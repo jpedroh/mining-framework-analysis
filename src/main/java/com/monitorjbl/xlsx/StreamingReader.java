@@ -44,10 +44,354 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
   private static final Logger log = LoggerFactory.getLogger(StreamingReader.class);
 
   private File tmp;
+<<<<<<< /usr/src/app/output/monitorjbl/excel-streaming-reader/f80a8d72621dab651e6defecb377f38f2dead38e/src/main/java/com/monitorjbl/xlsx/StreamingReader.java/left.java
+  private OPCPackage pkg;
+||||||| /usr/src/app/output/monitorjbl/excel-streaming-reader/f80a8d72621dab651e6defecb377f38f2dead38e/src/main/java/com/monitorjbl/xlsx/StreamingReader.java/base.java
+=======
   private final StreamingWorkbookReader workbook;
+>>>>>>> /usr/src/app/output/monitorjbl/excel-streaming-reader/f80a8d72621dab651e6defecb377f38f2dead38e/src/main/java/com/monitorjbl/xlsx/StreamingReader.java/right.java
 
+<<<<<<< /usr/src/app/output/monitorjbl/excel-streaming-reader/f80a8d72621dab651e6defecb377f38f2dead38e/src/main/java/com/monitorjbl/xlsx/StreamingReader.java/left.java
+  private StreamingReader(OPCPackage pkg, SharedStringsTable sst, StylesTable stylesTable, XMLEventReader parser, int rowCacheSize) {
+    this.pkg = pkg;
+    this.sst = sst;
+    this.stylesTable = stylesTable;
+    this.parser = parser;
+    this.rowCacheSize = rowCacheSize;
+  }
+
+  /**
+   * Read through a number of rows equal to the rowCacheSize field or until there is no more data to read
+   *
+   * @return true if data was read
+   */
+  private boolean getRow() {
+    try {
+      rowCache.clear();
+      while(rowCache.size() < rowCacheSize && parser.hasNext()) {
+        handleEvent(parser.nextEvent());
+      }
+      rowCacheIterator = rowCache.iterator();
+      return rowCacheIterator.hasNext();
+    } catch(XMLStreamException | SAXException e) {
+      log.debug("End of stream");
+    }
+    return false;
+  }
+
+  /**
+   * Handles a SAX event.
+   *
+   * @param event
+   * @throws SAXException
+   */
+  private void handleEvent(XMLEvent event) throws SAXException {
+    if(event.getEventType() == XMLStreamConstants.CHARACTERS) {
+      Characters c = event.asCharacters();
+      lastContents += c.getData();
+    } else if(event.getEventType() == XMLStreamConstants.START_ELEMENT) {
+      StartElement startElement = event.asStartElement();
+      String tagLocalName = startElement.getName().getLocalPart();
+
+      if("row".equals(tagLocalName)) {
+        Attribute rowIndex = startElement.getAttributeByName(new QName("r"));
+        currentRow = new StreamingRow(Integer.parseInt(rowIndex.getValue()) - 1);
+      } else if("c".equals(tagLocalName)) {
+        Attribute ref = startElement.getAttributeByName(new QName("r"));
+
+        String[] coord = ref.getValue().split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
+        currentCell = new StreamingCell(CellReference.convertColStringToIndex(coord[0]), Integer.parseInt(coord[1]) - 1);
+        setFormatString(startElement, currentCell);
+
+        Attribute type = startElement.getAttributeByName(new QName("t"));
+        if(type != null) {
+          currentCell.setType(type.getValue());
+        } else {
+          currentCell.setType("n");
+        }
+
+        Attribute style = startElement.getAttributeByName(new QName("s"));
+
+        if(style != null) {
+          String indexStr = style.getValue();
+          try {
+            int index = Integer.parseInt(indexStr);
+            currentCell.setCellStyle(stylesTable.getStyleAt(index));
+          } catch(NumberFormatException nfe) {
+            log.warn("Ignoring invalid style index {}", indexStr);
+          }
+        }
+      }
+
+      // Clear contents cache
+      lastContents = "";
+    } else if(event.getEventType() == XMLStreamConstants.END_ELEMENT) {
+      EndElement endElement = event.asEndElement();
+      String tagLocalName = endElement.getName().getLocalPart();
+
+      if("v".equals(tagLocalName) || "t".equals(tagLocalName)) {
+        currentCell.setRawContents(unformattedContents());
+        currentCell.setContents(formattedContents());
+      } else if("row".equals(tagLocalName) && currentRow != null) {
+        rowCache.add(currentRow);
+      } else if("c".equals(tagLocalName)) {
+        currentRow.getCellMap().put(currentCell.getColumnIndex(), currentCell);
+      }
+
+    }
+  }
+
+  /**
+   * Read the numeric format string out of the styles table for this cell. Stores
+   * the result in the Cell.
+   *
+   * @param startElement
+   * @param cell
+   */
+  void setFormatString(StartElement startElement, StreamingCell cell) {
+    Attribute cellStyle = startElement.getAttributeByName(new QName("s"));
+    String cellStyleString = (cellStyle != null) ? cellStyle.getValue() : null;
+    XSSFCellStyle style = null;
+
+    if(cellStyleString != null) {
+      style = stylesTable.getStyleAt(Integer.parseInt(cellStyleString));
+    } else if(stylesTable.getNumCellStyles() > 0) {
+      style = stylesTable.getStyleAt(0);
+    }
+
+    if(style != null) {
+      cell.setNumericFormatIndex(style.getDataFormat());
+      String formatString = style.getDataFormatString();
+
+      if(formatString != null) {
+        cell.setNumericFormat(formatString);
+      } else {
+        cell.setNumericFormat(BuiltinFormats.getBuiltinFormat(cell.getNumericFormatIndex()));
+      }
+    } else {
+      cell.setNumericFormatIndex(null);
+      cell.setNumericFormat(null);
+    }
+  }
+
+  /**
+   * Tries to format the contents of the last contents appropriately based on
+   * the type of cell and the discovered numeric format.
+   *
+   * @return
+   */
+  String formattedContents() {
+    switch(currentCell.getType()) {
+      case "s":           //string stored in shared table
+        int idx = Integer.parseInt(lastContents);
+        return new XSSFRichTextString(sst.getEntryAt(idx)).toString();
+      case "inlineStr":   //inline string (not in sst)
+        return new XSSFRichTextString(lastContents).toString();
+      case "str":         //forumla type
+        return '"' + lastContents + '"';
+      case "e":           //error type
+        return "ERROR:  " + lastContents;
+      case "n":           //numeric type
+        if(currentCell.getNumericFormat() != null && lastContents.length() > 0) {
+          return dataFormatter.formatRawCellContents(
+              Double.parseDouble(lastContents),
+              currentCell.getNumericFormatIndex(),
+              currentCell.getNumericFormat());
+        } else {
+          return lastContents;
+        }
+      default:
+        return lastContents;
+    }
+  }
+
+  /**
+   * Returns the contents of the cell, with no formatting applied
+   *
+   * @return
+   */
+  String unformattedContents() {
+    switch(currentCell.getType()) {
+      case "s":           //string stored in shared table
+        int idx = Integer.parseInt(lastContents);
+        return new XSSFRichTextString(sst.getEntryAt(idx)).toString();
+      case "inlineStr":   //inline string (not in sst)
+        return new XSSFRichTextString(lastContents).toString();
+      default:
+        return lastContents;
+    }
+||||||| /usr/src/app/output/monitorjbl/excel-streaming-reader/f80a8d72621dab651e6defecb377f38f2dead38e/src/main/java/com/monitorjbl/xlsx/StreamingReader.java/base.java
+  private StreamingReader(SharedStringsTable sst, StylesTable stylesTable, XMLEventReader parser, int rowCacheSize) {
+    this.sst = sst;
+    this.stylesTable = stylesTable;
+    this.parser = parser;
+    this.rowCacheSize = rowCacheSize;
+  }
+
+  /**
+   * Read through a number of rows equal to the rowCacheSize field or until there is no more data to read
+   *
+   * @return true if data was read
+   */
+  private boolean getRow() {
+    try {
+      rowCache.clear();
+      while(rowCache.size() < rowCacheSize && parser.hasNext()) {
+        handleEvent(parser.nextEvent());
+      }
+      rowCacheIterator = rowCache.iterator();
+      return rowCacheIterator.hasNext();
+    } catch(XMLStreamException | SAXException e) {
+      log.debug("End of stream");
+    }
+    return false;
+  }
+
+  /**
+   * Handles a SAX event.
+   *
+   * @param event
+   * @throws SAXException
+   */
+  private void handleEvent(XMLEvent event) throws SAXException {
+    if(event.getEventType() == XMLStreamConstants.CHARACTERS) {
+      Characters c = event.asCharacters();
+      lastContents += c.getData();
+    } else if(event.getEventType() == XMLStreamConstants.START_ELEMENT) {
+      StartElement startElement = event.asStartElement();
+      String tagLocalName = startElement.getName().getLocalPart();
+
+      if("row".equals(tagLocalName)) {
+        Attribute rowIndex = startElement.getAttributeByName(new QName("r"));
+        currentRow = new StreamingRow(Integer.parseInt(rowIndex.getValue()) - 1);
+      } else if("c".equals(tagLocalName)) {
+        Attribute ref = startElement.getAttributeByName(new QName("r"));
+
+        String[] coord = ref.getValue().split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
+        currentCell = new StreamingCell(CellReference.convertColStringToIndex(coord[0]), Integer.parseInt(coord[1]) - 1);
+        setFormatString(startElement, currentCell);
+
+        Attribute type = startElement.getAttributeByName(new QName("t"));
+        if(type != null) {
+          currentCell.setType(type.getValue());
+        } else {
+          currentCell.setType("n");
+        }
+
+        Attribute style = startElement.getAttributeByName(new QName("s"));
+
+        if(style != null){
+          String indexStr = style.getValue();
+          try{
+            int index = Integer.parseInt(indexStr);
+            currentCell.setCellStyle(stylesTable.getStyleAt(index));
+          } catch(NumberFormatException nfe) {
+            log.warn("Ignoring invalid style index {}", indexStr);
+          }
+        }
+      }
+
+      // Clear contents cache
+      lastContents = "";
+    } else if(event.getEventType() == XMLStreamConstants.END_ELEMENT) {
+      EndElement endElement = event.asEndElement();
+      String tagLocalName = endElement.getName().getLocalPart();
+
+      if("v".equals(tagLocalName)) {
+        currentCell.setRawContents(unformattedContents());
+        currentCell.setContents(formattedContents());
+      } else if("row".equals(tagLocalName) && currentRow != null) {
+        rowCache.add(currentRow);
+      } else if("c".equals(tagLocalName)) {
+        currentRow.getCellMap().put(currentCell.getColumnIndex(), currentCell);
+      }
+
+    }
+  }
+
+  /**
+   * Read the numeric format string out of the styles table for this cell. Stores
+   * the result in the Cell.
+   *
+   * @param startElement
+   * @param cell
+   */
+  void setFormatString(StartElement startElement, StreamingCell cell) {
+    Attribute cellStyle = startElement.getAttributeByName(new QName("s"));
+    String cellStyleString = (cellStyle != null) ? cellStyle.getValue() : null;
+    XSSFCellStyle style = null;
+
+    if(cellStyleString != null) {
+      style = stylesTable.getStyleAt(Integer.parseInt(cellStyleString));
+    } else if(stylesTable.getNumCellStyles() > 0) {
+      style = stylesTable.getStyleAt(0);
+    }
+
+    if(style != null) {
+      cell.setNumericFormatIndex(style.getDataFormat());
+      String formatString = style.getDataFormatString();
+
+      if(formatString != null) {
+        cell.setNumericFormat(formatString);
+      } else {
+        cell.setNumericFormat(BuiltinFormats.getBuiltinFormat(cell.getNumericFormatIndex()));
+      }
+    } else {
+      cell.setNumericFormatIndex(null);
+      cell.setNumericFormat(null);
+    }
+  }
+
+  /**
+   * Tries to format the contents of the last contents appropriately based on
+   * the type of cell and the discovered numeric format.
+   *
+   * @return
+   */
+  String formattedContents() {
+    switch(currentCell.getType()) {
+      case "s":           //string stored in shared table
+        int idx = Integer.parseInt(lastContents);
+        return new XSSFRichTextString(sst.getEntryAt(idx)).toString();
+      case "inlineStr":   //inline string (not in sst)
+        return new XSSFRichTextString(lastContents).toString();
+      case "str":         //forumla type
+        return '"' + lastContents + '"';
+      case "e":           //error type
+        return "ERROR:  " + lastContents;
+      case "n":           //numeric type
+        if(currentCell.getNumericFormat() != null && lastContents.length() > 0) {
+          return dataFormatter.formatRawCellContents(
+              Double.parseDouble(lastContents),
+              currentCell.getNumericFormatIndex(),
+              currentCell.getNumericFormat());
+        } else {
+          return lastContents;
+        }
+      default:
+        return lastContents;
+    }
+  }
+
+  /**
+   * Returns the contents of the cell, with no formatting applied
+   *
+   * @return
+   */
+  String unformattedContents() {
+    switch(currentCell.getType()) {
+      case "s":           //string stored in shared table
+        int idx = Integer.parseInt(lastContents);
+        return new XSSFRichTextString(sst.getEntryAt(idx)).toString();
+      case "inlineStr":   //inline string (not in sst)
+        return new XSSFRichTextString(lastContents).toString();
+      default:
+        return lastContents;
+    }
+=======
   public StreamingReader(StreamingWorkbookReader workbook) {
     this.workbook = workbook;
+>>>>>>> /usr/src/app/output/monitorjbl/excel-streaming-reader/f80a8d72621dab651e6defecb377f38f2dead38e/src/main/java/com/monitorjbl/xlsx/StreamingReader.java/right.java
   }
 
   /**
@@ -72,12 +416,33 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
   @Override
   public void close() {
     try {
+<<<<<<< /usr/src/app/output/monitorjbl/excel-streaming-reader/f80a8d72621dab651e6defecb377f38f2dead38e/src/main/java/com/monitorjbl/xlsx/StreamingReader.java/left.java
+      parser.close();
+      pkg.revert();
+    } catch(XMLStreamException e) {
+      throw new CloseException(e);
+    }
+
+    if(tmp != null) {
+      log.debug("Deleting tmp file [" + tmp.getAbsolutePath() + "]");
+      tmp.delete();
+||||||| /usr/src/app/output/monitorjbl/excel-streaming-reader/f80a8d72621dab651e6defecb377f38f2dead38e/src/main/java/com/monitorjbl/xlsx/StreamingReader.java/base.java
+      parser.close();
+    } catch(XMLStreamException e) {
+      throw new CloseException(e);
+    }
+
+    if(tmp != null) {
+      log.debug("Deleting tmp file [" + tmp.getAbsolutePath() + "]");
+      tmp.delete();
+=======
       workbook.close();
     } finally {
       if(tmp != null) {
         log.debug("Deleting tmp file [" + tmp.getAbsolutePath() + "]");
         tmp.delete();
       }
+>>>>>>> /usr/src/app/output/monitorjbl/excel-streaming-reader/f80a8d72621dab651e6defecb377f38f2dead38e/src/main/java/com/monitorjbl/xlsx/StreamingReader.java/right.java
     }
   }
 
@@ -276,8 +641,14 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
         }
 
         XMLEventReader parser = XMLInputFactory.newInstance().createXMLEventReader(sheet);
+<<<<<<< /usr/src/app/output/monitorjbl/excel-streaming-reader/f80a8d72621dab651e6defecb377f38f2dead38e/src/main/java/com/monitorjbl/xlsx/StreamingReader.java/left.java
+        return new StreamingReader(pkg, sst, styles, parser, rowCacheSize);
+||||||| /usr/src/app/output/monitorjbl/excel-streaming-reader/f80a8d72621dab651e6defecb377f38f2dead38e/src/main/java/com/monitorjbl/xlsx/StreamingReader.java/base.java
+        return new StreamingReader(sst, styles, parser, rowCacheSize);
+=======
 
         return new StreamingReader(new StreamingWorkbookReader(pkg, new StreamingSheetReader(sst, styles, parser, rowCacheSize), this));
+>>>>>>> /usr/src/app/output/monitorjbl/excel-streaming-reader/f80a8d72621dab651e6defecb377f38f2dead38e/src/main/java/com/monitorjbl/xlsx/StreamingReader.java/right.java
       } catch(IOException e) {
         throw new OpenException("Failed to open file", e);
       } catch(OpenXML4JException | XMLStreamException e) {
