@@ -456,13 +456,17 @@ public interface CollectionService
     public int countCollectionsWithSubmit(String q, Context context, Community community, String entityType)
         throws SQLException, SearchServiceException;
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c6cf19d40c02f9e53a3fa76af819da8d38f850ec/dspace-api/src/main/java/org/dspace/content/service/CollectionService.java/left.java
+    int countArchivedItem(Collection collection) throws ItemCountException;
+||||||| /usr/src/app/output/dspace/dspace/c6cf19d40c02f9e53a3fa76af819da8d38f850ec/dspace-api/src/main/java/org/dspace/content/service/CollectionService.java/base.java
+=======
     /**
      * Returns a list of all collections for a specific entity type.
      * NOTE: for better performance, this method retrieves its results from an index (cache)
      *       and does not query the database directly.
      *       This means that results may be stale or outdated until
      *       https://github.com/DSpace/DSpace/issues/2853 is resolved."
-     *
+     * 
      * @param context          DSpace Context
      * @param entityType       limit the returned collection to those related to given entity type
      * @return                 list of collections found
@@ -470,5 +474,6 @@ public interface CollectionService
      */
     public List<Collection> findAllCollectionsByEntityType(Context context, String entityType)
         throws SearchServiceException;
-    int countArchivedItem(Collection collection) throws ItemCountException;
+>>>>>>> /usr/src/app/output/dspace/dspace/c6cf19d40c02f9e53a3fa76af819da8d38f850ec/dspace-api/src/main/java/org/dspace/content/service/CollectionService.java/right.java
+
 }

@@ -1050,6 +1050,10 @@ public class CollectionServiceImpl extends DSpaceObjectServiceImpl<Collection> i
     }
 
     @Override
+    public int countArchivedItem(Collection collection) throws ItemCountException {
+        return ItemCounter.getInstance().getCount(collection);
+    }
+    @Override
     @SuppressWarnings("rawtypes")
     public List<Collection> findAllCollectionsByEntityType(Context context, String entityType)
             throws SearchServiceException {
@@ -1069,8 +1073,4 @@ public class CollectionServiceImpl extends DSpaceObjectServiceImpl<Collection> i
         return collectionList;
     }
 
-    @Override
-    public int countArchivedItem(Collection collection) throws ItemCountException {
-        return ItemCounter.getInstance().getCount(collection);
-    }
 }
