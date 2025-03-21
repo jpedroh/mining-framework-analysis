@@ -184,11 +184,11 @@ public class PlistSerializerImplTest {
 		//then
 		assertThat(xml).isEqualTo("<dict><key>bar</key><string>test2</string><key>foo</key><string>test1</string></dict>");
 	}
-
 	@Test
-	public void testPlistDataSerializationHandler() {
+	public void testPlistDataSerializationHandler()
+	{
 		//given
-		byte[] data = "test".getBytes();
+		byte[] data = new String("test").getBytes();
 		PlistData object = new PlistData(data);
 
 		//when
@@ -196,7 +196,7 @@ public class PlistSerializerImplTest {
 
 		//then
 		assertThat(xml).isEqualTo("<data>dGVzdA==</data>");
-	}
+	}	
 
 	@Test
 	public void testSupportedDataTypes() throws IllegalAccessException, InstantiationException {
