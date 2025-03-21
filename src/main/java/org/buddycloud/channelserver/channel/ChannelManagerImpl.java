@@ -476,5 +476,5 @@ public class ChannelManagerImpl implements ChannelManager {
 	public int countNodeThreads(String node) throws NodeStoreException {
 		return nodeStore.countNodeThreads(node);
 	}
-
+	
 }
