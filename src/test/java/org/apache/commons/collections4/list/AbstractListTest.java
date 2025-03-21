@@ -610,9 +610,19 @@ public abstract class AbstractListTest<E> extends AbstractCollectionTest<E> {
         resetFull();
         Exception exception = assertThrows(UnsupportedOperationException.class, () -> {
             getCollection().set(0, getFullElements()[0]);
+<<<<<<< /usr/src/app/output/apache/commons-collections/96a6d523e8f8d041a6acb7814c8c0fa40c72000a/src/test/java/org/apache/commons/collections4/list/AbstractListTest.java/left.java
         });
         if (null != exception.getMessage()) {
             assertTrue(exception.getMessage().contains("Index:"));
+||||||| /usr/src/app/output/apache/commons-collections/96a6d523e8f8d041a6acb7814c8c0fa40c72000a/src/test/java/org/apache/commons/collections4/list/AbstractListTest.java/base.java
+            fail("Emtpy collection should not support set.");
+        } catch (final UnsupportedOperationException e) {
+            // expected
+=======
+            fail("Empty collection should not support set.");
+        } catch (final UnsupportedOperationException e) {
+            // expected
+>>>>>>> /usr/src/app/output/apache/commons-collections/96a6d523e8f8d041a6acb7814c8c0fa40c72000a/src/test/java/org/apache/commons/collections4/list/AbstractListTest.java/right.java
         }
         // make sure things didn't change even if the expected exception was
         // thrown.

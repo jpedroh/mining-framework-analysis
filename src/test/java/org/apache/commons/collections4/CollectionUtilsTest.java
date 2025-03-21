@@ -843,7 +843,7 @@ public class CollectionUtilsTest extends MockTestCase {
         CollectionUtils.hashCode(collectionB, null);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testIsEqualCollectionNullColl1() {
         final Collection<Integer> list = new ArrayList<>(1);
         list.add(1);

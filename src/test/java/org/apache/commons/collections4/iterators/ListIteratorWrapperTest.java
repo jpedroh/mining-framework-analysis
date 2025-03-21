@@ -220,7 +220,13 @@ public class ListIteratorWrapperTest<E> extends AbstractIteratorTest<E> {
 
         // after reset, the results should be the same as before
         assertEquals(first, iter.next());
+<<<<<<< /usr/src/app/output/apache/commons-collections/96a6d523e8f8d041a6acb7814c8c0fa40c72000a/src/test/java/org/apache/commons/collections4/iterators/ListIteratorWrapperTest.java/left.java
         assertEquals(second, iter.next());
+||||||| /usr/src/app/output/apache/commons-collections/96a6d523e8f8d041a6acb7814c8c0fa40c72000a/src/test/java/org/apache/commons/collections4/iterators/ListIteratorWrapperTest.java/base.java
+        assertEquals("Second elment should be the same", second, iter.next());
+=======
+        assertEquals("Second element should be the same", second, iter.next());
+>>>>>>> /usr/src/app/output/apache/commons-collections/96a6d523e8f8d041a6acb7814c8c0fa40c72000a/src/test/java/org/apache/commons/collections4/iterators/ListIteratorWrapperTest.java/right.java
 
         // after passing the point, where we resetted, continuation should work as expected
         for (int i = 2; i < testArray.length; i++) {
