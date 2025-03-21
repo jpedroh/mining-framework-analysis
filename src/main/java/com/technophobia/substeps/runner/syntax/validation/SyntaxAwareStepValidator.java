@@ -22,7 +22,9 @@ public class SyntaxAwareStepValidator implements StepValidator {
         this.stepImplMap = createStepImplMap();
     }
 
-    public void validateFeatureFile(final FeatureFile featureFile, final SyntaxErrorReporter syntaxErrorReporter) {
+
+    public void validateFeatureFile(final FeatureFile featureFile,
+            final SyntaxErrorReporter syntaxErrorReporter) {
         final List<Scenario> scenarios = featureFile.getScenarios();
         if (scenarios != null) {
             for (final Scenario scenario : scenarios) {
@@ -32,7 +34,9 @@ public class SyntaxAwareStepValidator implements StepValidator {
         }
     }
 
-    public void validateSubstep(final ParentStep substep, final SyntaxErrorReporter syntaxErrorReporter) {
+
+    public void validateSubstep(final ParentStep substep,
+            final SyntaxErrorReporter syntaxErrorReporter) {
         final List<Step> steps = substep.getSteps();
         if (steps != null) {
             for (final Step step : steps) {
@@ -51,6 +55,7 @@ public class SyntaxAwareStepValidator implements StepValidator {
             }
         }
     }
+
 
     protected void validate(final Step step, final File sourceFile,
             final SyntaxErrorReporter syntaxErrorReporter) {
@@ -79,7 +84,8 @@ public class SyntaxAwareStepValidator implements StepValidator {
     private PatternMap<StepImplementation> createStepImplMap() {
         final PatternMap<StepImplementation> results = new PatternMap<StepImplementation>();
 
-        final List<StepImplementation> stepImpls = syntax.getStepImplementations();
+        final List<StepImplementation> stepImpls = this.syntax
+                .getStepImplementations();
         for (final StepImplementation stepImpl : stepImpls) {
             results.put(stepImpl.getValue(), stepImpl);
         }
