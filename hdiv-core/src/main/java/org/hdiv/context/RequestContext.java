@@ -1,33 +1,15 @@
-/**
- * Copyright 2005-2016 hdiv.org
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * 	http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.hdiv.context;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
-
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletRequestWrapper;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.hdiv.dataComposer.IDataComposer;
 import org.hdiv.exception.HDIVException;
 import org.hdiv.filter.AsyncRequestWrapper;
@@ -45,227 +27,222 @@ import org.slf4j.LoggerFactory;
  * @since 3.0.0
  */
 public class RequestContext implements RequestContextHolder {
+  protected HttpServletRequest request;
 
-	protected HttpServletRequest request;
+  protected HttpServletResponse response;
 
-	protected HttpServletResponse response;
+  protected SessionModel session;
 
-	protected SessionModel session;
+  protected String modifyParameterName;
 
-	protected String modifyParameterName;
+  protected String hdivParameterName;
 
-	protected String hdivParameterName;
+  private String requestURI;
 
-	private String requestURI;
+  private String baseURL;
 
-	private String baseURL;
+  private UUID currentPageId;
 
-	private UUID currentPageId;
+  private Boolean isAjaxRequest;
 
-	private Boolean isAjaxRequest;
+  private IDataComposer dataComposer;
 
-	private IDataComposer dataComposer;
+  private long renderTime;
 
-	private long renderTime;
+  private final Logger log = LoggerFactory.getLogger(RequestContextHolder.class);
 
-	private final Logger log = LoggerFactory.getLogger(RequestContextHolder.class);
+  private String formStateId;
 
-	private String formStateId;
+  private String redirect;
 
-	private String redirect;
+  private ValidationContext validationContext;
 
-	private ValidationContext validationContext;
+  @SuppressWarnings(value = { "deprecation" }) public RequestContext(final HttpServletRequest request, final HttpServletResponse response) {
+    this.request = request;
+    this.response = response;
+    requestURI = request.getRequestURI();
+    request.setAttribute(Constants.HDIV_REQUEST_CONTEXT, this);
+    doCreateSession();
+  }
 
-	@SuppressWarnings("deprecation")
-	public RequestContext(final HttpServletRequest request, final HttpServletResponse response) {
-		this.request = request;
-		this.response = response;
-		requestURI = request.getRequestURI();
-		request.setAttribute(Constants.HDIV_REQUEST_CONTEXT, this);
-		doCreateSession();
-	}
+  @Deprecated public void doCreateSession() {
+    session = new HttpSessionModel(request.getSession());
+  }
 
-	@Deprecated
-	public void doCreateSession() {
-		session = new HttpSessionModel(request.getSession());
-	}
+  public final void update(final HttpServletRequest request, final HttpServletResponse response) {
+    this.request = request;
+    this.response = response;
+  }
 
-	public final void update(final HttpServletRequest request, final HttpServletResponse response) {
-		this.request = request;
-		this.response = response;
-	}
+  public HttpServletRequest getRequest() {
+    return request;
+  }
 
-	public HttpServletRequest getRequest() {
-		return request;
-	}
+  public String getParameter(final String name) {
+    return request.getParameter(name);
+  }
 
-	public String getParameter(final String name) {
-		return request.getParameter(name);
-	}
-
-	/**
+  /**
 	 * @return the response
 	 */
-	public HttpServletResponse getResponse() {
-		return response;
-	}
+  public HttpServletResponse getResponse() {
+    return response;
+  }
 
-	/**
+  /**
 	 * @return the session
 	 */
-	public SessionModel getSession() {
-		return session;
-	}
+  public SessionModel getSession() {
+    return session;
+  }
 
-	public String getHdivParameterName() {
-		return hdivParameterName;
-	}
+  public String getHdivParameterName() {
+    return hdivParameterName;
+  }
 
-	public void setHdivParameterName(final String name) {
-		hdivParameterName = name;
-	}
+  public void setHdivParameterName(final String name) {
+    hdivParameterName = name;
+  }
 
-	public String getHdivModifyParameterName() {
-		return modifyParameterName;
-	}
+  public String getHdivModifyParameterName() {
+    return modifyParameterName;
+  }
 
-	public void setHdivModifyParameterName(final String name) {
-		modifyParameterName = name;
-	}
+  public void setHdivModifyParameterName(final String name) {
+    modifyParameterName = name;
+  }
 
-	public String getHdivState() {
-		return request.getParameter(getHdivParameterName());
-	}
+  public String getHdivState() {
+    return request.getParameter(getHdivParameterName());
+  }
 
-	public String getRequestURI() {
-		return requestURI;
-	}
+  public String getRequestURI() {
+    return requestURI;
+  }
 
-	public void setRequestURI(final String requestURI) {
-		this.requestURI = requestURI;
-	}
+  public void setRequestURI(final String requestURI) {
+    this.requestURI = requestURI;
+  }
 
-	public UUID getCurrentPageId() {
-		return currentPageId;
-	}
+  public UUID getCurrentPageId() {
+    return currentPageId;
+  }
 
-	public void setCurrentPageId(final UUID currentPageId) {
-		this.currentPageId = currentPageId;
-	}
+  public void setCurrentPageId(final UUID currentPageId) {
+    this.currentPageId = currentPageId;
+  }
 
-	public String getBaseURL() {
-		return baseURL;
-	}
+  public String getBaseURL() {
+    return baseURL;
+  }
 
-	public void setBaseURL(final String baseURL) {
-		this.baseURL = baseURL;
-	}
+  public void setBaseURL(final String baseURL) {
+    this.baseURL = baseURL;
+  }
 
-	/**
+  /**
 	 * Checks if request is an ajax request and store the result in a request's attribute
 	 *
 	 * @return isAjaxRquest
 	 */
-	public final boolean isAjax() {
-		if (isAjaxRequest == null) {
-			String xRequestedWithValue = request.getHeader("x-requested-with");
-			isAjaxRequest = xRequestedWithValue != null ? "XMLHttpRequest".equalsIgnoreCase(xRequestedWithValue) : false;
-		}
-		return isAjaxRequest;
-	}
+  public final boolean isAjax() {
+    if (isAjaxRequest == null) {
+      String xRequestedWithValue = request.getHeader("x-requested-with");
+      isAjaxRequest = xRequestedWithValue != null ? "XMLHttpRequest".equalsIgnoreCase(xRequestedWithValue) : false;
+    }
+    return isAjaxRequest;
+  }
 
-	public void clearAjax() {
-		// Only for testing
-		isAjaxRequest = null;
-	}
+  public void clearAjax() {
+    isAjaxRequest = null;
+  }
 
-	public String getUrlWithoutContextPath() {
-		return requestURI.substring(request.getContextPath().length());
-	}
+  public String getUrlWithoutContextPath() {
+    return requestURI.substring(request.getContextPath().length());
+  }
 
-	public IDataComposer getDataComposer() {
-		return dataComposer;
-	}
+  public IDataComposer getDataComposer() {
+    return dataComposer;
+  }
 
-	public void setDataComposer(final IDataComposer dataComposer) {
-		this.dataComposer = dataComposer;
-	}
+  public void setDataComposer(final IDataComposer dataComposer) {
+    this.dataComposer = dataComposer;
+  }
 
-	public void addRenderTime(long time) {
-		time = System.nanoTime() - time;
-		if (log.isDebugEnabled()) {
-			log.debug("render-time-processUrl (ms): " + time / 1000000.0);
-		}
-		renderTime += time;
-	}
+  public void addRenderTime(long time) {
+    time = System.nanoTime() - time;
+    if (log.isDebugEnabled()) {
+      log.debug("render-time-processUrl (ms): " + time / 1000000.0);
+    }
+    renderTime += time;
+  }
 
-	public long getRenderTime() {
-		return renderTime;
-	}
+  public long getRenderTime() {
+    return renderTime;
+  }
 
-	public String getMethod() {
-		return request.getMethod();
-	}
+  public String getMethod() {
+    return request.getMethod();
+  }
 
-	public String getContextPath() {
-		return request.getContextPath();
-	}
+  public String getContextPath() {
+    return request.getContextPath();
+  }
 
-	public String getServerName() {
-		return request.getServerName();
-	}
+  public String getServerName() {
+    return request.getServerName();
+  }
 
-	public Object getAttribute(final String attributeName) {
-		return request.getAttribute(attributeName);
-	}
+  public Object getAttribute(final String attributeName) {
+    return request.getAttribute(attributeName);
+  }
 
-	public void setAttribute(final String attributeName, final Object value) {
-		request.setAttribute(attributeName, value);
-	}
+  public void setAttribute(final String attributeName, final Object value) {
+    request.setAttribute(attributeName, value);
+  }
 
-	public boolean isAsync() {
-		RequestWrapper wrapper = HDIVUtil.getNativeRequest(request, RequestWrapper.class);
-		if (wrapper != null && wrapper instanceof AsyncRequestWrapper) {
-			AsyncRequestWrapper asyncWrapper = (AsyncRequestWrapper) wrapper;
-			return asyncWrapper.isAsyncRequest();
-		}
-		return false;
-	}
+  public boolean isAsync() {
+    RequestWrapper wrapper = HDIVUtil.getNativeRequest(request, RequestWrapper.class);
+    if (wrapper != null && wrapper instanceof AsyncRequestWrapper) {
+      AsyncRequestWrapper asyncWrapper = (AsyncRequestWrapper) wrapper;
+      return asyncWrapper.isAsyncRequest();
+    }
+    return false;
+  }
 
-	public Map<String, String[]> getParameterMap() {
-		return request.getParameterMap();
-	}
+  public Map<String, String[]> getParameterMap() {
+    return request.getParameterMap();
+  }
 
-	public String getFormStateId() {
-		return formStateId;
-	}
+  public String getFormStateId() {
+    return formStateId;
+  }
 
-	public void setFormStateId(final String formStateId) {
-		this.formStateId = formStateId;
-		request.setAttribute(Constants.FORM_STATE_ID, formStateId);
-	}
+  public void setFormStateId(final String formStateId) {
+    this.formStateId = formStateId;
+    request.setAttribute(Constants.FORM_STATE_ID, formStateId);
+  }
 
-	public Enumeration<String> getParameterNames() {
-		return request.getParameterNames();
-	}
+  public Enumeration<String> getParameterNames() {
+    return request.getParameterNames();
+  }
 
-	/**
+  /**
 	 * Mark parameter as editable.
 	 *
 	 * @param name parameter name
 	 */
-	public void addEditableParameter(final String name) {
+  public void addEditableParameter(final String name) {
+    if (request instanceof RequestWrapper) {
+      if (log.isDebugEnabled()) {
+        log.debug("Editable parameter [" + name + "] added.");
+      }
+      RequestWrapper wrapper = (RequestWrapper) request;
+      wrapper.addEditableParameter(name);
+    }
+  }
 
-		if (request instanceof RequestWrapper) {
-			if (log.isDebugEnabled()) {
-				log.debug("Editable parameter [" + name + "] added.");
-			}
-			RequestWrapper wrapper = (RequestWrapper) request;
-			wrapper.addEditableParameter(name);
-		}
-	}
-
-	/**
+  /**
 	 * Try to resolve the message. Treat as an error if the message can't be found.
 	 *
 	 * @param key the code to lookup up, such as 'calculator.noRateSet'
@@ -273,23 +250,24 @@ public class RequestContext implements RequestContextHolder {
 	 * within a message), or null if none.
 	 * @return The resolved message
 	 */
-	public String getMessage(final String key, final String o) {
-		return HDIVUtil.getMessage(request, key, o, Locale.getDefault());
-	}
+  public String getMessage(final String key, final String o) {
+    return HDIVUtil.getMessage(request, key, o, Locale.getDefault());
+  }
 
-	protected ServletRequest getNativeRequest(final ServletRequest request, final Class<?> requiredType) {
-		if (requiredType != null) {
-			if (requiredType.isInstance(request)) {
-				return request;
-			}
-			else if (request instanceof ServletRequestWrapper) {
-				return getNativeRequest(((ServletRequestWrapper) request).getRequest(), requiredType);
-			}
-		}
-		return null;
-	}
+  protected ServletRequest getNativeRequest(final ServletRequest request, final Class<?> requiredType) {
+    if (requiredType != null) {
+      if (requiredType.isInstance(request)) {
+        return request;
+      } else {
+        if (request instanceof ServletRequestWrapper) {
+          return getNativeRequest(((ServletRequestWrapper) request).getRequest(), requiredType);
+        }
+      }
+    }
+    return null;
+  }
 
-	/**
+  /**
 	 * Adds one parameter to the request. Since the HttpServletRequest object's parameters are unchanged according to the Servlet
 	 * specification, the instance of request should be passed as a parameter of type RequestWrapper.
 	 *
@@ -297,73 +275,66 @@ public class RequestContext implements RequestContextHolder {
 	 * @param value new parameter value
 	 * @throws HDIVException if the request object is not of type RequestWrapper
 	 */
-	public void addParameterToRequest(final String name, final String[] value) {
+  public void addParameterToRequest(final String name, final String[] value) {
+    RequestWrapper wrapper;
+    if (request instanceof RequestWrapper) {
+      wrapper = (RequestWrapper) request;
+    } else {
+      wrapper = (RequestWrapper) getNativeRequest(request, RequestWrapper.class);
+    }
+    if (wrapper != null) {
+      wrapper.addParameter(name, value);
+    } else {
+      String errorMessage = HDIVUtil.getMessage(request, "helper.notwrapper");
+      throw new HDIVException(errorMessage);
+    }
+  }
 
-		RequestWrapper wrapper;
+  public String[] getParameterValues(final String name) {
+    return request.getParameterValues(name);
+  }
 
-		if (request instanceof RequestWrapper) {
-			wrapper = (RequestWrapper) request;
-		}
-		else {
-			wrapper = (RequestWrapper) getNativeRequest(request, RequestWrapper.class);
-		}
+  public Cookie[] getCookies() {
+    return request.getCookies();
+  }
 
-		if (wrapper != null) {
-			wrapper.addParameter(name, value);
-		}
-		else {
-			String errorMessage = HDIVUtil.getMessage(request, "helper.notwrapper");
-			throw new HDIVException(errorMessage);
-		}
+  public String getQueryString() {
+    return request.getQueryString();
+  }
 
-	}
+  public String getContentType() {
+    return request.getContentType();
+  }
 
-	public String[] getParameterValues(final String name) {
-		return request.getParameterValues(name);
-	}
+  public String getServletPath() {
+    return request.getServletPath();
+  }
 
-	public Cookie[] getCookies() {
-		return request.getCookies();
-	}
+  public void setRedirectAction(final String redirect) {
+    this.redirect = redirect;
+  }
 
-	public String getQueryString() {
-		return request.getQueryString();
-	}
+  public String getRedirectAction() {
+    return redirect;
+  }
 
-	public String getContentType() {
-		return request.getContentType();
-	}
+  @SuppressWarnings(value = { "deprecation" }) public void setHdivState(final String hdivState) {
+    HDIVUtil.setHdivState(request, hdivState);
+  }
 
-	public String getServletPath() {
-		return request.getServletPath();
-	}
+  public InputStream getInputStream() throws IOException {
+    return request.getInputStream();
+  }
 
-	public void setRedirectAction(final String redirect) {
-		this.redirect = redirect;
-	}
+  public String getHeader(final String header) {
+    return request.getHeader(header);
+  }
 
-	public String getRedirectAction() {
-		return redirect;
-	}
+  public <T extends ValidationContext> T getValidationContext() {
+    return (T) validationContext;
+  }
 
-	@SuppressWarnings("deprecation")
-	public void setHdivState(final String hdivState) {
-		HDIVUtil.setHdivState(request, hdivState);
-	}
-
-	public InputStream getInputStream() throws IOException {
-		return request.getInputStream();
-	}
-
-	public String getHeader(final String header) {
-		return request.getHeader(header);
-	}
-
-	public <T extends ValidationContext> T getValidationContext() {
-		return (T) validationContext;
-	}
-
-	public void setValidationContext(final ValidationContext validationContext) {
-		this.validationContext = validationContext;
-	}
+  public void setValidationContext(final ValidationContext validationContext) {
+    this.validationContext = validationContext;
+  }
 }
