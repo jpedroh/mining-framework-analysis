@@ -84,7 +84,7 @@ public class Connection {
 			return;
 		}
 		
-		if(data.get("bridge_port") == null || data.get("bridge_host") == null) {
+		if ( data.get("bridge_port") == null || data.get("bridge_host") == null) {
 			log.error("Could not find host and port in JSON body");
 		} else {
 			host = (String) data.get("bridge_host");
@@ -143,6 +143,28 @@ public class Connection {
 
 			log.info("Handshake complete");
 
+<<<<<<< /usr/src/app/output/getbridge/bridge-java/35d226d99b31bc824c3a3460ec0611c8572a081c/bridge-java-core/src/main/java/com/flotype/bridge/Connection.java/left.java
+			// Parse as normal
+			Map<String, Object> message = Utils.deserialize(bridge, body);
+			if (message.get("destination") == null) {
+				log.warn("No destination in message {}", bodyString);	
+				return;
+			}
+			if (message.get("source") != null) {
+				bridge.context = new BridgeClient(bridge, (String) message.get("source"));
+			}
+			bridge.dispatcher.execute((Reference) message.get("destination"),
+					(List<Object>) message.get("args"));
+||||||| /usr/src/app/output/getbridge/bridge-java/35d226d99b31bc824c3a3460ec0611c8572a081c/bridge-java-core/src/main/java/com/flotype/bridge/Connection.java/base.java
+			// Parse as normal
+			Map<String, Object> message = Utils.deserialize(bridge, body);
+			if(message.get("destination") == null) {
+				log.warn("No destination in message {}", bodyString);
+			} else {
+			bridge.dispatcher.execute((Reference) message.get("destination"),
+					(List<Object>) message.get("args"));
+			}
+=======
 			if(this.handshaken == false) {
 				bridge.onReady();
 				this.handshaken = true;
@@ -151,6 +173,7 @@ public class Connection {
 			}
 		} else {
 			processMessage(message);
+>>>>>>> /usr/src/app/output/getbridge/bridge-java/35d226d99b31bc824c3a3460ec0611c8572a081c/bridge-java-core/src/main/java/com/flotype/bridge/Connection.java/right.java
 		}
 	}
 
@@ -159,11 +182,9 @@ public class Connection {
 		Map<String, Object> obj;
 		try {
 			obj = Utils.deserialize(bridge, message.getBytes());
-			if(obj.get("destination") == null) {
-				log.warn("No destination in message {}", message);
-			} else {
-				bridge.dispatcher.execute((Reference) obj.get("destination"),
-						(List<Object>) obj.get("args"));
+			if (obj.get("destination") == null) {
+				log.warn("No destination in message {}", message);	
+				return;
 			}
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
