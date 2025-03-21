@@ -1545,6 +1545,16 @@ public class PHPGrammar {
       )
     );
   }
+  public ExpressionTree INDIRECT_METHOD_CALL() {
+    return b.<ExpressionTree>nonterminal(PHPLexicalGrammar.INDIRECT_METHOD_CALL).is(
+      f.memberExpression(
+        b.firstOf(
+          ARRAY_INITIALIZER(),
+          STRING_LITERAL()),
+        FUNCTION_CALL_ARGUMENT_LIST()
+      )
+    );
+  }
 
   public ExpressionTree MEMBER_EXPRESSION() {
     return b.<ExpressionTree>nonterminal(PHPLexicalGrammar.MEMBER_EXPRESSION).is(
@@ -1731,7 +1741,12 @@ public class PHPGrammar {
     return b.<ExpressionTree>nonterminal(PHPLexicalGrammar.POSTFIX_EXPR).is(
       f.postfixExpression(
         b.firstOf(
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-php/2b1240c2482c763e1523e38661bc8f5c5194763c/php-frontend/src/main/java/org/sonar/php/parser/PHPGrammar.java/left.java
           SPECIAL_CALL(),
+||||||| /usr/src/app/output/sonarcommunity/sonar-php/2b1240c2482c763e1523e38661bc8f5c5194763c/php-frontend/src/main/java/org/sonar/php/parser/PHPGrammar.java/base.java
+=======
+          INDIRECT_METHOD_CALL(),
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-php/2b1240c2482c763e1523e38661bc8f5c5194763c/php-frontend/src/main/java/org/sonar/php/parser/PHPGrammar.java/right.java
           f.combinedScalarOffset(ARRAY_INITIALIZER(), b.zeroOrMore(DIMENSIONAL_OFFSET())),
           FUNCTION_EXPRESSION(),
           ARROW_FUNCTION_EXPRESSION(),

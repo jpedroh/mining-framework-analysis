@@ -169,7 +169,12 @@ public enum PHPLexicalGrammar implements GrammarRuleKey {
    */
   PRIMARY_EXPRESSION,
   MEMBER_EXPRESSION,
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-php/2b1240c2482c763e1523e38661bc8f5c5194763c/php-frontend/src/main/java/org/sonar/php/parser/PHPLexicalGrammar.java/left.java
   SPECIAL_CALL,
+||||||| /usr/src/app/output/sonarcommunity/sonar-php/2b1240c2482c763e1523e38661bc8f5c5194763c/php-frontend/src/main/java/org/sonar/php/parser/PHPLexicalGrammar.java/base.java
+=======
+  INDIRECT_METHOD_CALL,
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-php/2b1240c2482c763e1523e38661bc8f5c5194763c/php-frontend/src/main/java/org/sonar/php/parser/PHPLexicalGrammar.java/right.java
   VARIABLE_WITHOUT_OBJECTS,
   CLASS_MEMBER_ACCESS,
   OBJECT_MEMBER_ACCESS,
