@@ -67,9 +67,13 @@ public class Faker implements Resolver {
         this.book = new Book(this, proxiedFakeValueService);
         this.business = new Business(proxiedFakeValueService);
         this.color = new Color(proxiedFakeValueService);
+<<<<<<< /usr/src/app/output/dius/java-faker/eaea01edb6684f0a0dec286d205db88293dc3581/src/main/java/com/github/javafaker/Faker.java/left.java
         this.hacker = new Hacker(proxiedFakeValueService);
-        this.company = new Company(this, proxiedFakeValueService, randomService);
+||||||| /usr/src/app/output/dius/java-faker/eaea01edb6684f0a0dec286d205db88293dc3581/src/main/java/com/github/javafaker/Faker.java/base.java
+=======
         this.commerce = new Commerce(proxiedFakeValueService, randomService);
+>>>>>>> /usr/src/app/output/dius/java-faker/eaea01edb6684f0a0dec286d205db88293dc3581/src/main/java/com/github/javafaker/Faker.java/right.java
+        this.company = new Company(this, proxiedFakeValueService, randomService);
         this.options = new Options(randomService);
         this.code = new Code(randomService);
         this.finance = new Finance(proxiedFakeValueService, randomService);
