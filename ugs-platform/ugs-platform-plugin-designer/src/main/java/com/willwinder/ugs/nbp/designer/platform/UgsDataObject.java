@@ -32,7 +32,13 @@ import java.io.IOException;
         displayName = "UGS design",
         mimeType = "application/x-ugs",
         extension = {"ugsd", "UGSD"},
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/dcb31a9394922bdde2c884feba593d110b20380e/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/platform/UgsDataObject.java/left.java
+        position = 100
+||||||| /usr/src/app/output/winder/universal-g-code-sender/dcb31a9394922bdde2c884feba593d110b20380e/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/platform/UgsDataObject.java/base.java
+        position = 1
+=======
         position = 2
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/dcb31a9394922bdde2c884feba593d110b20380e/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/platform/UgsDataObject.java/right.java
 )
 @DataObject.Registration(
         mimeType = "application/x-ugs",
