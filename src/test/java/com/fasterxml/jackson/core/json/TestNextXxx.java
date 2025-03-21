@@ -32,6 +32,7 @@ public class TestNextXxx
     }
 
     // [jackson-core#34]
+
     public void testIssue34() throws Exception
     {
         _testIssue34(false);
@@ -39,6 +40,7 @@ public class TestNextXxx
     }
 
     // [jackson-core#38] with nextFieldName
+
     public void testIssue38() throws Exception
     {
         _testIssue38(false);
@@ -52,12 +54,13 @@ public class TestNextXxx
     }
 
     // for [core#220]: problem with `nextFieldName(str)`, indented content
+
     public void testNextNameWithIndentation() throws Exception
     {
         _testNextFieldNameIndent(false);
         _testNextFieldNameIndent(true);
     }
-    
+
     public void testNextTextValue() throws Exception
     {
         _textNextText(false);
@@ -81,7 +84,7 @@ public class TestNextXxx
         _textNextBoolean(false);
         _textNextBoolean(true);
     }
-    
+
     /*
     /********************************************************
     /* Actual test code
@@ -235,6 +238,7 @@ public class TestNextXxx
     }
 
     private void _testNextFieldNameIndent(boolean useStream) throws Exception
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/f554808f2285ab7fa68a7b830e33417712ce4a26/src/test/java/com/fasterxml/jackson/core/json/TestNextXxx.java/left.java
     {
         final String DOC = "{\n  \"name\" : \n  [\n  ]\n   }";
         JsonParser p = useStream ?
@@ -251,7 +255,27 @@ public class TestNextXxx
 
         p.close();
     }
-    
+||||||| /usr/src/app/output/fasterxml/jackson-core/f554808f2285ab7fa68a7b830e33417712ce4a26/src/test/java/com/fasterxml/jackson/core/json/TestNextXxx.java/base.java
+=======
+    {
+        final String DOC = "{\n  \"name\" : \n  [\n  ]\n   }";
+        JsonFactory f = new JsonFactory();
+        JsonParser p = useStream ?
+                f.createParser(new ByteArrayInputStream(DOC.getBytes("UTF-8")))
+            : f.createParser(new StringReader(DOC));
+        assertToken(JsonToken.START_OBJECT, p.nextToken());
+        assertTrue(p.nextFieldName(new SerializedString("name")));
+
+        assertToken(JsonToken.START_ARRAY, p.nextToken());
+        assertToken(JsonToken.END_ARRAY, p.nextToken());
+        assertToken(JsonToken.END_OBJECT, p.nextToken());
+
+        assertNull(p.nextToken());
+
+        p.close();
+    }
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/f554808f2285ab7fa68a7b830e33417712ce4a26/src/test/java/com/fasterxml/jackson/core/json/TestNextXxx.java/right.java
+
     private void _textNextText(boolean useStream) throws Exception
     {
         final String DOC = aposToQuotes("{'a':'123','b':5,'c':[false,'foo']}");
@@ -399,7 +423,13 @@ public class TestNextXxx
 
         p.close();
     }
-    
+
+    // for [core#220]: problem with `nextFieldName(str)`, indented content
+
+    // [core#34]
+
+    // [core#38] with nextFieldName
+
     private void _testIssue34(boolean useStream) throws Exception
     {
         final int TESTROUNDS = 223;
