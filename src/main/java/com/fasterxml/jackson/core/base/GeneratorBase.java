@@ -133,7 +133,7 @@ public abstract class GeneratorBase extends JsonGenerator
 
     @Override
     public void setCurrentValue(Object v) {
-        if (_outputContext != null) {
+        if (_writeContext != null) {
             _outputContext.setCurrentValue(v);
         }
     }
