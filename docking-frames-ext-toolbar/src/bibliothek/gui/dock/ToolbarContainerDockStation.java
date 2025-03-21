@@ -878,7 +878,7 @@ public class ToolbarContainerDockStation extends AbstractDockableStation impleme
 	 */
 	private int indexOf( Position position, Dockable child ){
 		DockablePlaceholderList<Dockable> list = getDockables( position );
-
+		
 		int index = 0;
 		for( Dockable handle : list.dockables() ) {
 			if( handle == child ) {

@@ -327,7 +327,7 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 
 	@Override
 	public DockableProperty getDockableProperty( Dockable child, Dockable target ){
-		int index = indexOf( child );
+		int index = indexOf(child);
 		Path placeholder = null;
 		PlaceholderStrategy strategy = getPlaceholderStrategy();
 		if( strategy != null ){
@@ -709,6 +709,8 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		add( dockable, index, null );
 	}
 	private void add( Dockable dockable, int index, Path placeholder ){
+		System.out.println(this.toString()
+				+ "## add(Dockable dockable, int index)##");
 		DockUtilities.ensureTreeValidity(this, dockable);
 		DockUtilities.checkLayoutLocked();
 		// Case where dockable is instance of ToolbarDockStation is handled by
@@ -718,7 +720,9 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		dockable = getToolbarStrategy().ensureToolbarLayer(this, dockable);
 		DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking(this, dockable);
 		try{
-			listeners.fireDockableAdding(dockable);			
+			listeners.fireDockableAdding(dockable);
+<<<<<<< /usr/src/app/output/benoker/dockingframes/c3dfb4ebbfeb49d09b88c8aefaa07183eb0fa06f/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarDockStation.java/left.java
+			
 			int inserted = -1;
 			
 			if( placeholder != null && dockables.getDockableAt( placeholder ) == null ){
@@ -736,6 +740,13 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 			}
 			
 			insertAt( dockable, index );
+||||||| /usr/src/app/output/benoker/dockingframes/c3dfb4ebbfeb49d09b88c8aefaa07183eb0fa06f/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarDockStation.java/base.java
+			dockables.dockables().add(index, dockable);
+			insertAt( dockable, index );
+=======
+			insertAt(dockable, index);
+			dockables.dockables().add(index, dockable);
+>>>>>>> /usr/src/app/output/benoker/dockingframes/c3dfb4ebbfeb49d09b88c8aefaa07183eb0fa06f/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarDockStation.java/right.java
 			listeners.fireDockableAdded(dockable);
 			fireDockablesRepositioned(index + 1);
 		} finally{
@@ -869,16 +880,6 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		private static final long serialVersionUID = -4399008463139189130L;
 
 		/**
-		 * The content Pane of this {@link OverpaintablePanel} (with a
-		 * BoxLayout)
-		 */
-		private JPanel contentPane = new SizeFixedPanel();
-		/** This pane will contain a {@link DockTitle} (with a BoxLayout) */
-		private JPanel titlePane = new SizeFixedPanel();
-
-		/**
-		 * This pane is the base of this OverpaintablePanel and contains both
-		 * title and content panes (with a BoxLayout)
 		 * A panel with a fixed size (minimum, maximum and preferred size are
 		 * same values). Computation of the size are take insets into account.
 		 * 
@@ -906,7 +907,14 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 				return getPreferredSize();
 			}
 		}
-		
+
+		/**
+		 * The content Pane of this {@link OverpaintablePanel} (with a
+		 * BoxLayout)
+		 */
+		private JPanel contentPane = new SizeFixedPanel();
+		/** This pane will contain a {@link DockTitle} (with a BoxLayout) */
+		private JPanel titlePane = new SizeFixedPanel();
 		/**
 		 * This pane is the base of this OverpaintablePanel and contains both
 		 * title and content panes (with a BoxLayout)
