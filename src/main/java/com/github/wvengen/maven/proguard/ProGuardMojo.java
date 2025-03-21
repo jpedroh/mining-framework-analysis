@@ -518,12 +518,7 @@ public class ProGuardMojo extends AbstractMojo {
 				File file = getClasspathElement(entry.getKey(), mavenProject);
 				hasInclusionLibrary = true;
 				inPath.add(file.toString());
-				if (putLibraryJarsInTempDir) {
-					libraryJars.add(file);
-				} else {
-					args.add("-libraryjars");
-					args.add(fileToString(file));
-				}
+				addLibraryJar(args, libraryJars, file);
 			}
 		}
 
