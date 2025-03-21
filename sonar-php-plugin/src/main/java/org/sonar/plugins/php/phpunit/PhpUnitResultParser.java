@@ -98,7 +98,7 @@ public class PhpUnitResultParser implements BatchExtension, PhpUnitParser {
       xstream.processAnnotations(TestCase.class);
       inputStream = new FileInputStream(report);
       TestSuites testSuites = (TestSuites) xstream.fromXML(inputStream);
-      LOG.debug("Tests suites: " + testSuites);
+      LOG.debug("Tests suites: " + testSuites.getTestSuites());
       return testSuites;
     } catch (IOException e) {
       throw new SonarException("Can't read PhpUnit report : " + report.getAbsolutePath(), e);
@@ -112,11 +112,51 @@ public class PhpUnitResultParser implements BatchExtension, PhpUnitParser {
    *
    * @param report the unit test report
    */
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-php/e174348192516286606c1ff5d6646cad3a168ac0/sonar-php-plugin/src/main/java/org/sonar/plugins/php/phpunit/PhpUnitResultParser.java/left.java
+  private Resource getUnitTestResource(PhpUnitTestReport report) {
+    return getUnitTestResource(report.getFile());
+  }
+
+  @VisibleForTesting
+  Resource getUnitTestResource(String filename) {
+    File testFile;
+    try {
+      testFile = new File(filename);
+    } catch (NullPointerException e) {
+      LOG.warn("Unit test resource not found: "+filename);
+      return null;
+    }
+
+    // In SonarQube version < 4.2 fromIOFile() returns null on test files
+    Resource resource = org.sonar.api.resources.File.fromIOFile(testFile, project);
+    if (resource == null) {
+      resource = org.sonar.api.resources.File.fromIOFile(testFile, moduleFileSystem.testDirs());
+    }
+
+    return resource;
+||||||| /usr/src/app/output/sonarcommunity/sonar-php/e174348192516286606c1ff5d6646cad3a168ac0/sonar-php-plugin/src/main/java/org/sonar/plugins/php/phpunit/PhpUnitResultParser.java/base.java
+  private Resource getUnitTestResource(PhpUnitTestReport report) {
+    return getUnitTestResource(report.getFile());
+  }
+
+  @VisibleForTesting
+  Resource getUnitTestResource(String filename) {
+    File testFile = new File(filename);
+
+    // In SonarQube version < 4.2 fromIOFile() returns null on test files
+    Resource resource = org.sonar.api.resources.File.fromIOFile(testFile, project);
+    if (resource == null) {
+      resource = org.sonar.api.resources.File.fromIOFile(testFile, moduleFileSystem.testDirs());
+    }
+
+    return resource;
+=======
   private InputFile getUnitTestInputFile(PhpUnitTestReport report) {
     return fileSystem.inputFile(fileSystem.predicates().and(
       filePredicates.hasPath(report.getFile()),
       filePredicates.hasType(InputFile.Type.TEST),
       filePredicates.hasLanguage(Php.KEY)));
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-php/e174348192516286606c1ff5d6646cad3a168ac0/sonar-php-plugin/src/main/java/org/sonar/plugins/php/phpunit/PhpUnitResultParser.java/right.java
   }
 
   /**
@@ -131,7 +171,7 @@ public class PhpUnitResultParser implements BatchExtension, PhpUnitParser {
    *
    * @param reportFile the reports directories to be scan
    */
-  protected void parse(File reportFile) {
+  public void parse(File reportFile) {
     if (reportFile == null) {
       insertZeroWhenNoReports();
     } else {

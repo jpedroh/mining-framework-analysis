@@ -119,9 +119,19 @@ public class PhpUnitCoverageResultParser implements BatchExtension, PhpUnitParse
     for (InputFile phpFile : fileSystem.inputFiles(mainFilesPredicate)) {
       org.sonar.api.resources.File resource = org.sonar.api.resources.File.create(phpFile.relativePath());
 
-      if (context.getMeasure(resource, LINE_COVERAGE) == null) {
-        LOG.debug("Coverage metrics have not been set on '{}': default values will be inserted.", phpFile.file().getName());
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-php/e174348192516286606c1ff5d6646cad3a168ac0/sonar-php-plugin/src/main/java/org/sonar/plugins/php/phpunit/PhpUnitCoverageResultParser.java/left.java
+      if (resource != null && context.getMeasure(resource, LINE_COVERAGE) == null) {
+        LOG.debug("Coverage metrics have not been set on '{}': default values will be inserted.", phpFile.getName());
         context.saveMeasure(resource, LINE_COVERAGE, 0.0);
+||||||| /usr/src/app/output/sonarcommunity/sonar-php/e174348192516286606c1ff5d6646cad3a168ac0/sonar-php-plugin/src/main/java/org/sonar/plugins/php/phpunit/PhpUnitCoverageResultParser.java/base.java
+      if (resource != null && context.getMeasure(resource, CoreMetrics.LINE_COVERAGE) == null) {
+        LOG.debug("Coverage metrics have not been set on '{}': default values will be inserted.", phpFile.getName());
+        context.saveMeasure(resource, CoreMetrics.LINE_COVERAGE, 0.0);
+=======
+      if (context.getMeasure(resource, CoreMetrics.LINE_COVERAGE) == null) {
+        LOG.debug("Coverage metrics have not been set on '{}': default values will be inserted.", phpFile.file().getName());
+        context.saveMeasure(resource, CoreMetrics.LINE_COVERAGE, 0.0);
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-php/e174348192516286606c1ff5d6646cad3a168ac0/sonar-php-plugin/src/main/java/org/sonar/plugins/php/phpunit/PhpUnitCoverageResultParser.java/right.java
         // for LINES_TO_COVER and UNCOVERED_LINES, we use NCLOC as an approximation
         Measure ncloc = context.getMeasure(resource, CoreMetrics.NCLOC);
 
