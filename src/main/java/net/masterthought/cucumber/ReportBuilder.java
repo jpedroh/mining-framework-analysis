@@ -9,7 +9,6 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import net.masterthought.cucumber.generators.AbstractPage;
 import net.masterthought.cucumber.generators.ErrorPage;
 import net.masterthought.cucumber.generators.FailuresOverviewPage;
 import net.masterthought.cucumber.generators.FeatureReportPage;
@@ -99,8 +97,8 @@ public class ReportBuilder {
                 trends = updateAndSaveTrends(reportable);
             }
 
-            List<AbstractPage> pages = collectPages(trends);
-            generatePages(pages);
+            // Collect and generate pages in a single pass
+            generatePages(trends);
 
             return reportable;
 
@@ -152,14 +150,35 @@ public class ReportBuilder {
         }
     }
 
-    private List<AbstractPage> collectPages(Trends trends) {
-        List<AbstractPage> pages = new ArrayList<>(reportResult.getAllFeatures().size() + reportResult.getAllTags().size() + 5);
+	private void generatePages(Trends trends) {
+		new FeaturesOverviewPage(reportResult, configuration).generatePage();
+		
+		for (Feature feature : reportResult.getAllFeatures()) {
+			new FeatureReportPage(reportResult, configuration, feature).generatePage();
+		}
+		
+		new TagsOverviewPage(reportResult, configuration).generatePage();
+		
+		for (TagObject tagObject : reportResult.getAllTags()) {
+			new TagReportPage(reportResult, configuration, tagObject).generatePage();
+		}
 
+<<<<<<< /usr/src/app/output/masterthought/cucumber-reporting/ab55e84c7636ef39e7186db9e90c48dfc2e99696/src/main/java/net/masterthought/cucumber/ReportBuilder.java/left.java
         pages.add(new FeaturesOverviewPage());
         for (Feature feature : reportResult.getAllFeatures()) {
             pages.add(new FeatureReportPage(feature));
         }
+||||||| /usr/src/app/output/masterthought/cucumber-reporting/ab55e84c7636ef39e7186db9e90c48dfc2e99696/src/main/java/net/masterthought/cucumber/ReportBuilder.java/base.java
+        pages.add(new FeaturesOverviewPage(reportResult, configuration));
+        for (Feature feature : reportResult.getAllFeatures()) {
+            pages.add(new FeatureReportPage(reportResult, configuration, feature));
+        }
+=======
+		new StepsOverviewPage(reportResult, configuration).generatePage();
+		new FailuresOverviewPage(reportResult, configuration).generatePage();
+>>>>>>> /usr/src/app/output/masterthought/cucumber-reporting/ab55e84c7636ef39e7186db9e90c48dfc2e99696/src/main/java/net/masterthought/cucumber/ReportBuilder.java/right.java
 
+<<<<<<< /usr/src/app/output/masterthought/cucumber-reporting/ab55e84c7636ef39e7186db9e90c48dfc2e99696/src/main/java/net/masterthought/cucumber/ReportBuilder.java/left.java
         pages.add(new TagsOverviewPage());
         for (TagObject tagObject : reportResult.getAllTags()) {
             pages.add(new TagReportPage(tagObject));
@@ -184,6 +203,35 @@ public class ReportBuilder {
         }
     }
 
+||||||| /usr/src/app/output/masterthought/cucumber-reporting/ab55e84c7636ef39e7186db9e90c48dfc2e99696/src/main/java/net/masterthought/cucumber/ReportBuilder.java/base.java
+        pages.add(new TagsOverviewPage(reportResult, configuration));
+        for (TagObject tagObject : reportResult.getAllTags()) {
+            pages.add(new TagReportPage(reportResult, configuration, tagObject));
+        }
+
+        pages.add(new StepsOverviewPage(reportResult, configuration));
+        pages.add(new FailuresOverviewPage(reportResult, configuration));
+
+        if (configuration.isTrendsStatsFile()) {
+            pages.add(new TrendsOverviewPage(reportResult, configuration, trends));
+        }
+
+        return pages;
+    }
+
+    private void generatePages(List<AbstractPage> pages) {
+        for (AbstractPage page : pages) {
+            page.generatePage();
+        }
+    }
+
+=======
+		if (configuration.isTrendsStatsFile()) {
+			new TrendsOverviewPage(reportResult, configuration, trends).generatePage();
+		}
+	}
+	
+>>>>>>> /usr/src/app/output/masterthought/cucumber-reporting/ab55e84c7636ef39e7186db9e90c48dfc2e99696/src/main/java/net/masterthought/cucumber/ReportBuilder.java/right.java
     private Trends updateAndSaveTrends(Reportable reportable) {
         Trends trends = loadOrCreateTrends();
         appendToTrends(trends, reportable);
@@ -233,9 +281,10 @@ public class ReportBuilder {
             throw new ValidationException("Could not save updated trends in file: " + file.getAbsolutePath(), e);
         }
     }
-
+    
     private void generateErrorPage(Exception exception) {
         LOG.info(exception);
         generatePages(Collections.<AbstractPage>singletonList(new ErrorPage(exception, jsonFiles)));
     }
+
 }

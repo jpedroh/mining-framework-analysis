@@ -17,16 +17,13 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.velocity.VelocityContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
 import mockit.Deencapsulation;
-import net.masterthought.cucumber.generators.AbstractPage;
 import net.masterthought.cucumber.generators.OverviewReport;
 import net.masterthought.cucumber.json.Feature;
 
@@ -227,10 +224,10 @@ public class ReportBuilderTest extends ReportGenerator {
         Deencapsulation.setField(builder, "reportResult", new ReportResult(features, configuration.getSortingMethod()));
 
         // when
-        List<AbstractPage> pages = Deencapsulation.invoke(builder, "collectPages", new Trends());
+        Deencapsulation.invoke(builder, "generatePages", new Trends());
 
         // then
-        assertThat(pages).hasSize(9);
+        assertThat(countHtmlFiles(configuration).length).isEqualTo(9);
     }
 
     @Test
@@ -244,9 +241,10 @@ public class ReportBuilderTest extends ReportGenerator {
         Deencapsulation.setField(builder, "reportResult", new ReportResult(features, configuration.getSortingMethod()));
 
         // when
-        List<AbstractPage> pages = Deencapsulation.invoke(builder, "collectPages", new Trends());
+        Deencapsulation.invoke(builder, "generatePages", new Trends());
 
         // then
+<<<<<<< /usr/src/app/output/masterthought/cucumber-reporting/ab55e84c7636ef39e7186db9e90c48dfc2e99696/src/test/java/net/masterthought/cucumber/ReportBuilderTest.java/left.java
         assertThat(pages).hasSize(10);
     }
 
@@ -276,6 +274,44 @@ public class ReportBuilderTest extends ReportGenerator {
 
         // then
         assertThat(counter.getValue()).isEqualTo(pages.size());
+||||||| /usr/src/app/output/masterthought/cucumber-reporting/ab55e84c7636ef39e7186db9e90c48dfc2e99696/src/test/java/net/masterthought/cucumber/ReportBuilderTest.java/base.java
+        assertThat(pages).hasSize(10);
+    }
+
+    @Test
+    public void generatePages_CallsGeneratePagesOverPassedPages() {
+
+        // given
+        Configuration configuration = new Configuration(null, null);
+        ReportBuilder builder = new ReportBuilder(jsonReports, configuration);
+
+        final MutableInt counter = new MutableInt();
+        AbstractPage page = new AbstractPage(null, null, configuration) {
+            @Override
+            public String getWebPage() {
+                return null;
+            }
+
+            @Override
+            protected void prepareReport() {
+                // only to satisfy abstract class contract
+            }
+
+            @Override
+            public void generatePage() {
+                counter.increment();
+            }
+        };
+        List<AbstractPage> pages = Arrays.asList(page, page, page);
+
+        // when
+        Deencapsulation.invoke(builder, "generatePages", pages);
+
+        // then
+        assertThat(counter.getValue()).isEqualTo(pages.size());
+=======
+        assertThat(countHtmlFiles(configuration).length).isEqualTo(10);
+>>>>>>> /usr/src/app/output/masterthought/cucumber-reporting/ab55e84c7636ef39e7186db9e90c48dfc2e99696/src/test/java/net/masterthought/cucumber/ReportBuilderTest.java/right.java
     }
 
     @Test
