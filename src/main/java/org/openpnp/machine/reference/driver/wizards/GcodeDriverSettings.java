@@ -119,6 +119,23 @@ public class GcodeDriverSettings extends AbstractConfigurationWizard {
         settingsPanel.add(backlashOffsetYTf, "8, 6, fill, default");
         backlashOffsetYTf.setColumns(5);
         
+<<<<<<< /usr/src/app/output/openpnp/openpnp/f466a55fc5d5d58bdc679020ceb49e9b46db3c5e/src/main/java/org/openpnp/machine/reference/driver/wizards/GcodeDriverSettings.java/left.java
+        JLabel lblBacklashOffsetZ = new JLabel("Backlash Offset Z [Units]");
+        settingsPanel.add(lblBacklashOffsetZ, "2, 8, right, default");
+        
+        backlashOffsetZTf = new JTextField();
+        settingsPanel.add(backlashOffsetZTf, "4, 8, fill, default");
+        backlashOffsetZTf.setColumns(5);
+        
+        JLabel lblBacklashOffsetR = new JLabel("Backlash Offset R [Units]");
+        settingsPanel.add(lblBacklashOffsetR, "6, 8, right, default");
+        
+        backlashOffsetRTf = new JTextField();
+        settingsPanel.add(backlashOffsetRTf, "8, 8, fill, default");
+        backlashOffsetRTf.setColumns(5);
+        
+||||||| /usr/src/app/output/openpnp/openpnp/f466a55fc5d5d58bdc679020ceb49e9b46db3c5e/src/main/java/org/openpnp/machine/reference/driver/wizards/GcodeDriverSettings.java/base.java
+=======
         JLabel lblBacklashOffsetZ = new JLabel("Backlash Offset Z [Units]");
         settingsPanel.add(lblBacklashOffsetZ, "2, 8, right, default");
         
@@ -135,6 +152,7 @@ public class GcodeDriverSettings extends AbstractConfigurationWizard {
         settingsPanel.add(backlashOffsetRTf, "8, 8, fill, default");
         backlashOffsetRTf.setColumns(5);
         
+>>>>>>> /usr/src/app/output/openpnp/openpnp/f466a55fc5d5d58bdc679020ceb49e9b46db3c5e/src/main/java/org/openpnp/machine/reference/driver/wizards/GcodeDriverSettings.java/right.java
         JLabel lblBacklashFeedSpeedFactor = new JLabel("Backlash Feed Rate Factor");
         settingsPanel.add(lblBacklashFeedSpeedFactor, "2, 10, right, default");
         
