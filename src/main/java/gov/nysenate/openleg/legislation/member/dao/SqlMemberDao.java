@@ -107,7 +107,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
     /** {@inheritDoc} */
     @Override
     public List<SessionMember> getAllSessionMembers(SortOrder sortOrder, LimitOffset limOff) {
-        OrderBy orderBy = new OrderBy("last_name", sortOrder);
+        OrderBy orderBy = new OrderBy("lbdc_short_name", sortOrder);
         return jdbcNamed.query(SqlMemberQuery.SELECT_MEMBER_FRAGMENT.getSql(schema(), orderBy, limOff),
                 new MapSqlParameterSource(), new MemberRowMapper());
     }
@@ -133,7 +133,7 @@ public class SqlMemberDao extends SqlBaseDao implements MemberDao
             sessionMember.setDistrictCode(rs.getInt("district_code"));
             sessionMember.setAlternate(rs.getBoolean("alternate"));
 
-            PersonName name = new PersonName(rs.getString("full_name"), rs.getString("prefix"),
+            PersonName name = new PersonName(rs.getString("full_name"), Chamber.getValue(rs.getString("most_recent_chamber")),
                     rs.getString("first_name"), rs.getString("middle_name"),
                     rs.getString("last_name"), rs.getString("suffix"));
             Person person = new Person(rs.getInt("person_id"), name,

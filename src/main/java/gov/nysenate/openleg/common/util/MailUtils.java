@@ -1,17 +1,13 @@
 package gov.nysenate.openleg.common.util;
-
-import com.google.common.eventbus.EventBus;
 import gov.nysenate.openleg.config.OpenLegEnvironment;
-import gov.nysenate.openleg.notifications.model.Notification;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import javax.annotation.PreDestroy;
 import javax.mail.*;
 import java.util.List;
 import java.util.Properties;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Contains methods that can be used to interact with mail servers
@@ -19,15 +15,26 @@ import java.util.Properties;
 
 @Service
 public class MailUtils {
+
+<<<<<<< /usr/src/app/output/nysenate/openlegislation/55f02d1256aabf0841995fe75f1beb820ed4c6bc/src/main/java/gov/nysenate/openleg/common/util/MailUtils.java/left.java
     private final EventBus eventBus;
+||||||| /usr/src/app/output/nysenate/openlegislation/55f02d1256aabf0841995fe75f1beb820ed4c6bc/src/main/java/gov/nysenate/openleg/common/util/MailUtils.java/base.java
+    @Autowired
+    private EventBus eventBus;
+=======
+    private static final Logger logger = LoggerFactory.getLogger(MailUtils.class);
+>>>>>>> /usr/src/app/output/nysenate/openlegislation/55f02d1256aabf0841995fe75f1beb820ed4c6bc/src/main/java/gov/nysenate/openleg/common/util/MailUtils.java/right.java
+
     private final String smtpUser, smtpPass;
     private final Properties mailProperties;
     private final OpenLegEnvironment environment;
     private Store store;
     private Folder sourceFolder, archiveFolder, partialFolder;
 
-    @Autowired
-    public MailUtils(EventBus eventBus,
+    
+    public
+    static
+    final MailUtils(EventBus eventBus,
                      @Value("${mail.smtp.host}") String host,
                      @Value("${mail.smtp.port}") String port,
                      @Value("${mail.smtp.auth:false}") boolean auth,
@@ -74,23 +81,29 @@ public class MailUtils {
      * Connects to the email store and folders when necessary, otherwise, it will reuse the existing connection.
      */
     public void createCheckMailConnection() throws MessagingException {
-        if (this.store != null && this.store.isConnected()) {
+        if (store != null && this.store.isConnected()) {
             // Current store is still valid, we can continue to use it.
             return;
         }
         // Connection to the store has been lost, re-establish it.
         try {
-            store = getStore(environment.getEmailHost(), environment.getEmailUser(), environment.getEmailPass());
-            this.sourceFolder = navigateToFolder(environment.getEmailReceivingFolder(), store);
-            this.archiveFolder = navigateToFolder(environment.getEmailProcessedFolder(), store);
-            this.partialFolder = navigateToFolder(environment.getEmailPartialDaybreakFolder(), store);
-            if (sourceFolder != null)
-                sourceFolder.open(Folder.READ_WRITE);
+            store = getStore();
         } catch (MessagingException ex) {
+<<<<<<< /usr/src/app/output/nysenate/openlegislation/55f02d1256aabf0841995fe75f1beb820ed4c6bc/src/main/java/gov/nysenate/openleg/common/util/MailUtils.java/left.java
+            // Shouldn't attempt connection if this is false.
+            eventBus.post(new Notification(PROCESS_WARNING, LocalDateTime.now(),
+                    "Can't connect to checkMail.", ex.getMessage()));
+||||||| /usr/src/app/output/nysenate/openlegislation/55f02d1256aabf0841995fe75f1beb820ed4c6bc/src/main/java/gov/nysenate/openleg/common/util/MailUtils.java/base.java
+            if (environment.isCheckmailEnabled() && eventBus != null) {
+                eventBus.post(new Notification(PROCESS_WARNING, LocalDateTime.now(),
+                        "Can't connect to checkMail.", ex.getMessage()));
+            }
+=======
             destroy();
             if (environment.isCheckmailEnabled()) {
                 logger.info("Unable to connect to email account: " + environment.getEmailHost(), ex);
             }
+>>>>>>> /usr/src/app/output/nysenate/openlegislation/55f02d1256aabf0841995fe75f1beb820ed4c6bc/src/main/java/gov/nysenate/openleg/common/util/MailUtils.java/right.java
         }
     }
 
@@ -134,11 +147,13 @@ public class MailUtils {
 
     /**
      * Gets an authenticated smtp mail session
+     *
      * @return Session
      */
     public Session getSmtpSession() {
         var auth = new Authenticator() {
             private final PasswordAuthentication pa = new PasswordAuthentication(smtpUser, smtpPass);
+
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return pa;
@@ -162,6 +177,11 @@ public class MailUtils {
         Store store = Session.getInstance(mailProperties).getStore();
         try {
             store.connect(environment.getEmailHost(), environment.getEmailUser(), environment.getEmailPass());
+            this.sourceFolder = navigateToFolder(environment.getEmailReceivingFolder(), store);
+            this.archiveFolder = navigateToFolder(environment.getEmailProcessedFolder(), store);
+            this.partialFolder = navigateToFolder(environment.getEmailPartialDaybreakFolder(), store);
+            if (sourceFolder != null)
+                sourceFolder.open(Folder.READ_WRITE);
         } catch (MessagingException ex) {
             store.close();
             throw ex;

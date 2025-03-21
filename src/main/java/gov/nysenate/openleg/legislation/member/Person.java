@@ -2,9 +2,7 @@ package gov.nysenate.openleg.legislation.member;
 
 import com.google.common.collect.ComparisonChain;
 import org.apache.commons.lang3.StringUtils;
-
 import java.util.Objects;
-
 public record Person(Integer personId, PersonName name, String email, String imgName)
         implements Comparable<Person> {
     public Person(Integer personId, PersonName name, String email, String imgName) {
@@ -20,8 +18,7 @@ public record Person(Integer personId, PersonName name, String email, String img
      * not be the same for older images which had a different naming conventions.
      */
     public String getSuggestedImageFileName() {
-        String temp = getPersonId() + "_" + getFirstName() + "_" + getLastName() + ".jpg";
-        return RegexUtils.removeAccentedCharacters(temp);
+        return personId + "_" + name.firstName() + "_" + name.lastName() + ".jpg";
     }
 
     /** --- Overrides --- */
@@ -48,3 +45,5 @@ public record Person(Integer personId, PersonName name, String email, String img
                 .compare(this.personId, o.personId).result();
     }
 }
+import gov.nysenate.openleg.common.util.RegexUtils;
+import gov.nysenate.openleg.legislation.committee.Chamber;

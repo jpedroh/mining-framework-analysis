@@ -55,8 +55,16 @@ public class MemberGetCtrlIT extends ApiTest {
     @Test
     public void getMembersByYearAndIdTest() {
         String name = "HASSELL-THOMPSO";
+<<<<<<< /usr/src/app/output/nysenate/openlegislation/55f02d1256aabf0841995fe75f1beb820ed4c6bc/src/test/java/gov/nysenate/openleg/api/legislation/member/MemberGetCtrlIT.java/left.java
         PersonName pName = new PersonName("Ruth Hassell-Thompson", "Senator", "Ruth", null,
                 "Hassell-Thompson", null);
+||||||| /usr/src/app/output/nysenate/openlegislation/55f02d1256aabf0841995fe75f1beb820ed4c6bc/src/test/java/gov/nysenate/openleg/api/legislation/member/MemberGetCtrlIT.java/base.java
+        PersonName pName = new PersonName(199, "Ruth Hassell-Thompson", "Ruth", null, "Hassell-Thompson",
+                "hassellt@senate.state.ny.us", "Senator", null, "380_ruth_hassell-thompson.jpg");
+=======
+        PersonName pName = new PersonName(199, "Ruth Hassell-Thompson",
+                "hassellt@senate.state.ny.us", "Senator", "380_ruth_hassell-thompson.jpg");
+>>>>>>> /usr/src/app/output/nysenate/openlegislation/55f02d1256aabf0841995fe75f1beb820ed4c6bc/src/test/java/gov/nysenate/openleg/api/legislation/member/MemberGetCtrlIT.java/right.java
         Person testPerson = new Person(199, pName, "hassellt@senate.state.ny.us",
                 "380_ruth_hassell-thompson.jpg");
         Member testMember = new Member(testPerson, 380, Chamber.SENATE, false);

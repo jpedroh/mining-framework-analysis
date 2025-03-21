@@ -24,6 +24,7 @@ public final class TestData {
     private TestData() {}
 
     public static final Map<Integer, Person> PERSON_DATA = new ImmutableMap.Builder<Integer, Person>()
+<<<<<<< /usr/src/app/output/nysenate/openlegislation/55f02d1256aabf0841995fe75f1beb820ed4c6bc/src/test/java/testing_utils/TestData.java/left.java
             .put(188, getPerson(188, "John L. Sampson", SENATE, "sampson@senate.state.ny.us",
                     "369_john_l._sampson.jpg", null))
             .put(263, getPerson(263, "Thomas P. Morahan", SENATE, "district38@nysenate.gov",
@@ -42,6 +43,45 @@ public final class TestData {
                     "espailla@nysenate.gov", "385_adriano_espaillat.jpg", null))
             .put(499, getPerson(499, "Edward Hennessey", null,
                     null, "no_image.jpg", null))
+||||||| /usr/src/app/output/nysenate/openlegislation/55f02d1256aabf0841995fe75f1beb820ed4c6bc/src/test/java/testing_utils/TestData.java/base.java
+            .put(188, new Person(188, "John L. Sampson", "John", "L.", "Sampson",
+                    "sampson@senate.state.ny.us", "Senator", null, "369_john_l._sampson.jpg"))
+            .put(263, new Person(263, "Thomas P. Morahan", "Thomas", "P.", "Morahan",
+                    "district38@nysenate.gov", "Senator", null, "no_image.jpg"))
+            .put(190, new Person(190, "James L. Seward", "James", "L.", "Seward",
+                    "seward@senate.state.ny.us", "Senator", null, "371_james_l._seward.jpg"))
+            .put(191, new Person(191, "Neil D. Breslin", "Neil", "D.", "Breslin",
+                    "breslin@senate.state.ny.us", "Senator", null, "372_neil_d._breslin.jpg"))
+            .put(942, new Person(942, "Billy Jones", "Billy", "", "Jones",
+                    "", "Assembly Member", "", "no_image.jpg"))
+            .put(944, new Person(944,	"Robert C. Carroll", "Robert", "C.", "Carroll",
+                    "CarrollR@nyassembly.gov", "Assembly Member", "", "no_image.jpg"))
+            .put(950, new Person(950, "Inez E. Dickens", "Inez", "E.", "Dickens",
+                    "", "Assembly Member", "", "no_image.jpg"))
+            .put(204, new Person(204,	"Adriano Espaillat",	"Adriano",	null,	"Espaillat",
+                    "espailla@nysenate.gov",	"Senator", null, "385_adriano_espaillat.jpg"))
+            .put(499, new Person(499, "Edward Hennessey", "Edward", null, "Hennessey",
+                    null, null, null, "no_image.jpg"))
+=======
+            .put(188, new Person(188, "John L. Sampson",
+                    "sampson@senate.state.ny.us", "Senator", "369_john_l._sampson.jpg"))
+            .put(263, new Person(263, "Thomas P. Morahan",
+                    "district38@nysenate.gov", "Senator", "no_image.jpg"))
+            .put(190, new Person(190, "James L. Seward",
+                    "seward@senate.state.ny.us", "Senator", "371_james_l._seward.jpg"))
+            .put(191, new Person(191, "Neil D. Breslin",
+                    "breslin@senate.state.ny.us", "Senator", "372_neil_d._breslin.jpg"))
+            .put(942, new Person(942, "Billy Jones",
+                    "", "Assembly Member", "no_image.jpg"))
+            .put(944, new Person(944,	"Robert C. Carroll",
+                    "CarrollR@nyassembly.gov", "Assembly Member", "no_image.jpg"))
+            .put(950, new Person(950, "Inez E. Dickens",
+                    "", "Assembly Member", "no_image.jpg"))
+            .put(204, new Person(204,	"Adriano Espaillat",
+                    "espailla@nysenate.gov",	"Senator", "385_adriano_espaillat.jpg"))
+            .put(499, new Person(499, "Edward Hennessey",
+                    null, null, "no_image.jpg"))
+>>>>>>> /usr/src/app/output/nysenate/openlegislation/55f02d1256aabf0841995fe75f1beb820ed4c6bc/src/test/java/testing_utils/TestData.java/right.java
             .build();
 
     private static Person getPerson(int id, String fullName, Chamber chamber, String email, String imgName, String suffix) {
