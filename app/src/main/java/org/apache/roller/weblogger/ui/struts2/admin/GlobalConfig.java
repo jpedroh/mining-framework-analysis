@@ -1,26 +1,6 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  The ASF licenses this file to You
- * under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.  For additional information regarding
- * copyright in this work, please see the NOTICE file in the top level
- * directory of this distribution.
- */
-
 package org.apache.roller.weblogger.ui.struts2.admin;
-
 import java.util.*;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,277 +22,238 @@ import org.apache.roller.weblogger.util.Utilities;
 import org.apache.struts2.interceptor.ParameterAware;
 import org.apache.struts2.interceptor.ServletRequestAware;
 
-
 /**
  * Action which handles editing of global configuration.
  */
-// TODO: make this work @AllowedMethods({"execute","save"})
 public class GlobalConfig extends UIAction implements ParameterAware, ServletRequestAware {
+  private static Log log = LogFactory.getLog(GlobalConfig.class);
 
-    private static Log log = LogFactory.getLog(GlobalConfig.class);
+  private Map<String, String[]> params = Collections.emptyMap();
 
-    // the request parameters
-    private Map<String, String[]> params = Collections.emptyMap();
+  private Map<String, RuntimeConfigProperty> properties = Collections.emptyMap();
 
-    // map of config properties
-    private Map<String, RuntimeConfigProperty> properties = Collections.emptyMap();
+  private ConfigDef globalConfigDef = null;
 
-    // the runtime config def used to populate the display
-    private ConfigDef globalConfigDef = null;
+  private List<WeblogEntryCommentPlugin> pluginsList = Collections.emptyList();
 
-    // list of comment plugins
-    private List<WeblogEntryCommentPlugin> pluginsList = Collections.emptyList();
+  private String[] commentPlugins = new String[0];
 
-    // comment plugins that are enabled.  this is what the html form submits to
-    private String[] commentPlugins = new String[0];
+  private String httpMethod = "GET";
 
-    // work around checkbox issue in cases where user inadvertently does a
-    // GET on the GlobalConfig!save URL and thus sets all checkboxes to false
-    private String httpMethod = "GET";
+  private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
 
-    private ResourceBundle bundle = ResourceBundle.getBundle("ApplicationResources");
+  private Collection<Weblog> weblogs;
 
-    // weblogs for frontpage blog chooser
-    private Collection<Weblog> weblogs;
+  public GlobalConfig() {
+    this.actionName = "globalConfig";
+    this.desiredMenu = "admin";
+    this.pageTitle = "configForm.title";
+  }
 
+  @Override public boolean isWeblogRequired() {
+    return false;
+  }
 
-    public GlobalConfig() {
-        this.actionName = "globalConfig";
-        this.desiredMenu = "admin";
-        this.pageTitle = "configForm.title";
-    }
+  @Override public List<String> requiredGlobalPermissionActions() {
+    return Collections.singletonList(GlobalPermission.ADMIN);
+  }
 
-
-    @Override
-    public boolean isWeblogRequired() {
-        return false;
-    }
-
-    @Override
-    public List<String> requiredGlobalPermissionActions() {
-        return Collections.singletonList(GlobalPermission.ADMIN);
-    }
-
-
-    /**
+  /**
      * Prepare action by loading runtime properties map.
      */
-    @Override
-    public void myPrepare() {
-        try {
-            // just grab our properties map and make it available to the action
-            PropertiesManager mgr = WebloggerFactory.getWeblogger().getPropertiesManager();
-            setProperties(mgr.getProperties());
-        } catch (WebloggerException ex) {
-            log.error("Error getting runtime properties map", ex);
-            addError("Unexpected error accessing Roller properties");
-        }
-
-        try {
-            WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
-            setWeblogs(mgr.getWeblogs(true, null, null, null, 0, -1));
-        } catch (WebloggerException ex) {
-            log.error("Error getting weblogs", ex);
-            addError("frontpageConfig.weblogs.error");
-        }
-
-        // set config def used to draw the view
-        RuntimeConfigDefs defs = WebloggerRuntimeConfig.getRuntimeConfigDefs();
-        List<ConfigDef> configDefs = defs.getConfigDefs();
-        for (ConfigDef configDef : configDefs) {
-            if ("global-properties".equals(configDef.getName())) {
-                setGlobalConfigDef(configDef);
-            }
-        }
-
-        // load plugins list
-        PluginManager pmgr = WebloggerFactory.getWeblogger().getPluginManager();
-        setPluginsList(pmgr.getCommentPlugins());
+  @Override public void myPrepare() {
+    try {
+      PropertiesManager mgr = WebloggerFactory.getWeblogger().getPropertiesManager();
+      setProperties(mgr.getProperties());
+    } catch (WebloggerException ex) {
+      log.error("Error getting runtime properties map", ex);
+      addError("Unexpected error accessing Roller properties");
     }
+    try {
+      WeblogManager mgr = WebloggerFactory.getWeblogger().getWeblogManager();
+      setWeblogs(mgr.getWeblogs(true, null, null, null, 0, -1));
+    } catch (WebloggerException ex) {
+      log.error("Error getting weblogs", ex);
+      addError("frontpageConfig.weblogs.error");
+    }
+    RuntimeConfigDefs defs = WebloggerRuntimeConfig.getRuntimeConfigDefs();
+    List<ConfigDef> configDefs = defs.getConfigDefs();
+    for (ConfigDef configDef : configDefs) {
+      if ("global-properties".equals(configDef.getName())) {
+        setGlobalConfigDef(configDef);
+      }
+    }
+    PluginManager pmgr = WebloggerFactory.getWeblogger().getPluginManager();
+    setPluginsList(pmgr.getCommentPlugins());
+  }
 
-
-    /**
+  /**
      * Display global properties editor form.
      */
-    @Override
-    public String execute() {
-
-        // setup array of configured plugins
-        if (!StringUtils.isEmpty(WebloggerRuntimeConfig.getProperty("users.comments.plugins"))) {
-            setCommentPlugins(StringUtils.split(WebloggerRuntimeConfig.getProperty("users.comments.plugins"), ","));
-        }
-
-        return SUCCESS;
+  @Override public String execute() {
+    if (!StringUtils.isEmpty(WebloggerRuntimeConfig.getProperty("users.comments.plugins"))) {
+      setCommentPlugins(StringUtils.split(WebloggerRuntimeConfig.getProperty("users.comments.plugins"), ","));
     }
+    return SUCCESS;
+  }
 
-
-    /**
+  /**
      * Save global properties.
      */
-    public String save() {
-        if (!"POST".equals(httpMethod)) {
-            return ERROR;
+  public String save() {
+    if (!"POST".equals(httpMethod)) {
+      return ERROR;
+    }
+    RuntimeConfigProperty updProp;
+    String incomingProp;
+    for (String propName : getProperties().keySet()) {
+      updProp = getProperties().get(propName);
+      incomingProp = this.getParameter(updProp.getName());
+      PropertyDef propertyDef = globalConfigDef.getPropertyDef(propName);
+      if (
+<<<<<<< /usr/src/app/output/apache/roller/cd196fe541630c996d411fba01fa5981c09a8449/app/src/main/java/org/apache/roller/weblogger/ui/struts2/admin/GlobalConfig.java/left.java
+      propertyDef == null
+=======
+      updProp.getValue() != null && (updProp.getValue().equals("true") || updProp.getValue().equals("false") || updProp.getValue().equals("on") || updProp.getValue().equals("off"))
+>>>>>>> /usr/src/app/output/apache/roller/cd196fe541630c996d411fba01fa5981c09a8449/app/src/main/java/org/apache/roller/weblogger/ui/struts2/admin/GlobalConfig.java/right.java
+      ) {
+
+<<<<<<< /usr/src/app/output/apache/roller/cd196fe541630c996d411fba01fa5981c09a8449/app/src/main/java/org/apache/roller/weblogger/ui/struts2/admin/GlobalConfig.java/left.java
+        continue;
+=======
+        if (incomingProp != null && (incomingProp.equalsIgnoreCase("true") || incomingProp.equalsIgnoreCase("on"))) {
+          incomingProp = "true";
+        } else {
+          incomingProp = "false";
         }
-
-        // only set values for properties that are already defined
-        RuntimeConfigProperty updProp;
-        String incomingProp;
-        for (String propName : getProperties().keySet()) {
-            updProp = getProperties().get(propName);
-            incomingProp = this.getParameter(updProp.getName());
-
-            PropertyDef propertyDef = globalConfigDef.getPropertyDef( propName );
-            if ( propertyDef == null) {
-                // we're only processing defined properties, i.e. ones shown in the UI
-                continue;
-            }
-
-            if ( incomingProp != null && propertyDef.getType().equals("boolean") ) {
-
-                try {
-                    Boolean.parseBoolean(incomingProp);
-                    updProp.setValue(incomingProp);
-                    log.debug("Set boolean " + propName + " = " + incomingProp);
-                } catch ( Exception nfe ) {
-                    String propDesc = bundle.getString( propertyDef.getKey() );
-                    addError("ConfigForm.invalidBooleanProperty",
-                            Arrays.asList(propDesc, propName));
-                }
-
-            } else if ( incomingProp != null && propertyDef.getType().equals("integer") ) {
-
-                try {
-                    Integer.parseInt(incomingProp);
-                    updProp.setValue(incomingProp);
-                    log.debug("Set integer " + propName + " = " + incomingProp);
-                } catch ( NumberFormatException nfe ) {
-                    String propDesc = bundle.getString( propertyDef.getKey() );
-                    addError("ConfigForm.invalidIntegerProperty",
-                            Arrays.asList(propDesc, propName));
-                }
-
-            } else if ( incomingProp != null && propertyDef.getType().equals("float") ) {
-
-                try {
-                    Float.parseFloat(incomingProp);
-                    updProp.setValue(incomingProp);
-                    log.debug("Set float " + propName + " = " + incomingProp);
-                } catch ( NumberFormatException nfe ) {
-                    String propDesc = bundle.getString(propertyDef.getKey());
-                    addError("ConfigForm.invalidFloatProperty",
-                        Arrays.asList(propDesc, propName));
-                }
-
-            } else if ( incomingProp != null ){
-                updProp.setValue( incomingProp.trim() );
-                log.debug("Set something " + propName + " = " + incomingProp);
-
-            } else if ( propertyDef.getName().equals("users.comments.plugins") ) {
-                // not a problem
-
-            } else {
-                addError("ConfigForm.invalidProperty", propName);
-            }
-
-        }
-
-        if ( this.hasActionErrors() ) {
-            return ERROR;
-        }
-
-        // special handling for comment plugins
-        String enabledPlugins = "";
-        if (getCommentPlugins().length > 0) {
-            enabledPlugins = StringUtils.join(getCommentPlugins(), ",");
-        }
-        RuntimeConfigProperty prop = getProperties().get("users.comments.plugins");
-        prop.setValue(enabledPlugins);
-
+>>>>>>> /usr/src/app/output/apache/roller/cd196fe541630c996d411fba01fa5981c09a8449/app/src/main/java/org/apache/roller/weblogger/ui/struts2/admin/GlobalConfig.java/right.java
+      }
+      if (propertyDef.getType().equals("boolean")) {
         try {
-            // save 'em and flush
-            PropertiesManager mgr = WebloggerFactory.getWeblogger().getPropertiesManager();
-            mgr.saveProperties(getProperties());
-            WebloggerFactory.getWeblogger().flush();
-
-            // notify user of our success
-            addMessage("generic.changes.saved");
-
-        } catch (WebloggerException ex) {
-            log.error("Error saving roller properties", ex);
-            addError("generic.error.check.logs");
+          Boolean.parseBoolean(incomingProp);
+          updProp.setValue(incomingProp);
+          log.debug("Set boolean " + propName + " = " + incomingProp);
+        } catch (Exception nfe) {
+          String propDesc = bundle.getString(propertyDef.getKey());
+          addError("ConfigForm.invalidBooleanProperty", Arrays.asList(new Object[] { propDesc, propName }));
         }
-
-        return SUCCESS;
-    }
-
-
-    public void setParameters(Map<String, String[]> parameters) {
-        this.params = parameters;
-
-        if (log.isDebugEnabled()) {
-            log.debug("Parameter map:");
-
-            for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
-                log.debug(entry.getKey() + " = " + Utilities.stringArrayToString(entry.getValue(),","));
+      } else {
+        if (propertyDef.getType().equals("integer")) {
+          try {
+            Integer.parseInt(incomingProp);
+            updProp.setValue(incomingProp);
+            log.debug("Set integer " + propName + " = " + incomingProp);
+          } catch (NumberFormatException nfe) {
+            String propDesc = bundle.getString(propertyDef.getKey());
+            addError("ConfigForm.invalidIntegerProperty", Arrays.asList(new Object[] { propDesc, propName }));
+          }
+        } else {
+          if (propertyDef.getType().equals("float")) {
+            try {
+              Float.parseFloat(incomingProp);
+              updProp.setValue(incomingProp);
+              log.debug("Set float " + propName + " = " + incomingProp);
+            } catch (NumberFormatException nfe) {
+              String propDesc = bundle.getString(propertyDef.getKey());
+              addError("ConfigForm.invalidFloatProperty", Arrays.asList(new Object[] { propDesc, propName }));
             }
+          } else {
+            if (incomingProp != null) {
+              updProp.setValue(incomingProp.trim());
+              log.debug("Set something " + propName + " = " + incomingProp);
+            } else {
+              if (propertyDef.getName().equals("users.comments.plugins")) {
+              } else {
+                addError("ConfigForm.invalidProperty", propName);
+              }
+            }
+          }
         }
+      }
     }
-
-    // convenience method for getting a single parameter as a String
-    private String getParameter(String key) {
-
-        String[] p = this.params.get(key);
-        if (p != null && p.length > 0) {
-            return p[0];
-        }
-        return null;
+    if (this.hasActionErrors()) {
+      return ERROR;
     }
-
-
-    public Map<String, RuntimeConfigProperty> getProperties() {
-        return properties;
+    String enabledPlugins = "";
+    if (getCommentPlugins().length > 0) {
+      enabledPlugins = StringUtils.join(getCommentPlugins(), ",");
     }
-
-    public void setProperties(Map<String, RuntimeConfigProperty> properties) {
-        this.properties = properties;
-        for (Map.Entry<String, RuntimeConfigProperty> entry : properties.entrySet()) {
-            log.debug("Got " + entry.getKey() + " = " + entry.getValue().getValue());
-        }
+    RuntimeConfigProperty prop = getProperties().get("users.comments.plugins");
+    prop.setValue(enabledPlugins);
+    try {
+      PropertiesManager mgr = WebloggerFactory.getWeblogger().getPropertiesManager();
+      mgr.saveProperties(getProperties());
+      WebloggerFactory.getWeblogger().flush();
+      addMessage("generic.changes.saved");
+    } catch (WebloggerException ex) {
+      log.error("Error saving roller properties", ex);
+      addError("generic.error.check.logs");
     }
+    return SUCCESS;
+  }
 
-    public ConfigDef getGlobalConfigDef() {
-        return globalConfigDef;
+  public void setParameters(Map<String, String[]> parameters) {
+    this.params = parameters;
+    if (log.isDebugEnabled()) {
+      log.debug("Parameter map:");
+      for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
+        log.debug(entry.getKey() + " = " + Utilities.stringArrayToString(entry.getValue(), ","));
+      }
     }
+  }
 
-    public void setGlobalConfigDef(ConfigDef globalConfigDef) {
-        this.globalConfigDef = globalConfigDef;
+  private String getParameter(String key) {
+    String[] p = this.params.get(key);
+    if (p != null && p.length > 0) {
+      return p[0];
     }
+    return null;
+  }
 
-    public List<WeblogEntryCommentPlugin> getPluginsList() {
-        return pluginsList;
-    }
+  public Map<String, RuntimeConfigProperty> getProperties() {
+    return properties;
+  }
 
-    public void setPluginsList(List<WeblogEntryCommentPlugin> pluginsList) {
-        this.pluginsList = pluginsList;
+  public void setProperties(Map<String, RuntimeConfigProperty> properties) {
+    this.properties = properties;
+    for (Map.Entry<String, RuntimeConfigProperty> entry : properties.entrySet()) {
+      log.debug("Got " + entry.getKey() + " = " + entry.getValue().getValue());
     }
+  }
 
-    public String[] getCommentPlugins() {
-        return commentPlugins.clone();
-    }
+  public ConfigDef getGlobalConfigDef() {
+    return globalConfigDef;
+  }
 
-    public void setCommentPlugins(String[] commentPlugins) {
-        this.commentPlugins = commentPlugins.clone();
-    }
+  public void setGlobalConfigDef(ConfigDef globalConfigDef) {
+    this.globalConfigDef = globalConfigDef;
+  }
 
-    public void setServletRequest(HttpServletRequest req) {
-        httpMethod = req.getMethod();
-    }
+  public List<WeblogEntryCommentPlugin> getPluginsList() {
+    return pluginsList;
+  }
 
-    public Collection<Weblog> getWeblogs() {
-        return weblogs;
-    }
+  public void setPluginsList(List<WeblogEntryCommentPlugin> pluginsList) {
+    this.pluginsList = pluginsList;
+  }
 
-    public void setWeblogs(Collection<Weblog> weblogs) {
-        this.weblogs = weblogs;
-    }
+  public String[] getCommentPlugins() {
+    return commentPlugins.clone();
+  }
+
+  public void setCommentPlugins(String[] commentPlugins) {
+    this.commentPlugins = commentPlugins.clone();
+  }
+
+  public void setServletRequest(HttpServletRequest req) {
+    httpMethod = req.getMethod();
+  }
+
+  public Collection<Weblog> getWeblogs() {
+    return weblogs;
+  }
+
+  public void setWeblogs(Collection<Weblog> weblogs) {
+    this.weblogs = weblogs;
+  }
 }
