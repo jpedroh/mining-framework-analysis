@@ -37,6 +37,60 @@ package de.uni_koblenz.jgralab.schema;
 
 import java.util.List;
 
+/**
+ * Represents a <code>GraphClass</code> in the <code>Schema</code>, that holds
+ * all <code>GraphElementClasses</code>.
+ * 
+ * <p>
+ * <b>Note:</b> in the following, <code>graphClass</code>, and <code>graphClass'</code>,
+ * will represent the states of the given <code>GraphClass</code> before,
+ * respectively after, any operation.
+ * </p>
+ * 
+ * <p>
+ * <b>Note:</b> in the following it is understood that method arguments differ
+ * from <code>null</code>. Therefore there will be no preconditions addressing
+ * this matter.
+ * </p>
+ * 
+ * @author ist@uni-koblenz.de
+ */
+
+/*
+ * JGraLab - The Java Graph Laboratory
+ * 
+ * Copyright (C) 2006-2012 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+ * 
+ * For bug reports, documentation and further information, visit
+ * 
+ *                         https://github.com/jgralab/jgralab
+ * 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
+ * 
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
+ */
+
 import de.uni_koblenz.jgralab.Graph;
 
 /**
@@ -102,6 +156,253 @@ public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 	 *            the qualified name of the vertex class to be created
 	 * @return the created vertex class
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/GraphClass.java/left.java
+	public VertexClass createVertexClass(String qualifiedName);
+
+	/**
+	 * @param name
+	 *            the name to search for
+	 * @return the contained graph element class with the name name
+	 */
+	public GraphElementClass getGraphElementClass(String name);
+
+	/**
+	 * @return a list of all EdgeClasses this graphclass knows, including
+	 *         inherited EdgeClasses
+	 */
+	public List<EdgeClass> getEdgeClasses();
+
+	/**
+	 * @return a list of all the edge/vertex/aggregation/composition classes of
+	 *         this graph class, including inherited classes
+	 */
+	public List<GraphElementClass> getGraphElementClasses();
+
+	/**
+	 * @return a list of all the vertex classes of this graph class, including
+	 *         inherited vertex classes
+	 */
+	public List<VertexClass> getVertexClasses();
+
+	/**
+	 * Returns the VertexClass with the given name. This GraphClass and the
+	 * superclasses will be searched for a VertexClass with this name
+	 * 
+	 * @param name
+	 *            the name of the VertexClass to search for
+	 * @return the VertexClass with the given name or null, if no such
+	 *         VertexClass exists
+	 */
+	public VertexClass getVertexClass(String name);
+
+	/**
+	 * Returns the number of VertexClasses defined in this GraphClass.
+	 * 
+	 * @return the number of VertexClasses defined in this GraphClass.
+	 */
+	public int getVertexClassCount();
+
+	/**
+	 * Returns the EdgeClass with the given name. This GraphClass and the
+	 * superclasses will be searched for a EdgeClass with this name
+	 * 
+	 * @param name
+	 *            the name of the EdgeClass to search for
+	 * @return the EdgeClass with the given name or null, if no such EdgeClass
+	 *         exists
+	 */
+	public EdgeClass getEdgeClass(String name);
+
+	/**
+	 * Returns the number of EdgeClasses (that is Edge-/Aggregation- and
+	 * CompositionClasses) defined in this GraphClass.
+	 * 
+	 * @return the number of EdgeClasses defined in this GraphClass.
+	 */
+	public int getEdgeClassCount();
+
+	/**
+	 * @param aGraphElementClass
+	 *            a vertex/edge/aggregation/composition class
+	 * @return true, if this graph class aggregates aGraphElementClass
+	 */
+	public boolean knowsOwn(GraphElementClass aGraphElementClass);
+
+	/**
+	 * @param aGraphElementClass
+	 *            a vertex/edge/aggregation/composition class
+	 * @return true, if this graph class aggregates aGraphElementClass
+	 */
+	public boolean knowsOwn(String aGraphElementClass);
+
+	/**
+	 * @param aGraphElementClass
+	 *            a vertex/edge/aggregation/composition class name
+	 * @return true, if this graph class aggregates aGraphElementClass
+	 */
+	public boolean knows(GraphElementClass aGraphElementClass);
+
+	/**
+	 * @param aGraphElementClass
+	 *            a vertex/edge/aggregation/composition class name
+	 * @return true, if this graph class aggregates aGraphElementClass
+	 */
+	public boolean knows(String aGraphElementClass);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/GraphClass.java/base.java
+	public VertexClass createVertexClass(QualifiedName name) ;
+
+	/**
+	 * addSuperClass can not be called for GraphClass and always throws a SchemaException.
+	 * @param superClass
+	 *            a graph class
+	 */
+	public void addSuperClass(GraphClass superClass) ;
+
+	/**
+	 * addSubClass can not be called for GraphClass and always throws a SchemaException.
+	 * @param subClass
+	 *            a graph class
+	 */
+	public void addSubClass(GraphClass subClass);
+
+	/**
+	 * @param aGraphElementClass
+	 *            a vertex/edge/aggregation/composition class
+	 * @return true, if this graph class aggregates aGraphElementClass
+	 */
+	public boolean knowsOwn(GraphElementClass aGraphElementClass);
+	
+	/**
+	 * @param aGraphElementClass
+	 *            a vertex/edge/aggregation/composition class
+	 * @return true, if this graph class aggregates aGraphElementClass
+	 */
+	public boolean knowsOwn(QualifiedName aGraphElementClass);
+
+	/**
+	 * @param aGraphElementClass
+	 *            a vertex/edge/aggregation/composition class name
+	 * @return true, if this graph class aggregates aGraphElementClass
+	 */
+	public boolean knows(GraphElementClass aGraphElementClass);
+	
+	/**
+	 * @param aGraphElementClass
+	 *            a vertex/edge/aggregation/composition class name
+	 * @return true, if this graph class aggregates aGraphElementClass
+	 */
+	public boolean knows(QualifiedName aGraphElementClass);
+
+	/**
+	 * @param name
+	 *            the name to search for
+	 * @return the contained graph element class with the name name
+	 */
+	public GraphElementClass getGraphElementClass(QualifiedName name);
+
+	/**
+	 * @return a list of all edge classes this graphclass knows,
+	 * excluding inherited edge classes
+	 */
+	public List<EdgeClass> getOwnEdgeClasses();
+	
+	/**
+	 * @return a list of all EdgeClasses this graphclass knows,
+	 * including inherited EdgeClasses
+	 */
+	public List<EdgeClass> getEdgeClasses();
+	
+	/**
+	 * @return a list of all composition classes this graphclass knows,
+	 * excluding inherited composition classes
+	 */
+	public List<CompositionClass> getOwnCompositionClasses();
+	
+	/**
+	 * @return a list of all composition classes this graphclass knows,
+	 * including inherited composition classes
+	 */
+	public List<CompositionClass> getCompositionClasses();
+	
+	/**
+	 * @return a list of all aggregation classes this graphclass knows,
+	 * excluding inherited aggregation classes
+	 */
+	public List<AggregationClass> getOwnAggregationClasses();
+	
+	/**
+	 * @return a list of all aggregation classes this graphclass knows,
+	 * including inherited aggregation classes
+	 */
+	public List<AggregationClass> getAggregationClasses();
+	
+	/**
+	 * @return a list of all the edge/vertex/aggregation/composition classes of
+	 *         this graph class, excluding inherited classes
+	 */
+	public List<GraphElementClass> getOwnGraphElementClasses();
+	
+	/**
+	 * @return a list of all the edge/vertex/aggregation/composition classes of
+	 *         this graph class, including inherited classes
+	 */
+	public List<GraphElementClass> getGraphElementClasses();
+	
+	/**
+	 * @return a list of all the vertex classes of
+	 *         this graph class, excluding inherited vertex classes
+	 */
+	public List<VertexClass> getOwnVertexClasses();
+
+	/**
+	 * @return a list of all the vertex classes of
+	 *         this graph class, including inherited vertex classes
+	 */
+	public List<VertexClass> getVertexClasses();
+	
+	/**
+	 * 
+	 * @return the number of edge classes this graph class knows, excluding
+	 * inherited edge classes
+	 */
+	public int getOwnEdgeClassCount();
+	
+	/**
+	 * 
+	 * @return the number of vertex classes this graph class knows, excluding
+	 * inherited vertex classes
+	 */
+	public int getOwnVertexClassCount();
+
+	/**
+	 * Returns the VertexClass with the given name. This GraphClass and the superclasses will be searched for a VertexClass with this name
+	 * @param name the name of the VertexClass to search for
+	 * @return the VertexClass with the given name or null, if no such VertexClass exists
+	 */
+	public VertexClass getVertexClass(QualifiedName name);
+	
+	/**
+	 * Returns the EdgeClass with the given name. This GraphClass and the superclasses will be searched for a EdgeClass with this name
+	 * @param name the name of the EdgeClass to search for
+	 * @return the EdgeClass with the given name or null, if no such EdgeClass exists
+	 */
+	public EdgeClass getEdgeClass(QualifiedName name);
+	
+	/**
+	 * Returns the CompositionClass with the given name. This GraphClass and the superclasses will be searched for a CompositionClass with this name
+	 * @param name the name of the CompositionClass to search for
+	 * @return the CompositionClass with the given name or null, if no such CompositionClass exists
+	 */
+	public CompositionClass getCompositionClass(QualifiedName name);
+	
+	/**
+	 * Returns the AggregationClass with the given name. This GraphClass and the superclasses will be searched for a AggregationClass with this name
+	 * @param name the name of the AggregationClass to search for
+	 * @return the AggregationClass with the given name or null, if no such AggregationClass exists
+	 */
+	public AggregationClass getAggregationClass(QualifiedName name);
+
+=======
 	public VertexClass createVertexClass(String qualifiedName);
 
 	/**
@@ -197,4 +498,5 @@ public interface GraphClass extends AttributedElementClass<GraphClass, Graph> {
 	 * @return true, if this graph class aggregates aGraphElementClass
 	 */
 	public boolean knows(String aGraphElementClass);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/GraphClass.java/right.java
 }

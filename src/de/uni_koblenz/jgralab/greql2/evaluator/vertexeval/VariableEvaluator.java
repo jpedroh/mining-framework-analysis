@@ -59,17 +59,33 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * the variable value using the method getResult(..), because it should make no
  * difference for other VertexEvaluators, if a vertex is root of a complex
  * subgraph or a variable. Also provides a method to set the variable value.
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VariableEvaluator.java/left.java
  * 
  * @author ist@uni-koblenz.de
  * 
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VariableEvaluator.java/base.java
+ * 
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * 
+=======
+ *
+ * @author ist@uni-koblenz.de
+ *
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VariableEvaluator.java/right.java
  */
 public class VariableEvaluator<V extends Variable> extends VertexEvaluator<V> {
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VariableEvaluator.java/left.java
 	private List<VertexEvaluator<? extends Expression>> dependingExpressions;
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VariableEvaluator.java/base.java
+=======
+	private List<VertexEvaluator> dependingExpressions;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VariableEvaluator.java/right.java
 
 	/**
 	 * This is the estimated cardinality of the definitionset of this variable
 	 */
+
 	private final long estimatedAssignments = Long.MIN_VALUE;
 
 	/**
@@ -79,21 +95,35 @@ public class VariableEvaluator<V extends Variable> extends VertexEvaluator<V> {
 	 * @param variableValue
 	 * @param evaluator
 	 */
+
 	public void setValue(Object variableValue, InternalGreqlEvaluator evaluator) {
 		if (dependingExpressions == null) {
 			dependingExpressions = calculateDependingExpressions();
 		}
 
 		int size = dependingExpressions.size();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VariableEvaluator.java/left.java
 		for (int i = 0; i < size; i++) {
 			dependingExpressions.get(i).clear(evaluator);
 		}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VariableEvaluator.java/base.java
+=======
+		for (int i = 0; i < size; i++) {
+			dependingExpressions.get(i).clear();
+		}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VariableEvaluator.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VariableEvaluator.java/left.java
 		evaluator.setLocalEvaluationResult(vertex, variableValue);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VariableEvaluator.java/base.java
+=======
+		variableValue = variableValue2;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VariableEvaluator.java/right.java
 	}
 
 	/**
 	 * returns the variableValue
 	 */
+
 	public Object getValue(InternalGreqlEvaluator evaluator) {
 		return evaluator.getLocalEvaluationResult(vertex);
 	}
@@ -102,6 +132,7 @@ public class VariableEvaluator<V extends Variable> extends VertexEvaluator<V> {
 	 * @param vertex
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
+
 	public VariableEvaluator(V vertex, Query query) {
 		super(vertex, query);
 	}
@@ -114,6 +145,51 @@ public class VariableEvaluator<V extends Variable> extends VertexEvaluator<V> {
 	@Override
 	public Object getResult(InternalGreqlEvaluator evaluator) {
 		return getValue(evaluator);
+	}
+
+	@Override
+	public Greql2Vertex getVertex() {
+		return vertex;
+	}
+
+	private Object variableValue;
+
+	public void setValue(Object variableValue2) {
+		if (dependingExpressions == null) {
+			dependingExpressions = calculateDependingExpressions();
+		}
+
+		int size = dependingExpressions.size();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VariableEvaluator.java/left.java
+		for (int i = 0; i < size; i++) {
+			dependingExpressions.get(i).clear(evaluator);
+		}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VariableEvaluator.java/base.java
+=======
+		for (int i = 0; i < size; i++) {
+			dependingExpressions.get(i).clear();
+		}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VariableEvaluator.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VariableEvaluator.java/left.java
+		evaluator.setLocalEvaluationResult(vertex, variableValue);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VariableEvaluator.java/base.java
+=======
+		variableValue = variableValue2;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VariableEvaluator.java/right.java
+	}
+
+	public Object getValue() {
+		return variableValue;
+	}
+
+	@Override
+	public Object evaluate() {
+		return variableValue;
+	}
+
+	@Override
+	public Object getResult() {
+		return variableValue;
 	}
 
 	@Override
@@ -131,6 +207,70 @@ public class VariableEvaluator<V extends Variable> extends VertexEvaluator<V> {
 			definedVariables = new HashSet<Variable>();
 		}
 		return definedVariables;
+	}
+
+	protected List<VertexEvaluator> calculateDependingExpressions() {
+		Queue<Greql2Vertex> queue = new LinkedList<Greql2Vertex>();
+		List<VertexEvaluator> dependingEvaluators = new ArrayList<VertexEvaluator>();
+		List<Vertex> forbiddenVertices = new ArrayList<Vertex>();
+		SimpleDeclaration simpleDecl = null;
+		if (vertex.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT) != null) {
+			simpleDecl = (SimpleDeclaration) vertex
+					.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT)
+					.getThat();
+		}
+		if (simpleDecl != null) {
+			forbiddenVertices.add(simpleDecl);
+			Declaration declaringVertex = (Declaration) simpleDecl
+					.getFirstIsSimpleDeclOfIncidence().getThat();
+			if (declaringVertex
+					.getFirstIsCompDeclOfIncidence(EdgeDirection.OUT) != null) {
+				forbiddenVertices.add(declaringVertex
+						.getFirstIsCompDeclOfIncidence(EdgeDirection.OUT)
+						.getThat());
+			} else {
+				forbiddenVertices.add(declaringVertex
+						.getFirstIsQuantifiedDeclOfIncidence(EdgeDirection.OUT)
+						.getThat());
+			}
+		} else {
+			if (vertex.getFirstIsVarOfIncidence(EdgeDirection.OUT) != null) {
+				Definition definingVertex = (Definition) vertex
+						.getFirstIsVarOfIncidence(EdgeDirection.OUT).getThat();
+				forbiddenVertices.add(definingVertex);
+				forbiddenVertices.add(definingVertex
+						.getFirstIsDefinitionOfIncidence(EdgeDirection.OUT)
+						.getThat());
+			} else {
+				// thisvertex, thisedge
+
+			}
+		}
+
+		queue.add(vertex);
+		while (!queue.isEmpty()) {
+			Greql2Vertex currentVertex = queue.poll();
+			VertexEvaluator eval = vertexEvalMarker.getMark(currentVertex);
+
+			if ((eval != null) && (!dependingEvaluators.contains(eval))
+					&& (!(eval instanceof PathDescriptionEvaluator))
+					&& (!(eval instanceof DeclarationEvaluator))
+					&& (!(eval instanceof SimpleDeclarationEvaluator))) {
+				dependingEvaluators.add(eval);
+			}
+			Greql2Aggregation currentEdge = currentVertex
+					.getFirstGreql2AggregationIncidence(EdgeDirection.OUT);
+			while (currentEdge != null) {
+				Greql2Vertex nextVertex = (Greql2Vertex) currentEdge.getThat();
+				if (!forbiddenVertices.contains(nextVertex)) {
+					// if (!(nextVertex instanceof SimpleDeclaration)) {
+					queue.add(nextVertex);
+				}
+				currentEdge = currentEdge
+						.getNextGreql2AggregationIncidence(EdgeDirection.OUT);
+			}
+		}
+		return dependingEvaluators;
 	}
 
 	@SuppressWarnings("unchecked")

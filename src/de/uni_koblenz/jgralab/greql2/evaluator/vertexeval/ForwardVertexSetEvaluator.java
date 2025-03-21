@@ -44,6 +44,8 @@ import de.uni_koblenz.jgralab.greql2.funlib.graph.ReachableVertices;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.ForwardVertexSet;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 
 /**
  * Evaluates a ForwardVertexSet
@@ -60,7 +62,15 @@ public class ForwardVertexSetEvaluator extends
 
 	private boolean initialized = false;
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ForwardVertexSetEvaluator.java/left.java
 	private VertexEvaluator<? extends Expression> startEval = null;
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ForwardVertexSetEvaluator.java/base.java
+	private VertexEvaluator<? extends Expression> startEval = null;
+=======
+	private VertexEvaluator<? extends Expression> startEval = null;
+
+	private VertexEvaluator startEval = null;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ForwardVertexSetEvaluator.java/right.java
 
 	private final void initialize(InternalGreqlEvaluator evaluator) {
 		PathDescription p = (PathDescription) vertex.getFirstIsPathOfIncidence(
@@ -83,6 +93,35 @@ public class ForwardVertexSetEvaluator extends
 		}
 		Vertex startVertex = null;
 		startVertex = (Vertex) startEval.getResult(evaluator);
+		return ReachableVertices.search(startVertex, searchAutomaton);
+	}
+
+	@Override
+	public Greql2Vertex getVertex() {
+		return vertex;
+	}
+
+	private final void initialize() {
+		PathDescription p = (PathDescription) vertex.getFirstIsPathOfIncidence(
+				EdgeDirection.IN).getAlpha();
+		PathDescriptionEvaluator pathDescEval = (PathDescriptionEvaluator) vertexEvalMarker
+				.getMark(p);
+
+		Expression startExpression = (Expression) vertex
+				.getFirstIsStartExprOfIncidence(EdgeDirection.IN).getAlpha();
+		startEval = vertexEvalMarker.getMark(startExpression);
+		searchAutomaton = new DFA(pathDescEval.getNFA());
+
+		initialized = true;
+	}
+
+	@Override
+	public Object evaluate() {
+		if (!initialized) {
+			initialize();
+		}
+		Vertex startVertex = null;
+		startVertex = (Vertex) startEval.getResult();
 		return ReachableVertices.search(startVertex, searchAutomaton);
 	}
 

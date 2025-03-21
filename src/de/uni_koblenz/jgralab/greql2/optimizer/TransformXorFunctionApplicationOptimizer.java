@@ -54,9 +54,19 @@ import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
  * Replaces all {@link Xor} {@link FunctionApplication}s in the {@link Greql2}
  * graph according the rule
  * <code>a xor b = (a and not b) or (not a and b)</code>.
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/TransformXorFunctionApplicationOptimizer.java/left.java
  * 
  * @author ist@uni-koblenz.de
  * 
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/TransformXorFunctionApplicationOptimizer.java/base.java
+ * 
+ * @author Tassilo Horn (horn), 2008
+ * 
+=======
+ *
+ * @author ist@uni-koblenz.de
+ *
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/TransformXorFunctionApplicationOptimizer.java/right.java
  */
 public class TransformXorFunctionApplicationOptimizer extends Optimizer {
 
@@ -64,6 +74,24 @@ public class TransformXorFunctionApplicationOptimizer extends Optimizer {
 			.getLogger(TransformXorFunctionApplicationOptimizer.class
 					.getPackage().getName());
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/TransformXorFunctionApplicationOptimizer.java/left.java
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/TransformXorFunctionApplicationOptimizer.java/base.java
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
+	 * .jgralab.greql2.optimizer.Optimizer)
+	 */
+=======
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#isEquivalent(de.uni_koblenz
+	 * .jgralab.greql2.optimizer.Optimizer)
+	 */
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/TransformXorFunctionApplicationOptimizer.java/right.java
 	@Override
 	protected boolean isEquivalent(Optimizer optimizer) {
 		if (optimizer instanceof TransformXorFunctionApplicationOptimizer) {
@@ -72,6 +100,26 @@ public class TransformXorFunctionApplicationOptimizer extends Optimizer {
 		return false;
 	}
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/TransformXorFunctionApplicationOptimizer.java/left.java
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/TransformXorFunctionApplicationOptimizer.java/base.java
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
+	 * .jgralab.greql2.evaluator.GreqlEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 */
+=======
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.optimizer.Optimizer#optimize(de.uni_koblenz
+	 * .jgralab.greql2.evaluator.GreqlEvaluator,
+	 * de.uni_koblenz.jgralab.greql2.schema.Greql2)
+	 */
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/TransformXorFunctionApplicationOptimizer.java/right.java
 	@Override
 	protected boolean optimize(Greql2Graph syntaxgraph, CostModel costModel) {
 		ArrayList<FunctionApplication> xors = new ArrayList<FunctionApplication>();
@@ -85,11 +133,24 @@ public class TransformXorFunctionApplicationOptimizer extends Optimizer {
 		for (FunctionApplication xor : xors) {
 			somethingWasTransformed = true;
 			// Figure out the two arguments of the Xor
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/TransformXorFunctionApplicationOptimizer.java/left.java
 			IsArgumentOf isArgOf = xor
 					.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
 			Expression arg1 = isArgOf.getAlpha();
 			isArgOf = isArgOf.getNextIsArgumentOfIncidence(EdgeDirection.IN);
 			Expression arg2 = isArgOf.getAlpha();
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/TransformXorFunctionApplicationOptimizer.java/base.java
+			IsArgumentOf isArgOf = xor.getFirstIsArgumentOf(EdgeDirection.IN);
+			Expression arg1 = (Expression) isArgOf.getAlpha();
+			isArgOf = isArgOf.getNextIsArgumentOf(EdgeDirection.IN);
+			Expression arg2 = (Expression) isArgOf.getAlpha();
+=======
+			IsArgumentOf isArgOf = xor
+					.getFirstIsArgumentOfIncidence(EdgeDirection.IN);
+			Expression arg1 = (Expression) isArgOf.getAlpha();
+			isArgOf = isArgOf.getNextIsArgumentOfIncidence(EdgeDirection.IN);
+			Expression arg2 = (Expression) isArgOf.getAlpha();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/TransformXorFunctionApplicationOptimizer.java/right.java
 
 			// The rule is: a xor b = a and ~b or ~a and b
 
@@ -149,6 +210,12 @@ public class TransformXorFunctionApplicationOptimizer extends Optimizer {
 			// delete the Xor
 			xor.delete();
 		}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/TransformXorFunctionApplicationOptimizer.java/left.java
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/TransformXorFunctionApplicationOptimizer.java/base.java
+=======
+
+		recreateVertexEvaluators(eval);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/TransformXorFunctionApplicationOptimizer.java/right.java
 		return somethingWasTransformed;
 	}
 

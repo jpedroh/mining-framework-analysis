@@ -36,12 +36,58 @@
 package de.uni_koblenz.jgralab.codegenerator;
 
 import java.util.HashSet;
+
 import java.util.Set;
+
 import java.util.TreeSet;
 
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+
 import de.uni_koblenz.jgralab.schema.VertexClass;
+
+/**
+ * This class is used by the method Schema.commit() to generate the Java-classes
+ * that implement the VertexClasses of a graph schema.
+ * 
+ * @author ist@uni-koblenz.de
+ */
+
+/*
+ * JGraLab - The Java Graph Laboratory
+ * 
+ * Copyright (C) 2006-2012 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+ * 
+ * For bug reports, documentation and further information, visit
+ * 
+ *                         https://github.com/jgralab/jgralab
+ * 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
+ * 
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
+ */
 
 /**
  * This class is used by the method Schema.commit() to generate the Java-classes
@@ -73,6 +119,58 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	/**
 	 * creates the body of the class file, that are methods and attributes
 	 */
+
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/left.java
+	@Override
+	protected CodeBlock createBody() {
+		CodeList code = (CodeList) super.createBody();
+		if (currentCycle.isStdOrDbImplOrTransImpl()) {
+			if (currentCycle.isStdImpl()) {
+				addImports("#jgImplStdPackage#.#baseClassName#");
+			} else if (currentCycle.isTransImpl()) {
+				addImports("#jgImplTransPackage#.#baseClassName#");
+			} else if (currentCycle.isDbImpl()) {
+				addImports("#jgImplDbPackage#.#baseClassName#");
+			}
+
+			rootBlock.setVariable("baseClassName", "VertexImpl");
+			code.add(createValidEdgeSets((VertexClass) aec));
+		}
+
+		if (config.hasTypeSpecificMethodsSupport()
+				&& !currentCycle.isClassOnly()) {
+			code.add(createNextVertexMethods());
+			code.add(createFirstIncidenceMethods());
+			code.add(rolenameGenerator.createRolenameMethods(currentCycle
+					.isStdOrDbImplOrTransImpl()));
+			code.add(createIncidenceIteratorMethods());
+		}
+		if (currentCycle.isStdOrDbImplOrTransImpl()) {
+			code.add(createGetEdgeForRolenameMethod());
+		}
+
+		return code;
+	}
+	private CodeBlock createNextVertexMethods() {
+		CodeList code = new CodeList();
+
+		TreeSet<AttributedElementClass> superClasses = new TreeSet<AttributedElementClass>();
+		superClasses.addAll(aec.getAllSuperClasses());
+		superClasses.add(aec);
+
+		if (config.hasTypeSpecificMethodsSupport()) {
+			for (AttributedElementClass ec : superClasses) {
+				if (ec.isInternal()) {
+					continue;
+				}
+				VertexClass vc = (VertexClass) ec;
+				code.addNoIndent(createNextVertexMethod(vc));
+			}
+		}
+		return code;
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/base.java
+=======
 	@Override
 	protected CodeBlock createBody() {
 		CodeList code = (CodeList) super.createBody();
@@ -99,14 +197,34 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
 		return code;
 	}
+	private CodeBlock createNextVertexMethods() {
+		CodeList code = new CodeList();
+
+		TreeSet<AttributedElementClass<?, ?>> superClasses = new TreeSet<AttributedElementClass<?, ?>>();
+		superClasses.addAll(aec.getAllSuperClasses());
+		superClasses.add(aec);
+
+		if (config.hasTypeSpecificMethodsSupport()) {
+			for (AttributedElementClass<?, ?> ec : superClasses) {
+				if (ec.isInternal()) {
+					continue;
+				}
+				VertexClass vc = (VertexClass) ec;
+				code.addNoIndent(createNextVertexMethod(vc));
+			}
+		}
+		return code;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/right.java
 
 	/**
 	 * creates the methods <code>getFirstEdgeName()</code>
-	 *
+	 * 
 	 * @param createClass
 	 *            if set to true, the method bodies will also be created
 	 * @return the CodeBlock that contains the methods
 	 */
+
 	private CodeBlock createFirstIncidenceMethods() {
 		CodeList code = new CodeList();
 		VertexClass vc = (VertexClass) aec;
@@ -147,13 +265,14 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	/**
 	 * creates the method <code>getFirstEdgeName()</code> for the given
 	 * EdgeClass
-	 *
+	 * 
 	 * @param createClass
 	 *            if set to true, the method bodies will also be created
 	 * @param withOrientation
 	 *            toggles if the EdgeDirection-parameter will be created
 	 * @return the CodeBlock that contains the method
 	 */
+
 	private CodeBlock createFirstIncidenceMethod(EdgeClass ec,
 			boolean withOrientation) {
 		CodeSnippet code = new CodeSnippet(true);
@@ -184,38 +303,21 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
 	/**
 	 * Creates <code>getNextVertexClassName()</code> methods
-	 *
+	 * 
 	 * @param createClass
 	 *            if set to true, also the method bodies will be created
 	 * @return the CodeBlock that contains the methods
 	 */
-	private CodeBlock createNextVertexMethods() {
-		CodeList code = new CodeList();
-
-		TreeSet<AttributedElementClass<?, ?>> superClasses = new TreeSet<AttributedElementClass<?, ?>>();
-		superClasses.addAll(aec.getAllSuperClasses());
-		superClasses.add(aec);
-
-		if (config.hasTypeSpecificMethodsSupport()) {
-			for (AttributedElementClass<?, ?> ec : superClasses) {
-				if (ec.isInternal()) {
-					continue;
-				}
-				VertexClass vc = (VertexClass) ec;
-				code.addNoIndent(createNextVertexMethod(vc));
-			}
-		}
-		return code;
-	}
 
 	/**
 	 * Creates <code>getNextVertexClassName()</code> method for given
 	 * VertexClass
-	 *
+	 * 
 	 * @param createClass
 	 *            if set to true, the method bodies will also be created
 	 * @return the CodeBlock that contains the method
 	 */
+
 	private CodeBlock createNextVertexMethod(VertexClass vc) {
 		CodeSnippet code = new CodeSnippet(true);
 		code.setVariable("vcQualifiedName", absoluteName(vc));
@@ -241,12 +343,13 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
 	/**
 	 * Creates <code>getEdgeNameIncidences</code> methods.
-	 *
+	 * 
 	 * @param createClass
 	 *            if set to true, also the method bodies will be created
 	 * @return the CodeBlock that contains the code for the
 	 *         getEdgeNameIncidences-methods
 	 */
+
 	private CodeBlock createIncidenceIteratorMethods() {
 		VertexClass vc = (VertexClass) aec;
 		CodeList code = new CodeList();
@@ -320,6 +423,162 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 		}
 		return code;
 	}
+
+	private CodeBlock createValidEdgeSets(VertexClass vc) {
+		addImports("java.util.Set");
+		addImports("java.util.HashSet");
+		addImports("#jgPackage#.Edge");
+		CodeList code = new CodeList();
+		code.setVariable("vcQualifiedName", schemaRootPackageName + ".impl."
+				+ vc.getQualifiedName());
+		code.setVariable("vcCamelName", camelCase(vc.getUniqueName()));
+		CodeSnippet s = new CodeSnippet(true);
+		s.add("/* add all valid from edges */");
+		s.add("private static Set<java.lang.Class<? extends Edge>> validFromEdges = new HashSet<java.lang.Class<? extends Edge>>();");
+		s.add("");
+		s.add("/* (non-Javadoc)");
+		s.add(" * @see jgralab.Vertex:isValidAlpha()");
+		s.add(" */");
+		s.add("@Override");
+		s.add("public boolean isValidAlpha(Edge edge) {");
+		s.add("\treturn validFromEdges.contains(edge.getSchemaClass());");
+		s.add("}");
+		s.add("");
+		s.add("{");
+		code.addNoIndent(s);
+		for (EdgeClass ec : vc.getValidFromEdgeClasses()) {
+			CodeSnippet line = new CodeSnippet(true);
+			line.setVariable("edgeClassQualifiedName", schemaRootPackageName
+					+ "." + ec.getQualifiedName());
+			line.add("\tvalidFromEdges.add(#edgeClassQualifiedName#.class);");
+			code.addNoIndent(line);
+		}
+		s = new CodeSnippet(true);
+		s.add("}");
+		s.add("");
+		s.add("/* add all valid to edges */");
+		s.add("private static Set<java.lang.Class<? extends Edge>> validToEdges = new HashSet<java.lang.Class<? extends Edge>>();");
+		s.add("");
+		s.add("/* (non-Javadoc)");
+		s.add(" * @see jgralab.Vertex:isValidOemga()");
+		s.add(" */");
+		s.add("@Override");
+		s.add("public boolean isValidOmega(Edge edge) {");
+		s.add("\treturn validToEdges.contains(edge.getSchemaClass());");
+		s.add("}");
+		s.add("");
+		s.add("{");
+		code.addNoIndent(s);
+		for (EdgeClass ec : vc.getValidToEdgeClasses()) {
+			CodeSnippet line = new CodeSnippet(true);
+			line.setVariable("edgeClassQualifiedName", schemaRootPackageName
+					+ "." + ec.getQualifiedName());
+			line.add("\tvalidToEdges.add(#edgeClassQualifiedName#.class);");
+			code.addNoIndent(line);
+		}
+		s = new CodeSnippet(true);
+		s.add("}");
+		code.addNoIndent(s);
+		return code;
+	}
+
+	// TODO Check duplicate rolenames at vertex class.
+
+	private CodeBlock createGetEdgeForRolenameMethod() {
+		CodeList list = new CodeList();
+		addImports("de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass");
+		CodeSnippet code = new CodeSnippet(true);
+		code.add("private static java.util.Map<String, DirectedSchemaEdgeClass> roleMap;");
+		list.addNoIndent(code);
+		code = new CodeSnippet(true);
+		code.add("static {");
+		code.add("roleMap = new java.util.HashMap<String, DirectedSchemaEdgeClass>();");
+		list.addNoIndent(code);
+		// addImports("de.uni_koblenz.jgralab.EdgeDirection");
+		VertexClass vc = (VertexClass) aec;
+		for (EdgeClass ec : vc.getValidFromEdgeClasses()) {
+			if (!ec.getTo().getRolename().isEmpty()) {
+				code = new CodeSnippet(true);
+				code.setVariable("rolename", ec.getTo().getRolename());
+				code.setVariable("edgeclass",
+						schemaRootPackageName + "." + ec.getQualifiedName());
+				code.setVariable("dir",
+						"de.uni_koblenz.jgralab.EdgeDirection.OUT");
+				code.add("roleMap.put(\"#rolename#\", new DirectedSchemaEdgeClass(#edgeclass#.class, #dir#));");
+				list.addNoIndent(code);
+			}
+		}
+		for (EdgeClass ec : vc.getValidToEdgeClasses()) {
+			if (!ec.getFrom().getRolename().isEmpty()) {
+				code = new CodeSnippet(true);
+				code.setVariable("rolename", ec.getFrom().getRolename());
+				code.setVariable("edgeclass",
+						schemaRootPackageName + "." + ec.getQualifiedName());
+				code.setVariable("dir",
+						"de.uni_koblenz.jgralab.EdgeDirection.IN");
+				code.add("roleMap.put(\"#rolename#\", new DirectedSchemaEdgeClass(#edgeclass#.class, #dir#));");
+				list.addNoIndent(code);
+			}
+		}
+		code = new CodeSnippet(true);
+		code.add("}");
+		list.addNoIndent(code);
+		code = new CodeSnippet(true);
+		code.add(
+				"public DirectedSchemaEdgeClass getEdgeForRolename(String rolename) {",
+				"\treturn roleMap.get(rolename);", "}");
+		list.addNoIndent(code);
+		return list;
+	}
+
+	/**
+	 * creates the body of the class file, that are methods and attributes
+	 */
+
+	/**
+	 * creates the methods <code>getFirstEdgeName()</code>
+	 *
+	 * @param createClass
+	 *            if set to true, the method bodies will also be created
+	 * @return the CodeBlock that contains the methods
+	 */
+
+	/**
+	 * creates the method <code>getFirstEdgeName()</code> for the given
+	 * EdgeClass
+	 *
+	 * @param createClass
+	 *            if set to true, the method bodies will also be created
+	 * @param withOrientation
+	 *            toggles if the EdgeDirection-parameter will be created
+	 * @return the CodeBlock that contains the method
+	 */
+
+	/**
+	 * Creates <code>getNextVertexClassName()</code> methods
+	 *
+	 * @param createClass
+	 *            if set to true, also the method bodies will be created
+	 * @return the CodeBlock that contains the methods
+	 */
+
+	/**
+	 * Creates <code>getNextVertexClassName()</code> method for given
+	 * VertexClass
+	 *
+	 * @param createClass
+	 *            if set to true, the method bodies will also be created
+	 * @return the CodeBlock that contains the method
+	 */
+
+	/**
+	 * Creates <code>getEdgeNameIncidences</code> methods.
+	 *
+	 * @param createClass
+	 *            if set to true, also the method bodies will be created
+	 * @return the CodeBlock that contains the code for the
+	 *         getEdgeNameIncidences-methods
+	 */
 
 	@Override
 	protected CodeBlock createAttributedElementClassConstant() {

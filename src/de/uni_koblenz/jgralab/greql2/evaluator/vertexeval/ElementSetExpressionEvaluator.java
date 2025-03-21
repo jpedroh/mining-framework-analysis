@@ -37,6 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.schema.ElementSetExpression;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 
 /**
  * This is the base class for VertexSetExpressionEvaluator and
@@ -49,6 +50,35 @@ public abstract class ElementSetExpressionEvaluator<V extends ElementSetExpressi
 		extends AbstractGraphElementCollectionEvaluator<V> {
 
 	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ElementSetExpressionEvaluator.java/left.java
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ElementSetExpressionEvaluator.java/base.java
+	 * The ElementSetExpression-Vertex this evaluator evaluates
+	 */
+	protected ElementSetExpression vertex;
+	
+	/**
+	 * returns the vertex this VertexEvaluator evaluates
+	 */
+	public Vertex getVertex() {
+		return vertex;
+	}
+
+	/**
+=======
+	 * The ElementSetExpression-Vertex this evaluator evaluates
+	 */
+	protected ElementSetExpression vertex;
+
+	/**
+	 * returns the vertex this VertexEvaluator evaluates
+	 */
+	@Override
+	public Greql2Vertex getVertex() {
+		return vertex;
+	}
+
+	/**
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ElementSetExpressionEvaluator.java/right.java
 	 * Creates a new ElementSetExpressionEvaluator for the given vertex
 	 * 
 	 * @param eval

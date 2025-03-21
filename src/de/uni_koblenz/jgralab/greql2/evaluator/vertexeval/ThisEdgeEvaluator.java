@@ -39,13 +39,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
 
 /**
@@ -53,6 +53,12 @@ import de.uni_koblenz.jgralab.greql2.schema.ThisEdge;
  * 
  * @author ist@uni-koblenz.de
  * 
+ */
+/**
+ * Evaluates a ThisEdge vertex in the GReQL-2 Syntaxgraph.
+ *
+ * @author ist@uni-koblenz.de
+ *
  */
 public class ThisEdgeEvaluator extends VariableEvaluator<ThisEdge> {
 
@@ -63,15 +69,24 @@ public class ThisEdgeEvaluator extends VariableEvaluator<ThisEdge> {
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
 	public ThisEdgeEvaluator(ThisEdge vertex, Query query) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ThisEdgeEvaluator.java/left.java
 		super(vertex, query);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ThisEdgeEvaluator.java/base.java
+		super(vertex, eval);
+		this.vertex = vertex;
+=======
+		super(vertex, eval);
+		// this.vertex = vertex;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ThisEdgeEvaluator.java/right.java
 	}
-
 	// calculates the set of depending expressions of this evaluator, but using
 	// a fs-approach
 	// which stops at the first path description of each path
 	@SuppressWarnings("unchecked")
 	@Override
-	protected List<VertexEvaluator<? extends Expression>> calculateDependingExpressions() {
+	protected
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ThisEdgeEvaluator.java/left.java
+	@Override List<VertexEvaluator<? extends Expression>> calculateDependingExpressions() {
 		Queue<Greql2Vertex> queue = new LinkedList<Greql2Vertex>();
 		List<VertexEvaluator<? extends Expression>> dependingEvaluators = new ArrayList<VertexEvaluator<? extends Expression>>();
 		queue.add(vertex);
@@ -99,5 +114,39 @@ public class ThisEdgeEvaluator extends VariableEvaluator<ThisEdge> {
 		}
 		return dependingEvaluators;
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ThisEdgeEvaluator.java/base.java
+	@Override  calculateDependingExpressions() 
+=======
+	@Override List<VertexEvaluator> calculateDependingExpressions() {
+		Queue<Greql2Vertex> queue = new LinkedList<Greql2Vertex>();
+		List<VertexEvaluator> dependingEvaluators = new ArrayList<VertexEvaluator>();
+		queue.add(vertex);
+		while (!queue.isEmpty()) {
+			Greql2Vertex currentVertex = queue.poll();
+			VertexEvaluator eval = vertexEvalMarker.getMark(currentVertex);
+
+			if ((eval != null) && (!dependingEvaluators.contains(eval))
+					&& (!(eval instanceof PathDescriptionEvaluator))
+					&& (!(eval instanceof DeclarationEvaluator))
+					&& (!(eval instanceof SimpleDeclarationEvaluator))) {
+				dependingEvaluators.add(eval);
+			}
+			Greql2Aggregation currentEdge = currentVertex
+					.getFirstGreql2AggregationIncidence(EdgeDirection.OUT);
+			while (currentEdge != null) {
+				Greql2Vertex nextVertex = (Greql2Vertex) currentEdge.getThat();
+				if (!(nextVertex instanceof PathDescription)) {
+					queue.add(nextVertex);
+				}
+				currentEdge = currentEdge
+						.getNextGreql2AggregationIncidence(EdgeDirection.OUT);
+			}
+		}
+		return dependingEvaluators;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ThisEdgeEvaluator.java/right.java
+	// calculates the set of depending expressions of this evaluator, but using
+	// a fs-approach
+	// which stops at the first path description of each path
 
 }

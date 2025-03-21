@@ -65,7 +65,7 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * @author ist@uni-koblenz.de
  * 
  */
-class OptimizerUtility {
+ class OptimizerUtility {
 	/**
 	 * Checks if <code>v1</code> is above <code>v2</code> in the {@link Greql2}
 	 * syntaxgraph. The {@link Greql2Expression} is considered to be above all
@@ -94,7 +94,6 @@ class OptimizerUtility {
 		}
 		return false;
 	}
-
 	/**
 	 * Check if <code>funApp</code> is an AND {@link FunctionApplication}.
 	 * 
@@ -103,11 +102,18 @@ class OptimizerUtility {
 	 * @return <code>true</code> if <code>funApp</code> is a
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/OptimizerUtility.java/left.java
 	static boolean isAnd(FunctionApplication funApp) {
 		return (funApp.getFirstIsFunctionIdOfIncidence().getAlpha()).get_name()
 				.equals("and");
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/OptimizerUtility.java/base.java
+=======
+	public static boolean isAnd(FunctionApplication funApp) {
+		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence()
+				.getAlpha()).get_name().equals("and");
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/OptimizerUtility.java/right.java
 	/**
 	 * Check if <code>funApp</code> is an OR {@link FunctionApplication}.
 	 * 
@@ -116,11 +122,18 @@ class OptimizerUtility {
 	 * @return <code>true</code> if <code>funApp</code> is a
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/OptimizerUtility.java/left.java
 	static boolean isOr(FunctionApplication funApp) {
 		return (funApp.getFirstIsFunctionIdOfIncidence().getAlpha()).get_name()
 				.equals("or");
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/OptimizerUtility.java/base.java
+=======
+	public static boolean isOr(FunctionApplication funApp) {
+		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence()
+				.getAlpha()).get_name().equals("or");
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/OptimizerUtility.java/right.java
 	/**
 	 * Check if <code>funApp</code> is an XOR {@link FunctionApplication}.
 	 * 
@@ -129,11 +142,18 @@ class OptimizerUtility {
 	 * @return <code>true</code> if <code>funApp</code> is a
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/OptimizerUtility.java/left.java
 	static boolean isXor(FunctionApplication funApp) {
 		return (funApp.getFirstIsFunctionIdOfIncidence().getAlpha()).get_name()
 				.equals("xor");
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/OptimizerUtility.java/base.java
+=======
+	public static boolean isXor(FunctionApplication funApp) {
+		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence()
+				.getAlpha()).get_name().equals("xor");
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/OptimizerUtility.java/right.java
 	/**
 	 * Check if <code>funApp</code> is an NOT {@link FunctionApplication}.
 	 * 
@@ -142,11 +162,18 @@ class OptimizerUtility {
 	 * @return <code>true</code> if <code>funApp</code> is a
 	 *         {@link FunctionApplication} of {@link And}.
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/OptimizerUtility.java/left.java
 	static boolean isNot(FunctionApplication funApp) {
 		return (funApp.getFirstIsFunctionIdOfIncidence().getAlpha()).get_name()
 				.equals("not");
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/OptimizerUtility.java/base.java
+=======
+	public static boolean isNot(FunctionApplication funApp) {
+		return ((FunctionId) funApp.getFirstIsFunctionIdOfIncidence()
+				.getAlpha()).get_name().equals("not");
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/OptimizerUtility.java/right.java
 	/**
 	 * Merges the contents of the sourcePosition attribute of <code>from</code>
 	 * to the contents of the sourcePosition attribute of <code>to</code>. If a
@@ -171,7 +198,6 @@ class OptimizerUtility {
 		}
 		to.set_sourcePositions(toSourcePositions);
 	}
-
 	/**
 	 * Find the {@link FunctionId} in the {@link Greql2} graph that has
 	 * <code>name</code> as its name attribute. If no such {@link FunctionId}
@@ -198,7 +224,6 @@ class OptimizerUtility {
 		fid.set_name(name);
 		return fid;
 	}
-
 	/**
 	 * Initialize all sourcePosition attributes of <code>graph</code> that are
 	 * <code>null</code> with an empty {@link ArrayList}.
@@ -214,7 +239,6 @@ class OptimizerUtility {
 			}
 		}
 	}
-
 	/**
 	 * @param sd
 	 *            a {@link SimpleDeclaration}
@@ -223,13 +247,23 @@ class OptimizerUtility {
 	 */
 	static Set<Variable> collectVariablesDeclaredBy(SimpleDeclaration sd) {
 		HashSet<Variable> vars = new HashSet<Variable>();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/OptimizerUtility.java/left.java
 		for (IsDeclaredVarOf inc : sd
 				.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
 			vars.add(inc.getAlpha());
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/OptimizerUtility.java/base.java
+		IsDeclaredVarOf inc = sd.getFirstIsDeclaredVarOf(EdgeDirection.IN);
+		while (inc != null) {
+			vars.add((Variable) inc.getAlpha());
+			inc = inc.getNextIsDeclaredVarOf(EdgeDirection.IN);
+=======
+		for (IsDeclaredVarOf inc : sd
+				.getIsDeclaredVarOfIncidences(EdgeDirection.IN)) {
+			vars.add((Variable) inc.getAlpha());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/OptimizerUtility.java/right.java
 		}
 		return vars;
 	}
-
 	/**
 	 * Collect all of {@link Variable}s that are located below <code>v</code>,
 	 * and that are declared in the current query (not bound variables of the
@@ -241,11 +275,11 @@ class OptimizerUtility {
 	 * @return a {@link Set} of {@link Variable}s that are located below
 	 *         <code>v</code>
 	 */
-	static Set<Variable> collectInternallyDeclaredVariablesBelow(Vertex vertex) {
+	static Set<Variable> collectInternallyDeclaredVariablesBelow(
+			Vertex vertex) {
 		return collectInternallyDeclaredVariablesBelow(vertex,
 				new HashSet<Variable>());
 	}
-
 	/**
 	 * Add all {@link Variable} vertices to <code>vars</code> that are in the
 	 * subgraph below <code>vertex</code>, and that are declared in the current
@@ -256,8 +290,18 @@ class OptimizerUtility {
 	 * @return the set of {@link Variable} vertices that are located in the
 	 *         subgraph below <code>vertex</code>
 	 */
-	static Set<Variable> collectInternallyDeclaredVariablesBelow(Vertex vertex,
-			Set<Variable> vars) {
+	/**
+	 * Add all {@link Variable} vertices to <code>vars</code> that are in the
+	 * subgraph below <code>vertex</code>, and that are declared in the current
+	 * query (not bound variables of the expression). Return <code>vars</code>.
+	 * 
+	 * @param vertex
+	 * @param vars
+	 * @return the set of {@link Variable} vertices that are located in the
+	 *         subgraph below <code>vertex</code>
+	 */
+	static Set<Variable> collectInternallyDeclaredVariablesBelow(
+			Vertex vertex, Set<Variable> vars) {
 		// GreqlEvaluator.println("collectVariablesBelow(" + vertex + ")");
 		if ((vertex instanceof Variable) && !(vertex instanceof ThisLiteral)) {
 			Variable v = (Variable) vertex;

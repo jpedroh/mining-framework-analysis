@@ -55,7 +55,13 @@ public class SetConstructionEvaluator extends
 
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SetConstructionEvaluator.java/left.java
 		return createValue(JGraLab.set(), evaluator);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SetConstructionEvaluator.java/base.java
+		return createValue(new JValueSet());
+=======
+		return createValue(JGraLab.set());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SetConstructionEvaluator.java/right.java
 	}
 
 	// @Override

@@ -36,14 +36,63 @@
 package de.uni_koblenz.jgralab.codegenerator;
 
 import java.util.Set;
+
 import java.util.SortedSet;
+
 import java.util.TreeSet;
 
 import de.uni_koblenz.jgralab.schema.Attribute;
+
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.EdgeClass;
+
 import de.uni_koblenz.jgralab.schema.EnumDomain;
+
 import de.uni_koblenz.jgralab.schema.RecordDomain;
+
+/**
+ * TODO add comment
+ * 
+ * @author ist@uni-koblenz.de
+ * 
+ */
+
+/*
+ * JGraLab - The Java Graph Laboratory
+ * 
+ * Copyright (C) 2006-2012 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+ * 
+ * For bug reports, documentation and further information, visit
+ * 
+ *                         https://github.com/jgralab/jgralab
+ * 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
+ * 
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
+ */
+
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+
 import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
@@ -62,7 +111,13 @@ public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 	/**
 	 * the AttributedElementClass to generate code for
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/left.java
+	protected AttributedElementClass aec;
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/base.java
+	protected AttributedElementClass aec;
+=======
 	protected AttributedElementClass<?, ?> aec;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/right.java
 
 	protected AttributedElementCodeGenerator(
 			AttributedElementClass<?, ?> attributedElementClass,
@@ -96,25 +151,16 @@ public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 		}
 	}
 
-	private static String getSchemaTypeName(AttributedElementClass<?, ?> aec) {
-		if (aec instanceof VertexClass) {
-			return "VertexClass";
-		} else if (aec instanceof EdgeClass) {
-			return "EdgeClass";
-		} else {
-			return "GraphClass";
-		}
-	}
-
 	/**
 	 * Returns the absolute name of the given AttributdelementClass. The name is
 	 * composed of the package-prefix of the schema the class belongs to and the
 	 * qualified name of the class
-	 *
+	 * 
 	 * @param aec
 	 * @return
 	 */
-	protected String absoluteName(AttributedElementClass<?, ?> aec) {
+
+	protected String absoluteName(AttributedElementClass aec) {
 		return schemaRootPackageName + "." + aec.getQualifiedName();
 	}
 
@@ -143,18 +189,14 @@ public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 		return code;
 	}
 
-	protected abstract CodeBlock createAttributedElementClassConstant();
-
-	@Override
+	@Override @Override
 	protected CodeBlock createHeader() {
 		CodeSnippet code = new CodeSnippet(true);
 
 		code.setVariable("classOrInterface", currentCycle
 				.isStdOrDbImplOrTransImpl() ? " class" : " interface");
-		code.setVariable("abstract", currentCycle.isStdOrDbImplOrTransImpl()
-				&& aec.isAbstract() ? " abstract" : "");
-		code.setVariable("impl", currentCycle.isStdOrDbImplOrTransImpl()
-				&& !aec.isAbstract() ? "Impl" : "");
+		code.setVariable("abstract", currentCycle.isStdOrDbImplOrTransImpl() && aec.isAbstract() ? " abstract" : "");
+		code.setVariable("impl", currentCycle.isStdOrDbImplOrTransImpl() && !aec.isAbstract() ? "Impl" : "");
 		code.add("public#abstract##classOrInterface# #simpleClassName##impl##extends##implements# {");
 		code.setVariable(
 				"extends",
@@ -166,8 +208,7 @@ public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 			String delim = currentCycle.isStdOrDbImplOrTransImpl() ? " implements "
 					: " extends ";
 			for (String interfaceName : interfaces) {
-				if (currentCycle.isStdOrDbImplOrTransImpl()
-						|| !interfaceName.equals(aec.getQualifiedName())) {
+				if (currentCycle.isStdOrDbImplOrTransImpl() || !interfaceName.equals(aec.getQualifiedName())) {
 					if (interfaceName.equals("Vertex")
 							|| interfaceName.equals("Edge")
 							|| interfaceName.equals("Graph")) {
@@ -218,6 +259,7 @@ public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 	 * @return true if at least one own or inherited attribute has a default
 	 *         value.
 	 */
+
 	protected boolean hasDefaultAttributeValues() {
 		for (Attribute attr : aec.getAttributeList()) {
 			if (attr.getDefaultValueAsString() != null) {
@@ -227,8 +269,28 @@ public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 		return false;
 	}
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/left.java
+	protected CodeBlock createGetAttributedElementClassMethod() {
+		return new CodeSnippet(
+				true,
+				"public final #jgSchemaPackage#.AttributedElementClass getAttributedElementClass() {",
+				"\treturn #schemaPackageName#.#schemaName#.instance().#schemaVariableName#;",
+				"}");
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/base.java
+=======
 	protected abstract CodeBlock createGetAttributedElementClassMethod();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/right.java
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/left.java
+	protected CodeBlock createGetSchemaClassMethod() {
+		return new CodeSnippet(
+				true,
+				"public final java.lang.Class<? extends #jgPackage#.AttributedElement> getSchemaClass() {",
+				"\treturn #javaClassName#.class;", "}");
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/base.java
+=======
 	protected CodeBlock createGetSchemaClassMethod() {
 		return new CodeSnippet(
 				true,
@@ -236,6 +298,7 @@ public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 				"public final java.lang.Class<? extends #jgPackage#.#graphElementClass#> getSchemaClass() {",
 				"\treturn #javaClassName#.class;", "}");
 	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/right.java
 
 	protected CodeBlock createGenericGetter(Set<Attribute> attrSet) {
 		CodeList code = new CodeList();
@@ -513,10 +576,11 @@ public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param attrSet
 	 * @return
 	 */
+
 	protected CodeBlock createWriteAttributeToStringMethod(
 			Set<Attribute> attrSet) {
 		CodeList code = new CodeList();
@@ -615,10 +679,11 @@ public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 	/**
 	 * Generates method attributes() which returns a set of all versioned
 	 * attributes for an <code>AttributedElement</code>.
-	 *
+	 * 
 	 * @param attributeList
 	 * @return
 	 */
+
 	protected CodeBlock createGetVersionedAttributesMethod(
 			SortedSet<Attribute> attributeList) {
 		CodeList code = new CodeList();
@@ -641,4 +706,48 @@ public abstract class AttributedElementCodeGenerator extends CodeGenerator {
 		}
 		return code;
 	}
+
+	private static String getSchemaTypeName(AttributedElementClass<?, ?> aec) {
+		if (aec instanceof VertexClass) {
+			return "VertexClass";
+		} else if (aec instanceof EdgeClass) {
+			return "EdgeClass";
+		} else {
+			return "GraphClass";
+		}
+	}
+
+	/**
+	 * Returns the absolute name of the given AttributdelementClass. The name is
+	 * composed of the package-prefix of the schema the class belongs to and the
+	 * qualified name of the class
+	 *
+	 * @param aec
+	 * @return
+	 */
+
+	protected String absoluteName(AttributedElementClass<?, ?> aec) {
+		return schemaRootPackageName + "." + aec.getQualifiedName();
+	}
+
+	protected abstract CodeBlock createAttributedElementClassConstant();
+
+	/**
+	 * @return true if at least one own or inherited attribute has a default
+	 *         value.
+	 */
+
+	/**
+	 *
+	 * @param attrSet
+	 * @return
+	 */
+
+	/**
+	 * Generates method attributes() which returns a set of all versioned
+	 * attributes for an <code>AttributedElement</code>.
+	 *
+	 * @param attributeList
+	 * @return
+	 */
 }

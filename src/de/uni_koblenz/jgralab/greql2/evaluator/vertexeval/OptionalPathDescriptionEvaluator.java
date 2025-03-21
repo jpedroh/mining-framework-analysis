@@ -41,6 +41,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.OptionalPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 
 /**
  * Evaluates an optional path description. Creates a NFA that accepts the
@@ -53,6 +54,36 @@ public class OptionalPathDescriptionEvaluator extends
 		PathDescriptionEvaluator<OptionalPathDescription> {
 
 	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/OptionalPathDescriptionEvaluator.java/left.java
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/OptionalPathDescriptionEvaluator.java/base.java
+	 * The IteratedPathDescription-Vertex this evaluator evaluates
+	 */
+	private OptionalPathDescription vertex;
+
+	/**
+	 * returns the vertex this VertexEvaluator evaluates
+	 */
+	@Override
+	public Vertex getVertex() {
+		return vertex;
+	}
+
+	/**
+=======
+	 * The IteratedPathDescription-Vertex this evaluator evaluates
+	 */
+	private OptionalPathDescription vertex;
+
+	/**
+	 * returns the vertex this VertexEvaluator evaluates
+	 */
+	@Override
+	public Greql2Vertex getVertex() {
+		return vertex;
+	}
+
+	/**
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/OptionalPathDescriptionEvaluator.java/right.java
 	 * Creates a new OptionalPathDescriptionEvaluator for the given vertex
 	 * 
 	 * @param eval
@@ -66,12 +97,28 @@ public class OptionalPathDescriptionEvaluator extends
 	}
 
 	@Override
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/OptionalPathDescriptionEvaluator.java/left.java
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
 		PathDescription p = vertex.getFirstIsOptionalPathOfIncidence(
 				EdgeDirection.IN).getAlpha();
 		PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query
 				.getVertexEvaluator(p);
 		return NFA.createOptionalPathDescriptionNFA(pathEval.getNFA(evaluator));
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/OptionalPathDescriptionEvaluator.java/base.java
+	public JValue evaluate() throws EvaluateException {
+		PathDescription p = (PathDescription) vertex
+				.getFirstIsOptionalPathOf(EdgeDirection.IN).getAlpha();
+		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(p);
+		return new JValue(NFA.createOptionalPathDescriptionNFA(pathEval
+				.getNFA()));
+=======
+	public NFA evaluate() {
+		PathDescription p = (PathDescription) vertex
+				.getFirstIsOptionalPathOfIncidence(EdgeDirection.IN).getAlpha();
+		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) vertexEvalMarker
+				.getMark(p);
+		return NFA.createOptionalPathDescriptionNFA(pathEval.getNFA());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/OptionalPathDescriptionEvaluator.java/right.java
 	}
 
 	// @Override

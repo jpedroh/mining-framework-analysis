@@ -89,6 +89,7 @@ public class MergeSimpleDeclarationsOptimizer extends Optimizer {
 	protected boolean optimize(Greql2Graph syntaxgraph, CostModel costModel) {
 		anOptimizationWasDone = false;
 		findAndMergeSimpleDeclarations(syntaxgraph);
+		recreateVertexEvaluators(eval);
 		return anOptimizationWasDone;
 	}
 

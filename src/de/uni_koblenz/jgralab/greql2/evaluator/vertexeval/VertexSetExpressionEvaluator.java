@@ -38,10 +38,15 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.JGraLab;
+
 import de.uni_koblenz.jgralab.Vertex;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+
 import de.uni_koblenz.jgralab.greql2.schema.VertexSetExpression;
+
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
@@ -53,12 +58,14 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
  * @author ist@uni-koblenz.de
  * 
  */
+
+import de.uni_koblenz.jgralab.Graph;
 public class VertexSetExpressionEvaluator extends
 		ElementSetExpressionEvaluator<VertexSetExpression> {
 
 	/**
 	 * Creates a new ElementSetExpressionEvaluator for the given vertex
-	 * 
+	 *
 	 * @param eval
 	 *            the GreqlEvaluator instance this VertexEvaluator belong to
 	 * @param vertex
@@ -69,18 +76,88 @@ public class VertexSetExpressionEvaluator extends
 	}
 
 	@Override
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexSetExpressionEvaluator.java/left.java
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
 		TypeCollection typeCollection = getTypeCollection(evaluator);
 		PSet<Vertex> resultSet = null;
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexSetExpressionEvaluator.java/base.java
+	public JValue evaluate() throws EvaluateException {
+		Graph datagraph = getDatagraph();
+		JValueTypeCollection typeCollection = getTypeCollection();
+		JValueSet resultSet = null;
+		String indexKey = null;
+		if (GreqlEvaluator.VERTEX_INDEXING) {
+			indexKey = typeCollection.typeString() + subgraph;
+			resultSet = greqlEvaluator.getVertexIndex(datagraph, indexKey);
+		}
+=======
+	public Object evaluate() {
+		Graph datagraph = greqlEvaluator.getDatagraph();
+		TypeCollection typeCollection = getTypeCollection();
+		PSet<Vertex> resultSet = null;
+		String indexKey = null;
+		if (GreqlEvaluator.VERTEX_INDEXING) {
+			indexKey = typeCollection.toString();
+			resultSet = GreqlEvaluator.getVertexIndex(datagraph, indexKey);
+		}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexSetExpressionEvaluator.java/right.java
 		if (resultSet == null) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexSetExpressionEvaluator.java/left.java
 			resultSet = JGraLab.set();
 			Vertex currentVertex = query.getQueryGraph().getFirstVertex();
 			while (currentVertex != null) {
 				if (typeCollection.acceptsType(currentVertex
 						.getAttributedElementClass())) {
 					resultSet = resultSet.plus(currentVertex);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexSetExpressionEvaluator.java/base.java
+			long startTime = System.currentTimeMillis();
+			resultSet = new JValueSet();
+			Vertex currentVertex = datagraph.getFirstVertex();
+			if (subgraph == null) {
+				while (currentVertex != null) {
+					if (typeCollection.acceptsType(currentVertex
+							.getAttributedElementClass())) {
+						JValue j = new JValue(currentVertex);
+						resultSet.add(j);
+					}
+					currentVertex = currentVertex.getNextVertex();
+=======
+			long startTime = System.currentTimeMillis();
+			resultSet = JGraLab.set();
+			Vertex currentVertex = datagraph.getFirstVertex();
+			while (currentVertex != null) {
+				if (typeCollection.acceptsType(currentVertex
+						.getAttributedElementClass())) {
+					resultSet = resultSet.plus(currentVertex);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexSetExpressionEvaluator.java/right.java
 				}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexSetExpressionEvaluator.java/left.java
 				currentVertex = currentVertex.getNextVertex();
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexSetExpressionEvaluator.java/base.java
+			} else {
+				while (currentVertex != null) {
+					if (subgraph.isMarked(currentVertex)
+							&& typeCollection.acceptsType(currentVertex
+									.getAttributedElementClass()))
+						resultSet.add(new JValue(currentVertex));
+					currentVertex = currentVertex.getNextVertex();
+				}
+			}
+			if (GreqlEvaluator.VERTEX_INDEXING) {
+				if (System.currentTimeMillis() - startTime > greqlEvaluator
+						.getIndexTimeBarrier())
+					greqlEvaluator.addVertexIndex(datagraph, indexKey,
+							resultSet);
+=======
+				currentVertex = currentVertex.getNextVertex();
+			}
+			if (GreqlEvaluator.VERTEX_INDEXING) {
+				if ((System.currentTimeMillis() - startTime) > greqlEvaluator
+						.getIndexTimeBarrier()) {
+					GreqlEvaluator.addVertexIndex(datagraph, indexKey,
+							resultSet);
+				}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexSetExpressionEvaluator.java/right.java
 			}
 		}
 		return resultSet;

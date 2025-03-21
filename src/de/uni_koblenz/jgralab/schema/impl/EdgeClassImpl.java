@@ -51,6 +51,21 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 
 	private IncidenceClass from, to;
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/EdgeClassImpl.java/left.java
+	static EdgeClass createDefaultEdgeClass(Schema schema) {
+		assert schema.getDefaultGraphClass() != null : "DefaultGraphClass has not yet been created!";
+		assert schema.getDefaultVertexClass() != null : "DefaultVertexClass has not yet been created!";
+		assert schema.getDefaultEdgeClass() == null : "DefaultEdgeClass already created!";
+		EdgeClass ec = schema.getDefaultGraphClass().createEdgeClass(
+				DEFAULTEDGECLASS_NAME, schema.getDefaultVertexClass(), 0,
+				Integer.MAX_VALUE, "", AggregationKind.NONE,
+				schema.getDefaultVertexClass(), 0, Integer.MAX_VALUE, "",
+				AggregationKind.NONE);
+		ec.setAbstract(true);
+		return ec;
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/EdgeClassImpl.java/base.java
+=======
 	static EdgeClass createDefaultEdgeClass(Schema schema) {
 		assert schema.getDefaultGraphClass() != null : "DefaultGraphClass has not yet been created!";
 		assert schema.getDefaultVertexClass() != null : "DefaultVertexClass has not yet been created!";
@@ -64,6 +79,7 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 		((EdgeClassImpl) ec).setInternal(true);
 		return ec;
 	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/EdgeClassImpl.java/right.java
 
 	/**
 	 * builds a new edge class
@@ -97,10 +113,38 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 	 *            a name which identifies the 'to' side of the edge class in a
 	 *            unique way
 	 */
-	protected EdgeClassImpl(String simpleName, Package pkg,
+
+	protected EdgeClassImpl(String simpleName,Package pkg,
 			GraphClass aGraphClass, VertexClass from, int fromMin, int fromMax,
 			String fromRoleName, AggregationKind aggrFrom, VertexClass to,
 			int toMin, int toMax, String toRoleName, AggregationKind aggrTo) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/EdgeClassImpl.java/left.java
+		super(simpleName, pkg, aGraphClass);
+		IncidenceClass fromInc = new IncidenceClassImpl(this, from,
+				fromRoleName, fromMin, fromMax, IncidenceDirection.OUT,
+				aggrFrom);
+		IncidenceClass toInc = new IncidenceClassImpl(this, to, toRoleName,
+				toMin, toMax, IncidenceDirection.IN, aggrTo);
+		this.from = fromInc;
+		this.to = toInc;
+		from.addOutIncidenceClass(fromInc);
+		to.addInIncidenceClass(toInc);
+		register();
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/EdgeClassImpl.java/base.java
+		super(qn, aGraphClass);
+		this.from = from;
+		this.to = to;
+		this.fromMin = fromMin;
+		this.fromMax = fromMax;
+		this.toMin = toMin;
+		this.toMax = toMax;
+		this.fromRolename = fromRoleName;
+		this.toRolename = toRoleName;
+		redefinedFromRoles = new HashSet<String>();
+		redefinedToRoles = new HashSet<String>();
+		inEdgeClass = new DirectedEdgeClass(this, EdgeDirection.IN);
+		outEdgeClass = new DirectedEdgeClass(this, EdgeDirection.OUT);
+=======
 		super(simpleName, pkg, aGraphClass);
 		IncidenceClass fromInc = new IncidenceClassImpl(this, from,
 				fromRoleName, fromMin, fromMax, IncidenceDirection.OUT,
@@ -112,6 +156,7 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 		((VertexClassImpl) from).addOutIncidenceClass(fromInc);
 		((VertexClassImpl) to).addInIncidenceClass(toInc);
 		register();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/EdgeClassImpl.java/right.java
 	}
 
 	@Override
@@ -126,7 +171,21 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 	}
 
 	@Override
-	public void addSuperClass(EdgeClass superClass) {
+	public
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/EdgeClassImpl.java/left.java
+	@Override void addSuperClass(EdgeClass superClass) {
+		checkIncidenceClassSpecialization(getFrom(), superClass.getFrom());
+		checkIncidenceClassSpecialization(getTo(), superClass.getTo());
+		super.addSuperClass(superClass);
+		((IncidenceClassImpl) getFrom()).addSubsettedIncidenceClass(superClass
+				.getFrom());
+		((IncidenceClassImpl) getTo()).addSubsettedIncidenceClass(superClass
+				.getTo());
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/EdgeClassImpl.java/base.java
+	@Override void addSuperClass(EdgeClass superClass) 
+=======
+	@Override void addSuperClass(EdgeClass superClass) {
 		// checked in super
 		// if(isFinished()){
 		// throw new SchemaException("No changes to finished schema!");
@@ -146,13 +205,14 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 		((IncidenceClassImpl) getTo()).addSubsettedIncidenceClass(superClass
 				.getTo());
 	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/EdgeClassImpl.java/right.java
 
-	@Override
+	@Override @Override
 	public IncidenceClass getFrom() {
 		return from;
 	}
 
-	@Override
+	@Override @Override
 	public IncidenceClass getTo() {
 		return to;
 	}
@@ -167,8 +227,9 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 	 * @throws SchemaException
 	 *             upon illegal combinations
 	 */
-	static void checkIncidenceClassSpecialization(IncidenceClass special,
-			IncidenceClass general) {
+
+	public static void checkIncidenceClassSpecialization(
+			IncidenceClass special, IncidenceClass general) {
 		// Vertex same
 		if ((!general.getVertexClass().isSuperClassOfOrEquals(
 				special.getVertexClass()))) {
@@ -226,4 +287,22 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 		}
 
 	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public Class<? extends Edge> getSchemaClass() {
+		return (Class<? extends Edge>) super.getSchemaClass();
+	}
+
+	/**
+	 * checks if the incidence classes own and inherited are compatible, i.e. if
+	 * the upper multiplicity of own is lower or equal than the one of inherited
+	 * and so on
+	 * 
+	 * @param special
+	 * @param general
+	 * @throws SchemaException
+	 *             upon illegal combinations
+	 */
+	
 }

@@ -46,6 +46,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
+import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 
 /**
  * this class models a nondeterministic finite automaton. It created during
@@ -302,16 +303,31 @@ public class NFA extends FiniteAutomaton {
 	 */
 	public static NFA createEdgePathDescriptionNFA(
 			Transition.AllowedEdgeDirection dir, TypeCollection typeCollection,
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/NFA.java/left.java
 			Set<String> roles, VertexEvaluator<?> edgeEval,
 			VertexEvaluator<? extends Expression> predicateEvaluator,
 			Query query) {
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/NFA.java/base.java
+			Set<String> roles, VertexEvaluator<?> edgeEval) {
+=======
+			Set<String> roles, VertexEvaluator<?> edgeEval,
+			VertexEvaluator predicateEvaluator,
+			GraphMarker<VertexEvaluator> marker) {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/NFA.java/right.java
 		NFA nfa = new NFA();
 		nfa.transitionList.clear();
 		nfa.initialState.outTransitions.clear();
 		nfa.finalStates.get(0).inTransitions.clear();
 		SimpleTransition t = new EdgeTransition(nfa.initialState,
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/NFA.java/left.java
 				nfa.finalStates.get(0), dir, typeCollection, roles, edgeEval,
 				predicateEvaluator, query);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/NFA.java/base.java
+				nfa.finalStates.get(0), dir, typeCollection, roles, edgeEval);
+=======
+				nfa.finalStates.get(0), dir, typeCollection, roles, edgeEval,
+				predicateEvaluator, marker);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/NFA.java/right.java
 		nfa.transitionList.add(t);
 		nfa.updateStateAttributes();
 		return nfa;
@@ -322,17 +338,36 @@ public class NFA extends FiniteAutomaton {
 	 * EdgeRestrictions (RoleId, TypeId) are modeled in the Transition.
 	 */
 	public static NFA createSimplePathDescriptionNFA(
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/NFA.java/left.java
 			Transition.AllowedEdgeDirection dir, TypeCollection typeCollection,
 			Set<String> roles,
 			VertexEvaluator<? extends Expression> predicateEvaluator,
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/NFA.java/base.java
+			Transition.AllowedEdgeDirection dir, TypeCollection typeCollection,
+=======
+			Transition.AllowedEdgeDirection dir, TypeCollection typeCollection,
+			Set<String> roles, VertexEvaluator predicateEvaluator,
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/NFA.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/NFA.java/left.java
 			Query query) {
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/NFA.java/base.java
+			String role) {
+=======
+			GraphMarker<VertexEvaluator> marker) {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/NFA.java/right.java
 		NFA nfa = new NFA();
 		nfa.transitionList.clear();
 		nfa.initialState.outTransitions.clear();
 		nfa.finalStates.get(0).inTransitions.clear();
 		SimpleTransition t = new SimpleTransition(nfa.initialState,
 				nfa.finalStates.get(0), dir, typeCollection, roles,
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/NFA.java/left.java
 				predicateEvaluator, query);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/NFA.java/base.java
+				predicateEvaluator, role);
+=======
+				predicateEvaluator, marker);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/NFA.java/right.java
 		nfa.transitionList.add(t);
 		nfa.updateStateAttributes();
 		return nfa;
@@ -354,6 +389,25 @@ public class NFA extends FiniteAutomaton {
 		AggregationTransition t = new AggregationTransition(nfa.initialState,
 				nfa.finalStates.get(0), aggregateFrom, typeCollection, roles,
 				predicateEvaluator, query);
+		nfa.transitionList.add(t);
+		nfa.updateStateAttributes();
+		return nfa;
+	}
+	/**
+	 * Constructs a NFA which accepts the given AggregationPathDescription. The
+	 * EdgeRestrictions (RoleId, TypeId) are modeled in the Transition.
+	 */
+	public static NFA createAggregationPathDescriptionNFA(
+			boolean aggregateFrom, TypeCollection typeCollection,
+			Set<String> roles, VertexEvaluator predicateEvaluator,
+			GraphMarker<VertexEvaluator> marker) {
+		NFA nfa = new NFA();
+		nfa.transitionList.clear();
+		nfa.initialState.outTransitions.clear();
+		nfa.finalStates.get(0).inTransitions.clear();
+		AggregationTransition t = new AggregationTransition(nfa.initialState,
+				nfa.finalStates.get(0), aggregateFrom, typeCollection, roles,
+				predicateEvaluator, marker);
 		nfa.transitionList.add(t);
 		nfa.updateStateAttributes();
 		return nfa;

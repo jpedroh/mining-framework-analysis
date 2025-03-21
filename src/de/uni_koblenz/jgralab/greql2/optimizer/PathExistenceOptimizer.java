@@ -102,6 +102,18 @@ public class PathExistenceOptimizer extends Optimizer {
 
 		runOptimization();
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/PathExistenceOptimizer.java/left.java
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/PathExistenceOptimizer.java/base.java
+		try {
+			eval.createVertexEvaluators();
+		} catch (EvaluateException e) {
+			e.printStackTrace();
+		}
+
+=======
+		recreateVertexEvaluators(eval);
+
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/PathExistenceOptimizer.java/right.java
 		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
 
 		// Tg2Dot.printGraphAsDot(syntaxgraph, true, "/home/horn/peo.dot");
@@ -251,9 +263,18 @@ public class PathExistenceOptimizer extends Optimizer {
 			vertexSet = syntaxgraph.createBackwardVertexSet();
 			syntaxgraph.createIsTargetExprOf(startOrTargetExp, vertexSet);
 		}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/PathExistenceOptimizer.java/left.java
 		syntaxgraph.createIsPathOf(
 				pe.getFirstIsPathOfIncidence(EdgeDirection.IN).getAlpha(),
 				vertexSet);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/PathExistenceOptimizer.java/base.java
+		syntaxgraph.createIsPathOf((Expression) pe.getFirstIsPathOf(
+				EdgeDirection.IN).getAlpha(), vertexSet);
+=======
+		syntaxgraph.createIsPathOf(
+				(Expression) pe.getFirstIsPathOfIncidence(EdgeDirection.IN)
+						.getAlpha(), vertexSet);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/PathExistenceOptimizer.java/right.java
 
 		syntaxgraph.createIsArgumentOf(vertexSet, contains);
 		syntaxgraph.createIsArgumentOf(otherExp, contains);

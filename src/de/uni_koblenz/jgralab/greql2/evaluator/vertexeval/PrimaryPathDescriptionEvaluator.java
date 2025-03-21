@@ -38,10 +38,13 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.Edge;
+
 import de.uni_koblenz.jgralab.EdgeDirection;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.Transition;
 import de.uni_koblenz.jgralab.greql2.schema.Direction;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.PrimaryPathDescription;
 
 /**
@@ -53,8 +56,40 @@ import de.uni_koblenz.jgralab.greql2.schema.PrimaryPathDescription;
 public abstract class PrimaryPathDescriptionEvaluator<V extends PrimaryPathDescription>
 		extends PathDescriptionEvaluator<V> {
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/PrimaryPathDescriptionEvaluator.java/left.java
 	public PrimaryPathDescriptionEvaluator(V vertex, Query query) {
 		super(vertex, query);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/PrimaryPathDescriptionEvaluator.java/base.java
+	protected PrimaryPathDescription vertex;
+
+	/**
+	 * returns the vertex this VertexEvaluator evaluates
+	 */
+	@Override
+	public Vertex getVertex() {
+		return vertex;
+	}
+
+	public PrimaryPathDescriptionEvaluator(PrimaryPathDescription vertex,
+			GreqlEvaluator eval) {
+		super(eval);
+		this.vertex = vertex;
+=======
+	protected PrimaryPathDescription vertex;
+
+	/**
+	 * returns the vertex this VertexEvaluator evaluates
+	 */
+	@Override
+	public Greql2Vertex getVertex() {
+		return vertex;
+	}
+
+	public PrimaryPathDescriptionEvaluator(PrimaryPathDescription vertex,
+			GreqlEvaluator eval) {
+		super(eval);
+		this.vertex = vertex;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/PrimaryPathDescriptionEvaluator.java/right.java
 	}
 
 	/**

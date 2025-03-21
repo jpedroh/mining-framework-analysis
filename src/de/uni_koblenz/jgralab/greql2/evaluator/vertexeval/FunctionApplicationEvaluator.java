@@ -38,15 +38,22 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import java.util.ArrayList;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+
 import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
+
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
+
 import de.uni_koblenz.jgralab.greql2.funlib.FunLib.FunctionInfo;
+
 import de.uni_koblenz.jgralab.greql2.funlib.Function;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsArgumentOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeExprOf;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
@@ -54,9 +61,19 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
  * Evaluates a FunctionApplication vertex in the GReQL-2 Syntaxgraph
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/FunctionApplicationEvaluator.java/left.java
  * 
  * @author ist@uni-koblenz.de
  * 
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/FunctionApplicationEvaluator.java/base.java
+ * 
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * 
+=======
+ *
+ * @author ist@uni-koblenz.de
+ *
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/FunctionApplicationEvaluator.java/right.java
  */
 public class FunctionApplicationEvaluator extends
 		VertexEvaluator<FunctionApplication> {
@@ -74,6 +91,7 @@ public class FunctionApplicationEvaluator extends
 	/**
 	 * The name of this function
 	 */
+
 	private String functionName = null;
 
 	private FunctionInfo fi = null;
@@ -81,10 +99,19 @@ public class FunctionApplicationEvaluator extends
 	/**
 	 * Returns the name of the Greql2Function
 	 */
+
 	public String getFunctionName() {
 		if (functionName == null) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/FunctionApplicationEvaluator.java/left.java
 			FunctionId id = vertex.getFirstIsFunctionIdOfIncidence(
 					EdgeDirection.IN).getAlpha();
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/FunctionApplicationEvaluator.java/base.java
+			FunctionId ;
+=======
+			FunctionId id = (FunctionId) vertex
+					.getFirstIsFunctionIdOfIncidence(EdgeDirection.IN)
+					.getAlpha();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/FunctionApplicationEvaluator.java/right.java
 			functionName = id.get_name();
 		}
 		return functionName;
@@ -105,6 +132,19 @@ public class FunctionApplicationEvaluator extends
 		return getFunctionInfo().getFunction();
 	}
 
+	protected FunctionApplication vertex;
+
+	@Override
+	public Greql2Vertex getVertex() {
+		return vertex;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#
+	 * getLoggingName()
+	 */
 	@Override
 	public String getLoggingName() {
 		return getFunctionName();
@@ -151,12 +191,30 @@ public class FunctionApplicationEvaluator extends
 			typeCollection = new TypeCollection();
 			while (typeEdge != null) {
 				typeId = (TypeId) typeEdge.getAlpha();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/FunctionApplicationEvaluator.java/left.java
 				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEvalMarker
 						.getMark(typeId);
 				typeCollection.addTypes((TypeCollection) typeEval
 						.getResult(graph));
 				typeEdge = typeEdge
 						.getNextIsTypeExprOfIncidence(EdgeDirection.IN);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/FunctionApplicationEvaluator.java/base.java
+				TypeIdEvaluator typeEval = (TypeIdEvaluator) greqlEvaluator
+						.getVertexEvaluatorGraphMarker().getMark(typeId);
+				try {
+					typeCollection.addTypes(typeEval.getResult(subgraph)
+							.toJValueTypeCollection());
+				} catch (JValueInvalidTypeException ex) {
+					throw new EvaluateException(
+							"Result of TypeId-vertex was not JValueTypeCollection ");
+				}
+				typeEdge = typeEdge.getNextIsTypeExprOf(EdgeDirection.IN);
+=======
+				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEvalMarker
+						.getMark(typeId);
+				typeCollection.addTypes((TypeCollection) typeEval.getResult());
+				typeEdge = typeEdge.getNextIsTypeExprOfIncidence(EdgeDirection.IN);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/FunctionApplicationEvaluator.java/right.java
 			}
 		}
 		return typeCollection;
@@ -189,13 +247,27 @@ public class FunctionApplicationEvaluator extends
 			parameters[p++] = graph;
 		}
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/FunctionApplicationEvaluator.java/left.java
 		for (int i = 0; i < paramEvalCount; i++) {
 			parameters[p++] = parameterEvaluators.get(i).getResult(graph);
 		}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/FunctionApplicationEvaluator.java/base.java
+		try {
+			result = greql2Function.evaluate(graph, subgraph, parameters);
+		} catch (QuerySourceException ex) {
+			List<SourcePosition> positionList = ex.getSourcePositions();
+			positionList.addAll(createPossibleSourcePositions());
+			throw ex;
+		}
+=======
+		for (int i = 0; i < paramEvalCount; i++) {
+			parameters[p++] = parameterEvaluators.get(i).getResult();
+		}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/FunctionApplicationEvaluator.java/right.java
 
 		if (typeArgument != null) {
-			parameters[p] = typeArgument;
-		}
+		parameters[p] = typeArgument;
+	}
 
 		return FunLib.apply(fi, parameters);
 	}

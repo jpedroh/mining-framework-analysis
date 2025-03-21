@@ -36,71 +36,175 @@
 package de.uni_koblenz.jgralab.schema.impl;
 
 import java.io.ByteArrayOutputStream;
+
 import java.io.DataOutputStream;
+
 import java.io.File;
+
 import java.io.IOException;
+
 import java.lang.reflect.Method;
+
 import java.util.ArrayList;
+
 import java.util.Collection;
+
 import java.util.HashMap;
+
+import java.util.HashSet;
+
+import java.util.Iterator;
+
 import java.util.LinkedList;
+
 import java.util.List;
+
 import java.util.Map;
+
 import java.util.TreeMap;
+
 import java.util.Vector;
+
 import java.util.regex.Pattern;
 
 import javax.tools.JavaCompiler;
+
 import javax.tools.JavaFileObject;
+
 import javax.tools.StandardJavaFileManager;
+
 import javax.tools.ToolProvider;
 
 import de.uni_koblenz.jgralab.Graph;
+
 import de.uni_koblenz.jgralab.GraphFactory;
+
 import de.uni_koblenz.jgralab.GraphIO;
+
 import de.uni_koblenz.jgralab.GraphIOException;
+
 import de.uni_koblenz.jgralab.ImplementationType;
+
 import de.uni_koblenz.jgralab.ProgressFunction;
-import de.uni_koblenz.jgralab.Vertex;
+
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
+
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
+
 import de.uni_koblenz.jgralab.codegenerator.EdgeCodeGenerator;
+
 import de.uni_koblenz.jgralab.codegenerator.EnumCodeGenerator;
+
 import de.uni_koblenz.jgralab.codegenerator.GraphCodeGenerator;
+
 import de.uni_koblenz.jgralab.codegenerator.GraphFactoryGenerator;
+
 import de.uni_koblenz.jgralab.codegenerator.RecordCodeGenerator;
+
 import de.uni_koblenz.jgralab.codegenerator.ReversedEdgeCodeGenerator;
+
 import de.uni_koblenz.jgralab.codegenerator.SchemaCodeGenerator;
+
 import de.uni_koblenz.jgralab.codegenerator.VertexCodeGenerator;
+
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
-import de.uni_koblenz.jgralab.impl.generic.GenericGraphFactoryImpl;
+
 import de.uni_koblenz.jgralab.schema.Attribute;
+
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+
 import de.uni_koblenz.jgralab.schema.BooleanDomain;
+
 import de.uni_koblenz.jgralab.schema.CompositeDomain;
+
 import de.uni_koblenz.jgralab.schema.Domain;
+
 import de.uni_koblenz.jgralab.schema.DoubleDomain;
+
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+
 import de.uni_koblenz.jgralab.schema.EnumDomain;
+
 import de.uni_koblenz.jgralab.schema.GraphClass;
+
 import de.uni_koblenz.jgralab.schema.IntegerDomain;
+
 import de.uni_koblenz.jgralab.schema.ListDomain;
+
 import de.uni_koblenz.jgralab.schema.LongDomain;
+
 import de.uni_koblenz.jgralab.schema.MapDomain;
+
 import de.uni_koblenz.jgralab.schema.NamedElement;
+
 import de.uni_koblenz.jgralab.schema.Package;
+
 import de.uni_koblenz.jgralab.schema.RecordDomain;
+
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
+
 import de.uni_koblenz.jgralab.schema.Schema;
+
 import de.uni_koblenz.jgralab.schema.SetDomain;
+
 import de.uni_koblenz.jgralab.schema.StringDomain;
+
 import de.uni_koblenz.jgralab.schema.VertexClass;
+
 import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
+
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
+
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
+
 import de.uni_koblenz.jgralab.schema.impl.compilation.ClassFileManager;
+
 import de.uni_koblenz.jgralab.schema.impl.compilation.InMemoryJavaSourceFile;
+
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
+
+/**
+ * @author ist@uni-koblenz.de
+ */
+
+/*
+ * JGraLab - The Java Graph Laboratory
+ * 
+ * Copyright (C) 2006-2012 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+ * 
+ * For bug reports, documentation and further information, visit
+ * 
+ *                         https://github.com/jgralab/jgralab
+ * 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
+ * 
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
+ */
+
+import de.uni_koblenz.jgralab.Vertex;
+
+import de.uni_koblenz.jgralab.impl.generic.GenericGraphFactoryImpl;
 
 /**
  * @author ist@uni-koblenz.de
@@ -111,21 +215,25 @@ public class SchemaImpl implements Schema {
 	// references. This way, when the schema gets collected, the class manager
 	// is free for collection, too.
 	private SchemaClassManager schemaClassManager = null;
-
 	public SchemaClassManager getSchemaClassManager() {
 		return schemaClassManager;
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
+	static final Class<?>[] GRAPHCLASS_CREATE_SIGNATURE = { String.class,
+			int.class, int.class };
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+	static final Class<?>[] graphClassCreateSignature = { String.class,
+			int.class, int.class };
+=======
 	static final Class<?>[] GRAPHCLASS_CREATE_SIGNATURE = {
 			ImplementationType.class, String.class, int.class, int.class };
-
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
 	/**
 	 * This is the name of the package into which the implementation classes for
 	 * this schema are generated. The impl package is child of the package for
 	 * the Schema.
 	 */
 	public static final String IMPL_PACKAGE_NAME = "impl";
-
 	/**
 	 * This is the name of the package into which the implementation classes for
 	 * this schema are generated. The impl package is child of the package for
@@ -134,98 +242,91 @@ public class SchemaImpl implements Schema {
 	public static final String IMPLSTDPACKAGENAME = "impl.std";
 	public static final String IMPLTRANSPACKAGENAME = "impl.trans";
 	public static final String IMPLDATABASEPACKAGENAME = "impl.db";
-
 	static final Class<?>[] VERTEX_CLASS_CREATE_SIGNATURE = { int.class };
-
 	/**
 	 * Toggles if the schema allows lowercase enumeration constants
 	 */
 	private boolean allowLowercaseEnumConstants = true;
-
 	private EdgeClass defaultEdgeClass;
-
 	private GraphClass defaultGraphClass;
-
 	private Package defaultPackage;
-
 	private VertexClass defaultVertexClass;
-
 	protected CodeGeneratorConfiguration config;
-
 	/**
 	 * Maps from qualified name to the {@link Domain}.
 	 */
 	private Map<String, Domain> domains = new HashMap<String, Domain>();
-
-	private DirectedAcyclicGraph<Domain> domainsDag = new DirectedAcyclicGraph<Domain>();
-
-	private boolean finished = false;
-
 	/**
 	 * Holds a reference to the {@link GraphClass} of this schema (not the
 	 * default graph class {@link GraphClass})
 	 */
 	private GraphClass graphClass;
-
+	/**
+	 * The {@link GraphFactory} for this schemas {@link GraphClass}, see {
+	 * {@link #graphClass}.
+	 */
 	/**
 	 * The name of this schema without the package prefix.
 	 */
 	private String name;
-
 	/**
 	 * The package prefix of this schema.
 	 */
 	private String packagePrefix;
-
 	/**
 	 * Maps from simple names to a set of {@link NamedElement}s which have this
 	 * simple name. Used for creation of unique names.
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
+	private Map<String, AttributedElementClass> duplicateSimpleNames = new HashMap<String, AttributedElementClass>();
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+=======
 	private Map<String, AttributedElementClass<?, ?>> duplicateSimpleNames = new HashMap<String, AttributedElementClass<?, ?>>();
-
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
 	/**
 	 * Maps from qualified name to the {@link Package} with that qualified name.
 	 */
 	private Map<String, Package> packages = new TreeMap<String, Package>();
-
 	/**
 	 * The qualified name of this schema, that is {@link #packagePrefix} DOT
 	 * {@link #name}
 	 */
 	private String qualifiedName;
-
 	/**
 	 * A set of all qualified names known to this schema.
 	 */
 	private Map<String, NamedElement> namedElements = new TreeMap<String, NamedElement>();
-
 	private BooleanDomain booleanDomain;
-
 	private DoubleDomain doubleDomain;
-
 	private IntegerDomain integerDomain;
-
 	private LongDomain longDomain;
-
 	private StringDomain stringDomain;
-
 	private static final Pattern SCHEMA_NAME_PATTERN = Pattern
 			.compile("^\\p{Upper}(\\p{Alnum}|[_])*\\p{Alnum}$");
-
 	private static final Pattern PACKAGE_PREFIX_PATTERN = Pattern
 			.compile("^\\p{Lower}\\w*(\\.\\p{Lower}\\w*)*$");
-
 	/**
 	 * Creates a new <code>Schema</code>.
-	 *
+	 * 
 	 * @param name
 	 *            Name of schema.
 	 * @param packagePrefix
 	 *            Package prefix of schema.
 	 */
 	public SchemaImpl(String name, String packagePrefix) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
+	
 		if (!SCHEMA_NAME_PATTERN.matcher(name).matches()) {
 			throwInvalidSchemaNameException();
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+		qName = qn;
+		if (qName.getPackageName().length() == 0) {
+			throw new SchemaException(
+					"package prefix of Schema must not be empty");
+=======
+		if (!SCHEMA_NAME_PATTERN.matcher(name).matches()) {
+			throwInvalidSchemaNameException();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
 		}
 
 		if (!PACKAGE_PREFIX_PATTERN.matcher(packagePrefix).matches()) {
@@ -258,7 +359,6 @@ public class SchemaImpl implements Schema {
 		defaultEdgeClass = EdgeClassImpl.createDefaultEdgeClass(this);
 		config = createDefaultConfig();
 	}
-
 	private void throwInvalidSchemaNameException() {
 		throw new InvalidNameException(
 				"Invalid schema name '"
@@ -269,7 +369,6 @@ public class SchemaImpl implements Schema {
 						+ "Any following character must be alphanumeric and/or a '_' character.\n"
 						+ "The name must end with an alphanumeric character.");
 	}
-
 	private void throwInvalidPackagePrefixNameException() {
 		throw new InvalidNameException(
 				"Invalid schema package prefix '"
@@ -281,7 +380,6 @@ public class SchemaImpl implements Schema {
 						+ "Following characters may be alphanumeric and/or '_' characters.\n"
 						+ "The last character before a '.' and the end of the line must be an alphanumeric character.");
 	}
-
 	private CodeGeneratorConfiguration createDefaultConfig() {
 		CodeGeneratorConfiguration out = new CodeGeneratorConfiguration();
 		if (java.lang.Package.getPackage(packagePrefix + ". "
@@ -300,19 +398,16 @@ public class SchemaImpl implements Schema {
 		return out;
 		// TODO: Monte, check for the other values :-)
 	}
-
 	void addDomain(Domain dom) {
 		assert !domains.containsKey(dom.getQualifiedName()) : "There already is a Domain with the qualified name: "
 				+ dom.getQualifiedName() + " in the Schema!";
 		domains.put(dom.getQualifiedName(), dom);
 	}
-
 	void addPackage(PackageImpl pkg) {
 		assert !packages.containsKey(pkg.getQualifiedName()) : "There already is a Package with the qualified name '"
 				+ pkg.getQualifiedName() + "' in the Schema!";
 		packages.put(pkg.getQualifiedName(), pkg);
 	}
-
 	void addNamedElement(NamedElement namedElement) {
 		assert !namedElements.containsKey(namedElement.getQualifiedName()) : "You are trying to add the NamedElement '"
 				+ namedElement.getQualifiedName()
@@ -324,11 +419,22 @@ public class SchemaImpl implements Schema {
 			return;
 		}
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
+		AttributedElementClass aec = (AttributedElementClass) namedElement;
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+=======
 		AttributedElementClass<?, ?> aec = (AttributedElementClass<?, ?>) namedElement;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
 
 		if (duplicateSimpleNames.containsKey(aec.getSimpleName())) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
+			AttributedElementClass other = duplicateSimpleNames.get(aec
+					.getSimpleName());
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+=======
 			AttributedElementClass<?, ?> other = duplicateSimpleNames.get(aec
 					.getSimpleName());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
 			if (other != null) {
 				((NamedElementImpl) other).changeUniqueName();
 				duplicateSimpleNames.put(aec.getSimpleName(), null);
@@ -338,17 +444,14 @@ public class SchemaImpl implements Schema {
 			duplicateSimpleNames.put(aec.getSimpleName(), aec);
 		}
 	}
-
 	@Override
 	public NamedElement getNamedElement(String qualifiedName) {
 		return namedElements.get(qualifiedName);
 	}
-
-	@Override
+	@Override @Override
 	public boolean allowsLowercaseEnumConstants() {
 		return allowLowercaseEnumConstants;
 	}
-
 	private Vector<InMemoryJavaSourceFile> createClasses(
 			CodeGeneratorConfiguration config) {
 		Vector<InMemoryJavaSourceFile> javaSources = new Vector<InMemoryJavaSourceFile>();
@@ -391,7 +494,6 @@ public class SchemaImpl implements Schema {
 
 		return javaSources;
 	}
-
 	@Override
 	public void createJAR(CodeGeneratorConfiguration config, String jarFileName)
 			throws IOException, GraphIOException {
@@ -422,7 +524,6 @@ public class SchemaImpl implements Schema {
 		}
 		deleteRecursively(schemaDir);
 	}
-
 	private void deleteRecursively(File file) {
 		if (file.isDirectory()) {
 			for (File f : file.listFiles()) {
@@ -433,7 +534,6 @@ public class SchemaImpl implements Schema {
 			file.delete();
 		}
 	}
-
 	private void compileClasses(File schemaDir) throws IOException {
 		JavaCompiler c = ToolProvider.getSystemJavaCompiler();
 		StandardJavaFileManager fileManager = c.getStandardFileManager(null,
@@ -443,7 +543,6 @@ public class SchemaImpl implements Schema {
 		c.getTask(null, fileManager, null, null, null, compilationUnits).call();
 		fileManager.close();
 	}
-
 	private List<File> getJavaFiles(File schemaDir) {
 		LinkedList<File> sources = new LinkedList<File>();
 		for (File f : schemaDir.listFiles()) {
@@ -457,7 +556,33 @@ public class SchemaImpl implements Schema {
 		}
 		return sources;
 	}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
+	@Override
+	public Vector<InMemoryJavaSourceFile> commit(CodeGeneratorConfiguration config) {
+		Vector<InMemoryJavaSourceFile> javaSources = new Vector<InMemoryJavaSourceFile>();
 
+		// generate schema class
+		CodeGenerator schemaCodeGenerator = new SchemaCodeGenerator(this,
+				packagePrefix, config);
+		javaSources.addAll(schemaCodeGenerator.createJavaSources());
+
+		// generate factory
+		CodeGenerator factoryCodeGenerator = new GraphFactoryGenerator(this,
+				packagePrefix, config);
+		javaSources.addAll(factoryCodeGenerator.createJavaSources());
+
+		// generate graph classes
+
+		if (graphClass.getQualifiedName().equals("Graph")) {
+			throw new SchemaException(
+					"The defined GraphClass must not be named Graph!");
+		}
+
+		javaSources.addAll(createClasses(config));
+		return javaSources;
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+=======
 	@Override
 	public Vector<InMemoryJavaSourceFile> commit(
 			CodeGeneratorConfiguration config) {
@@ -489,7 +614,7 @@ public class SchemaImpl implements Schema {
 		javaSources.addAll(createClasses(config));
 		return javaSources;
 	}
-
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
 	private void createFiles(CodeGeneratorConfiguration config,
 			String pathPrefix, ProgressFunction progressFunction,
 			long schemaElements, long currentCount, long interval)
@@ -563,15 +688,60 @@ public class SchemaImpl implements Schema {
 			}
 		}
 	}
-
 	@Override
 	public void commit(String pathPrefix, CodeGeneratorConfiguration config)
 			throws GraphIOException {
 		this.commit(pathPrefix, config, null);
 	}
-
 	@Override
-	public void commit(String pathPrefix, CodeGeneratorConfiguration config,
+	public
+	@Override void commit(String pathPrefix, CodeGeneratorConfiguration config,
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
+			ProgressFunction progressFunction) throws GraphIOException {
+		// progress bar for schema generation
+		// ProgressFunctionImpl pf;
+		long schemaElements = 0, currentCount = 0, interval = 1;
+		if (progressFunction != null) {
+			int elements = getNumberOfElements();
+			if (config.hasTransactionSupport()) {
+				elements *= 2;
+			}
+			progressFunction.init(elements);
+			interval = progressFunction.getUpdateInterval();
+		}
+
+		// ********************* build code **********************
+		if (!pathPrefix.endsWith(File.separator)) {
+			pathPrefix += File.separator;
+		}
+
+		// generate schema class
+		CodeGenerator schemaCodeGenerator = new SchemaCodeGenerator(this,
+				packagePrefix, config);
+		schemaCodeGenerator.createFiles(pathPrefix);
+
+		// generate factory
+		CodeGenerator factoryCodeGenerator = new GraphFactoryGenerator(this,
+				packagePrefix, config);
+		factoryCodeGenerator.createFiles(pathPrefix);
+
+		// generate graph class
+		if (graphClass.getQualifiedName().equals("Graph")) {
+			throw new SchemaException(
+					"The defined GraphClass must not be named Graph!");
+		}
+
+		createFiles(config, pathPrefix, progressFunction, schemaElements,
+				currentCount, interval);
+
+		// finish progress bar
+		if (progressFunction != null) {
+			progressFunction.finished();
+		}
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+			ProgressFunction progressFunction) throws GraphIOException 
+=======
 			ProgressFunction progressFunction) throws GraphIOException {
 		if (!finished) {
 			throw new SchemaException(
@@ -619,14 +789,32 @@ public class SchemaImpl implements Schema {
 			progressFunction.finished();
 		}
 	}
-
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
 	@Override
 	public int compareTo(Schema other) {
 		return qualifiedName.compareTo(other.getQualifiedName());
 	}
-
 	@Override
-	public void compile(CodeGeneratorConfiguration config) {
+	public
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
+	@Override void compile(CodeGeneratorConfiguration config) {
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		if (compiler == null) {
+			throw new SchemaException("Cannot compile schema " + qualifiedName
+					+ ". Most probably you use a JRE instead of a JDK. "
+					+ "The JRE does not provide a compiler.");
+
+		}
+		StandardJavaFileManager jfm = compiler.getStandardFileManager(null,
+				null, null);
+		ClassFileManager manager = new ClassFileManager(this, jfm);
+		Vector<InMemoryJavaSourceFile> javaSources = commit(config);
+		compiler.getTask(null, manager, null, null, null, javaSources).call();
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+	@Override void compile(CodeGeneratorConfiguration config) 
+=======
+	@Override void compile(CodeGeneratorConfiguration config) {
 		finish();
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		if (compiler == null) {
@@ -641,21 +829,27 @@ public class SchemaImpl implements Schema {
 		Vector<InMemoryJavaSourceFile> javaSources = commit(config);
 		compiler.getTask(null, manager, null, null, null, javaSources).call();
 	}
-
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
 	@Override
 	public Attribute createAttribute(String name, Domain dom,
-			AttributedElementClass<?, ?> aec, String defaultValueAsString) {
-		if (finished) {
-			throw new SchemaException("No changes to finished schema!");
-		}
+			AttributedElementClass aec, String defaultValueAsString) {
 		return new AttributeImpl(name, dom, aec, defaultValueAsString);
 	}
-
 	@Override
 	public EnumDomain createEnumDomain(String qualifiedName) {
 		return createEnumDomain(qualifiedName, new ArrayList<String>());
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
+	@Override
+	public EnumDomain createEnumDomain(String qualifiedName,
+			List<String> enumComponents) {
+		String[] components = splitQualifiedName(qualifiedName);
+		PackageImpl parent = (PackageImpl) createPackageWithParents(components[0]);
+		String simpleName = components[1];
+		return new EnumDomainImpl(simpleName, parent, enumComponents);
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+=======
 	@Override
 	public EnumDomain createEnumDomain(String qualifiedName,
 			List<String> enumComponents) {
@@ -668,7 +862,90 @@ public class SchemaImpl implements Schema {
 		EnumDomain ed = new EnumDomainImpl(simpleName, parent, enumComponents);
 		return ed;
 	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
+	@Override
+	public GraphClass createGraphClass(String simpleName) {
+		if (graphClass != null) {
+			throw new SchemaException(
+					"Only one GraphClass (except DefaultGraphClass) is allowed in a Schema! '"
+							+ graphClass.getQualifiedName()
+							+ "' is already there.");
+		}
 
+		if (simpleName.equals(GraphClass.DEFAULTGRAPHCLASS_NAME)) {
+			throw new InvalidNameException(
+					"A GraphClass must not be named like the default GraphClass ("
+							+ GraphClass.DEFAULTGRAPHCLASS_NAME + ")");
+		}
+
+		if (simpleName.contains(".")) {
+			throw new InvalidNameException(
+					"A GraphClass must always be in the default package!");
+		}
+		GraphClassImpl gc = new GraphClassImpl(simpleName, this);
+		gc.addSuperClass(defaultGraphClass);
+		return gc;
+	}
+
+	@Override
+	public ListDomain createListDomain(Domain baseDomain) {
+		String qn = "List<" + baseDomain.getQualifiedName() + ">";
+		if (domains.containsKey(qn)) {
+			return (ListDomain) domains.get(qn);
+		}
+		return new ListDomainImpl(this, baseDomain);
+	}
+
+	@Override
+	public MapDomain createMapDomain(Domain keyDomain, Domain valueDomain) {
+		String qn = "Map<" + keyDomain.getQualifiedName() + ", "
+				+ valueDomain.getQualifiedName() + ">";
+		if (domains.containsKey(qn)) {
+			return (MapDomain) domains.get(qn);
+		}
+		return new MapDomainImpl(this, keyDomain, valueDomain);
+	}
+
+	@Override
+	public SetDomain createSetDomain(Domain baseDomain) {
+		String qn = "Set<" + baseDomain.getQualifiedName() + ">";
+		if (domains.containsKey(qn)) {
+			return (SetDomain) domains.get(qn);
+		}
+		return new SetDomainImpl(this, baseDomain);
+	}
+
+	@Override
+	public Method getEdgeCreateMethod(String edgeClassName,
+			ImplementationType implementationType) {
+		// Edge class create method cannot be found directly by its signature
+		// because the vertex parameters are subclassed to match the to- and
+		// from-class. Those subclasses are unknown in this method. Therefore,
+		// we look for a method with correct name and 3 parameters
+		// (int, vertex, Vertex).
+		AttributedElementClass aec = getAttributedElementClass(edgeClassName);
+		if ((aec == null) || !(aec instanceof EdgeClass)) {
+			throw new SchemaException(
+					"There's no EdgeClass with qualified name " + edgeClassName
+							+ "!");
+		}
+		EdgeClass ec = (EdgeClass) aec;
+		String methodName = "create"
+				+ CodeGenerator.camelCase(ec.getUniqueName());
+		Class<?> schemaClass = getGraphClassImpl(implementationType);
+		for (Method m : schemaClass.getMethods()) {
+			if (m.getName().equals(methodName)
+					&& (m.getParameterTypes().length == 3)) {
+				return m;
+			}
+		}
+		throw new SchemaClassAccessException("can't find create method '"
+				+ methodName + "' in '" + schemaClass.getName() + "' for '"
+				+ ec.getUniqueName() + "'");
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+=======
 	@Override
 	public GraphClass createGraphClass(String simpleName) {
 		if (finished) {
@@ -696,55 +973,6 @@ public class SchemaImpl implements Schema {
 		return gc;
 	}
 
-	private BooleanDomain createBooleanDomain() {
-		if (booleanDomain != null) {
-			throw new SchemaException(
-					"The BooleanDomain for this Schema was already created!");
-		}
-		booleanDomain = new BooleanDomainImpl(this);
-		return booleanDomain;
-	}
-
-	private DoubleDomain createDoubleDomain() {
-		if (doubleDomain != null) {
-			throw new SchemaException(
-					"The DoubleDomain for this Schema was already created!");
-		}
-
-		doubleDomain = new DoubleDomainImpl(this);
-		return doubleDomain;
-	}
-
-	private IntegerDomain createIntegerDomain() {
-		if (integerDomain != null) {
-			throw new SchemaException(
-					"The IntegerDomain for this Schema was already created!");
-		}
-
-		integerDomain = new IntegerDomainImpl(this);
-		return integerDomain;
-	}
-
-	private LongDomain createLongDomain() {
-		if (longDomain != null) {
-			throw new SchemaException(
-					"The LongDomain for this Schema was already created!");
-		}
-
-		longDomain = new LongDomainImpl(this);
-		return longDomain;
-	}
-
-	private StringDomain createStringDomain() {
-		if (stringDomain != null) {
-			throw new SchemaException(
-					"The StringDomain for this Schema was already created!");
-		}
-
-		stringDomain = new StringDomainImpl(this);
-		return stringDomain;
-	}
-
 	@Override
 	public ListDomain createListDomain(Domain baseDomain) {
 		if (finished) {
@@ -770,14 +998,110 @@ public class SchemaImpl implements Schema {
 		return new MapDomainImpl(this, keyDomain, valueDomain);
 	}
 
+	@Override
+	public SetDomain createSetDomain(Domain baseDomain) {
+		if (finished) {
+			throw new SchemaException("No changes to finished schema!");
+		}
+		String qn = "Set<" + baseDomain.getQualifiedName() + ">";
+		if (domains.containsKey(qn)) {
+			return (SetDomain) domains.get(qn);
+		}
+		return new SetDomainImpl(this, baseDomain);
+	}
+
+	@Override
+	public Method getEdgeCreateMethod(String edgeClassName,
+			ImplementationType implementationType) {
+		// Edge class create method cannot be found directly by its signature
+		// because the vertex parameters are subclassed to match the to- and
+		// from-class. Those subclasses are unknown in this method. Therefore,
+		// we look for a method with correct name and 3 parameters
+		// (int, vertex, Vertex).
+		AttributedElementClass<?, ?> aec = getAttributedElementClass(edgeClassName);
+		if ((aec == null) || !(aec instanceof EdgeClass)) {
+			throw new SchemaException(
+					"There's no EdgeClass with qualified name " + edgeClassName
+							+ "!");
+		}
+		EdgeClass ec = (EdgeClass) aec;
+		String methodName = "create"
+				+ CodeGenerator.camelCase(ec.getUniqueName());
+		Class<?> schemaClass = getGraphClassImpl(implementationType);
+		if (implementationType != ImplementationType.GENERIC) {
+			for (Method m : schemaClass.getMethods()) {
+				if (m.getName().equals(methodName)
+						&& (m.getParameterTypes().length == 3)) {
+					return m;
+				}
+			}
+		} else {
+			try {
+				return schemaClass.getMethod("createEdge",
+						new Class[] { EdgeClass.class, int.class, Vertex.class,
+								Vertex.class });
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			}
+		}
+		throw new SchemaClassAccessException("can't find create method '"
+				+ methodName + "' in '" + schemaClass.getName() + "' for '"
+				+ ec.getUniqueName() + "'");
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
+	private BooleanDomain createBooleanDomain() {
+		if (booleanDomain != null) {
+			throw new SchemaException(
+					"The BooleanDomain for this Schema was already created!");
+		}
+		booleanDomain = new BooleanDomainImpl(this);
+		return booleanDomain;
+	}
+	private DoubleDomain createDoubleDomain() {
+		if (doubleDomain != null) {
+			throw new SchemaException(
+					"The DoubleDomain for this Schema was already created!");
+		}
+
+		doubleDomain = new DoubleDomainImpl(this);
+		return doubleDomain;
+	}
+	private IntegerDomain createIntegerDomain() {
+		if (integerDomain != null) {
+			throw new SchemaException(
+					"The IntegerDomain for this Schema was already created!");
+		}
+
+		integerDomain = new IntegerDomainImpl(this);
+		return integerDomain;
+	}
+	private LongDomain createLongDomain() {
+		if (longDomain != null) {
+			throw new SchemaException(
+					"The LongDomain for this Schema was already created!");
+		}
+
+		longDomain = new LongDomainImpl(this);
+		return longDomain;
+	}
+	private StringDomain createStringDomain() {
+		if (stringDomain != null) {
+			throw new SchemaException(
+					"The StringDomain for this Schema was already created!");
+		}
+
+		stringDomain = new StringDomainImpl(this);
+		return stringDomain;
+	}
 	Package createPackage(String sn, Package parentPkg) {
 		return new PackageImpl(sn, parentPkg, this);
 	}
-
 	/**
 	 * Creates a {@link Package} with given qualified name, or returns an
 	 * existing package with this qualified name.
-	 *
+	 * 
 	 * @param qn
 	 *            the qualified name of the package
 	 * @return a new {@link Package} with the given qualified name, or an
@@ -829,11 +1153,10 @@ public class SchemaImpl implements Schema {
 				+ "' is empty, but not the default package.";
 		return createPackage(pkgSimpleName, currentParent);
 	}
-
 	/**
 	 * Given a qualified name like foo.bar.baz returns a string array with two
 	 * components: the package prefix (foo.bar) and the simple name (baz).
-	 *
+	 * 
 	 * @param qualifiedName
 	 *            a qualified name
 	 * @return a string array with two components: the package prefix and the
@@ -855,12 +1178,21 @@ public class SchemaImpl implements Schema {
 		}
 		return components;
 	}
-
 	@Override
 	public RecordDomain createRecordDomain(String qualifiedName) {
 		return createRecordDomain(qualifiedName, null);
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
+	@Override
+	public RecordDomain createRecordDomain(String qualifiedName,
+			Collection<RecordComponent> recordComponents) {
+		String[] components = splitQualifiedName(qualifiedName);
+		PackageImpl parent = (PackageImpl) createPackageWithParents(components[0]);
+		String simpleName = components[1];
+		return new RecordDomainImpl(simpleName, parent, recordComponents);
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+=======
 	@Override
 	public RecordDomain createRecordDomain(String qualifiedName,
 			Collection<RecordComponent> recordComponents) {
@@ -874,32 +1206,39 @@ public class SchemaImpl implements Schema {
 				recordComponents);
 		return rd;
 	}
-
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
 	@Override
-	public SetDomain createSetDomain(Domain baseDomain) {
-		if (finished) {
-			throw new SchemaException("No changes to finished schema!");
+	public
+	@Override boolean equals(Object other) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
+		if (other == null || !(other instanceof Schema)) {
+			return false;
 		}
-		String qn = "Set<" + baseDomain.getQualifiedName() + ">";
-		if (domains.containsKey(qn)) {
-			return (SetDomain) domains.get(qn);
-		}
-		return new SetDomainImpl(this, baseDomain);
-	}
-
-	@Override
-	public boolean equals(Object other) {
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+=======
 		if ((other == null) || !(other instanceof Schema)) {
 			return false;
 		}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
 		return qualifiedName.equals(((Schema) other).getQualifiedName());
 	}
-
 	@Override
 	public int hashCode() {
 		return qualifiedName.hashCode();
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
+	@Override
+	public AttributedElementClass getAttributedElementClass(String qualifiedName) {
+		if (graphClass == null) {
+			return null;
+		} else if (graphClass.getQualifiedName().equals(qualifiedName)) {
+			return graphClass;
+		} else {
+			return graphClass.getGraphElementClass(qualifiedName);
+		}
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+=======
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends AttributedElementClass<?, ?>> T getAttributedElementClass(
@@ -912,155 +1251,179 @@ public class SchemaImpl implements Schema {
 			return (T) graphClass.getGraphElementClass(qualifiedName);
 		}
 	}
-
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
 	@Override
-	public List<CompositeDomain> getCompositeDomains() {
+	public List<CompositeDomain> getCompositeDomainsInTopologicalOrder() {
 		ArrayList<CompositeDomain> topologicalOrderList = new ArrayList<CompositeDomain>();
+		CompositeDomain cd;
+		HashSet<CompositeDomain> compositeDomainSet = new HashSet<CompositeDomain>();
 
-		for (Domain dom : domainsDag.getNodesInTopologicalOrder()) {
-			if (dom instanceof CompositeDomain) {
-				topologicalOrderList.add((CompositeDomain) dom);
+		// store composite domains in compositeDomainSet
+		for (Domain dl : domains.values()) {
+			if (dl instanceof CompositeDomain) {
+				compositeDomainSet.add((CompositeDomain) dl);
 			}
 		}
+
+		// iteratively add domains from compositeDomainSet,
+		// whose component domains already are in topologicalOrderList,
+		// to topologicalOrderList
+		// the added domains are removed from compositeDomainSet
+		while (!compositeDomainSet.isEmpty()) {
+			for (Iterator<CompositeDomain> cdit = compositeDomainSet.iterator(); cdit
+					.hasNext();) {
+				cd = cdit.next();
+				if (topologicalOrderList.containsAll(cd
+						.getAllComponentCompositeDomains())) {
+					topologicalOrderList.add(cd);
+					cdit.remove();
+				}
+			}
+		}
+
 		return topologicalOrderList;
 	}
-
 	private Method getCreateMethod(String className, String graphClassName,
 			Class<?>[] signature, ImplementationType implementationType) {
 		Class<? extends Graph> schemaClass = null;
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
+		AttributedElementClass aec = null;
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+=======
 		AttributedElementClass<?, ?> aec = null;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
 		try {
-			schemaClass = getGraphClassImpl(implementationType);
-			if (className.equals(graphClassName)) {
-				if (implementationType != ImplementationType.GENERIC) {
-					// Graph create method is in the SchemaImpl specialization
-					return getClass().getMethod("create" + graphClassName,
-							signature);
-				} else {
-					// generic case
-					return schemaClass.getMethod("createGraph", signature);
-				}
-			} else {
-				// Element create methods are in the GraphImpl specialization
-				aec = graphClass.getVertexClass(className);
+		schemaClass = getGraphClassImpl(implementationType);
+		if (className.equals(graphClassName)) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
+			return schemaClass.getMethod("create", signature);
+		} else {
+			aec = graphClass.getVertexClass(className);
+			if (aec == null) {
+				aec = graphClass.getEdgeClass(className);
 				if (aec == null) {
-					aec = graphClass.getEdgeClass(className);
-					if (aec == null) {
-						throw new SchemaClassAccessException("class "
-								+ className + " does not exist in schema");
-					}
+					throw new SchemaClassAccessException("class "
+							+ className + " does not exist in schema");
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+			return m1Class.getMethod("create", signature);
+		} else {
+			GraphClass gc = getGraphClasses().get(graphClassName);
+			VertexClass vc = gc.getVertexClass(className);
+			if (vc != null) {
+				className = vc.getQName();
+			} else {
+				EdgeClass ec = gc.getEdgeClass(className);
+				if (ec != null) {
+					className = ec.getQName();
+				} else {
+					throw new SchemaException("class "
+							+ className.getQualifiedName()
+							+ " does not exist in schema");
+=======
+			if (implementationType != ImplementationType.GENERIC) {
+				// Graph create method is in the SchemaImpl specialization
+				return getClass().getMethod("create" + graphClassName,
+						signature);
+			} else {
+				// generic case
+				return schemaClass.getMethod("createGraph", signature);
+			}
+		} else {
+			// Element create methods are in the GraphImpl specialization
+			aec = graphClass.getVertexClass(className);
+			if (aec == null) {
+				aec = graphClass.getEdgeClass(className);
+				if (aec == null) {
+					throw new SchemaClassAccessException("class "
+							+ className + " does not exist in schema");
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
 				}
-				if (implementationType != ImplementationType.GENERIC) {
-					return schemaClass.getMethod(
+			}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
+			return schemaClass
+					.getMethod(
 							"create"
 									+ CodeGenerator.camelCase(aec
 											.getUniqueName()), signature);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+			return m1Class.getMethod("create"
+					+ CodeGenerator.camelCase(className.getUniqueName()),
+					signature);
+=======
+			if (implementationType != ImplementationType.GENERIC) {
+				return schemaClass.getMethod(
+						"create"
+								+ CodeGenerator.camelCase(aec
+										.getUniqueName()), signature);
+			} else {
+				if (signature[0].equals(VertexClass.class)) {
+					return schemaClass.getMethod("createVertex", signature);
 				} else {
-					if (signature[0].equals(VertexClass.class)) {
-						return schemaClass.getMethod("createVertex", signature);
-					} else {
-						return schemaClass.getMethod("createEdge", signature);
-					}
+					return schemaClass.getMethod("createEdge", signature);
 				}
-
 			}
-		} catch (SecurityException e) {
-			throw new SchemaClassAccessException(
-					"can't find create method in '" + schemaClass.getName()
-							+ "' for '" + aec.getUniqueName() + "'", e);
-		} catch (NoSuchMethodException e) {
-			throw new SchemaClassAccessException(
-					"can't find create method in '" + schemaClass.getName()
-							+ "' for '" + aec.getUniqueName() + "'", e);
-		}
-	}
 
-	@Override
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
+		}
+	} catch (SecurityException e) {
+		throw new SchemaClassAccessException(
+				"can't find create method in '" + schemaClass.getName()
+						+ "' for '" + aec.getUniqueName() + "'", e);
+	} catch (NoSuchMethodException e) {
+		throw new SchemaClassAccessException(
+				"can't find create method in '" + schemaClass.getName()
+						+ "' for '" + aec.getUniqueName() + "'", e);
+	}
+	}
+	@Override @Override
 	public EdgeClass getDefaultEdgeClass() {
 		return defaultEdgeClass;
 	}
-
-	@Override
+	@Override @Override
 	public GraphClass getDefaultGraphClass() {
 		return defaultGraphClass;
 	}
-
 	@Override
 	public Package getDefaultPackage() {
 		return defaultPackage;
 	}
-
-	@Override
+	@Override @Override
 	public VertexClass getDefaultVertexClass() {
 		return defaultVertexClass;
 	}
-
 	@Override
 	public Domain getDomain(String domainName) {
 		return domains.get(domainName);
 	}
-
 	@Override
 	public Map<String, Domain> getDomains() {
 		return domains;
 	}
-
-	protected DirectedAcyclicGraph<Domain> getDomainsDag() {
-		return domainsDag;
-	}
-
 	@Override
-	public List<EdgeClass> getEdgeClasses() {
-		List<EdgeClass> ec_top = new ArrayList<EdgeClass>();
-		ec_top.add(defaultEdgeClass);
-		for (EdgeClass ec : graphClass.getEdgeClasses()) {
-			ec_top.add(ec);
-		}
-		return ec_top;
-	}
+	public List<EdgeClass> getEdgeClassesInTopologicalOrder() {
+		ArrayList<EdgeClass> topologicalOrderList = new ArrayList<EdgeClass>();
+		HashSet<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
 
-	@Override
-	public Method getEdgeCreateMethod(String edgeClassName,
-			ImplementationType implementationType) {
-		// Edge class create method cannot be found directly by its signature
-		// because the vertex parameters are subclassed to match the to- and
-		// from-class. Those subclasses are unknown in this method. Therefore,
-		// we look for a method with correct name and 3 parameters
-		// (int, vertex, Vertex).
-		AttributedElementClass<?, ?> aec = getAttributedElementClass(edgeClassName);
-		if ((aec == null) || !(aec instanceof EdgeClass)) {
-			throw new SchemaException(
-					"There's no EdgeClass with qualified name " + edgeClassName
-							+ "!");
-		}
-		EdgeClass ec = (EdgeClass) aec;
-		String methodName = "create"
-				+ CodeGenerator.camelCase(ec.getUniqueName());
-		Class<?> schemaClass = getGraphClassImpl(implementationType);
-		if (implementationType != ImplementationType.GENERIC) {
-			for (Method m : schemaClass.getMethods()) {
-				if (m.getName().equals(methodName)
-						&& (m.getParameterTypes().length == 3)) {
-					return m;
+		// store edge classes in edgeClassSet
+		edgeClassSet.addAll(graphClass.getEdgeClasses());
+
+		topologicalOrderList.add(defaultEdgeClass);
+		// iteratively add classes from edgeClassSet,
+		// whose superclasses already are in topologicalOrderList,
+		// to topologicalOrderList
+		// the added classes are removed from edgeClassSet
+		while (!edgeClassSet.isEmpty()) {
+			for (EdgeClass ec : edgeClassSet) {
+				if (topologicalOrderList.containsAll(ec.getAllSuperClasses())) {
+					topologicalOrderList.add(ec);
 				}
 			}
-		} else {
-			try {
-				return schemaClass.getMethod("createEdge",
-						new Class[] { EdgeClass.class, int.class, Vertex.class,
-								Vertex.class });
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				e.printStackTrace();
-			}
+			edgeClassSet.removeAll(topologicalOrderList);
 		}
-		throw new SchemaClassAccessException("can't find create method '"
-				+ methodName + "' in '" + schemaClass.getName() + "' for '"
-				+ ec.getUniqueName() + "'");
-	}
 
-	@Override
+		return topologicalOrderList;
+	}
+	@Override @Override
 	public List<EnumDomain> getEnumDomains() {
 		ArrayList<EnumDomain> enumList = new ArrayList<EnumDomain>();
 
@@ -1072,45 +1435,64 @@ public class SchemaImpl implements Schema {
 
 		return enumList;
 	}
-
 	@Override
 	public BooleanDomain getBooleanDomain() {
 		return booleanDomain;
 	}
-
 	@Override
 	public DoubleDomain getDoubleDomain() {
 		return doubleDomain;
 	}
-
 	@Override
 	public IntegerDomain getIntegerDomain() {
 		return integerDomain;
 	}
-
 	@Override
 	public LongDomain getLongDomain() {
 		return longDomain;
 	}
-
 	@Override
 	public StringDomain getStringDomain() {
 		return stringDomain;
 	}
-
 	@Override
 	public GraphClass getGraphClass() {
 		return graphClass;
 	}
-
 	/**
-	 *
+	 * 
 	 * @param implementationType
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	private Class<? extends Graph> getGraphClassImpl(
 			ImplementationType implementationType) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
+		String implClassName = packagePrefix + ".";
+		// determine package
+		switch (implementationType) {
+		case STANDARD:
+			implClassName += IMPLSTDPACKAGENAME;
+			break;
+		case TRANSACTION:
+			implClassName += IMPLTRANSPACKAGENAME;
+			break;
+		case DATABASE:
+			implClassName += IMPLDATABASEPACKAGENAME;
+		default:
+			throw new SchemaException("Implementation type "
+					+ implementationType + " not supported yet.");
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+		String implClassName = getPackageName() + "." + IMPLPACKAGENAME + "."
+				+ graphClassName.getSimpleName() + "Impl";
+		Class<? extends Graph> m1Class;
+		try {
+			m1Class = (Class<? extends Graph>) Class.forName(implClassName,
+					true, M1ClassManager.instance());
+		} catch (ClassNotFoundException e) {
+			throw new SchemaException("can't load implementation class '"
+					+ implClassName + "'", e);
+=======
 		String implClassName = packagePrefix + ".";
 		// determine package
 		switch (implementationType) {
@@ -1128,8 +1510,26 @@ public class SchemaImpl implements Schema {
 		default:
 			throw new SchemaException("Implementation type "
 					+ implementationType + " not supported yet.");
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
 		}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
+		implClassName = implClassName + "." + graphClass.getSimpleName()
+				+ "Impl";
 
+		Class<? extends Graph> schemaClass;
+		try {
+			schemaClass = (Class<? extends Graph>) Class.forName(implClassName,
+					true, SchemaClassManager.instance(qualifiedName));
+		} catch (ClassNotFoundException e) {
+			throw new SchemaClassAccessException(
+					"can't load implementation class '" + implClassName + "'",
+					e);
+		}
+		return schemaClass;
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+		return m1Class;
+=======
+	
 		Class<? extends Graph> schemaClass;
 		if (implementationType != ImplementationType.GENERIC) {
 			implClassName = implClassName + "." + graphClass.getSimpleName()
@@ -1155,43 +1555,43 @@ public class SchemaImpl implements Schema {
 								+ "'", e);
 			}
 		}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
 	}
-
+	@Override
+	public Method getGraphCreateMethod(ImplementationType implementationType) {
+		return getCreateMethod(graphClass.getSimpleName(),
+				graphClass.getSimpleName(), GRAPHCLASS_CREATE_SIGNATURE,
+				implementationType);
+	}
 	@Override
 	public String getName() {
 		return name;
 	}
-
 	/**
 	 * only used internally
-	 *
+	 * 
 	 * @return number of graphelementclasses contained in graphclass
 	 */
 	private int getNumberOfElements() {
 		return graphClass.getGraphElementClasses().size() + 1;
 	}
-
 	@Override
 	public Package getPackage(String packageName) {
 		return packages.get(packageName);
 	}
-
 	@Override
 	public String getPackagePrefix() {
 		return packagePrefix;
 	}
-
 	@Override
 	public Map<String, Package> getPackages() {
 		return packages;
 	}
-
 	@Override
 	public String getQualifiedName() {
 		return qualifiedName;
 	}
-
-	@Override
+	@Override @Override
 	public List<RecordDomain> getRecordDomains() {
 		ArrayList<RecordDomain> recordList = new ArrayList<RecordDomain>();
 
@@ -1203,17 +1603,39 @@ public class SchemaImpl implements Schema {
 
 		return recordList;
 	}
-
 	@Override
-	public List<VertexClass> getVertexClasses() {
-		List<VertexClass> vc_top = new ArrayList<VertexClass>();
-		vc_top.add(defaultVertexClass);
-		for (VertexClass vc : graphClass.getVertexClasses()) {
-			vc_top.add(vc);
-		}
-		return vc_top;
-	}
+	public List<VertexClass> getVertexClassesInTopologicalOrder() {
+		ArrayList<VertexClass> topologicalOrderList = new ArrayList<VertexClass>();
+		HashSet<VertexClass> vertexClassSet = new HashSet<VertexClass>();
 
+		// store vertex classes in vertexClassSet
+		vertexClassSet.addAll(graphClass.getVertexClasses());
+		// first only the default vertex class is in the topo list
+		topologicalOrderList.add(defaultVertexClass);
+
+		// iteratively add classes from vertexClassSet,
+		// whose superclasses already are in topologicalOrderList,
+		// to topologicalOrderList
+		// the added classes are removed from vertexClassSet
+		while (!vertexClassSet.isEmpty()) {
+			for (VertexClass vc : vertexClassSet) {
+				if (topologicalOrderList.containsAll(vc.getAllSuperClasses())) {
+					topologicalOrderList.add(vc);
+				}
+			}
+			vertexClassSet.removeAll(topologicalOrderList);
+		}
+		return topologicalOrderList;
+	}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
+	@Override
+	public Method getVertexCreateMethod(String vertexClassName,
+			ImplementationType implementationType) {
+		return getCreateMethod(vertexClassName, graphClass.getSimpleName(),
+				VERTEX_CLASS_CREATE_SIGNATURE, implementationType);
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+=======
 	@Override
 	public Method getVertexCreateMethod(String vertexClassName,
 			ImplementationType implementationType) {
@@ -1226,7 +1648,7 @@ public class SchemaImpl implements Schema {
 					implementationType);
 		}
 	}
-
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
 	@Override
 	public boolean isValidEnumConstant(String name) {
 		if (name.isEmpty()) {
@@ -1249,18 +1671,15 @@ public class SchemaImpl implements Schema {
 
 		return true;
 	}
-
 	@Override
 	public boolean knows(String qn) {
 		return (namedElements.containsKey(qn) || getQualifiedName().equals(qn));
 	}
-
-	@Override
+	@Override @Override
 	public void setAllowLowercaseEnumConstants(
 			boolean allowLowercaseEnumConstants) {
 		this.allowLowercaseEnumConstants = allowLowercaseEnumConstants;
 	}
-
 	void setGraphClass(GraphClass gc) {
 		if (graphClass != null) {
 			throw new SchemaException("There already is a GraphClass named: "
@@ -1268,7 +1687,6 @@ public class SchemaImpl implements Schema {
 		}
 		graphClass = gc;
 	}
-
 	/**
 	 * @return the textual representation of the schema with all graph classes,
 	 *         their edge and vertex classes, all attributes and the whole
@@ -1278,12 +1696,10 @@ public class SchemaImpl implements Schema {
 		return "GraphClass of schema '" + qualifiedName + "':\n\n\n"
 				+ ((GraphClassImpl) graphClass).getDescriptionString();
 	}
-
 	@Override
 	public String toString() {
 		return getQualifiedName();
 	}
-
 	@Override
 	public String toTGString() {
 		String schemaDefinition = null;
@@ -1301,17 +1717,187 @@ public class SchemaImpl implements Schema {
 		}
 		return schemaDefinition;
 	}
-
 	@Override
 	public String getFileName() {
 		return qualifiedName.replace('.', File.separatorChar);
 	}
-
 	@Override
 	public String getPathName() {
 		return packagePrefix.replace('.', File.separatorChar);
 	}
+	/**
+	 * Set flag that transaction support should be used or not.
+	 * 
+	 * @param config
+	 */
+	public void setConfiguration(CodeGeneratorConfiguration config) {
+		this.config = config;
+	}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
+	@Override
+	public Graph createGraph(ImplementationType implementationType) {
+		return createGraph(implementationType, 100, 100);
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+=======
+	@Override
+	public Graph createGraph(ImplementationType implementationType) {
+		return createGraph(implementationType, null, 100, 100);
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
+	@Override
+	public Graph createGraph(ImplementationType implementationType, int vCount,
+			int eCount) {
+		try {
+			getGraphClass().getSchemaClass();
+		} catch (SchemaClassAccessException e) {
+			switch (implementationType) {
+			case STANDARD:
+				compile(CodeGeneratorConfiguration.MINIMAL);
+				break;
+			case DATABASE:
+				compile(CodeGeneratorConfiguration.WITH_DATABASE_SUPPORT);
+				break;
+			case TRANSACTION:
+				compile(CodeGeneratorConfiguration.WITH_TRANSACTION_SUPPORT);
+				break;
+			default:
+				throw new RuntimeException(
+						"FIXME: Unexpected implementation type "
+								+ implementationType);
+			}
 
+		}
+
+		Method graphCreateMethod = getGraphCreateMethod(ImplementationType.STANDARD);
+
+		try {
+			return (Graph) graphCreateMethod.invoke(null, null, vCount, eCount);
+		} catch (Exception e) {
+			throw new SchemaException(
+					"Something failed when creating the  graph!", e);
+		}
+	}
+	// we need a hard reference here, cause the SchemaClassManager uses only
+	// weak
+	// references. This way, when the schema gets collected, the class manager
+	// is free for collection, too.
+	/**
+	 * This is the name of the package into which the implementation classes for
+	 * this schema are generated. The impl package is child of the package for
+	 * Schema.
+	 */
+	/**
+	 * Maps from qualified name to the {@link Domain}.
+	 */
+	private DirectedAcyclicGraph<Domain> domainsDag = new DirectedAcyclicGraph<Domain>();
+	private boolean finished = false;
+	/**
+	 * Holds a reference to the {@link GraphClass} of this schema (not the
+	 * default graph class {@link GraphClass})
+	 */
+	/**
+	 * The name of this schema without the package prefix.
+	 */
+	/**
+	 * The package prefix of this schema.
+	 */
+	/**
+	 * Maps from simple names to a set of {@link NamedElement}s which have this
+	 * simple name. Used for creation of unique names.
+	 */
+	/**
+	 * Maps from qualified name to the {@link Package} with that qualified name.
+	 */
+	/**
+	 * The qualified name of this schema, that is {@link #packagePrefix} DOT
+	 * {@link #name}
+	 */
+	/**
+	 * A set of all qualified names known to this schema.
+	 */
+	/**
+	 * Creates a new <code>Schema</code>.
+	 *
+	 * @param name
+	 *            Name of schema.
+	 * @param packagePrefix
+	 *            Package prefix of schema.
+	 */
+	@Override
+	public Attribute createAttribute(String name, Domain dom,
+			AttributedElementClass<?, ?> aec, String defaultValueAsString) {
+		if (finished) {
+			throw new SchemaException("No changes to finished schema!");
+		}
+		return new AttributeImpl(name, dom, aec, defaultValueAsString);
+	}
+	/**
+	 * Creates a {@link Package} with given qualified name, or returns an
+	 * existing package with this qualified name.
+	 *
+	 * @param qn
+	 *            the qualified name of the package
+	 * @return a new {@link Package} with the given qualified name, or an
+	 *         existing package with this qualified name.
+	 */
+	/**
+	 * Given a qualified name like foo.bar.baz returns a string array with two
+	 * components: the package prefix (foo.bar) and the simple name (baz).
+	 *
+	 * @param qualifiedName
+	 *            a qualified name
+	 * @return a string array with two components: the package prefix and the
+	 *         simple name
+	 */
+	@Override
+	public List<CompositeDomain> getCompositeDomains() {
+		ArrayList<CompositeDomain> topologicalOrderList = new ArrayList<CompositeDomain>();
+
+		for (Domain dom : domainsDag.getNodesInTopologicalOrder()) {
+			if (dom instanceof CompositeDomain) {
+				topologicalOrderList.add((CompositeDomain) dom);
+			}
+		}
+		return topologicalOrderList;
+	}
+	protected DirectedAcyclicGraph<Domain> getDomainsDag() {
+		return domainsDag;
+	}
+	@Override
+	public List<EdgeClass> getEdgeClasses() {
+		List<EdgeClass> ec_top = new ArrayList<EdgeClass>();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
+		topologicalOrderList.add(defaultEdgeClass);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+		defaultAggregationClass.add(defaultEdgeClass);
+=======
+		ec_top.add(defaultEdgeClass);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
+		for (EdgeClass ec : graphClass.getEdgeClasses()) {
+			ec_top.add(ec);
+		}
+		return ec_top;
+	}
+	/**
+	 *
+	 * @param implementationType
+	 * @return
+	 */
+	@Override
+	public List<VertexClass> getVertexClasses() {
+		List<VertexClass> vc_top = new ArrayList<VertexClass>();
+		vc_top.add(defaultVertexClass);
+		for (VertexClass vc : graphClass.getVertexClasses()) {
+			vc_top.add(vc);
+		}
+		return vc_top;
+	}
+	/**
+	 * @return the textual representation of the schema with all graph classes,
+	 *         their edge and vertex classes, all attributes and the whole
+	 *         hierarchy of those classes
+	 */
 	@Override
 	public GraphFactory createDefaultGraphFactory(
 			ImplementationType implementationType) {
@@ -1323,19 +1909,12 @@ public class SchemaImpl implements Schema {
 		}
 		return new GenericGraphFactoryImpl(this);
 	}
-
-	@Override
-	public Graph createGraph(ImplementationType implementationType) {
-		return createGraph(implementationType, null, 100, 100);
-	}
-
 	@Override
 	public Graph createGraph(ImplementationType implementationType, String id,
 			int vMax, int eMax) {
 		GraphFactory factory = createDefaultGraphFactory(implementationType);
 		return factory.createGraph(getGraphClass(), id, vMax, eMax);
 	}
-
 	/**
 	 * @return whether the schema is finished
 	 */
@@ -1343,7 +1922,6 @@ public class SchemaImpl implements Schema {
 	public boolean isFinished() {
 		return finished;
 	}
-
 	/**
 	 * Signals that the schema is finished. No more changes are allowed. To open
 	 * the change mode call reopen
@@ -1357,7 +1935,6 @@ public class SchemaImpl implements Schema {
 		finished = true;
 
 	}
-
 	/**
 	 * Reopens the schema to allow changes. To finish the schema again, call
 	 * finish
@@ -1370,12 +1947,10 @@ public class SchemaImpl implements Schema {
 		((GraphClassImpl) graphClass).finish();
 		finished = false;
 	}
-
 	@Override
 	public void save(String filename) throws GraphIOException {
 		GraphIO.saveSchemaToFile(this, filename);
 	}
-
 	@Override
 	public void save(DataOutputStream out) throws GraphIOException {
 		GraphIO.saveSchemaToStream(this, out);

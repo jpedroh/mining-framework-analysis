@@ -37,11 +37,13 @@
  */
 package de.uni_koblenz.jgralab.greql2.optimizer.condexp;
 
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.optimizer.OptimizerUtility;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
 import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2;
 
 /**
  * TODO: (heimdall) Comment class!
@@ -51,8 +53,8 @@ import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
  */
 public class Or extends BinaryOperator {
 
-	public Or(Formula lhs, Formula rhs) {
-		super(lhs, rhs);
+	public Or(GreqlEvaluator eval, Formula lhs, Formula rhs) {
+		super(eval, lhs, rhs);
 	}
 
 	@Override
@@ -62,7 +64,12 @@ public class Or extends BinaryOperator {
 
 	@Override
 	public Expression toExpression() {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/condexp/Or.java/left.java
 		Greql2Graph syntaxgraph = greqlEvaluator.getSyntaxGraph();
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/condexp/Or.java/base.java
+=======
+		Greql2 syntaxgraph = greqlEvaluator.getSyntaxGraph();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/condexp/Or.java/right.java
 		FunctionApplication funApp = syntaxgraph.createFunctionApplication();
 		FunctionId funId = OptimizerUtility.findOrCreateFunctionId("or",
 				syntaxgraph);
@@ -75,8 +82,9 @@ public class Or extends BinaryOperator {
 	@Override
 	protected Formula calculateReplacementFormula(Expression exp,
 			Literal literal) {
-		return new Or(leftHandSide.calculateReplacementFormula(exp, literal),
-				rightHandSide.calculateReplacementFormula(exp, literal));
+		return new Or(greqlEvaluator, leftHandSide.calculateReplacementFormula(
+				exp, literal), rightHandSide.calculateReplacementFormula(exp,
+				literal));
 	}
 
 	@Override
@@ -107,7 +115,7 @@ public class Or extends BinaryOperator {
 			return lhs;
 		}
 
-		return new Or(lhs, rhs);
+		return new Or(greqlEvaluator, lhs, rhs);
 	}
 
 	@Override

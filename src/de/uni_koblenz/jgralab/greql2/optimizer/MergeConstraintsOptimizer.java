@@ -102,6 +102,7 @@ public class MergeConstraintsOptimizer extends Optimizer {
 				syntaxgraph.createIsConstraintOf(singleConstraint, decl);
 			}
 		}
+		recreateVertexEvaluators(eval);
 		return constraintsGotMerged;
 	}
 
@@ -116,6 +117,7 @@ public class MergeConstraintsOptimizer extends Optimizer {
 	 * @param syntaxgraph
 	 * @return a conjunction of all constraints
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/MergeConstraintsOptimizer.java/left.java
 	public Expression createConjunction(List<IsConstraintOf> constraintEdges,
 			Greql2Graph syntaxgraph) {
 		if (constraintEdges.size() == 1) {
@@ -133,4 +135,35 @@ public class MergeConstraintsOptimizer extends Optimizer {
 						syntaxgraph), funApp);
 		return funApp;
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/MergeConstraintsOptimizer.java/base.java
+=======
+	public Expression createConjunction(List<IsConstraintOf> constraintEdges,
+			Greql2 syntaxgraph) {
+		if (constraintEdges.size() == 1) {
+			return constraintEdges.get(0).getAlpha();
+		}
+		FunctionApplication funApp = syntaxgraph.createFunctionApplication();
+		FunctionId funId = OptimizerUtility.findOrCreateFunctionId("and",
+				syntaxgraph);
+		syntaxgraph.createIsFunctionIdOf(funId, funApp);
+		syntaxgraph.createIsArgumentOf(constraintEdges.get(0).getAlpha(),
+				funApp);
+		syntaxgraph.createIsArgumentOf(
+				createConjunction(
+						constraintEdges.subList(1, constraintEdges.size()),
+						syntaxgraph), funApp);
+		return funApp;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/MergeConstraintsOptimizer.java/right.java
+	/**
+	 * Given a list of {@link IsConstraintOf} edges of a {@link Declaration}
+	 * create one {@link Expression} that can serve as single constraint. If the
+	 * list contains exactly one {@link IsConstraintOf} edge, return its alpha
+	 * expression. Else create AND {@link FunctionApplication}s combining all
+	 * constraints.
+	 * 
+	 * @param constraintEdges
+	 * @param syntaxgraph
+	 * @return a conjunction of all constraints
+	 */
 }

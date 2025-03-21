@@ -41,6 +41,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.TransposedPathDescription;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 
 /**
  * Evaluates a TransposedPathDescription vertex. Creates a NFA, which accepts
@@ -53,6 +54,36 @@ public class TransposedPathDescriptionEvaluator extends
 		PathDescriptionEvaluator<TransposedPathDescription> {
 
 	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TransposedPathDescriptionEvaluator.java/left.java
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TransposedPathDescriptionEvaluator.java/base.java
+	 * The IteratedPathDescription-Vertex this evaluator evaluates
+	 */
+	private TransposedPathDescription vertex;
+
+	/**
+	 * returns the vertex this VertexEvaluator evaluates
+	 */
+	@Override
+	public Vertex getVertex() {
+		return vertex;
+	}
+
+	/**
+=======
+	 * The IteratedPathDescription-Vertex this evaluator evaluates
+	 */
+	private TransposedPathDescription vertex;
+
+	/**
+	 * returns the vertex this VertexEvaluator evaluates
+	 */
+	@Override
+	public Greql2Vertex getVertex() {
+		return vertex;
+	}
+
+	/**
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TransposedPathDescriptionEvaluator.java/right.java
 	 * Creates a new TransposedPathDescriptionEvaluator for the given vertex
 	 * 
 	 * @param eval
@@ -66,6 +97,7 @@ public class TransposedPathDescriptionEvaluator extends
 	}
 
 	@Override
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TransposedPathDescriptionEvaluator.java/left.java
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
 		PathDescription p = vertex.getFirstIsTransposedPathOfIncidence(
 				EdgeDirection.IN).getAlpha();
@@ -73,6 +105,22 @@ public class TransposedPathDescriptionEvaluator extends
 				.getVertexEvaluator(p);
 		return NFA.createTransposedPathDescriptionNFA(pathEval
 				.getNFA(evaluator));
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TransposedPathDescriptionEvaluator.java/base.java
+	public JValue evaluate() throws EvaluateException {
+		PathDescription p = (PathDescription) vertex
+				.getFirstIsTransposedPathOf(EdgeDirection.IN).getAlpha();
+		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(p);
+		return new JValue(NFA.createTransposedPathDescriptionNFA(pathEval
+				.getNFA()));
+=======
+	public NFA evaluate() {
+		PathDescription p = (PathDescription) vertex
+				.getFirstIsTransposedPathOfIncidence(EdgeDirection.IN)
+				.getAlpha();
+		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) vertexEvalMarker
+				.getMark(p);
+		return NFA.createTransposedPathDescriptionNFA(pathEval.getNFA());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TransposedPathDescriptionEvaluator.java/right.java
 	}
 
 	// @Override

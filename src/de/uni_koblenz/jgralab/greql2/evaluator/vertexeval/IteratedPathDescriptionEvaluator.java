@@ -42,6 +42,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.IteratedPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.IterationType;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 
 /**
  * Evaluates an iterated path description. Creates a NFA that accepts the
@@ -54,6 +55,36 @@ public class IteratedPathDescriptionEvaluator extends
 		PathDescriptionEvaluator<IteratedPathDescription> {
 
 	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/IteratedPathDescriptionEvaluator.java/left.java
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/IteratedPathDescriptionEvaluator.java/base.java
+	 * The IteratedPathDescription-Vertex this evaluator evaluates
+	 */
+	private IteratedPathDescription vertex;
+
+	/**
+	 * returns the vertex this VertexEvaluator evaluates
+	 */
+	@Override
+	public Vertex getVertex() {
+		return vertex;
+	}
+
+	/**
+=======
+	 * The IteratedPathDescription-Vertex this evaluator evaluates
+	 */
+	private IteratedPathDescription vertex;
+
+	/**
+	 * returns the vertex this VertexEvaluator evaluates
+	 */
+	@Override
+	public Greql2Vertex getVertex() {
+		return vertex;
+	}
+
+	/**
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/IteratedPathDescriptionEvaluator.java/right.java
 	 * Creates a new IteratedPathDescriptionEvaluator for the given vertex
 	 * 
 	 * @param eval
@@ -67,15 +98,36 @@ public class IteratedPathDescriptionEvaluator extends
 	}
 
 	@Override
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/IteratedPathDescriptionEvaluator.java/left.java
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
 		PathDescription p = vertex.getFirstIsIteratedPathOfIncidence(
 				EdgeDirection.IN).getAlpha();
 		PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query
 				.getVertexEvaluator(p);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/IteratedPathDescriptionEvaluator.java/base.java
+	public JValue evaluate() throws EvaluateException {
+		PathDescription p = (PathDescription) vertex
+				.getFirstIsIteratedPathOf(EdgeDirection.IN).getAlpha();
+		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(p);
+=======
+	public NFA evaluate() {
+		PathDescription p = (PathDescription) vertex
+				.getFirstIsIteratedPathOfIncidence(EdgeDirection.IN).getAlpha();
+		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) vertexEvalMarker
+				.getMark(p);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/IteratedPathDescriptionEvaluator.java/right.java
 		NFA createdNFA = NFA.createIteratedPathDescriptionNFA(
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/IteratedPathDescriptionEvaluator.java/left.java
 				pathEval.getNFA(evaluator),
 				vertex.get_times() == IterationType.STAR);
 		return createdNFA;
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/IteratedPathDescriptionEvaluator.java/base.java
+				pathEval.getNFA(), vertex.getTimes() == "star");
+		return new JValue(createdNFA);
+=======
+				pathEval.getNFA(), vertex.get_times() == IterationType.STAR);
+		return createdNFA;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/IteratedPathDescriptionEvaluator.java/right.java
 	}
 
 	// @Override

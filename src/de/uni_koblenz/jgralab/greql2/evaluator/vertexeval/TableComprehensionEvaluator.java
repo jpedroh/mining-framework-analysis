@@ -42,15 +42,14 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
 import org.pcollections.PVector;
-
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclarationLayer;
 import de.uni_koblenz.jgralab.greql2.schema.Declaration;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsTableHeaderOf;
 import de.uni_koblenz.jgralab.greql2.schema.TableComprehension;
 import de.uni_koblenz.jgralab.greql2.types.Table;
@@ -69,14 +68,30 @@ public class TableComprehensionEvaluator extends
 
 	private VariableDeclarationLayer declarationLayer;
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/left.java
 	private VertexEvaluator<? extends Expression> columnHeaderEval = null;
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/base.java
+=======
+	private VertexEvaluator columnHeaderEval = null;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/right.java
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/left.java
 	private VertexEvaluator<? extends Expression> rowHeaderEval = null;
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/base.java
+=======
+	private VertexEvaluator rowHeaderEval = null;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/right.java
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/left.java
 	private VertexEvaluator<? extends Expression> resultDefEval = null;
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/base.java
+=======
+	private VertexEvaluator resultDefEval = null;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/right.java
 
 	private boolean initialized = false;
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/left.java
 	private void initialize(InternalGreqlEvaluator evaluator) {
 		Declaration d = vertex.getFirstIsCompDeclOfIncidence(EdgeDirection.IN)
 				.getAlpha();
@@ -96,6 +111,31 @@ public class TableComprehensionEvaluator extends
 		resultDefEval = query.getVertexEvaluator(resultDef);
 		initialized = true;
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/base.java
+	private void initialize 
+=======
+	private void initialize() {
+		Declaration d = (Declaration) vertex.getFirstIsCompDeclOfIncidence(
+				EdgeDirection.IN).getAlpha();
+		DeclarationEvaluator declEval = (DeclarationEvaluator) vertexEvalMarker
+				.getMark(d);
+		declarationLayer = (VariableDeclarationLayer) declEval.getResult();
+
+		Expression columnHeader = (Expression) vertex
+				.getFirstIsColumnHeaderExprOfIncidence(EdgeDirection.IN)
+				.getAlpha();
+		columnHeaderEval = vertexEvalMarker.getMark(columnHeader);
+		Expression rowHeader = (Expression) vertex
+				.getFirstIsRowHeaderExprOfIncidence(EdgeDirection.IN)
+				.getAlpha();
+		rowHeaderEval = vertexEvalMarker.getMark(rowHeader);
+		Expression resultDef = (Expression) vertex
+				.getFirstIsCompResultDefOfIncidence(EdgeDirection.IN)
+				.getAlpha();
+		resultDefEval = vertexEvalMarker.getMark(resultDef);
+		initialized = true;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/right.java
 
 	/**
 	 * Creates a new TableComprehensionEvaluator for the given vertex
@@ -109,22 +149,75 @@ public class TableComprehensionEvaluator extends
 		super(vertex, query);
 	}
 
-	@Override
+	@Override @Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/left.java
 		if (!initialized) {
 			initialize(evaluator);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/base.java
+		Declaration d = (Declaration) vertex.getFirstIsCompDeclOf(
+				EdgeDirection.IN).getAlpha();
+		DeclarationEvaluator declEval = (DeclarationEvaluator) greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(d);
+		VariableDeclarationLayer declLayer = null;
+		try {
+			declLayer = declEval.getResult(subgraph).toDeclarationLayer();
+		} catch (JValueInvalidTypeException exception) {
+			throw new EvaluateException("Error evaluating TableComprehension",
+					exception);
+=======
+		if (!initialized) {
+			initialize();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/right.java
 		}
 		TreeMap<Object, HashMap<Object, Object>> tableMap = new TreeMap<Object, HashMap<Object, Object>>();
 		Set<Object> completeColumnHeaderTuple = new HashSet<Object>();
 		TreeSet<Object> rowHeaderSet = new TreeSet<Object>();
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/left.java
 		declarationLayer.reset();
 		while (declarationLayer.iterate(null)) {
 			Object columnHeaderEntry = columnHeaderEval.getResult(evaluator);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/base.java
+		Expression columnHeader = (Expression) vertex
+				.getFirstIsColumnHeaderExprOf(EdgeDirection.IN).getAlpha();
+		VertexEvaluator columnHeaderEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(columnHeader);
+		Expression rowHeader = (Expression) vertex.getFirstIsRowHeaderExprOf(
+				EdgeDirection.IN).getAlpha();
+		VertexEvaluator rowHeaderEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(rowHeader);
+		Expression resultDef = (Expression) vertex.getFirstIsCompResultDefOf(
+				EdgeDirection.IN).getAlpha();
+		VertexEvaluator resultDefEval = greqlEvaluator
+				.getVertexEvaluatorGraphMarker().getMark(resultDef);
+		TreeMap<JValue, HashMap<JValue, JValue>> tableMap = new TreeMap<JValue, HashMap<JValue, JValue>>();
+		Set<JValue> completeColumnHeaderTuple = new HashSet<JValue>();
+		TreeSet<JValue> rowHeaderSet = new TreeSet<JValue>();
+
+		int noOfVarCombinations = 0;
+		while (declLayer.iterate(subgraph)) {
+			noOfVarCombinations++;
+			JValue columnHeaderEntry = columnHeaderEval.getResult(subgraph);
+=======
+		declarationLayer.reset();
+		while (declarationLayer.iterate()) {
+			Object columnHeaderEntry = columnHeaderEval.getResult();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/right.java
 			completeColumnHeaderTuple.add(columnHeaderEntry);
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/left.java
 			Object rowHeaderEntry = rowHeaderEval.getResult(evaluator);
 			Object localResult = resultDefEval.getResult(evaluator);
 			HashMap<Object, Object> row = tableMap.get(rowHeaderEntry);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/base.java
+			JValue rowHeaderEntry = rowHeaderEval.getResult(subgraph);
+			JValue localResult = resultDefEval.getResult(subgraph);
+			HashMap<JValue, JValue> row = tableMap.get(rowHeaderEntry);
+=======
+			Object rowHeaderEntry = rowHeaderEval.getResult();
+			Object localResult = resultDefEval.getResult();
+			HashMap<Object, Object> row = tableMap.get(rowHeaderEntry);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/right.java
 			if (row == null) {
 				row = new HashMap<Object, Object>();
 				tableMap.put(rowHeaderEntry, row);
@@ -144,20 +237,43 @@ public class TableComprehensionEvaluator extends
 		IsTableHeaderOf tHeader = vertex
 				.getFirstIsTableHeaderOfIncidence(EdgeDirection.IN);
 		if (tHeader != null) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/left.java
 			VertexEvaluator<? extends Expression> theval = query
 					.getVertexEvaluator(tHeader.getAlpha());
 			headerTuple = headerTuple
 					.plus((String) theval.getResult(evaluator));
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/base.java
+			VertexEvaluator theval = greqlEvaluator
+					.getVertexEvaluatorGraphMarker()
+					.getMark(tHeader.getAlpha());
+			headerTuple.add(theval.getResult(subgraph));
+=======
+			VertexEvaluator theval = vertexEvalMarker.getMark(tHeader
+					.getAlpha());
+			headerTuple = headerTuple.plus((String) theval.getResult());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/right.java
 		} else {
 			headerTuple.plus(""); // dummy entry in the upper
 			// left
 			// corner
 		}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/left.java
 		while (colIter.hasNext()) {
 			headerTuple = headerTuple.plus(colIter.next().toString());
 		}
 		resultTable = resultTable.withTitles(headerTuple);
 		Iterator<Entry<Object, HashMap<Object, Object>>> rowIter = tableMap
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/base.java
+		while (colIter.hasNext())
+			headerTuple.add(colIter.next());
+		Iterator<Entry<JValue, HashMap<JValue, JValue>>> rowIter = tableMap
+=======
+		while (colIter.hasNext()) {	
+			headerTuple = headerTuple.plus( colIter.next().toString());
+		}
+		resultTable = resultTable.withTitles(headerTuple);
+		Iterator<Entry<Object, HashMap<Object, Object>>> rowIter = tableMap
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TableComprehensionEvaluator.java/right.java
 				.entrySet().iterator();
 		while (rowIter.hasNext()) {
 			Entry<Object, HashMap<Object, Object>> currentEntry = rowIter

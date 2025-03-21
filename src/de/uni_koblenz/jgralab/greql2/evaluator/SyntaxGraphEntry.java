@@ -38,13 +38,13 @@ package de.uni_koblenz.jgralab.greql2.evaluator;
 import java.io.File;
 import java.util.logging.Logger;
 
-import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
 // TODO [greqlevaluator] readd import
 // import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Graph;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Schema;
 
 /**
  * This class is one entry in the Map from Query+CostModel+Optimizer to
@@ -202,17 +202,36 @@ public class SyntaxGraphEntry {
 	 *             contain a constructor with zero parameters.
 	 */
 	public SyntaxGraphEntry(File fileName) throws GraphIOException {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/SyntaxGraphEntry.java/left.java
 		syntaxGraph = (Greql2Graph) GraphIO
 				.loadGraphFromFileWithStandardSupport(fileName.getPath(), null);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/SyntaxGraphEntry.java/base.java
+		this.syntaxGraph = (Greql2) GraphIO.loadGraphFromFile(fileName
+				.getPath(), null);
+=======
+		syntaxGraph = Greql2Schema.instance().loadGreql2(fileName.getPath());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/SyntaxGraphEntry.java/right.java
 		Greql2Expression g2e = syntaxGraph.getFirstGreql2Expression();
 		try {
 			queryText = (String) g2e.getAttribute("_queryText");
 			String optimizerClass = (String) g2e.getAttribute("_optimizer");
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/SyntaxGraphEntry.java/left.java
 			// TODO [greqlevaluator] reenable optimizer
 			// if (!optimizerClass.isEmpty()) {
 			// optimizer = (Optimizer) Class.forName(optimizerClass)
 			// .newInstance();
 			// }
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/SyntaxGraphEntry.java/base.java
+			if (!optimizerClass.isEmpty()) {
+				this.optimizer = (Optimizer) Class.forName(optimizerClass)
+						.newInstance();
+			}
+=======
+			if (!optimizerClass.isEmpty()) {
+				optimizer = (Optimizer) Class.forName(optimizerClass)
+						.newInstance();
+			}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/SyntaxGraphEntry.java/right.java
 			String costModelClass = (String) g2e.getAttribute("_costModel");
 			if (!costModelClass.isEmpty()) {
 				costModel = (CostModel) Class.forName(costModelClass)
@@ -248,6 +267,7 @@ public class SyntaxGraphEntry {
 		Greql2Expression g2e = syntaxGraph.getFirstGreql2Expression();
 		g2e.set_queryText(queryText);
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/SyntaxGraphEntry.java/left.java
 		// TODO [greqlevaluator] reenable optimizer
 		// if (optimizer != null) {
 		// optimizerClass = optimizer.getClass().getName();
@@ -258,9 +278,34 @@ public class SyntaxGraphEntry {
 		if (costModel != null) {
 			costModelClass = costModel.getClass().getName();
 			costModelClassSimple = costModel.getClass().getSimpleName();
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/SyntaxGraphEntry.java/base.java
+			if (costModel != null) {
+				costModelClass = costModel.getClass().getName();
+				costModelClassSimple = costModel.getClass().getSimpleName();
+			}
+			g2e.setAttribute("_costModel", costModelClass);
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+=======
+		if (optimizer != null) {
+			optimizerClass = optimizer.getClass().getName();
+			optimizerClassSimple = optimizer.getClass().getSimpleName();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/SyntaxGraphEntry.java/right.java
+		}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/SyntaxGraphEntry.java/left.java
+		g2e.set_costModel(costModelClass);
+
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/SyntaxGraphEntry.java/base.java
+=======
+		g2e.set_optimizer(optimizerClass);
+
+		if (costModel != null) {
+			costModelClass = costModel.getClass().getName();
+			costModelClassSimple = costModel.getClass().getSimpleName();
 		}
 		g2e.set_costModel(costModelClass);
 
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/SyntaxGraphEntry.java/right.java
 		String fileName = directory.getPath() + File.separator
 				+ queryText.hashCode() + "-" + costModelClassSimple + "-"
 				+ optimizerClassSimple + ".tg";
@@ -289,6 +334,7 @@ public class SyntaxGraphEntry {
 		return false;
 	}
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/SyntaxGraphEntry.java/left.java
 	@Override
 	public int hashCode() {
 		return queryText.hashCode()
@@ -297,10 +343,18 @@ public class SyntaxGraphEntry {
 		// costModel.getClass().hashCode()
 		;
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/SyntaxGraphEntry.java/base.java
+=======
+	@Override
+	public int hashCode() {
+		return queryText.hashCode() + optimizer.getClass().hashCode()
+				+ costModel.getClass().hashCode();
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/SyntaxGraphEntry.java/right.java
 
 	public String getQueryText() {
-		return queryText;
-	}
+	return queryText;
+}
 
 	@Override
 	public String toString() {

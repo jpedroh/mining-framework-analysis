@@ -38,22 +38,20 @@ package de.uni_koblenz.jgralab.utilities.tg2whatever;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
-
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
 import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.Schema;
+import de.uni_koblenz.jgralab.ImplementationType;
 
 public abstract class Tg2Whatever {
 
@@ -78,6 +76,7 @@ public abstract class Tg2Whatever {
 	/**
 	 * @return the reversedEdges
 	 */
+
 	public boolean isReversedEdges() {
 		return reversedEdges;
 	}
@@ -86,6 +85,7 @@ public abstract class Tg2Whatever {
 	 * @param reversedEdges
 	 *            the reversedEdges to set
 	 */
+
 	public void setReversedEdges(boolean reversedEdges) {
 		this.reversedEdges = reversedEdges;
 	}
@@ -109,6 +109,7 @@ public abstract class Tg2Whatever {
 	 * sets the graph marker. If this is not null, only vertices and edges that
 	 * are marked with the marker will be printed to the dot-file
 	 */
+
 	public void setGraphMarker(BooleanGraphMarker m) {
 		marker = m;
 	}
@@ -116,6 +117,7 @@ public abstract class Tg2Whatever {
 	/**
 	 * toggles which schema to use for conversion
 	 */
+
 	public void setSchema(Schema s) {
 		schema = s;
 	}
@@ -123,6 +125,7 @@ public abstract class Tg2Whatever {
 	/**
 	 * toggles which schema to use for conversion
 	 */
+
 	public void setSchema(String fileName) {
 		schemaFileName = fileName;
 	}
@@ -130,6 +133,7 @@ public abstract class Tg2Whatever {
 	/**
 	 * toggles which graph to convertes
 	 */
+
 	public void setGraph(Graph g) {
 		graph = g;
 	}
@@ -137,15 +141,27 @@ public abstract class Tg2Whatever {
 	/**
 	 * loads the graph from file
 	 */
+
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/utilities/tg2whatever/Tg2Whatever.java/left.java
+	public void setGraph(String fileName) throws GraphIOException {
+		graphFileName = fileName;
+		graph = GraphIO.loadSchemaAndGraphFromFile(graphFileName,
+				CodeGeneratorConfiguration.MINIMAL,
+				new ConsoleProgressFunction("Loading"));
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/utilities/tg2whatever/Tg2Whatever.java/base.java
+=======
 	public void setGraph(String fileName) throws GraphIOException {
 		graphFileName = fileName;
 		graph = GraphIO.loadGraphFromFile(graphFileName,
 				new ConsoleProgressFunction("Loading"));
 	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/utilities/tg2whatever/Tg2Whatever.java/right.java
 
 	/**
 	 * toggles the name of the output file
 	 */
+
 	public void setOutputFile(String file) {
 		outputName = file;
 	}
@@ -155,6 +171,7 @@ public abstract class Tg2Whatever {
 	 * 
 	 * @param print
 	 */
+
 	public void setPrintRoleNames(boolean print) {
 		roleNames = print;
 	}
@@ -164,6 +181,7 @@ public abstract class Tg2Whatever {
 	 * 
 	 * @param shorten
 	 */
+
 	public void setShortenStrings(boolean shorten) {
 		shortenStrings = shorten;
 	}
@@ -173,6 +191,7 @@ public abstract class Tg2Whatever {
 	 * 
 	 * @param print
 	 */
+
 	public void setPrintEdgeAttributes(boolean print) {
 		edgeAttributes = print;
 	}
@@ -182,6 +201,7 @@ public abstract class Tg2Whatever {
 	 * 
 	 * @param print
 	 */
+
 	public void setPrintReversedEdges(boolean print) {
 		reversedEdges = print;
 	}
@@ -191,6 +211,7 @@ public abstract class Tg2Whatever {
 	 * 
 	 * @param print
 	 */
+
 	public void setPrintDomainNames(boolean print) {
 		domainNames = print;
 	}
@@ -238,6 +259,16 @@ public abstract class Tg2Whatever {
 	}
 
 	private void loadGraph() {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/utilities/tg2whatever/Tg2Whatever.java/left.java
+		try {
+			System.out.println("Loading graph from file " + graphFileName);
+			graph = GraphIO.loadGraphFromFileWithStandardSupport(graphFileName,
+					schema, new ConsoleProgressFunction("Loading"));
+			System.out.println("Graph loaded");
+		} catch (GraphIOException ex) {
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/utilities/tg2whatever/Tg2Whatever.java/base.java
+		try  catch (GraphIOException ex) {
+=======
 		try {
 			System.out.println("Loading graph from file " + graphFileName);
 			graph = GraphIO.loadGraphFromFile(graphFileName, schema,
@@ -245,6 +276,7 @@ public abstract class Tg2Whatever {
 							"Loading"));
 			System.out.println("Graph loaded");
 		} catch (GraphIOException ex) {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/utilities/tg2whatever/Tg2Whatever.java/right.java
 			System.err.println("Graph in file '" + graphFileName
 					+ "' could not be read.");
 			ex.printStackTrace();
@@ -284,6 +316,7 @@ public abstract class Tg2Whatever {
 	 * @param out
 	 *            PrintStream as output stream.
 	 */
+
 	protected abstract void graphStart(PrintStream out);
 
 	/**
@@ -292,6 +325,7 @@ public abstract class Tg2Whatever {
 	 * @param out
 	 *            PrintStream as output stream.
 	 */
+
 	protected abstract void graphEnd(PrintStream out);
 
 	/**
@@ -302,6 +336,7 @@ public abstract class Tg2Whatever {
 	 * @param v
 	 *            Vertex, which should be printed.
 	 */
+
 	protected abstract void printVertex(PrintStream out, Vertex v);
 
 	/**
@@ -312,6 +347,7 @@ public abstract class Tg2Whatever {
 	 * @param e
 	 *            Edge, which should be printed.
 	 */
+
 	protected abstract void printEdge(PrintStream out, Edge e);
 
 	/**
@@ -321,6 +357,7 @@ public abstract class Tg2Whatever {
 	 * @param s
 	 * @return
 	 */
+
 	protected abstract String stringQuote(String s);
 
 	protected void getOptions(String[] args) {
@@ -367,6 +404,7 @@ public abstract class Tg2Whatever {
 	 * @param comLine
 	 *            CommandLine object.
 	 */
+
 	protected void getAdditionalOptions(CommandLine comLine) {
 	}
 
@@ -396,6 +434,7 @@ public abstract class Tg2Whatever {
 	 * @param optionHandler
 	 *            OptionHandler object.
 	 */
+
 	protected void addAdditionalOptions(OptionHandler optionHandler) {
 	}
 
@@ -454,4 +493,78 @@ public abstract class Tg2Whatever {
 		oh.addOption(shortenStrings);
 		return oh;
 	}
+
+	/**
+	 * @return the reversedEdges
+	 */
+
+	/**
+	 * @param reversedEdges
+	 *            the reversedEdges to set
+	 */
+
+	/**
+	 * toggles which schema to use for conversion
+	 */
+
+	/**
+	 * toggles which schema to use for conversion
+	 */
+
+	/**
+	 * Is called, when graph processing is started.
+	 * 
+	 * @param out
+	 *            PrintStream as output stream.
+	 */
+
+	/**
+	 * Is called, when graph processing ends.
+	 * 
+	 * @param out
+	 *            PrintStream as output stream.
+	 */
+
+	/**
+	 * Prints a Vertex to the provided output stream.
+	 * 
+	 * @param out
+	 *            PrintStream as output stream.
+	 * @param v
+	 *            Vertex, which should be printed.
+	 */
+
+	/**
+	 * Prints a Edge to the provided output stream.
+	 * 
+	 * @param out
+	 *            PrintStream as output stream.
+	 * @param e
+	 *            Edge, which should be printed.
+	 */
+
+	/**
+	 * Replaces characters in the given string by the escape sequences that are
+	 * appropriate for the specific output format.
+	 * 
+	 * @param s
+	 * @return
+	 */
+
+	/**
+	 * This methods is a hook to get additional CommandLine options, which are
+	 * not implemented in {@link Tg2Whatever}.
+	 * 
+	 * @param comLine
+	 *            CommandLine object.
+	 */
+
+	/**
+	 * This method is a hook to provide the possibility to add additional
+	 * options to the OptionHandler for derived classes.
+	 * 
+	 * @param optionHandler
+	 *            OptionHandler object.
+	 */
+
 }

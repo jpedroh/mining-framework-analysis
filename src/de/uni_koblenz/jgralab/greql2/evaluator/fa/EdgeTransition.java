@@ -38,11 +38,17 @@ package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 import java.util.Set;
 
 import de.uni_koblenz.jgralab.Edge;
+
 import de.uni_koblenz.jgralab.Vertex;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
+
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
@@ -56,6 +62,8 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
  * @author ist@uni-koblenz.de
  * 
  */
+
+import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 public class EdgeTransition extends SimpleTransition {
 
 	/**
@@ -69,7 +77,7 @@ public class EdgeTransition extends SimpleTransition {
 	/**
 	 * returns a string which describes the edge
 	 */
-	@Override
+	@Override @Override
 	public String edgeString() {
 		String desc = "EdgeTransition";
 		// String desc = "EdgeTransition ( Dir:" + validDirection.toString() + "
@@ -139,7 +147,6 @@ public class EdgeTransition extends SimpleTransition {
 		}
 		return true;
 	}
-
 	/**
 	 * Copy-constructor, creates a copy of the given transition
 	 */
@@ -147,15 +154,13 @@ public class EdgeTransition extends SimpleTransition {
 		super(t, addToStates);
 		allowedEdgeEvaluator = t.allowedEdgeEvaluator;
 	}
-
 	/**
 	 * returns a copy of this transition
 	 */
-	@Override
+	@Override @Override
 	public Transition copy(boolean addToStates) {
 		return new EdgeTransition(this, addToStates);
 	}
-
 	/**
 	 * Creates a new transition from start state to end state. The Transition
 	 * accepts all edges that have the right direction, role, startVertexType,
@@ -185,12 +190,13 @@ public class EdgeTransition extends SimpleTransition {
 		super(start, end, dir, typeCollection, roles, predicateEval, query);
 		allowedEdgeEvaluator = edgeEval;
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
-	 */@Override
+	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/EdgeTransition.java/left.java
+@Override
 	public boolean accepts(Vertex v, Edge e, InternalGreqlEvaluator evaluator) {
 		if (!super.accepts(v, e, evaluator)) {
 			return false;
@@ -207,9 +213,70 @@ public class EdgeTransition extends SimpleTransition {
 		}
 		return true;
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/EdgeTransition.java/base.java
+=======
+@Override
+	public boolean accepts(Vertex v, Edge e) {
+		if (!super.accepts(v, e)) {
+			return false;
+		}
+		// checks if only one edge is allowed an if e is this allowed edge
+		if (allowedEdgeEvaluator != null) {
 
+			Edge allowedEdge = ((Edge) allowedEdgeEvaluator.getResult())
+					.getNormalEdge();
+			if (e.getNormalEdge() != allowedEdge) {
+				return false;
+			}
+
+		}
+		return true;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/EdgeTransition.java/right.java
 	public boolean consumedEdge() {
 		return true;
 	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * greql2.evaluator.fa.Transition#equalSymbol(greql2.evaluator.fa.EdgeTransition
+	 * )
+	 */
+	/**
+	 * Creates a new transition from start state to end state. The Transition
+	 * accepts all edges that have the right direction, role, startVertexType,
+	 * endVertexType, edgeType and even it's possible to define a specific edge.
+	 * This constructor creates a transition to accept a EdgePathDescription
+	 * 
+	 * @param start
+	 *            The state where this transition starts
+	 * @param end
+	 *            The state where this transition ends
+	 * @param dir
+	 *            The direction of the accepted edges, may be EdeDirection.IN,
+	 *            EdgeDirection.OUT or EdgeDirection.ANY
+	 * @param typeCollection
+	 *            The types which restrict the possible edges
+	 * @param roles
+	 *            The set of accepted edge role names, or null if any role is
+	 *            accepted
+	 * @param edgeEval
+	 *            If this is set, only the resulting edge of this evaluator will
+	 *            be accepted
+	 */
+	public EdgeTransition(State start, State end, AllowedEdgeDirection dir,
+			TypeCollection typeCollection, Set<String> roles,
+			VertexEvaluator edgeEval, VertexEvaluator predicateEval,
+			GraphMarker<VertexEvaluator> graphMarker) {
+		super(start, end, dir, typeCollection, roles, predicateEval,
+				graphMarker);
+		allowedEdgeEvaluator = edgeEval;
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
+	 */
 
 }

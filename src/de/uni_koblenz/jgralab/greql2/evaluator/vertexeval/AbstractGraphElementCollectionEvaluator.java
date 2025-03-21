@@ -42,8 +42,10 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeRestrOfExpression;
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 
 /**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/AbstractGraphElementCollectionEvaluator.java/left.java
  * This class is the base class for all VertexEvaluators, that construct an
  * element collection, for instance EdgeSetExpressionEvaluator. But it is not
  * the base for Forward- or BackwardVertexSetEvaluator, because these are
@@ -51,6 +53,22 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
  * 
  * @author ist@uni-koblenz.de
  * 
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/AbstractGraphElementCollectionEvaluator.java/base.java
+ * This class is the base class for all VertexEvaluators, that construct an element
+ * collection, for instance EdgeSetExpressionEvaluator. But it is not the base for 
+ * Forward- or BackwardVertexSetEvaluator, because these are PathSearchEvaluators. 
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> 
+ * Summer 2006, Diploma Thesis
+ *
+=======
+ * This class is the base class for all VertexEvaluators, that construct an
+ * element collection, for instance EdgeSetExpressionEvaluator. But it is not
+ * the base for Forward- or BackwardVertexSetEvaluator, because these are
+ * PathSearchEvaluators.
+ *
+ * @author ist@uni-koblenz.de  
+ *
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/AbstractGraphElementCollectionEvaluator.java/right.java
  */
 public abstract class AbstractGraphElementCollectionEvaluator<V extends Expression>
 		extends VertexEvaluator<V> {
@@ -68,10 +86,26 @@ public abstract class AbstractGraphElementCollectionEvaluator<V extends Expressi
 					.getFirstIsTypeRestrOfExpressionIncidence(EdgeDirection.IN);
 			while (inc != null) {
 				if (inc.getAlpha() instanceof TypeId) {
-					TypeIdEvaluator typeEval = (TypeIdEvaluator) query
-							.getVertexEvaluator(inc.getAlpha());
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/AbstractGraphElementCollectionEvaluator.java/left.java
+					TypeIdEvaluator typeEval = (TypeIdEvaluator) query.getVertexEvaluator(inc.getAlpha());
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/AbstractGraphElementCollectionEvaluator.java/base.java
+					TypeIdEvaluator typeEval = (TypeIdEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getVertexEvaluator(inc.getAlpha());
+=======
+					TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEvalMarker.getVertexEvaluator(inc.getAlpha());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/AbstractGraphElementCollectionEvaluator.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/AbstractGraphElementCollectionEvaluator.java/left.java
 					typeCollection.addTypes((TypeCollection) typeEval
 							.getResult(evaluator));
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/AbstractGraphElementCollectionEvaluator.java/base.java
+					try {
+						typeCollection.addTypes(typeEval.getResult(subgraph).toJValueTypeCollection());
+					} catch (JValueInvalidTypeException ex) {
+						throw new EvaluateException("Result of TypeId was not a JValueTypeCollection", ex);
+					}
+=======
+					typeCollection.addTypes((TypeCollection) typeEval
+							.getResult());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/AbstractGraphElementCollectionEvaluator.java/right.java
 				}
 				inc = inc
 						.getNextIsTypeRestrOfExpressionIncidence(EdgeDirection.IN);

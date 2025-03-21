@@ -94,7 +94,13 @@ public class EpsilonTransition extends Transition {
 	 * be eliminated before the pathsearch strarts
 	 */
 	@Override
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/EpsilonTransition.java/left.java
 	public boolean accepts(Vertex v, Edge e, InternalGreqlEvaluator evaluator) {
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/EpsilonTransition.java/base.java
+	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph) {
+=======
+	public boolean accepts(Vertex v, Edge e) {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/EpsilonTransition.java/right.java
 		throw new UnsupportedOperationException(
 				"EpsilonTransition.accepts(...) has been called. That should not happen, there should be no epsilon-transitions in the DFA used for path search. Check the DFA-Constructor");
 	}

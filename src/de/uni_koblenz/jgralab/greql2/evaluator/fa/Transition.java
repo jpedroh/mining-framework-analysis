@@ -175,8 +175,15 @@ public abstract class Transition {
 	 * returns true if this transition accepts the given combination of Vertex
 	 * and Edge
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/Transition.java/left.java
 	public abstract boolean accepts(Vertex v, Edge e,
 			InternalGreqlEvaluator evaluator);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/Transition.java/base.java
+	public abstract boolean accepts(Vertex v, Edge e,
+			BooleanGraphMarker subgraph);
+=======
+	public abstract boolean accepts(Vertex v, Edge e);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/Transition.java/right.java
 
 	/**
 	 * returns the vertex of the datagraph which can be visited after this

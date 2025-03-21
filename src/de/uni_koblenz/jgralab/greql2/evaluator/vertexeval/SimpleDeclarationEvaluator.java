@@ -38,14 +38,23 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import org.pcollections.PVector;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+
 import de.uni_koblenz.jgralab.JGraLab;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.VariableDeclaration;
+
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
+
 import de.uni_koblenz.jgralab.greql2.schema.IsDeclaredVarOf;
+
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeExprOf;
+
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
+
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 /**
@@ -55,6 +64,10 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
  * @author ist@uni-koblenz.de
  * 
  */
+
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 public class SimpleDeclarationEvaluator extends
 		VertexEvaluator<SimpleDeclaration> {
 
@@ -65,7 +78,6 @@ public class SimpleDeclarationEvaluator extends
 	public SimpleDeclarationEvaluator(SimpleDeclaration vertex, Query query) {
 		super(vertex, query);
 	}
-
 	/**
 	 * returns a JValueList of VariableDeclaration objects
 	 */
@@ -90,13 +102,11 @@ public class SimpleDeclarationEvaluator extends
 		}
 		return varDeclList;
 	}
-
 	// @Override
 	// public VertexCosts calculateSubtreeEvaluationCosts() {
 	// return greqlEvaluator.getCostModel().calculateCostsSimpleDeclaration(
 	// this);
 	// }
-
 	// @Override
 	// public void calculateNeededAndDefinedVariables() {
 	// neededVariables = new HashSet<Variable>();
@@ -123,5 +133,27 @@ public class SimpleDeclarationEvaluator extends
 	// return greqlEvaluator.getCostModel()
 	// .calculateCardinalitySimpleDeclaration(this);
 	// }
+	@Override
+	public Greql2Vertex getVertex() {
+		return vertex;
+	}
+	@Override
+	public PVector<VariableDeclaration> evaluate() {
+		IsTypeExprOf inc = vertex
+				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN);
+		Expression typeExpression = (Expression) inc.getAlpha();
+		VertexEvaluator exprEval = vertexEvalMarker.getMark(typeExpression);
+		PVector<VariableDeclaration> varDeclList = JGraLab.vector();
+		IsDeclaredVarOf varInc = vertex
+				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.IN);
+		while (varInc != null) {
+			VariableDeclaration varDecl = new VariableDeclaration(
+					(Variable) varInc.getAlpha(), exprEval, vertex,
+					greqlEvaluator);
+			varDeclList = varDeclList.plus(varDecl);
+			varInc = varInc.getNextIsDeclaredVarOfIncidence(EdgeDirection.IN);
+		}
+		return varDeclList;
+	}
 
 }

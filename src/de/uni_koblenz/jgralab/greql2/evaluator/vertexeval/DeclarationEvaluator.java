@@ -37,9 +37,7 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.pcollections.PVector;
-
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
@@ -50,6 +48,10 @@ import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsConstraintOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsSimpleDeclOf;
 import de.uni_koblenz.jgralab.greql2.schema.SimpleDeclaration;
+import java.util.Iterator;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
+import de.uni_koblenz.jgralab.greql2.schema.Variable;
 
 /**
  * Evaluates a Declaration vertex in the GReQL-2 Syntaxgraph
@@ -66,10 +68,10 @@ public class DeclarationEvaluator extends VertexEvaluator<Declaration> {
 	public DeclarationEvaluator(Declaration vertex, Query query) {
 		super(vertex, query);
 	}
-
 	@Override
 	public VariableDeclarationLayer evaluate(InternalGreqlEvaluator evaluator) {
 		ArrayList<VertexEvaluator<? extends Expression>> constraintList = new ArrayList<VertexEvaluator<? extends Expression>>();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/DeclarationEvaluator.java/left.java
 		for (IsConstraintOf consInc : vertex
 				.getIsConstraintOfIncidences(EdgeDirection.IN)) {
 			VertexEvaluator<? extends Expression> curEval = query
@@ -78,6 +80,17 @@ public class DeclarationEvaluator extends VertexEvaluator<Declaration> {
 				constraintList.add(curEval);
 			}
 		}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/DeclarationEvaluator.java/base.java
+=======
+		for (IsConstraintOf consInc : vertex
+				.getIsConstraintOfIncidences(EdgeDirection.IN)) {
+			VertexEvaluator curEval = vertexEvalMarker.getMark(consInc
+					.getAlpha());
+			if (curEval != null) {
+				constraintList.add(curEval);
+			}
+		}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/DeclarationEvaluator.java/right.java
 		/* create list of VariableDeclaration objects */
 		List<VariableDeclaration> varDeclList = new ArrayList<VariableDeclaration>();
 		for (IsSimpleDeclOf inc : vertex
@@ -96,7 +109,6 @@ public class DeclarationEvaluator extends VertexEvaluator<Declaration> {
 				vertex, varDeclList, constraintList);
 		return declarationLayer;
 	}
-
 	// @Override
 	// public VertexCosts calculateSubtreeEvaluationCosts() {
 	// return greqlEvaluator.getCostModel().calculateCostsDeclaration(this);
@@ -121,5 +133,50 @@ public class DeclarationEvaluator extends VertexEvaluator<Declaration> {
 	// return greqlEvaluator.getCostModel().calculateCardinalityDeclaration(
 	// this);
 	// }
+	@Override
+	public Greql2Vertex getVertex() {
+		return vertex;
+	}
+	@Override
+	public VariableDeclarationLayer evaluate() {
+		ArrayList<VertexEvaluator> constraintList = new ArrayList<VertexEvaluator>();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/DeclarationEvaluator.java/left.java
+		for (IsConstraintOf consInc : vertex
+				.getIsConstraintOfIncidences(EdgeDirection.IN)) {
+			VertexEvaluator<? extends Expression> curEval = query
+					.getVertexEvaluator(consInc.getAlpha());
+			if (curEval != null) {
+				constraintList.add(curEval);
+			}
+		}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/DeclarationEvaluator.java/base.java
+=======
+		for (IsConstraintOf consInc : vertex
+				.getIsConstraintOfIncidences(EdgeDirection.IN)) {
+			VertexEvaluator curEval = vertexEvalMarker.getMark(consInc
+					.getAlpha());
+			if (curEval != null) {
+				constraintList.add(curEval);
+			}
+		}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/DeclarationEvaluator.java/right.java
+		/* create list of VariableDeclaration objects */
+		List<VariableDeclaration> varDeclList = new ArrayList<VariableDeclaration>();
+		for (IsSimpleDeclOf inc : vertex
+				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
+			SimpleDeclaration simpleDecl = (SimpleDeclaration) inc.getAlpha();
+			SimpleDeclarationEvaluator simpleDeclEval = (SimpleDeclarationEvaluator) vertexEvalMarker
+					.getMark(simpleDecl);
+			@SuppressWarnings("unchecked")
+			PVector<VariableDeclaration> resultCollection = (PVector<VariableDeclaration>) simpleDeclEval
+					.getResult();
+			for (VariableDeclaration v : resultCollection) {
+				varDeclList.add(v);
+			}
+		}
+		VariableDeclarationLayer declarationLayer = new VariableDeclarationLayer(
+				vertex, varDeclList, constraintList);
+		return declarationLayer;
+	}
 
 }

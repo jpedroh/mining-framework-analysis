@@ -36,7 +36,50 @@
 package de.uni_koblenz.jgralab;
 
 import de.uni_koblenz.jgralab.schema.AggregationKind;
+
 import de.uni_koblenz.jgralab.schema.EdgeClass;
+
+/**
+ * represents a signed edge, has an orientation
+ * 
+ * @author ist@uni-koblenz.de
+ * 
+ */
+
+/*
+ * JGraLab - The Java Graph Laboratory
+ * 
+ * Copyright (C) 2006-2012 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+ * 
+ * For bug reports, documentation and further information, visit
+ * 
+ *                         https://github.com/jgralab/jgralab
+ * 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
+ * 
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
+ */
 
 /**
  * represents a signed edge, has an orientation
@@ -61,6 +104,36 @@ public interface Edge extends GraphElement<EdgeClass, Edge> {
 	 *            the orientation the next incidence should have
 	 * @return the next incidence object in iSeq of current vertex
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Edge.java/left.java
+	public Edge getNextIncidence(EdgeDirection orientation);
+
+	/**
+	 * Gets the next incident edge at the current vertex, which has one of
+	 * <code>kinds</code> aggregation semantics at this (
+	 * <code>thisIncidence == true</code>) or that (
+	 * <code>thisIncidence == false</code>) side.
+	 * 
+	 * If no <code>kind</code> is given, it simply returns the first incident
+	 * edge.
+	 * 
+	 * @see Vertex#getFirstIncidence(boolean, AggregationKind...)
+	 * 
+	 * @param thisIncidence
+	 *            if true, <code>kinds</code> has to match the incidence at the
+	 *            current vertex, else it has to matche the incedence at the
+	 *            opposite vertex
+	 * @param kinds
+	 *            the acceptable aggregation kinds
+	 * @return the next incident edge at the current vertex, which has one of
+	 *         <code>kinds</code> aggregation semantics at this (
+	 *         <code>thisIncidence == true</code>) or that (
+	 *         <code>thisIncidence == false</code>) side.
+	 */
+	public Edge getNextIncidence(boolean thisIncidence,
+			AggregationKind... kinds);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Edge.java/base.java
+	public Edge getNextEdge(EdgeDirection orientation);
+=======
 	public Edge getNextIncidence(EdgeDirection orientation);
 
 	/**
@@ -87,6 +160,7 @@ public interface Edge extends GraphElement<EdgeClass, Edge> {
 	 */
 	public Edge getNextIncidence(boolean thisIncidence,
 			AggregationKind... kinds);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Edge.java/right.java
 
 	/**
 	 * @param anEdgeClass
@@ -184,6 +258,104 @@ public interface Edge extends GraphElement<EdgeClass, Edge> {
 	 *         ends at
 	 */
 	public Vertex getThat();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Edge.java/left.java
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Edge.java/base.java
+
+	/**
+	 * @return the rolename of the edge at the this-vertex
+	 */
+	public String getThisRole();
+
+	/**
+	 * @return the rolename of the edge at the that-vertex
+	 */
+	public String getThatRole();
+
+	/**
+	 * @return next edge object in eSeq
+	 */
+	public Edge getNextEdgeInGraph();
+
+	/**
+	 * @param anEdgeClass
+	 * @return next edge object of anEdgeClass or its superclasses in eSeq
+	 */
+	public Edge getNextEdgeOfClassInGraph(EdgeClass anEdgeClass);
+
+	/**
+	 * @param anEdgeClass
+	 * @return next edge object of anEdgeClass or its superclasses in eSeq
+	 */
+	public Edge getNextEdgeOfClassInGraph(Class<? extends Edge> anEdgeClass);
+
+	/**
+	 * @param anEdgeClass
+	 * @param explicitType
+	 *            if true, no subclasses are returned
+	 * @return next edge object of explicit anEdgeClass in eSeq
+	 */
+	public Edge getNextEdgeOfClassInGraph(EdgeClass anEdgeClass,
+			boolean explicitType);
+
+	/**
+	 * @param anEdgeClass
+	 * @param explicitType
+	 *            if true, no subclasses are returned
+	 * @return next edge object of explicit anEdgeClass in eSeq
+	 */
+	public Edge getNextEdgeOfClassInGraph(Class<? extends Edge> anEdgeClass,
+			boolean explicitType);
+
+
+	/**
+	 * @return the alpha vertex of this edge
+	 */
+	public Vertex getAlpha();
+
+	/**
+	 * @return the omega vertex of this edge
+	 */
+	public Vertex getOmega();
+
+	/**
+	 * @param anEdge
+	 * @return true, if this edge is before anEdge in eSeq
+	 */
+	public boolean isBeforeInGraph(Edge anEdge);
+
+	/**
+	 * puts this edge before anEdge in eSeq
+	 * 
+	 * @param anEdge
+	 */
+	public void putBeforeInGraph(Edge anEdge);
+
+	/**
+	 * @param anEdge
+	 * @return true, if this edge is after anEdge in eSeq
+	 */
+	public boolean isAfterInGraph(Edge anEdge);
+
+	/**
+	 * puts this edge after anEdge in eSeq
+	 * 
+	 * @param anEdge
+	 */
+	public void putAfterInGraph(Edge anEdge);
+
+	/**
+	 * sets the id field of this edge in package 'oo' to id
+	 * 
+	 * @param id
+	 */
+	void setId(int id);
+
+	/**
+	 * removes this edge from eSeq and erases its attributes @ if used on an
+	 * incidence
+	 */
+	public void delete();
+=======
 
 	/**
 	 * sets the alpha vertex to v
@@ -305,6 +477,180 @@ public interface Edge extends GraphElement<EdgeClass, Edge> {
 	 */
 	@Override
 	public void delete();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Edge.java/right.java
+
+	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Edge.java/left.java
+	 * sets the alpha vertex to v
+	 * 
+	 * @param v
+	 *            a vertex
+	 */
+	void setAlpha(Vertex v);
+
+	/**
+	 * sets the omega vertex to v
+	 * 
+	 * @param v
+	 *            a vertex
+	 */
+	void setOmega(Vertex v);
+
+	/**
+	 * sets the this vertex to v
+	 * 
+	 * @param v
+	 *            a vertex
+	 */
+	void setThis(Vertex v);
+
+	/**
+	 * sets the that vertex to v
+	 * 
+	 * @param v
+	 *            a vertex
+	 */
+	void setThat(Vertex v);
+
+	/**
+	 * @return the rolename of the edge at the this-vertex
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Edge.java/base.java
+	 * sets the alpha vertex to v
+	 * 
+	 * @param v
+	 *            a vertex
+	 */
+	void setAlpha(Vertex v);
+
+	/**
+	 * sets the omega vertex to v
+	 * 
+	 * @param v
+	 *            a vertex
+	 */
+	void setOmega(Vertex v);
+
+	/**
+	 * sets the this vertex to v
+	 * 
+	 * @param v
+	 *            a vertex
+	 */
+	void setThis(Vertex v);
+
+	/**
+	 * sets the that vertex to v
+	 * 
+	 * @param v
+	 *            a vertex
+	 */
+	void setThat(Vertex v);
+
+	/**
+	 * puts this edge after the given edge <code>previousEdge</code> in the
+	 * incidence list of the <code>this-vertex</code> of this edge. This does
+	 * neither affect the global edge sequence eSeq nor the alpha or omega
+	 * vertices, only the order of the edges at the <code>this-vertex</code>
+	 * of this edge is changed
+=======
+	 * puts this edge immediately before the given edge <code>e</code> in the
+	 * incidence list of the <code>this-vertex</code> of this edge. This does
+	 * neither affect the global edge sequence eSeq nor the alpha or omega
+	 * vertices, only the order of the edges at the <code>this-vertex</code> of
+	 * this edge is changed.
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Edge.java/right.java
+	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Edge.java/left.java
+	public String getThisRole();
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Edge.java/base.java
+	public void putEdgeBefore(Edge nextEdge);
+=======
+	public void putIncidenceBefore(Edge e);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Edge.java/right.java
+
+	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Edge.java/left.java
+	 * @return the rolename of the edge at the that-vertex
+	 */
+	public String getThatRole();
+
+	/**
+	 * @return next edge in eSeq
+	 */
+	public Edge getNextEdge();
+
+	/**
+	 * @return previous edge in eSeq
+	 */
+	public Edge getPrevEdge();
+
+	/**
+	 * @param anEdgeClass
+	 * @return next edge of anEdgeClass or its superclasses in eSeq
+	 */
+	public Edge getNextEdge(EdgeClass anEdgeClass);
+
+	/**
+	 * @param anEdgeClass
+	 * @return next edge of anEdgeClass or its superclasses in eSeq
+	 */
+	public Edge getNextEdge(Class<? extends Edge> anEdgeClass);
+
+	/**
+	 * @return the alpha vertex of this edge
+	 */
+	public Vertex getAlpha();
+
+	/**
+	 * @return the omega vertex of this edge
+	 */
+	public Vertex getOmega();
+
+	/**
+	 * @param e
+	 * @return true if this edge is somewhere before e in the lambda sequence of
+	 *         the this-vertex
+	 */
+	public boolean isBeforeIncidence(Edge e);
+
+	/**
+	 * @param e
+	 * @return true if this edge is somewhere after e in the lambda sequence of
+	 *         the this-vertex
+	 */
+	public boolean isAfterIncidence(Edge e);
+
+	/**
+	 * @param e
+	 * @return true if this edge is somewhere before e in eSeq
+	 */
+	public boolean isBeforeEdge(Edge e);
+
+	/**
+	 * puts this edge immediately before e in eSeq
+	 * 
+	 * @param e
+	 */
+	public void putBeforeEdge(Edge e);
+
+	/**
+	 * @param e
+	 * @return true if this edge is somewhere after e in eSeq
+	 */
+	public boolean isAfterEdge(Edge e);
+
+	/**
+	 * puts this edge immediately after anEdge in eSeq
+	 * 
+	 * @param e
+	 */
+	public void putAfterEdge(Edge e);
+
+	/**
+	 * removes this edge from eSeq and erases its attributes @ if used on an
+	 * incidence
+	 */
+	public void delete();
 
 	/**
 	 * puts this edge immediately before the given edge <code>e</code> in the
@@ -312,7 +658,21 @@ public interface Edge extends GraphElement<EdgeClass, Edge> {
 	 * neither affect the global edge sequence eSeq nor the alpha or omega
 	 * vertices, only the order of the edges at the <code>this-vertex</code> of
 	 * this edge is changed.
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Edge.java/base.java
+	 * puts this edge after the given edge <code>previousEdge</code> in the
+	 * incidence list of the <code>this-vertex</code> of this edge. This does
+	 * neither affect the global edge sequence eSeq nor the alpha or omega
+	 * vertices, only the order of the edges at the <code>this-vertex</code>
+	 * of this edge is changed
+=======
+	 * puts this edge after the after given edge <code>previousEdge</code> in
+	 * the incidence list of the <code>this-vertex</code> of this edge. This
+	 * does neither affect the global edge sequence eSeq nor the alpha or omega
+	 * vertices, only the order of the edges at the <code>this-vertex</code> of
+	 * this edge is changed.
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Edge.java/right.java
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Edge.java/left.java
 	public void putIncidenceBefore(Edge e);
 
 	/**
@@ -323,6 +683,11 @@ public interface Edge extends GraphElement<EdgeClass, Edge> {
 	 * this edge is changed.
 	 */
 	public void putIncidenceAfter(Edge e);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Edge.java/base.java
+	public void putEdgeAfter(Edge previousEdge);
+=======
+	public void putIncidenceAfter(Edge e);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Edge.java/right.java
 
 	/**
 	 * returns the normal edge of this edge
@@ -339,6 +704,40 @@ public interface Edge extends GraphElement<EdgeClass, Edge> {
 	 * returns true if this edge is the "normal" edge, false otherwise
 	 */
 	public boolean isNormal();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Edge.java/left.java
+
+	/**
+	 * @return the semantics of this edge, e.g. AggregationKind.NONE, SHARED or
+	 *         COMPOSITE
+	 */
+	public AggregationKind getAggregationKind();
+
+	/**
+	 * @return the semantics of the alpha end of this edge, e.g.
+	 *         AggregationKind.NONE, SHARED or COMPOSITE
+	 */
+	public AggregationKind getAlphaAggregationKind();
+
+	/**
+	 * @return the semantics of the omega end of this edge, e.g.
+	 *         AggregationKind.NONE, SHARED or COMPOSITE
+	 */
+	public AggregationKind getOmegaAggregationKind();
+
+	/**
+	 * @return the semantics of the this end of this edge, e.g.
+	 *         AggregationKind.NONE, SHARED or COMPOSITE
+	 */
+	public AggregationKind getThisAggregationKind();
+
+	/**
+	 * @return the semantics of the that end of this edge, e.g.
+	 *         AggregationKind.NONE, SHARED or COMPOSITE
+	 */
+	public AggregationKind getThatAggregationKind();
+
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Edge.java/base.java
+=======
 
 	/**
 	 * @return the semantics of this edge, e.g. AggregationKind.NONE, SHARED or
@@ -372,4 +771,5 @@ public interface Edge extends GraphElement<EdgeClass, Edge> {
 
 	@Override
 	public EdgeClass getAttributedElementClass();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Edge.java/right.java
 }

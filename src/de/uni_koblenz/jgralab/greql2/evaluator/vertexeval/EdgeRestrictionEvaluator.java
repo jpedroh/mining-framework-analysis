@@ -37,13 +37,13 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.schema.EdgeRestriction;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.IsBooleanPredicateOfEdgeRestriction;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 import de.uni_koblenz.jgralab.greql2.schema.IsRoleIdOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsTypeIdOf;
 import de.uni_koblenz.jgralab.greql2.schema.RoleId;
@@ -51,15 +51,46 @@ import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
 
 /**
  * Evaluates an edge restriction, edges can be restricted with TypeIds and Roles
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/left.java
  * 
  * @author ist@uni-koblenz.de
  * 
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/base.java
+ * 
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * 
+=======
+ *
+ * @author ist@uni-koblenz.de
+ *
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/right.java
  */
 public class EdgeRestrictionEvaluator extends VertexEvaluator<EdgeRestriction> {
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/left.java
+	private VertexEvaluator<? extends Expression> predicateEvaluator = null;
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/base.java
+	private VertexEvaluator<? extends Expression> predicateEvaluator = null;
+=======
 	private VertexEvaluator<? extends Expression> predicateEvaluator = null;
 
+	private VertexEvaluator predicateEvaluator = null;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/left.java
 	public VertexEvaluator<? extends Expression> getPredicateEvaluator() {
+		return predicateEvaluator;
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/base.java
+	@Override
+	public Vertex getVertex() {
+		return vertex;
+=======
+	@Override
+	public Greql2Vertex getVertex() {
+		return vertex;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/right.java
+	}
+
+	public VertexEvaluator getPredicateEvaluator() {
 		return predicateEvaluator;
 	}
 
@@ -72,9 +103,17 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator<EdgeRestriction> {
 	 * Returns the typeCollection
 	 */
 	public TypeCollection getTypeCollection(InternalGreqlEvaluator evaluator) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/left.java
 		if (typeCollection == null) {
 			evaluate(evaluator);
 		}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/base.java
+		if (typeCollection == null) evaluate();
+=======
+		if (typeCollection == null) {
+			evaluate();
+		}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/right.java
 		return typeCollection;
 	}
 
@@ -92,7 +131,7 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator<EdgeRestriction> {
 
 	/**
 	 * creates a new EdgeRestriction evaluator
-	 * 
+	 *
 	 * @param vertex
 	 * @param eval
 	 */
@@ -110,26 +149,55 @@ public class EdgeRestrictionEvaluator extends VertexEvaluator<EdgeRestriction> {
 			IsTypeIdOf typeInc = vertex
 					.getFirstIsTypeIdOfIncidence(EdgeDirection.IN);
 			while (typeInc != null) {
-				TypeIdEvaluator typeEval = (TypeIdEvaluator) query
-						.getVertexEvaluator(typeInc.getAlpha());
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/left.java
+				TypeIdEvaluator typeEval = (TypeIdEvaluator) query.getVertexEvaluator(typeInc.getAlpha());
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/base.java
+				TypeIdEvaluator typeEval = (TypeIdEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getVertexEvaluator(typeInc.getAlpha());
+=======
+				TypeIdEvaluator typeEval = (TypeIdEvaluator) vertexEvalMarker.getVertexEvaluator(typeInc.getAlpha());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/left.java
 				typeCollection.addTypes((TypeCollection) typeEval
 						.getResult(evaluator));
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/base.java
+				try {
+				//	GreqlEvaluator.println("Adding types: " + typeEval.getResult(subgraph).toJValueTypeCollection());
+					typeCollection.addTypes(typeEval.getResult(subgraph).toJValueTypeCollection());
+				} catch (JValueInvalidTypeException ex) {
+					throw new EvaluateException("Result of TypeId was not a JValueTypeCollection", ex);
+				}
+=======
+				typeCollection.addTypes((TypeCollection) typeEval.getResult());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/right.java
 				typeInc = typeInc.getNextIsTypeIdOfIncidence(EdgeDirection.IN);
 			}
 		}
 
 		if (vertex.getFirstIsRoleIdOfIncidence() != null) {
 			validRoles = new HashSet<String>();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/left.java
 			for (IsRoleIdOf e : vertex.getIsRoleIdOfIncidences()) {
 				RoleId role = e.getAlpha();
 				validRoles.add(role.get_name());
 			}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/base.java
+=======
+			for (IsRoleIdOf e : vertex.getIsRoleIdOfIncidences()) {
+				RoleId role = (RoleId) e.getAlpha();
+				validRoles.add(role.get_name());
+			}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/right.java
 		}
-		IsBooleanPredicateOfEdgeRestriction predInc = vertex
-				.getFirstIsBooleanPredicateOfEdgeRestrictionIncidence(EdgeDirection.IN);
+		IsBooleanPredicateOfEdgeRestriction predInc = vertex.getFirstIsBooleanPredicateOfEdgeRestrictionIncidence(EdgeDirection.IN);
 		if (predInc != null) {
 			// System.out.println("Found a BooleanPredicateOfEdge");
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/left.java
 			predicateEvaluator = query.getVertexEvaluator(predInc.getAlpha());
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/base.java
+			predicateEvaluator = ;
+=======
+			predicateEvaluator = vertexEvalMarker.getMark(predInc.getAlpha());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeRestrictionEvaluator.java/right.java
 		}
 		return null;
 	}

@@ -38,9 +38,13 @@ package de.uni_koblenz.jgralab.greql2.evaluator.fa;
 import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.Edge;
+
 import de.uni_koblenz.jgralab.Vertex;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+
 import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
 
 public class IntermediateVertexTransition extends Transition {
@@ -50,12 +54,11 @@ public class IntermediateVertexTransition extends Transition {
 	 * the result of this VertexEvaluator
 	 */
 	public VertexEvaluator<?> intermediateVertexEvaluator;
-
 	/**
 	 * returns true if this transition and the given transition t accept the
 	 * same edges
 	 */
-	@Override
+	@Override @Override
 	public boolean equalSymbol(Transition t) {
 		if (!(t instanceof IntermediateVertexTransition)) {
 			return false;
@@ -66,7 +69,6 @@ public class IntermediateVertexTransition extends Transition {
 		}
 		return true;
 	}
-
 	/**
 	 * creates a new transition, which accepts a intermediate vertex
 	 * 
@@ -82,7 +84,6 @@ public class IntermediateVertexTransition extends Transition {
 		super(start, end);
 		intermediateVertexEvaluator = intermediateVertices;
 	}
-
 	/**
 	 * Copy-constructor, creates a copy of the given transition
 	 */
@@ -91,15 +92,13 @@ public class IntermediateVertexTransition extends Transition {
 		super(t, addToStates);
 		intermediateVertexEvaluator = t.intermediateVertexEvaluator;
 	}
-
 	/**
 	 * returns a copy of this transition
 	 */
-	@Override
+	@Override @Override
 	public Transition copy(boolean addToStates) {
 		return new IntermediateVertexTransition(this, addToStates);
 	}
-
 	/**
 	 * Checks if the transition is an epsilon-transition
 	 * 
@@ -109,23 +108,23 @@ public class IntermediateVertexTransition extends Transition {
 	public boolean isEpsilon() {
 		return false;
 	}
-
 	/**
 	 * returns a string which describes the edge
 	 */
-	@Override
+	@Override @Override
 	public String edgeString() {
 		String desc = "IndermediateVertexTransition";
 		return desc;
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
 	 */
 	@Override
-	public boolean accepts(Vertex v, Edge e, InternalGreqlEvaluator evaluator) {
+	public
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/IntermediateVertexTransition.java/left.java
+	@Override boolean accepts(Vertex v, Edge e, InternalGreqlEvaluator evaluator) {
 		// checks if a intermediateVertexExpression exists and if the end-vertex
 		// of e is part of the result of this expression
 
@@ -142,7 +141,27 @@ public class IntermediateVertexTransition extends Transition {
 		}
 		return false;
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/IntermediateVertexTransition.java/base.java
+	@Override boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph) 
+=======
+	@Override boolean accepts(Vertex v, Edge e) {
+		// checks if a intermediateVertexExpression exists and if the end-vertex
+		// of e is part of the result of this expression
 
+		if (intermediateVertexEvaluator != null) {
+			Object tempRes = intermediateVertexEvaluator.getResult();
+			if (tempRes instanceof PCollection) {
+				@SuppressWarnings("unchecked")
+				PCollection<Vertex> intermediateVertices = (PCollection<Vertex>) tempRes;
+				return intermediateVertices.contains(v);
+			} else {
+				Vertex intermediateVertex = (Vertex) tempRes;
+				return v == intermediateVertex;
+			}
+		}
+		return false;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/IntermediateVertexTransition.java/right.java
 	/**
 	 * returns the vertex of the datagraph which can be visited after this
 	 * transition has fired. This is the vertex itself
@@ -151,16 +170,28 @@ public class IntermediateVertexTransition extends Transition {
 	public Vertex getNextVertex(Vertex v, Edge e) {
 		return v;
 	}
-
 	@Override
 	public String prettyPrint() {
 		return "IntermediateVertex "
 				+ GreqlSerializer.serializeVertex(intermediateVertexEvaluator
 						.getVertex());
 	}
-
 	@Override
 	public boolean consumesEdge() {
 		return false;
 	}
+	/**
+	 * this transition may only fire, if the end-vertex of the edge e is part of
+	 * the result of this VertexEvaluator
+	 */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
+	 */
+	/**
+	 * returns the vertex of the datagraph which can be visited after this
+	 * transition has fired. This is the vertex itself
+	 */
+
 }

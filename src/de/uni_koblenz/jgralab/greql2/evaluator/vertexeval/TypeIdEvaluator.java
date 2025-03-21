@@ -36,13 +36,19 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import java.util.ArrayList;
+
 import java.util.List;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+
 import de.uni_koblenz.jgralab.greql2.exception.UnknownTypeException;
+
 import de.uni_koblenz.jgralab.greql2.schema.TypeId;
+
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
+
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
@@ -51,6 +57,8 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * @author ist@uni-koblenz.de
  * 
  */
+
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 
 	public TypeIdEvaluator(TypeId vertex, Query query) {
@@ -64,6 +72,7 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 	 *            the schema of the datagraph
 	 * @return the generated list of types
 	 */
+
 	protected List<AttributedElementClass> createTypeList(
 			InternalGreqlEvaluator evaluator) {
 
@@ -71,7 +80,12 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 		AttributedElementClass elemClass = evaluator
 				.getAttributedElementClass(vertex.get_name());
 		if (elemClass == null) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TypeIdEvaluator.java/left.java
 			elemClass = evaluator.getKnownType(vertex.get_name());
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TypeIdEvaluator.java/base.java
+=======
+			elemClass = greqlEvaluator.getKnownType(vertex.get_name());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TypeIdEvaluator.java/right.java
 			if (elemClass == null) {
 				throw new UnknownTypeException(vertex.get_name(),
 						createPossibleSourcePositions());
@@ -93,15 +107,81 @@ public class TypeIdEvaluator extends VertexEvaluator<TypeId> {
 	}
 
 	// @Override
+
 	// public VertexCosts calculateSubtreeEvaluationCosts() {
+
 	// return greqlEvaluator.getCostModel().calculateCostsTypeId(this);
-	// }
-	//
-	// @Override
-	// public double calculateEstimatedSelectivity() {
-	// return greqlEvaluator.getCostModel().calculateSelectivityTypeId(this);
+
 	// }
 
+	//
+
+	// @Override
+
+	// public double calculateEstimatedSelectivity() {
+
+	// return greqlEvaluator.getCostModel().calculateSelectivityTypeId(this);
+
+	// }
+
+	@Override
+	public Greql2Vertex getVertex() {
+		return vertex;
+	}
+
+	/**
+	 * Creates a list of types from this TypeId-Vertex
+	 * 
+	 * @param schema
+	 *            the schema of the datagraph
+	 * @return the generated list of types
+	 */
+
+	protected List<AttributedElementClass<?, ?>> createTypeList(Schema schema) {
+
+		ArrayList<AttributedElementClass<?, ?>> returnTypes = new ArrayList<AttributedElementClass<?, ?>>();
+		AttributedElementClass<?, ?> elemClass = schema
+				.getAttributedElementClass(vertex.get_name());
+		if (elemClass == null) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TypeIdEvaluator.java/left.java
+			elemClass = evaluator.getKnownType(vertex.get_name());
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TypeIdEvaluator.java/base.java
+=======
+			elemClass = greqlEvaluator.getKnownType(vertex.get_name());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TypeIdEvaluator.java/right.java
+			if (elemClass == null) {
+				throw new UnknownTypeException(vertex.get_name(),
+						createPossibleSourcePositions());
+			} else {
+				vertex.set_name(elemClass.getQualifiedName());
+			}
+		}
+		returnTypes.add(elemClass);
+		if (!vertex.is_type()) {
+			returnTypes.addAll(elemClass.getAllSubClasses());
+		}
+		return returnTypes;
+	}
+
+	@Override
+	public Object evaluate() {
+		List<AttributedElementClass<?, ?>> typeList = createTypeList(greqlEvaluator
+				.getDatagraph().getSchema());
+		return new TypeCollection(typeList, vertex.is_excluded());
+	}
+
+	@Override
+	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
+		return greqlEvaluator.getCostModel().calculateCostsTypeId(this,
+				graphSize);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#
+	 * getLoggingName()
+	 */
 	@Override
 	public String getLoggingName() {
 		StringBuilder name = new StringBuilder();

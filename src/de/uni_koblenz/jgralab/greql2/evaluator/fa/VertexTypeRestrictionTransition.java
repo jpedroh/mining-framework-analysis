@@ -55,13 +55,17 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 * The type collection that toggles which types are accepted and which are
 	 * not
 	 */
+	/**
+	 * The type collection that toggles which types are accepted and which are
+	 * not
+	 */
 	private final TypeCollection typeCollection;
 
 	/**
 	 * returns true if this transition and the given transition t accept the
 	 * same edges
 	 */
-	@Override
+	@Override @Override
 	public boolean equalSymbol(Transition t) {
 		if (!(t instanceof VertexTypeRestrictionTransition)) {
 			return false;
@@ -102,7 +106,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	/**
 	 * returns a copy of this transition
 	 */
-	@Override
+	@Override @Override
 	public Transition copy(boolean addToStates) {
 		return new VertexTypeRestrictionTransition(this, addToStates);
 	}
@@ -120,7 +124,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 	/**
 	 * returns a string which describes the edge
 	 */
-	@Override
+	@Override @Override
 	public String edgeString() {
 		String desc = "VertexRestrictinTransition";
 		return desc;
@@ -136,8 +140,24 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 *            the current vertex
 	 * @return true if the transition can fire with e, false otherwise
 	 */
-	@Override
+	/**
+	 * Checks if the transition can fire with the vertex as input, this means,
+	 * no edge will be traversed but its only checked if this transition accepts
+	 * the given vertex, this is needed to check things like
+	 * startVertexRestriction etc
+	 * 
+	 * @param v
+	 *            the current vertex
+	 * @return true if the transition can fire with e, false otherwise
+	 */
+	@Override @Override
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/VertexTypeRestrictionTransition.java/left.java
 	public boolean accepts(Vertex v, Edge e, InternalGreqlEvaluator evaluator) {
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/VertexTypeRestrictionTransition.java/base.java
+	public boolean accepts(Vertex v, Edge e, BooleanGraphMarker subgraph) {
+=======
+	public boolean accepts(Vertex v, Edge e) {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/VertexTypeRestrictionTransition.java/right.java
 		VertexClass vertexClass = v.getAttributedElementClass();
 		if (!typeCollection.acceptsType(vertexClass)) {
 			return false;
@@ -149,11 +169,29 @@ public class VertexTypeRestrictionTransition extends Transition {
 	 * returns the vertex of the datagraph which can be visited after this
 	 * transition has fired. This is the vertex itself
 	 */
+	/**
+	 * returns the vertex of the datagraph which can be visited after this
+	 * transition has fired. This is the vertex itself
+	 */
 	@Override
 	public Vertex getNextVertex(Vertex v, Edge e) {
 		return v;
 	}
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/VertexTypeRestrictionTransition.java/left.java
+	@Override
+	public String prettyPrint() {
+		StringBuilder b = new StringBuilder();
+		String delim = "";
+		for (AttributedElementClass c : typeCollection.getAllowedTypes()) {
+			b.append(delim);
+			b.append(c.getSimpleName());
+			delim = ",";
+		}
+		return "&{" + b + "}";
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/VertexTypeRestrictionTransition.java/base.java
+=======
 	@Override
 	public String prettyPrint() {
 		StringBuilder b = new StringBuilder();
@@ -165,6 +203,7 @@ public class VertexTypeRestrictionTransition extends Transition {
 		}
 		return "&{" + b + "}";
 	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/fa/VertexTypeRestrictionTransition.java/right.java
 
 	@Override
 	public boolean consumesEdge() {

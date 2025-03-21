@@ -38,11 +38,17 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import org.pcollections.PSet;
 
 import de.uni_koblenz.jgralab.Edge;
+
 import de.uni_koblenz.jgralab.JGraLab;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+
 import de.uni_koblenz.jgralab.greql2.schema.EdgeSetExpression;
+
 import de.uni_koblenz.jgralab.greql2.types.TypeCollection;
+
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 
 /**
@@ -51,6 +57,10 @@ import de.uni_koblenz.jgralab.schema.AttributedElementClass;
  * @author ist@uni-koblenz.de
  * 
  */
+
+import de.uni_koblenz.jgralab.Graph;
+
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 public class EdgeSetExpressionEvaluator extends
 		ElementSetExpressionEvaluator<EdgeSetExpression> {
 
@@ -67,7 +77,9 @@ public class EdgeSetExpressionEvaluator extends
 	}
 
 	@Override
-	public PSet<Edge> evaluate(InternalGreqlEvaluator evaluator) {
+	public
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeSetExpressionEvaluator.java/left.java
+	@Override PSet<Edge> evaluate(InternalGreqlEvaluator evaluator) {
 		// create the resulting set
 		PSet<Edge> resultSet = JGraLab.set();
 		Edge currentEdge = query.getQueryGraph().getFirstEdge();
@@ -82,17 +94,46 @@ public class EdgeSetExpressionEvaluator extends
 		}
 		return resultSet;
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeSetExpressionEvaluator.java/base.java
+	@Override PSet<Edge> evaluate 
+=======
+	@Override PSet<Edge> evaluate() {
+		Graph datagraph = greqlEvaluator.getDatagraph();
+		// create the resulting set
+		PSet<Edge> resultSet = JGraLab.set();
+		Edge currentEdge = datagraph.getFirstEdge();
+		TypeCollection typeCollection = getTypeCollection();
+		while (currentEdge != null) {
+			EdgeClass edgeClass = currentEdge.getAttributedElementClass();
+			if (typeCollection.acceptsType(edgeClass)) {
+				resultSet = resultSet.plus(currentEdge);
+			}
+			currentEdge = currentEdge.getNextEdge();
+		}
+		return resultSet;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/EdgeSetExpressionEvaluator.java/right.java
 
 	// @Override
+
 	// public VertexCosts calculateSubtreeEvaluationCosts() {
+
 	// return greqlEvaluator.getCostModel().calculateCostsEdgeSetExpression(
+
 	// this);
+
 	// }
+
 	//
+
 	// @Override
+
 	// public long calculateEstimatedCardinality() {
+
 	// return greqlEvaluator.getCostModel()
+
 	// .calculateCardinalityEdgeSetExpression(this);
+
 	// }
 
 }

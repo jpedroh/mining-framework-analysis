@@ -104,12 +104,34 @@ public interface CostModel {
 	public VertexCosts calculateCostsBackwardVertexSet(
 			BackwardVertexSetEvaluator e);
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/left.java
 	public VertexCosts calculateCostsListComprehension(ComprehensionEvaluator e);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/base.java
+	public VertexCosts calculateCostsBagComprehension(
+			BagComprehensionEvaluator e, GraphSize graphSize);
+
+	public VertexCosts calculateCostsBagConstruction(
+			BagConstructionEvaluator e, GraphSize graphSize);
+=======
+	public VertexCosts calculateCostsListComprehension(ComprehensionEvaluator e,
+			GraphSize graphSize);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/right.java
 
 	public VertexCosts calculateCostsConditionalExpression(
 			ConditionalExpressionEvaluator e);
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/left.java
 	public VertexCosts calculateCostsDeclaration(DeclarationEvaluator e);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/base.java
+	public VertexCosts calculateCostsDeclaration(DeclarationEvaluator e,
+			GraphSize graphSize);
+
+	public VertexCosts calculateCostsDefinition(DefinitionEvaluator e,
+			GraphSize graphSize);
+=======
+	public VertexCosts calculateCostsDeclaration(DeclarationEvaluator e,
+			GraphSize graphSize);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/right.java
 
 	public VertexCosts calculateCostsEdgePathDescription(
 			EdgePathDescriptionEvaluator e);
@@ -117,7 +139,16 @@ public interface CostModel {
 	public VertexCosts calculateCostsEdgeRestriction(EdgeRestrictionEvaluator e);
 
 	public VertexCosts calculateCostsEdgeSetExpression(
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/left.java
 			EdgeSetExpressionEvaluator e);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/base.java
+			EdgeSetExpressionEvaluator e, GraphSize graphSize);
+
+	public VertexCosts calculateCostsEdgeSubgraphExpression(
+			EdgeSubgraphExpressionEvaluator e, GraphSize graphSize);
+=======
+			EdgeSetExpressionEvaluator e, GraphSize graphSize);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/right.java
 
 	public VertexCosts calculateCostsExponentiatedPathDescription(
 			ExponentiatedPathDescriptionEvaluator e);
@@ -135,7 +166,16 @@ public interface CostModel {
 			IntermediateVertexPathDescriptionEvaluator e);
 
 	public VertexCosts calculateCostsIteratedPathDescription(
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/left.java
 			IteratedPathDescriptionEvaluator e);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/base.java
+			IteratedPathDescriptionEvaluator e, GraphSize graphSize);
+
+	public VertexCosts calculateCostsLetExpression(LetExpressionEvaluator e,
+			GraphSize graphSize);
+=======
+			IteratedPathDescriptionEvaluator e, GraphSize graphSize);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/right.java
 
 	public VertexCosts calculateCostsListConstruction(
 			ListConstructionEvaluator e);
@@ -154,8 +194,21 @@ public interface CostModel {
 	public VertexCosts calculateCostsRecordConstruction(
 			RecordConstructionEvaluator e);
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/left.java
 	public VertexCosts calculateCostsRecordElement(RecordElementEvaluator e);
 
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/base.java
+	public VertexCosts calculateCostsRecordElement(RecordElementEvaluator e,
+			GraphSize graphSize);
+
+	public VertexCosts calculateCostsRestrictedExpression(
+			RestrictedExpressionEvaluator e, GraphSize graphSize);
+
+=======
+	public VertexCosts calculateCostsRecordElement(RecordElementEvaluator e,
+			GraphSize graphSize);
+
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/right.java
 	public VertexCosts calculateCostsSequentialPathDescription(
 			SequentialPathDescriptionEvaluator e);
 
@@ -168,10 +221,19 @@ public interface CostModel {
 			SimpleDeclarationEvaluator e);
 
 	public VertexCosts calculateCostsSimplePathDescription(
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/left.java
 			SimplePathDescriptionEvaluator e);
 
 	public VertexCosts calculateCostsAggregationPathDescription(
 			AggregationPathDescriptionEvaluator e);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/base.java
+			SimplePathDescriptionEvaluator e, GraphSize graphSize);
+=======
+			SimplePathDescriptionEvaluator e, GraphSize graphSize);
+
+	public VertexCosts calculateCostsAggregationPathDescription(
+			AggregationPathDescriptionEvaluator e, GraphSize graphSize);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/right.java
 
 	public VertexCosts calculateCostsTableComprehension(
 			TableComprehensionEvaluator e);
@@ -195,8 +257,22 @@ public interface CostModel {
 	public VertexCosts calculateCostsVariable(VariableEvaluator e);
 
 	public VertexCosts calculateCostsVertexSetExpression(
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/left.java
 			VertexSetExpressionEvaluator e);
 
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/base.java
+			VertexSetExpressionEvaluator e, GraphSize graphSize);
+
+	public VertexCosts calculateCostsVertexSubgraphExpression(
+			VertexSubgraphExpressionEvaluator e, GraphSize graphSize);
+
+	public VertexCosts calculateCostsWhereExpression(
+			WhereExpressionEvaluator e, GraphSize graphSize);
+
+=======
+			VertexSetExpressionEvaluator e, GraphSize graphSize);
+
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/right.java
 	/*
 	 * The methods to calculate the cardinality
 	 */
@@ -204,7 +280,18 @@ public interface CostModel {
 	public long calculateCardinalityBackwardVertexSet(
 			BackwardVertexSetEvaluator e);
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/left.java
 	public long calculateCardinalityListComprehension(ComprehensionEvaluator e);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/base.java
+	public long calculateCardinalityBagComprehension(
+			BagComprehensionEvaluator e, GraphSize graphSize);
+
+	public long calculateCardinalityBagConstruction(BagConstructionEvaluator e,
+			GraphSize graphSize);
+=======
+	public long calculateCardinalityListComprehension(ComprehensionEvaluator e,
+			GraphSize graphSize);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/right.java
 
 	public long calculateCardinalityConditionalExpression(
 			ConditionalExpressionEvaluator e);
@@ -214,7 +301,19 @@ public interface CostModel {
 	public long calculateCardinalityEdgeSetExpression(
 			EdgeSetExpressionEvaluator e);
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/left.java
 	public long calculateCardinalityForwardVertexSet(ForwardVertexSetEvaluator e);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/base.java
+	public long calculateCardinalityEdgeSubgraphExpression(
+			EdgeSubgraphExpressionEvaluator e, GraphSize graphSize);
+
+	public long calculateCardinalityForwardVertexSet(
+			ForwardVertexSetEvaluator e, GraphSize graphSize);
+=======
+
+	public long calculateCardinalityForwardVertexSet(
+			ForwardVertexSetEvaluator e, GraphSize graphSize);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/right.java
 
 	public long calculateCardinalityFunctionApplication(
 			FunctionApplicationEvaluator e);
@@ -241,7 +340,17 @@ public interface CostModel {
 			TupleConstructionEvaluator e);
 
 	public long calculateCardinalityVertexSetExpression(
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/left.java
 			VertexSetExpressionEvaluator e);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/base.java
+			VertexSetExpressionEvaluator e, GraphSize graphSize);
+
+	public long calculateCardinalityVertexSubgraphExpression(
+			VertexSubgraphExpressionEvaluator e, GraphSize graphSize);
+=======
+			VertexSetExpressionEvaluator e, GraphSize graphSize);
+
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/right.java
 
 	/*
 	 * The methods to calculate the selectivity
@@ -254,18 +363,58 @@ public interface CostModel {
 
 	public double calculateSelectivityTypeId(TypeIdEvaluator e);
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/left.java
 	public long calculateVariableAssignments(VariableEvaluator e);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/base.java
+	/*
+	 * The methods to calculate the size of the expected subgraph
+	 */
+=======
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/right.java
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/left.java
 	public VertexCosts calculateCostsMapConstruction(
 			MapConstructionEvaluator mapConstructionEvaluator);
 
 	public long calculateCardinalityMapConstruction(
 			MapConstructionEvaluator mapConstructionEvaluator);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/base.java
+	public GraphSize calculateVertexSubgraphSize(
+			VertexSubgraphExpressionEvaluator e, GraphSize graphSize);
 
+	public GraphSize calculateEdgeSubgraphSize(
+			EdgeSubgraphExpressionEvaluator e, GraphSize graphSize);
+=======
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/right.java
+
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/left.java
 	public VertexCosts calculateCostsMapComprehension(
 			MapComprehensionEvaluator mapComprehensionEvaluator);
 
 	public long calculateCardinalityMapComprehension(
 			MapComprehensionEvaluator mapComprehensionEvaluator);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/base.java
+	public long calculateVariableAssignments(VariableEvaluator e,
+			GraphSize graphSize);
+=======
+	public long calculateVariableAssignments(VariableEvaluator e,
+			GraphSize graphSize);
+
+	public VertexCosts calculateCostsMapConstruction(
+			MapConstructionEvaluator mapConstructionEvaluator,
+			GraphSize graphSize);
+
+	public long calculateCardinalityMapConstruction(
+			MapConstructionEvaluator mapConstructionEvaluator,
+			GraphSize graphSize);
+
+	public VertexCosts calculateCostsMapComprehension(
+			MapComprehensionEvaluator mapComprehensionEvaluator,
+			GraphSize graphSize);
+
+	public long calculateCardinalityMapComprehension(
+			MapComprehensionEvaluator mapComprehensionEvaluator,
+			GraphSize graphSize);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/costmodel/CostModel.java/right.java
 
 }

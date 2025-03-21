@@ -50,6 +50,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluatorImpl;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
+import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 import de.uni_koblenz.jgralab.greql2.exception.QuerySourceException;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Aggregation;
 import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
@@ -59,9 +60,19 @@ import de.uni_koblenz.jgralab.greql2.schema.Variable;
 /**
  * This is the base class for all VertexEvaluators which evaluate the vertices
  * in the GReQL Syntaxgraph
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexEvaluator.java/left.java
  * 
  * @author ist@uni-koblenz.de TODO [greqlrenovation] Check when GlobalVariable
  *         must be set in evaluator
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexEvaluator.java/base.java
+ * 
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * 
+=======
+ *
+ * @author ist@uni-koblenz.de
+ *
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexEvaluator.java/right.java
  */
 public abstract class VertexEvaluator<V extends Greql2Vertex> {
 
@@ -88,51 +99,87 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	protected Query query;
 
 	// /**
+
 	// * The costs for the current evaluation of the whole subtree in the
+
 	// abstract
+
 	// * measurement unit "interpretation steps"
+
 	// */
+
 	// protected long currentSubtreeEvaluationCosts = Long.MIN_VALUE;
+
 	//
+
 	// /**
+
 	// * The costs for the evaluation of the whole subtree for the first time
+
 	// */
+
 	// protected long initialSubtreeEvaluationCosts = Long.MIN_VALUE;
+
 	//
+
 	// /**
+
 	// * The costs for <b>one</b> evaluation of this vertex _without_ the costs
+
 	// of
+
 	// * the evaluation of the subtrees
+
 	// */
+
 	// protected long ownEvaluationCosts = Long.MIN_VALUE;
+
 	//
+
 	// /**
+
 	// * The costs for all evaluations of this vertex for all variable
+
 	// * combinations <b>without</b> the costs for the subtree evaluation
+
 	// */
+
 	// protected long iteratedEvaluationCosts = Long.MIN_VALUE;
 
 	// /**
+
 	// * The expected cardinality of the evaluation result this evaluator
+
 	// creates
+
 	// */
+
 	// protected long estimatedCardinality = Long.MIN_VALUE;
+
 	//
+
 	// /**
+
 	// * The expected selectivity of this vertexevaluator
+
 	// */
+
 	// protected double estimatedSelectivity = Double.NaN;
 
 	/**
 	 * The set of variables this vertex depends on
 	 */
+
 	protected Set<Variable> neededVariables = null;
 
 	/**
 	 * The set of variables this vertex defines and that are valid in all
 	 * subgraphs
 	 */
+
 	protected Set<Variable> definedVariables = null;
+
+	protected GraphMarker<VertexEvaluator> vertexEvalMarker = null;
 
 	/**
 	 * @param eval
@@ -140,17 +187,34 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	 * @param query
 	 *            the {@link Query} this {@link VertexEvaluator} belongs to
 	 */
+
 	protected VertexEvaluator(V vertex, Query query) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexEvaluator.java/left.java
 		this.vertex = vertex;
 		this.query = query;
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexEvaluator.java/base.java
+		greqlEvaluator = eval;
+		graph = eval.getDatagraph();
+		evaluationLogger = eval.getEvaluationLogger();
+=======
+		greqlEvaluator = eval;
+		graph = eval.getDatagraph();
+		vertexEvalMarker = eval.getVertexEvaluatorGraphMarker();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexEvaluator.java/right.java
 	}
 
 	/**
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
+
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexEvaluator.java/left.java
 	public V getVertex() {
 		return vertex;
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexEvaluator.java/base.java
+=======
+	public abstract Greql2Vertex getVertex();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexEvaluator.java/right.java
 
 	/**
 	 * @return the name of the associated {@link Greql2Vertex} used for logging.
@@ -159,15 +223,18 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	 *         control. For example {@link FunctionApplicationEvaluator}s use
 	 *         the function name of the corresponding function for logging.
 	 */
+
 	public String getLoggingName() {
 		return getVertex().getAttributedElementClass().getSimpleName();
 	}
 
 	/**
 	 * Gets the result of the evaluation of this vertex on the given subgraph
-	 * 
+	 *
 	 * @return the evaluation result
 	 */
+
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexEvaluator.java/left.java
 	public Object getResult(InternalGreqlEvaluator evaluator) {
 		Object result = evaluator.getLocalEvaluationResult(vertex);
 		if (result != null) {
@@ -192,11 +259,37 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 
 		return result;
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexEvaluator.java/base.java
+=======
+	public Object getResult() {
+		if (result != null) {
+			return result;
+		}
+
+		// System.out.println("Evaluating : " + this);
+		try {
+			result = evaluate();
+			// System.out.println("VertexEvaluator.getResult() " + result
+			// + " of vertex " + getVertex());
+		} catch (QuerySourceException ex) {
+			removeInvalidSourcePosition(ex);
+			throw ex;
+		}
+
+		// System.out.println("Evaluating : " + this + " finished");
+		// System.out.println("Result is: " + result);
+
+		greqlEvaluator.progress(ownEvaluationCosts);
+
+		return result;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexEvaluator.java/right.java
 
 	/**
 	 * @return true, if this expression has already been evaluated, useful
 	 *         mostly for debugging
 	 */
+
 	public boolean isEvaluated(InternalGreqlEvaluator evaluator) {
 		return (evaluator.getLocalEvaluationResult(vertex) != null);
 	}
@@ -205,22 +298,26 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	 * this method does the evaluation. It must be implemented by concrete
 	 * evaluators
 	 */
+
 	public abstract Object evaluate(InternalGreqlEvaluator evaluator);
 
 	/**
 	 * clears the evaluation result
 	 */
+
 	public final void clear(InternalGreqlEvaluator evaluator) {
 		evaluator.removeLocalEvaluationResult(vertex);
 	}
 
 	// TODO [greqlrenovation] handleResult
+
 	/**
 	 * resets the VertexEvaluators internal state (evaluation result, costs,
 	 * etc) to the initial one, that means, sets all variables of this
 	 * vertexevaluator to values, that it is in the same state like it was
 	 * directly after creation
 	 */
+
 	@Deprecated
 	public void resetToInitialState() {
 		// result = null;
@@ -233,6 +330,7 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	}
 
 	// TODO [greqlrenovation] handleResult
+
 	@Deprecated
 	public void resetSubtreeToInitialState() {
 		// resetToInitialState();
@@ -248,10 +346,11 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	/**
 	 * This method must be overwritten by every subclass. It should call the
 	 * right method of the GreqlEvaluators costmodel.
-	 * 
+	 *
 	 * @return a 3-Tupel (ownCosts, iteratedCosts, subtreeCosts) of costs the
 	 *         evaluation of the subtree with this vertex as root causes
 	 */
+
 	// protected abstract VertexCosts calculateSubtreeEvaluationCosts();
 
 	/**
@@ -259,10 +358,11 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	 * cost differ from the initialEvaluationCosts, because only for the first
 	 * evaluation, the result really gets evaluated, for all other evaluations,
 	 * the evaluated result only gets copied, these costs are 1
-	 * 
+	 *
 	 * @return the costs of this evaluation of the subtree the vertex this
 	 *         evaluator evaluates is root of
 	 */
+
 	public long getCurrentSubtreeEvaluationCosts() {
 		// if (currentSubtreeEvaluationCosts == Long.MIN_VALUE) {
 		// return getInitialSubtreeEvaluationCosts();
@@ -276,10 +376,11 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	 * Calculates the costs the first evaluation of the subtree causes. These
 	 * cost differ from the second "evaluation", because for the second one, the
 	 * already evaluated result only gets copied, these costs are 1
-	 * 
+	 *
 	 * @return the costs of the first evaluation of the subgraph the vertex this
 	 *         evaluator evaluates is root of
 	 */
+
 	public long getInitialSubtreeEvaluationCosts() {
 		// if (initialSubtreeEvaluationCosts > 0) {
 		// return initialSubtreeEvaluationCosts;
@@ -297,13 +398,14 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	/**
 	 * Get the costs for evaluating the associated vertex one time. No subtree
 	 * or iteration costs are taken into account.
-	 * 
+	 *
 	 * @param graphSize
 	 *            a {@link GraphSize} object indicating the size of the data-
 	 *            {@link Graph}
 	 * @return the costs for evaluating the associated vertex one time excluding
 	 *         subtree and iteration costs
 	 */
+
 	public long getOwnEvaluationCosts() {
 		// if (ownEvaluationCosts == Long.MIN_VALUE) {
 		// // call for side-effects
@@ -316,13 +418,20 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	/**
 	 * calculate the set of needed and defined variables
 	 */
+
 	public void calculateNeededAndDefinedVariables() {
 		neededVariables = new HashSet<Variable>();
 		definedVariables = new HashSet<Variable>();
 		Edge inc = getVertex().getFirstIncidence(EdgeDirection.IN);
 		while (inc != null) {
-			VertexEvaluator<?> veval = query
-					.getVertexEvaluator((Greql2Vertex) inc.getAlpha());
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexEvaluator.java/left.java
+			VertexEvaluator<?> veval = query.getVertexEvaluator((Greql2Vertex) inc.getAlpha());
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexEvaluator.java/base.java
+			VertexEvaluator<?> veval = greqlEvaluator
+					.getVertexEvaluatorGraphMarker().getVertexEvaluator((Greql2Vertex) inc.getAlpha());
+=======
+			VertexEvaluator<?> veval = vertexEvalMarker.getVertexEvaluator((Greql2Vertex) inc.getAlpha());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/VertexEvaluator.java/right.java
 			if (veval != null) {
 				neededVariables.addAll(veval.getNeededVariables());
 				definedVariables.addAll(veval.getDefinedVariables());
@@ -337,9 +446,10 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 
 	/**
 	 * Calculates the set of variables this vertex depends on
-	 * 
+	 *
 	 * @return the set of variables this vertex depends on
 	 */
+
 	public Set<Variable> getNeededVariables() {
 		if (neededVariables == null) {
 			calculateNeededAndDefinedVariables();
@@ -351,9 +461,10 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	 * Calculates the set of variables this vertex (or even a vertex in a
 	 * subgraph) defines and that is valid in the whole subtree with this vertex
 	 * as head.
-	 * 
+	 *
 	 * @return the set of variables this vertex defines and that are valid
 	 */
+
 	public Set<Variable> getDefinedVariables() {
 		if (definedVariables == null) {
 			calculateNeededAndDefinedVariables();
@@ -365,6 +476,7 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 	 * Returns the number of combinations of the variables this vertex depends
 	 * on
 	 */
+
 	public long getVariableCombinations() {
 		// int combinations = 1;
 		// Iterator<Variable> iter = getNeededVariables().iterator();
@@ -377,6 +489,16 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 		// return combinations;
 		return 0;
 	}
+
+	protected void setVertexEvalMarker(GraphMarker<VertexEvaluator> marker) {
+		vertexEvalMarker = marker;
+	}
+
+	public GraphMarker<VertexEvaluator> getVertexEvalMarker() {
+		return vertexEvalMarker;
+	}
+
+	public abstract Object evaluate();
 
 	/**
 	 * returns the estimated size of the result.
@@ -516,7 +638,7 @@ public abstract class VertexEvaluator<V extends Greql2Vertex> {
 					GreqlEvaluatorImpl.class };
 			Class<?> evalClass = Class.forName(evalName);
 			Constructor<?> constructor = evalClass.getConstructor(argsClass);
-			@SuppressWarnings("unchecked")
+			
 			VertexEvaluator<V> vertexEval = (VertexEvaluator<V>) constructor
 					.newInstance(vertex, eval);
 			return vertexEval;

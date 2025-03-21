@@ -38,8 +38,16 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.JGraLab;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
+
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
 import de.uni_koblenz.jgralab.greql2.schema.SetComprehension;
 
 /**
@@ -49,7 +57,13 @@ import de.uni_koblenz.jgralab.greql2.schema.SetComprehension;
  * 
  */
 public class SetComprehensionEvaluator extends
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SetComprehensionEvaluator.java/left.java
 		ComprehensionEvaluator<SetComprehension> {
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SetComprehensionEvaluator.java/base.java
+		VertexEvaluator {
+=======
+		ComprehensionEvaluator {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SetComprehensionEvaluator.java/right.java
 
 	/**
 	 * Creates a new SetComprehensionEvaluator for the given vertex
@@ -62,11 +76,20 @@ public class SetComprehensionEvaluator extends
 	public SetComprehensionEvaluator(SetComprehension vertex, Query query) {
 		super(vertex, query);
 	}
-
 	@Override
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SetComprehensionEvaluator.java/left.java
 	protected PCollection<Object> getResultDatastructure(
 			InternalGreqlEvaluator evaluator) {
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SetComprehensionEvaluator.java/base.java
+	protected PCollection<Object> getResultDatastructure {
+=======
+	protected PCollection<Object> getResultDatastructure() {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SetComprehensionEvaluator.java/right.java
 		return JGraLab.set();
+	}
+	@Override
+	public SetComprehension getVertex() {
+		return vertex;
 	}
 
 	// @Override

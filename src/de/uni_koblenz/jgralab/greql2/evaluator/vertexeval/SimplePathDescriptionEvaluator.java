@@ -63,6 +63,7 @@ public class SimplePathDescriptionEvaluator extends
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
 		TypeCollection typeCollection = new TypeCollection();
 		EdgeRestrictionEvaluator edgeRestEval = null;
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SimplePathDescriptionEvaluator.java/left.java
 		VertexEvaluator<? extends Expression> predicateEvaluator = null;
 		for (IsEdgeRestrOf inc : vertex
 				.getIsEdgeRestrOfIncidences(EdgeDirection.IN)) {
@@ -70,11 +71,33 @@ public class SimplePathDescriptionEvaluator extends
 					.getVertexEvaluator(inc.getAlpha());
 			typeCollection.addTypes(edgeRestEval.getTypeCollection(evaluator));
 			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SimplePathDescriptionEvaluator.java/base.java
+		if (inc != null) {
+			edgeRestEval = (EdgeRestrictionEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(inc.getAlpha());
+			typeCollection.addTypes(edgeRestEval.getTypeCollection());
+=======
+		VertexEvaluator predicateEvaluator = null;
+		for (IsEdgeRestrOf inc : vertex
+				.getIsEdgeRestrOfIncidences(EdgeDirection.IN)) {
+			edgeRestEval = (EdgeRestrictionEvaluator) vertexEvalMarker
+					.getMark(inc.getAlpha());
+			typeCollection.addTypes(edgeRestEval.getTypeCollection());
+			predicateEvaluator = edgeRestEval.getPredicateEvaluator();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SimplePathDescriptionEvaluator.java/right.java
 		}
 		createdNFA = NFA.createSimplePathDescriptionNFA(
 				getEdgeDirection(vertex), typeCollection,
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SimplePathDescriptionEvaluator.java/left.java
 				getEdgeRoles(edgeRestEval), predicateEvaluator, query);
 		return createdNFA;
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SimplePathDescriptionEvaluator.java/base.java
+				getEdgeRole(edgeRestEval));
+		return new JValue(createdNFA);
+=======
+				getEdgeRoles(edgeRestEval), predicateEvaluator,
+				vertexEvalMarker);
+		return createdNFA;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SimplePathDescriptionEvaluator.java/right.java
 	}
 
 	// @Override

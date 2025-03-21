@@ -37,17 +37,14 @@ package de.uni_koblenz.jgralab.utilities.tg2gxl;
 
 //import gnu.getopt.Getopt;
 //import gnu.getopt.LongOpt;
-
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
-
 import de.uni_koblenz.ist.utilities.option_handler.OptionHandler;
 import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
@@ -61,7 +58,6 @@ import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.BooleanDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.DoubleDomain;
-import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.IntegerDomain;
 import de.uni_koblenz.jgralab.schema.ListDomain;
@@ -70,8 +66,11 @@ import de.uni_koblenz.jgralab.schema.RecordDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.SetDomain;
 import de.uni_koblenz.jgralab.schema.StringDomain;
-import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.utilities.tg2schemagraph.Schema2SchemaGraph;
+//import gnu.getopt.Getopt;
+//import gnu.getopt.LongOpt;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.utilities.tg2whatever.Tg2Whatever;
 
 /**
@@ -150,7 +149,7 @@ public class Tg2GXL extends Tg2Whatever {
 	 * @param out
 	 *            the output stream
 	 */
-	@Override
+	@Override @Override
 	protected void graphStart(PrintStream out) {
 
 		out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -173,7 +172,6 @@ public class Tg2GXL extends Tg2Whatever {
 					+ "\" xlink:type=\"simple\"/>");
 		}
 	}
-
 	/**
 	 * prints a vertex.
 	 * 
@@ -183,7 +181,8 @@ public class Tg2GXL extends Tg2Whatever {
 	 *            the processed vertex
 	 */
 	@Override
-	protected void printVertex(PrintStream out, Vertex v) {
+	protected
+	@Override void printVertex(PrintStream out, Vertex v) {
 		VertexClass elemClass = v.getAttributedElementClass();
 		if (printSchema && !(v instanceof Schema)) {
 
@@ -209,7 +208,6 @@ public class Tg2GXL extends Tg2Whatever {
 			out.println("</node>");
 		}
 	}
-
 	/**
 	 * @param e
 	 *            an edge
@@ -228,7 +226,6 @@ public class Tg2GXL extends Tg2Whatever {
 		}
 		return -1;
 	}
-
 	/**
 	 * prints an edge object.
 	 * 
@@ -237,7 +234,7 @@ public class Tg2GXL extends Tg2Whatever {
 	 * @param e
 	 *            the processed edge
 	 */
-	@Override
+	@Override @Override
 	protected void printEdge(PrintStream out, Edge e) {
 		EdgeClass elemClass = e.getAttributedElementClass();
 
@@ -280,19 +277,17 @@ public class Tg2GXL extends Tg2Whatever {
 			out.println("</edge>");
 		}
 	}
-
 	/**
 	 * closes the tags opened in <code>graphStart(PrintStream out)</code>.
 	 * 
 	 * @param out
 	 *            the output stream
 	 */
-	@Override
+	@Override @Override
 	protected void graphEnd(PrintStream out) {
 		out.println("</graph>");
 		out.println("</gxl>");
 	}
-
 	/**
 	 * prints the \<attr\> ... \</attr\> tag for each attribute of
 	 * <code>elem</code>. The methods <code>printComposite(...)</code> and
@@ -304,7 +299,6 @@ public class Tg2GXL extends Tg2Whatever {
 	 *            the <code>AttributedElement</code> owning at least one
 	 *            <code>Attribute</code>
 	 */
-
 	private void printAttributes(PrintStream out, AttributedElement<?, ?> elem) {
 		for (Attribute attr : elem.getAttributedElementClass()
 				.getAttributeList()) {
@@ -318,7 +312,6 @@ public class Tg2GXL extends Tg2Whatever {
 			out.println("</attr>");
 		}
 	}
-
 	/**
 	 * each attributes domain is submitted to this method with the attributes
 	 * value. While the domain is a <code>CompositeDomain</code>, this method is
@@ -378,7 +371,6 @@ public class Tg2GXL extends Tg2Whatever {
 			}
 		}
 	}
-
 	/**
 	 * prints the value <code>val</code> of a basic domain <code>dom</code> to
 	 * the print stream <code>out</code>. this method acts as the break
@@ -426,7 +418,6 @@ public class Tg2GXL extends Tg2Whatever {
 			out.println("</int>");
 		}
 	}
-
 	/**
 	 * You can launch this tool from the command-line.
 	 * 
@@ -447,11 +438,10 @@ public class Tg2GXL extends Tg2Whatever {
 			e.printStackTrace();
 		}
 	}
-
 	/**
 	 * overrides the <code>printGraph()</code> method in Tg2Whatever.
 	 */
-	@Override
+	@Override @Override
 	public void convert() throws IOException {
 		printSchema = false;
 		setOutputFile(graphOutputName);
@@ -465,7 +455,6 @@ public class Tg2GXL extends Tg2Whatever {
 		super.convert();
 
 	}
-
 	/**
 	 * processes the command-line parameter set valid parameters are: -g --graph
 	 * points at the .tg file in which the graph is located, that should be
@@ -498,7 +487,6 @@ public class Tg2GXL extends Tg2Whatever {
 					graphOutputName.length() - 4) + "Schema.gxl";
 		}
 	}
-
 	protected static CommandLine processCommandlineOptions(String[] args) {
 		String toolString = "java " + Tg2GXL.class.getName();
 		String versionString = JGraLab.getInfo(false);
@@ -518,12 +506,74 @@ public class Tg2GXL extends Tg2Whatever {
 
 		return oh.parse(args);
 	}
+	/**
+	 * starts the graph.
+	 * 
+	 * @param out
+	 *            the output stream
+	 */
+	/**
+	 * prints a vertex.
+	 * 
+	 * @param out
+	 *            the output stream
+	 * @param v
+	 *            the processed vertex
+	 */
+	/**
+	 * prints an edge object.
+	 * 
+	 * @param out
+	 *            the output stream
+	 * @param e
+	 *            the processed edge
+	 */
+	/**
+	 * prints the \<attr\> ... \</attr\> tag for each attribute of
+	 * <code>elem</code>. The methods <code>printComposite(...)</code> and
+	 * <code>printValue(...)</code> are responsible for the attributes interior.
+	 * 
+	 * @param out
+	 *            the output stream
+	 * @param elem
+	 *            the <code>AttributedElement</code> owning at least one
+	 *            <code>Attribute</code>
+	 */
+	/**
+	 * each attributes domain is submitted to this method with the attributes
+	 * value. While the domain is a <code>CompositeDomain</code>, this method is
+	 * called recursively. The break condition is the appearance of a
+	 * <Code>BasicDomain</Code>.
+	 * 
+	 * @param out
+	 *            the output stream
+	 * @param dom
+	 *            a JGralab domain
+	 * @param val
+	 *            the value of the attribute having this domain
+	 */
+	/**
+	 * prints the value <code>val</code> of a basic domain <code>dom</code> to
+	 * the print stream <code>out</code>. this method acts as the break
+	 * condition for the recursive function
+	 * <code>printComposite(PrintStram out, Domain dom, Object val)</code>
+	 * 
+	 * @param out
+	 *            the output stream
+	 * @param dom
+	 *            a JGralab domain
+	 * @param val
+	 *            the value of the attribute having this Domain
+	 */
+	/**
+	 * overrides the <code>printGraph()</code> method in Tg2Whatever.
+	 */
 
 	/**
 	 * adds an escape sequence to special characters in a string
 	 * 
 	 */
-	@Override
+	@Override @Override
 	protected String stringQuote(String s) {
 		StringBuffer sb = new StringBuffer();
 		for (char ch : s.toCharArray()) {

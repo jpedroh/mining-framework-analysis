@@ -40,29 +40,88 @@ import java.util.ArrayList;
 import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
+
 import de.uni_koblenz.jgralab.greql2.schema.IsPartOf;
+
 import de.uni_koblenz.jgralab.greql2.schema.ValueConstruction;
 
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 /**
  * This is the abstract base class for all ValueConstructions
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ValueConstructionEvaluator.java/left.java
  * 
  * @author ist@uni-koblenz.de
  * 
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ValueConstructionEvaluator.java/base.java
+ * 
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * 
+=======
+ *
+ * @author ist@uni-koblenz.de
+ *
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ValueConstructionEvaluator.java/right.java
  */
 abstract public class ValueConstructionEvaluator<V extends ValueConstruction>
 		extends VertexEvaluator<V> {
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ValueConstructionEvaluator.java/left.java
 	private ArrayList<VertexEvaluator<? extends Expression>> partEvaluators = null;
 
 	public ValueConstructionEvaluator(V vertex, Query query) {
 		super(vertex, query);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ValueConstructionEvaluator.java/base.java
+	protected ValueConstruction vertex;
+	
+	private ArrayList<VertexEvaluator> partEvaluators = null;
+	
+	
+	/**
+	 * returns the vertex this VertexEvaluator evaluates
+	 */
+	@Override
+	public Vertex getVertex() {
+		return vertex;
+=======
+	protected ValueConstruction vertex;
+
+	private ArrayList<VertexEvaluator> partEvaluators = null;
+
+	/**
+	 * returns the vertex this VertexEvaluator evaluates
+	 */
+	@Override
+	public Greql2Vertex getVertex() {
+		return vertex;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ValueConstructionEvaluator.java/right.java
 	}
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ValueConstructionEvaluator.java/left.java
 	public final PCollection<Object> createValue(
 			PCollection<Object> collection, InternalGreqlEvaluator evaluator) {
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ValueConstructionEvaluator.java/base.java
+	public ValueConstructionEvaluator(ValueConstruction vertex, GreqlEvaluator eval) {
+		super(eval);
+		this.vertex = vertex;
+	}
+
+	public final JValue createValue(JValueCollection collection)
+			throws EvaluateException {
+=======
+	public ValueConstructionEvaluator(ValueConstruction vertex,
+			GreqlEvaluator eval) {
+		super(eval);
+		this.vertex = vertex;
+	}
+
+	public final PCollection<Object> createValue(PCollection<Object> collection) {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ValueConstructionEvaluator.java/right.java
 		if (partEvaluators == null) {
 			int partCount = 0;
 			IsPartOf inc = vertex.getFirstIsPartOfIncidence(EdgeDirection.IN);
@@ -70,20 +129,45 @@ abstract public class ValueConstructionEvaluator<V extends ValueConstruction>
 				partCount++;
 				inc = inc.getNextIsPartOfIncidence(EdgeDirection.IN);
 			}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ValueConstructionEvaluator.java/left.java
 			inc = vertex.getFirstIsPartOfIncidence(EdgeDirection.IN);
 			partEvaluators = new ArrayList<VertexEvaluator<? extends Expression>>(
 					partCount);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ValueConstructionEvaluator.java/base.java
+			inc = vertex.getFirstIsPartOf(EdgeDirection.IN);
+			partEvaluators = new ArrayList<VertexEvaluator>(partCount);
+=======
+			inc = vertex.getFirstIsPartOfIncidence(EdgeDirection.IN);
+			partEvaluators = new ArrayList<VertexEvaluator>(partCount);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ValueConstructionEvaluator.java/right.java
 			while (inc != null) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ValueConstructionEvaluator.java/left.java
 				Expression currentExpression = inc.getAlpha();
 				VertexEvaluator<? extends Expression> vertexEval = query
 						.getVertexEvaluator(currentExpression);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ValueConstructionEvaluator.java/base.java
+				Expression currentExpression = (Expression) inc.getAlpha();
+				VertexEvaluator vertexEval = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(currentExpression);
+=======
+				Expression currentExpression = (Expression) inc.getAlpha();
+				VertexEvaluator vertexEval = vertexEvalMarker
+						.getMark(currentExpression);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ValueConstructionEvaluator.java/right.java
 				partEvaluators.add(vertexEval);
 				inc = inc.getNextIsPartOfIncidence(EdgeDirection.IN);
 			}
 		}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ValueConstructionEvaluator.java/left.java
 		for (int i = 0; i < partEvaluators.size(); i++) {
 			collection = collection.plus(partEvaluators.get(i).getResult(
 					evaluator));
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ValueConstructionEvaluator.java/base.java
+		for (int i=0; i<partEvaluators.size(); i++) {
+			collection.add(partEvaluators.get(i).getResult(subgraph));
+=======
+		for (int i = 0; i < partEvaluators.size(); i++) {
+			collection = collection.plus(partEvaluators.get(i).getResult());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ValueConstructionEvaluator.java/right.java
 		}
 		return collection;
 	}

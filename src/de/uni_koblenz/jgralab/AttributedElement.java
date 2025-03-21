@@ -42,10 +42,21 @@ import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;
 
 /**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/AttributedElement.java/left.java
+ * aggregates graphs, edges and vertices
+ * 
+ * @author ist@uni-koblenz.de
+ * 
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/AttributedElement.java/base.java
+ * aggregates graphs, edges and vertices 
+ * @author Steffen Kahle
+ *
+=======
  * superclass of graphs, edges and vertices
  * 
  * @author ist@uni-koblenz.de
  * 
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/AttributedElement.java/right.java
  */
 public interface AttributedElement<SC extends AttributedElementClass<SC, IC>, IC extends AttributedElement<SC, IC>>
 		extends Comparable<AttributedElement<SC, IC>> {
@@ -53,13 +64,29 @@ public interface AttributedElement<SC extends AttributedElementClass<SC, IC>, IC
 	 * @return the {@link AttributedElementClass} of this
 	 *         {@link AttributedElement}
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/AttributedElement.java/left.java
+	public AttributedElementClass getAttributedElementClass();
+
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/AttributedElement.java/base.java
+	public AttributedElementClass getAttributedElementClass();
+	
+=======
 	public SC getAttributedElementClass();
 
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/AttributedElement.java/right.java
 	/**
 	 * @return the schema class of this attributedelement
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/AttributedElement.java/left.java
+	public Class<? extends AttributedElement> getSchemaClass();
+
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/AttributedElement.java/base.java
+	public Class<? extends AttributedElement> getM1Class();
+	
+=======
 	public Class<? extends IC> getSchemaClass();
 
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/AttributedElement.java/right.java
 	public GraphClass getGraphClass();
 
 	public void readAttributeValueFromString(String attributeName, String value)
@@ -82,6 +109,11 @@ public interface AttributedElement<SC extends AttributedElementClass<SC, IC>, IC
 	 * @return the schema this AttributedElement belongs to
 	 */
 	public Schema getSchema();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/AttributedElement.java/left.java
+
+	void initializeAttributesWithDefaultValues();
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/AttributedElement.java/base.java
+=======
 
 	void initializeAttributesWithDefaultValues();
 
@@ -90,4 +122,5 @@ public interface AttributedElement<SC extends AttributedElementClass<SC, IC>, IC
 	 * @return true, iff this attributed element is an instance of cls.
 	 */
 	public boolean isInstanceOf(SC cls);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/AttributedElement.java/right.java
 }

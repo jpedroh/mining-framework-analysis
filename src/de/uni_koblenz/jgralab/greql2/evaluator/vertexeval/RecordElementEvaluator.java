@@ -41,6 +41,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.RecordElement;
 import de.uni_koblenz.jgralab.greql2.schema.RecordId;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 
 /**
  * Evaluates a record element, this is for instance name:"element" in the
@@ -57,8 +58,15 @@ public class RecordElementEvaluator extends VertexEvaluator<RecordElement> {
 
 	public String getId() {
 		if (id == null) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/RecordElementEvaluator.java/left.java
 			RecordId idVertex = vertex.getFirstIsRecordIdOfIncidence(
 					EdgeDirection.IN).getAlpha();
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/RecordElementEvaluator.java/base.java
+			RecordId ;
+=======
+			RecordId idVertex = (RecordId) vertex
+					.getFirstIsRecordIdOfIncidence(EdgeDirection.IN).getAlpha();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/RecordElementEvaluator.java/right.java
 			id = idVertex.get_name();
 		}
 		return id;
@@ -72,10 +80,12 @@ public class RecordElementEvaluator extends VertexEvaluator<RecordElement> {
 	 * @param vertex
 	 *            the vertex this VertexEvaluator evaluates
 	 */
+
 	public RecordElementEvaluator(RecordElement vertex, Query query) {
 		super(vertex, query);
 	}
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/RecordElementEvaluator.java/left.java
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
 		if (expEval == null) {
@@ -86,10 +96,32 @@ public class RecordElementEvaluator extends VertexEvaluator<RecordElement> {
 		}
 		return expEval.getResult(evaluator);
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/RecordElementEvaluator.java/base.java
+=======
+	@Override
+	public Object evaluate() {
+		if (expEval == null) {
+			Expression recordElementExp = (Expression) vertex
+					.getFirstIsRecordExprOfIncidence(EdgeDirection.IN)
+					.getAlpha();
+			expEval = vertexEvalMarker.getMark(recordElementExp);
+		}
+		return expEval.getResult();
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/RecordElementEvaluator.java/right.java
 
 	// @Override
+
 	// public VertexCosts calculateSubtreeEvaluationCosts() {
+
 	// return greqlEvaluator.getCostModel().calculateCostsRecordElement(this);
+
 	// }
+
+	@Override
+	public Greql2Vertex getVertex() {
+		return vertex;
+	}
+
 
 }

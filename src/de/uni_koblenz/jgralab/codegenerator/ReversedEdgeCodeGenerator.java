@@ -46,6 +46,12 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
+ * 
+ * @author ist@uni-koblenz.de
+ * 
+ */
+/**
+ * TODO add comment
  *
  * @author ist@uni-koblenz.de
  *

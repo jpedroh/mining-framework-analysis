@@ -35,21 +35,57 @@
 
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
+import de.uni_koblenz.jgralab.EdgeDirection;
+
+import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+
+import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+
+import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
+
+import de.uni_koblenz.jgralab.greql2.schema.IsSequenceElementOf;
+
+import de.uni_koblenz.jgralab.greql2.schema.SequentialPathDescription;
+
 import java.util.ArrayList;
 
-import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
-import de.uni_koblenz.jgralab.greql2.evaluator.Query;
-import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
-import de.uni_koblenz.jgralab.greql2.schema.IsSequenceElementOf;
-import de.uni_koblenz.jgralab.greql2.schema.SequentialPathDescription;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 
 public class SequentialPathDescriptionEvaluator extends
 		PathDescriptionEvaluator<SequentialPathDescription> {
 
 	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SequentialPathDescriptionEvaluator.java/left.java
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SequentialPathDescriptionEvaluator.java/base.java
+	 * The SequentialPathDescription-Vertex this evaluator evaluates
+	 */
+	private SequentialPathDescription vertex;
+
+	/**
+	 * returns the vertex this VertexEvaluator evaluates
+	 */
+	public Vertex getVertex() {
+		return vertex;
+	}
+
+	/**
+=======
+	 * The SequentialPathDescription-Vertex this evaluator evaluates
+	 */
+	private SequentialPathDescription vertex;
+
+	/**
+	 * returns the vertex this VertexEvaluator evaluates
+	 */
+	@Override
+	public Greql2Vertex getVertex() {
+		return vertex;
+	}
+
+	/**
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SequentialPathDescriptionEvaluator.java/right.java
 	 * Creates a new IteratedPathDescriptionEvaluator for the given vertex
-	 * 
+	 *
 	 * @param eval
 	 *            the GreqlEvaluator instance this VertexEvaluator belong to
 	 * @param vertex
@@ -61,15 +97,33 @@ public class SequentialPathDescriptionEvaluator extends
 	}
 
 	@Override
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SequentialPathDescriptionEvaluator.java/left.java
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SequentialPathDescriptionEvaluator.java/base.java
+	public JValue evaluate() throws EvaluateException {
+=======
+	public NFA evaluate() {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SequentialPathDescriptionEvaluator.java/right.java
 		IsSequenceElementOf inc = vertex
 				.getFirstIsSequenceElementOfIncidence(EdgeDirection.IN);
 		ArrayList<NFA> nfaList = new ArrayList<NFA>();
 		while (inc != null) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SequentialPathDescriptionEvaluator.java/left.java
 			PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query
 					.getVertexEvaluator(inc.getAlpha());
 			nfaList.add(pathEval.getNFA(evaluator));
 			inc = inc.getNextIsSequenceElementOfIncidence(EdgeDirection.IN);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SequentialPathDescriptionEvaluator.java/base.java
+			PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(inc
+					.getAlpha());
+			nfaList.add(pathEval.getNFA());
+			inc = inc.getNextIsSequenceElementOf(EdgeDirection.IN);
+=======
+			PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) vertexEvalMarker
+					.getMark(inc.getAlpha());
+			nfaList.add(pathEval.getNFA());
+			inc = inc.getNextIsSequenceElementOfIncidence(EdgeDirection.IN);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/SequentialPathDescriptionEvaluator.java/right.java
 		}
 		return NFA.createSequentialPathDescriptionNFA(nfaList);
 	}

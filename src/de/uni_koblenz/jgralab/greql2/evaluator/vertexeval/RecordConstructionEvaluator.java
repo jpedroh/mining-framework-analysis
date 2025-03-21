@@ -36,12 +36,19 @@
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 
 import de.uni_koblenz.jgralab.EdgeDirection;
+
 import de.uni_koblenz.jgralab.Record;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+
 import de.uni_koblenz.jgralab.greql2.schema.IsRecordElementOf;
+
 import de.uni_koblenz.jgralab.greql2.schema.RecordConstruction;
+
 import de.uni_koblenz.jgralab.greql2.schema.RecordElement;
+
 import de.uni_koblenz.jgralab.impl.RecordImpl;
 
 /**
@@ -50,6 +57,8 @@ import de.uni_koblenz.jgralab.impl.RecordImpl;
  * @author ist@uni-koblenz.de
  * 
  */
+
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 public class RecordConstructionEvaluator extends
 		VertexEvaluator<RecordConstruction> {
 
@@ -64,7 +73,7 @@ public class RecordConstructionEvaluator extends
 	public RecordConstructionEvaluator(RecordConstruction vertex, Query query) {
 		super(vertex, query);
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/RecordConstructionEvaluator.java/left.java
 	@Override
 	public Record evaluate(InternalGreqlEvaluator evaluator) {
 		RecordImpl resultRecord = RecordImpl.empty();
@@ -80,7 +89,24 @@ public class RecordConstructionEvaluator extends
 		}
 		return resultRecord;
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/RecordConstructionEvaluator.java/base.java
+=======
+	@Override
+	public Record evaluate() {
+		RecordImpl resultRecord = RecordImpl.empty();
+		IsRecordElementOf inc = vertex
+				.getFirstIsRecordElementOfIncidence(EdgeDirection.IN);
+		while (inc != null) {
+			RecordElement currentElement = inc.getAlpha();
+			RecordElementEvaluator vertexEval = (RecordElementEvaluator) vertexEvalMarker
+					.getMark(currentElement);
+			resultRecord = resultRecord.plus(vertexEval.getId(),
+					vertexEval.getResult());
+			inc = inc.getNextIsRecordElementOfIncidence(EdgeDirection.IN);
+		}
+		return resultRecord;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/RecordConstructionEvaluator.java/right.java
 	// @Override
 	// public VertexCosts calculateSubtreeEvaluationCosts() {
 	// return greqlEvaluator.getCostModel().calculateCostsRecordConstruction(
@@ -92,5 +118,14 @@ public class RecordConstructionEvaluator extends
 	// return greqlEvaluator.getCostModel()
 	// .calculateCardinalityRecordConstruction(this);
 	// }
+	@Override
+	public Greql2Vertex getVertex() {
+		return vertex;
+	}
+	@Override
+	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
+		return greqlEvaluator.getCostModel().calculateCostsRecordConstruction(
+				this, graphSize);
+	}
 
 }

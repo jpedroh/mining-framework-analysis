@@ -44,8 +44,8 @@ import org.pcollections.POrderedSet;
 import de.uni_koblenz.jgralab.eca.ECARuleManagerInterface;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
-import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
+import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.trans.CommitFailedException;
 import de.uni_koblenz.jgralab.trans.InvalidSavepointException;
@@ -65,15 +65,30 @@ import de.uni_koblenz.jgralab.trans.Transaction;
 public interface Graph extends AttributedElement<GraphClass, Graph> {
 
 	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 * Creates a vertex the specified class <code>cls</code> and adds the new
+	 * vertex to this Graph.
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 * Creates a instance of the given class and adds this vertex to the graph
+=======
 	 * Creates a vertex of the specified {@link VertexClass} and adds the new
 	 * vertex to the Graph.
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 */
 	public <T extends Vertex> T createVertex(VertexClass vc);
 
 	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	 * Creates an edge of the specified class <code>cls</code> that connects
+	 * <code>alpha</code> and <code>omega</code> vertices and adds the new edge
+	 * to this Graph.
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	 * Creates a instance of the given class and adds this edge to the graph
+=======
 	 * Creates an edge of the specified {@link EdgeClass} <code>ec</code> that
 	 * connects <code>alpha</code> and </code>omega</code> vertices and adds the
 	 * new edge to this Graph.
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Graph.java/right.java
 	 */
 	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha,
 			Vertex omega);
@@ -370,6 +385,140 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 	 */
 	public Transaction newTransaction();
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Graph.java/left.java
+	/**
+	 * @return a read-only-<code>Transaction</code>
+	 */
+	public Transaction newReadOnlyTransaction();
+
+	/**
+	 * Sets the given <code>transaction</code> as the active
+	 * <code>Transaction</code> for the current thread.
+	 *
+	 * @param transaction
+	 */
+	public void setCurrentTransaction(Transaction transaction);
+
+	/**
+	 * @return the currently active <code>Transaction</code> in the current
+	 *         thread
+	 */
+	public Transaction getCurrentTransaction();
+
+	/**
+	 * Delegates to {@link Graph#getCurrentTransaction()
+	 * getCurrentTransaction()}.
+	 *
+	 * @throws CommitFailedException
+	 *             if commit fails
+	 */
+	public void commit() throws CommitFailedException;
+
+	/**
+	 * Delegates to {@link Graph#getCurrentTransaction()
+	 * getCurrentTransaction()}.
+	 */
+	public void abort();
+
+	/**
+	 * Delegates to {@link Graph#getCurrentTransaction()
+	 * getCurrentTransaction()}.
+	 *
+	 * @return the defined <code>Savepoint</code>
+	 */
+	public Savepoint defineSavepoint();
+
+	/**
+	 * Delegates to {@link Graph#getCurrentTransaction()
+	 * getCurrentTransaction()}.
+	 *
+	 * @param savepoint
+	 *            the <code>Savepoint</code> to be restored.
+	 *
+	 * @throws InvalidSavepointException
+	 */
+	public void restoreSavepoint(Savepoint savepoint)
+			throws InvalidSavepointException;
+
+	/**
+	 * Tells whether this graph instance supports transactions.
+	 *
+	 * @return true if this graph instance supports transactions.
+	 */
+	public boolean hasTransactionSupport();
+
+	/**
+	 * Sorts the vertex sequence according to the given comparator in ascending
+	 * order.
+	 *
+	 * @param comp
+	 *            the comparator defining the desired vertex order.
+	 */
+	public void sortVertices(Comparator<Vertex> comp);
+
+	/**
+	 * Sorts the edge sequence according to the given comparator in ascending
+	 * order.
+	 *
+	 * @param comp
+	 *            the comparator defining the desired edge order.
+	 */
+	public void sortEdges(Comparator<Edge> comp);
+
+	/**
+	 * Registers the given <code>newListener</code> to the internal listener
+	 * list.
+	 *
+	 * @param newListener
+	 *            the new <code>GraphStructureChangedListener</code> to
+	 *            register.
+	 */
+	public void addGraphStructureChangedListener(
+			GraphStructureChangedListener newListener);
+
+	/**
+	 * Removes the given <code>listener</code> from the internal listener list.
+	 *
+	 * @param listener
+	 *            the <code>GraphStructureChangedListener</code> to be removed.
+	 */
+	public void removeGraphStructureChangedListener(
+			GraphStructureChangedListener listener);
+
+	/**
+	 * Removes all <code>GraphStructureChangedListener</code> from the internal
+	 * listener list.
+	 */
+	public void removeAllGraphStructureChangedListeners();
+
+	/**
+	 * Returns the amount of registered
+	 * <code>GraphStructureChangedListener</code>s.
+	 *
+	 * @return the amount of registered
+	 *         <code>GraphStructureChangedListener</code>s
+	 */
+	public int getGraphStructureChangedListenerCount();
+
+	public ECARuleManagerInterface getECARuleManager();
+
+	public ECARuleManagerInterface getECARuleManagerIfThere();
+
+	public TraversalContext setTraversalContext(TraversalContext tc);
+
+	public TraversalContext getTraversalContext();
+
+	public void save(String filename) throws GraphIOException;
+
+	public void save(String filename, ProgressFunction pf)
+			throws GraphIOException;
+
+	public void save(DataOutputStream out) throws GraphIOException;
+
+	public void save(DataOutputStream out, ProgressFunction pf)
+			throws GraphIOException;
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Graph.java/base.java
+=======
 	/**
 	 * @return a read-only-<code>Transaction</code>
 	 */
@@ -508,4 +657,5 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 
 	@Override
 	public GraphClass getAttributedElementClass();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/Graph.java/right.java
 }

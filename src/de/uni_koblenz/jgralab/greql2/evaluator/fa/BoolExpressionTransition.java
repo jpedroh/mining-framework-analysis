@@ -44,6 +44,7 @@ import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
+import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
 
 /**
  * This transition may fire, if the VertexEvaluator it holds as attribute
@@ -61,7 +62,8 @@ public class BoolExpressionTransition extends Transition {
 	/**
 	 * returns a string which describes the edge
 	 */
-	@Override
+
+	@Override @Override
 	public String edgeString() {
 		String desc = "BoolExpressionTransition";
 		return desc;
@@ -74,7 +76,8 @@ public class BoolExpressionTransition extends Transition {
 	 * greql2.evaluator.fa.Transition#equalSymbol(greql2.evaluator.fa.EdgeTransition
 	 * )
 	 */
-	@Override
+
+	@Override @Override
 	public boolean equalSymbol(Transition t) {
 		if (!(t instanceof BoolExpressionTransition)) {
 			return false;
@@ -89,6 +92,7 @@ public class BoolExpressionTransition extends Transition {
 	/**
 	 * Copy-constructor, creates a copy of the given transition
 	 */
+
 	protected BoolExpressionTransition(BoolExpressionTransition t,
 			boolean addToStates) {
 		super(t, addToStates);
@@ -99,7 +103,8 @@ public class BoolExpressionTransition extends Transition {
 	/**
 	 * returns a copy of this transition
 	 */
-	@Override
+
+	@Override @Override
 	public Transition copy(boolean addToStates) {
 		return new BoolExpressionTransition(this, addToStates);
 	}
@@ -107,6 +112,7 @@ public class BoolExpressionTransition extends Transition {
 	/**
 	 * Creates a new transition from start state to end state.
 	 */
+
 	public BoolExpressionTransition(State start, State end,
 			VertexEvaluator<? extends Expression> boolEval, Query query) {
 		super(start, end);
@@ -124,6 +130,7 @@ public class BoolExpressionTransition extends Transition {
 	 * 
 	 * @see greql2.evaluator.fa.Transition#isEpsilon()
 	 */
+
 	@Override
 	public boolean isEpsilon() {
 		return false;
@@ -134,6 +141,7 @@ public class BoolExpressionTransition extends Transition {
 	 * 
 	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
 	 */
+
 	@Override
 	public boolean accepts(Vertex v, Edge e, InternalGreqlEvaluator evaluator) {
 		if (thisVertexEvaluator != null) {
@@ -160,6 +168,42 @@ public class BoolExpressionTransition extends Transition {
 
 	@Override
 	public boolean consumesEdge() {
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * greql2.evaluator.fa.Transition#equalSymbol(greql2.evaluator.fa.EdgeTransition
+	 * )
+	 */
+
+	/**
+	 * Creates a new transition from start state to end state.
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see greql2.evaluator.fa.Transition#isEpsilon()
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see greql2.evaluator.fa.Transition#accepts(jgralab.Vertex, jgralab.Edge)
+	 */
+
+	@Override
+	public boolean accepts(Vertex v, Edge e) {
+		if (thisVertexEvaluator != null) {
+			thisVertexEvaluator.setValue(v);
+		}
+		Object res = boolExpressionEvaluator.getResult();
+		if (res instanceof Boolean && ((Boolean) res).equals(Boolean.TRUE)) {
+			return true;
+		}
 		return false;
 	}
 }

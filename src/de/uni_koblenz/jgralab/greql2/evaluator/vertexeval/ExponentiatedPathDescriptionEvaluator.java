@@ -43,6 +43,7 @@ import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
 import de.uni_koblenz.jgralab.greql2.schema.ExponentiatedPathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.Expression;
 import de.uni_koblenz.jgralab.greql2.schema.PathDescription;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 
 /**
  * Evaluates an exponentiated path description. Creates a NFA that accepts the
@@ -55,6 +56,36 @@ public class ExponentiatedPathDescriptionEvaluator extends
 		PathDescriptionEvaluator<ExponentiatedPathDescription> {
 
 	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ExponentiatedPathDescriptionEvaluator.java/left.java
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ExponentiatedPathDescriptionEvaluator.java/base.java
+	 * The ExponentiatedPathDescription-Vertex this evaluator evaluates
+	 */
+	private ExponentiatedPathDescription vertex;
+
+	/**
+	 * returns the vertex this VertexEvaluator evaluates
+	 */
+	@Override
+	public Vertex getVertex() {
+		return vertex;
+	}
+
+	/**
+=======
+	 * The ExponentiatedPathDescription-Vertex this evaluator evaluates
+	 */
+	private ExponentiatedPathDescription vertex;
+
+	/**
+	 * returns the vertex this VertexEvaluator evaluates
+	 */
+	@Override
+	public Greql2Vertex getVertex() {
+		return vertex;
+	}
+
+	/**
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ExponentiatedPathDescriptionEvaluator.java/right.java
 	 * Creates a new ExponentiatedPathDescriptionEvaluator for the given vertex
 	 * 
 	 * @param eval
@@ -68,6 +99,7 @@ public class ExponentiatedPathDescriptionEvaluator extends
 	}
 
 	@Override
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ExponentiatedPathDescriptionEvaluator.java/left.java
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
 		PathDescription p = vertex.getFirstIsExponentiatedPathOfIncidence()
 				.getAlpha();
@@ -77,6 +109,24 @@ public class ExponentiatedPathDescriptionEvaluator extends
 				.getVertexEvaluator(vertex.getFirstIsExponentOfIncidence(
 						EdgeDirection.IN).getAlpha());
 		Object exponentValue = exponentEvaluator.getResult(evaluator);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ExponentiatedPathDescriptionEvaluator.java/base.java
+	public JValue evaluate() throws EvaluateException {
+		PathDescription p = (PathDescription) vertex
+				.getFirstIsExponentiatedPathOf().getAlpha();
+		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(p);
+		VertexEvaluator exponentEvaluator = greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(vertex
+				.getFirstIsExponentOf(EdgeDirection.IN).getAlpha());
+		JValue exponentValue = exponentEvaluator.getResult(subgraph);
+=======
+	public NFA evaluate() {
+		PathDescription p = (PathDescription) vertex
+				.getFirstIsExponentiatedPathOfIncidence().getAlpha();
+		PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) vertexEvalMarker
+				.getMark(p);
+		VertexEvaluator exponentEvaluator = vertexEvalMarker.getMark(vertex
+				.getFirstIsExponentOfIncidence(EdgeDirection.IN).getAlpha());
+		Object exponentValue = exponentEvaluator.getResult();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ExponentiatedPathDescriptionEvaluator.java/right.java
 		int exponent = 0;
 		if (exponentValue instanceof Integer) {
 			exponent = (Integer) exponentValue;
@@ -84,8 +134,16 @@ public class ExponentiatedPathDescriptionEvaluator extends
 			throw new GreqlException(
 					"Exponent of ExponentiatedPathDescription is not convertable to integer value");
 		}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ExponentiatedPathDescriptionEvaluator.java/left.java
 		return NFA.createExponentiatedPathDescriptionNFA(
 				pathEval.getNFA(evaluator), exponent);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ExponentiatedPathDescriptionEvaluator.java/base.java
+		return new JValue(NFA.createExponentiatedPathDescriptionNFA(pathEval
+				.getNFA(), exponent));
+=======
+		return NFA.createExponentiatedPathDescriptionNFA(pathEval.getNFA(),
+				exponent);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ExponentiatedPathDescriptionEvaluator.java/right.java
 	}
 
 	// @Override

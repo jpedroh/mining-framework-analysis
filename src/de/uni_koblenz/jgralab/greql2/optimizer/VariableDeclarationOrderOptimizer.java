@@ -166,7 +166,12 @@ public class VariableDeclarationOrderOptimizer extends Optimizer {
 			marker.removeMark(sd);
 			sd.delete();
 		}
+		for (SimpleDeclaration sd : oldSDs) {
+			marker.removeMark(sd);
+			sd.delete();
+		}
 
+		recreateVertexEvaluators(eval);
 		OptimizerUtility.createMissingSourcePositions(syntaxgraph);
 
 		// Tg2Dot.printGraphAsDot(syntaxgraph, true, "/home/horn/vdoo.dot");
@@ -205,6 +210,7 @@ public class VariableDeclarationOrderOptimizer extends Optimizer {
 	 * @return a {@link Set} of all {@link Variable}s declared by the
 	 *         {@link SimpleDeclaration}s of <code>decl</code>.
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/VariableDeclarationOrderOptimizer.java/left.java
 	private Set<Variable> collectVariablesDeclaredBy(Declaration decl) {
 		HashSet<Variable> vars = new HashSet<Variable>();
 		for (IsSimpleDeclOf inc : decl
@@ -214,4 +220,26 @@ public class VariableDeclarationOrderOptimizer extends Optimizer {
 		}
 		return vars;
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/VariableDeclarationOrderOptimizer.java/base.java
+=======
+	private Set<Variable> collectVariablesDeclaredBy(Declaration decl) {
+		HashSet<Variable> vars = new HashSet<Variable>();
+		for (IsSimpleDeclOf inc : decl
+				.getIsSimpleDeclOfIncidences(EdgeDirection.IN)) {
+			vars.addAll(OptimizerUtility
+					.collectVariablesDeclaredBy((SimpleDeclaration) inc
+							.getAlpha()));
+		}
+		return vars;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/VariableDeclarationOrderOptimizer.java/right.java
+	/**
+	 * Collect all {@link Variable}s declared by the {@link SimpleDeclaration}s
+	 * of <code>decl</code>.
+	 * 
+	 * @param decl
+	 *            a {@link Declaration}
+	 * @return a {@link Set} of all {@link Variable}s declared by the
+	 *         {@link SimpleDeclaration}s of <code>decl</code>.
+	 */
 }

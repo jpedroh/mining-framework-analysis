@@ -35,23 +35,35 @@
 
 package de.uni_koblenz.jgralab.schema.impl;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.pcollections.PVector;
 
-import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.JGraLab;
+
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
+
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
+
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
+
 import de.uni_koblenz.jgralab.schema.EnumDomain;
+
 import de.uni_koblenz.jgralab.schema.Package;
+
 import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
+
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
-import de.uni_koblenz.jgralab.schema.exception.SchemaException;
+
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
+
+import java.io.IOException;
+
+import de.uni_koblenz.jgralab.GraphIO;
+
+import de.uni_koblenz.jgralab.GraphIOException;
+
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
 public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 

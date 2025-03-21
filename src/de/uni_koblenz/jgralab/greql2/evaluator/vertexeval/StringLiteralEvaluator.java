@@ -38,6 +38,8 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.schema.StringLiteral;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 
 /**
  * Evaluates a String Literal, that means, provides access to the literal value
@@ -50,13 +52,51 @@ import de.uni_koblenz.jgralab.greql2.schema.StringLiteral;
  */
 public class StringLiteralEvaluator extends VertexEvaluator<StringLiteral> {
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/StringLiteralEvaluator.java/left.java
 	public StringLiteralEvaluator(StringLiteral vertex, Query query) {
 		super(vertex, query);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/StringLiteralEvaluator.java/base.java
+	private StringLiteral vertex;
+
+	/**
+	 * returns the vertex this VertexEvaluator evaluates
+	 */
+	@Override
+	public Vertex getVertex() {
+		return vertex;
+	}
+
+	public StringLiteralEvaluator(StringLiteral vertex, GreqlEvaluator eval) {
+		super(eval);
+		this.vertex = vertex;
+=======
+	private StringLiteral vertex;
+
+	/**
+	 * returns the vertex this VertexEvaluator evaluates
+	 */
+	@Override
+	public Greql2Vertex getVertex() {
+		return vertex;
+	}
+
+	public StringLiteralEvaluator(StringLiteral vertex, GreqlEvaluator eval) {
+		super(eval);
+		this.vertex = vertex;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/StringLiteralEvaluator.java/right.java
 	}
 
 	@Override
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/StringLiteralEvaluator.java/left.java
 	public String evaluate(InternalGreqlEvaluator evaluator) {
 		return vertex.get_stringValue();
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/StringLiteralEvaluator.java/base.java
+	public JValue evaluate() throws EvaluateException {
+		return new JValue(vertex.getStringValue());
+=======
+	public String evaluate() {
+		return vertex.get_stringValue();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/StringLiteralEvaluator.java/right.java
 	}
 
 	// @Override

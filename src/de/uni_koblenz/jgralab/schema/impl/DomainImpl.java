@@ -46,11 +46,20 @@ public abstract class DomainImpl extends NamedElementImpl implements Domain {
 	}
 
 	@Override
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/DomainImpl.java/left.java
+	protected final void register() {
+		((SchemaImpl) getSchema()).addDomain(this);
+		((PackageImpl) parentPackage).addDomain(this);
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/DomainImpl.java/base.java
+	protected final void register() 
+=======
 	protected final void register() {
 		((SchemaImpl) getSchema()).addDomain(this);
 		((PackageImpl) parentPackage).addDomain(this);
 		((SchemaImpl)getSchema()).getDomainsDag().createNode(this);
 	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/impl/DomainImpl.java/right.java
 
 	@Override
 	public String toString() {

@@ -312,6 +312,9 @@ public class TgSchema2Java {
 						+ File.separator + pathName + vc.getSimpleName()
 						+ "Impl.java");
 			}
+			requiredFilePaths.add(commitPath + File.separator + schemaPath
+					+ File.separator + "impl" + File.separator + pathName
+					+ gc.getSimpleName() + "Impl.java");
 		}
 
 		for (EdgeClass ec : schema.getGraphClass().getEdgeClasses()) {

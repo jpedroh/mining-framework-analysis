@@ -68,10 +68,12 @@ public class DefaultOptimizer extends Optimizer {
 	/**
 	 * Print the text representation of the optimized query after optimization.
 	 */
+
 	private static boolean debugOptimization = Boolean.parseBoolean(System
 			.getProperty("greqlDebugOptimization", "false"));
 
 	private static final CostModel costModel = new DefaultCostModel();
+
 	private static final DefaultOptimizer instance = new DefaultOptimizer();
 
 	public static void optimizeQuery(Greql2Graph g) {
@@ -191,6 +193,7 @@ public class DefaultOptimizer extends Optimizer {
 		// do the optimization
 		while (
 		// First merge common subgraphs
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/DefaultOptimizer.java/left.java
 		cso.optimize(syntaxgraph)
 		// then transform all Xors to (x & ~y) | (~x & y).
 				| txfao.optimize(syntaxgraph)
@@ -204,6 +207,22 @@ public class DefaultOptimizer extends Optimizer {
 				// vertex sets into the type expressions of the start or target
 				// expression variabse.
 				| pe2dpeo.optimize(syntaxgraph)
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/DefaultOptimizer.java/base.java
+=======
+		cso.optimize(syntaxgraph)
+		// then transform all Xors to (x & ~y) | (~x & y).
+				| txfao.optimize(syntaxgraph)
+				// Again, merge common subgraphs that may be the result of the
+				// previous step.
+				| cso.optimize(syntaxgraph)
+				// For each declaration merge its constraints into a single
+				// conjunction.
+				| mco.optimize(eval, syntaxgraph)
+				// Then try to pull up path existences as forward/backward
+				// vertex sets into the type expressions of the start or target
+				// expression variabse.
+				| pe2dpeo.optimize(eval, syntaxgraph)
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/DefaultOptimizer.java/right.java
 				// Now move predicates that are part of a conjunction and thus
 				// movable into the type expression of the simple declaration
 				// that declares all needed local variables of it.
@@ -226,7 +245,8 @@ public class DefaultOptimizer extends Optimizer {
 				// expressions to simulate short circuit evaluation.
 				| ceo.optimize(syntaxgraph)
 				// At last, merge common subgraphs and
-				| cso.optimize(syntaxgraph)
+				|
+				cso.optimize(syntaxgraph)
 				// merge simple declarations which have the same type
 				// expression.
 				| msdo.optimize(syntaxgraph)) {

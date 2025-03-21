@@ -146,5 +146,5 @@ public abstract class CostModelBase {
 	protected static final int definitionExpressionCostsFactor = 2;
 
 	protected GraphSize graphSize;
-
+//	protected GreqlEvaluator greqlEvaluator;
 }

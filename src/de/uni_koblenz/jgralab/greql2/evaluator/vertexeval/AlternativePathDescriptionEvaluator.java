@@ -43,20 +43,64 @@ import de.uni_koblenz.jgralab.greql2.evaluator.Query;
 import de.uni_koblenz.jgralab.greql2.evaluator.fa.NFA;
 import de.uni_koblenz.jgralab.greql2.schema.AlternativePathDescription;
 import de.uni_koblenz.jgralab.greql2.schema.IsAlternativePathOf;
+import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.VertexCosts;
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Vertex;
 
 /**
  * Evaluates an alternative path description. Creates a NFA that accepts the
  * alternative path description.
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/AlternativePathDescriptionEvaluator.java/left.java
  * 
  * @author ist@uni-koblenz.de
  * 
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/AlternativePathDescriptionEvaluator.java/base.java
+ * 
+ * @author Daniel Bildhauer <dbildh@uni-koblenz.de> Summer 2006, Diploma Thesis
+ * 
+=======
+ *
+ * @author ist@uni-koblenz.de
+ *
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/AlternativePathDescriptionEvaluator.java/right.java
  */
 public class AlternativePathDescriptionEvaluator extends
 		PathDescriptionEvaluator<AlternativePathDescription> {
 
 	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/AlternativePathDescriptionEvaluator.java/left.java
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/AlternativePathDescriptionEvaluator.java/base.java
+	 * The AlternativePathDescription-Vertex this evaluator evaluates
+	 */
+	private AlternativePathDescription vertex;
+
+	/**
+	 * returns the vertex this VertexEvaluator evaluates
+	 */
+	@Override
+	public Vertex getVertex() {
+		return vertex;
+	}
+
+	/**
+=======
+	 * The AlternativePathDescription-Vertex this evaluator evaluates
+	 */
+	private AlternativePathDescription vertex;
+
+	/**
+	 * returns the vertex this VertexEvaluator evaluates
+	 */
+	@Override
+	public Greql2Vertex getVertex() {
+		return vertex;
+	}
+
+	/**
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/AlternativePathDescriptionEvaluator.java/right.java
 	 * Creates a new IteratedPathDescriptionEvaluator for the given vertex
-	 * 
+	 *
 	 * @param eval
 	 *            the GreqlEvaluator instance this VertexEvaluator belong to
 	 * @param vertex
@@ -74,15 +118,33 @@ public class AlternativePathDescriptionEvaluator extends
 	 */
 
 	@Override
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/AlternativePathDescriptionEvaluator.java/left.java
 	public NFA evaluate(InternalGreqlEvaluator evaluator) {
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/AlternativePathDescriptionEvaluator.java/base.java
+	public JValue evaluate() throws EvaluateException {
+=======
+	public NFA evaluate() {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/AlternativePathDescriptionEvaluator.java/right.java
 		IsAlternativePathOf inc = vertex
 				.getFirstIsAlternativePathOfIncidence(EdgeDirection.IN);
 		ArrayList<NFA> nfaList = new ArrayList<NFA>();
 		while (inc != null) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/AlternativePathDescriptionEvaluator.java/left.java
 			PathDescriptionEvaluator<?> pathEval = (PathDescriptionEvaluator<?>) query
 					.getVertexEvaluator(inc.getAlpha());
 			nfaList.add(pathEval.getNFA(evaluator));
 			inc = inc.getNextIsAlternativePathOfIncidence(EdgeDirection.IN);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/AlternativePathDescriptionEvaluator.java/base.java
+			PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) greqlEvaluator.getVertexEvaluatorGraphMarker().getMark(inc
+					.getAlpha());
+			nfaList.add(pathEval.getNFA());
+			inc = inc.getNextIsAlternativePathOf(EdgeDirection.IN);
+=======
+			PathDescriptionEvaluator pathEval = (PathDescriptionEvaluator) vertexEvalMarker
+					.getMark(inc.getAlpha());
+			nfaList.add(pathEval.getNFA());
+			inc = inc.getNextIsAlternativePathOfIncidence(EdgeDirection.IN);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/AlternativePathDescriptionEvaluator.java/right.java
 		}
 		return NFA.createAlternativePathDescriptionNFA(nfaList);
 	}

@@ -85,6 +85,68 @@ public interface Domain extends NamedElement {
 	 */
 	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName);
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/Domain.java/left.java
+
+	/**
+	 * @return true if this domain is a composite domain
+	 */
+	public boolean isComposite();
+
+	/**
+	 * @return true if this domain is a primitive type
+	 */
+	public boolean isPrimitive();
+
+	/**
+	 * @return true if this domain is a primitive type
+	 */
+	public boolean isBoolean();
+
+	/**
+	 * example: Integer for integer List<Boolean> for a list with basedomain
+	 * boolean
+	 * 
+	 * @return java representation of this attribute
+	 */
+	public String getTransactionJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix);
+
+	/**
+	 * example: Integer for integer
+	 * 
+	 * @return the non primitive representation of this attribute, only affects
+	 *         int, boolean, double
+	 */
+	public String getTransactionJavaClassName(String schemaRootPackagePrefix);
+
+	/**
+	 * @return a code fragment to read a value of this domain from the GraphIO
+	 *         object named graphIoVariablename into the variableName for
+	 *         transaction support
+	 */
+	public CodeBlock getTransactionReadMethod(String schemaPrefix,
+			String variableName, String graphIoVariableName);
+
+	/**
+	 * @return a code fragment to write a value of this domain to the GraphIO
+	 *         object named graphIoVariablename into the variableName for
+	 *         transaction support
+	 */
+	public CodeBlock getTransactionWriteMethod(String schemaRootPackagePrefix,
+			String variableName, String graphIoVariableName);
+
+	/**
+	 * @param schemaRootPackagePrefix
+	 * @return the name of the versioned class implementation for this domain.
+	 */
+	public String getVersionedClass(String schemaRootPackagePrefix);
+
+	/**
+	 * @return the initial value for this Domain
+	 */
+	public String getInitialValue();
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/Domain.java/base.java
+=======
 
 	/**
 	 * @return true if this domain is a composite domain
@@ -186,4 +248,5 @@ public interface Domain extends NamedElement {
 	 * to this domain.
 	 */
 	public boolean isConformGenericValue(Object value);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/Domain.java/right.java
 }

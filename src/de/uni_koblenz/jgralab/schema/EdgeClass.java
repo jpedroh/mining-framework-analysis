@@ -38,6 +38,12 @@ package de.uni_koblenz.jgralab.schema;
 import de.uni_koblenz.jgralab.Edge;
 
 /**
+ * Interface for Edge/Aggregation/Composition classes, instances of this class
+ * represent an schema element.
+ * 
+ * @author ist@uni-koblenz.de
+ */
+/**
  * Interface for edge classes. Instances of this class represent a grUML
  * EdgeClass schema element.
  *
@@ -47,7 +53,174 @@ public interface EdgeClass extends GraphElementClass<EdgeClass, Edge> {
 
 	public static final String DEFAULTEDGECLASS_NAME = "Edge";
 
+	public static final String DEFAULTEDGECLASS_NAME = "Edge";
+
 	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/EdgeClass.java/left.java
+	 * adds a superclass to the list of superclasses, all attributes get
+	 * inherited from those classes
+	 * 
+	 * @param superClass
+	 *            the edge class to be added to the list of superclasses if an
+	 *            attribute name exists in superClass and in this class
+	 * 
+	 */
+	public void addSuperClass(EdgeClass superClass);
+
+	public IncidenceClass getFrom();
+
+	public IncidenceClass getTo();
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.schema.AttributedElementClass#getSchemaClass()
+	 */
+	public Class<? extends Edge> getSchemaClass();
+
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/EdgeClass.java/base.java
+	 * adds a superclass to the list of superclasses,
+	 * all attributes get inherited from those classes
+	 * @param superClass the edge class to be added to the
+	 * list of superclasses if an attribute name exists in superClass and in this class
+	 * 
+	 */
+	public void addSuperClass(EdgeClass superClass) ;
+
+	/**
+	 * @return the vertex class where the edge class originates
+	 */
+	public VertexClass getFrom();
+	
+	/**
+	 * @return the maximum multiplicity at the from-side
+	 */
+	public int getFromMax();
+
+	/**
+	 * @return the minimum multiplicity at the from-side
+	 */
+	public int getFromMin();
+
+	/**
+	 * @return the rolename on the from-side
+	 */
+	public String getFromRolename();
+	
+	/**
+	 * @return the set of rolenames that are redefined by the rolename on the from-side
+	 */
+	public Set<String> getRedefinedFromRoles();
+	
+	/**
+	 * Redefines the <code>redefinedRoleName</code> with the rolename
+	 * defined while the creation of that edge.
+	 * That means on the one hand, that edges of this class have the new role name
+	 * as roleName on the from-end and on the other hand that the redefined
+	 * edge is not longer allowed at the from-vertex class of this edge 
+	 * @param redefinedRoleName the rolename to redefine
+	 */
+	public void redefineFromRole(String redefinedRoleName);
+	
+	/**
+	 * Redefines all <code>redefinedRoleNames</code> with the rolename
+	 * defined while the creation of that edge
+	 * That means on the one hand, that edges of this class have the new role name
+	 * as roleName on the from-end and on the other hand that the redefined
+	 * edges are not longer allowed at the from-vertex class of this edge 
+	 * @param redefinedRoleNames the rolenames to redefine
+	 */
+	public void redefineFromRole(Set<String> redefinedRoleNames);
+
+	/**
+	 * @return the vertex class where the edge class closes 
+	 */
+	public VertexClass getTo();
+
+	/**
+	 * @return the maximum multiplicity at the to-side
+	 */
+	public int getToMax();
+
+	/**
+	 * @return the minimum mulitplicity at the to-side
+	 */
+	public int getToMin();
+
+	/**
+	 * @return the rolename on the to-side
+	 */
+	public String getToRolename();
+	
+	/**
+	 * @return the set of rolenames that are redefined by the rolename on the to-side
+	 */
+	public Set<String> getRedefinedToRoles();
+	
+	/**
+	 * Redefines the <code>redefinedRoleName</code> with the rolename
+	 * defined while the creation of that edge
+	 * That means on the one hand, that edges of this class have the new role name
+	 * as roleName on the to-end and on the other hand that the redefined
+	 * edge is not longer allowed at the to-vertex class of this edge 
+	 * @param redefinedRoleName the rolename to redefine
+	 */
+	public void redefineToRole(String redefinedRoleName);
+	
+	/**
+	 * Redefines all <code>redefinedRoleNames</code> with the rolename
+	 * defined while the creation of that edge
+	 * That means on the one hand, that edges of this class have the new role name
+	 * as roleName on the to-end and on the other hand that the redefined
+	 * edges are not longer allowed at the to-vertex class of this edge 
+	 * @param redefinedRoleNames the rolenames to redefine
+	 */
+	public void redefineToRole(Set<String> redefinedRoleNames);
+	
+	/**
+	 * @return true, if the connectable VertexClasses and cardinalities of this EdgeClass
+	 * satisfy the restrictions of its superclasses 
+	 */
+	public boolean checkConnectionRestrictions();
+	
+	/**
+	 * Tries to merge the cardinalities of the edges endpoints
+	 * @return true if a merge was done successfull, false if no merge was needed or if a merge is not possible
+	 *
+	 */
+	public boolean mergeConnectionCardinalities() ;
+	
+	
+	/**
+	 * Tries to merge the VertexClasses of the edges endpoints
+	 * @return true if a merge was done successfull, false if no merge was needed
+	 * or if a merge is not possible
+	 */
+	public boolean mergeConnectionVertexClasses() ;
+	
+	
+	/**
+	 * @return returns the DirectedEdgeClass-Object consisting of this edge class with 
+	 * direction EdgeDirection.IN
+	 *
+	 */
+	public DirectedEdgeClass getInEdgeClass();
+	
+	/**
+	 * @return returns the DirectedEdgeClass-Object consisting of this edge class with 
+	 * direction EdgeDirection.OUT
+	 *
+	 */
+	public DirectedEdgeClass getOutEdgeClass();
+	
+	/*
+	 * (non-Javadoc)
+	 * @see de.uni_koblenz.jgralab.schema.AttributedElementClass#getM1Class()
+	 */
+	public Class<? extends Edge> getM1Class();
+	
+=======
 	 * adds a superclass to the list of superclasses, all attributes get
 	 * inherited from those classes
 	 *
@@ -62,4 +235,5 @@ public interface EdgeClass extends GraphElementClass<EdgeClass, Edge> {
 
 	public IncidenceClass getTo();
 
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/schema/EdgeClass.java/right.java
 }

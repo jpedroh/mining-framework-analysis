@@ -38,8 +38,11 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.JGraLab;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+
 import de.uni_koblenz.jgralab.greql2.schema.ListConstruction;
 
 /**
@@ -57,7 +60,13 @@ public class ListConstructionEvaluator extends
 
 	@Override
 	public PCollection<Object> evaluate(InternalGreqlEvaluator evaluator) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ListConstructionEvaluator.java/left.java
 		return createValue(JGraLab.vector(), evaluator);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ListConstructionEvaluator.java/base.java
+		return createValue(new JValueList());
+=======
+		return createValue(JGraLab.vector());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/ListConstructionEvaluator.java/right.java
 	}
 
 	// @Override

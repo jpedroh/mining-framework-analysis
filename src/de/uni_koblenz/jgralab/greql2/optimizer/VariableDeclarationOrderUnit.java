@@ -91,8 +91,16 @@ public class VariableDeclarationOrderUnit implements
 		declaringDeclaration = declaringDecl;
 		vertexEvalMarker = marker;
 		this.graphSize = graphSize;
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/VariableDeclarationOrderUnit.java/left.java
 		simpleDeclarationOfVariable = variable
 				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT).getOmega();
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/VariableDeclarationOrderUnit.java/base.java
+		this.simpleDeclarationOfVariable = (SimpleDeclaration) this.variable
+				.getFirstIsDeclaredVarOf(EdgeDirection.OUT).getOmega();
+=======
+		this.simpleDeclarationOfVariable = (SimpleDeclaration) this.variable
+				.getFirstIsDeclaredVarOfIncidence(EdgeDirection.OUT).getOmega();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/optimizer/VariableDeclarationOrderUnit.java/right.java
 		typeExpressionOfVariable = simpleDeclarationOfVariable
 				.getFirstIsTypeExprOfIncidence(EdgeDirection.IN).getAlpha();
 

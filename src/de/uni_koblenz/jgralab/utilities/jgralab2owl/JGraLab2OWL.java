@@ -309,11 +309,26 @@ public class JGraLab2OWL {
 		// String filename = args[0];
 		String filename = comLine.getOptionValue("g");
 		try {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/utilities/jgralab2owl/JGraLab2OWL.java/left.java
+			Graph graph = GraphIO.loadGraphFromFileWithStandardSupport(comLine
+					.getOptionValue("g")/* args[0] */, null);
+
+			saveGraphToOWLInstances(filename + ".owl", graph, false, true,
+					true, new ConsoleProgressFunction());
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/utilities/jgralab2owl/JGraLab2OWL.java/base.java
+			Graph graph = GraphIO.loadGraphFromFile(args[0], null);
+			// Schema schema = graph.getSchema();
+			// saveSchemaToOWL(filename + "Schema.owl", schema, true,
+			// false);
+			saveGraphToOWL(filename + ".owl", graph, false, true,
+					new ProgressFunctionImpl());
+=======
 			Graph graph = GraphIO.loadGraphFromFile(
 					comLine.getOptionValue("g")/* args[0] */, null);
 
 			saveGraphToOWLInstances(filename + ".owl", graph, false, true,
 					true, new ConsoleProgressFunction());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/utilities/jgralab2owl/JGraLab2OWL.java/right.java
 		} catch (Exception ex) {
 			System.out.println("Sorry, something went wrong");
 			ex.printStackTrace();

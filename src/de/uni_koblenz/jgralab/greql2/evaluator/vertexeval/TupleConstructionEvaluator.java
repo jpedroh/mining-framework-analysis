@@ -38,8 +38,11 @@ package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
 import org.pcollections.PCollection;
 
 import de.uni_koblenz.jgralab.greql2.evaluator.InternalGreqlEvaluator;
+
 import de.uni_koblenz.jgralab.greql2.evaluator.Query;
+
 import de.uni_koblenz.jgralab.greql2.schema.TupleConstruction;
+
 import de.uni_koblenz.jgralab.greql2.types.Tuple;
 
 /**
@@ -57,7 +60,13 @@ public class TupleConstructionEvaluator extends
 
 	@Override
 	public PCollection<Object> evaluate(InternalGreqlEvaluator evaluator) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TupleConstructionEvaluator.java/left.java
 		return createValue(Tuple.empty(), evaluator);
+||||||| /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TupleConstructionEvaluator.java/base.java
+		return createValue(new JValueTuple());
+=======
+		return createValue(Tuple.empty());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1502a3525248376410ba747530bf6ef93a0656f2/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/TupleConstructionEvaluator.java/right.java
 	}
 
 	// @Override
