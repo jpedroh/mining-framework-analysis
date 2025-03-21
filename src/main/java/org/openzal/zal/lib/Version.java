@@ -1,12 +1,12 @@
 package org.openzal.zal.lib;
-
 import java.util.Objects;
 import java.util.Optional;
 
 public class Version implements Comparable<Version> {
-
   private final int major;
+
   private final Optional<Integer> minor;
+
   private final Optional<String> patch;
 
   public static Version of(int major) {
@@ -30,13 +30,13 @@ public class Version implements Comparable<Version> {
     if (i0 == -1) {
       return new Version(Integer.parseInt(v), Optional.empty(), Optional.empty());
     } else {
-      int i1 = v.indexOf('.', i0+1);
+      int i1 = v.indexOf('.', i0 + 1);
       int major = Integer.parseInt(v.substring(0, i0));
       if (i1 == -1) {
-        return new Version(major, Optional.of(Integer.parseInt(v.substring(i0+1))), Optional.empty());
+        return new Version(major, Optional.of(Integer.parseInt(v.substring(i0 + 1))), Optional.empty());
       } else {
         String patch = v.substring(i1 + 1);
-        return new Version(major, Optional.of(Integer.parseInt(v.substring(i0+1, i1))), patch.length() > 0 ? Optional.of(patch) : Optional.empty());
+        return new Version(major, Optional.of(Integer.parseInt(v.substring(i0 + 1, i1))), patch.length() > 0 ? Optional.of(patch) : Optional.empty());
       }
     }
   }
@@ -60,7 +60,9 @@ public class Version implements Comparable<Version> {
   }
 
   public int getPatchAsNumber() {
-    if (!patch.isPresent()) return 0;
+    if (!patch.isPresent()) {
+      return 0;
+    }
     String ps = patch.get();
     StringBuilder digits = new StringBuilder();
     for (int i = 0; i < ps.length(); i++) {
@@ -80,8 +82,7 @@ public class Version implements Comparable<Version> {
     return new Version(major, minor, p);
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -89,29 +90,30 @@ public class Version implements Comparable<Version> {
       return false;
     }
     Version version = (Version) o;
-    return getMajor() == version.getMajor() && Objects.equals(getMinor(), version.getMinor()) && Objects.equals(getPatch(),
-        version.getPatch());
+    return getMajor() == version.getMajor() && Objects.equals(getMinor(), version.getMinor()) && Objects.equals(getPatch(), version.getPatch());
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(getMajor(), getMinor(), getPatch());
   }
 
   static <A extends Comparable<A>> int compareOpt(Optional<A> a1, Optional<A> a2) {
     if (a1.isPresent() && a2.isPresent()) {
       return a1.get().compareTo(a2.get());
-    } else if (!a1.isPresent() && !a2.isPresent()) {
-      return 0;
-    } else if (a1.isPresent()) {
-      return 1;
     } else {
-      return -1;
+      if (!a1.isPresent() && !a2.isPresent()) {
+        return 0;
+      } else {
+        if (a1.isPresent()) {
+          return 1;
+        } else {
+          return -1;
+        }
+      }
     }
   }
 
-  @Override
-  public int compareTo(Version o) {
+  @Override public int compareTo(Version o) {
     int r = Integer.compare(major, o.getMajor());
     if (r == 0) {
       r = Integer.compare(getMinor(), o.getMinor());
@@ -122,20 +124,13 @@ public class Version implements Comparable<Version> {
     return r;
   }
 
-  public boolean isAtLeast(Version version)
-  {
+  public boolean isAtLeast(Version version) {
     return compareTo(version) >= 0;
   }
 
-  public boolean isAtMost(Version version)
-  {
-    return compareTo(version) <= 0;
-  }
-
-  @Override
-  public String toString() {
+  @Override public String toString() {
     if (!minor.isPresent()) {
-        return String.valueOf(major);
+      return String.valueOf(major);
     } else {
       if (patch.isPresent()) {
         return String.format("%s.%s.%s", getMajor(), getMinor(), getPatch().get());
