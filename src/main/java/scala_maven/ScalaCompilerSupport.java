@@ -25,13 +25,13 @@ public abstract class ScalaCompilerSupport extends ScalaSourceMojoSupport {
     private boolean compileErrors;
 
     /**
-     * Recompile mode to use when sources were previously compiled and there is at
-     * least one change:
-     * "all" =&gt; all sources are recompiled,
-     * "incremental" =&gt; incrementally recompile modified sources and other affected
-     * sources.
-     *
-     */
+    * Recompile mode to use when sources were previously compiled and there is at
+    * least one change:
+    * "all" =&gt; all sources are recompiled,
+    * "incremental" =&gt; incrementally recompile modified sources and other affected
+    * sources.
+    *
+    */
     @Parameter(property = "recompileMode", defaultValue = "incremental")
     protected String recompileMode;
 
