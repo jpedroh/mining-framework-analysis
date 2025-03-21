@@ -20,10 +20,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -122,7 +122,6 @@ public class GitDescribeMojo
      * @parameter default-value=false
      */
     private boolean tags;
-
     /**
      * Perform the task for which this plugin exists.
      * i.e. try to shove the Git Describe property into Maven
