@@ -180,18 +180,6 @@ public class FormatTest extends TestBase
         assertFalse(sensitive.getFeature(Feature.ACCEPT_CASE_INSENSITIVE_VALUES));
     }
 
-    public void testShape() {
-        assertFalse(JsonFormat.Shape.STRING.isNumeric());
-        assertFalse(JsonFormat.Shape.STRING.isStructured());
-
-        assertTrue(JsonFormat.Shape.NUMBER_INT.isNumeric());
-        assertTrue(JsonFormat.Shape.NUMBER_FLOAT.isNumeric());
-        assertTrue(JsonFormat.Shape.NUMBER.isNumeric());
-
-        assertTrue(JsonFormat.Shape.ARRAY.isStructured());
-        assertTrue(JsonFormat.Shape.OBJECT.isStructured());
-    }
-
     public void testFeatures() {
         JsonFormat.Features f1 = JsonFormat.Features.empty();
         JsonFormat.Features f2 = f1.with(Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)

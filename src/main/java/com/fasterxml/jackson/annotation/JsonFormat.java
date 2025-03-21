@@ -447,12 +447,13 @@ public @interface JsonFormat
         private final Features _features;
 
         // lazily constructed when created from annotations
+
         private transient TimeZone _timezone;
-        
+
         public Value() {
             this("", Shape.ANY, "", "", Features.empty(), null);
         }
-        
+
         public Value(JsonFormat ann) {
             this(ann.pattern(), ann.shape(), ann.locale(), ann.timezone(),
                     Features.construct(ann), ann.lenient().asBoolean());
@@ -506,6 +507,7 @@ public @interface JsonFormat
          * Note that one or both of value instances may be `null`, directly;
          * if both are `null`, result will also be `null`; otherwise never null.
          */
+
         public static Value merge(Value base, Value overrides)
         {
             return (base == null) ? overrides
@@ -632,28 +634,17 @@ public @interface JsonFormat
         public Class<JsonFormat> valueFor() {
             return JsonFormat.class;
         }
-        
+
         public String getPattern() { return _pattern; }
+
         public Shape getShape() { return _shape; }
+
         public Locale getLocale() { return _locale; }
 
-        /**
-         * @return {@code Boolean.TRUE} if explicitly set to true; {@code Boolean.FALSE}
-         *   if explicit set to false; or {@code null} if not set either way (assuming
-         *   "default leniency" for the context)
-         */
         public Boolean getLenient() {
             return _lenient;
         }
 
-        /**
-         * Convenience method equivalent to
-         *<pre>
-         *   Boolean.TRUE.equals(getLenient())
-         *</pre>
-         * that is, returns {@code true} if (and only if) leniency has been explicitly
-         * set to {code true}; but not if it is undefined.
-         */
         public boolean isLenient() {
             return Boolean.TRUE.equals(_lenient);
         }
@@ -663,13 +654,14 @@ public @interface JsonFormat
          * when caller just wants time zone id to convert, but not as JDK
          * provided {@link TimeZone}
          */
+
         public String timeZoneAsString() {
             if (_timezone != null) {
                 return _timezone.getID();
             }
             return _timezoneStr;
         }
-        
+
         public TimeZone getTimeZone() {
             TimeZone tz = _timezone;
             if (tz == null) {
@@ -699,6 +691,7 @@ public @interface JsonFormat
          * NOTE: does NOT mean that `lenient` is `true` necessarily; just that
          * it has been set.
          */
+
         public boolean hasLenient() {
             return _lenient != null;
         }
@@ -710,12 +703,120 @@ public @interface JsonFormat
          * indicates that the default handling should be used based on global defaults,
          * and there is no format override.
          */
+
         public Boolean getFeature(JsonFormat.Feature f) {
             return _features.get(f);
         }
 
         /**
          * Accessor for getting full set of features enabled/disabled.
+         */
+
+        /**
+         * @since 2.9
+         */
+
+        /**
+         * @since 2.6
+         */
+
+        /**
+         * @since 2.9
+         */
+
+        /**
+         * @since 2.9
+         */
+
+        /**
+         * @since 2.9
+         */
+
+        /**
+         * @since 2.7
+         */
+
+        /**
+         * @since 2.7
+         */
+
+        /**
+         * @since 2.7
+         */
+
+        /**
+         * @since 2.6
+         */
+
+        /**
+         * @since 2.7
+         */
+
+        /**
+         * @since 2.9
+         */
+
+        /**
+         * @since 2.1
+         */
+
+        /**
+         * @since 2.1
+         */
+
+        /**
+         * @since 2.1
+         */
+
+        /**
+         * @since 2.1
+         */
+
+        /**
+         * @since 2.9
+         */
+
+        /**
+         * @since 2.6
+         */
+
+        /**
+         * @since 2.6
+         */
+
+        /**
+         * @return {@code Boolean.TRUE} if explicitly set to true; {@code Boolean.FALSE}
+         *   if explicit set to false; or {@code null} if not set either way (assuming
+         *   "default leniency" for the context)
+         *
+         * @since 2.9
+         */
+
+        /**
+         * Convenience method equivalent to
+         *<pre>
+         *   Boolean.TRUE.equals(getLenient())
+         *</pre>
+         * that is, returns {@code true} if (and only if) leniency has been explicitly
+         * set to {code true}; but not if it is undefined.
+         *
+         * @since 2.9
+         */
+
+        /**
+         * @since 2.4
+         */
+
+        /**
+         * @since 2.4
+         */
+
+        /**
+         * @since 2.4
+         */
+
+        /**
+         * @since 2.4
          */
         public Features getFeatures() {
             return _features;
