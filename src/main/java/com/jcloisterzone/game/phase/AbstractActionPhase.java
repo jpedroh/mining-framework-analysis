@@ -56,9 +56,21 @@ public abstract class AbstractActionPhase extends Phase {
             // TODO use interface instead
             places = places.filter(t -> !(t._2 instanceof Castle) && !(t._2 instanceof SoloveiRazboynik) && !(t._2 instanceof Acrobats) && !(t._2 instanceof Circus));
 
+<<<<<<< /usr/src/app/output/farin/jcloisterzone/7e9d5f4d784d82c9b00ceea8fd046f049472a166/src/main/java/com/jcloisterzone/game/phase/AbstractActionPhase.java/left.java
+            if (!state.getBooleanRule(Rule.FARMERS)) {
+                places = places.filter(t -> !(t._2 instanceof Field));
+            }
             if (!state.getBooleanRule(Rule.FISHERMEN)) {
                 places = places.filter(t -> !(t._2 instanceof River));
             }
+
+||||||| /usr/src/app/output/farin/jcloisterzone/7e9d5f4d784d82c9b00ceea8fd046f049472a166/src/main/java/com/jcloisterzone/game/phase/AbstractActionPhase.java/base.java
+            if (!state.getBooleanRule(Rule.FARMERS)) {
+                places = places.filter(t -> !(t._2 instanceof Field));
+            }
+
+=======
+>>>>>>> /usr/src/app/output/farin/jcloisterzone/7e9d5f4d784d82c9b00ceea8fd046f049472a166/src/main/java/com/jcloisterzone/game/phase/AbstractActionPhase.java/right.java
             // towers are handled by Tower capability separately (needs collect towers on all tiles)
             // (and flier or magic portal use is also not allowed to be placed on tower
             places = places.filter(t -> !(t._2 instanceof Tower));
