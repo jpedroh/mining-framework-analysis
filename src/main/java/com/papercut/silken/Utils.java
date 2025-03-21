@@ -141,7 +141,6 @@ public class Utils {
     	}
     	return new SoyMapData(toSoyCompatibleMap(obj));
     }
-    
     /**
      * Merge two SoyMapData resources.  If the two maps to merge contain duplicate key names, source
      * s2 will overwrite s1.  
@@ -149,6 +148,7 @@ public class Utils {
      * @param s2 2nd resource map.
      * @return A new SoyMapData object containing data from both source.
      */
+<<<<<<< /usr/src/app/output/codedance/silken/9f4e8c6f1edd9ad3116ca992b5e530bf16334716/src/main/java/com/papercut/silken/Utils.java/left.java
     public static SoyMapData mergeSoyMapData(SoyMapData s1, SoyMapData s2) {
         Preconditions.checkNotNull(s1);
         Preconditions.checkNotNull(s2);
@@ -160,6 +160,47 @@ public class Utils {
             merged.putSingle(key, s2.getSingle(key));
         }
         return merged;
+    }
+||||||| /usr/src/app/output/codedance/silken/9f4e8c6f1edd9ad3116ca992b5e530bf16334716/src/main/java/com/papercut/silken/Utils.java/base.java
+    public static SoyMapData mergeSoyMapData(SoyMapData s1, SoyMapData s2) {
+        SoyMapData merged = new SoyMapData();
+        for (String key: s1.getKeys()) {
+            merged.putSingle(key, s1.getSingle(key));
+        }
+        for (String key: s2.getKeys()) {
+            merged.putSingle(key, s2.getSingle(key));
+        }
+        return merged;
+    }
+=======
+    public static SoyMapData mergeSoyMapData(SoyMapData soyMap1, SoyMapData soyMap2) {
+        SoyMapData mergedMap = new SoyMapData();
+        
+        if (soyMap1 != null) {
+        	addSoyMapMapToSoyMapData(soyMap1, mergedMap);
+        }
+        if (soyMap2 != null) {
+        	addSoyMapMapToSoyMapData(soyMap2, mergedMap);
+        }
+
+        return mergedMap;
+    }
+>>>>>>> /usr/src/app/output/codedance/silken/9f4e8c6f1edd9ad3116ca992b5e530bf16334716/src/main/java/com/papercut/silken/Utils.java/right.java
+    /**
+     * Merge two SoyMapData resources.
+     * @param soyMap1 1st resource map.
+     * @param soyMap2 2nd resource map.
+     * @return A new SoyMapData object containing data from both source.
+     */
+    /**
+     * Iterates through sourceMap and adds entries to destinationMap 
+     * @param sourceMap Map to read from
+     * @param destinationMap Map to write to
+     */
+    private static void addSoyMapMapToSoyMapData(SoyMapData sourceMap, SoyMapData destinationMap) {
+    	for (String key: sourceMap.getKeys()) {
+    		destinationMap.putSingle(key, sourceMap.getSingle(key));
+        }
     }
     
     /**
