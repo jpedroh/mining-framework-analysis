@@ -1,23 +1,4 @@
-/**
- * Copyright (c) 2012 Reficio (TM) - Reestablish your software! All Rights Reserved.
- *
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.reficio.p2;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -58,26 +39,18 @@ import org.reficio.p2.resolver.maven.ResolvedArtifact;
 import org.reficio.p2.resolver.maven.impl.AetherResolver;
 import org.reficio.p2.utils.JarUtils;
 import org.reficio.p2.utils.Utils;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.Map;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
-
 
 /**
  * Main plugin class
@@ -87,467 +60,394 @@ import java.util.jar.Manifest;
  *         http://www.reficio.org
  * @since 1.0.0
  */
-@Mojo(
-        name = "site",
-        defaultPhase = LifecyclePhase.COMPILE,
-        requiresDependencyResolution = ResolutionScope.RUNTIME,
-        requiresDependencyCollection = ResolutionScope.RUNTIME
-)
-public class P2Mojo extends AbstractMojo implements Contextualizable {
+@Mojo(name = "site", defaultPhase = LifecyclePhase.COMPILE, requiresDependencyResolution = ResolutionScope.RUNTIME, requiresDependencyCollection = ResolutionScope.RUNTIME) public class P2Mojo extends AbstractMojo implements Contextualizable {
+  private static final String BUNDLES_TOP_FOLDER = "/source";
 
-    private static final String BUNDLES_TOP_FOLDER = "/source";
-    private static final String FEATURES_DESTINATION_FOLDER = BUNDLES_TOP_FOLDER + "/features";
-    private static final String BUNDLES_DESTINATION_FOLDER = BUNDLES_TOP_FOLDER + "/plugins";
-    private static final String DEFAULT_CATEGORY_FILE = "category.xml";
-    private static final String DEFAULT_CATEGORY_CLASSPATH_LOCATION = "/";
+  private static final String FEATURES_DESTINATION_FOLDER = BUNDLES_TOP_FOLDER + "/features";
 
-    private String timestamp = Utils.getTimeStamp(); // create timestamp only once!
-    
-    @Parameter(defaultValue = "${project}", required = true, readonly = true)
-    private MavenProject project;
+  private static final String BUNDLES_DESTINATION_FOLDER = BUNDLES_TOP_FOLDER + "/plugins";
 
-    @Parameter(defaultValue = "${session}", required = true, readonly = true)
-    private MavenSession session;
+  private static final String DEFAULT_CATEGORY_FILE = "category.xml";
 
-    @Component
-    @Requirement
-    private BuildPluginManager pluginManager;
+  private static final String DEFAULT_CATEGORY_CLASSPATH_LOCATION = "/";
 
-    @Parameter(defaultValue = "${project.build.directory}", required = true)
-    private String buildDirectory;
+  @Parameter(defaultValue = "${project}", required = true, readonly = true) private MavenProject project;
 
-    @Parameter(defaultValue = "${project.build.directory}/repository", required = true)
-    private String destinationDirectory;
+  @Parameter(defaultValue = "${session}", required = true, readonly = true) private MavenSession session;
 
-    @Component
-    @Requirement
-    private P2ApplicationLauncher launcher;
+  @Component @Requirement private BuildPluginManager pluginManager;
 
+  @Parameter(defaultValue = "${project.build.directory}", required = true) private String buildDirectory;
 
-    /**
+  @Parameter(defaultValue = "${project.build.directory}/repository", required = true) private String destinationDirectory;
+
+  @Component @Requirement private P2ApplicationLauncher launcher;
+
+  /**
      * Specifies a file containing category definitions.
      */
-    @Parameter(defaultValue = "")
-    private String categoryFileURL;
+  @Parameter(defaultValue = "") private String categoryFileURL;
 
-    /**
+  /**
      * Optional line of additional arguments passed to the p2 application launcher.
      */
-    @Parameter(defaultValue = "false")
-    private boolean pedantic;
+  @Parameter(defaultValue = "false") private boolean pedantic;
 
-    /**
+  /**
      * Specifies whether to compress generated update site.
      */
-    @Parameter(defaultValue = "true")
-    private boolean compressSite;
+  @Parameter(defaultValue = "true") private boolean compressSite;
 
-    /**
+  /**
      * Kill the forked process after a certain number of seconds. If set to 0, wait forever for the
      * process, never timing out.
      */
-    @Parameter(defaultValue = "0", alias = "p2.timeout")
-    private int forkedProcessTimeoutInSeconds;
+  @Parameter(defaultValue = "0", alias = "p2.timeout") private int forkedProcessTimeoutInSeconds;
 
-    /**
+  /**
      * Specifies additional arguments to p2Launcher, for example -consoleLog -debug -verbose
      */
-    @Parameter(defaultValue = "")
-    private String additionalArgs;
+  @Parameter(defaultValue = "") private String additionalArgs;
 
-    /**
+  /**
      * Dependency injection container - used to get some components programatically
      */
-    private PlexusContainer container;
+  private PlexusContainer container;
 
-    /**
+  /**
      * Aether Repository System
      * Declared as raw Object type as different objects are injected in different Maven versions:
      * * 3.0.0 and above -> org.sonatype.aether...
      * * 3.1.0 and above -> org.eclipse.aether...
      */
-    private Object repoSystem;
+  private Object repoSystem;
 
-    /**
+  /**
      * The current repository/network configuration of Maven.
      */
-    @Parameter(defaultValue = "${repositorySystemSession}", readonly = true, required = true)
-    private Object repoSession;
+  @Parameter(defaultValue = "${repositorySystemSession}", readonly = true, required = true) private Object repoSession;
 
-    /**
+  /**
      * The project's remote repositories to use for the resolution of project dependencies.
      */
-    @Parameter(defaultValue = "${project.remoteProjectRepositories}", readonly = true, required = true)
-    private List<Object> projectRepos;
+  @Parameter(defaultValue = "${project.remoteProjectRepositories}", readonly = true, required = true) private List<Object> projectRepos;
 
-    @Parameter(readonly = true)
-    private List<P2Artifact> artifacts;
+  @Parameter(readonly = true) private List<P2Artifact> artifacts;
 
-    /**
+  /**
      * A list of artifacts that define eclipse features
      */
-    @Parameter(readonly = true)
-    private List<P2Artifact> features;
+  @Parameter(readonly = true) private List<P2FeatureArtifact> featureArtifacts;
 
-    /**
+  /**
      * A list of Eclipse artifacts that should be downloaded from P2 repositories
      */
-    @Parameter(readonly = true)
-    private List<EclipseArtifact> p2;
-   
-    /**
-     * A list of definitions of eclipse features
-     * 
-     */
-    @Parameter(readonly=true)
-    private List<P2FeatureDefinition> featureDefinitions;
-    
-    /**
+  @Parameter(readonly = true) private List<EclipseArtifact, P2FeatureDefinition> featureDefinitions;
+
+  /**
      * Logger retrieved from the Maven internals.
      * It's the recommended way to do it...
      */
-    private Log log = getLog();
+  private Log log = getLog();
 
-    /**
+  /**
      * Folder which the jar files bundled by the ArtifactBundler will be copied to
      */
-    private File bundlesDestinationFolder;
+  private File bundlesDestinationFolder;
 
-    /**
+  /**
      * Folder which the feature jar files bundled by the ArtifactBundler will be copied to
      */
-    private File featuresDestinationFolder;
+  private File featuresDestinationFolder;
 
-    /**
+  /**
      * Processing entry point.
      * Method that orchestrates the execution of the plugin.
      */
-    @Override
-    public void execute() {
-        try {
-            initializeEnvironment();
-            initializeRepositorySystem();
-            processArtifacts(this.artifacts);
-            processFeatures();
-            processEclipseArtifacts();
-            executeP2PublisherPlugin();
-            executeCategoryPublisher();
-            cleanupEnvironment();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+  @Override public void execute() {
+    try {
+      initializeEnvironment();
+      initializeRepositorySystem();
+      processArtifacts(this.artifacts);
+      processFeatures();
+      processEclipseArtifacts();
+      executeP2PublisherPlugin();
+      executeCategoryPublisher();
+      cleanupEnvironment();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void initializeEnvironment() throws IOException {
+    Logger.initialize(log);
+    bundlesDestinationFolder = new File(buildDirectory, BUNDLES_DESTINATION_FOLDER);
+    featuresDestinationFolder = new File(buildDirectory, FEATURES_DESTINATION_FOLDER);
+    FileUtils.deleteDirectory(new File(buildDirectory, BUNDLES_TOP_FOLDER));
+    FileUtils.forceMkdir(bundlesDestinationFolder);
+    FileUtils.forceMkdir(featuresDestinationFolder);
+    artifacts = artifacts != null ? artifacts : new ArrayList<P2Artifact>();
+    features = features != null ? features : new ArrayList<P2Artifact>();
+    p2 = p2 != null ? p2 : new ArrayList<EclipseArtifact>();
+  }
+
+  private void initializeRepositorySystem() {
+    if (repoSystem == null) {
+      repoSystem = lookup("org.eclipse.aether.RepositorySystem");
+    }
+    if (repoSystem == null) {
+      repoSystem = lookup("org.sonatype.aether.RepositorySystem");
+    }
+    Preconditions.checkNotNull(repoSystem, "Could not initialize RepositorySystem");
+  }
+
+  private Object lookup(String role) {
+    try {
+      return container.lookup(role);
+    } catch (ComponentLookupException ex) {
+    }
+    return null;
+  }
+
+  private Map<P2Artifact, ArtifactBundlerInstructions> processArtifacts(List<P2Artifact> artifacts) {
+    Map<P2Artifact, ArtifactBundlerInstructions> bundlerInstructions = new HashMap<P2Artifact, ArtifactBundlerInstructions>();
+    Multimap<P2Artifact, ResolvedArtifact> resolvedArtifacts = resolveArtifacts(artifacts);
+
+<<<<<<< /usr/src/app/output/reficio/p2-maven-plugin/b02e8c2d7d3f758d6d44fb446854c713dcdb4d5f/src/main/java/org/reficio/p2/P2Mojo.java/left.java
+    Set<Artifact> processedArtifacts = processRootArtifacts(resolvedArtifacts);
+=======
+    if (null != artifacts) {
+      for (P2Artifact p2Artifact : artifacts) {
+        for (ResolvedArtifact resolvedArtifact : resolvedArtifacts.get(p2Artifact)) {
+          String timestamp = Utils.getTimeStamp();
+          ArtifactBundlerInstructions abi = bundleArtifact(p2Artifact, resolvedArtifact, timestamp);
+          bundlerInstructions.put(p2Artifact, abi);
         }
+      }
     }
+>>>>>>> /usr/src/app/output/reficio/p2-maven-plugin/b02e8c2d7d3f758d6d44fb446854c713dcdb4d5f/src/main/java/org/reficio/p2/P2Mojo.java/right.java
 
-    private void initializeEnvironment() throws IOException {
-        Logger.initialize(log);
-        bundlesDestinationFolder = new File(buildDirectory, BUNDLES_DESTINATION_FOLDER);
-        featuresDestinationFolder = new File(buildDirectory, FEATURES_DESTINATION_FOLDER);
-        FileUtils.deleteDirectory(new File(buildDirectory, BUNDLES_TOP_FOLDER));
-        FileUtils.forceMkdir(bundlesDestinationFolder);
-        FileUtils.forceMkdir(featuresDestinationFolder);
-        artifacts = artifacts != null ? artifacts : new ArrayList<P2Artifact>();
-        features = features != null ? features : new ArrayList<P2Artifact>();
-        p2 = p2 != null ? p2 : new ArrayList<EclipseArtifact>();
-    }
 
-    private void initializeRepositorySystem() {
-        if (repoSystem == null) {
-            repoSystem = lookup("org.eclipse.aether.RepositorySystem");
+<<<<<<< /usr/src/app/output/reficio/p2-maven-plugin/b02e8c2d7d3f758d6d44fb446854c713dcdb4d5f/src/main/java/org/reficio/p2/P2Mojo.java/left.java
+    processTransitiveArtifacts(resolvedArtifacts, processedArtifacts);
+=======
+    return bundlerInstructions;
+>>>>>>> /usr/src/app/output/reficio/p2-maven-plugin/b02e8c2d7d3f758d6d44fb446854c713dcdb4d5f/src/main/java/org/reficio/p2/P2Mojo.java/right.java
+  }
+
+  private Set<Artifact> processRootArtifacts(Multimap<P2Artifact, ResolvedArtifact> processedArtifacts) {
+    Set<Artifact> bundledArtifacts = Sets.newHashSet();
+    for (P2Artifact p2Artifact : artifacts) {
+      for (ResolvedArtifact resolvedArtifact : processedArtifacts.get(p2Artifact)) {
+        if (resolvedArtifact.isRoot()) {
+          if (bundledArtifacts.add(resolvedArtifact.getArtifact())) {
+            bundleArtifact(p2Artifact, resolvedArtifact);
+          } else {
+            String message = String.format("p2-maven-plugin misconfiguration" + "\n\n\tJar [%s] is configured as an artifact multiple times. " + "\n\tRemove the duplicate artifact definitions.\n", resolvedArtifact.getArtifact());
+            throw new RuntimeException(message);
+          }
         }
-        if (repoSystem == null) {
-            repoSystem = lookup("org.sonatype.aether.RepositorySystem");
+      }
+    }
+    return bundledArtifacts;
+  }
+
+  private void processTransitiveArtifacts(Multimap<P2Artifact, ResolvedArtifact> resolvedArtifacts, Set<Artifact> bundledArtifacts) {
+    for (P2Artifact p2Artifact : artifacts) {
+      for (ResolvedArtifact resolvedArtifact : resolvedArtifacts.get(p2Artifact)) {
+        if (!resolvedArtifact.isRoot()) {
+          if (bundledArtifacts.add(resolvedArtifact.getArtifact())) {
+            bundleArtifact(p2Artifact, resolvedArtifact);
+          } else {
+            log.debug(String.format("Not bundling transitive dependency since it has already been bundled [%s]", resolvedArtifact.getArtifact()));
+          }
         }
-        Preconditions.checkNotNull(repoSystem, "Could not initialize RepositorySystem");
+      }
     }
+  }
 
-    private Object lookup(String role) {
-        try {
-            return container.lookup(role);
-        } catch (ComponentLookupException ex) {
+  private void processFeatures() {
+    Multimap<P2FeatureArtifact, ResolvedArtifact> resolvedFeatures = resolveFeatures();
+    log.info("Resolved " + resolvedFeatures.size() + 
+<<<<<<< /usr/src/app/output/reficio/p2-maven-plugin/b02e8c2d7d3f758d6d44fb446854c713dcdb4d5f/src/main/java/org/reficio/p2/P2Mojo.java/left.java
+    " features"
+=======
+    " feature artifacts"
+>>>>>>> /usr/src/app/output/reficio/p2-maven-plugin/b02e8c2d7d3f758d6d44fb446854c713dcdb4d5f/src/main/java/org/reficio/p2/P2Mojo.java/right.java
+    );
+    for (P2Artifact p2Artifact : features) {
+      for (ResolvedArtifact resolvedArtifact : resolvedFeatures.get(p2Artifact)) {
+        handleFeature(p2Artifact, resolvedArtifact);
+      }
+    }
+    if (null != featureDefinitions) {
+      for (P2FeatureDefinition p2Feature : featureDefinitions) {
+        this.createFeature(p2Feature);
+      }
+    }
+  }
+
+  private Multimap<P2Artifact, ResolvedArtifact> resolveArtifacts(List<P2Artifact> artifacts) {
+    Multimap<P2Artifact, ResolvedArtifact> resolvedArtifacts = ArrayListMultimap.create();
+    for (P2Artifact p2Artifact : artifacts) {
+      logResolving(p2Artifact);
+      ArtifactResolutionResult resolutionResult = resolveArtifact(p2Artifact);
+      resolvedArtifacts.putAll(p2Artifact, resolutionResult.getResolvedArtifacts());
+    }
+    return resolvedArtifacts;
+  }
+
+  private Multimap<P2FeatureArtifact, ResolvedArtifact> resolveFeatures() {
+    Multimap<P2FeatureArtifact, ResolvedArtifact> resolvedFeatureArtifacts = ArrayListMultimap.create();
+    for (P2Artifact p2Artifact : features) {
+      logResolving(p2Artifact);
+      ArtifactResolutionResult resolutionResult = resolveArtifact(p2Artifact);
+      resolvedArtifacts.putAll(p2Artifact, resolutionResult.getResolvedArtifacts());
+    }
+    return resolvedFeatureArtifacts;
+  }
+
+  private void logResolving(EclipseArtifact p2) {
+    log.info(String.format("Resolving artifact=[%s] source=[%s]", p2.getId(), p2.shouldIncludeSources()));
+  }
+
+  private void logResolving(IP2Artifact p2) {
+    log.info(String.format("Resolving artifact=[%s] transitive=[%s] source=[%s]", p2.getId(), p2.shouldIncludeTransitive(), p2.shouldIncludeSources()));
+  }
+
+  private ArtifactResolutionResult resolveArtifact(P2Artifact p2Artifact) {
+    ArtifactResolutionRequest resolutionRequest = ArtifactResolutionRequest.builder().rootArtifactId(p2Artifact.getId()).resolveSource(p2Artifact.shouldIncludeSources()).resolveTransitive(p2Artifact.shouldIncludeTransitive()).excludes(p2Artifact.getExcludes()).build();
+    ArtifactResolutionResult resolutionResult = getArtifactResolver().resolve(resolutionRequest);
+    logResolved(resolutionRequest, resolutionResult);
+    return resolutionResult;
+  }
+
+  private ArtifactResolutionResult resolveFeatureArtifact(P2FeatureArtifact p2Artifact) {
+    ArtifactResolutionRequest resolutionRequest = ArtifactResolutionRequest.builder().rootArtifactId(p2Artifact.getId()).resolveSource(p2Artifact.shouldIncludeSources()).resolveTransitive(p2Artifact.shouldIncludeTransitive()).excludes(p2Artifact.getExcludes()).build();
+    ArtifactResolutionResult resolutionResult = getArtifactResolver().resolve(resolutionRequest);
+    logResolved(resolutionRequest, resolutionResult);
+    return resolutionResult;
+  }
+
+  private ArtifactResolver getArtifactResolver() {
+    return new AetherResolver(repoSystem, repoSession, projectRepos);
+  }
+
+  private void logResolved(ArtifactResolutionRequest resolutionRequest, ArtifactResolutionResult resolutionResult) {
+    for (ResolvedArtifact resolvedArtifact : resolutionResult.getResolvedArtifacts()) {
+      log.info("\t [JAR] " + resolvedArtifact.getArtifact());
+      if (resolvedArtifact.getSourceArtifact() != null) {
+        log.info("\t [SRC] " + resolvedArtifact.getSourceArtifact().toString());
+      } else {
+        if (resolutionRequest.isResolveSource()) {
+          log.warn("\t [SRC] Failed to resolve source for artifact " + resolvedArtifact.getArtifact().toString());
         }
-        return null;
+      }
     }
+  }
 
-//    private Map<P2Artifact, ArtifactBundlerInstructions> processArtifacts(List<P2Artifact> artifacts) {
-//    	Map<P2Artifact, ArtifactBundlerInstructions> bundlerInstructions = new HashMap<P2Artifact, ArtifactBundlerInstructions>();
-//        // first resolve all artifacts
-//        Multimap<P2Artifact, ResolvedArtifact> resolvedArtifacts = resolveArtifacts(artifacts);
-//        // then bundle the artifacts including the transitive dependencies (if specified so)
-//        if (null!=artifacts) {
-//	        for (P2Artifact p2Artifact : artifacts) {
-//	            for (ResolvedArtifact resolvedArtifact : resolvedArtifacts.get(p2Artifact)) {
-//	            	String timestamp = Utils.getTimeStamp();
-//	                ArtifactBundlerInstructions abi = bundleArtifact(p2Artifact, resolvedArtifact, timestamp);
-//	                bundlerInstructions.put(p2Artifact,abi);
-//	            }
-//	        }
-//        }
-//        return bundlerInstructions;
-//    }
-
-
-    private Map<P2Artifact, ArtifactBundlerInstructions>  processArtifacts(List<P2Artifact> artifacts) {
-    	Map<P2Artifact, ArtifactBundlerInstructions> bundlerInstructions = new HashMap<P2Artifact, ArtifactBundlerInstructions>();
-    	
-        Multimap<P2Artifact, ResolvedArtifact> resolvedArtifacts = resolveArtifacts(artifacts);
-        Set<Artifact> processedArtifacts = processRootArtifacts(resolvedArtifacts, bundlerInstructions, artifacts);
-        processTransitiveArtifacts(resolvedArtifacts, processedArtifacts, bundlerInstructions, artifacts);
-        
-        return bundlerInstructions;
-        
+  private void handleFeatureArtifact(P2FeatureArtifact p2FeatureArtifact, ResolvedArtifact resolvedArtifact) {
+    log.debug("Handling feature artifact" + p2FeatureArtifact.getId());
+    ArtifactBundlerRequest bundlerRequest = P2Helper.createBundlerRequest(p2FeatureArtifact, resolvedArtifact, featuresDestinationFolder);
+    try {
+      File inputFile = bundlerRequest.getBinaryInputFile();
+      File outputFile = bundlerRequest.getBinaryOutputFile();
+      String timestamp = Utils.getTimeStamp();
+      JarUtils.adjustFeatureXml(inputFile, outputFile, this.bundlesDestinationFolder, log, timestamp);
+      log.info("Copied " + inputFile + " to " + outputFile);
+    } catch (Exception ex) {
+      throw new RuntimeException("Error while bundling jar or source: " + bundlerRequest.getBinaryInputFile().getName(), ex);
     }
+  }
 
-    private Set<Artifact> processRootArtifacts(Multimap<P2Artifact, ResolvedArtifact> processedArtifacts, 
-    		Map<P2Artifact, ArtifactBundlerInstructions> bundlerInstructions, List<P2Artifact> artifacts) {
-    	
-
-        Set<Artifact> bundledArtifacts = Sets.newHashSet();
-        for (P2Artifact p2Artifact : artifacts) {
-            for (ResolvedArtifact resolvedArtifact : processedArtifacts.get(p2Artifact)) {
-                if (resolvedArtifact.isRoot()) {
-                    if (bundledArtifacts.add(resolvedArtifact.getArtifact())) {
-                    	ArtifactBundlerInstructions abi = bundleArtifact(p2Artifact, resolvedArtifact);
-                    	bundlerInstructions.put(p2Artifact,abi);
-                    } else {
-                        String message = String.format("p2-maven-plugin misconfiguration" +
-                                "\n\n\tJar [%s] is configured as an artifact multiple times. " +
-                                "\n\tRemove the duplicate artifact definitions.\n", resolvedArtifact.getArtifact());
-                        throw new RuntimeException(message);
-                    }
-                }
-            }
+  private void createFeature(P2FeatureDefinition p2featureDefinition) {
+    try {
+      Map<P2Artifact, ArtifactBundlerInstructions> bi = this.processArtifacts(p2featureDefinition.getArtifacts());
+      if (null == p2featureDefinition.getFeatureFile()) {
+        String timestamp = Utils.getTimeStamp();
+        p2featureDefinition.setVersion(Utils.mavenToEclipse(p2featureDefinition.getVersion(), timestamp));
+        FeatureBuilder featureBuilder = new FeatureBuilder(p2featureDefinition, bi);
+        featureBuilder.generate(this.featuresDestinationFolder);
+        if (p2featureDefinition.getGenerateSourceFeature()) {
+          featureBuilder.generateSourceFeature(this.featuresDestinationFolder);
         }
-        return bundledArtifacts;
+      } else {
+        File basedir = p2featureDefinition.getFeatureFile().getParentFile();
+        TychoFeatureBuilder builder = new TychoFeatureBuilder(p2featureDefinition.getFeatureFile(), this.featuresDestinationFolder.getAbsolutePath(), "test.feature", "1.0.0", project, this.session, this.pluginManager);
+        builder.execute();
+      }
+      log.info("Created feature " + p2featureDefinition.getId());
+    } catch (Exception e) {
+      log.error(e);
     }
+  }
 
-    private void processTransitiveArtifacts(Multimap<P2Artifact, ResolvedArtifact> resolvedArtifacts, Set<Artifact> bundledArtifacts, 
-    		Map<P2Artifact, ArtifactBundlerInstructions> bundlerInstructions, List<P2Artifact> artifacts) {
-        // then bundle transitive artifacts
+  private ArtifactBundlerInstructions bundleArtifact(P2Artifact p2Artifact, ResolvedArtifact resolvedArtifact, String timestamp) {
+    log.info("Bundling Artifact " + p2Artifact.getId());
+    P2Validator.validateBundleRequest(p2Artifact, resolvedArtifact);
+    ArtifactBundler bundler = getArtifactBundler();
+    ArtifactBundlerInstructions bundlerInstructions = P2Helper.createBundlerInstructions(p2Artifact, resolvedArtifact, timestamp);
+    ArtifactBundlerRequest bundlerRequest = P2Helper.createBundlerRequest(p2Artifact, resolvedArtifact, bundlesDestinationFolder);
+    bundler.execute(bundlerRequest, bundlerInstructions);
+    return bundlerInstructions;
+  }
 
-    	for (P2Artifact p2Artifact : artifacts) {
-            for (ResolvedArtifact resolvedArtifact : resolvedArtifacts.get(p2Artifact)) {
-                if (!resolvedArtifact.isRoot()) {
-                    if (bundledArtifacts.add(resolvedArtifact.getArtifact())) {
-                    	ArtifactBundlerInstructions abi = bundleArtifact(p2Artifact, resolvedArtifact);
-                    	bundlerInstructions.put(p2Artifact,abi);
-                    } else {
-                        log.debug(String.format("Not bundling transitive dependency since it has already been bundled [%s]", resolvedArtifact.getArtifact()));
-                    }
-                }
-            }
-        }
+  private void processEclipseArtifacts() {
+    DefaultEclipseResolver resolver = new DefaultEclipseResolver(projectRepos, bundlesDestinationFolder);
+    for (EclipseArtifact artifact : p2) {
+      logResolving(artifact);
+      String[] tokens = artifact.getId().split(":");
+      if (tokens.length != 2) {
+        throw new RuntimeException("Wrong format " + artifact.getId());
+      }
+      EclipseResolutionRequest request = new EclipseResolutionRequest(tokens[0], tokens[1], artifact.shouldIncludeSources());
+      resolver.resolve(request);
     }
+  }
 
-    private void processFeatures() {
-        // artifacts should already have been resolved by processArtifacts()
+  private ArtifactBundler getArtifactBundler() {
+    return new AquteBundler(pedantic);
+  }
 
-        Multimap<P2Artifact, ResolvedArtifact> resolvedFeatures = resolveFeatures();
-        // then bundle the artifacts including the transitive dependencies (if specified so)
-        log.info("Resolved " + resolvedFeatures.size() + " features");
-        for (P2Artifact p2Artifact : features) {
-            for (ResolvedArtifact resolvedArtifact : resolvedFeatures.get(p2Artifact)) {
-                handleFeature(p2Artifact, resolvedArtifact);
-            }
-        }
- 
-        if (null!=featureDefinitions) {
-	        for (P2FeatureDefinition p2Feature : featureDefinitions) {
-	        		this.createFeature(p2Feature);
-	        }
-        }
+  private void executeP2PublisherPlugin() throws IOException, MojoExecutionException {
+    prepareDestinationDirectory();
+    BundlePublisher publisher = BundlePublisher.builder().mavenProject(project).mavenSession(session).buildPluginManager(pluginManager).compressSite(compressSite).additionalArgs(additionalArgs).build();
+    publisher.execute();
+  }
+
+  private void prepareDestinationDirectory() throws IOException {
+    FileUtils.deleteDirectory(new File(destinationDirectory));
+  }
+
+  private void executeCategoryPublisher() throws AbstractMojoExecutionException, IOException {
+    prepareCategoryLocationFile();
+    CategoryPublisher publisher = CategoryPublisher.builder().p2ApplicationLauncher(launcher).additionalArgs(additionalArgs).forkedProcessTimeoutInSeconds(forkedProcessTimeoutInSeconds).categoryFileLocation(categoryFileURL).metadataRepositoryLocation(destinationDirectory).build();
+    publisher.execute();
+  }
+
+  private void prepareCategoryLocationFile() throws IOException {
+    if (StringUtils.isBlank(categoryFileURL)) {
+      InputStream is = getClass().getResourceAsStream(DEFAULT_CATEGORY_CLASSPATH_LOCATION + DEFAULT_CATEGORY_FILE);
+      File destinationFolder = new File(destinationDirectory);
+      destinationFolder.mkdirs();
+      File categoryDefinitionFile = new File(destinationFolder, DEFAULT_CATEGORY_FILE);
+      FileWriter writer = new FileWriter(categoryDefinitionFile);
+      IOUtils.copy(is, writer, "UTF-8");
+      IOUtils.closeQuietly(writer);
+      categoryFileURL = categoryDefinitionFile.getAbsolutePath();
     }
-    
+  }
 
-    
-    private Multimap<P2Artifact, ResolvedArtifact> resolveArtifacts(List<P2Artifact> artifacts) {
-        Multimap<P2Artifact, ResolvedArtifact> resolvedArtifacts = ArrayListMultimap.create();
-        for (P2Artifact p2Artifact : artifacts) {
-            logResolving(p2Artifact);
-            ArtifactResolutionResult resolutionResult = resolveArtifact(p2Artifact);
-            resolvedArtifacts.putAll(p2Artifact, resolutionResult.getResolvedArtifacts());
-        }
-        return resolvedArtifacts;
+  private void cleanupEnvironment() throws IOException {
+    File workFolder = new File(buildDirectory, BUNDLES_TOP_FOLDER);
+    try {
+      FileUtils.deleteDirectory(workFolder);
+    } catch (IOException ex) {
+      log.warn("Cannot cleanup the work folder " + workFolder.getAbsolutePath());
     }
+  }
 
-
-    private Multimap<P2Artifact, ResolvedArtifact> resolveFeatures() {
-        Multimap<P2Artifact, ResolvedArtifact> resolvedArtifacts = ArrayListMultimap.create();
-        for (P2Artifact p2Artifact : features) {
-            logResolving(p2Artifact);
-            ArtifactResolutionResult resolutionResult = resolveArtifact(p2Artifact);
-            resolvedArtifacts.putAll(p2Artifact, resolutionResult.getResolvedArtifacts());
-        }
-        return resolvedArtifacts;
-    }
-            
-
-    private void logResolving(EclipseArtifact p2) {
-        log.info(String.format("Resolving artifact=[%s] source=[%s]", p2.getId(),
-                p2.shouldIncludeSources()));
-    }
-
-
-    private void logResolving(IP2Artifact p2) {
-        log.info(String.format("Resolving artifact=[%s] transitive=[%s] source=[%s]", p2.getId(), p2.shouldIncludeTransitive(),
-                p2.shouldIncludeSources()));
-    }
-    
-    private ArtifactResolutionResult resolveArtifact(P2Artifact p2Artifact) {
-        ArtifactResolutionRequest resolutionRequest = ArtifactResolutionRequest.builder()
-                .rootArtifactId(p2Artifact.getId())
-                .resolveSource(p2Artifact.shouldIncludeSources())
-                .resolveTransitive(p2Artifact.shouldIncludeTransitive())
-                .excludes(p2Artifact.getExcludes())
-                .build();
-        ArtifactResolutionResult resolutionResult = getArtifactResolver().resolve(resolutionRequest);
-        logResolved(resolutionRequest, resolutionResult);
-        return resolutionResult;
-    }
-    
-    private ArtifactResolver getArtifactResolver() {
-        return new AetherResolver(repoSystem, repoSession, projectRepos);
-    }
-
-    private void logResolved(ArtifactResolutionRequest resolutionRequest, ArtifactResolutionResult resolutionResult) {
-        for (ResolvedArtifact resolvedArtifact : resolutionResult.getResolvedArtifacts()) {
-            log.info("\t [JAR] " + resolvedArtifact.getArtifact());
-            if (resolvedArtifact.getSourceArtifact() != null) {
-                log.info("\t [SRC] " + resolvedArtifact.getSourceArtifact().toString());
-            } else if (resolutionRequest.isResolveSource()) {
-                log.warn("\t [SRC] Failed to resolve source for artifact " + resolvedArtifact.getArtifact().toString());
-            }
-        }
-    }
-    
-    private void createFeature(P2FeatureDefinition p2featureDefinition) {
-    	try {
-    		Map<P2Artifact, ArtifactBundlerInstructions> bi = this.processArtifacts(p2featureDefinition.getArtifacts());
-    		
-			if (null==p2featureDefinition.getFeatureFile()) {
-				//we must be generating the feature file from the pom
-				p2featureDefinition.setVersion( Utils.mavenToEclipse(p2featureDefinition.getVersion(), timestamp) );
-
-				FeatureBuilder featureBuilder = new FeatureBuilder(p2featureDefinition, bi, timestamp);
-				featureBuilder.generate(this.featuresDestinationFolder);
-				if (p2featureDefinition.getGenerateSourceFeature()) {
-					featureBuilder.generateSourceFeature(this.featuresDestinationFolder);
-				}
-			} else {
-				//given a feature file, so build using tycho
-				File basedir = p2featureDefinition.getFeatureFile().getParentFile();
-				TychoFeatureBuilder builder = new TychoFeatureBuilder(
-						p2featureDefinition.getFeatureFile(),
-						this.featuresDestinationFolder.getAbsolutePath(),
-						"test.feature",
-						"1.0.0",
-						project,
-						this.session,
-						this.pluginManager
-				);
-				builder.execute();
-			}
-			
-			log.info("Created feature "+p2featureDefinition.getId());
-			
-    	} catch (Exception e) {
-    		log.error(e);
-    	}
-    }
-    
-    private ArtifactBundlerInstructions bundleArtifact(P2Artifact p2Artifact, ResolvedArtifact resolvedArtifact) {
-    	log.info("Bundling Artifact "+p2Artifact.getId());
-        P2Validator.validateBundleRequest(p2Artifact, resolvedArtifact);
-        ArtifactBundler bundler = getArtifactBundler();
-        ArtifactBundlerInstructions bundlerInstructions = P2Helper.createBundlerInstructions(p2Artifact, resolvedArtifact, timestamp);
-        ArtifactBundlerRequest bundlerRequest = P2Helper.createBundlerRequest(p2Artifact, resolvedArtifact, bundlesDestinationFolder);
-        bundler.execute(bundlerRequest, bundlerInstructions);
-        return bundlerInstructions;
-    }
-
-    private void handleFeature(P2Artifact p2Artifact, ResolvedArtifact resolvedArtifact) {
-        log.debug("Handling feature " + p2Artifact.getId());
-        ArtifactBundlerRequest bundlerRequest = P2Helper.createBundlerRequest(p2Artifact, resolvedArtifact, featuresDestinationFolder);
-        try {
-            File inputFile = bundlerRequest.getBinaryInputFile();
-            File outputFile = bundlerRequest.getBinaryOutputFile();
-            //This will also copy the input to the output
-            JarUtils.adjustFeatureXml(inputFile, outputFile, this.bundlesDestinationFolder, log, timestamp);
-            log.info("Copied " + inputFile + " to " + outputFile);
-        } catch (Exception ex) {
-            throw new RuntimeException("Error while bundling jar or source: " + bundlerRequest.getBinaryInputFile().getName(), ex);
-        }
-    }
-
-    private void processEclipseArtifacts() {
-        DefaultEclipseResolver resolver = new DefaultEclipseResolver(projectRepos, bundlesDestinationFolder);
-        for (EclipseArtifact artifact : p2) {
-            logResolving(artifact);
-            String[] tokens = artifact.getId().split(":");
-            if (tokens.length != 2) {
-                throw new RuntimeException("Wrong format " + artifact.getId());
-            }
-            EclipseResolutionRequest request = new EclipseResolutionRequest(tokens[0], tokens[1], artifact.shouldIncludeSources());
-            resolver.resolve(request);
-        }
-    }
-
-    private ArtifactBundler getArtifactBundler() {
-        return new AquteBundler(pedantic);
-    }
-
-    private void executeP2PublisherPlugin() throws IOException, MojoExecutionException {
-        prepareDestinationDirectory();
-        BundlePublisher publisher = BundlePublisher.builder()
-                .mavenProject(project)
-                .mavenSession(session)
-                .buildPluginManager(pluginManager)
-                .compressSite(compressSite)
-                .additionalArgs(additionalArgs)
-                .build();
-        publisher.execute();
-    }
-
-    private void prepareDestinationDirectory() throws IOException {
-        FileUtils.deleteDirectory(new File(destinationDirectory));
-    }
-
-    private void executeCategoryPublisher() throws AbstractMojoExecutionException, IOException {
-        prepareCategoryLocationFile();
-        CategoryPublisher publisher = CategoryPublisher.builder()
-                .p2ApplicationLauncher(launcher)
-                .additionalArgs(additionalArgs)
-                .forkedProcessTimeoutInSeconds(forkedProcessTimeoutInSeconds)
-                .categoryFileLocation(categoryFileURL)
-                .metadataRepositoryLocation(destinationDirectory)
-                .build();
-        publisher.execute();
-    }
-
-    private void prepareCategoryLocationFile() throws IOException {
-        if (StringUtils.isBlank(categoryFileURL)) {
-            InputStream is = getClass().getResourceAsStream(DEFAULT_CATEGORY_CLASSPATH_LOCATION + DEFAULT_CATEGORY_FILE);
-            File destinationFolder = new File(destinationDirectory);
-            destinationFolder.mkdirs();
-            File categoryDefinitionFile = new File(destinationFolder, DEFAULT_CATEGORY_FILE);
-            FileWriter writer = new FileWriter(categoryDefinitionFile);
-            IOUtils.copy(is, writer, "UTF-8");
-            IOUtils.closeQuietly(writer);
-            categoryFileURL = categoryDefinitionFile.getAbsolutePath();
-        }
-    }
-
-    private void cleanupEnvironment() throws IOException {
-        File workFolder = new File(buildDirectory, BUNDLES_TOP_FOLDER);
-        try {
-            FileUtils.deleteDirectory(workFolder);
-        } catch (IOException ex) {
-            log.warn("Cannot cleanup the work folder " + workFolder.getAbsolutePath());
-        }
-    }
-
-    @Override
-    public void contextualize(Context context) throws ContextException {
-        this.container = (PlexusContainer) context.get(PlexusConstants.PLEXUS_KEY);
-    }
-
+  @Override public void contextualize(Context context) throws ContextException {
+    this.container = (PlexusContainer) context.get(PlexusConstants.PLEXUS_KEY);
+  }
 }
