@@ -1,26 +1,16 @@
 package javaewah;
-
-
-/*
- * Copyright 2009-2012, Daniel Lemire, Cliff Moon and David McIntosh
- * Licensed under APL 2.0.
- */
-
 import org.junit.Test;
-
 import java.util.*;
 import java.io.*;
-
 import junit.framework.Assert;
 
 /**
  * This class is used for unit testing.
  */
 public class EWAHCompressedBitmapTest {
-  
   /** The Constant MEGA: a large integer. */
   private static final int MEGA = 8 * 1024 * 1024;
-  
+
   /** The Constant TEST_BS_SIZE: used to represent the size of a large bitmap. */
   private static final int TEST_BS_SIZE = 8 * MEGA;
 
@@ -33,22 +23,19 @@ public class EWAHCompressedBitmapTest {
    */
   public static int[] createSortedIntArrayOfBitsToSet(int size, int seed) {
     Random random = new Random(seed);
-    // build raw int array
     int[] bits = new int[size];
     for (int i = 0; i < bits.length; i++) {
       bits[i] = random.nextInt(TEST_BS_SIZE);
     }
-    // might generate duplicates
     Arrays.sort(bits);
-    // first count how many distinct values
     int counter = 0;
     int oldx = -1;
     for (int x : bits) {
-      if (x != oldx)
+      if (x != oldx) {
         ++counter;
+      }
       oldx = x;
     }
-    // then construct new array
     int[] answer = new int[counter];
     counter = 0;
     oldx = -1;
@@ -66,8 +53,7 @@ public class EWAHCompressedBitmapTest {
    * Pseudo-non-deterministic test inspired by S.J.vanSchaik.
    * (Yes, non-deterministic tests are bad, but the test is actually deterministic.)
    */
-  @Test
-  public void vanSchaikTest() {
+  @Test public void vanSchaikTest() {
     System.out.println("testing vanSchaikTest (this takes some time)");
     final int totalNumBits = 32768;
     final double odds = 0.9;
@@ -81,16 +67,14 @@ public class EWAHCompressedBitmapTest {
           numBitsSet++;
         }
       }
-      equal(cBitMap.cardinality(),numBitsSet);
+      equal(cBitMap.cardinality(), numBitsSet);
     }
-    
   }
 
   /**
    * Test inspired by William Habermaas.
    */
-  @Test
-  public void habermaasTest() {
+  @Test public void habermaasTest() {
     System.out.println("testing habermaasTest");
     BitSet bitsetaa = new BitSet();
     EWAHCompressedBitmap aa = new EWAHCompressedBitmap();
@@ -128,7 +112,7 @@ public class EWAHCompressedBitmapTest {
    */
   public static void shouldSetBits(int length) {
     System.out.println("testing shouldSetBits " + length);
-    int[] bitsToSet = createSortedIntArrayOfBitsToSet(length,434222);
+    int[] bitsToSet = createSortedIntArrayOfBitsToSet(length, 434222);
     EWAHCompressedBitmap ewah = new EWAHCompressedBitmap();
     System.out.println(" ... setting " + bitsToSet.length + " values");
     for (int i : bitsToSet) {
@@ -143,8 +127,7 @@ public class EWAHCompressedBitmapTest {
   /**
    * Test running length word.
    */
-  @Test
-  public void testRunningLengthWord() {
+  @Test public void testRunningLengthWord() {
     System.out.println("testing RunningLengthWord");
     long x[] = new long[1];
     RunningLengthWord rlw = new RunningLengthWord(x, 0);
@@ -205,8 +188,7 @@ public class EWAHCompressedBitmapTest {
   /**
    * Test ewah compressed bitmap.
    */
-  @Test
-  public void testEWAHCompressedBitmap() {
+  @Test public void testEWAHCompressedBitmap() {
     System.out.println("testing EWAH");
     long zero = 0;
     long specialval = 1l | (1l << 4) | (1l << 63);
@@ -262,12 +244,12 @@ public class EWAHCompressedBitmapTest {
     }
     isTrue(x.getPositions().equals(myarray2.getPositions()));
     x = new EWAHCompressedBitmap();
-    for (Iterator<Integer> k = myarray1.iterator(); k.hasNext();) {
+    for (Iterator<Integer> k = myarray1.iterator(); k.hasNext(); ) {
       x.set(extracted(k).intValue());
     }
     isTrue(x.getPositions().equals(myarray1.getPositions()));
     x = new EWAHCompressedBitmap();
-    for (Iterator<Integer> k = myarray2.iterator(); k.hasNext();) {
+    for (Iterator<Integer> k = myarray2.iterator(); k.hasNext(); ) {
       x.set(extracted(k).intValue());
     }
     isTrue(x.getPositions().equals(myarray2.getPositions()));
@@ -277,8 +259,7 @@ public class EWAHCompressedBitmapTest {
    * as per renaud.delbru, Feb 12, 2009 this might throw an error out of bound
    * exception.
    */
-  @Test
-  public void testLargeEWAHCompressedBitmap() {
+  @Test public void testLargeEWAHCompressedBitmap() {
     System.out.println("testing EWAH over a large array");
     EWAHCompressedBitmap myarray1 = new EWAHCompressedBitmap();
     int N = 11000000;
@@ -291,20 +272,17 @@ public class EWAHCompressedBitmapTest {
   /**
    * Test cardinality.
    */
-  @Test
-  public void testCardinality() {
+  @Test public void testCardinality() {
     System.out.println("testing EWAH cardinality");
     EWAHCompressedBitmap bitmap = new EWAHCompressedBitmap();
     bitmap.set(Integer.MAX_VALUE);
-    // System.out.format("Total Items %d\n", bitmap.cardinality());
     isTrue(bitmap.cardinality() == 1);
   }
 
   /**
    * Test sets and gets.
    */
-  @Test
-  public void testSetGet() {
+  @Test public void testSetGet() {
     System.out.println("testing EWAH set/get");
     EWAHCompressedBitmap ewcb = new EWAHCompressedBitmap();
     int[] val = { 5, 4400, 44600, 55400, 1000000 };
@@ -323,8 +301,7 @@ public class EWAHCompressedBitmapTest {
    *
    * @throws IOException Signals that an I/O exception has occurred.
    */
-  @Test
-  public void testExternalization() throws IOException {
+  @Test public void testExternalization() throws IOException {
     System.out.println("testing EWAH externalization");
     EWAHCompressedBitmap ewcb = new EWAHCompressedBitmap();
     int[] val = { 5, 4400, 44600, 55400, 1000000 };
@@ -358,8 +335,9 @@ public class EWAHCompressedBitmapTest {
     while (i.hasNext()) {
       int x = extracted(i).intValue();
       int y = array[cursor++];
-      if (x != y)
+      if (x != y) {
         throw new RuntimeException(x + " != " + y);
+      }
     }
   }
 
@@ -371,11 +349,14 @@ public class EWAHCompressedBitmapTest {
    * @param y the uncompressed bitset/bitmap
    */
   static void equal(EWAHCompressedBitmap x, BitSet y) {
-    if (x.cardinality() != y.cardinality())
+    if (x.cardinality() != y.cardinality()) {
       throw new RuntimeException("cardinality differs ");
-    for (int i : x.getPositions())
-      if (!y.get(i))
+    }
+    for (int i : x.getPositions()) {
+      if (!y.get(i)) {
         throw new RuntimeException("bitset got different bits");
+      }
+    }
   }
 
   /**
@@ -385,10 +366,10 @@ public class EWAHCompressedBitmapTest {
    * @param y the second number
    */
   static void equal(int x, int y) {
-    if (x != y)
+    if (x != y) {
       throw new RuntimeException(x + " != " + y);
+    }
   }
-
 
   /**
    * Are the two numbers equal? 
@@ -397,10 +378,10 @@ public class EWAHCompressedBitmapTest {
    * @param y the second number
    */
   static void equal(long x, long y) {
-    if (x != y)
+    if (x != y) {
       throw new RuntimeException(x + " != " + y);
+    }
   }
-
 
   /**
    * Are the two booleans equal? 
@@ -409,8 +390,9 @@ public class EWAHCompressedBitmapTest {
    * @param y the second boolean
    */
   static void equal(boolean x, boolean y) {
-    if (x != y)
+    if (x != y) {
       throw new RuntimeException(x + " != " + y);
+    }
   }
 
   /**
@@ -419,8 +401,9 @@ public class EWAHCompressedBitmapTest {
    * @param x the x
    */
   static void isTrue(boolean x) {
-    if (!x)
+    if (!x) {
       throw new RuntimeException();
+    }
   }
 
   /**
@@ -439,16 +422,16 @@ public class EWAHCompressedBitmapTest {
       final EWAHCompressedBitmap ewahBitmap3 = new EWAHCompressedBitmap();
       final BitSet jdkBitmap3 = new BitSet();
       final int len = rnd.nextInt(maxlength);
-      for (int pos = 0; pos < len; pos++) { // random *** number of bits set ***
-        if (rnd.nextInt(7) == 0) { // random *** increasing *** values
+      for (int pos = 0; pos < len; pos++) {
+        if (rnd.nextInt(7) == 0) {
           ewahBitmap1.set(pos);
           jdkBitmap1.set(pos);
         }
-        if (rnd.nextInt(11) == 0) { // random *** increasing *** values
+        if (rnd.nextInt(11) == 0) {
           ewahBitmap2.set(pos);
           jdkBitmap2.set(pos);
         }
-        if (rnd.nextInt(7) == 0) { // random *** increasing *** values
+        if (rnd.nextInt(7) == 0) {
           ewahBitmap3.set(pos);
           jdkBitmap3.set(pos);
         }
@@ -456,44 +439,36 @@ public class EWAHCompressedBitmapTest {
       assertEquals(jdkBitmap1, ewahBitmap1);
       assertEquals(jdkBitmap2, ewahBitmap2);
       assertEquals(jdkBitmap3, ewahBitmap3);
-      // XOR
       {
         final EWAHCompressedBitmap xorEwahBitmap = ewahBitmap1.xor(ewahBitmap2);
         final BitSet xorJdkBitmap = (BitSet) jdkBitmap1.clone();
         xorJdkBitmap.xor(jdkBitmap2);
         assertEquals(xorJdkBitmap, xorEwahBitmap);
       }
-      // AND
       {
         final EWAHCompressedBitmap andEwahBitmap = ewahBitmap1.and(ewahBitmap2);
         final BitSet andJdkBitmap = (BitSet) jdkBitmap1.clone();
         andJdkBitmap.and(jdkBitmap2);
         assertEquals(andJdkBitmap, andEwahBitmap);
       }
-      // AND
       {
         final EWAHCompressedBitmap andEwahBitmap = ewahBitmap2.and(ewahBitmap1);
         final BitSet andJdkBitmap = (BitSet) jdkBitmap1.clone();
         andJdkBitmap.and(jdkBitmap2);
         assertEquals(andJdkBitmap, andEwahBitmap);
       }
-      // AND NOT
       {
-        final EWAHCompressedBitmap andNotEwahBitmap = ewahBitmap1
-          .andNot(ewahBitmap2);
+        final EWAHCompressedBitmap andNotEwahBitmap = ewahBitmap1.andNot(ewahBitmap2);
         final BitSet andNotJdkBitmap = (BitSet) jdkBitmap1.clone();
         andNotJdkBitmap.andNot(jdkBitmap2);
         assertEquals(andNotJdkBitmap, andNotEwahBitmap);
       }
-      // AND NOT
       {
-        final EWAHCompressedBitmap andNotEwahBitmap = ewahBitmap2
-          .andNot(ewahBitmap1);
+        final EWAHCompressedBitmap andNotEwahBitmap = ewahBitmap2.andNot(ewahBitmap1);
         final BitSet andNotJdkBitmap = (BitSet) jdkBitmap2.clone();
         andNotJdkBitmap.andNot(jdkBitmap1);
         assertEquals(andNotJdkBitmap, andNotEwahBitmap);
       }
-      // OR
       {
         final EWAHCompressedBitmap orEwahBitmap = ewahBitmap1.or(ewahBitmap2);
         final BitSet orJdkBitmap = (BitSet) jdkBitmap1.clone();
@@ -502,14 +477,12 @@ public class EWAHCompressedBitmapTest {
         assertEquals(orJdkBitmap, EWAHCompressedBitmap.or(ewahBitmap1, ewahBitmap2));
         Assert.assertEquals(orEwahBitmap.cardinality(), ewahBitmap1.orCardinality(ewahBitmap2));
       }
-      // OR
       {
         final EWAHCompressedBitmap orEwahBitmap = ewahBitmap2.or(ewahBitmap1);
         final BitSet orJdkBitmap = (BitSet) jdkBitmap1.clone();
         orJdkBitmap.or(jdkBitmap2);
         assertEquals(orJdkBitmap, orEwahBitmap);
       }
-      // MULTI OR
       {
         final BitSet orJdkBitmap = (BitSet) jdkBitmap1.clone();
         orJdkBitmap.or(jdkBitmap2);
@@ -541,8 +514,7 @@ public class EWAHCompressedBitmapTest {
    * @param jdkBitmap the uncompressed bitmap
    * @param ewahBitmap the compressed bitmap
    */
-  static void assertCardinality(BitSet jdkBitmap,
-    EWAHCompressedBitmap ewahBitmap) {
+  static void assertCardinality(BitSet jdkBitmap, EWAHCompressedBitmap ewahBitmap) {
     final int c1 = jdkBitmap.cardinality();
     final int c2 = ewahBitmap.cardinality();
     if (c1 != c2) {
@@ -550,7 +522,6 @@ public class EWAHCompressedBitmapTest {
     }
   }
 
-  // 
   /**
    * Assess equality between an uncompressed bitmap and a compressed one,
    * part of a test contributed by Marc Polizzi
@@ -558,8 +529,7 @@ public class EWAHCompressedBitmapTest {
    * @param jdkBitmap the jdk bitmap
    * @param ewahBitmap the ewah bitmap
    */
-  static void assertEqualsIterator(BitSet jdkBitmap,
-    EWAHCompressedBitmap ewahBitmap) {
+  static void assertEqualsIterator(BitSet jdkBitmap, EWAHCompressedBitmap ewahBitmap) {
     final Vector<Integer> positions = new Vector<Integer>();
     final Iterator<Integer> bits = ewahBitmap.iterator();
     while (bits.hasNext()) {
@@ -569,8 +539,7 @@ public class EWAHCompressedBitmapTest {
       }
       positions.add(new Integer(bit));
     }
-    for (int pos = jdkBitmap.nextSetBit(0); pos >= 0; pos = jdkBitmap
-      .nextSetBit(pos + 1)) {
+    for (int pos = jdkBitmap.nextSetBit(0); pos >= 0; pos = jdkBitmap.nextSetBit(pos + 1)) {
       if (!positions.contains(new Integer(pos))) {
         throw new RuntimeException("iterator: bitset got different bits");
       }
@@ -587,23 +556,20 @@ public class EWAHCompressedBitmapTest {
     return bits.next();
   }
 
-  // part of a test contributed by Marc Polizzi
   /**
    * Assert equals positions.
    *
    * @param jdkBitmap the jdk bitmap
    * @param ewahBitmap the ewah bitmap
    */
-  static void assertEqualsPositions(BitSet jdkBitmap,
-    EWAHCompressedBitmap ewahBitmap) {
+  static void assertEqualsPositions(BitSet jdkBitmap, EWAHCompressedBitmap ewahBitmap) {
     final List<Integer> positions = ewahBitmap.getPositions();
     for (int position : positions) {
       if (!jdkBitmap.get(position)) {
         throw new RuntimeException("positions: bitset got different bits");
       }
     }
-    for (int pos = jdkBitmap.nextSetBit(0); pos >= 0; pos = jdkBitmap
-      .nextSetBit(pos + 1)) {
+    for (int pos = jdkBitmap.nextSetBit(0); pos >= 0; pos = jdkBitmap.nextSetBit(pos + 1)) {
       if (!positions.contains(new Integer(pos))) {
         throw new RuntimeException("positions: bitset got different bits");
       }
@@ -616,48 +582,50 @@ public class EWAHCompressedBitmapTest {
    * @param ewahBitmap1 the ewah bitmap1
    * @param ewahBitmap2 the ewah bitmap2
    */
-  static void assertEqualsPositions(EWAHCompressedBitmap ewahBitmap1,
-    EWAHCompressedBitmap ewahBitmap2) {
+  static void assertEqualsPositions(EWAHCompressedBitmap ewahBitmap1, EWAHCompressedBitmap ewahBitmap2) {
     final List<Integer> positions1 = ewahBitmap1.getPositions();
     final List<Integer> positions2 = ewahBitmap2.getPositions();
-    if (!positions1.equals(positions2))
+    if (!positions1.equals(positions2)) {
       throw new RuntimeException("positions: alternative got different bits");
+    }
   }
 
   /**
    * Test massive and.
    */
-  @Test
-  public void testMassiveAnd() {
+  @Test public void testMassiveAnd() {
     System.out.println("testing massive logical and");
     EWAHCompressedBitmap[] ewah = new EWAHCompressedBitmap[1024];
-    for (int k = 0; k < ewah.length; ++k)
+    for (int k = 0; k < ewah.length; ++k) {
       ewah[k] = new EWAHCompressedBitmap();
+    }
     for (int k = 0; k < 30000; ++k) {
       ewah[(k + 2 * k * k) % ewah.length].set(k);
     }
     EWAHCompressedBitmap answer = ewah[0];
-    for (int k = 1; k < ewah.length; ++k)
+    for (int k = 1; k < ewah.length; ++k) {
       answer = answer.and(ewah[k]);
-    // result should be empty
-    if (answer.getPositions().size() != 0)
+    }
+    if (answer.getPositions().size() != 0) {
       System.out.println(answer.toDebugString());
+    }
     isTrue(answer.getPositions().size() == 0);
   }
 
   /**
    * Test massive xor.
    */
-  @Test
-  public void testMassiveXOR() {
+  @Test public void testMassiveXOR() {
     System.out.println("testing massive xor (can take a couple of minutes)");
     final int N = 16;
     EWAHCompressedBitmap[] ewah = new EWAHCompressedBitmap[N];
     BitSet[] bset = new BitSet[N];
-    for (int k = 0; k < ewah.length; ++k)
+    for (int k = 0; k < ewah.length; ++k) {
       ewah[k] = new EWAHCompressedBitmap();
-    for (int k = 0; k < bset.length; ++k)
+    }
+    for (int k = 0; k < bset.length; ++k) {
       bset[k] = new BitSet();
+    }
     for (int k = 0; k < 30000; ++k) {
       ewah[(k + 2 * k * k) % ewah.length].set(k);
       bset[(k + 2 * k * k) % ewah.length].set(k);
@@ -671,8 +639,9 @@ public class EWAHCompressedBitmapTest {
     }
     int k = 0;
     for (int j : answer) {
-      if (k != j)
+      if (k != j) {
         System.out.println(answer.toDebugString());
+      }
       equal(k, j);
       k += 1;
     }
@@ -681,18 +650,19 @@ public class EWAHCompressedBitmapTest {
   /**
    * Test massive and not.
    */
-  @Test
-  public void testMassiveAndNot() {
+  @Test public void testMassiveAndNot() {
     System.out.println("testing massive and not");
     final int N = 1024;
     EWAHCompressedBitmap[] ewah = new EWAHCompressedBitmap[N];
-    for (int k = 0; k < ewah.length; ++k)
+    for (int k = 0; k < ewah.length; ++k) {
       ewah[k] = new EWAHCompressedBitmap();
+    }
     for (int k = 0; k < 30000; ++k) {
       ewah[(k + 2 * k * k) % ewah.length].set(k);
     }
     EWAHCompressedBitmap answer = ewah[0];
     EWAHCompressedBitmap answer2 = ewah[0];
+    ;
     for (int k = 1; k < ewah.length; ++k) {
       answer = answer.andNot(ewah[k]);
       EWAHCompressedBitmap copy = null;
@@ -710,25 +680,28 @@ public class EWAHCompressedBitmapTest {
   /**
    * Test massive or.
    */
-  @Test
-  public void testMassiveOr() {
+  @Test public void testMassiveOr() {
     System.out.println("testing massive logical or (can take a couple of minutes)");
     final int N = 128;
     for (int howmany = 512; howmany <= 10000; howmany *= 2) {
       EWAHCompressedBitmap[] ewah = new EWAHCompressedBitmap[N];
       BitSet[] bset = new BitSet[N];
-      for (int k = 0; k < ewah.length; ++k)
+      for (int k = 0; k < ewah.length; ++k) {
         ewah[k] = new EWAHCompressedBitmap();
-      for (int k = 0; k < bset.length; ++k)
+      }
+      for (int k = 0; k < bset.length; ++k) {
         bset[k] = new BitSet();
-      for (int k = 0; k < N; ++k)
+      }
+      for (int k = 0; k < N; ++k) {
         assertEqualsPositions(bset[k], ewah[k]);
+      }
       for (int k = 0; k < howmany; ++k) {
         ewah[(k + 2 * k * k) % ewah.length].set(k);
         bset[(k + 2 * k * k) % ewah.length].set(k);
       }
-      for (int k = 0; k < N; ++k)
+      for (int k = 0; k < N; ++k) {
         assertEqualsPositions(bset[k], ewah[k]);
+      }
       EWAHCompressedBitmap answer = ewah[0];
       BitSet bitsetanswer = bset[0];
       for (int k = 1; k < ewah.length; ++k) {
@@ -741,8 +714,9 @@ public class EWAHCompressedBitmapTest {
       assertEqualsPositions(bitsetanswer, EWAHCompressedBitmap.or(ewah));
       int k = 0;
       for (int j : answer) {
-        if (k != j)
+        if (k != j) {
           System.out.println(answer.toDebugString());
+        }
         equal(k, j);
         k += 1;
       }
@@ -752,8 +726,7 @@ public class EWAHCompressedBitmapTest {
   /**
    * Created: 2/4/11 6:03 PM By: Arnon Moscona.
    */
-  @Test
-  public void EwahIteratorProblem() {
+  @Test public void EwahIteratorProblem() {
     System.out.println("testing ArnonMoscona");
     EWAHCompressedBitmap bitmap = new EWAHCompressedBitmap();
     for (int i = 9434560; i <= 9435159; i++) {
@@ -768,9 +741,8 @@ public class EWAHCompressedBitmapTest {
       isTrue(ival == vval);
     }
     isTrue(!iterator.hasNext());
-    //
     for (int k = 2; k <= 1024; k *= 2) {
-      int[] bitsToSet = createSortedIntArrayOfBitsToSet(k,434455 + 5*k);
+      int[] bitsToSet = createSortedIntArrayOfBitsToSet(k, 434455 + 5 * k);
       EWAHCompressedBitmap ewah = new EWAHCompressedBitmap();
       for (int i : bitsToSet) {
         ewah.set(i);
@@ -784,12 +756,11 @@ public class EWAHCompressedBitmapTest {
    *
    * @throws IOException Signals that an I/O exception has occurred.
    */
-  @Test
-  public void testWithParameters() throws IOException {
-    System.out
-      .println("These tests can run for several minutes. Please be patient.");
-    for (int k = 2; k < 1 << 24; k *= 8)
+  @Test public void testWithParameters() throws IOException {
+    System.out.println("These tests can run for several minutes. Please be patient.");
+    for (int k = 2; k < 1 << 24; k *= 8) {
       shouldSetBits(k);
+    }
     PolizziTest(64);
     PolizziTest(128);
     PolizziTest(256);
@@ -800,20 +771,19 @@ public class EWAHCompressedBitmapTest {
   /**
    * Test clear function
    */
-  @Test
-  public void testClear() {
+  @Test public void testClear() {
     EWAHCompressedBitmap bitmap = new EWAHCompressedBitmap();
     bitmap.set(5);
     bitmap.clear();
     bitmap.set(7);
     isTrue(1 == bitmap.cardinality());
     isTrue(1 == bitmap.getPositions().size());
-    isTrue(7 == bitmap.getPositions().get(0).intValue());
+    isTrue(7 == bitmap.getPositions().get(0));
     bitmap.clear();
-    bitmap.set( 5000 );
+    bitmap.set(5000);
     isTrue(1 == bitmap.cardinality());
     isTrue(1 == bitmap.getPositions().size());
-    isTrue(5000 == bitmap.getPositions().get(0).intValue());
+    isTrue(5000 == bitmap.getPositions().get(0));
     bitmap.set(5001);
     bitmap.set(5005);
     bitmap.set(5100);
@@ -826,47 +796,40 @@ public class EWAHCompressedBitmapTest {
     isTrue(4 == bitmap.cardinality());
     List<Integer> positions = bitmap.getPositions();
     isTrue(4 == positions.size());
-    isTrue(5 == positions.get(0).intValue());
-    isTrue(7 == positions.get(1).intValue());
-    isTrue(1000 == positions.get(2).intValue());
-    isTrue(1001 == positions.get(3).intValue());
+    isTrue(5 == positions.get(0));
+    isTrue(7 == positions.get(1));
+    isTrue(1000 == positions.get(2));
+    isTrue(1001 == positions.get(3));
   }
-  
+
   /**
    * Test the intersects method
    */
-  @Test
-  public void testIntersectsMethod(){
-      System.out.println("testing Intersets Bug");
-      EWAHCompressedBitmap bitmap = new EWAHCompressedBitmap();
-      bitmap.set(1);
-      EWAHCompressedBitmap bitmap2 = new EWAHCompressedBitmap();
-      bitmap2.set(1);
-      bitmap2.set(11);
-      bitmap2.set(111);
-      bitmap2.set(1111111);
-      bitmap2.set(11111111);
-      isTrue(bitmap.intersects(bitmap2));
-      isTrue(bitmap2.intersects(bitmap));
+  @Test public void testIntersectsMethod() {
+    System.out.println("testing Intersets Bug");
+    EWAHCompressedBitmap bitmap = new EWAHCompressedBitmap();
+    bitmap.set(1);
+    EWAHCompressedBitmap bitmap2 = new EWAHCompressedBitmap();
+    bitmap2.set(1);
+    bitmap2.set(11);
+    bitmap2.set(111);
+    bitmap2.set(1111111);
+    bitmap2.set(11111111);
+    isTrue(bitmap.intersects(bitmap2));
+    isTrue(bitmap2.intersects(bitmap));
   }
 
-  @Test
-  public void testOrCardinality()
-  {
+  @Test public void testOrCardinality() {
     EWAHCompressedBitmap bitmap = new EWAHCompressedBitmap();
-    for (int i=0; i<128; i++) {
+    for (int i = 0; i < 128; i++) {
       bitmap.set(i);
     }
     bitmap.set(1025);
     bitmap.set(1026);
-
     Assert.assertEquals(130, bitmap.orCardinality(new EWAHCompressedBitmap()));
   }
 
-  @Test
-  public void testMultiOr()
-  {
-    // test bitmap3 has a literal word while bitmap1/2 have a run of 0
+  @Test public void testMultiOr() {
     EWAHCompressedBitmap bitmap1 = new EWAHCompressedBitmap();
     bitmap1.set(1000);
     EWAHCompressedBitmap bitmap2 = new EWAHCompressedBitmap();
@@ -875,9 +838,7 @@ public class EWAHCompressedBitmapTest {
     bitmap3.set(500);
     bitmap3.set(502);
     bitmap3.set(504);
-
     EWAHCompressedBitmap expected = bitmap1.or(bitmap2).or(bitmap3).or(bitmap1);
-
-    assertEqualsPositions(expected, EWAHCompressedBitmap.or(bitmap1,bitmap2,bitmap3,bitmap1));
+    assertEqualsPositions(expected, EWAHCompressedBitmap.or(bitmap1, bitmap2, bitmap3, bitmap1));
   }
 }
