@@ -69,8 +69,27 @@ public class Cluster {
 
     final Manager manager;
 
+    // Note: we don't want to make init part of Configuration. In 2.0, the default is not init
+    // so there is not point in breaking Configuration API for that. However, as a workaround
+    // until upgrade, we still want to allow optional lazy initialization of the control
+    // connection (see #JAVA-161)
+<<<<<<< /usr/src/app/output/datastax/java-driver/4dd56310d780ad0d35a6c8010e8569a71b1a83f5/driver-core/src/main/java/com/datastax/driver/core/Cluster.java/left.java
     private Cluster(String name, List<InetAddress> contactPoints, Configuration configuration, Collection<Host.StateListener> listeners) {
+||||||| /usr/src/app/output/datastax/java-driver/4dd56310d780ad0d35a6c8010e8569a71b1a83f5/driver-core/src/main/java/com/datastax/driver/core/Cluster.java/base.java
+    private Cluster(List<InetAddress> contactPoints, Configuration configuration) {
+=======
+    private Cluster(List<InetAddress> contactPoints, Configuration configuration, boolean init) {
+>>>>>>> /usr/src/app/output/datastax/java-driver/4dd56310d780ad0d35a6c8010e8569a71b1a83f5/driver-core/src/main/java/com/datastax/driver/core/Cluster.java/right.java
+<<<<<<< /usr/src/app/output/datastax/java-driver/4dd56310d780ad0d35a6c8010e8569a71b1a83f5/driver-core/src/main/java/com/datastax/driver/core/Cluster.java/left.java
         this.manager = new Manager(name, contactPoints, configuration, listeners);
+||||||| /usr/src/app/output/datastax/java-driver/4dd56310d780ad0d35a6c8010e8569a71b1a83f5/driver-core/src/main/java/com/datastax/driver/core/Cluster.java/base.java
+        this.manager = new Manager(contactPoints, configuration);
+        this.manager.init();
+=======
+        this.manager = new Manager(contactPoints, configuration);
+        if (init)
+            this.manager.init();
+>>>>>>> /usr/src/app/output/datastax/java-driver/4dd56310d780ad0d35a6c8010e8569a71b1a83f5/driver-core/src/main/java/com/datastax/driver/core/Cluster.java/right.java
     }
 
     /**
@@ -126,7 +145,13 @@ public class Cluster {
         if (contactPoints.isEmpty())
             throw new IllegalArgumentException("Cannot build a cluster without contact points");
 
+<<<<<<< /usr/src/app/output/datastax/java-driver/4dd56310d780ad0d35a6c8010e8569a71b1a83f5/driver-core/src/main/java/com/datastax/driver/core/Cluster.java/left.java
         return new Cluster(initializer.getClusterName(), contactPoints, initializer.getConfiguration(), initializer.getInitialListeners());
+||||||| /usr/src/app/output/datastax/java-driver/4dd56310d780ad0d35a6c8010e8569a71b1a83f5/driver-core/src/main/java/com/datastax/driver/core/Cluster.java/base.java
+        return new Cluster(initializer.getClusterName(), contactPoints, initializer.getConfiguration());
+=======
+        return new Cluster(initializer.getClusterName(), contactPoints, initializer.getConfiguration(), true);
+>>>>>>> /usr/src/app/output/datastax/java-driver/4dd56310d780ad0d35a6c8010e8569a71b1a83f5/driver-core/src/main/java/com/datastax/driver/core/Cluster.java/right.java
     }
 
     /**
@@ -146,6 +171,7 @@ public class Cluster {
      * @return a new session on this cluster sets to no keyspace.
      */
     public Session connect() {
+        manager.init(); // Calls init if deferInitialization was used. It's a no-op if it's already initialized.
         return manager.newSession();
     }
 
@@ -193,6 +219,7 @@ public class Cluster {
      * @return the cluster metadata.
      */
     public Metadata getMetadata() {
+        manager.init(); // Calls init if deferInitialization was used. It's a no-op if it's already initialized.
         return manager.metadata;
     }
 
@@ -394,14 +421,12 @@ public class Cluster {
         private PoolingOptions poolingOptions;
         private SocketOptions socketOptions;
         private QueryOptions queryOptions;
-
         private Collection<Host.StateListener> listeners;
-
-
         @Override
         public String getClusterName() {
             return clusterName;
         }
+        private boolean deferInitialization = false;
 
         @Override
         public List<InetAddress> getContactPoints() {
@@ -708,6 +733,30 @@ public class Cluster {
             return this;
         }
 
+
+        /**
+         * Defer the initialization of the created cluster.
+         * <p>
+         * By default, building the cluster (calling the {@link #build} method of this object)
+         * triggers the creation of a connection to one of the contact points.
+         * That connection is then used to fetch the metadata on the Cassandra
+         * cluster we are connected to (other nodes, schema, ...). If this
+         * method is used, the creation of that connection will be deferred until the first
+         * call to {@code connect()} or {@code getMetadata()} on the resulting {@code Cluster}
+         * object.
+         * <p>
+         * This method is useful when it is not convenient to deal with connection problems
+         * while creating the Cluster object. Note that this method only exists
+         * in the 1.X branch of the driver since deferred initialization is the default on
+         * the 2.X branch.
+         *
+         * @return this builder.
+         */
+        public Builder withDeferredInitialization() {
+            this.deferInitialization = true;
+            return this;
+        }
+
         /**
          * The configuration that will be used for the new cluster.
          * <p>
@@ -746,7 +795,11 @@ public class Cluster {
          * @return the newly built Cluster instance.
          */
         public Cluster build() {
-            return Cluster.buildFrom(this);
+            List<InetAddress> contactPoints = getContactPoints();
+            if (contactPoints.isEmpty())
+                throw new IllegalArgumentException("Cannot build a cluster without contact points");
+
+            return new Cluster(contactPoints, getConfiguration(), !deferInitialization);
         }
     }
 
@@ -823,6 +876,9 @@ public class Cluster {
         }
 
         private void init() {
+            if (!isInit.compareAndSet(false, true))
+                return;
+
             if (!isInit.compareAndSet(false, true))
                 return;
 
