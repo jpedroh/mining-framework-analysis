@@ -16,6 +16,32 @@
  */
 package org.apache.commons.lang3;
 
+<<<<<<< /usr/src/app/output/apache/commons-lang/3dc5b155952bbe0a6904496cc8e87f3a512bcb34/src/test/java/org/apache/commons/lang3/FunctionsTest.java/left.java
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.lang.reflect.UndeclaredThrowableException;
+import java.util.concurrent.Callable;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
+||||||| /usr/src/app/output/apache/commons-lang/3dc5b155952bbe0a6904496cc8e87f3a512bcb34/src/test/java/org/apache/commons/lang3/FunctionsTest.java/base.java
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.lang.reflect.UndeclaredThrowableException;
+import java.util.concurrent.Callable;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+=======
+>>>>>>> /usr/src/app/output/apache/commons-lang/3dc5b155952bbe0a6904496cc8e87f3a512bcb34/src/test/java/org/apache/commons/lang3/FunctionsTest.java/right.java
 import org.apache.commons.lang3.Functions.FailableBiConsumer;
 import org.apache.commons.lang3.Functions.FailableBiFunction;
 import org.apache.commons.lang3.Functions.FailableCallable;
@@ -293,7 +319,7 @@ class FunctionsTest {
     }
 
     @Test
-    public void testApplyFunction() {
+    void testApplyFunction() {
         final IllegalStateException ise = new IllegalStateException();
         final Testable testable = new Testable(ise);
         Throwable e = assertThrows(IllegalStateException.class, () -> Functions.apply(Testable::testInt, testable));
@@ -318,7 +344,7 @@ class FunctionsTest {
     }
 
     @Test
-    public void testAsFunction() {
+    void testAsFunction() {
         final IllegalStateException ise = new IllegalStateException();
         final Testable testable = new Testable(ise);
         final FailableFunction<Throwable, Integer, Throwable> failableFunction = th -> {
@@ -345,7 +371,61 @@ class FunctionsTest {
     }
 
     @Test
-    public void testApplyBiFunction() {
+    void testAsPredicate() {
+        final IllegalStateException ise = new IllegalStateException();
+        final Testable testable = new Testable(ise);
+        final Functions.FailablePredicate<Throwable, Throwable> failablePredicate = th -> {
+            testable.setThrowable(th);
+            return testable.testBool();
+        };
+        final Predicate<Throwable> predicate = Functions.asPredicate(failablePredicate);
+        Throwable e = assertThrows(IllegalStateException.class, () -> predicate.test(ise));
+        assertSame(ise, e);
+
+        final Error error = new OutOfMemoryError();
+        testable.setThrowable(error);
+        e = assertThrows(OutOfMemoryError.class, () -> predicate.test(error));
+        assertSame(error, e);
+
+        final IOException ioe = new IOException("Unknown I/O error");
+        testable.setThrowable(ioe);
+        e = assertThrows(UncheckedIOException.class, () -> predicate.test(ioe));
+        final Throwable t = e.getCause();
+        assertNotNull(t);
+        assertSame(ioe, t);
+
+        assertEquals(false, predicate.test(null));
+    }
+
+    @Test
+    void testAsBiPredicate() {
+        final IllegalStateException ise = new IllegalStateException();
+        final Testable testable = new Testable(ise);
+        final Functions.FailableBiPredicate<Throwable, Throwable, Throwable> failableBiPredicate = (th1, th2) -> {
+            testable.setThrowable(th1);
+            return testable.testBool();
+        };
+        final BiPredicate<Throwable, Throwable> predicate = Functions.asBiPredicate(failableBiPredicate);
+        Throwable e = assertThrows(IllegalStateException.class, () -> predicate.test(ise, ise));
+        assertSame(ise, e);
+
+        final Error error = new OutOfMemoryError();
+        testable.setThrowable(error);
+        e = assertThrows(OutOfMemoryError.class, () -> predicate.test(error, error));
+        assertSame(error, e);
+
+        final IOException ioe = new IOException("Unknown I/O error");
+        testable.setThrowable(ioe);
+        e = assertThrows(UncheckedIOException.class, () -> predicate.test(ioe, ioe));
+        final Throwable t = e.getCause();
+        assertNotNull(t);
+        assertSame(ioe, t);
+
+        assertEquals(false, predicate.test(null, null));
+    }
+
+    @Test
+    void testApplyBiFunction() {
         final IllegalStateException ise = new IllegalStateException();
         final Testable testable = new Testable(null);
         Throwable e = assertThrows(IllegalStateException.class, () -> Functions.apply(Testable::testInt, testable, ise));
@@ -367,7 +447,7 @@ class FunctionsTest {
     }
 
     @Test
-    public void testAsBiFunction() {
+    void testAsBiFunction() {
         final IllegalStateException ise = new IllegalStateException();
         final Testable testable = new Testable(ise);
         final FailableBiFunction<Testable, Throwable, Integer, Throwable> failableBiFunction = (t, th) -> {
@@ -394,7 +474,7 @@ class FunctionsTest {
     }
 
     @Test
-    public void testGetFromSupplier() {
+    void testGetFromSupplier() {
         FailureOnOddInvocations.invocation = 0;
         UndeclaredThrowableException e = assertThrows(UndeclaredThrowableException.class, () ->  Functions.run(FailureOnOddInvocations::new));
         final Throwable cause = e.getCause();
@@ -406,6 +486,11 @@ class FunctionsTest {
     }
 
     @Test
+<<<<<<< /usr/src/app/output/apache/commons-lang/3dc5b155952bbe0a6904496cc8e87f3a512bcb34/src/test/java/org/apache/commons/lang3/FunctionsTest.java/left.java
+    void testAsSupplier() {
+||||||| /usr/src/app/output/apache/commons-lang/3dc5b155952bbe0a6904496cc8e87f3a512bcb34/src/test/java/org/apache/commons/lang3/FunctionsTest.java/base.java
+    public void testAsSupplier() {
+=======
     @DisplayName("Test that asPredicate(FailablePredicate) is converted to -> Predicate ")
     public void testAsPredicate() {
         FailureOnOddInvocations.invocation = 0;
@@ -437,6 +522,7 @@ class FunctionsTest {
 
     @Test
     public void testAsSupplier() {
+>>>>>>> /usr/src/app/output/apache/commons-lang/3dc5b155952bbe0a6904496cc8e87f3a512bcb34/src/test/java/org/apache/commons/lang3/FunctionsTest.java/right.java
         FailureOnOddInvocations.invocation = 0;
         final FailableSupplier<FailureOnOddInvocations, Throwable> failableSupplier = () -> new FailureOnOddInvocations();
         final Supplier<FailureOnOddInvocations> supplier = Functions.asSupplier(failableSupplier);
@@ -450,7 +536,7 @@ class FunctionsTest {
     }
 
     @Test
-    public void testTryWithResources() {
+    void testTryWithResources() {
         final CloseableObject co = new CloseableObject();
         final FailableConsumer<Throwable, ? extends Throwable> consumer = co::run;
         final IllegalStateException ise = new IllegalStateException();

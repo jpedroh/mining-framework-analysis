@@ -163,7 +163,6 @@ public class Functions {
     public static Runnable asRunnable(FailableRunnable<?> pRunnable) {
         return () -> run(pRunnable);
     }
-
     /**
      * Converts the given {@link FailableConsumer} into a standard {@link Consumer}.
      *
@@ -175,9 +174,14 @@ public class Functions {
      * @return a standard {@code Consumer}
      */
     public static <I> Consumer<I> asConsumer(FailableConsumer<I, ?> pConsumer) {
+<<<<<<< /usr/src/app/output/apache/commons-lang/3dc5b155952bbe0a6904496cc8e87f3a512bcb34/src/main/java/org/apache/commons/lang3/Functions.java/left.java
         return pInput -> accept(pConsumer, pInput);
+||||||| /usr/src/app/output/apache/commons-lang/3dc5b155952bbe0a6904496cc8e87f3a512bcb34/src/main/java/org/apache/commons/lang3/Functions.java/base.java
+        return ;
+=======
+        return (pInput) -> accept(pConsumer, pInput);
+>>>>>>> /usr/src/app/output/apache/commons-lang/3dc5b155952bbe0a6904496cc8e87f3a512bcb34/src/main/java/org/apache/commons/lang3/Functions.java/right.java
     }
-
     /**
      * Converts the given {@link FailableCallable} into a standard {@link Callable}.
      *
@@ -191,7 +195,6 @@ public class Functions {
     public static <O> Callable<O> asCallable(FailableCallable<O, ?> pCallable) {
         return () -> call(pCallable);
     }
-
     /**
      * Converts the given {@link FailableBiConsumer} into a standard {@link BiConsumer}.
      *
@@ -206,7 +209,6 @@ public class Functions {
     public static <I1, I2> BiConsumer<I1, I2> asBiConsumer(FailableBiConsumer<I1, I2, ?> pConsumer) {
         return (pInput1, pInput2) -> accept(pConsumer, pInput1, pInput2);
     }
-
     /**
      * Converts the given {@link FailableFunction} into a standard {@link Function}.
      *
@@ -221,7 +223,6 @@ public class Functions {
     public static <I, O> Function<I, O> asFunction(FailableFunction<I, O, ?> pFunction) {
         return pInput -> apply(pFunction, pInput);
     }
-
     /**
      * Converts the given {@link FailableBiFunction} into a standard {@link BiFunction}.
      *
@@ -237,7 +238,6 @@ public class Functions {
     public static <I1, I2, O> BiFunction<I1, I2, O> asBiFunction(FailableBiFunction<I1, I2, O, ?> pFunction) {
         return (pInput1, pInput2) -> apply(pFunction, pInput1, pInput2);
     }
-
     /**
      * Converts the given {@link FailablePredicate} into a standard {@link Predicate}.
      *
@@ -249,9 +249,14 @@ public class Functions {
      * @return a standard {@code Predicate}
      */
     public static <I> Predicate<I> asPredicate(FailablePredicate<I, ?> pPredicate) {
+<<<<<<< /usr/src/app/output/apache/commons-lang/3dc5b155952bbe0a6904496cc8e87f3a512bcb34/src/main/java/org/apache/commons/lang3/Functions.java/left.java
         return pInput -> test(pPredicate, pInput);
+||||||| /usr/src/app/output/apache/commons-lang/3dc5b155952bbe0a6904496cc8e87f3a512bcb34/src/main/java/org/apache/commons/lang3/Functions.java/base.java
+        return ;
+=======
+        return (pInput) -> test(pPredicate, pInput);
+>>>>>>> /usr/src/app/output/apache/commons-lang/3dc5b155952bbe0a6904496cc8e87f3a512bcb34/src/main/java/org/apache/commons/lang3/Functions.java/right.java
     }
-
     /**
      * Converts the given {@link FailableBiPredicate} into a standard {@link BiPredicate}.
      *
@@ -266,7 +271,6 @@ public class Functions {
     public static <I1, I2> BiPredicate<I1, I2> asBiPredicate(FailableBiPredicate<I1, I2, ?> pPredicate) {
         return (pInput1, pInput2) -> test(pPredicate, pInput1, pInput2);
     }
-
     /**
      * Converts the given {@link FailableSupplier} into a standard {@link Supplier}.
      *
@@ -280,7 +284,6 @@ public class Functions {
     public static <O> Supplier<O> asSupplier(FailableSupplier<O, ?> pSupplier) {
         return () -> get(pSupplier);
     }
-
     /**
      * Runs a runnable and rethrows any exception as a {@link RuntimeException}.
      *
@@ -297,7 +300,6 @@ public class Functions {
             throw rethrow(t);
         }
     }
-
     /**
      * Calls a callable and rethrows any exception as a {@link RuntimeException}.
      *
@@ -312,7 +314,6 @@ public class Functions {
     public static <O, T extends Throwable> O call(FailableCallable<O, T> pCallable) {
         return get(() -> pCallable.call());
     }
-
     /**
      * Consumes a consumer and rethrows any exception as a {@link RuntimeException}.
      *
@@ -327,7 +328,6 @@ public class Functions {
     public static <O, T extends Throwable> void accept(FailableConsumer<O, T> pConsumer, O pObject) {
         run(() -> pConsumer.accept(pObject));
     }
-
     /**
      * Consumes a consumer and rethrows any exception as a {@link RuntimeException}.
      *
@@ -344,7 +344,6 @@ public class Functions {
     public static <O1, O2, T extends Throwable> void accept(FailableBiConsumer<O1, O2, T> pConsumer, O1 pObject1, O2 pObject2) {
         run(() -> pConsumer.accept(pObject1, pObject2));
     }
-
     /**
      * Applies a function and rethrows any exception as a {@link RuntimeException}.
      *
@@ -361,7 +360,6 @@ public class Functions {
     public static <I, O, T extends Throwable> O apply(FailableFunction<I, O, T> pFunction, I pInput) {
         return get(() -> pFunction.apply(pInput));
     }
-
     /**
      * Applies a function and rethrows any exception as a {@link RuntimeException}.
      *
@@ -380,7 +378,6 @@ public class Functions {
     public static <I1, I2, O, T extends Throwable> O apply(FailableBiFunction<I1, I2, O, T> pFunction, I1 pInput1, I2 pInput2) {
         return get(() -> pFunction.apply(pInput1, pInput2));
     }
-
     /**
      * Tests a predicate and rethrows any exception as a {@link RuntimeException}.
      *
@@ -396,7 +393,6 @@ public class Functions {
     public static <O, T extends Throwable> boolean test(FailablePredicate<O, T> pPredicate, O pObject) {
         return get(() -> pPredicate.test(pObject));
     }
-
     /**
      * Tests a predicate and rethrows any exception as a {@link RuntimeException}.
      *
@@ -414,7 +410,6 @@ public class Functions {
     public static <O1, O2, T extends Throwable> boolean test(FailableBiPredicate<O1, O2, T> pPredicate, O1 pObject1, O2 pObject2) {
         return get(() -> pPredicate.test(pObject1, pObject2));
     }
-
     /**
      * Invokes the supplier, and returns the result.
      *
@@ -433,8 +428,6 @@ public class Functions {
             throw rethrow(t);
         }
     }
-
-
     /**
      * A simple try-with-resources implementation, that can be used, if your
      * objects do not implement the {@link AutoCloseable} interface. The method
@@ -499,7 +492,6 @@ public class Functions {
             }
         }
     }
-
     /**
      * A simple try-with-resources implementation, that can be used, if your
      * objects do not implement the {@link AutoCloseable} interface. The method
@@ -524,9 +516,8 @@ public class Functions {
                                         FailableRunnable<? extends Throwable>... pResources) {
         tryWithResources(pAction, null, pResources);
     }
-
     /**
-     * <p>Rethrows a {@link Throwable} as an unchecked exception. If the argument is
+     * <p>Rethrow a {@link Throwable} as an unchecked exception. If the argument is
      * already unchecked, namely a {@code RuntimeException} or {@code Error} then
      * the argument will be rethrown without modification. If the exception is
      * {@code IOException} then it will be enveloped into a {@code UncheckedIOException}.
@@ -561,7 +552,6 @@ public class Functions {
             throw popStackTrace(new UndeclaredThrowableException(pThrowable));
         }
     }
-
     /**
      * Remove the last element from the stack trace of the throwable. This method is called
      * from rethrow and the stack trace modification will show the throwable as if it was
@@ -577,4 +567,9 @@ public class Functions {
         t.setStackTrace(newTrace);
         return t;
     }
+    /**
+     * Rethrows a {@link Throwable} as an unchecked exception.
+     * @param pThrowable The throwable to rethrow
+     * @return Never returns anything, this method never terminates normally
+     */
 }
