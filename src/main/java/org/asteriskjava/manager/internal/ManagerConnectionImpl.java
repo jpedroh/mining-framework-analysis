@@ -667,6 +667,7 @@ public class ManagerConnectionImpl implements ManagerConnection, Dispatcher
                             {
                                 return AsteriskVersion.ASTERISK_1_8;
                             }
+<<<<<<< /usr/src/app/output/srt/asterisk-java/2131fda1860f47da7d05dd3d494922e7d90b2ab3/src/main/java/org/asteriskjava/manager/internal/ManagerConnectionImpl.java/left.java
                             else if (VERSION_PATTERN_10.matcher(coreLine).matches())
                             {
                                 return AsteriskVersion.ASTERISK_10;
@@ -683,6 +684,13 @@ public class ManagerConnectionImpl implements ManagerConnection, Dispatcher
                             {
                                 return AsteriskVersion.ASTERISK_13;
                             }
+||||||| /usr/src/app/output/srt/asterisk-java/2131fda1860f47da7d05dd3d494922e7d90b2ab3/src/main/java/org/asteriskjava/manager/internal/ManagerConnectionImpl.java/base.java
+=======
+                            else if (coreLine != null && coreLine.startsWith("Asterisk 11"))
+                             {
+                                 return AsteriskVersion.ASTERISK_11;
+                             }
+>>>>>>> /usr/src/app/output/srt/asterisk-java/2131fda1860f47da7d05dd3d494922e7d90b2ab3/src/main/java/org/asteriskjava/manager/internal/ManagerConnectionImpl.java/right.java
                         }
                     }
 

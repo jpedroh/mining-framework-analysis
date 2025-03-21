@@ -29,13 +29,12 @@ public class PingResponse extends ManagerResponse
     private String ping;
     private String timestamp;
 
-    private String timestamp;
-    
     /**
      * Returns always "Pong".
      *
      * @return always "Pong".
      */
+
     public String getPing()
     {
         return ping;
@@ -51,6 +50,7 @@ public class PingResponse extends ManagerResponse
      * @return Timestamp as a String, e.g 1353747825.795863
      * @since 1.0.0
      */
+
     public String getTimestamp()
     {
         return timestamp;

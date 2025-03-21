@@ -67,29 +67,34 @@ public class AsteriskVersion implements Comparable<AsteriskVersion>, Serializabl
      * @since 1.0.0
      */
     public static final AsteriskVersion ASTERISK_10 = new AsteriskVersion(1000, "Asterisk 10");
-
     /**
      * Represents the Asterisk 11 series.
      *
      * @since 1.0.0
      */
+<<<<<<< /usr/src/app/output/srt/asterisk-java/2131fda1860f47da7d05dd3d494922e7d90b2ab3/src/main/java/org/asteriskjava/AsteriskVersion.java/left.java
     public static final AsteriskVersion ASTERISK_11 = new AsteriskVersion(1100, "Asterisk 11");
-
+||||||| /usr/src/app/output/srt/asterisk-java/2131fda1860f47da7d05dd3d494922e7d90b2ab3/src/main/java/org/asteriskjava/AsteriskVersion.java/base.java
+=======
+    public static final AsteriskVersion ASTERISK_11 = new AsteriskVersion(111, "Asterisk 11");
+>>>>>>> /usr/src/app/output/srt/asterisk-java/2131fda1860f47da7d05dd3d494922e7d90b2ab3/src/main/java/org/asteriskjava/AsteriskVersion.java/right.java
     /**
      * Represents the Asterisk 12 series.
      *
      * @since 1.0.0
      */
     public static final AsteriskVersion ASTERISK_12 = new AsteriskVersion(1200, "Asterisk 12");
-
     /**
      * Represents the Asterisk 13 series.
      *
      * @since 1.0.0
      */
     public static final AsteriskVersion ASTERISK_13 = new AsteriskVersion(1300, "Asterisk 13");
-
-
+    /**
+     * Represents the Asterisk 11 series.
+     *
+     * @since 1.0.0
+     */
     /**
      * Serial version identifier.
      */

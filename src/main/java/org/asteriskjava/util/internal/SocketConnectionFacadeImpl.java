@@ -180,10 +180,19 @@ public class SocketConnectionFacadeImpl implements SocketConnectionFacade
     {
         socket.close();
         scanner.close();
+<<<<<<< /usr/src/app/output/srt/asterisk-java/2131fda1860f47da7d05dd3d494922e7d90b2ab3/src/main/java/org/asteriskjava/util/internal/SocketConnectionFacadeImpl.java/left.java
+        if (trace != null) {
+            trace.close();
+        }
+||||||| /usr/src/app/output/srt/asterisk-java/2131fda1860f47da7d05dd3d494922e7d90b2ab3/src/main/java/org/asteriskjava/util/internal/SocketConnectionFacadeImpl.java/base.java
+        trace.close();
+=======
+        
         // close the trace only if it was activated (the object is not null)
         if (trace != null){
         	trace.close();
         }
+>>>>>>> /usr/src/app/output/srt/asterisk-java/2131fda1860f47da7d05dd3d494922e7d90b2ab3/src/main/java/org/asteriskjava/util/internal/SocketConnectionFacadeImpl.java/right.java
     }
 
     public boolean isConnected()

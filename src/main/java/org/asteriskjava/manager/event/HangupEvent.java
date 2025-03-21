@@ -90,15 +90,21 @@ public class HangupEvent extends AbstractChannelEvent
         this.causeTxt = causeTxt;
     }
 
-	public String getAccountCode() 
-	{
-		return accountCode;
-	}
+    /**
+     * Returns the Caller*ID name of the channel connected if set.
+     * If the channel has no caller id set "unknown" is returned.
+     *
+     * @since 1.0.0
+     */
+    public String getConnectedlinename()
+    {
+        return connectedlinename;
+    }
 
-	public void setAccountCode(String accountCode) 
-	{
-		this.accountCode = accountCode;
-	}
+    public void setConnectedlinename(String connectedlinename)
+    {
+        this.connectedlinename = connectedlinename;
+    }
 
     /**
      * Returns the Caller*ID number of the channel connected if set.
@@ -106,35 +112,42 @@ public class HangupEvent extends AbstractChannelEvent
      *
      * @since 1.0.0
      */
-	public String getConnectedLineNum() 
-	{
+    public String getConnectedlinenum()
+    {
+        return connectedlinenum;
+    }
+
+    public void setConnectedlinenum(String connectedlinenum)
+    {
+        this.connectedlinenum = connectedlinenum;
+    }
+
+	public String getAccountCode() {
+		return accountCode;
+	}
+
+	public void setAccountCode(String accountCode) {
+		this.accountCode = accountCode;
+	}
+
+	public String getConnectedLineNum() {
 		return connectedLineNum;
 	}
 
-	public void setConnectedLineNum(String connectedLineNum) 
-	{
+	public void setConnectedLineNum(String connectedLineNum) {
 		this.connectedLineNum = connectedLineNum;
 	}
 
-    /**
-     * Returns the Caller*ID name of the channel connected if set.
-     * If the channel has no caller id set "unknown" is returned.
-     *
-     * @since 1.0.0
-     */
-	public String getConnectedLineName() 
-	{
+	public String getConnectedLineName() {
 		return connectedLineName;
 	}
 
-	public void setConnectedLineName(String connectedLineName) 
-	{
+	public void setConnectedLineName(String connectedLineName) {
 		this.connectedLineName = connectedLineName;
 	}
 
 	@Override
-	public String toString() 
-	{
+	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("HangupEvent [cause=");
 		builder.append(cause);
@@ -149,4 +162,6 @@ public class HangupEvent extends AbstractChannelEvent
 		builder.append("]");
 		return builder.toString();
 	}
+    
+    
 }
