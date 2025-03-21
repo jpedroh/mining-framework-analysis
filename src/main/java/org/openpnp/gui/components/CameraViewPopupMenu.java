@@ -98,8 +98,15 @@ public class CameraViewPopupMenu extends JPopupMenu {
                         (RulerReticle) cameraView.getDefaultReticle()));
             }
             else if (cameraView.getDefaultReticle() instanceof GridReticle) {
+<<<<<<< /usr/src/app/output/openpnp/openpnp/0c32f6facf7588586ad6d566dad3066bcd7c08cc/src/main/java/org/openpnp/gui/components/CameraViewPopupMenu.java/left.java
+                setReticleOptionsMenu(createGridReticleOptionsMenu(
+                        (GridReticle) cameraView.getDefaultReticle()));
+||||||| /usr/src/app/output/openpnp/openpnp/0c32f6facf7588586ad6d566dad3066bcd7c08cc/src/main/java/org/openpnp/gui/components/CameraViewPopupMenu.java/base.java
+                setReticleOptionsMenu();
+=======
                 setReticleOptionsMenu(createRulerReticleOptionsMenu(
                         (GridReticle) cameraView.getDefaultReticle()));
+>>>>>>> /usr/src/app/output/openpnp/openpnp/0c32f6facf7588586ad6d566dad3066bcd7c08cc/src/main/java/org/openpnp/gui/components/CameraViewPopupMenu.java/right.java
             }
             else if (cameraView.getDefaultReticle() instanceof FiducialReticle) {
                 setReticleOptionsMenu(createFiducialReticleOptionsMenu(
@@ -739,6 +746,18 @@ public class CameraViewPopupMenu extends JPopupMenu {
         }
     };
 
+<<<<<<< /usr/src/app/output/openpnp/openpnp/0c32f6facf7588586ad6d566dad3066bcd7c08cc/src/main/java/org/openpnp/gui/components/CameraViewPopupMenu.java/left.java
+    private Action gridReticleAction = new AbstractAction("Grid") {
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            GridReticle reticle = new GridReticle();
+            JMenu optionsMenu = createGridReticleOptionsMenu(reticle);
+            setReticleOptionsMenu(optionsMenu);
+            cameraView.setDefaultReticle(reticle);
+        }
+    };
+||||||| /usr/src/app/output/openpnp/openpnp/0c32f6facf7588586ad6d566dad3066bcd7c08cc/src/main/java/org/openpnp/gui/components/CameraViewPopupMenu.java/base.java
+=======
     private Action gridReticleAction = new AbstractAction("Grid") {
         @Override
         public void actionPerformed(ActionEvent arg0) {
@@ -748,16 +767,17 @@ public class CameraViewPopupMenu extends JPopupMenu {
             cameraView.setDefaultReticle(reticle);
         }
     };
+>>>>>>> /usr/src/app/output/openpnp/openpnp/0c32f6facf7588586ad6d566dad3066bcd7c08cc/src/main/java/org/openpnp/gui/components/CameraViewPopupMenu.java/right.java
 
     private Action rulerReticleAction = new AbstractAction("Ruler") {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-            RulerReticle reticle = new RulerReticle();
-            JMenu optionsMenu = createRulerReticleOptionsMenu(reticle);
-            setReticleOptionsMenu(optionsMenu);
-            cameraView.setDefaultReticle(reticle);
-        }
-    };
+    @Override
+    public void actionPerformed(ActionEvent arg0) {
+        RulerReticle reticle = new RulerReticle();
+        JMenu optionsMenu = createRulerReticleOptionsMenu(reticle);
+        setReticleOptionsMenu(optionsMenu);
+        cameraView.setDefaultReticle(reticle);
+    }
+};
 
     private Action fiducialReticleAction = new AbstractAction("Fiducial") {
         @Override
