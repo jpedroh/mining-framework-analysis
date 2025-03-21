@@ -1,5 +1,4 @@
 package org.cyclopsgroup.jmxterm.boot;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -49,22 +48,19 @@ public class CliMain {
    * @throws Exception Allow any exceptions
    */
   int execute(String[] args) throws Exception {
-    ArgumentProcessor<CliMainOptions> ap =
-        ArgumentProcessor.newInstance(CliMainOptions.class, new GnuParser());
+    ArgumentProcessor<CliMainOptions> ap = ArgumentProcessor.newInstance(CliMainOptions.class, new GnuParser());
     CliMainOptions options = new CliMainOptions();
     ap.process(args, options);
     if (options.isHelp()) {
       ap.printHelp(STDOUT_WRITER);
       return 0;
     }
-
     VerboseLevel verboseLevel;
     if (options.getVerboseLevel() != null) {
       verboseLevel = VerboseLevel.valueOf(options.getVerboseLevel().toUpperCase());
     } else {
       verboseLevel = null;
     }
-
     CommandOutput output;
     if (StringUtils.equals(options.getOutput(), CliMainOptions.STDOUT)) {
       output = new PrintStreamCommandOutput(System.out, System.err);
@@ -80,26 +76,19 @@ public class CliMain {
         } else {
           LineReaderImpl consoleReader = (LineReaderImpl) LineReaderBuilder.builder().build();
           File historyFile = new File(System.getProperty("user.home"), ".jmxterm_history");
-          output.printMessage(
-              "Delete "
-                  + historyFile.getAbsolutePath()
-                  + " if you encounter error right after launching me.");
+          output.printMessage("Delete " + historyFile.getAbsolutePath() + " if you encounter error right after launching me.");
           consoleReader.setVariable(LineReader.HISTORY_FILE, historyFile);
           History history = consoleReader.getHistory();
           history.load();
-          Runtime.getRuntime()
-              .addShutdownHook(
-                  new Thread(
-                      new Runnable() {
-                        @Override
-                        public void run() {
-                          try {
-                            history.save();
-                          } catch (IOException e) {
-                            System.err.println("Failed to flush command history! " + e);
-                          }
-                        }
-                      }));
+          Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            @Override public void run() {
+              try {
+                history.save();
+              } catch (IOException e) {
+                System.err.println("Failed to flush command history! " + e);
+              }
+            }
+          }));
           input = new JlineCommandInput(consoleReader, COMMAND_PROMPT);
         }
       } else {
@@ -112,9 +101,7 @@ public class CliMain {
       try {
         CommandCenter commandCenter = new CommandCenter(output, input);
         if (input instanceof JlineCommandInput) {
-          ((JlineCommandInput) input)
-              .getConsole()
-              .setCompleter(new ConsoleCompletor(commandCenter));
+          ((JlineCommandInput) input).getConsole().setCompleter(new ConsoleCompletor(commandCenter));
         }
         if (options.getUrl() != null) {
           Map<String, Object> env = new HashMap<>();
@@ -123,17 +110,13 @@ public class CliMain {
             if (password == null) {
               password = input.readMaskedString("Authentication password: ");
             }
-            String[] credentials = {options.getUser(), password};
+            String[] credentials = { options.getUser(), password };
             env.put(JMXConnector.CREDENTIALS, credentials);
           }
           if (options.isSecureRmiRegistry()) {
-            // Required to prevent "java.rmi.ConnectIOException: non-JRMP server at remote endpoint"
-            // error
             env.put("com.sun.jndi.rmi.factory.socket", new SslRMIClientSocketFactory());
           }
-          commandCenter.connect(
-              SyntaxUtils.getUrl(options.getUrl(), commandCenter.getProcessManager()),
-              env.isEmpty() ? null : env);
+          commandCenter.connect(SyntaxUtils.getUrl(options.getUrl(), commandCenter.getProcessManager()), env.isEmpty() ? null : env);
         }
         if (verboseLevel != null) {
           commandCenter.setVerboseLevel(verboseLevel);
@@ -156,10 +139,10 @@ public class CliMain {
         }
         commandCenter.close();
         return exitCode;
-      } finally {
+      }  finally {
         input.close();
       }
-    } finally {
+    }  finally {
       output.close();
     }
   }

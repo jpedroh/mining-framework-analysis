@@ -1,12 +1,18 @@
 package org.cyclopsgroup.jmxterm.cmd;
-
 import java.io.IOException;
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
+import org.apache.commons.lang3.Validate;
 import java.util.Arrays;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import java.util.Collections;
+import org.cyclopsgroup.jcli.annotation.Cli;
 import java.util.Comparator;
+import org.cyclopsgroup.jcli.annotation.Option;
 import java.util.List;
+import org.cyclopsgroup.jmxterm.Command;
 import java.util.regex.Pattern;
+import org.cyclopsgroup.jmxterm.Session;
 import javax.management.JMException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanFeatureInfo;
@@ -16,33 +22,18 @@ import javax.management.MBeanOperationInfo;
 import javax.management.MBeanParameterInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.cyclopsgroup.jcli.annotation.Cli;
-import org.cyclopsgroup.jcli.annotation.Option;
-import org.cyclopsgroup.jmxterm.Command;
-import org.cyclopsgroup.jmxterm.Session;
 
 /**
  * Command that displays attributes and operations of an MBean
  *
  * @author <a href="mailto:jiaqi.guo@gmail.com">Jiaqi Guo</a>
  */
-@Cli(
-    name = "info",
-    description = "Display detail information about an MBean",
-    note = "If -b option is not specified, current selected MBean is applied")
-public class InfoCommand extends Command {
-  private static final Comparator<MBeanFeatureInfo> INFO_COMPARATOR =
-      new Comparator<MBeanFeatureInfo>() {
-        public int compare(MBeanFeatureInfo o1, MBeanFeatureInfo o2) {
-          return new CompareToBuilder()
-              .append(o1.getName(), o2.getName())
-              .append(o1.hashCode(), o2.hashCode())
-              .toComparison();
-        }
-      };
+@Cli(name = "info", description = "Display detail information about an MBean", note = "If -b option is not specified, current selected MBean is applied") public class InfoCommand extends Command {
+  private static final Comparator<MBeanFeatureInfo> INFO_COMPARATOR = new Comparator<MBeanFeatureInfo>() {
+    public int compare(MBeanFeatureInfo o1, MBeanFeatureInfo o2) {
+      return new CompareToBuilder().append(o1.getName(), o2.getName()).append(o1.hashCode(), o2.hashCode()).toComparison();
+    }
+  };
 
   private static final String TEXT_ATTRIBUTES = "# attributes";
 
@@ -73,14 +64,7 @@ public class InfoCommand extends Command {
     Collections.sort(infos, INFO_COMPARATOR);
     for (MBeanAttributeInfo attr : infos) {
       String rw = "" + (attr.isReadable() ? "r" : "") + (attr.isWritable() ? "w" : "");
-      session.output.println(
-          String.format(
-              "  %%%-3d - %s (%s, %s)" + (showDescription ? ", %s" : ""),
-              index++,
-              attr.getName(),
-              attr.getType(),
-              rw,
-              attr.getDescription()));
+      session.output.println(String.format("  %%%-3d - %s (%s, %s)" + (showDescription ? ", %s" : ""), index++, attr.getName(), attr.getType(), rw, attr.getDescription()));
     }
   }
 
@@ -88,19 +72,13 @@ public class InfoCommand extends Command {
     Session session = getSession();
     MBeanNotificationInfo[] notificationInfos = info.getNotifications();
     if (notificationInfos.length == 0) {
-      session.output.printMessage("there's no notifications");
+      session.output.printMessage("there\'s no notifications");
       return;
     }
     int index = 0;
     session.output.println(TEXT_NOTIFICATIONS);
     for (MBeanNotificationInfo notification : notificationInfos) {
-      session.output.println(
-          String.format(
-              "  %%%-3d - %s(%s)" + (showDescription ? ", %s" : ""),
-              index++,
-              notification.getName(),
-              StringUtils.join(notification.getNotifTypes(), ","),
-              notification.getDescription()));
+      session.output.println(String.format("  %%%-3d - %s(%s)" + (showDescription ? ", %s" : ""), index++, notification.getName(), StringUtils.join(notification.getNotifTypes(), ","), notification.getDescription()));
     }
   }
 
@@ -108,11 +86,10 @@ public class InfoCommand extends Command {
     Session session = getSession();
     MBeanOperationInfo[] operationInfos = info.getOperations();
     if (operationInfos.length == 0) {
-      session.output.printMessage("there's no operations");
+      session.output.printMessage("there\'s no operations");
       return;
     }
-    List<MBeanOperationInfo> operations =
-        new ArrayList<MBeanOperationInfo>(Arrays.asList(operationInfos));
+    List<MBeanOperationInfo> operations = new ArrayList<MBeanOperationInfo>(Arrays.asList(operationInfos));
     Collections.sort(operations, INFO_COMPARATOR);
     session.output.println(TEXT_OPERATIONS);
     int index = 0;
@@ -124,18 +101,9 @@ public class InfoCommand extends Command {
         paramTypes.add(paramInfo.getType() + " " + paramInfo.getName());
         paramDescriptions.add("       " + paramInfo.getName() + ": " + paramInfo.getDescription());
       }
-      String parameters = StringUtils.join(paramTypes, ',');
-      String parametersDesc =
-          paramDescriptions.isEmpty() ? "" : '\n' + StringUtils.join(paramDescriptions, '\n');
-      session.output.println(
-          String.format(
-              "  %%%-3d - %s %s(%s)" + (showDescription ? ", %s%s" : ""),
-              index++,
-              op.getReturnType(),
-              op.getName(),
-              parameters,
-              op.getDescription(),
-              parametersDesc));
+      final String parameters = StringUtils.join(paramTypes, ',');
+      final String parametersDesc = paramDescriptions.isEmpty() ? "" : '\n' + StringUtils.join(paramDescriptions, '\n');
+      session.output.println(String.format("  %%%-3d - %s %s(%s)" + (showDescription ? ", %s%s" : ""), index++, op.getReturnType(), op.getName(), parameters, op.getDescription(), parametersDesc));
     }
   }
 
@@ -143,7 +111,7 @@ public class InfoCommand extends Command {
     Session session = getSession();
     MBeanOperationInfo[] operationInfos = info.getOperations();
     if (operationInfos.length == 0) {
-      session.output.printMessage("there's no operations");
+      session.output.printMessage("there\'s no operations");
       return;
     }
     session.output.println(TEXT_OPERATIONS);
@@ -155,41 +123,26 @@ public class InfoCommand extends Command {
         found = true;
         MBeanParameterInfo[] paramInfos = op.getSignature();
         List<String> paramTypes = new ArrayList<String>(paramInfos.length);
-        StringBuilder paramsDesc =
-            new StringBuilder("             parameters:" + System.lineSeparator());
+        StringBuilder paramsDesc = new StringBuilder("             parameters:" + System.lineSeparator());
         for (MBeanParameterInfo paramInfo : paramInfos) {
           String parameter = paramInfo.getName();
-          paramsDesc.append(
-              String.format(
-                  "                 + %-20s : %s" + System.lineSeparator(),
-                  parameter,
-                  paramInfo.getDescription()));
+          paramsDesc.append(String.format("                 + %-20s : %s" + System.lineSeparator(), parameter, paramInfo.getDescription()));
           paramTypes.add(paramInfo.getType() + " " + parameter);
         }
-        session.output.println(
-            String.format(
-                "  %%%-3d - %s %s(%s), %s",
-                index++,
-                op.getReturnType(),
-                opName,
-                StringUtils.join(paramTypes, ','),
-                op.getDescription()));
+        session.output.println(String.format("  %%%-3d - %s %s(%s), %s", index++, op.getReturnType(), opName, StringUtils.join(paramTypes, ','), op.getDescription()));
         session.output.println(paramsDesc.toString());
       }
     }
     if (!found) {
-      session.output.printMessage(
-          String.format("The operation '%s' is not found in the bean.", operation));
+      session.output.printMessage(String.format("The operation \'%s\' is not found in the bean.", operation));
     }
   }
 
-  @Override
-  public void execute() throws IOException, JMException {
+  @Override public void execute() throws IOException, JMException {
     Session session = getSession();
     String beanName = BeanCommand.getBeanName(bean, domain, session);
     if (beanName == null) {
-      throw new IllegalArgumentException(
-          "Please specify a bean using either -b option or bean command");
+      throw new IllegalArgumentException("Please specify a bean using either -b option or bean command");
     }
     ObjectName name = new ObjectName(beanName);
     MBeanServerConnection con = session.getConnection().getServerConnection();
@@ -203,17 +156,16 @@ public class InfoCommand extends Command {
       for (char t : type.toCharArray()) {
         switch (t) {
           case 'a':
-            displayAttributes(info);
-            break;
+          displayAttributes(info);
+          break;
           case 'o':
-            displayOperations(info);
-            break;
+          displayOperations(info);
+          break;
           case 'n':
-            displayNotifications(info);
-            break;
+          displayNotifications(info);
+          break;
           default:
-            throw new IllegalArgumentException(
-                "Unrecognizable character " + t + " in type option " + type);
+          throw new IllegalArgumentException("Unrecognizable character " + t + " in type option " + type);
         }
       }
     } else {
@@ -223,8 +175,7 @@ public class InfoCommand extends Command {
   }
 
   /** @param bean Bean for which information is displayed */
-  @Option(name = "b", longName = "bean", description = "Name of MBean")
-  public final void setBean(String bean) {
+  @Option(name = "b", longName = "bean", description = "Name of MBean") public final void setBean(String bean) {
     this.bean = bean;
   }
 
@@ -233,35 +184,24 @@ public class InfoCommand extends Command {
    *
    * @param domain Domain name
    */
-  @Option(name = "d", longName = "domain", description = "Domain for bean")
-  public final void setDomain(String domain) {
+  @Option(name = "d", longName = "domain", description = "Domain for bean") public final void setDomain(String domain) {
     this.domain = domain;
   }
 
   /** @param showDescription True to show detail description */
-  @Option(name = "e", longName = "detail", description = "Show description")
-  public final void setShowDescription(boolean showDescription) {
+  @Option(name = "e", longName = "detail", description = "Show description") public final void setShowDescription(boolean showDescription) {
     this.showDescription = showDescription;
   }
 
   /** @param type Type of detail to display */
-  @Option(
-      name = "t",
-      longName = "type",
-      description =
-          "Types(a|o|u) to display, for example aon for all attributes, operations and notifications")
-  public void setType(String type) {
-    Validate.isTrue(StringUtils.isNotEmpty(type), "Type can't be NULL");
+  @Option(name = "t", longName = "type", description = "Types(a|o|u) to display, for example aon for all attributes, operations and notifications") public void setType(String type) {
+    Validate.isTrue(StringUtils.isNotEmpty(type), "Type can\'t be NULL");
     Validate.isTrue(Pattern.matches("^a?o?n?$", type), "Type must be a?|o?|n?");
     this.type = type;
   }
 
-  @Option(
-      name = "o",
-      longName = "op",
-      description = "Show a single operation with more details (including parameters information)")
-  public void setOperation(String operation) {
-    Validate.isTrue(StringUtils.isNotEmpty(operation), "Operation can't be NULL");
+  @Option(name = "o", longName = "op", description = "Show a single operation with more details (including parameters information)") public void setOperation(String operation) {
+    Validate.isTrue(StringUtils.isNotEmpty(operation), "Operation can\'t be NULL");
     this.operation = operation;
   }
 }
