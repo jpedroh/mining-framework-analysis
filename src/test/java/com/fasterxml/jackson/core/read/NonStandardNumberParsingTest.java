@@ -85,7 +85,13 @@ public class NonStandardNumberParsingTest
 
     public void testLeadingDotInDecimalAllowedReader() {
         _testLeadingDotInDecimalAllowed(JSON_F, MODE_READER);
-      _testLeadingDotInDecimalAllowed(jsonFactory(), MODE_READER_THROTTLED);
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/73f8e4ccb4693b38ed91070710be528ff33b6936/src/test/java/com/fasterxml/jackson/core/read/NonStandardNumberParsingTest.java/left.java
+//      _testLeadingDotInDecimalAllowed(jsonFactory(), MODE_READER_THROTTLED);
+||||||| /usr/src/app/output/fasterxml/jackson-core/73f8e4ccb4693b38ed91070710be528ff33b6936/src/test/java/com/fasterxml/jackson/core/read/NonStandardNumberParsingTest.java/base.java
+//        _testLeadingDotInDecimalAllowed(jsonFactory(), MODE_READER_THROTTLED);
+=======
+_testLeadingDotInDecimalAllowed(jsonFactory(), MODE_READER_THROTTLED);
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/73f8e4ccb4693b38ed91070710be528ff33b6936/src/test/java/com/fasterxml/jackson/core/read/NonStandardNumberParsingTest.java/right.java
     }
 
     public void testTrailingDotInDecimalAllowedDataInput() {
