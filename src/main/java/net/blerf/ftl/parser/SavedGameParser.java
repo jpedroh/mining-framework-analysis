@@ -56,30 +56,6 @@ public class SavedGameParser extends DatParser {
 			ShipState playerShipState = readShip( in, true );
 			gameState.setPlayerShipState( playerShipState );
 
-			gameState.addMysteryBytes( new MysteryBytes(in, 4) );
-			
-			gameState.sectorLayoutSeed = readInt(in);
-			
-			// Pixel offset from far right of sector map
-			gameState.rebelFleetOffset = readInt(in);
-			
-			gameState.addMysteryBytes( new MysteryBytes(in, 24) );
-			
-			// Variable length unknown list. Need to read to get to the right position for beacon list
-			int unknownCount = readInt(in);
-			List<Integer> mil = new ArrayList<Integer>();
-			for (int i = 0; i < unknownCount; i++) {
-				mil.add( readInt(in) );
-			}
-			gameState.mysteryIntList = mil;
-			
-			gameState.addMysteryBytes( new MysteryBytes(in, 8) );
-			
-			int beaconCount = readInt(in);
-			for (int i = 0; i < beaconCount; i++) {
-				gameState.addBeacon( readBeacon(in) );
-			}
-
 			// Mystery bytes (including recent beacon info)...
 			int bytesRemaining = (int)(in.getChannel().size() - in.getChannel().position());
 			gameState.addMysteryBytes( new MysteryBytes(in, bytesRemaining) );
@@ -165,11 +141,37 @@ public class SavedGameParser extends DatParser {
 		for (int i=0; i < augmentCount; i++) {
 			shipState.addAugmentId( readString(in) );
 		}
-
+		
 		int cargoCount = readInt(in);
 		for (int i=0; i < cargoCount; i++) {
-			shipState.addCargoItemId( readString(in) );
+			gameState.addCargoItemId( readString(in) );
 		}
+		
+		gameState.addMysteryBytes( new MysteryBytes(in, 4) );
+		
+		gameState.sectorLayoutSeed = readInt(in);
+		
+		// Pixel offset from far right of sector map
+		gameState.rebelFleetOffset = readInt(in);
+		
+		gameState.addMysteryBytes( new MysteryBytes(in, 24) );
+		
+		// Variable length unknown list. Need to read to get to the right position for beacon list
+		int unknownCount = readInt(in);
+		List<Integer> mil = new ArrayList<>();
+		for (int i = 0; i < unknownCount; i++) {
+			mil.add( readInt(in) );
+		}
+		gameState.mysteryIntList = mil;
+		
+		gameState.addMysteryBytes( new MysteryBytes(in, 8) );
+		
+		int beaconCount = readInt(in);
+		for (int i = 0; i < beaconCount; i++) {
+			gameState.addBeacon( readBeacon(in) );
+		}
+
+		// The next 8 bytes might belong in the ship. Dunno.
 
 		return shipState;
 	}
@@ -347,9 +349,6 @@ public class SavedGameParser extends DatParser {
 		public int sectorNumber = 1;
 		public HashMap<String,Integer> stateVars = new HashMap<String,Integer>();
 		public ShipState playerShipState = null;
-		public int sectorLayoutSeed, rebelFleetOffset;
-		public List<Integer> mysteryIntList;
-		public List<BeaconState> beacons = new ArrayList<BeaconState>();
 		public ArrayList<MysteryBytes> mysteryList = new ArrayList<MysteryBytes>();
 
 		public void setSectorNumber( int n ) { sectorNumber = n; }
@@ -391,15 +390,10 @@ public class SavedGameParser extends DatParser {
 			this.playerShipState = shipState;
 		}
 
-		public void addBeacon( BeaconState beacon ) {
-			beacons.add( beacon );
-		}
-
 		public void addMysteryBytes( MysteryBytes m ) {
 			mysteryList.add(m);
 		}
 
-		@Override
 		public String toString() {
 			StringBuilder result = new StringBuilder();
 			boolean first = true;
@@ -415,20 +409,7 @@ public class SavedGameParser extends DatParser {
 			result.append("\nPlayer Ship...\n");
 			result.append(playerShipState.toString().replaceAll("(^|\n)(.+)", "$1  $2"));
 
-			result.append("\nSector Data...\n");
-			result.append( String.format("Sector Layout Seed: %d\n", sectorLayoutSeed) );
-			result.append( String.format("Rebel Fleet Offset: %d\n", rebelFleetOffset) );
-			result.append( String.format("Mystery Int List: %s\n", mysteryIntList) );
-			
-			result.append("\nSector Beacons...\n");
-			int beaconId = 0;
-			first = true;
-			for( BeaconState beacon: beacons ) {
-				if (first) { first = false; }
-				else { result.append(",\n"); }
-				result.append( String.format("BeaconId: %2d\n", beaconId++) );
-				result.append( beacon.toString().replaceAll("(^|\n)(.+)", "$1  $2") );
-			}
+			result.append("\n");
 
 			result.append("\nMystery Bytes...\n");
 			first = true;
@@ -457,42 +438,33 @@ public class SavedGameParser extends DatParser {
 		public ArrayList<WeaponState> weaponList = new ArrayList<WeaponState>();
 		public ArrayList<DroneState> droneList = new ArrayList<DroneState>();
 		public ArrayList<String> augmentIdList = new ArrayList<String>();
-		public ArrayList<String> cargoIdList = new ArrayList<String>();
 		public ArrayList<MysteryBytes> mysteryList = new ArrayList<MysteryBytes>();
-
 		public ShipState(String shipName, String shipBlueprintId, String shipLayoutId, boolean playerControlled) {
 			this.shipName = shipName;
 			this.shipBlueprintId = shipBlueprintId;
 			this.shipLayoutId = shipLayoutId;
 			this.playerControlled = playerControlled;
 		}
-
 		public void addStartingCrewMember( StartingCrewState sc ) {
 			startingCrewList.add(sc);
 		}
-
 		public void setHullAmt( int n ) { hullAmt = n; }
 		public void setFuelAmt( int n ) { fuelAmt = n; }
 		public void setDronePartsAmt( int n ) { dronePartsAmt = n; }
 		public void setMissilesAmt( int n ) { missilesAmt = n; }
 		public void setScrapAmt( int n ) { scrapAmt = n; }
-
 		public void addCrewMember( CrewState c ) {
 			crewList.add(c);
 		}
-
 		public void setReservePowerCapacity( int n ) {
 			reservePowerCapacity = n;
 		}
-
 		public void addSystem( SystemState s ) {
 			systemList.add(s);
 		}
-
 		public void addRoom( RoomState r ) {
 			roomList.add(r);
 		}
-
 		/**
 		 * Adds a door.
 		 *
@@ -501,28 +473,29 @@ public class SavedGameParser extends DatParser {
 		public void addDoor( int[] doorCoord, DoorState d ) {
 			doorMap.put(doorCoord, d);
 		}
-
 		public void addWeapon( WeaponState w ) {
 			weaponList.add(w);
 		}
-
 		public void addDrone( DroneState d ) {
 			droneList.add(d);
 		}
-
 		public void addAugmentId( String augmentId ) {
 			augmentIdList.add(augmentId);
 		}
-		
-		public void addCargoItemId( String cargoItemId ) {
-			cargoIdList.add( cargoItemId );
-		}
-		
 		public void addMysteryBytes( MysteryBytes m ) {
 			mysteryList.add(m);
 		}
+		public ArrayList<String> cargoIdList = new ArrayList<String>();
+		public int sectorLayoutSeed, rebelFleetOffset;
+		public List<Integer> mysteryIntList;
+		public List<BeaconState> beacons = new ArrayList<>();
+		public void addCargoItemId( String cargoItemId ) {
+			cargoIdList.add( cargoItemId );
+		}
+		public void addBeacon( BeaconState beacon ) {
+			beacons.add( beacon );
+		}
 
-		@Override
 		public String toString() {
 			// The blueprint fetching might vary if !playerControlled.
 			// See autoBlueprints.xml vs blueprints.xml.
@@ -645,11 +618,28 @@ public class SavedGameParser extends DatParser {
 			for (String augmentId : augmentIdList) {
 				result.append(String.format("AugmentId: %s\n", augmentId));
 			}
+			result.append("\n");
 			
 			result.append("\nCargo...\n");
 			for (String cargoItemId : cargoIdList) {
 				result.append(String.format("CargoItemId: %s\n", cargoItemId));
 			}
+			result.append("\n");
+			
+			result.append("\nSector Data...\n");
+			result.append( String.format("Sector Layout Seed: %d\n", sectorLayoutSeed) );
+			result.append( String.format("Rebel Fleet Offset: %d\n", rebelFleetOffset) );
+			result.append( String.format("Mystery Int List: %s\n", mysteryIntList) );
+			result.append("\n");
+			
+			result.append("\nSector Beacons...\n");
+			int beaconId = 0;
+			for( BeaconState beacon: beacons ) {
+				result.append( String.format("Beacon %d\n", beaconId++) );
+				result.append( beacon );
+				result.append("\n");
+			}
+			result.append("\n");
 
 			result.append("\nMystery Bytes...\n");
 			first = true;
@@ -681,7 +671,6 @@ public class SavedGameParser extends DatParser {
 			return race;
 		}
 
-		@Override
 		public String toString() {
 			StringBuilder result = new StringBuilder();
 			result.append(String.format("Name: %s\n", name));
@@ -730,7 +719,6 @@ public class SavedGameParser extends DatParser {
 		public void setTheta( int n ) { unknownTheta = n; }
 		public void setIota( int n ) { unknownIota = n; }
 
-		@Override
 		public String toString() {
 			StringBuilder result = new StringBuilder();
 			result.append(String.format("Name: %s\n", name));
@@ -781,7 +769,6 @@ public class SavedGameParser extends DatParser {
 
 		public void addMysteryBytes( MysteryBytes m ) { mysteryList.add(m); }
 
-		@Override
 		public String toString() {
 			StringBuilder result = new StringBuilder();
 			if (capacity > 0) {
@@ -829,7 +816,6 @@ public class SavedGameParser extends DatParser {
 			squareList.add( new int[] {fireHealth, ignitionProgress, gamma} );
 		}
 
-		@Override
 		public String toString() {
 			StringBuilder result = new StringBuilder();
 			result.append(String.format("Oxygen: %3d%%\n", oxygen));
@@ -853,7 +839,6 @@ public class SavedGameParser extends DatParser {
 			this.open = open;
 		}
 
-		@Override
 		public String toString() {
 			StringBuilder result = new StringBuilder();
 			result.append(String.format("Open: %d, Alpha?: %d\n", open, unknownAlpha));
@@ -874,7 +859,6 @@ public class SavedGameParser extends DatParser {
 			this.unknownAlpha = alpha;
 		}
 
-		@Override
 		public String toString() {
 			StringBuilder result = new StringBuilder();
 			result.append(String.format("WeaponId: %s\n", weaponId));
@@ -905,7 +889,6 @@ public class SavedGameParser extends DatParser {
 		public void setEpsilon( int n ) { unknownEpsilon = n; }
 		public void setDigamma( int n ) { unknownDigamma = n; }
 
-		@Override
 		public String toString() {
 			StringBuilder result = new StringBuilder();
 			result.append(String.format("DroneId: %s\n", droneId));
@@ -944,34 +927,33 @@ public class SavedGameParser extends DatParser {
 		private boolean storePresent; // True if beacon contains a store (may require beacon to have been seen first)
 		private StoreState store;
 
-		@Override
 		public String toString() {
 			StringBuilder result = new StringBuilder();
 			
-			result.append(String.format("Visited:           %b\n", visited));
+			result.append(String.format("Visited: %b\n", visited));
 			if( visited ) {
-				result.append(String.format("Bkg Starscape:     %s\n", bgStarscapeImageInnerPath));
-				result.append(String.format("Bkg Sprite:        %s\n", bgSpriteImageInnerPath));
-				result.append(String.format("Bkg Sprite Coords: %d,%d\n", bgSpritePosX, bgSpritePosY));
-				result.append(String.format("Unknown:           %d\n", unknownVisitedAlpha));
+				result.append(String.format("\tBkg Starscape: %s\n", bgStarscapeImageInnerPath));
+				result.append(String.format("\tBkg Sprite: %s\n", bgSpriteImageInnerPath));
+				result.append(String.format("\tBkg Sprite Coords: %d,%d\n", bgSpritePosX, bgSpritePosY));
+				result.append(String.format("\tUnknown: %d\n", unknownVisitedAlpha));
 			}
 			
-			result.append(String.format("Seen:              %b\n", seen));
+			result.append(String.format("Seen: %b\n", seen));
 			
-			result.append(String.format("Enemy Present:     %b\n", enemyPresent));
-			if ( enemyPresent ) {
-				result.append(String.format("  Ship Event ID:          %s\n", shipEventId));
-				result.append(String.format("  Ship Blueprint List ID: %s\n", shipBlueprintListId));
-				result.append(String.format("  Unknown:                %d\n", unknownEnemyPresentAlpha));
+			result.append(String.format("Enemy Present: %b\n", enemyPresent));
+			if( enemyPresent ) {
+				result.append(String.format("\tShip Event ID: %s\n", shipEventId));
+				result.append(String.format("\tShip Blueprint List ID: %s\n", shipBlueprintListId));
+				result.append(String.format("\tUnknown: %d\n", unknownEnemyPresentAlpha));
 			}
 			
-			result.append(String.format("Fleets Present:    %s\n", fleetPresence));
+			result.append(String.format("Fleets Present: %s\n", fleetPresence));
 			
-			result.append(String.format("Under Attack:      %b\n", underAttack));
+			result.append(String.format("Under Attack: %b\n", underAttack));
 			
-			result.append(String.format("Store Present:     %b\n", storePresent));
-			if ( storePresent ) {
-				result.append( store.toString().replaceAll("(^|\n)(.+)", "$1  $2") );
+			result.append(String.format("Store Present: %b\n", storePresent));
+			if( storePresent ) {
+				result.append(String.format("%s\n", store));
 			}
 
 			return result.toString();
@@ -1080,15 +1062,12 @@ public class SavedGameParser extends DatParser {
 		public String toString() {
 			StringBuilder result = new StringBuilder();
 			
-			result.append( String.format("Fuel: %d\n" , fuel) );
-			result.append( String.format("Missiles: %d\n" , missiles) );
-			result.append( String.format("Drone Parts: %d\n" , droneParts) );
+			result.append( String.format("\tFuel: %d\n" , fuel) );
+			result.append( String.format("\tMissiles: %d\n" , missiles) );
+			result.append( String.format("\tDrone Parts: %d\n" , droneParts) );
 			
-			result.append( "\nTop Shelf:..." );
-			result.append( topShelf.toString().replaceAll("(^|\n)(.+)", "$1  $2") );
-
-			result.append( "\nBottom Shelf...\n" );
-			result.append( bottomShelf.toString().replaceAll("(^|\n)(.+)", "$1  $2") );
+			result.append( String.format("\tTop Shelf:\n%s", topShelf) );
+			result.append( String.format("\tBottom Shelf:\n%s", bottomShelf) );
 			
 			return result.toString();
 		}
@@ -1135,19 +1114,16 @@ public class SavedGameParser extends DatParser {
 		private List<StoreItem> items;
 		
 		public StoreShelf() {
-			items = new ArrayList<StoreItem>(3);
+			items = new ArrayList<>(3);
 		}
 		
 		@Override
 		public String toString() {
 			StringBuilder result = new StringBuilder();
-			boolean first = true;
-
-			result.append( String.format("Item Type: %s\n", itemType) );
+			
+			result.append( String.format("\t\tItem Type: %s\n" , itemType) );
 			for (StoreItem item : items) {
-				if (first) { first = false; }
-				else { result.append(",\n"); }
-				result.append( item.toString().replaceAll("(^|\n)(.+)", "$1  $2") );
+				result.append(item);
 			}
 			
 			return result.toString();
@@ -1168,15 +1144,13 @@ public class SavedGameParser extends DatParser {
 	public class StoreItem {
 		private boolean available;
 		private String itemId;
-
 		public StoreItem(boolean available, String itemId) {
 			this.available = available;
 			this.itemId = itemId;
 		}
-
 		@Override
 		public String toString() {
-			return String.format("%s (%s)\n" , itemId, (available ? "Available" : "Sold Out"));
+			return String.format("\t\t%s (%s)\n" , itemId, available ? "Available" : "Sold Out");
 		}
 	}
 
