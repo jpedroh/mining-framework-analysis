@@ -82,12 +82,27 @@ public class SonarLintTest {
     StandaloneAnalysisConfiguration configuration = StandaloneAnalysisConfiguration.builder()
       .setBaseDir(baseDir)
       .addInputFile(inputFile)
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-php/ff256d1615e1f9920551f3b66592fc8de1bf5e37/its/plugin/tests/src/test/java/com/sonar/it/php/SonarLintTest.java/left.java
       .build();
+||||||| /usr/src/app/output/sonarcommunity/sonar-php/ff256d1615e1f9920551f3b66592fc8de1bf5e37/its/plugin/tests/src/test/java/com/sonar/it/php/SonarLintTest.java/base.java
+      .build(
+        RuleKey.parse("php:S101"),
+        RuleKey.parse("php:S2964"),
+        RuleKey.parse("php:S1808")
+      );
+=======
+      .build(
+        RuleKey.parse("php:S101"),
+        RuleKey.parse("php:S2964"),
+        RuleKey.parse("php:S1808"),
+        RuleKey.parse("php:S6600")
+      );
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-php/ff256d1615e1f9920551f3b66592fc8de1bf5e37/its/plugin/tests/src/test/java/com/sonar/it/php/SonarLintTest.java/right.java
     sonarlintEngine.analyze(configuration, issues::add, null, null);
 
     assertThat(issues).extracting("ruleKey", "startLine", "inputFile.path", "severity").containsOnly(
-      tuple("php:S101", 4, inputFile.getPath(), "MINOR"),
-      tuple("php:S1808", 18, inputFile.getPath(), "MINOR"),
+      tuple("php:S101", 4, inputFile.relativePath(), IssueSeverity.MINOR),
+      tuple("php:S1808", 18, inputFile.relativePath(), IssueSeverity.MINOR),
       tuple("php:S6600", 10, inputFile.getPath(), "CRITICAL"),
       tuple("php:S6600", 15, inputFile.getPath(), "CRITICAL"));
   }
