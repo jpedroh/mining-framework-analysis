@@ -8,6 +8,7 @@ import net.iponweb.disthene.config.AggregationConfiguration;
 import net.iponweb.disthene.config.BlackListConfiguration;
 import net.iponweb.disthene.config.DistheneConfiguration;
 import net.iponweb.disthene.events.DistheneEvent;
+import net.iponweb.disthene.service.aggregate.AggregateService;
 import net.iponweb.disthene.service.aggregate.RollupService;
 import net.iponweb.disthene.service.aggregate.SumService;
 import net.iponweb.disthene.service.auth.TenantService;
@@ -55,6 +56,7 @@ public class Disthene {
 
     private MBassador<DistheneEvent> bus;
     private BlacklistService blacklistService;
+    private AggregateService aggregateService;
     private StatsService statsService;
     private IndexService indexService;
     private CassandraService cassandraService;
@@ -109,8 +111,17 @@ public class Disthene {
             blacklistService = new BlacklistService(blackListConfiguration);
 
             logger.info("Creating metric service");
+<<<<<<< /usr/src/app/output/einsamhauer/disthene/8c23ce22f44dfa88b1093a590f68cddbb7856da7/src/main/java/net/iponweb/disthene/Disthene.java/left.java
+            metricService = new MetricService(bus, blacklistService, distheneConfiguration);
+
+            logger.info("Creating base rollup aggregator");
+            aggregateService = new AggregateService(bus, distheneConfiguration);
+||||||| /usr/src/app/output/einsamhauer/disthene/8c23ce22f44dfa88b1093a590f68cddbb7856da7/src/main/java/net/iponweb/disthene/Disthene.java/base.java
+            metricService = new MetricService(bus, blacklistService);
+=======
             @SuppressWarnings("unused")
             MetricService metricService = new MetricService(bus, blacklistService);
+>>>>>>> /usr/src/app/output/einsamhauer/disthene/8c23ce22f44dfa88b1093a590f68cddbb7856da7/src/main/java/net/iponweb/disthene/Disthene.java/right.java
 
             logger.info("Creating stats");
             statsService = new StatsService(bus, distheneConfiguration.getStats(), distheneConfiguration.getCarbon().getBaseRollup());
@@ -284,6 +295,9 @@ public class Disthene {
             // We will probably lose some last stats here. But leaving it to run will complicate things
             logger.info("Shutting down stats service");
             statsService.shutdown();
+
+	    logger.info("Shutting down base rollup aggregator");
+            aggregateService.shutdown();
 
             logger.info("Shutting down sum aggregator");
             sumService.shutdown();

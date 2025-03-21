@@ -14,8 +14,13 @@ public class CarbonConfiguration {
     private List<Rollup> rollups = new ArrayList<>();
     private Rollup baseRollup;
     private int aggregatorDelay;
+<<<<<<< /usr/src/app/output/einsamhauer/disthene/8c23ce22f44dfa88b1093a590f68cddbb7856da7/src/main/java/net/iponweb/disthene/config/CarbonConfiguration.java/left.java
+    private boolean aggregateBaseRollup;
+||||||| /usr/src/app/output/einsamhauer/disthene/8c23ce22f44dfa88b1093a590f68cddbb7856da7/src/main/java/net/iponweb/disthene/config/CarbonConfiguration.java/base.java
+=======
     private List<String> authorizedTenants = new ArrayList<>();
     private boolean allowAll = true;
+>>>>>>> /usr/src/app/output/einsamhauer/disthene/8c23ce22f44dfa88b1093a590f68cddbb7856da7/src/main/java/net/iponweb/disthene/config/CarbonConfiguration.java/right.java
 
     public String getBind() {
         return bind;
@@ -39,6 +44,14 @@ public class CarbonConfiguration {
 
     public void setAggregatorDelay(int aggregatorDelay) {
         this.aggregatorDelay = aggregatorDelay;
+    }
+
+    public boolean getAggregateBaseRollup() {
+        return aggregateBaseRollup;
+    }
+
+    public void setAggregateBaseRollup(boolean aggregateBaseRollup) {
+        this.aggregateBaseRollup = aggregateBaseRollup;
     }
 
     public List<Rollup> getRollups() {
@@ -78,8 +91,13 @@ public class CarbonConfiguration {
                 ", rollups=" + rollups +
                 ", baseRollup=" + baseRollup +
                 ", aggregatorDelay=" + aggregatorDelay +
+<<<<<<< /usr/src/app/output/einsamhauer/disthene/8c23ce22f44dfa88b1093a590f68cddbb7856da7/src/main/java/net/iponweb/disthene/config/CarbonConfiguration.java/left.java
+                ", aggregateBaseRollup=" + aggregateBaseRollup +
+||||||| /usr/src/app/output/einsamhauer/disthene/8c23ce22f44dfa88b1093a590f68cddbb7856da7/src/main/java/net/iponweb/disthene/config/CarbonConfiguration.java/base.java
+=======
                 ", authorizedTenants=" + authorizedTenants +
                 ", allowAll=" + allowAll +
+>>>>>>> /usr/src/app/output/einsamhauer/disthene/8c23ce22f44dfa88b1093a590f68cddbb7856da7/src/main/java/net/iponweb/disthene/config/CarbonConfiguration.java/right.java
                 '}';
     }
 }
