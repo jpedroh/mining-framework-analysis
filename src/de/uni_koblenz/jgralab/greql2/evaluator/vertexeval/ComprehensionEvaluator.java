@@ -82,7 +82,7 @@ public abstract class ComprehensionEvaluator<V extends Comprehension> extends
 		return varDeclLayer;
 	}
 
-	protected final void initializeMaxCount(InternalGreqlEvaluator evaluator) {
+	protected final void initializeMaxCount() {
 		if (getVertex().get_maxCount() != null) {
 			VertexEvaluator<? extends Expression> maxCountEval = query
 					.getVertexEvaluator(getVertex().get_maxCount());
@@ -92,9 +92,9 @@ public abstract class ComprehensionEvaluator<V extends Comprehension> extends
 
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
-		initializeMaxCount(evaluator);
+		initializeMaxCount();
 		VariableDeclarationLayer declLayer = getVariableDeclationLayer(evaluator);
-		VertexEvaluator<?> resultDefEval = getResultDefinitionEvaluator();
+		VertexEvaluator<? extends Expression> resultDefEval = getResultDefinitionEvaluator();
 		PCollection<Object> resultCollection = getResultDatastructure(evaluator);
 		declLayer.reset();
 		while (declLayer.iterate(evaluator)

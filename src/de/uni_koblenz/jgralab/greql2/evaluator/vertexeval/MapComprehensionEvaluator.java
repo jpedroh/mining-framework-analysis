@@ -50,7 +50,7 @@ import de.uni_koblenz.jgralab.greql2.schema.MapComprehension;
 
 /**
  * @author Tassilo Horn <horn@uni-koblenz.de>
- * 
+ *
  */
 public class MapComprehensionEvaluator extends
 		ComprehensionEvaluator<MapComprehension> {
@@ -59,17 +59,72 @@ public class MapComprehensionEvaluator extends
 		super(vertex, query);
 	}
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/55c5691ba6b104f745af5ca7f98479dba901c8bb/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/MapComprehensionEvaluator.java/left.java
 	// @Override
-	// protected VertexCosts calculateSubtreeEvaluationCosts(GraphSize
-	// graphSize) {
-	// return this.greqlEvaluator.getCostModel()
-	// .calculateCostsMapComprehension(this, graphSize);
+	// protected VertexCosts calculateSubtreeEvaluationCosts() {
+	// return greqlEvaluator.getCostModel().calculateCostsMapComprehension(
+	// this);
 	// }
-
+||||||| /usr/src/app/output/jgralab/jgralab/55c5691ba6b104f745af5ca7f98479dba901c8bb/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/MapComprehensionEvaluator.java/base.java
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#
+	 * calculateSubtreeEvaluationCosts
+	 * (de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 */
 	@Override
+	protected VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
+		return this.greqlEvaluator.getCostModel()
+				.calculateCostsMapComprehension(this, graphSize);
+	}
+=======
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @seede.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#
+	 * calculateSubtreeEvaluationCosts
+	 * (de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize)
+	 */
+	@Override
+	protected VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
+		return this.greqlEvaluator.getCostModel()
+				.calculateCostsMapComprehension(this, graphSize);
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/55c5691ba6b104f745af5ca7f98479dba901c8bb/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/MapComprehensionEvaluator.java/right.java
+
+<<<<<<< /usr/src/app/output/jgralab/jgralab/55c5691ba6b104f745af5ca7f98479dba901c8bb/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/MapComprehensionEvaluator.java/left.java
+||||||| /usr/src/app/output/jgralab/jgralab/55c5691ba6b104f745af5ca7f98479dba901c8bb/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/MapComprehensionEvaluator.java/base.java
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#evaluate
+	 * ()
+	 */
+=======
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#evaluate
+	 * ()
+	 */
+>>>>>>> /usr/src/app/output/jgralab/jgralab/55c5691ba6b104f745af5ca7f98479dba901c8bb/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/MapComprehensionEvaluator.java/right.java
+	@Override
+<<<<<<< /usr/src/app/output/jgralab/jgralab/55c5691ba6b104f745af5ca7f98479dba901c8bb/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/MapComprehensionEvaluator.java/left.java
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
-		initializeMaxCount(evaluator);
 		VariableDeclarationLayer declLayer = getVariableDeclationLayer(evaluator);
+
+||||||| /usr/src/app/output/jgralab/jgralab/55c5691ba6b104f745af5ca7f98479dba901c8bb/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/MapComprehensionEvaluator.java/base.java
+	public Object evaluate() {
+		VariableDeclarationLayer declLayer = getVariableDeclationLayer();
+
+=======
+	public Object evaluate() {
+		initializeMaxCount();
+		VariableDeclarationLayer declLayer = getVariableDeclationLayer();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/55c5691ba6b104f745af5ca7f98479dba901c8bb/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/MapComprehensionEvaluator.java/right.java
 		PMap<Object, Object> resultMap = JGraLab.map();
 
 		Expression key = (Expression) vertex
@@ -83,19 +138,55 @@ public class MapComprehensionEvaluator extends
 		VertexEvaluator<? extends Expression> valEval = query
 				.getVertexEvaluator(val);
 		declLayer.reset();
-		while (declLayer.iterate(evaluator) && (resultMap.size() < maxCount)) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/55c5691ba6b104f745af5ca7f98479dba901c8bb/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/MapComprehensionEvaluator.java/left.java
+		while (declLayer.iterate(evaluator)) {
 			Object jkey = keyEval.getResult(evaluator);
 			Object jval = valEval.getResult(evaluator);
+||||||| /usr/src/app/output/jgralab/jgralab/55c5691ba6b104f745af5ca7f98479dba901c8bb/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/MapComprehensionEvaluator.java/base.java
+		while (declLayer.iterate()) {
+			Object jkey = keyEval.getResult();
+			Object jval = valEval.getResult();
+=======
+		while (declLayer.iterate() && (resultMap.size() < maxCount)) {
+			Object jkey = keyEval.getResult();
+			Object jval = valEval.getResult();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/55c5691ba6b104f745af5ca7f98479dba901c8bb/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/MapComprehensionEvaluator.java/right.java
 			resultMap = resultMap.plus(jkey, jval);
 		}
 		return resultMap;
 	}
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/55c5691ba6b104f745af5ca7f98479dba901c8bb/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/MapComprehensionEvaluator.java/left.java
 	// @Override
 	// public long calculateEstimatedCardinality() {
 	// return greqlEvaluator.getCostModel()
 	// .calculateCardinalityMapComprehension(this);
 	// }
+||||||| /usr/src/app/output/jgralab/jgralab/55c5691ba6b104f745af5ca7f98479dba901c8bb/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/MapComprehensionEvaluator.java/base.java
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#getVertex
+	 * ()
+	 */
+	@Override
+	public Comprehension getVertex() {
+		return vertex;
+	}
+=======
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator#getVertex
+	 * ()
+	 */
+	@Override
+	public Comprehension getVertex() {
+		return vertex;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/55c5691ba6b104f745af5ca7f98479dba901c8bb/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/MapComprehensionEvaluator.java/right.java
 
 	@Override
 	protected PCollection<Object> getResultDatastructure(
