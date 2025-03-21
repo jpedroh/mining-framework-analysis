@@ -169,8 +169,12 @@ public class CheckList {
       OneStatementPerLineCheck.class,
       OpeningPHPTagCheck.class,
       OverridingMethodSimplyCallParentCheck.class,
-      OverwrittenArrayElementCheck.class,
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-php/b094a7946d00cde0b21b3c19898e7fe65d9c7a98/php-checks/src/main/java/org/sonar/php/checks/CheckList.java/left.java
       ParameterSequenceCheck.class,
+||||||| /usr/src/app/output/sonarcommunity/sonar-php/b094a7946d00cde0b21b3c19898e7fe65d9c7a98/php-checks/src/main/java/org/sonar/php/checks/CheckList.java/base.java
+=======
+      OverwrittenArrayElementCheck.class,
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-php/b094a7946d00cde0b21b3c19898e7fe65d9c7a98/php-checks/src/main/java/org/sonar/php/checks/CheckList.java/right.java
       ParsingErrorCheck.class,
       PerlStyleCommentsUsageCheck.class,
       PermissionsControlCheck.class,
