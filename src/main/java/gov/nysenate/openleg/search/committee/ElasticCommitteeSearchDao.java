@@ -2,14 +2,14 @@ package gov.nysenate.openleg.search.committee;
 
 import com.google.common.collect.Lists;
 import gov.nysenate.openleg.api.legislation.committee.view.CommitteeView;
-import gov.nysenate.openleg.search.ElasticBaseDao;
 import gov.nysenate.openleg.common.dao.LimitOffset;
-import gov.nysenate.openleg.search.SearchIndex;
-import gov.nysenate.openleg.legislation.committee.*;
 import gov.nysenate.openleg.legislation.SessionYear;
+import gov.nysenate.openleg.legislation.committee.*;
+import gov.nysenate.openleg.legislation.committee.dao.CommitteeDataService;
+import gov.nysenate.openleg.search.ElasticBaseDao;
+import gov.nysenate.openleg.search.SearchIndex;
 import gov.nysenate.openleg.search.SearchResult;
 import gov.nysenate.openleg.search.SearchResults;
-import gov.nysenate.openleg.legislation.committee.dao.CommitteeDataService;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
@@ -18,8 +18,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -35,12 +33,14 @@ import java.util.regex.Pattern;
 
 @Repository
 public class ElasticCommitteeSearchDao extends ElasticBaseDao implements CommitteeSearchDao {
-
-    private static final Logger logger = LoggerFactory.getLogger(ElasticCommitteeSearchDao.class);
-
     private static final String committeeSearchIndexName = SearchIndex.COMMITTEE.getIndexName();
 
-    @Autowired private CommitteeDataService committeeDataService;
+    private final CommitteeDataService committeeDataService;
+
+    @Autowired
+    public ElasticCommitteeSearchDao(CommitteeDataService committeeDataService) {
+        this.committeeDataService = committeeDataService;
+    }
 
     @Override
     public SearchResults<CommitteeVersionId> searchCommittees(QueryBuilder query, QueryBuilder filter,
@@ -94,8 +94,8 @@ public class ElasticCommitteeSearchDao extends ElasticBaseDao implements Committ
         SearchResults<CommitteeVersionId> searchResults = searchCommittees(
                 getCommitteeSessionQuery(committeeSessionId), null, Collections.emptyList(), LimitOffset.ALL);
 
-        searchResults.getResults().stream()
-                .map(SearchResult::getResult)
+        searchResults.resultList().stream()
+                .map(SearchResult::result)
                 .map(this::getCommitteeVersionDeleteRequest)
                 .forEach(request::add);
 
