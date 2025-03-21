@@ -1,28 +1,4 @@
-/**
- * Copyright (c) 2012, Oliver Kleine, Institute of Telematics, University of Luebeck
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
- * following conditions are met:
- *
- * - Redistributions of source code must retain the above copyright notice, this list of conditions and the following
- * disclaimer.
- * - Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
- * following disclaimer in the documentation and/or other materials provided with the distribution.
- * - Neither the name of the University of Luebeck nor the names of its contributors may be used to endorse or promote
- * products derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
- * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
- * GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 package de.uniluebeck.itm.spitfire.nCoap.message;
-
 import de.uniluebeck.itm.spitfire.nCoap.communication.callback.ResponseCallback;
 import de.uniluebeck.itm.spitfire.nCoap.message.header.Code;
 import de.uniluebeck.itm.spitfire.nCoap.message.header.Header;
@@ -32,7 +8,6 @@ import de.uniluebeck.itm.spitfire.nCoap.message.options.*;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -44,12 +19,11 @@ import java.util.List;
  * @author Oliver Kleine
  */
 public class CoapRequest extends CoapMessage {
+  private static Logger log = LoggerFactory.getLogger(CoapRequest.class.getName());
 
-    private static Logger log = LoggerFactory.getLogger(CoapRequest.class.getName());
+  private ResponseCallback callback;
 
-    private ResponseCallback callback;
-
-    /**
+  /**
      * This method creates a new Message object and uses the given parameters to create an appropriate header
      * and initial option list with target URI-related options set.
      * @param msgType  The message type
@@ -61,29 +35,21 @@ public class CoapRequest extends CoapMessage {
      * @throws InvalidMessageException if the given code is not suitable for a request
      * @return a new Message instance
      */
-    public CoapRequest(MsgType msgType, Code code, URI targetUri)
-            throws InvalidMessageException, ToManyOptionsException, InvalidOptionException, URISyntaxException {
-
-        super(msgType, code);
-
-        if(!code.isRequest()){
-            throw new InvalidMessageException("[CoapDefaultRequest] Code " + code + " is no request code!");
-        }
-
-        setTargetURI(targetUri);
-
-
-        log.debug("Created new request instance " +
-            "(MsgType: " + msgType + ", Code: " + code + ", TargetURI: " + getTargetUri() + ")");
-
+  public CoapRequest(MsgType msgType, Code code, URI targetUri) throws InvalidMessageException, ToManyOptionsException, InvalidOptionException, URISyntaxException {
+    super(msgType, code);
+    if (!code.isRequest()) {
+      throw new InvalidMessageException("[CoapDefaultRequest] Code " + code + " is no request code!");
     }
+    setTargetURI(targetUri);
+    log.debug("Created new request instance " + "(MsgType: " + msgType + ", Code: " + code + ", TargetURI: " + getTargetUri() + ")");
+  }
 
-    public CoapRequest(CoapRequest coapRequest) throws InvalidHeaderException {
-        super(coapRequest);
-        this.callback = coapRequest.getResponseCallback();
-    }
+  public CoapRequest(CoapRequest coapRequest) throws InvalidHeaderException {
+    super(coapRequest);
+    this.callback = coapRequest.getResponseCallback();
+  }
 
-    /**
+  /**
      * This method creates a new Message object and uses the given parameters to create an appropriate header
      * and initial option list with target URI-related options set.
      * @param msgType  The message type
@@ -95,73 +61,58 @@ public class CoapRequest extends CoapMessage {
      * @throws InvalidMessageException if the given code is not suitable for a request
      * @return a new Message instance
      */
-    public CoapRequest(MsgType msgType, Code code, URI targetUri, ResponseCallback callback)
-            throws InvalidMessageException, ToManyOptionsException, InvalidOptionException, URISyntaxException {
+  public CoapRequest(MsgType msgType, Code code, URI targetUri, ResponseCallback callback) throws InvalidMessageException, ToManyOptionsException, InvalidOptionException, URISyntaxException {
+    this(msgType, code, targetUri);
+    this.callback = callback;
+  }
 
-        this(msgType, code, targetUri);
-        this.callback = callback;
-    }
+  public CoapRequest(Header header, OptionList optionList, ChannelBuffer payload) {
+    super(header, optionList, payload);
+  }
 
-    public CoapRequest(Header header, OptionList optionList, ChannelBuffer payload){
-        super(header, optionList, payload);
-    }
+  public ResponseCallback getResponseCallback() {
+    return callback;
+  }
 
-    public ResponseCallback getResponseCallback() {
-        return callback;
-    }
+  public void setResponseCallback(ResponseCallback responseCallback) {
+    this.callback = responseCallback;
+  }
 
-    public void setResponseCallback(ResponseCallback responseCallback){
-        this.callback = responseCallback;
-    }
-
-     /**
+  /**
      * Returns the messages target URI
      * @return the messages target URI if the message is a request or null if its a response
      */
-    public URI getTargetUri() {
-
-        try {
-            String uri = "coap://";
-            
-            //add host
-            List<Option> list = getOption(OptionRegistry.OptionName.URI_HOST);
-
-            StringOption uriHost = (StringOption) list.toArray()[0];
-            uri = uri + uriHost.getDecodedValue();
-
-            //add port
-            list = getOption(OptionRegistry.OptionName.URI_PORT);
-            UintOption uriPort = (UintOption) list.toArray()[0];
-            uri = uri + ":" + uriPort.getDecodedValue();
-
-            //add path
-            list = getOption(OptionRegistry.OptionName.URI_PATH);
-            for(Option option : list){
-                StringOption uriPath = (StringOption) option;
-                uri = uri + "/" + uriPath.getDecodedValue();
-            }
-
-            //add query
-            list = getOption(OptionRegistry.OptionName.URI_QUERY);
-            if(!list.isEmpty()){
-                uri = uri + "?";
-                for(Option option : list){
-                    StringOption uriQuery = (StringOption) option;
-                    uri = uri + uriQuery.getDecodedValue() + "&";
-                }
-                //remove the last "&"
-                uri = uri.substring(0, uri.length() - 1);
-            }
-
-            return new URI(uri);
+  public URI getTargetUri() {
+    try {
+      String uri = "coap://";
+      List<Option> list = getOption(OptionRegistry.OptionName.URI_HOST);
+      StringOption uriHost = (StringOption) list.toArray()[0];
+      uri = uri + uriHost.getDecodedValue();
+      list = getOption(OptionRegistry.OptionName.URI_PORT);
+      UintOption uriPort = (UintOption) list.toArray()[0];
+      uri = uri + ":" + uriPort.getDecodedValue();
+      list = getOption(OptionRegistry.OptionName.URI_PATH);
+      for (Option option : list) {
+        StringOption uriPath = (StringOption) option;
+        uri = uri + "/" + uriPath.getDecodedValue();
+      }
+      list = getOption(OptionRegistry.OptionName.URI_QUERY);
+      if (!list.isEmpty()) {
+        uri = uri + "?";
+        for (Option option : list) {
+          StringOption uriQuery = (StringOption) option;
+          uri = uri + uriQuery.getDecodedValue() + "&";
         }
-        catch (URISyntaxException e) {
-            log.error("[Message] This should never happen!", e);
-            return null;
-        }
+        uri = uri.substring(0, uri.length() - 1);
+      }
+      return new URI(uri);
+    } catch (URISyntaxException e) {
+      log.error("[Message] This should never happen!", e);
+      return null;
     }
-    
-    /**
+  }
+
+  /**
      * This method sets all necessary target URI related options. This causes eventually already contained
      * target URI related options to be removed from the list even in case of an exception.
      *
@@ -178,47 +129,34 @@ public class CoapRequest extends CoapMessage {
      * @throws ToManyOptionsException if adding all target URI options would exceed the maximum number of options per
      * message.
      */
-    public void setTargetURI(URI targetUri) throws URISyntaxException, InvalidOptionException, ToManyOptionsException {
-        optionList.removeTargetURI();
-        try{
-            //Create collection of target URI related options
-            Collection<Option> targetUriOptions = Option.createTargetURIOptions(targetUri);
-
-            //Add options to the list
-            for(Option option : targetUriOptions){
-
-                log.debug("Add " + OptionRegistry.getOptionName(option.getOptionNumber()) +
-                        " option with value: " + Option.getHexString(option.getValue()));
-
-
-                OptionRegistry.OptionName optionName = OptionRegistry.getOptionName(option.getOptionNumber());
-                optionList.addOption(header.getCode(), optionName, option);
-            }
-
-            //Try to determine the receipients IP address if there was no URI host option set
-            if(optionList.getOption(OptionRegistry.OptionName.URI_HOST).isEmpty()){
-                try{
-                    rcptAddress = InetAddress.getByName(targetUri.getHost());
-                } catch (UnknownHostException e) {
-                    log.debug("The target hostname " + targetUri.getHost() + " could not be resolved.");
-                }
-            }
+  public void setTargetURI(URI targetUri) throws URISyntaxException, InvalidOptionException, ToManyOptionsException {
+    optionList.removeTargetURI();
+    try {
+      Collection<Option> targetUriOptions = Option.createTargetURIOptions(targetUri);
+      for (Option option : targetUriOptions) {
+        log.debug("Add " + OptionRegistry.getOptionName(option.getOptionNumber()) + " option with value: " + Option.getHexString(option.getValue()));
+        OptionRegistry.OptionName optionName = OptionRegistry.getOptionName(option.getOptionNumber());
+        optionList.addOption(header.getCode(), optionName, option);
+      }
+      if (optionList.getOption(OptionRegistry.OptionName.URI_HOST).isEmpty()) {
+        try {
+          rcptAddress = InetAddress.getByName(targetUri.getHost());
+        } catch (UnknownHostException e) {
+          log.debug("The target hostname " + targetUri.getHost() + " could not be resolved.");
         }
-        catch(InvalidOptionException e){
-            optionList.removeTargetURI();
-
-            log.debug("Critical option for target URI could not be added.", e);
-
-            throw e;
-        }
-        catch(ToManyOptionsException e){
-            optionList.removeTargetURI();
-            log.debug("Critical option for target URI could not be added.", e);
-            throw e;
-        }
+      }
+    } catch (InvalidOptionException e) {
+      optionList.removeTargetURI();
+      log.debug("Critical option for target URI could not be added.", e);
+      throw e;
+    } catch (ToManyOptionsException e) {
+      optionList.removeTargetURI();
+      log.debug("Critical option for target URI could not be added.", e);
+      throw e;
     }
+  }
 
-    /**
+  /**
      * Set one option for each media type to be accepted as response payload. This causes eventually already contained
      * accept options to be removed from the list even in case of an exception.
      *
@@ -229,48 +167,43 @@ public class CoapRequest extends CoapMessage {
      * @return <code>true</code> if accept options were succesfully set, <code>false</code> if accept option is not
      * meaningful with the message code and thus silently ignored
      */
-    public boolean setAccept(OptionRegistry.MediaType... mediaTypes) throws InvalidOptionException, ToManyOptionsException {
-        optionList.removeAllOptions(OptionRegistry.OptionName.ACCEPT);
-        try{
-            for(OptionRegistry.MediaType mediaType : mediaTypes){
-                Option option = Option.createUintOption(OptionRegistry.OptionName.ACCEPT, mediaType.number);
-                optionList.addOption(header.getCode(), OptionRegistry.OptionName.ACCEPT, option);
-            }
-            return true;
-        }
-        catch (InvalidOptionException e) {
-            optionList.removeAllOptions(OptionRegistry.OptionName.ACCEPT);
-            log.debug("Elective option (" + OptionRegistry.OptionName.ACCEPT + ") could not be added.", e);
-            return false;
-        }
-        catch (ToManyOptionsException e) {
-            optionList.removeAllOptions(OptionRegistry.OptionName.ACCEPT);
-            log.debug("Elective option (" + OptionRegistry.OptionName.ACCEPT + ") could not be added.", e);
-            return false;
-        }
+  public boolean setAccept(OptionRegistry.MediaType... mediaTypes) throws InvalidOptionException, ToManyOptionsException {
+    optionList.removeAllOptions(OptionRegistry.OptionName.ACCEPT);
+    try {
+      for (OptionRegistry.MediaType mediaType : mediaTypes) {
+        Option option = Option.createUintOption(OptionRegistry.OptionName.ACCEPT, mediaType.number);
+        optionList.addOption(header.getCode(), OptionRegistry.OptionName.ACCEPT, option);
+      }
+      return true;
+    } catch (InvalidOptionException e) {
+      optionList.removeAllOptions(OptionRegistry.OptionName.ACCEPT);
+      log.debug("Elective option (" + OptionRegistry.OptionName.ACCEPT + ") could not be added.", e);
+      return false;
+    } catch (ToManyOptionsException e) {
+      optionList.removeAllOptions(OptionRegistry.OptionName.ACCEPT);
+      log.debug("Elective option (" + OptionRegistry.OptionName.ACCEPT + ") could not be added.", e);
+      return false;
     }
+  }
 
-    /**
+  /**
      * Returns the contained Proxy URI
      * @return  the messages proxy URI (if any) or null otherwise
      * @throws java.net.URISyntaxException
      */
-    public URI getProxyURI() throws URISyntaxException {
-        Collection<Option> options = optionList.getOption(OptionRegistry.OptionName.PROXY_URI);
-
-        if(options.isEmpty()){
-            return null;
-        }
-
-        String result = "";
-        for(Option option : options){
-            result += ((StringOption)option).getDecodedValue();
-        }
-        return new URI(result);
-
+  public URI getProxyURI() throws URISyntaxException {
+    Collection<Option> options = optionList.getOption(OptionRegistry.OptionName.PROXY_URI);
+    if (options.isEmpty()) {
+      return null;
     }
+    String result = "";
+    for (Option option : options) {
+      result += ((StringOption) option).getDecodedValue();
+    }
+    return new URI(result);
+  }
 
-     /**
+  /**
      * Adds an appropriate number of proxy URI options to the list. This causes eventually already contained
      * proxy URI options to be removed from the list even in case of an exception.
      *
@@ -280,29 +213,25 @@ public class CoapRequest extends CoapMessage {
      * @throws ToManyOptionsException if adding all proxy URI options would exceed the maximum number of options per
      * message.
      */
-    public void setProxyURI(URI proxyURI) throws InvalidOptionException, URISyntaxException, ToManyOptionsException {
-        optionList.removeAllOptions(OptionRegistry.OptionName.PROXY_URI);
-        try{
-            Collection<Option> options = Option.createProxyUriOptions(proxyURI);
-            for(Option option : options){
-                optionList.addOption(header.getCode(), OptionRegistry.OptionName.PROXY_URI, option);
-            }
-        }
-        catch(InvalidOptionException e){
-            optionList.removeAllOptions(OptionRegistry.OptionName.PROXY_URI);
-            log.debug("Critical option (" + OptionRegistry.OptionName.PROXY_URI + ") could not be added.", e);
-
-            throw e;
-        }
-        catch(ToManyOptionsException e){
-            optionList.removeAllOptions(OptionRegistry.OptionName.PROXY_URI);
-            log.debug("Critical option (" + OptionRegistry.OptionName.PROXY_URI + ") could not be added.", e);
-
-            throw e;
-        }
+  public void setProxyURI(URI proxyURI) throws InvalidOptionException, URISyntaxException, ToManyOptionsException {
+    optionList.removeAllOptions(OptionRegistry.OptionName.PROXY_URI);
+    try {
+      Collection<Option> options = Option.createProxyUriOptions(proxyURI);
+      for (Option option : options) {
+        optionList.addOption(header.getCode(), OptionRegistry.OptionName.PROXY_URI, option);
+      }
+    } catch (InvalidOptionException e) {
+      optionList.removeAllOptions(OptionRegistry.OptionName.PROXY_URI);
+      log.debug("Critical option (" + OptionRegistry.OptionName.PROXY_URI + ") could not be added.", e);
+      throw e;
+    } catch (ToManyOptionsException e) {
+      optionList.removeAllOptions(OptionRegistry.OptionName.PROXY_URI);
+      log.debug("Critical option (" + OptionRegistry.OptionName.PROXY_URI + ") could not be added.", e);
+      throw e;
     }
+  }
 
-    /**
+  /**
      * Set one option for each ETAG enabling the computing of this requests payload on the server. This causes
      * eventually already contained if-match options to be removed from the list even in case of an exception.
      *
@@ -311,73 +240,71 @@ public class CoapRequest extends CoapMessage {
      * @throws ToManyOptionsException if adding all if-match options would exceed the maximum number of
      * options per message.
      */
-    public void setIfMatch(byte[]... etags) throws InvalidOptionException, ToManyOptionsException {
-        optionList.removeAllOptions(OptionRegistry.OptionName.IF_MATCH);
-        try{
-            for(byte[] etag : etags){
-                Option option = Option.createOpaqueOption(OptionRegistry.OptionName.IF_MATCH, etag);
-                optionList.addOption(header.getCode(), OptionRegistry.OptionName.IF_MATCH, option);
-            }
-        }
-        catch (InvalidOptionException e) {
-            optionList.removeAllOptions(OptionRegistry.OptionName.IF_MATCH);
-            log.debug("Critical option (" + OptionRegistry.OptionName.IF_MATCH + ") could not be added.", e);
-            throw e;
-        }
-        catch (ToManyOptionsException e) {
-            optionList.removeAllOptions(OptionRegistry.OptionName.IF_MATCH);
-            log.debug("Critical option (" + OptionRegistry.OptionName.IF_MATCH + ") could not be added.", e);
-            throw e;
-        }
+  public void setIfMatch(byte[]... etags) throws InvalidOptionException, ToManyOptionsException {
+    optionList.removeAllOptions(OptionRegistry.OptionName.IF_MATCH);
+    try {
+      for (byte[] etag : etags) {
+        Option option = Option.createOpaqueOption(OptionRegistry.OptionName.IF_MATCH, etag);
+        optionList.addOption(header.getCode(), OptionRegistry.OptionName.IF_MATCH, option);
+      }
+    } catch (InvalidOptionException e) {
+      optionList.removeAllOptions(OptionRegistry.OptionName.IF_MATCH);
+      log.debug("Critical option (" + OptionRegistry.OptionName.IF_MATCH + ") could not be added.", e);
+      throw e;
+    } catch (ToManyOptionsException e) {
+      optionList.removeAllOptions(OptionRegistry.OptionName.IF_MATCH);
+      log.debug("Critical option (" + OptionRegistry.OptionName.IF_MATCH + ") could not be added.", e);
+      throw e;
     }
+  }
 
-    /**
+  /**
      * Set the if-non-match option. This causes eventually already contained if-non-match options to be removed from
      * the list even in case of an exception.
      *
      * @throws ToManyOptionsException if adding an if-non-match options would exceed the maximum number of
      * options per message.
      */
-    public void setIfNoneMatch() throws ToManyOptionsException {
-        optionList.removeAllOptions(OptionRegistry.OptionName.IF_NONE_MATCH);
-        try{
-            Option option = Option.createEmptyOption(OptionRegistry.OptionName.IF_NONE_MATCH);
-            optionList.addOption(header.getCode(), OptionRegistry.OptionName.IF_NONE_MATCH, option);
-        } catch (InvalidOptionException e) {
-            optionList.removeAllOptions(OptionRegistry.OptionName.IF_NONE_MATCH);
-            log.error("This should never happen!", e);
-        } catch (ToManyOptionsException e) {
-            optionList.removeAllOptions(OptionRegistry.OptionName.IF_NONE_MATCH);
-            log.debug("Critical option (" + OptionRegistry.OptionName.IF_NONE_MATCH + ") could not be added.", e);
-            throw e;
-        }
+  public void setIfNoneMatch() throws ToManyOptionsException {
+    optionList.removeAllOptions(OptionRegistry.OptionName.IF_NONE_MATCH);
+    try {
+      Option option = Option.createEmptyOption(OptionRegistry.OptionName.IF_NONE_MATCH);
+      optionList.addOption(header.getCode(), OptionRegistry.OptionName.IF_NONE_MATCH, option);
+    } catch (InvalidOptionException e) {
+      optionList.removeAllOptions(OptionRegistry.OptionName.IF_NONE_MATCH);
+      log.error("This should never happen!", e);
+    } catch (ToManyOptionsException e) {
+      optionList.removeAllOptions(OptionRegistry.OptionName.IF_NONE_MATCH);
+      log.debug("Critical option (" + OptionRegistry.OptionName.IF_NONE_MATCH + ") could not be added.", e);
+      throw e;
     }
+  }
 
-    /**
+  /**
      * Set the observe option. This causes eventually already contained observe options to be removed from
      * the list even in case of an exception.
      *
      * @throws ToManyOptionsException if adding an observe options would exceed the maximum number of
      * options per message.
      */
-    public void setObserveOptionRequest() throws ToManyOptionsException {
-        optionList.removeAllOptions(OptionRegistry.OptionName.OBSERVE_REQUEST);
-        try{
-            Option option = Option.createEmptyOption(OptionRegistry.OptionName.OBSERVE_REQUEST);
-            optionList.addOption(header.getCode(), OptionRegistry.OptionName.OBSERVE_REQUEST, option);
-        } catch (InvalidOptionException e) {
-            optionList.removeAllOptions(OptionRegistry.OptionName.OBSERVE_REQUEST);
-            log.error("This should never happen!", e);
-        } catch (ToManyOptionsException e) {
-            optionList.removeAllOptions(OptionRegistry.OptionName.OBSERVE_REQUEST);
-            log.debug("Critical option (" + OptionRegistry.OptionName.OBSERVE_REQUEST + ") could not be added.", e);
-            throw e;
-        }
+  public void setObserveOptionRequest() throws ToManyOptionsException {
+    optionList.removeAllOptions(OptionRegistry.OptionName.OBSERVE_REQUEST);
+    try {
+      Option option = Option.createEmptyOption(OptionRegistry.OptionName.OBSERVE_REQUEST);
+      optionList.addOption(header.getCode(), OptionRegistry.OptionName.OBSERVE_REQUEST, option);
+    } catch (InvalidOptionException e) {
+      optionList.removeAllOptions(OptionRegistry.OptionName.OBSERVE_REQUEST);
+      log.error("This should never happen!", e);
+    } catch (ToManyOptionsException e) {
+      optionList.removeAllOptions(OptionRegistry.OptionName.OBSERVE_REQUEST);
+      log.debug("Critical option (" + OptionRegistry.OptionName.OBSERVE_REQUEST + ") could not be added.", e);
+      throw e;
     }
+  }
 
-    public String toString(){
-        String result = super.toString();
-        result += ", target URI " + getTargetUri();
-        return result;
-    }
+  public String toString() {
+    String result = super.toString();
+    result += ", target URI " + getTargetUri();
+    return result;
+  }
 }

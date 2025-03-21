@@ -1,66 +1,64 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package de.uniluebeck.itm.spitfire.nCoap.message.options;
-
 import de.uniluebeck.itm.spitfire.nCoap.message.header.Code;
 import de.uniluebeck.itm.spitfire.nCoap.message.header.Header;
 import de.uniluebeck.itm.spitfire.nCoap.message.options.OptionRegistry.OptionName;
-
 import javax.annotation.Nullable;
 
 /**
  *
  * @author Oliver Kleine
  */
-public class InvalidOptionException extends Exception{
+public class InvalidOptionException extends Exception {
 
-    @Nullable
-    private Header messageHeader;
-    private OptionName optionName;
-    private boolean critical;
+<<<<<<< /usr/src/app/output/okleine/ncoap/cedf40c2211b5e353f2f2fcfd3a209daaa715595/src/main/java/de/uniluebeck/itm/spitfire/nCoap/message/options/InvalidOptionException.java/left.java
+  private static final long serialVersionUID = 1L;
+=======
+  @Nullable private Header messageHeader;
+>>>>>>> /usr/src/app/output/okleine/ncoap/cedf40c2211b5e353f2f2fcfd3a209daaa715595/src/main/java/de/uniluebeck/itm/spitfire/nCoap/message/options/InvalidOptionException.java/right.java
 
-    public InvalidOptionException(Header header, OptionName optionName, String msg){
-        this(optionName, msg);
-        this.messageHeader = header;
-    }
 
-    public InvalidOptionException(OptionName optionName, String msg){
-        super(msg);
-        this.optionName = optionName;
-        this.critical = OptionRegistry.isCritial(optionName);
-    }
+  private OptionName optionName;
 
-     public InvalidOptionException(int optNumber, String msg){
-        super(msg);
-        this.critical = OptionRegistry.isCritical(optNumber);
-    }
+  private boolean critical;
 
-    /**
+  public InvalidOptionException(Header header, OptionName optionName, String msg) {
+    this(optionName, msg);
+    this.messageHeader = header;
+  }
+
+  public InvalidOptionException(OptionName optionName, String msg) {
+    super(msg);
+    this.optionName = optionName;
+    this.critical = OptionRegistry.isCritial(optionName);
+  }
+
+  public InvalidOptionException(int optNumber, String msg) {
+    super(msg);
+    this.critical = OptionRegistry.isCritical(optNumber);
+  }
+
+  /**
      * Returns true if this Exception has been caused by a critical option. Otherwise (in case of elective options)
      * it returns false.
      * @return whether the Exception was caused by a critical option
      */
-    public boolean isCritical(){
-       return critical;
-    }
+  public boolean isCritical() {
+    return critical;
+  }
 
-    /**
+  /**
      * Returns the OptionName of the option that caused this exception
      * @return the OptionName of the option that caused this exception
      */
-    public OptionName getOptionName(){
-        return optionName;
-    }
+  public OptionName getOptionName() {
+    return optionName;
+  }
 
-    /**
+  /**
      * Returns the {@link Header} instance that caused this exception (if available) or null otherwise
      * @return the {@link Header} instance that caused this exception (if available) or null otherwise
      */
-    @Nullable
-    public Header getMessageHeader() {
-        return messageHeader;
-    }
+  @Nullable public Header getMessageHeader() {
+    return messageHeader;
+  }
 }
