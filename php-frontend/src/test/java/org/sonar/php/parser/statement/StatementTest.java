@@ -1,80 +1,199 @@
-/*
- * SonarQube PHP Plugin
- * Copyright (C) 2010-2020 SonarSource SA
- * mailto:info AT sonarsource DOT com
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */
-package org.sonar.php.parser.statement;
-
-import org.junit.Test;
-import org.sonar.php.parser.PHPLexicalGrammar;
-
-import static org.sonar.php.utils.Assertions.assertThat;
-
-public class StatementTest {
-
-  @Test
-  public void test() {
-    assertThat(PHPLexicalGrammar.STATEMENT)
-      .matches("{}")
-      .matches("label:")
-      .matches("if ($a): endif;")
-      .matches("while($a) {}")
-      .matches("for ($i = 1; $i <= 10; $i++) {}")
-      .matches("switch ($a) {}")
-      .matches("break;")
-      .matches("continue;")
-      .matches("return;")
-      .matches(";")
-      .matches("yield $a;")
-      .matches("[$a, &$b] = $array;")
-      .matches("list($a, &$b) = $array;")
-      .matches("foreach ($array as list(&$a, $b)) { $a = 7; }")
-      .matches("global $a;")
-      .matches("echo \"Hi\";")
-      .matches("$a = b'hello';")
-      .matches("unset($a);")
-      .matches("yield yield;")
-      .matches("die(yield $foo);")
-      .matches("yield from [yield];")
-      .matches("list($value) = yield;")
-      .matches("var_dump(yield * -1);")
-      .matches("var_dump([yield \"k\" => \"a\" . \"b\"]);")
-      .matches("$$varName = yield;")
-      .matches("$gen = yield;")
-      .matches("$var = function () {};")
-      .matches("foo();")
-      .matches("Foo::bar();")
-      .matches("'Foo::bar'();")
-      .matches("['Foo','bar']();")
-      .matches("[A::class, $method_name]();")
-      .matches("null();")
-    ;
-  }
-
-  @Test
-  public void optional_semicolon() {
-    assertThat(PHPLexicalGrammar.STATEMENT)
-      .matches("continue ?>");
-  }
-
-  @Test
-  public void top_statement() {
-    assertThat(PHPLexicalGrammar.TOP_STATEMENT)
-      .matches("__halt_compiler();");
-  }
-
-}
+  package     org . sonar . php . parser . statement ;   import   org . junit . Test ;  import     org . sonar . php . parser . PHPLexicalGrammar ;  import static      org . sonar . php . utils . Assertions . assertThat ;   public class StatementTest  {    @ Test public void test  ( )  {                                  
+<<<<<<<
+  assertThat  (  PHPLexicalGrammar . STATEMENT ) . matches  ( "{}" )
+=======
+assertThat
+>>>>>>>
+ . matches  ( 
+<<<<<<<
+"label:"
+=======
+ PHPLexicalGrammar . STATEMENT
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"if ($a): endif;"
+=======
+"{}"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"while($a) {}"
+=======
+"label:"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"for ($i = 1; $i <= 10; $i++) {}"
+=======
+"if ($a): endif;"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"switch ($a) {}"
+=======
+"while($a) {}"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"break;"
+=======
+"for ($i = 1; $i <= 10; $i++) {}"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"continue;"
+=======
+"switch ($a) {}"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"return;"
+=======
+"break;"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+";"
+=======
+"continue;"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"yield $a;"
+=======
+"return;"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"[$a, &$b] = $array;"
+=======
+";"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"list($a, &$b) = $array;"
+=======
+"yield $a;"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"foreach ($array as list(&$a, $b)) { $a = 7; }"
+=======
+"[$a, &$b] = $array;"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"global $a;"
+=======
+"list($a, &$b) = $array;"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"echo \"Hi\";"
+=======
+"foreach ($array as list(&$a, $b)) { $a = 7; }"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"$a = b'hello';"
+=======
+"global $a;"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"unset($a);"
+=======
+"echo \"Hi\";"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"yield yield;"
+=======
+"$a = b'hello';"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"die(yield $foo);"
+=======
+"unset($a);"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"yield from [yield];"
+=======
+"yield yield;"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"list($value) = yield;"
+=======
+"die(yield $foo);"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"var_dump(yield * -1);"
+=======
+"yield from [yield];"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"var_dump([yield \"k\" => \"a\" . \"b\"]);"
+=======
+"list($value) = yield;"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"$$varName = yield;"
+=======
+"var_dump(yield * -1);"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"$gen = yield;"
+=======
+"var_dump([yield \"k\" => \"a\" . \"b\"]);"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"$var = function () {};"
+=======
+"$$varName = yield;"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"foo();"
+=======
+"$gen = yield;"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"Foo::bar();"
+=======
+"$var = function () {};"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"'Foo::bar'();"
+=======
+"foo();"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"['Foo','bar']();"
+=======
+"Foo::bar();"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"[A::class, $method_name]();"
+=======
+"'Foo::bar'();"
+>>>>>>>
+ ) . matches  ( 
+<<<<<<<
+"null();"
+=======
+"['Foo','bar']();"
+>>>>>>>
+ ) ; }    @ Test public void optional_semicolon  ( )  {    assertThat  (  PHPLexicalGrammar . STATEMENT ) . matches  ( "continue ?>" ) ; }    @ Test public void top_statement  ( )  {    assertThat  (  PHPLexicalGrammar . TOP_STATEMENT ) . matches  ( "__halt_compiler();" ) ; } }
