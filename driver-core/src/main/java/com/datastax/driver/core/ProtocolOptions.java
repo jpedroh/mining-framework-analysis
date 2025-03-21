@@ -55,18 +55,12 @@ public class ProtocolOptions {
         public String toString() {
             return protocolName;
         }
-    };
-
+    }
+;
     /**
      * The default port for Cassandra native binary protocol: 9042.
      */
     public static final int DEFAULT_PORT = 9042;
-
-    /**
-     * The default value for {@link #getMaxSchemaAgreementWaitSeconds()}: 10.
-     */
-    public static final int DEFAULT_MAX_SCHEMA_AGREEMENT_WAIT_SECONDS = 10;
-
     /**
      * The newest version of the protocol that this version of the driver support.
      *
@@ -74,19 +68,14 @@ public class ProtocolOptions {
      */
     @Deprecated
     public static final int NEWEST_SUPPORTED_PROTOCOL_VERSION = ProtocolVersion.NEWEST_SUPPORTED.toInt();
-
     private volatile Cluster.Manager manager;
-
     private final int port;
-    final ProtocolVersion initialProtocolVersion; // What the user asked us. Will be null by default.
-
-    private final int maxSchemaAgreementWaitSeconds;
-
-    private final SSLOptions sslOptions; // null if no SSL
+    final ProtocolVersion initialProtocolVersion;
+// What the user asked us. Will be null by default.
+    private final SSLOptions sslOptions;
+// null if no SSL
     private final AuthProvider authProvider;
-
     private volatile Compression compression = Compression.NONE;
-
     /**
      * Creates a new {@code ProtocolOptions} instance using the {@code DEFAULT_PORT}
      * (and without SSL).
@@ -94,7 +83,6 @@ public class ProtocolOptions {
     public ProtocolOptions() {
         this(DEFAULT_PORT);
     }
-
     /**
      * Creates a new {@code ProtocolOptions} instance using the provided port
      * (without SSL nor authentication).
@@ -104,9 +92,8 @@ public class ProtocolOptions {
      * @param port the port to use for the binary protocol.
      */
     public ProtocolOptions(int port) {
-        this(port, null, DEFAULT_MAX_SCHEMA_AGREEMENT_WAIT_SECONDS, null, AuthProvider.NONE);
+        this(port, null, null, AuthProvider.NONE);
     }
-
     /**
      * Creates a new {@code ProtocolOptions} instance using the provided port
      * and SSL context.
@@ -120,28 +107,27 @@ public class ProtocolOptions {
      * @param authProvider the {@code AuthProvider} to use for authentication against
      * the Cassandra nodes.
      */
-    public ProtocolOptions(int port, ProtocolVersion protocolVersion, int maxSchemaAgreementWaitSeconds, SSLOptions sslOptions, AuthProvider authProvider) {
+    public ProtocolOptions(int port, ProtocolVersion protocolVersion, SSLOptions sslOptions, AuthProvider authProvider) {
         this.port = port;
         this.initialProtocolVersion = protocolVersion;
-        this.maxSchemaAgreementWaitSeconds = maxSchemaAgreementWaitSeconds;
         this.sslOptions = sslOptions;
         this.authProvider = authProvider;
     }
-
     /**
      * @throws IllegalArgumentException if {@code protocolVersion} does not correspond to any known version.
      *
-     * @deprecated This is provided for backward compatibility; use {@link #ProtocolOptions(int, ProtocolVersion, int, SSLOptions, AuthProvider))} instead.
+     * @deprecated This is provided for backward compatibility; use {@link #ProtocolOptions(int, ProtocolVersion, SSLOptions, AuthProvider))} instead.
      */
     @Deprecated
-    public ProtocolOptions(int port, int protocolVersion, SSLOptions sslOptions, AuthProvider authProvider) {
-        this(port, ProtocolVersion.fromInt(protocolVersion), DEFAULT_MAX_SCHEMA_AGREEMENT_WAIT_SECONDS, sslOptions, authProvider);
+    public ProtocolOptions(int port, int protocolVersion, int maxSchemaAgreementWaitSeconds, SSLOptions sslOptions, AuthProvider authProvider) {
+        this.port = port;
+        this.initialProtocolVersion = ProtocolVersion.fromInt(protocolVersion);
+        this.sslOptions = sslOptions;
+        this.authProvider = authProvider;
     }
-
     void register(Cluster.Manager manager) {
         this.manager = manager;
     }
-
     /**
      * Returns the port used to connect to the Cassandra hosts.
      *
@@ -150,7 +136,6 @@ public class ProtocolOptions {
     public int getPort() {
         return port;
     }
-
     /**
      * The protocol version used by the Cluster instance.
      *
@@ -163,7 +148,6 @@ public class ProtocolOptions {
     public ProtocolVersion getProtocolVersionEnum() {
         return manager.connectionFactory.protocolVersion;
     }
-
     /**
      * The protocol version used by the Cluster instance, as a number.
      *
@@ -173,7 +157,6 @@ public class ProtocolOptions {
     public int getProtocolVersion() {
         return getProtocolVersionEnum().toInt();
     }
-
     /**
      * Returns the compression used by the protocol.
      * <p>
@@ -184,7 +167,6 @@ public class ProtocolOptions {
     public Compression getCompression() {
         return compression;
     }
-
     /**
      * Sets the compression to use.
      * <p>
@@ -207,7 +189,11 @@ public class ProtocolOptions {
         this.compression = compression;
         return this;
     }
-
+    /**
+     * The default value for {@link #getMaxSchemaAgreementWaitSeconds()}: 10.
+     */
+    public static final int DEFAULT_MAX_SCHEMA_AGREEMENT_WAIT_SECONDS = 10;
+    private final int maxSchemaAgreementWaitSeconds;
     /**
      * Returns the maximum time to wait for schema agreement before returning from a DDL query.
      *
