@@ -262,10 +262,107 @@ public class Scripting {
 				return outputBuffer;
 			}
 
+<<<<<<< /usr/src/app/output/structr/structr/0a74f0631fa877f6cd824e4073093d37ebeaf131/structr-core/src/main/java/org/structr/core/script/Scripting.java/left.java
+			return result;
+		} catch (Throwable ex) {
+||||||| /usr/src/app/output/structr/structr/0a74f0631fa877f6cd824e4073093d37ebeaf131/structr-core/src/main/java/org/structr/core/script/Scripting.java/base.java
+			// prioritize written output over result returned from method
+			final String output = actionContext.getOutput();
+			if (output != null && !output.isEmpty()) {
+				extractedValue = output;
+			}
+=======
 			return result != null ? result : "";
 		} catch (Throwable ex) {
+>>>>>>> /usr/src/app/output/structr/structr/0a74f0631fa877f6cd824e4073093d37ebeaf131/structr-core/src/main/java/org/structr/core/script/Scripting.java/right.java
 
+<<<<<<< /usr/src/app/output/structr/structr/0a74f0631fa877f6cd824e4073093d37ebeaf131/structr-core/src/main/java/org/structr/core/script/Scripting.java/left.java
+			throw new FrameworkException(422, ex.getMessage());
+||||||| /usr/src/app/output/structr/structr/0a74f0631fa877f6cd824e4073093d37ebeaf131/structr-core/src/main/java/org/structr/core/script/Scripting.java/base.java
+			if (extractedValue == null || extractedValue == Undefined.instance) {
+				extractedValue = scriptable.unwrap(scope.get("_structrMainResult", scope));
+			}
+
+			if (extractedValue == null || extractedValue == Undefined.instance) {
+				extractedValue = "";
+			}
+
+			return extractedValue;
+
+		} catch (final FrameworkException fex) {
+
+			if (!actionContext.getDisableVerboseExceptionLogging()) {
+				logger.warn(getExceptionMessage(actionContext), fex);
+			}
+
+			// just throw the FrameworkException so we dont lose the information contained
+			throw fex;
+
+		} catch (final WrappedException w) {
+
+			if (w.getWrappedException() instanceof FrameworkException) {
+				throw (FrameworkException)w.getWrappedException();
+			}
+
+			if (!actionContext.getDisableVerboseExceptionLogging()) {
+				logger.warn(getExceptionMessage(actionContext), w);
+			}
+
+			// if any other kind of Throwable is encountered throw a new FrameworkException and be done with it
+			throw new FrameworkException(422, w.getMessage());
+
+		} catch (final NullPointerException npe) {
+
+			if (!actionContext.getDisableVerboseExceptionLogging()) {
+				logger.warn(getExceptionMessage(actionContext), npe);
+			}
+
+			final String message = "NullPointerException in " + npe.getStackTrace()[0].toString();
+
+			throw new FrameworkException(422, message);
+
+		} catch (final EcmaError ecmaError) {
+
+			final String type      = entity != null ? entity.getClass().getSimpleName() : "";
+			final String errorName = ecmaError.getName();
+			final String message   = ecmaError.getErrorMessage();
+			final int lineNumber   = ecmaError.lineNumber();
+			final int columnNumber = ecmaError.columnNumber();
+
+			RuntimeEventLog.javascript(errorName, message, lineNumber, columnNumber, type, snippet.getName(), entityDescription);
+
+			// if any other kind of Throwable is encountered throw a new FrameworkException and be done with it
+			throw new FrameworkException(422, ecmaError.getMessage());
+
+		} catch (final RhinoException rhinoException) {
+
+			final String type      = entity != null ? entity.getClass().getSimpleName() : "";
+			final String errorName = "RhinoException";
+			final String message   = rhinoException.details();
+			final int lineNumber   = rhinoException.lineNumber();
+			final int columnNumber = rhinoException.columnNumber();
+
+			RuntimeEventLog.javascript(errorName, message, lineNumber, columnNumber, type, snippet.getName(), entityDescription);
+
+			// if any other kind of Throwable is encountered throw a new FrameworkException and be done with it
+			throw new FrameworkException(422, rhinoException.getMessage());
+
+
+		} catch (final Throwable t) {
+
+			if (!actionContext.getDisableVerboseExceptionLogging()) {
+				logger.warn(getExceptionMessage(actionContext), t);
+			}
+
+			// if any other kind of Throwable is encountered throw a new FrameworkException and be done with it
+			throw new FrameworkException(422, t.getMessage());
+
+		} finally {
+
+			Scripting.destroyJavascriptContext();
+=======
 			throw new FrameworkException(422, ex.getMessage(), new ScriptingError(ex));
+>>>>>>> /usr/src/app/output/structr/structr/0a74f0631fa877f6cd824e4073093d37ebeaf131/structr-core/src/main/java/org/structr/core/script/Scripting.java/right.java
 		}
 
 	}
@@ -353,11 +450,26 @@ public class Scripting {
 				return outputBuffer;
 			}
 
+<<<<<<< /usr/src/app/output/structr/structr/0a74f0631fa877f6cd824e4073093d37ebeaf131/structr-core/src/main/java/org/structr/core/script/Scripting.java/left.java
+			return result;
+||||||| /usr/src/app/output/structr/structr/0a74f0631fa877f6cd824e4073093d37ebeaf131/structr-core/src/main/java/org/structr/core/script/Scripting.java/base.java
+			return extractedValue;
+=======
 			return result != null ? result : "";
+>>>>>>> /usr/src/app/output/structr/structr/0a74f0631fa877f6cd824e4073093d37ebeaf131/structr-core/src/main/java/org/structr/core/script/Scripting.java/right.java
+<<<<<<< /usr/src/app/output/structr/structr/0a74f0631fa877f6cd824e4073093d37ebeaf131/structr-core/src/main/java/org/structr/core/script/Scripting.java/left.java
+		} catch (PolyglotException ex) {
+
+			throw new FrameworkException(422, ex.getMessage());
+		} catch ( Throwable ex) {
+||||||| /usr/src/app/output/structr/structr/0a74f0631fa877f6cd824e4073093d37ebeaf131/structr-core/src/main/java/org/structr/core/script/Scripting.java/base.java
+		}  catch ( Throwable ex) {
+=======
 		} catch (PolyglotException ex) {
 
 			throw new FrameworkException(422, ex.getMessage(), new ScriptingError(ex));
-		} catch (Throwable ex) {
+		} catch ( Throwable ex) {
+>>>>>>> /usr/src/app/output/structr/structr/0a74f0631fa877f6cd824e4073093d37ebeaf131/structr-core/src/main/java/org/structr/core/script/Scripting.java/right.java
 
 			throw new FrameworkException(422, ex.getMessage(), new ScriptingError(ex));
 		}
