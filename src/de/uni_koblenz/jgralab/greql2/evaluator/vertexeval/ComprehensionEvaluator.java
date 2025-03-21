@@ -85,10 +85,11 @@ public abstract class ComprehensionEvaluator<V extends Comprehension> extends
 	@Override
 	public Object evaluate(InternalGreqlEvaluator evaluator) {
 		if (getVertex().get_maxCount() != null) {
-			VertexEvaluator<? extends Expression> maxCountEval = query
-					.getVertexEvaluator(getVertex().get_maxCount());
-			maxCount = ((Number) maxCountEval.getResult(evaluator)).longValue();
+			VertexEvaluator maxCountEval = vertexEvalMarker.getMark(getVertex()
+					.get_maxCount());
+			maxCount = ((Number) maxCountEval.getResult()).longValue();
 		}
+
 		VariableDeclarationLayer declLayer = getVariableDeclationLayer(evaluator);
 		VertexEvaluator<? extends Expression> resultDefEval = getResultDefinitionEvaluator();
 		PCollection<Object> resultCollection = getResultDatastructure(evaluator);
