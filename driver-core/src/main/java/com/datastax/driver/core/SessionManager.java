@@ -20,15 +20,13 @@ import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
-
-import com.google.common.base.Function;
 import com.google.common.util.concurrent.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.datastax.driver.core.exceptions.AuthenticationException;
 import com.datastax.driver.core.exceptions.DriverInternalError;
 import com.datastax.driver.core.exceptions.UnsupportedFeatureException;
+import com.google.common.base.Function;
 import com.datastax.driver.core.policies.LoadBalancingPolicy;
 import com.datastax.driver.core.policies.ReconnectionPolicy;
 
@@ -45,6 +43,7 @@ class SessionManager implements Session {
     final AtomicReference<CloseFuture> closeFuture = new AtomicReference<CloseFuture>();
 
     // Package protected, only Cluster should construct that.
+
     SessionManager(Cluster cluster, Collection<Host> hosts) {
         this.cluster = cluster;
 
@@ -88,6 +87,14 @@ class SessionManager implements Session {
         return executeQuery(makeRequestMessage(statement, null), statement);
     }
 
+<<<<<<< /usr/src/app/output/datastax/java-driver/c822d0b2146018d64a6db306f7280082b2f99fd9/driver-core/src/main/java/com/datastax/driver/core/SessionManager.java/left.java
+    public PreparedStatement prepare(String query) {
+        Connection.Future future = new Connection.Future(new Requests.Prepare(query));
+        execute(future, Statement.DEFAULT);
+        return toPreparedStatement(query, future);
+    }
+||||||| /usr/src/app/output/datastax/java-driver/c822d0b2146018d64a6db306f7280082b2f99fd9/driver-core/src/main/java/com/datastax/driver/core/SessionManager.java/base.java
+=======
     public PreparedStatement prepare(String query) {
         try {
             return Uninterruptibles.getUninterruptibly(prepareAsync(query));
@@ -95,40 +102,30 @@ class SessionManager implements Session {
             throw DefaultResultSetFuture.extractCauseFromExecutionException(e);
         }
     }
+>>>>>>> /usr/src/app/output/datastax/java-driver/c822d0b2146018d64a6db306f7280082b2f99fd9/driver-core/src/main/java/com/datastax/driver/core/SessionManager.java/right.java
 
-    public PreparedStatement prepare(RegularStatement statement) {
-        try {
-            return Uninterruptibles.getUninterruptibly(prepareAsync(statement));
-        } catch (ExecutionException e) {
-            throw DefaultResultSetFuture.extractCauseFromExecutionException(e);
-        }
-    }
-
-    public ListenableFuture<PreparedStatement> prepareAsync(String query) {
-        Connection.Future future = new Connection.Future(new Requests.Prepare(query));
-        execute(future, Statement.DEFAULT);
-        return toPreparedStatement(query, future);
-    }
-
-    public ListenableFuture<PreparedStatement> prepareAsync(final RegularStatement statement) {
+    @Override
+    public PreparedStatement apply(PreparedStatement prepared) {
+<<<<<<< /usr/src/app/output/datastax/java-driver/c822d0b2146018d64a6db306f7280082b2f99fd9/driver-core/src/main/java/com/datastax/driver/core/SessionManager.java/left.java
         if (statement.getValues() != null)
             throw new IllegalArgumentException("A statement to prepare should not have values");
 
-        ListenableFuture<PreparedStatement> prepared = prepareAsync(statement.toString());
-        return Futures.transform(prepared, new Function<PreparedStatement, PreparedStatement>() {
-            @Override
-            public PreparedStatement apply(PreparedStatement prepared) {
-                ByteBuffer routingKey = statement.getRoutingKey();
-                if (routingKey != null)
-                    prepared.setRoutingKey(routingKey);
-                prepared.setConsistencyLevel(statement.getConsistencyLevel());
-                if (statement.isTracing())
-                    prepared.enableTracing();
-                prepared.setRetryPolicy(statement.getRetryPolicy());
+        PreparedStatement prepared = prepare(statement.toString());
 
-                return prepared;
-            }
-        });
+||||||| /usr/src/app/output/datastax/java-driver/c822d0b2146018d64a6db306f7280082b2f99fd9/driver-core/src/main/java/com/datastax/driver/core/SessionManager.java/base.java
+        PreparedStatement prepared = prepare(statement.getQueryString());
+
+=======
+>>>>>>> /usr/src/app/output/datastax/java-driver/c822d0b2146018d64a6db306f7280082b2f99fd9/driver-core/src/main/java/com/datastax/driver/core/SessionManager.java/right.java
+        ByteBuffer routingKey = statement.getRoutingKey();
+        if (routingKey != null)
+            prepared.setRoutingKey(routingKey);
+        prepared.setConsistencyLevel(statement.getConsistencyLevel());
+        if (statement.isTracing())
+            prepared.enableTracing();
+        prepared.setRetryPolicy(statement.getRetryPolicy());
+
+        return prepared;
     }
 
     public CloseFuture closeAsync() {
@@ -161,38 +158,42 @@ class SessionManager implements Session {
         return cluster;
     }
 
-    private ListenableFuture<PreparedStatement> toPreparedStatement(final String query, final Connection.Future future) {
-        return Futures.transform(future, new Function<Message.Response, PreparedStatement>() {
-            public PreparedStatement apply(Message.Response response) {
-                switch (response.type) {
-                    case RESULT:
-                        Responses.Result rm = (Responses.Result)response;
-                        switch (rm.kind) {
-                            case PREPARED:
-                                Responses.Result.Prepared pmsg = (Responses.Result.Prepared)rm;
-                                DefaultPreparedStatement stmt = DefaultPreparedStatement.fromMessage(pmsg, cluster.getMetadata(), query, poolsState.keyspace);
-                                cluster.manager.addPrepared(stmt);
-                                try {
-                                    // All Sessions are connected to the same nodes so it's enough to prepare only the nodes of this session.
-                                    // If that changes, we'll have to make sure this propagate to other sessions too.
-                                    prepare(stmt.getQueryString(), future.getAddress());
-                                } catch (InterruptedException e) {
-                                    Thread.currentThread().interrupt();
-                                    // This method doesn't propagate interruption, at least not for now. However, if we've
-                                    // interrupted preparing queries on other node it's not a problem as we'll re-prepare
-                                    // later if need be. So just ignore.
-                                }
-                                return stmt;
-                            default:
-                                throw new DriverInternalError(String.format("%s response received when prepared statement was expected", rm.kind));
+    public PreparedStatement apply(Message.Response response) {
+        switch (response.type) {
+            case RESULT:
+                Responses.Result rm = (Responses.Result)response;
+                switch (rm.kind) {
+                    case PREPARED:
+                        Responses.Result.Prepared pmsg = (Responses.Result.Prepared)rm;
+                        DefaultPreparedStatement stmt = DefaultPreparedStatement.fromMessage(pmsg, cluster.getMetadata(), query, poolsState.keyspace);
+                        cluster.manager.addPrepared(stmt);
+                        try {
+                            // All Sessions are connected to the same nodes so it's enough to prepare only the nodes of this session.
+                            // If that changes, we'll have to make sure this propagate to other sessions too.
+                            prepare(stmt.getQueryString(), future.getAddress());
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            // This method doesn't propagate interruption, at least not for now. However, if we've
+                            // interrupted preparing queries on other node it's not a problem as we'll re-prepare
+                            // later if need be. So just ignore.
                         }
-                    case ERROR:
-                        throw ((Responses.Error)response).asException(future.getAddress());
+                        return stmt;
                     default:
-                        throw new DriverInternalError(String.format("%s response received when prepared statement was expected", response.type));
+                        throw new DriverInternalError(String.format("%s response received when prepared statement was expected", rm.kind));
                 }
-            }
-        });
+            case ERROR:
+<<<<<<< /usr/src/app/output/datastax/java-driver/c822d0b2146018d64a6db306f7280082b2f99fd9/driver-core/src/main/java/com/datastax/driver/core/SessionManager.java/left.java
+                throw ((Responses.Error)response).asException(future.getAddress());
+||||||| /usr/src/app/output/datastax/java-driver/c822d0b2146018d64a6db306f7280082b2f99fd9/driver-core/src/main/java/com/datastax/driver/core/SessionManager.java/base.java
+                DefaultResultSetFuture.extractCause(DefaultResultSetFuture.convertException(((ErrorMessage)response).error));
+                break;
+=======
+                DefaultResultSetFuture.extractCause(DefaultResultSetFuture.convertException(((ErrorMessage)response).error));
+                throw new AssertionError();
+>>>>>>> /usr/src/app/output/datastax/java-driver/c822d0b2146018d64a6db306f7280082b2f99fd9/driver-core/src/main/java/com/datastax/driver/core/SessionManager.java/right.java
+            default:
+                throw new DriverInternalError(String.format("%s response received when prepared statement was expected", response.type));
+        }
     }
 
     Connection.Factory connectionFactory() {
@@ -276,6 +277,7 @@ class SessionManager implements Session {
      * This method ensures that all hosts for which a pool should exist
      * have one, and hosts that shouldn't don't.
      */
+
     void updateCreatedPools() {
         for (Host h : cluster.getMetadata().allHosts()) {
             HostDistance dist = loadBalancingPolicy().distance(h);
@@ -395,8 +397,154 @@ class SessionManager implements Session {
      * This method will find a suitable node to connect to using the
      * {@link LoadBalancingPolicy} and handle host failover.
      */
+
     void execute(RequestHandler.Callback callback, Statement statement) {
         new RequestHandler(this, callback, statement).sendRequest();
+    }
+
+    public PreparedStatement prepare(RegularStatement statement) {
+        try {
+            return Uninterruptibles.getUninterruptibly(prepareAsync(statement));
+        } catch (ExecutionException e) {
+            throw DefaultResultSetFuture.extractCauseFromExecutionException(e);
+        }
+    }
+
+    public ListenableFuture<PreparedStatement> prepareAsync(final Statement statement) {
+        ListenableFuture<PreparedStatement> prepared = prepareAsync(statement.toString());
+        return Futures.transform(prepared, new Function<PreparedStatement, PreparedStatement>() {
+            @Override
+            public PreparedStatement apply(PreparedStatement prepared) {
+<<<<<<< /usr/src/app/output/datastax/java-driver/c822d0b2146018d64a6db306f7280082b2f99fd9/driver-core/src/main/java/com/datastax/driver/core/SessionManager.java/left.java
+                if (statement.getValues() != null)
+                    throw new IllegalArgumentException("A statement to prepare should not have values");
+
+                PreparedStatement prepared = prepare(statement.toString());
+
+||||||| /usr/src/app/output/datastax/java-driver/c822d0b2146018d64a6db306f7280082b2f99fd9/driver-core/src/main/java/com/datastax/driver/core/SessionManager.java/base.java
+                PreparedStatement prepared = prepare(statement.getQueryString());
+
+=======
+>>>>>>> /usr/src/app/output/datastax/java-driver/c822d0b2146018d64a6db306f7280082b2f99fd9/driver-core/src/main/java/com/datastax/driver/core/SessionManager.java/right.java
+                ByteBuffer routingKey = statement.getRoutingKey();
+                if (routingKey != null)
+                    prepared.setRoutingKey(routingKey);
+                prepared.setConsistencyLevel(statement.getConsistencyLevel());
+                if (statement.isTracing())
+                    prepared.enableTracing();
+                prepared.setRetryPolicy(statement.getRetryPolicy());
+
+                return prepared;
+            }
+        });
+    }
+
+    private ListenableFuture<PreparedStatement> toPreparedStatement(final String query, final Connection.Future future) {
+<<<<<<< /usr/src/app/output/datastax/java-driver/c822d0b2146018d64a6db306f7280082b2f99fd9/driver-core/src/main/java/com/datastax/driver/core/SessionManager.java/left.java
+        try {
+            Message.Response response = Uninterruptibles.getUninterruptibly(future);
+            switch (response.type) {
+                case RESULT:
+                    Responses.Result rm = (Responses.Result)response;
+                    switch (rm.kind) {
+                        case PREPARED:
+                            Responses.Result.Prepared pmsg = (Responses.Result.Prepared)rm;
+                            DefaultPreparedStatement stmt = DefaultPreparedStatement.fromMessage(pmsg, cluster.getMetadata(), query, poolsState.keyspace);
+                            cluster.manager.addPrepared(stmt);
+                            try {
+                                // All Sessions are connected to the same nodes so it's enough to prepare only the nodes of this session.
+                                // If that changes, we'll have to make sure this propagate to other sessions too.
+                                prepare(stmt.getQueryString(), future.getAddress());
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                                // This method doesn't propagate interruption, at least not for now. However, if we've
+                                // interrupted preparing queries on other node it's not a problem as we'll re-prepare
+                                // later if need be. So just ignore.
+                            }
+                            return stmt;
+                        default:
+                            throw new DriverInternalError(String.format("%s response received when prepared statement was expected", rm.kind));
+                    }
+                case ERROR:
+                    throw ((Responses.Error)response).asException(future.getAddress());
+                default:
+                    throw new DriverInternalError(String.format("%s response received when prepared statement was expected", response.type));
+||||||| /usr/src/app/output/datastax/java-driver/c822d0b2146018d64a6db306f7280082b2f99fd9/driver-core/src/main/java/com/datastax/driver/core/SessionManager.java/base.java
+        try {
+            Message.Response response = Uninterruptibles.getUninterruptibly(future);
+            switch (response.type) {
+                case RESULT:
+                    ResultMessage rm = (ResultMessage)response;
+                    switch (rm.kind) {
+                        case PREPARED:
+                            ResultMessage.Prepared pmsg = (ResultMessage.Prepared)rm;
+                            PreparedStatement stmt = PreparedStatement.fromMessage(pmsg, cluster.getMetadata(), query, poolsState.keyspace);
+                            cluster.manager.addPrepared(stmt);
+                            try {
+                                // All Sessions are connected to the same nodes so it's enough to prepare only the nodes of this session.
+                                // If that changes, we'll have to make sure this propagate to other sessions too.
+                                prepare(stmt.getQueryString(), future.getAddress());
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                                // This method doesn't propagate interruption, at least not for now. However, if we've
+                                // interrupted preparing queries on other node it's not a problem as we'll re-prepare
+                                // later if need be. So just ignore.
+                            }
+                            return stmt;
+                        default:
+                            throw new DriverInternalError(String.format("%s response received when prepared statement was expected", rm.kind));
+                    }
+                case ERROR:
+                    DefaultResultSetFuture.extractCause(DefaultResultSetFuture.convertException(((ErrorMessage)response).error));
+                    break;
+                default:
+                    throw new DriverInternalError(String.format("%s response received when prepared statement was expected", response.type));
+=======
+        return Futures.transform(future, new Function<Message.Response, PreparedStatement>() {
+            public PreparedStatement apply(Message.Response response) {
+                switch (response.type) {
+                    case RESULT:
+                        ResultMessage rm = (ResultMessage)response;
+                        switch (rm.kind) {
+                            case PREPARED:
+                                ResultMessage.Prepared pmsg = (ResultMessage.Prepared)rm;
+                                PreparedStatement stmt = PreparedStatement.fromMessage(pmsg, cluster.getMetadata(), query, poolsState.keyspace);
+                                cluster.manager.addPrepared(stmt);
+                                try {
+                                    // All Sessions are connected to the same nodes so it's enough to prepare only the nodes of this session.
+                                    // If that changes, we'll have to make sure this propagate to other sessions too.
+                                    prepare(stmt.getQueryString(), future.getAddress());
+                                } catch (InterruptedException e) {
+                                    Thread.currentThread().interrupt();
+                                    // This method doesn't propagate interruption, at least not for now. However, if we've
+                                    // interrupted preparing queries on other node it's not a problem as we'll re-prepare
+                                    // later if need be. So just ignore.
+                                }
+                                return stmt;
+                            default:
+                                throw new DriverInternalError(String.format("%s response received when prepared statement was expected", rm.kind));
+                        }
+                    case ERROR:
+                        DefaultResultSetFuture.extractCause(DefaultResultSetFuture.convertException(((ErrorMessage)response).error));
+                        throw new AssertionError();
+                    default:
+                        throw new DriverInternalError(String.format("%s response received when prepared statement was expected", response.type));
+                }
+>>>>>>> /usr/src/app/output/datastax/java-driver/c822d0b2146018d64a6db306f7280082b2f99fd9/driver-core/src/main/java/com/datastax/driver/core/SessionManager.java/right.java
+            }
+<<<<<<< /usr/src/app/output/datastax/java-driver/c822d0b2146018d64a6db306f7280082b2f99fd9/driver-core/src/main/java/com/datastax/driver/core/SessionManager.java/left.java
+        } catch (ExecutionException e) {
+            throw DefaultResultSetFuture.extractCauseFromExecutionException(e);
+        }
+||||||| /usr/src/app/output/datastax/java-driver/c822d0b2146018d64a6db306f7280082b2f99fd9/driver-core/src/main/java/com/datastax/driver/core/SessionManager.java/base.java
+            throw new AssertionError();
+        } catch (ExecutionException e) {
+            DefaultResultSetFuture.extractCauseFromExecutionException(e);
+            throw new AssertionError();
+        }
+=======
+        });
+>>>>>>> /usr/src/app/output/datastax/java-driver/c822d0b2146018d64a6db306f7280082b2f99fd9/driver-core/src/main/java/com/datastax/driver/core/SessionManager.java/right.java
     }
 
     private void prepare(String query, InetAddress toExclude) throws InterruptedException {

@@ -212,13 +212,8 @@ public interface Session extends Closeable {
      * @return a future on the prepared statement corresponding to {@code statement}.
      *
      * @see Session#prepare(Statement)
-     *
-     * @throws IllegalArgumentException if {@code statement.getValues() != null}
-     * (values for executing a prepared statement should be provided after preparation
-     * though the {@link PreparedStatement#bind} method or through a corresponding
-     * {@link BoundStatement}).
      */
-    public ListenableFuture<PreparedStatement> prepareAsync(RegularStatement statement);
+    public ListenableFuture<PreparedStatement> prepareAsync(Statement statement);
 
     /**
      * Initiates a shutdown of this session instance.
