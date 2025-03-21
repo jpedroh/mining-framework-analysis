@@ -1,30 +1,10 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-
 package opennlp.tools.cmdline;
-
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import opennlp.tools.cmdline.chunker.ChunkerConverterTool;
 import opennlp.tools.cmdline.chunker.ChunkerCrossValidatorTool;
 import opennlp.tools.cmdline.chunker.ChunkerEvaluatorTool;
@@ -76,27 +56,19 @@ import opennlp.tools.cmdline.tokenizer.TokenizerTrainerTool;
 import opennlp.tools.util.Version;
 
 public final class CLI {
-
   public static final String CMD = "opennlp";
 
   private static Map<String, CmdLineTool> toolLookupMap;
 
   static {
     toolLookupMap = new LinkedHashMap<>();
-
     List<CmdLineTool> tools = new LinkedList<>();
-
-    // Document Categorizer
     tools.add(new DoccatTool());
     tools.add(new DoccatTrainerTool());
     tools.add(new DoccatEvaluatorTool());
     tools.add(new DoccatCrossValidatorTool());
     tools.add(new DoccatConverterTool());
-
-    // Dictionary Builder
     tools.add(new DictionaryBuilderTool());
-
-    // Tokenizer
     tools.add(new SimpleTokenizerTool());
     tools.add(new TokenizerMETool());
     tools.add(new TokenizerTrainerTool());
@@ -104,66 +76,50 @@ public final class CLI {
     tools.add(new TokenizerCrossValidatorTool());
     tools.add(new TokenizerConverterTool());
     tools.add(new DictionaryDetokenizerTool());
-
-    // Sentence detector
     tools.add(new SentenceDetectorTool());
     tools.add(new SentenceDetectorTrainerTool());
     tools.add(new SentenceDetectorEvaluatorTool());
     tools.add(new SentenceDetectorCrossValidatorTool());
     tools.add(new SentenceDetectorConverterTool());
-
-    // Name Finder
     tools.add(new TokenNameFinderTool());
     tools.add(new TokenNameFinderTrainerTool());
     tools.add(new TokenNameFinderEvaluatorTool());
     tools.add(new TokenNameFinderCrossValidatorTool());
     tools.add(new TokenNameFinderConverterTool());
     tools.add(new CensusDictionaryCreatorTool());
-
-
-    // POS Tagger
     tools.add(new opennlp.tools.cmdline.postag.POSTaggerTool());
     tools.add(new POSTaggerTrainerTool());
     tools.add(new POSTaggerEvaluatorTool());
     tools.add(new POSTaggerCrossValidatorTool());
     tools.add(new POSTaggerConverterTool());
-
-    //Lemmatizer
     tools.add(new LemmatizerMETool());
     tools.add(new LemmatizerTrainerTool());
     tools.add(new LemmatizerEvaluatorTool());
-
-    // Chunker
     tools.add(new ChunkerMETool());
     tools.add(new ChunkerTrainerTool());
     tools.add(new ChunkerEvaluatorTool());
     tools.add(new ChunkerCrossValidatorTool());
     tools.add(new ChunkerConverterTool());
-
-    // Parser
     tools.add(new ParserTool());
-    tools.add(new ParserTrainerTool()); // trains everything
+    tools.add(new ParserTrainerTool());
     tools.add(new ParserEvaluatorTool());
-    tools.add(new ParserConverterTool()); // trains everything
-    tools.add(new BuildModelUpdaterTool()); // re-trains  build model
-    tools.add(new CheckModelUpdaterTool()); // re-trains  build model
+    tools.add(new ParserConverterTool());
+    tools.add(new BuildModelUpdaterTool());
+    tools.add(new CheckModelUpdaterTool());
     tools.add(new TaggerModelReplacerTool());
-
-    // Entity Linker
     tools.add(new EntityLinkerTool());
-    
-    // Sentiment Analysis Parser
     tools.add(new SentimentTrainerTool());
     tools.add(new SentimentEvaluatorTool());
-    tools.add(new SentimentCrossValidatorTool());
-
-    // Language Model
-    tools.add(new NGramLanguageModelTool());
-
+    tools.add(new 
+<<<<<<< /usr/src/app/output/apache/opennlp/6fceb69a6af56b3ccf80b333b25f884a20ef224e/opennlp-tools/src/main/java/opennlp/tools/cmdline/CLI.java/left.java
+    NGramLanguageModelTool
+=======
+    SentimentCrossValidatorTool
+>>>>>>> /usr/src/app/output/apache/opennlp/6fceb69a6af56b3ccf80b333b25f884a20ef224e/opennlp-tools/src/main/java/opennlp/tools/cmdline/CLI.java/right.java
+    ());
     for (CmdLineTool tool : tools) {
       toolLookupMap.put(tool.getName(), tool);
     }
-
     toolLookupMap = Collections.unmodifiableMap(toolLookupMap);
   }
 
@@ -185,8 +141,6 @@ public final class CLI {
     System.out.print("OpenNLP " + Version.currentVersion().toString() + ". ");
     System.out.println("Usage: " + CMD + " TOOL");
     System.out.println("where TOOL is one of:");
-
-    // distance of tool name from line start
     int numberOfSpaces = -1;
     for (String toolName : toolLookupMap.keySet()) {
       if (toolName.length() > numberOfSpaces) {
@@ -194,36 +148,26 @@ public final class CLI {
       }
     }
     numberOfSpaces = numberOfSpaces + 4;
-
     for (CmdLineTool tool : toolLookupMap.values()) {
-
       System.out.print("  " + tool.getName());
-
       for (int i = 0; i < Math.abs(tool.getName().length() - numberOfSpaces); i++) {
         System.out.print(" ");
       }
-
       System.out.println(tool.getShortDescription());
     }
-
     System.out.println("All tools print help when invoked with help parameter");
     System.out.println("Example: opennlp SimpleTokenizer help");
   }
 
   public static void main(String[] args) {
-
     if (args.length == 0) {
       usage();
       System.exit(0);
     }
-
     final long startTime = System.currentTimeMillis();
     String toolArguments[] = new String[args.length - 1];
     System.arraycopy(args, 1, toolArguments, 0, toolArguments.length);
-
     String toolName = args[0];
-
-    //check for format
     String formatName = StreamFactoryRegistry.DEFAULT_FORMAT;
     int idx = toolName.indexOf(".");
     if (-1 < idx) {
@@ -231,49 +175,43 @@ public final class CLI {
       toolName = toolName.substring(0, idx);
     }
     CmdLineTool tool = toolLookupMap.get(toolName);
-
     try {
       if (null == tool) {
         throw new TerminateToolException(1, "Tool " + toolName + " is not found.");
       }
-
-      if ((0 == toolArguments.length && tool.hasParams()) ||
-          0 < toolArguments.length && "help".equals(toolArguments[0])) {
+      if ((0 == toolArguments.length && tool.hasParams()) || 0 < toolArguments.length && "help".equals(toolArguments[0])) {
         if (tool instanceof TypedCmdLineTool) {
           System.out.println(((TypedCmdLineTool) tool).getHelp(formatName));
-        } else if (tool instanceof BasicCmdLineTool) {
-          System.out.println(tool.getHelp());
+        } else {
+          if (tool instanceof BasicCmdLineTool) {
+            System.out.println(tool.getHelp());
+          }
         }
-
         System.exit(0);
       }
-
       if (tool instanceof TypedCmdLineTool) {
         ((TypedCmdLineTool) tool).run(formatName, toolArguments);
-      } else if (tool instanceof BasicCmdLineTool) {
-        if (-1 == idx) {
-          ((BasicCmdLineTool) tool).run(toolArguments);
-        } else {
-          throw new TerminateToolException(1, "Tool " + toolName + " does not support formats.");
-        }
       } else {
-        throw new TerminateToolException(1, "Tool " + toolName + " is not supported.");
+        if (tool instanceof BasicCmdLineTool) {
+          if (-1 == idx) {
+            ((BasicCmdLineTool) tool).run(toolArguments);
+          } else {
+            throw new TerminateToolException(1, "Tool " + toolName + " does not support formats.");
+          }
+        } else {
+          throw new TerminateToolException(1, "Tool " + toolName + " is not supported.");
+        }
       }
-    }
-    catch (TerminateToolException e) {
-
+    } catch (TerminateToolException e) {
       if (e.getMessage() != null) {
         System.err.println(e.getMessage());
       }
-
       if (e.getCause() != null) {
         System.err.println(e.getCause().getMessage());
         e.getCause().printStackTrace(System.err);
       }
-
       System.exit(e.getCode());
     }
-
     final long endTime = System.currentTimeMillis();
     System.out.format("Execution time: %.3f seconds\n", (endTime - startTime) / 1000.0);
   }
