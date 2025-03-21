@@ -1,28 +1,9 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.apache.camel.component.ironmq;
-
 import java.util.LinkedList;
-import java.util.Queue;
-
 import io.iron.ironmq.EmptyQueueException;
+import java.util.Queue;
 import io.iron.ironmq.Message;
 import io.iron.ironmq.Messages;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -38,124 +19,125 @@ import org.slf4j.LoggerFactory;
  * The IronMQ consumer.
  */
 public class IronMQConsumer extends ScheduledBatchPollingConsumer {
-    private static final Logger LOG = LoggerFactory.getLogger(IronMQConsumer.class);
+  private static final Logger LOG = LoggerFactory.getLogger(IronMQConsumer.class);
 
-    public IronMQConsumer(Endpoint endpoint, Processor processor) {
-        super(endpoint, processor);
+  public IronMQConsumer(Endpoint endpoint, Processor processor) {
+    super(endpoint, processor);
+  }
+
+  @Override protected int poll() throws Exception {
+    shutdownRunningTask = null;
+    pendingExchanges = 0;
+    try {
+      Messages messages = null;
+      LOG.trace("Receiving messages with request [messagePerPoll{}, timeout {}]...", getMaxMessagesPerPoll(), getEndpoint().getConfiguration().getTimeout());
+      messages = getEndpoint().getQueue().reserve(getMaxMessagesPerPoll(), getEndpoint().getConfiguration().getTimeout(), getEndpoint().getConfiguration().getWait());
+      LOG.trace("Received {} messages", messages.getSize());
+      Queue<Exchange> exchanges = createExchanges(messages.getMessages());
+      int noProcessed = processBatch(CastUtils.cast(exchanges));
+      if (getEndpoint().getConfiguration().isBatchDelete()) {
+        LOG.trace("Batch deleting {} messages", messages.getSize());
+        getEndpoint().getQueue().deleteMessages(messages);
+      }
+      return noProcessed;
+    } catch (EmptyQueueException e) {
+      return 0;
     }
+  }
 
-    @Override
-    protected int poll() throws Exception {
-        // must reset for each poll
-        shutdownRunningTask = null;
-        pendingExchanges = 0;
-        try {
-            Messages messages = null;
-            LOG.trace("Receiving messages with request [messagePerPoll{}, timeout {}]...", getMaxMessagesPerPoll(), getEndpoint().getConfiguration().getTimeout());
-            messages = getEndpoint().getQueue().reserve(getMaxMessagesPerPoll(), getEndpoint().getConfiguration().getTimeout(), getEndpoint().getConfiguration().getWait());
-            LOG.trace("Received {} messages", messages.getSize());
-
-            Queue<Exchange> exchanges = createExchanges(messages.getMessages());
-            int noProcessed = processBatch(CastUtils.cast(exchanges));
-            // delete all processed messages in one batch;
-            if (getEndpoint().getConfiguration().isBatchDelete()) {
-                LOG.trace("Batch deleting {} messages", messages.getSize());
-                getEndpoint().getQueue().deleteMessages(messages);
-            }
-            return noProcessed;
-        } catch (EmptyQueueException e) {
-            return 0;
-        }
+  protected Queue<Exchange> createExchanges(Message[] messages) {
+    LOG.trace("Received {} messages in this poll", messages.length);
+    Queue<Exchange> answer = new LinkedList<Exchange>();
+    for (int i = 0; i < messages.length; i++) {
+      Exchange exchange = getEndpoint().createExchange(messages[i]);
+      answer.add(exchange);
     }
+    return answer;
+  }
 
-    protected Queue<Exchange> createExchanges(Message[] messages) {
-        LOG.trace("Received {} messages in this poll", messages.length);
+  @Override public int processBatch(Queue<Object> exchanges) throws Exception {
+    int total = exchanges.size();
+    for (int index = 0; index < total && isBatchAllowed(); index++) {
+      final Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
+      exchange.setProperty(Exchange.BATCH_INDEX, index);
+      exchange.setProperty(Exchange.BATCH_SIZE, total);
+      exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+      pendingExchanges = total - index - 1;
 
-        Queue<Exchange> answer = new LinkedList<Exchange>();
-        for (int i = 0; i < messages.length; i++) {
-            Exchange exchange = getEndpoint().createExchange(messages[i]);
-            answer.add(exchange);
-        }
-        return answer;
-    }
+<<<<<<< /usr/src/app/output/pax95/camel-ironmq/7b8e755aa410ddd2841a5471f78bf5256a647b76/src/main/java/org/apache/camel/component/ironmq/IronMQConsumer.java/left.java
+      if (!getEndpoint().getConfiguration().isBatchDelete()) {
+        exchange.addOnCompletion(new Synchronization() {
+          final String reservationId = ExchangeHelper.getMandatoryHeader(exchange, IronMQConstants.MESSAGE_RESERVATION_ID, String.class);
 
-    @Override
-    public int processBatch(Queue<Object> exchanges) throws Exception {
-        int total = exchanges.size();
+          final String messageid = ExchangeHelper.getMandatoryHeader(exchange, IronMQConstants.MESSAGE_ID, String.class);
 
-        for (int index = 0; index < total && isBatchAllowed(); index++) {
-            // only loop if we are started (allowed to run)
-            final Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
-            // add current index and total as properties
-            exchange.setProperty(Exchange.BATCH_INDEX, index);
-            exchange.setProperty(Exchange.BATCH_SIZE, total);
-            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+          public void onComplete(Exchange exchange) {
+            processCommit(exchange, messageid, reservationId);
+          }
 
-            // update pending number of exchanges
-            pendingExchanges = total - index - 1;
+          public void onFailure(Exchange exchange) {
+            processRollback(exchange);
+          }
 
-            // add on completion to handle after work when the exchange is done
-            // if batchDelete is not enabled
-            if (!getEndpoint().getConfiguration().isBatchDelete()) {
-                exchange.addOnCompletion(new Synchronization() {
-                    final String reservationId = ExchangeHelper.getMandatoryHeader(exchange, IronMQConstants.MESSAGE_RESERVATION_ID, String.class);
-                    final String messageid = ExchangeHelper.getMandatoryHeader(exchange, IronMQConstants.MESSAGE_ID, String.class);
+          @Override public String toString() {
+            return "IronMQConsumerOnCompletion";
+          }
+        });
+      }
+=======
+      exchange.addOnCompletion(new Synchronization() {
+        final String messageid = ExchangeHelper.getMandatoryHeader(exchange, IronMQConstants.MESSAGE_ID, String.class);
 
-                    public void onComplete(Exchange exchange) {
-                        processCommit(exchange, messageid, reservationId);
-                    }
-
-                    public void onFailure(Exchange exchange) {
-                        processRollback(exchange);
-                    }
-
-                    @Override
-                    public String toString() {
-                        return "IronMQConsumerOnCompletion";
-                    }
-                });
-            }
-
-            LOG.trace("Processing exchange [{}]...", exchange);
-
-            getProcessor().process(exchange);
+        public void onComplete(Exchange exchange) {
+          processCommit(exchange, messageid);
         }
 
-        return total;
-    }
+        public void onFailure(Exchange exchange) {
+          processRollback(exchange);
+        }
 
-    /**
+        @Override public String toString() {
+          return "IronMQConsumerOnCompletion";
+        }
+      });
+>>>>>>> /usr/src/app/output/pax95/camel-ironmq/7b8e755aa410ddd2841a5471f78bf5256a647b76/src/main/java/org/apache/camel/component/ironmq/IronMQConsumer.java/right.java
+
+      LOG.trace("Processing exchange [{}]...", exchange);
+      getProcessor().process(exchange);
+    }
+    return total;
+  }
+
+  /**
      * Strategy to delete the message after being processed.
      * 
      * @param exchange the exchange
      */
-    protected void processCommit(Exchange exchange, String messageid, String reservationId) {
-        try {
-            LOG.trace("Deleting message with messageId {} and reservationId {}...", messageid, reservationId);
-            getEndpoint().getQueue().deleteMessage(messageid, reservationId);
-            LOG.trace("Message deleted");
-        } catch (Exception e) {
-            getExceptionHandler().handleException("Error occurred during delete of message. This exception is ignored.", exchange, e);
-        }
+  protected void processCommit(Exchange exchange, String messageid, String reservationId) {
+    try {
+      LOG.trace("Deleting message with messageId {} and reservationId {}...", messageid, reservationId);
+      getEndpoint().getQueue().deleteMessage(messageid, reservationId);
+      LOG.trace("Message deleted");
+    } catch (Exception e) {
+      getExceptionHandler().handleException("Error occurred during delete of message. This exception is ignored.", exchange, e);
     }
+  }
 
-    /**
+  /**
      * Strategy when processing the exchange failed.
      * 
      * @param exchange the exchange
      */
-    protected void processRollback(Exchange exchange) {
-        Exception cause = exchange.getException();
-        if (cause != null) {
-            LOG.warn("Exchange failed, so rolling back message status: " + exchange, cause);
-        } else {
-            LOG.warn("Exchange failed, so rolling back message status: {}", exchange);
-        }
+  protected void processRollback(Exchange exchange) {
+    Exception cause = exchange.getException();
+    if (cause != null) {
+      LOG.warn("Exchange failed, so rolling back message status: " + exchange, cause);
+    } else {
+      LOG.warn("Exchange failed, so rolling back message status: {}", exchange);
     }
+  }
 
-    @Override
-    public IronMQEndpoint getEndpoint() {
-        return (IronMQEndpoint)super.getEndpoint();
-    }
-
+  @Override public IronMQEndpoint getEndpoint() {
+    return (IronMQEndpoint) super.getEndpoint();
+  }
 }
