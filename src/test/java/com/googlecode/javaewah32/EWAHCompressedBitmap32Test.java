@@ -66,7 +66,7 @@ public class EWAHCompressedBitmap32Test {
         }
         Assert.assertFalse(iterator.hasNext());
     }
-    
+
     @Test
     public void isEmpty() {
         EWAHCompressedBitmap32 bitmap = EWAHCompressedBitmap32.bitmapOf();
