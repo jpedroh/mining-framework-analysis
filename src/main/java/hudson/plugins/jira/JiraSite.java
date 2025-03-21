@@ -39,7 +39,6 @@ import hudson.plugins.jira.extension.ExtendedJiraRestClient;
 import hudson.plugins.jira.extension.ExtendedVersion;
 import hudson.plugins.jira.model.JiraIssue;
 import hudson.plugins.jira.selector.DefaultIssueSelector;
-import hudson.security.ACL;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import hudson.util.Secret;
@@ -49,7 +48,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.interceptor.RequirePOST;
-
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -63,6 +61,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
+import hudson.security.ACL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -1036,8 +1037,9 @@ public class JiraSite extends AbstractDescribableImpl<JiraSite> {
      * @throws TimeoutException TimeoutException if too long
      */
     public boolean progressMatchingIssues(String jqlSearch, String workflowActionName, String comment, PrintStream console) throws TimeoutException {
+
         if (this.jiraSession == null) {
-            LOGGER.warning("Jira session could not be established");
+            LOGGER.warning("JIRA session could not be established");
             console.println(Messages.FailedToConnect());
             return false;
         }
@@ -1099,10 +1101,20 @@ public class JiraSite extends AbstractDescribableImpl<JiraSite> {
         for (Issue issue : issues) {
             String issueKey = issue.getKey();
 
-//             if (isNotEmpty(comment)) {
-//                 this.jiraSession.addComment(issueKey, comment, null, null);
-//             }
+<<<<<<< /usr/src/app/output/jenkinsci/jira-plugin/474f5432d56bf2a59273c767db40d6a3d5806ff0/src/main/java/hudson/plugins/jira/JiraSite.java/left.java
+||||||| /usr/src/app/output/jenkinsci/jira-plugin/474f5432d56bf2a59273c767db40d6a3d5806ff0/src/main/java/hudson/plugins/jira/JiraSite.java/base.java
+            if (isNotEmpty(comment)) {
+                session.addComment(issueKey, comment, null, null);
+            }
 
+
+=======
+            if (isNotEmpty(comment)) {
+                this.jiraSession.addComment(issueKey, comment, null, null);
+            }
+
+
+>>>>>>> /usr/src/app/output/jenkinsci/jira-plugin/474f5432d56bf2a59273c767db40d6a3d5806ff0/src/main/java/hudson/plugins/jira/JiraSite.java/right.java
             if (isEmpty(workflowActionName)) {
                 continue;
             }
@@ -1119,7 +1131,13 @@ public class JiraSite extends AbstractDescribableImpl<JiraSite> {
                 console.println(String.format("[%s]: Found action id %s for workflow action '%s'", issueKey, actionId, workflowActionName));
             }
 
+<<<<<<< /usr/src/app/output/jenkinsci/jira-plugin/474f5432d56bf2a59273c767db40d6a3d5806ff0/src/main/java/hudson/plugins/jira/JiraSite.java/left.java
+            session.progressWorkflowAction(issueKey, actionId);
+||||||| /usr/src/app/output/jenkinsci/jira-plugin/474f5432d56bf2a59273c767db40d6a3d5806ff0/src/main/java/hudson/plugins/jira/JiraSite.java/base.java
+            String newStatus = session.progressWorkflowAction(issueKey, actionId);
+=======
             String newStatus = this.jiraSession.progressWorkflowAction(issueKey, actionId);
+>>>>>>> /usr/src/app/output/jenkinsci/jira-plugin/474f5432d56bf2a59273c767db40d6a3d5806ff0/src/main/java/hudson/plugins/jira/JiraSite.java/right.java
 
             if (isNotEmpty(comment)) {
                 session.addComment(issueKey, comment, null, null);

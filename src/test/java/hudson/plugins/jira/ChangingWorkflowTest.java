@@ -180,15 +180,32 @@ public class ChangingWorkflowTest {
 
 
     @Test
-
-    public void addCommentsOnNonEmptyWorkflowAndNonEmptyComment() throws IOException, TimeoutException {
-        FieldSetter.setField(site, JiraSite.class.getDeclaredField("jiraSession"), mockSession);
+    public void addCommentsOnNonEmptyWorkflowAndNonEmptyComment() throws Exception {
+<<<<<<< /usr/src/app/output/jenkinsci/jira-plugin/474f5432d56bf2a59273c767db40d6a3d5806ff0/src/test/java/hudson/plugins/jira/ChangingWorkflowTest.java/left.java
+        doReturn(mockSession).when(site).getSession();
+        doReturn(Arrays.asList(mock(Issue.class))).when(mockSession).getIssuesFromJqlSearch(anyString());
+        doReturn(Integer.valueOf(randomNumeric(5)))
+            .when(mockSession)
+            .getActionIdForIssue(any(),eq(NON_EMPTY_WORKFLOW_LOWERCASE));
+        doCallRealMethod().when(site)
+            .progressMatchingIssues(anyString(), anyString(), anyString(), any(PrintStream.class));
+||||||| /usr/src/app/output/jenkinsci/jira-plugin/474f5432d56bf2a59273c767db40d6a3d5806ff0/src/test/java/hudson/plugins/jira/ChangingWorkflowTest.java/base.java
+        doReturn(mockSession).when(site).getSession();
         doReturn(Arrays.asList(mock(Issue.class))).when(mockSession).getIssuesFromJqlSearch(anyString());
         doReturn(Integer.valueOf(randomNumeric(5)))
             .when(mockSession)
             .getActionIdForIssue(any(),eq(NON_EMPTY_WORKFLOW_LOWERCASE));
         doCallRealMethod().when(site)
             .progressMatchingIssues(anyString(), any(), anyString(), any(PrintStream.class));
+=======
+        FieldSetter.setField(site, JiraSite.class.getDeclaredField("jiraSession"), mockSession);
+        when(mockSession.getIssuesFromJqlSearch(anyString()))
+            .thenReturn(Arrays.asList(mock(Issue.class)));
+        when(mockSession.getActionIdForIssue(any(),eq(NON_EMPTY_WORKFLOW_LOWERCASE)))
+             .thenReturn(Integer.valueOf(randomNumeric(5)));
+        when(site.progressMatchingIssues(anyString(), any(), anyString(), any(PrintStream.class)))
+             .thenCallRealMethod();
+>>>>>>> /usr/src/app/output/jenkinsci/jira-plugin/474f5432d56bf2a59273c767db40d6a3d5806ff0/src/test/java/hudson/plugins/jira/ChangingWorkflowTest.java/right.java
 
         site.progressMatchingIssues(ISSUE_JQL,
                 NON_EMPTY_WORKFLOW_LOWERCASE, NON_EMPTY_COMMENT, mock(PrintStream.class));
