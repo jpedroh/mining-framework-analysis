@@ -1,5 +1,4 @@
 package com.testingbot.tunnel.proxy;
-
 import com.testingbot.tunnel.App;
 import com.testingbot.tunnel.Statistics;
 import java.io.IOException;
@@ -17,36 +16,36 @@ import org.eclipse.jetty.proxy.ConnectHandler;
  * @author TestingBot
  */
 public class CustomConnectHandler extends ConnectHandler {
-    private boolean debugMode = false;
-    
-    public void setDebugMode(boolean mode) {
-        debugMode = mode;
+  private boolean debugMode = false;
+
+  public void setDebugMode(boolean mode) {
+    debugMode = mode;
+  }
+
+  @Override public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    String method = request.getMethod();
+    Statistics.addRequest();
+    if (method.equalsIgnoreCase("CONNECT")) {
+      Logger.getLogger(App.class.getName()).log(Level.INFO, "<< [{0}] {1} ({2})", new Object[] { method, request.getRequestURL().toString(), response.toString().substring(9, 12) });
     }
-    
-    @Override
-    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String method = request.getMethod();
-        
-        Statistics.addRequest();
-            
-        if (method.equalsIgnoreCase("CONNECT")) {
-            Logger.getLogger(App.class.getName()).log(Level.INFO, "<< [{0}] {1} ({2})", new Object[]{method, request.getRequestURL().toString(), response.toString().substring(9, 12)});
+    if (debugMode == true) {
+      Enumeration<String> headerNames = request.getHeaderNames();
+      if (headerNames != null) {
+        StringBuilder sb = new StringBuilder();
+        String header;
+        while (headerNames.hasMoreElements()) {
+          header = headerNames.nextElement();
+          sb.append(header).append(": ").append(request.getHeader(header)).append(System.getProperty("line.separator"));
         }
-        
-        if (debugMode == true) {
-            Enumeration<String> headerNames = request.getHeaderNames();
-            if (headerNames != null) {
-                StringBuilder sb = new StringBuilder();
-                String header;
- 
-                while (headerNames.hasMoreElements()) {
-                    header = headerNames.nextElement();
-                    sb.append(header).append(": ").append(request.getHeader(header)).append(System.getProperty("line.separator"));
-                }
-                Logger.getLogger(App.class.getName()).log(Level.INFO, sb.toString());
-            }
-        }
-        
-        super.handle(target, baseRequest, request, response);
+        Logger.getLogger(
+<<<<<<< /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/com/testingbot/tunnel/proxy/CustomConnectHandler.java/left.java
+        App
+=======
+        CustomConnectHandler
+>>>>>>> /usr/src/app/output/testingbot/testingbot-tunnel/03f9869d5ccd78ac84c044fcb9fdeeed2b7dcf7e/src/main/java/com/testingbot/tunnel/proxy/CustomConnectHandler.java/right.java
+        .class.getName()).log(Level.INFO, sb.toString());
+      }
     }
+    super.handle(target, baseRequest, request, response);
+  }
 }
