@@ -30,9 +30,15 @@ public class Environment {
 
     public static final String CHARSET = "UTF-8";
 
-    public static final String API_VERSION = "v1";
+    public static final String API_VERSION = "v2";
     
+<<<<<<< /usr/src/app/output/chargebee/chargebee-java/76dbc6098e61e649ba7abdd90e651a88e0e5b3dc/src/main/java/com/chargebee/Environment.java/left.java
+    public static final String LIBRARY_VERSION = "2.0.0-beta";
+||||||| /usr/src/app/output/chargebee/chargebee-java/76dbc6098e61e649ba7abdd90e651a88e0e5b3dc/src/main/java/com/chargebee/Environment.java/base.java
+    public static final String LIBRARY_VERSION = "1.1.74";
+=======
     public static final String LIBRARY_VERSION = "1.1.75";
+>>>>>>> /usr/src/app/output/chargebee/chargebee-java/76dbc6098e61e649ba7abdd90e651a88e0e5b3dc/src/main/java/com/chargebee/Environment.java/right.java
 
     private final String apiBaseUrl;
 

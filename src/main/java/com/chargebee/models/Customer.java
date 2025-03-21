@@ -160,175 +160,134 @@ public class Customer extends Resource<Customer> {
 
     //Constructors
     //============
-
     public Customer(String jsonStr) {
         super(jsonStr);
     }
-
     public Customer(JSONObject jsonObj) {
         super(jsonObj);
     }
-
     // Fields
     //=======
-
     public String id() {
         return reqString("id");
     }
-
     public String firstName() {
         return optString("first_name");
     }
-
     public String lastName() {
         return optString("last_name");
     }
-
     public String email() {
         return optString("email");
     }
-
     public String phone() {
         return optString("phone");
     }
-
     public String company() {
         return optString("company");
     }
-
     public String vatNumber() {
         return optString("vat_number");
     }
-
     public AutoCollection autoCollection() {
         return reqEnum("auto_collection", AutoCollection.class);
     }
-
     public Boolean allowDirectDebit() {
         return reqBoolean("allow_direct_debit");
     }
-
     public Timestamp createdAt() {
         return reqTimestamp("created_at");
     }
-
     public String createdFromIp() {
         return optString("created_from_ip");
     }
-
     public Taxability taxability() {
         return optEnum("taxability", Taxability.class);
     }
-
     @Deprecated
     public CardStatus cardStatus() {
         return optEnum("card_status", CardStatus.class);
     }
-
     public Customer.BillingAddress billingAddress() {
         return optSubResource("billing_address", Customer.BillingAddress.class);
     }
-
     public List<Customer.Contact> contacts() {
         return optList("contacts", Customer.Contact.class);
     }
-
     public Customer.PaymentMethod paymentMethod() {
         return optSubResource("payment_method", Customer.PaymentMethod.class);
     }
-
     public String invoiceNotes() {
         return optString("invoice_notes");
     }
-
-    public Integer accountCredits() {
-        return reqInteger("account_credits");
+    public Integer promotionalCredits() {
+        return reqInteger("promotional_credits");
     }
-
     public Integer refundableCredits() {
         return reqInteger("refundable_credits");
     }
-
     public Integer excessPayments() {
         return reqInteger("excess_payments");
     }
-
     public JSONObject metaData() {
         return optJSONObject("meta_data");
     }
-
     // Operations
     //===========
-
     public static CreateRequest create() throws IOException {
         String uri = uri("customers");
         return new CreateRequest(Method.POST, uri);
     }
-
     public static ListRequest list() throws IOException {
         String uri = uri("customers");
         return new ListRequest(uri);
     }
-
     public static Request retrieve(String id) throws IOException {
         String uri = uri("customers", nullCheck(id));
         return new Request(Method.GET, uri);
     }
-
     public static UpdateRequest update(String id) throws IOException {
         String uri = uri("customers", nullCheck(id));
         return new UpdateRequest(Method.POST, uri);
     }
-
     public static UpdatePaymentMethodRequest updatePaymentMethod(String id) throws IOException {
         String uri = uri("customers", nullCheck(id), "update_payment_method");
         return new UpdatePaymentMethodRequest(Method.POST, uri);
     }
-
     public static UpdateBillingInfoRequest updateBillingInfo(String id) throws IOException {
         String uri = uri("customers", nullCheck(id), "update_billing_info");
         return new UpdateBillingInfoRequest(Method.POST, uri);
     }
-
     public static AddContactRequest addContact(String id) throws IOException {
         String uri = uri("customers", nullCheck(id), "add_contact");
         return new AddContactRequest(Method.POST, uri);
     }
-
     public static UpdateContactRequest updateContact(String id) throws IOException {
         String uri = uri("customers", nullCheck(id), "update_contact");
         return new UpdateContactRequest(Method.POST, uri);
     }
-
     public static DeleteContactRequest deleteContact(String id) throws IOException {
         String uri = uri("customers", nullCheck(id), "delete_contact");
         return new DeleteContactRequest(Method.POST, uri);
     }
-
-    public static AddAccountCreditsRequest addAccountCredits(String id) throws IOException {
-        String uri = uri("customers", nullCheck(id), "add_account_credits");
-        return new AddAccountCreditsRequest(Method.POST, uri);
+    public static AddPromotionalCreditsRequest addPromotionalCredits(String id) throws IOException {
+        String uri = uri("customers", nullCheck(id), "add_promotional_credits");
+        return new AddPromotionalCreditsRequest(Method.POST, uri);
     }
-
-    public static DeductAccountCreditsRequest deductAccountCredits(String id) throws IOException {
-        String uri = uri("customers", nullCheck(id), "deduct_account_credits");
-        return new DeductAccountCreditsRequest(Method.POST, uri);
+    public static DeductPromotionalCreditsRequest deductPromotionalCredits(String id) throws IOException {
+        String uri = uri("customers", nullCheck(id), "deduct_promotional_credits");
+        return new DeductPromotionalCreditsRequest(Method.POST, uri);
     }
-
-    public static SetAccountCreditsRequest setAccountCredits(String id) throws IOException {
-        String uri = uri("customers", nullCheck(id), "set_account_credits");
-        return new SetAccountCreditsRequest(Method.POST, uri);
+    public static SetPromotionalCreditsRequest setPromotionalCredits(String id) throws IOException {
+        String uri = uri("customers", nullCheck(id), "set_promotional_credits");
+        return new SetPromotionalCreditsRequest(Method.POST, uri);
     }
-
     public static DeleteRequest delete(String id) throws IOException {
         String uri = uri("customers", nullCheck(id), "delete");
         return new DeleteRequest(Method.POST, uri);
     }
-
-
     // Operation Request Classes
     //==========================
-
     public static class CreateRequest extends Request<CreateRequest> {
 
         private CreateRequest(Method httpMeth, String uri) {
@@ -578,7 +537,6 @@ public class Customer extends Resource<Customer> {
             return params;
         }
     }
-
     public static class UpdateRequest extends Request<UpdateRequest> {
 
         private UpdateRequest(Method httpMeth, String uri) {
@@ -650,7 +608,6 @@ public class Customer extends Resource<Customer> {
             return params;
         }
     }
-
     public static class UpdatePaymentMethodRequest extends Request<UpdatePaymentMethodRequest> {
 
         private UpdatePaymentMethodRequest(Method httpMeth, String uri) {
@@ -677,7 +634,6 @@ public class Customer extends Resource<Customer> {
             return params;
         }
     }
-
     public static class UpdateBillingInfoRequest extends Request<UpdateBillingInfoRequest> {
 
         private UpdateBillingInfoRequest(Method httpMeth, String uri) {
@@ -760,7 +716,6 @@ public class Customer extends Resource<Customer> {
             return params;
         }
     }
-
     public static class AddContactRequest extends Request<AddContactRequest> {
 
         private AddContactRequest(Method httpMeth, String uri) {
@@ -817,7 +772,6 @@ public class Customer extends Resource<Customer> {
             return params;
         }
     }
-
     public static class UpdateContactRequest extends Request<UpdateContactRequest> {
 
         private UpdateContactRequest(Method httpMeth, String uri) {
@@ -874,7 +828,6 @@ public class Customer extends Resource<Customer> {
             return params;
         }
     }
-
     public static class DeleteContactRequest extends Request<DeleteContactRequest> {
 
         private DeleteContactRequest(Method httpMeth, String uri) {
@@ -891,20 +844,19 @@ public class Customer extends Resource<Customer> {
             return params;
         }
     }
+    public static class AddPromotionalCreditsRequest extends Request<AddPromotionalCreditsRequest> {
 
-    public static class AddAccountCreditsRequest extends Request<AddAccountCreditsRequest> {
-
-        private AddAccountCreditsRequest(Method httpMeth, String uri) {
+        private AddPromotionalCreditsRequest(Method httpMeth, String uri) {
             super(httpMeth, uri);
         }
     
-        public AddAccountCreditsRequest amount(Integer amount) {
+        public AddPromotionalCreditsRequest amount(Integer amount) {
             params.add("amount", amount);
             return this;
         }
 
 
-        public AddAccountCreditsRequest description(String description) {
+        public AddPromotionalCreditsRequest description(String description) {
             params.add("description", description);
             return this;
         }
@@ -915,20 +867,19 @@ public class Customer extends Resource<Customer> {
             return params;
         }
     }
+    public static class DeductPromotionalCreditsRequest extends Request<DeductPromotionalCreditsRequest> {
 
-    public static class DeductAccountCreditsRequest extends Request<DeductAccountCreditsRequest> {
-
-        private DeductAccountCreditsRequest(Method httpMeth, String uri) {
+        private DeductPromotionalCreditsRequest(Method httpMeth, String uri) {
             super(httpMeth, uri);
         }
     
-        public DeductAccountCreditsRequest amount(Integer amount) {
+        public DeductPromotionalCreditsRequest amount(Integer amount) {
             params.add("amount", amount);
             return this;
         }
 
 
-        public DeductAccountCreditsRequest description(String description) {
+        public DeductPromotionalCreditsRequest description(String description) {
             params.add("description", description);
             return this;
         }
@@ -939,20 +890,19 @@ public class Customer extends Resource<Customer> {
             return params;
         }
     }
+    public static class SetPromotionalCreditsRequest extends Request<SetPromotionalCreditsRequest> {
 
-    public static class SetAccountCreditsRequest extends Request<SetAccountCreditsRequest> {
-
-        private SetAccountCreditsRequest(Method httpMeth, String uri) {
+        private SetPromotionalCreditsRequest(Method httpMeth, String uri) {
             super(httpMeth, uri);
         }
     
-        public SetAccountCreditsRequest amount(Integer amount) {
+        public SetPromotionalCreditsRequest amount(Integer amount) {
             params.add("amount", amount);
             return this;
         }
 
 
-        public SetAccountCreditsRequest description(String description) {
+        public SetPromotionalCreditsRequest description(String description) {
             params.add("description", description);
             return this;
         }
