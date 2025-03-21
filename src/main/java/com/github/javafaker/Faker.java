@@ -88,10 +88,10 @@ public class Faker {
     private final Medical medical;
     private final Animal animal;
     private final BackToTheFuture backToTheFuture;
+    private final Nation nation;
     private final PrincessBride princessBride;
     private final Buffy buffy;
     private final Relationships relationships;
-    private final Nation nation;
 
     public Faker() {
         this(Locale.ENGLISH);
@@ -181,10 +181,14 @@ public class Faker {
         this.country = new Country(this);
         this.animal = new Animal(this);
         this.backToTheFuture = new BackToTheFuture(this);
+<<<<<<< /usr/src/app/output/dius/java-faker/014cc70488ebf6aae06636e83ee1e6a8b783d617/src/main/java/com/github/javafaker/Faker.java/left.java
+        this.nation = new Nation(this);
+||||||| /usr/src/app/output/dius/java-faker/014cc70488ebf6aae06636e83ee1e6a8b783d617/src/main/java/com/github/javafaker/Faker.java/base.java
+=======
         this.princessBride = new PrincessBride(this);
         this.buffy = new Buffy(this);
         this.relationships = new Relationships(this);
-        this.nation = new Nation(this);
+>>>>>>> /usr/src/app/output/dius/java-faker/014cc70488ebf6aae06636e83ee1e6a8b783d617/src/main/java/com/github/javafaker/Faker.java/right.java
     }
 
     /**
@@ -591,6 +595,10 @@ public class Faker {
         return  backToTheFuture;
     }
 
+    public Nation nation() {
+        return nation;
+    }
+
     public PrincessBride princessBride() {
         return princessBride;
     }
@@ -598,11 +606,7 @@ public class Faker {
     public Relationships relationships() {
         return relationships;
     }
-
-    public Nation nation() {
-        return nation;
-    }
-
+    
     public String resolve(String key) {
         return this.fakeValuesService.resolve(key, this, this);
     }
