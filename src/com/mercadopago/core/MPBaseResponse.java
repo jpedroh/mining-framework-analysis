@@ -81,8 +81,9 @@ public class MPBaseResponse {
             try {
                 this.jsonResponse = new JsonParser().parse(this.stringResponse).getAsJsonObject();
                 if (this.jsonResponse.has("json") &&
-                        this.jsonResponse.get("json").isJsonObject())
+                        this.jsonResponse.get("json").isJsonObject()) {
                     this.jsonEntity = this.jsonResponse.getAsJsonObject("json");
+                }
             } catch (JsonParseException jsonParseException) {
                 // Do nothing
             }
