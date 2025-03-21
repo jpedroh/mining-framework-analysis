@@ -28,51 +28,61 @@ public class ValidatorError implements Serializable {
 	/**
 	 * Error code from {@link HDIVErrorCodes}
 	 */
+
 	private final String type;
 
 	/**
 	 * Protection rule related to validation error
 	 */
+
 	private final String rule;
 
 	/**
 	 * Target url
 	 */
+
 	private String target;
 
 	/**
 	 * The name of the parameter
 	 */
+
 	private final String parameterName;
 
 	/**
 	 * The value of the parameter
 	 */
+
 	private final String parameterValue;
 
 	/**
 	 * The original (not modified) value of the parameter
 	 */
+
 	private final String originalParameterValue;
 
 	/**
 	 * Users local IP
 	 */
+
 	private String localIp;
 
 	/**
 	 * Users remote IP
 	 */
+
 	private String remoteIp;
 
 	/**
 	 * The name of the user that made the request
 	 */
+
 	private String userName;
 
 	/**
 	 * In an attack of type 'EDITABLE_VALIDATION_ERROR', contains the name of the rule that rejected the value
 	 */
+
 	private final String validationRuleName;
 
 	private Throwable exception;
@@ -113,15 +123,20 @@ public class ValidatorError implements Serializable {
 	public ValidatorError(final String type, final String target, final String parameterName, final String parameterValue,
 			final String originalParameterValue, final String localIp, final String remoteIp, final String userName,
 			final String validationRuleName) {
-		this(type, getDefaultRule(type), target, parameterName, parameterValue, originalParameterValue, localIp, remoteIp, userName,
-				validationRuleName);
+		this(type, !HDIVErrorCodes.isEditableError(type) ? "AUTOMATED_REAL_TIME_WHITELISTING" : "CUSTOM_INPUT_VALIDATION", target,
+				parameterName, parameterValue, originalParameterValue, localIp, remoteIp, userName, validationRuleName);
 	}
 
 	public ValidatorError(final String type, final String rule, final String target, final String parameterName,
 			final String parameterValue, final String originalParameterValue, final String localIp, final String remoteIp,
 			final String userName, final String validationRuleName) {
 		this.type = type;
+<<<<<<< /usr/src/app/output/hdiv/hdiv/3d002a41907d808d059bb7c1ff4aaf3a3a76f411/hdiv-core/src/main/java/org/hdiv/filter/ValidatorError.java/left.java
+		this.rule = rule;
+||||||| /usr/src/app/output/hdiv/hdiv/3d002a41907d808d059bb7c1ff4aaf3a3a76f411/hdiv-core/src/main/java/org/hdiv/filter/ValidatorError.java/base.java
+=======
 		this.rule = rule != null ? rule : getDefaultRule(type);
+>>>>>>> /usr/src/app/output/hdiv/hdiv/3d002a41907d808d059bb7c1ff4aaf3a3a76f411/hdiv-core/src/main/java/org/hdiv/filter/ValidatorError.java/right.java
 		this.target = target;
 		this.parameterName = parameterName;
 		this.parameterValue = parameterValue;
@@ -135,13 +150,10 @@ public class ValidatorError implements Serializable {
 		}
 	}
 
-	private static String getDefaultRule(final String type) {
-		return !HDIVErrorCodes.isEditableError(type) ? "AUTOMATED_REAL_TIME_WHITELISTING" : "CUSTOM_INPUT_VALIDATION";
-	}
-
 	/**
 	 * @return the type
 	 */
+
 	public String getType() {
 		return type;
 	}
@@ -149,9 +161,29 @@ public class ValidatorError implements Serializable {
 	/**
 	 * @return the rule
 	 */
+
 	public String getRule() {
 		return rule;
 	}
+
+	/**
+	 * Protection rule related to validation error
+	 */
+
+	public ValidatorError(final String type, final String target, final String parameterName, final String parameterValue,
+			final String originalParameterValue, final String localIp, final String remoteIp, final String userName,
+			final String validationRuleName) {
+		this(type, getDefaultRule(type), target, parameterName, parameterValue, originalParameterValue, localIp, remoteIp, userName,
+				validationRuleName);
+	}
+
+	private static String getDefaultRule(final String type) {
+		return !HDIVErrorCodes.isEditableError(type) ? "AUTOMATED_REAL_TIME_WHITELISTING" : "CUSTOM_INPUT_VALIDATION";
+	}
+
+	/**
+	 * @return the rule
+	 */
 
 	/**
 	 * @return the target
