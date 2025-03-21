@@ -45,9 +45,17 @@ public class CreateSequenceParser {
         schema.addSequence(sequence);
 
         while (!parser.expectOptional(";")) {
+<<<<<<< /usr/src/app/output/fordfrog/apgdiff/e87c0a43d2a289df3bcc87b2530487bfc9953a26/src/main/java/cz/startnet/utils/pgdiff/parsers/CreateSequenceParser.java/left.java
+            if (parser.expectOptional("AS")) {
+                sequence.setAs(parser.parseString());
+            } else if (parser.expectOptional("INCREMENT")) {
+||||||| /usr/src/app/output/fordfrog/apgdiff/e87c0a43d2a289df3bcc87b2530487bfc9953a26/src/main/java/cz/startnet/utils/pgdiff/parsers/CreateSequenceParser.java/base.java
+            if (parser.expectOptional("AS"))  else if (parser.expectOptional("INCREMENT")) {
+=======
             if (parser.expectOptional("AS")) {
                 sequence.setDataType(parser.parseString());
             } else if (parser.expectOptional("INCREMENT")) {
+>>>>>>> /usr/src/app/output/fordfrog/apgdiff/e87c0a43d2a289df3bcc87b2530487bfc9953a26/src/main/java/cz/startnet/utils/pgdiff/parsers/CreateSequenceParser.java/right.java
                 parser.expectOptional("BY");
                 sequence.setIncrement(parser.parseString());
             } else if (parser.expectOptional("MINVALUE")) {
