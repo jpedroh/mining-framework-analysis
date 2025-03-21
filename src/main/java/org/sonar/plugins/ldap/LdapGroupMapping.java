@@ -107,15 +107,24 @@ public class LdapGroupMapping {
       if ("dn".equals(attr)) {
         parameters[i] = user.getNameInNamespace();
       } else if ("objectsid".equals(attr.toLowerCase())) {
-        Attribute attribute = user.getAttributes().get(attr);
-        byte[] objectSid;
-        try {
-          objectSid = (byte[])attribute.get();
-          PSID sid = new PSID(objectSid);
-          parameters[i] = Advapi32Util.convertSidToStringSid(sid);
-        } catch (NamingException e) {
-          parameters[i] = null;
-        }
+    	Attribute attribute = user.getAttributes().get(attr);
+		byte[] objectSid;
+		try {
+      	objectSid = (byte[])attribute.get();
+      	PSID sid = new PSID(objectSid);
+      	parameters[i] = Advapi32Util.convertSidToStringSid(sid);
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/f2c7dc67661e8fc7757772065ec3e45481cfe626/src/main/java/org/sonar/plugins/ldap/LdapGroupMapping.java/left.java
+      } catch (NamingException e) {
+      	// TODO Auto-generated catch block
+      	parameters[i] = null;
+      }
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/f2c7dc67661e8fc7757772065ec3e45481cfe626/src/main/java/org/sonar/plugins/ldap/LdapGroupMapping.java/base.java
+      } catch (NamingException e) 
+=======
+      } catch (NamingException e) {
+        parameters[i] = null;
+      }
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/f2c7dc67661e8fc7757772065ec3e45481cfe626/src/main/java/org/sonar/plugins/ldap/LdapGroupMapping.java/right.java
       } else {
         parameters[i] = getAttributeValue(user, attr);
       }

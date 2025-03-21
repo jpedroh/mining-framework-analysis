@@ -151,7 +151,12 @@ public class LdapContextFactory {
       // Enable connection pooling
       env.put(SUN_CONNECTION_POOLING_PROPERTY, "true");
     }
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-ldap/f2c7dc67661e8fc7757772065ec3e45481cfe626/src/main/java/org/sonar/plugins/ldap/LdapContextFactory.java/left.java
+    env.put("java.naming.ldap.attributes.binary", "objectSid objectGUID");
+||||||| /usr/src/app/output/sonarcommunity/sonar-ldap/f2c7dc67661e8fc7757772065ec3e45481cfe626/src/main/java/org/sonar/plugins/ldap/LdapContextFactory.java/base.java
+=======
     env.put(LDAP_BINARY_ATTRIBUTES_PROPERTY, "objectSid objectGUID");
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/f2c7dc67661e8fc7757772065ec3e45481cfe626/src/main/java/org/sonar/plugins/ldap/LdapContextFactory.java/right.java
     env.put(Context.INITIAL_CONTEXT_FACTORY, factory);
     env.put(Context.PROVIDER_URL, providerUrl);
     env.put(Context.REFERRAL, DEFAULT_REFERRAL);
