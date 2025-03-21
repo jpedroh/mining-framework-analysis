@@ -735,6 +735,1756 @@ public class ArrayUtils {
      * array plus the given element in the last position. The component type of
      * the new array is the same as that of the input array.
      *
+     * @param array  the array to traverse backwards looking for the object, may be {@code null}
+     * @param objectToFind  the object to find, may be {@code null}
+     * @return the last index of the object within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int lastIndexOf(final Object[] array, final Object objectToFind) {
+        return lastIndexOf(array, objectToFind, Integer.MAX_VALUE);
+    }
+    /**
+     * <p>Finds the last index of the given object in the array starting at the given index.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * <p>A negative startIndex will return {@link #INDEX_NOT_FOUND} ({@code -1}). A startIndex larger than
+     * the array length will search from the end of the array.
+     *
+     * @param array  the array to traverse for looking for the object, may be {@code null}
+     * @param objectToFind  the object to find, may be {@code null}
+     * @param startIndex  the start index to traverse backwards from
+     * @return the last index of the object within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int lastIndexOf(final Object[] array, final Object objectToFind, int startIndex) {
+        if (array == null) {
+            return INDEX_NOT_FOUND;
+        }
+        if (startIndex < 0) {
+            return INDEX_NOT_FOUND;
+        } else if (startIndex >= array.length) {
+            startIndex = array.length - 1;
+        }
+        if (objectToFind == null) {
+            for (int i = startIndex; i >= 0; i--) {
+                if (array[i] == null) {
+                    return i;
+                }
+            }
+        } else if (array.getClass().getComponentType().isInstance(objectToFind)) {
+            for (int i = startIndex; i >= 0; i--) {
+                if (objectToFind.equals(array[i])) {
+                    return i;
+                }
+            }
+        }
+        return INDEX_NOT_FOUND;
+    }
+    /**
+     * <p>Checks if the object is in the given array.
+     *
+     * <p>The method returns {@code false} if a {@code null} array is passed in.
+     *
+     * @param array  the array to search through
+     * @param objectToFind  the object to find
+     * @return {@code true} if the array contains the object
+     */
+    public static boolean contains(final Object[] array, final Object objectToFind) {
+        return indexOf(array, objectToFind) != INDEX_NOT_FOUND;
+    }
+    // long IndexOf
+    //-----------------------------------------------------------------------
+    /**
+     * <p>Finds the index of the given value in the array.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * @param array  the array to search through for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @return the index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int indexOf(final long[] array, final long valueToFind) {
+        return indexOf(array, valueToFind, 0);
+    }
+    /**
+     * <p>Finds the index of the given value in the array starting at the given index.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * <p>A negative startIndex is treated as zero. A startIndex larger than the array
+     * length will return {@link #INDEX_NOT_FOUND} ({@code -1}).
+     *
+     * @param array  the array to search through for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @param startIndex  the index to start searching at
+     * @return the index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int indexOf(final long[] array, final long valueToFind, int startIndex) {
+        if (array == null) {
+            return INDEX_NOT_FOUND;
+        }
+        if (startIndex < 0) {
+            startIndex = 0;
+        }
+        for (int i = startIndex; i < array.length; i++) {
+            if (valueToFind == array[i]) {
+                return i;
+            }
+        }
+        return INDEX_NOT_FOUND;
+    }
+    /**
+     * <p>Finds the last index of the given value within the array.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * @param array  the array to traverse backwards looking for the object, may be {@code null}
+     * @param valueToFind  the object to find
+     * @return the last index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int lastIndexOf(final long[] array, final long valueToFind) {
+        return lastIndexOf(array, valueToFind, Integer.MAX_VALUE);
+    }
+    /**
+     * <p>Finds the last index of the given value in the array starting at the given index.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * <p>A negative startIndex will return {@link #INDEX_NOT_FOUND} ({@code -1}). A startIndex larger than the
+     * array length will search from the end of the array.
+     *
+     * @param array  the array to traverse for looking for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @param startIndex  the start index to traverse backwards from
+     * @return the last index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int lastIndexOf(final long[] array, final long valueToFind, int startIndex) {
+        if (array == null) {
+            return INDEX_NOT_FOUND;
+        }
+        if (startIndex < 0) {
+            return INDEX_NOT_FOUND;
+        } else if (startIndex >= array.length) {
+            startIndex = array.length - 1;
+        }
+        for (int i = startIndex; i >= 0; i--) {
+            if (valueToFind == array[i]) {
+                return i;
+            }
+        }
+        return INDEX_NOT_FOUND;
+    }
+    /**
+     * <p>Checks if the value is in the given array.
+     *
+     * <p>The method returns {@code false} if a {@code null} array is passed in.
+     *
+     * @param array  the array to search through
+     * @param valueToFind  the value to find
+     * @return {@code true} if the array contains the object
+     */
+    public static boolean contains(final long[] array, final long valueToFind) {
+        return indexOf(array, valueToFind) != INDEX_NOT_FOUND;
+    }
+    // int IndexOf
+    //-----------------------------------------------------------------------
+    /**
+     * <p>Finds the index of the given value in the array.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * @param array  the array to search through for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @return the index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int indexOf(final int[] array, final int valueToFind) {
+        return indexOf(array, valueToFind, 0);
+    }
+    /**
+     * <p>Finds the index of the given value in the array starting at the given index.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * <p>A negative startIndex is treated as zero. A startIndex larger than the array
+     * length will return {@link #INDEX_NOT_FOUND} ({@code -1}).
+     *
+     * @param array  the array to search through for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @param startIndex  the index to start searching at
+     * @return the index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int indexOf(final int[] array, final int valueToFind, int startIndex) {
+        if (array == null) {
+            return INDEX_NOT_FOUND;
+        }
+        if (startIndex < 0) {
+            startIndex = 0;
+        }
+        for (int i = startIndex; i < array.length; i++) {
+            if (valueToFind == array[i]) {
+                return i;
+            }
+        }
+        return INDEX_NOT_FOUND;
+    }
+    /**
+     * <p>Finds the last index of the given value within the array.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * @param array  the array to traverse backwards looking for the object, may be {@code null}
+     * @param valueToFind  the object to find
+     * @return the last index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int lastIndexOf(final int[] array, final int valueToFind) {
+        return lastIndexOf(array, valueToFind, Integer.MAX_VALUE);
+    }
+    /**
+     * <p>Finds the last index of the given value in the array starting at the given index.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * <p>A negative startIndex will return {@link #INDEX_NOT_FOUND} ({@code -1}). A startIndex larger than the
+     * array length will search from the end of the array.
+     *
+     * @param array  the array to traverse for looking for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @param startIndex  the start index to traverse backwards from
+     * @return the last index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int lastIndexOf(final int[] array, final int valueToFind, int startIndex) {
+        if (array == null) {
+            return INDEX_NOT_FOUND;
+        }
+        if (startIndex < 0) {
+            return INDEX_NOT_FOUND;
+        } else if (startIndex >= array.length) {
+            startIndex = array.length - 1;
+        }
+        for (int i = startIndex; i >= 0; i--) {
+            if (valueToFind == array[i]) {
+                return i;
+            }
+        }
+        return INDEX_NOT_FOUND;
+    }
+    /**
+     * <p>Checks if the value is in the given array.
+     *
+     * <p>The method returns {@code false} if a {@code null} array is passed in.
+     *
+     * @param array  the array to search through
+     * @param valueToFind  the value to find
+     * @return {@code true} if the array contains the object
+     */
+    public static boolean contains(final int[] array, final int valueToFind) {
+        return indexOf(array, valueToFind) != INDEX_NOT_FOUND;
+    }
+    // short IndexOf
+    //-----------------------------------------------------------------------
+    /**
+     * <p>Finds the index of the given value in the array.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * @param array  the array to search through for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @return the index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int indexOf(final short[] array, final short valueToFind) {
+        return indexOf(array, valueToFind, 0);
+    }
+    /**
+     * <p>Finds the index of the given value in the array starting at the given index.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * <p>A negative startIndex is treated as zero. A startIndex larger than the array
+     * length will return {@link #INDEX_NOT_FOUND} ({@code -1}).
+     *
+     * @param array  the array to search through for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @param startIndex  the index to start searching at
+     * @return the index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int indexOf(final short[] array, final short valueToFind, int startIndex) {
+        if (array == null) {
+            return INDEX_NOT_FOUND;
+        }
+        if (startIndex < 0) {
+            startIndex = 0;
+        }
+        for (int i = startIndex; i < array.length; i++) {
+            if (valueToFind == array[i]) {
+                return i;
+            }
+        }
+        return INDEX_NOT_FOUND;
+    }
+    /**
+     * <p>Finds the last index of the given value within the array.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * @param array  the array to traverse backwards looking for the object, may be {@code null}
+     * @param valueToFind  the object to find
+     * @return the last index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int lastIndexOf(final short[] array, final short valueToFind) {
+        return lastIndexOf(array, valueToFind, Integer.MAX_VALUE);
+    }
+    /**
+     * <p>Finds the last index of the given value in the array starting at the given index.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * <p>A negative startIndex will return {@link #INDEX_NOT_FOUND} ({@code -1}). A startIndex larger than the
+     * array length will search from the end of the array.
+     *
+     * @param array  the array to traverse for looking for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @param startIndex  the start index to traverse backwards from
+     * @return the last index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int lastIndexOf(final short[] array, final short valueToFind, int startIndex) {
+        if (array == null) {
+            return INDEX_NOT_FOUND;
+        }
+        if (startIndex < 0) {
+            return INDEX_NOT_FOUND;
+        } else if (startIndex >= array.length) {
+            startIndex = array.length - 1;
+        }
+        for (int i = startIndex; i >= 0; i--) {
+            if (valueToFind == array[i]) {
+                return i;
+            }
+        }
+        return INDEX_NOT_FOUND;
+    }
+    /**
+     * <p>Checks if the value is in the given array.
+     *
+     * <p>The method returns {@code false} if a {@code null} array is passed in.
+     *
+     * @param array  the array to search through
+     * @param valueToFind  the value to find
+     * @return {@code true} if the array contains the object
+     */
+    public static boolean contains(final short[] array, final short valueToFind) {
+        return indexOf(array, valueToFind) != INDEX_NOT_FOUND;
+    }
+    // char IndexOf
+    //-----------------------------------------------------------------------
+    /**
+     * <p>Finds the index of the given value in the array.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * @param array  the array to search through for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @return the index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     * @since 2.1
+     */
+    public static int indexOf(final char[] array, final char valueToFind) {
+        return indexOf(array, valueToFind, 0);
+    }
+    /**
+     * <p>Finds the index of the given value in the array starting at the given index.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * <p>A negative startIndex is treated as zero. A startIndex larger than the array
+     * length will return {@link #INDEX_NOT_FOUND} ({@code -1}).
+     *
+     * @param array  the array to search through for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @param startIndex  the index to start searching at
+     * @return the index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     * @since 2.1
+     */
+    public static int indexOf(final char[] array, final char valueToFind, int startIndex) {
+        if (array == null) {
+            return INDEX_NOT_FOUND;
+        }
+        if (startIndex < 0) {
+            startIndex = 0;
+        }
+        for (int i = startIndex; i < array.length; i++) {
+            if (valueToFind == array[i]) {
+                return i;
+            }
+        }
+        return INDEX_NOT_FOUND;
+    }
+    /**
+     * <p>Finds the last index of the given value within the array.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * @param array  the array to traverse backwards looking for the object, may be {@code null}
+     * @param valueToFind  the object to find
+     * @return the last index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     * @since 2.1
+     */
+    public static int lastIndexOf(final char[] array, final char valueToFind) {
+        return lastIndexOf(array, valueToFind, Integer.MAX_VALUE);
+    }
+    /**
+     * <p>Finds the last index of the given value in the array starting at the given index.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * <p>A negative startIndex will return {@link #INDEX_NOT_FOUND} ({@code -1}). A startIndex larger than the
+     * array length will search from the end of the array.
+     *
+     * @param array  the array to traverse for looking for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @param startIndex  the start index to traverse backwards from
+     * @return the last index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     * @since 2.1
+     */
+    public static int lastIndexOf(final char[] array, final char valueToFind, int startIndex) {
+        if (array == null) {
+            return INDEX_NOT_FOUND;
+        }
+        if (startIndex < 0) {
+            return INDEX_NOT_FOUND;
+        } else if (startIndex >= array.length) {
+            startIndex = array.length - 1;
+        }
+        for (int i = startIndex; i >= 0; i--) {
+            if (valueToFind == array[i]) {
+                return i;
+            }
+        }
+        return INDEX_NOT_FOUND;
+    }
+    /**
+     * <p>Checks if the value is in the given array.
+     *
+     * <p>The method returns {@code false} if a {@code null} array is passed in.
+     *
+     * @param array  the array to search through
+     * @param valueToFind  the value to find
+     * @return {@code true} if the array contains the object
+     * @since 2.1
+     */
+    public static boolean contains(final char[] array, final char valueToFind) {
+        return indexOf(array, valueToFind) != INDEX_NOT_FOUND;
+    }
+    // byte IndexOf
+    //-----------------------------------------------------------------------
+    /**
+     * <p>Finds the index of the given value in the array.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * @param array  the array to search through for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @return the index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int indexOf(final byte[] array, final byte valueToFind) {
+        return indexOf(array, valueToFind, 0);
+    }
+    /**
+     * <p>Finds the index of the given value in the array starting at the given index.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * <p>A negative startIndex is treated as zero. A startIndex larger than the array
+     * length will return {@link #INDEX_NOT_FOUND} ({@code -1}).
+     *
+     * @param array  the array to search through for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @param startIndex  the index to start searching at
+     * @return the index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int indexOf(final byte[] array, final byte valueToFind, int startIndex) {
+        if (array == null) {
+            return INDEX_NOT_FOUND;
+        }
+        if (startIndex < 0) {
+            startIndex = 0;
+        }
+        for (int i = startIndex; i < array.length; i++) {
+            if (valueToFind == array[i]) {
+                return i;
+            }
+        }
+        return INDEX_NOT_FOUND;
+    }
+    /**
+     * <p>Finds the last index of the given value within the array.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * @param array  the array to traverse backwards looking for the object, may be {@code null}
+     * @param valueToFind  the object to find
+     * @return the last index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int lastIndexOf(final byte[] array, final byte valueToFind) {
+        return lastIndexOf(array, valueToFind, Integer.MAX_VALUE);
+    }
+    /**
+     * <p>Finds the last index of the given value in the array starting at the given index.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * <p>A negative startIndex will return {@link #INDEX_NOT_FOUND} ({@code -1}). A startIndex larger than the
+     * array length will search from the end of the array.
+     *
+     * @param array  the array to traverse for looking for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @param startIndex  the start index to traverse backwards from
+     * @return the last index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int lastIndexOf(final byte[] array, final byte valueToFind, int startIndex) {
+        if (array == null) {
+            return INDEX_NOT_FOUND;
+        }
+        if (startIndex < 0) {
+            return INDEX_NOT_FOUND;
+        } else if (startIndex >= array.length) {
+            startIndex = array.length - 1;
+        }
+        for (int i = startIndex; i >= 0; i--) {
+            if (valueToFind == array[i]) {
+                return i;
+            }
+        }
+        return INDEX_NOT_FOUND;
+    }
+    /**
+     * <p>Checks if the value is in the given array.
+     *
+     * <p>The method returns {@code false} if a {@code null} array is passed in.
+     *
+     * @param array  the array to search through
+     * @param valueToFind  the value to find
+     * @return {@code true} if the array contains the object
+     */
+    public static boolean contains(final byte[] array, final byte valueToFind) {
+        return indexOf(array, valueToFind) != INDEX_NOT_FOUND;
+    }
+    // double IndexOf
+    //-----------------------------------------------------------------------
+    /**
+     * <p>Finds the index of the given value in the array.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * @param array  the array to search through for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @return the index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int indexOf(final double[] array, final double valueToFind) {
+        return indexOf(array, valueToFind, 0);
+    }
+    /**
+     * <p>Finds the index of the given value within a given tolerance in the array.
+     * This method will return the index of the first value which falls between the region
+     * defined by valueToFind - tolerance and valueToFind + tolerance.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * @param array  the array to search through for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @param tolerance tolerance of the search
+     * @return the index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int indexOf(final double[] array, final double valueToFind, final double tolerance) {
+        return indexOf(array, valueToFind, 0, tolerance);
+    }
+    /**
+     * <p>Finds the index of the given value in the array starting at the given index.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * <p>A negative startIndex is treated as zero. A startIndex larger than the array
+     * length will return {@link #INDEX_NOT_FOUND} ({@code -1}).
+     *
+     * @param array  the array to search through for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @param startIndex  the index to start searching at
+     * @return the index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int indexOf(final double[] array, final double valueToFind, int startIndex) {
+        if (isEmpty(array)) {
+            return INDEX_NOT_FOUND;
+        }
+        if (startIndex < 0) {
+            startIndex = 0;
+        }
+        for (int i = startIndex; i < array.length; i++) {
+            if (valueToFind == array[i]) {
+                return i;
+            }
+        }
+        return INDEX_NOT_FOUND;
+    }
+    /**
+     * <p>Finds the index of the given value in the array starting at the given index.
+     * This method will return the index of the first value which falls between the region
+     * defined by valueToFind - tolerance and valueToFind + tolerance.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * <p>A negative startIndex is treated as zero. A startIndex larger than the array
+     * length will return {@link #INDEX_NOT_FOUND} ({@code -1}).
+     *
+     * @param array  the array to search through for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @param startIndex  the index to start searching at
+     * @param tolerance tolerance of the search
+     * @return the index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int indexOf(final double[] array, final double valueToFind, int startIndex, final double tolerance) {
+        if (isEmpty(array)) {
+            return INDEX_NOT_FOUND;
+        }
+        if (startIndex < 0) {
+            startIndex = 0;
+        }
+        final double min = valueToFind - tolerance;
+        final double max = valueToFind + tolerance;
+        for (int i = startIndex; i < array.length; i++) {
+            if (array[i] >= min && array[i] <= max) {
+                return i;
+            }
+        }
+        return INDEX_NOT_FOUND;
+    }
+    /**
+     * <p>Finds the last index of the given value within the array.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * @param array  the array to traverse backwards looking for the object, may be {@code null}
+     * @param valueToFind  the object to find
+     * @return the last index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int lastIndexOf(final double[] array, final double valueToFind) {
+        return lastIndexOf(array, valueToFind, Integer.MAX_VALUE);
+    }
+    /**
+     * <p>Finds the last index of the given value within a given tolerance in the array.
+     * This method will return the index of the last value which falls between the region
+     * defined by valueToFind - tolerance and valueToFind + tolerance.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * @param array  the array to search through for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @param tolerance tolerance of the search
+     * @return the index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int lastIndexOf(final double[] array, final double valueToFind, final double tolerance) {
+        return lastIndexOf(array, valueToFind, Integer.MAX_VALUE, tolerance);
+    }
+    /**
+     * <p>Finds the last index of the given value in the array starting at the given index.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * <p>A negative startIndex will return {@link #INDEX_NOT_FOUND} ({@code -1}). A startIndex larger than the
+     * array length will search from the end of the array.
+     *
+     * @param array  the array to traverse for looking for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @param startIndex  the start index to traverse backwards from
+     * @return the last index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int lastIndexOf(final double[] array, final double valueToFind, int startIndex) {
+        if (isEmpty(array)) {
+            return INDEX_NOT_FOUND;
+        }
+        if (startIndex < 0) {
+            return INDEX_NOT_FOUND;
+        } else if (startIndex >= array.length) {
+            startIndex = array.length - 1;
+        }
+        for (int i = startIndex; i >= 0; i--) {
+            if (valueToFind == array[i]) {
+                return i;
+            }
+        }
+        return INDEX_NOT_FOUND;
+    }
+    /**
+     * <p>Finds the last index of the given value in the array starting at the given index.
+     * This method will return the index of the last value which falls between the region
+     * defined by valueToFind - tolerance and valueToFind + tolerance.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * <p>A negative startIndex will return {@link #INDEX_NOT_FOUND} ({@code -1}). A startIndex larger than the
+     * array length will search from the end of the array.
+     *
+     * @param array  the array to traverse for looking for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @param startIndex  the start index to traverse backwards from
+     * @param tolerance  search for value within plus/minus this amount
+     * @return the last index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int lastIndexOf(final double[] array, final double valueToFind, int startIndex, final double tolerance) {
+        if (isEmpty(array)) {
+            return INDEX_NOT_FOUND;
+        }
+        if (startIndex < 0) {
+            return INDEX_NOT_FOUND;
+        } else if (startIndex >= array.length) {
+            startIndex = array.length - 1;
+        }
+        final double min = valueToFind - tolerance;
+        final double max = valueToFind + tolerance;
+        for (int i = startIndex; i >= 0; i--) {
+            if (array[i] >= min && array[i] <= max) {
+                return i;
+            }
+        }
+        return INDEX_NOT_FOUND;
+    }
+    /**
+     * <p>Checks if the value is in the given array.
+     *
+     * <p>The method returns {@code false} if a {@code null} array is passed in.
+     *
+     * @param array  the array to search through
+     * @param valueToFind  the value to find
+     * @return {@code true} if the array contains the object
+     */
+    public static boolean contains(final double[] array, final double valueToFind) {
+        return indexOf(array, valueToFind) != INDEX_NOT_FOUND;
+    }
+    /**
+     * <p>Checks if a value falling within the given tolerance is in the
+     * given array.  If the array contains a value within the inclusive range
+     * defined by (value - tolerance) to (value + tolerance).
+     *
+     * <p>The method returns {@code false} if a {@code null} array
+     * is passed in.
+     *
+     * @param array  the array to search
+     * @param valueToFind  the value to find
+     * @param tolerance  the array contains the tolerance of the search
+     * @return true if value falling within tolerance is in array
+     */
+    public static boolean contains(final double[] array, final double valueToFind, final double tolerance) {
+        return indexOf(array, valueToFind, 0, tolerance) != INDEX_NOT_FOUND;
+    }
+    // float IndexOf
+    //-----------------------------------------------------------------------
+    /**
+     * <p>Finds the index of the given value in the array.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * @param array  the array to search through for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @return the index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int indexOf(final float[] array, final float valueToFind) {
+        return indexOf(array, valueToFind, 0);
+    }
+    /**
+     * <p>Finds the index of the given value in the array starting at the given index.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * <p>A negative startIndex is treated as zero. A startIndex larger than the array
+     * length will return {@link #INDEX_NOT_FOUND} ({@code -1}).
+     *
+     * @param array  the array to search through for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @param startIndex  the index to start searching at
+     * @return the index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int indexOf(final float[] array, final float valueToFind, int startIndex) {
+        if (isEmpty(array)) {
+            return INDEX_NOT_FOUND;
+        }
+        if (startIndex < 0) {
+            startIndex = 0;
+        }
+        for (int i = startIndex; i < array.length; i++) {
+            if (valueToFind == array[i]) {
+                return i;
+            }
+        }
+        return INDEX_NOT_FOUND;
+    }
+    /**
+     * <p>Finds the last index of the given value within the array.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * @param array  the array to traverse backwards looking for the object, may be {@code null}
+     * @param valueToFind  the object to find
+     * @return the last index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int lastIndexOf(final float[] array, final float valueToFind) {
+        return lastIndexOf(array, valueToFind, Integer.MAX_VALUE);
+    }
+    /**
+     * <p>Finds the last index of the given value in the array starting at the given index.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * <p>A negative startIndex will return {@link #INDEX_NOT_FOUND} ({@code -1}). A startIndex larger than the
+     * array length will search from the end of the array.
+     *
+     * @param array  the array to traverse for looking for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @param startIndex  the start index to traverse backwards from
+     * @return the last index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int lastIndexOf(final float[] array, final float valueToFind, int startIndex) {
+        if (isEmpty(array)) {
+            return INDEX_NOT_FOUND;
+        }
+        if (startIndex < 0) {
+            return INDEX_NOT_FOUND;
+        } else if (startIndex >= array.length) {
+            startIndex = array.length - 1;
+        }
+        for (int i = startIndex; i >= 0; i--) {
+            if (valueToFind == array[i]) {
+                return i;
+            }
+        }
+        return INDEX_NOT_FOUND;
+    }
+    /**
+     * <p>Checks if the value is in the given array.
+     *
+     * <p>The method returns {@code false} if a {@code null} array is passed in.
+     *
+     * @param array  the array to search through
+     * @param valueToFind  the value to find
+     * @return {@code true} if the array contains the object
+     */
+    public static boolean contains(final float[] array, final float valueToFind) {
+        return indexOf(array, valueToFind) != INDEX_NOT_FOUND;
+    }
+    // boolean IndexOf
+    //-----------------------------------------------------------------------
+    /**
+     * <p>Finds the index of the given value in the array.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * @param array  the array to search through for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @return the index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int indexOf(final boolean[] array, final boolean valueToFind) {
+        return indexOf(array, valueToFind, 0);
+    }
+    /**
+     * <p>Finds the index of the given value in the array starting at the given index.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * <p>A negative startIndex is treated as zero. A startIndex larger than the array
+     * length will return {@link #INDEX_NOT_FOUND} ({@code -1}).
+     *
+     * @param array  the array to search through for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @param startIndex  the index to start searching at
+     * @return the index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null}
+     *  array input
+     */
+    public static int indexOf(final boolean[] array, final boolean valueToFind, int startIndex) {
+        if (isEmpty(array)) {
+            return INDEX_NOT_FOUND;
+        }
+        if (startIndex < 0) {
+            startIndex = 0;
+        }
+        for (int i = startIndex; i < array.length; i++) {
+            if (valueToFind == array[i]) {
+                return i;
+            }
+        }
+        return INDEX_NOT_FOUND;
+    }
+    /**
+     * <p>Finds the last index of the given value within the array.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) if
+     * {@code null} array input.
+     *
+     * @param array  the array to traverse backwards looking for the object, may be {@code null}
+     * @param valueToFind  the object to find
+     * @return the last index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int lastIndexOf(final boolean[] array, final boolean valueToFind) {
+        return lastIndexOf(array, valueToFind, Integer.MAX_VALUE);
+    }
+    /**
+     * <p>Finds the last index of the given value in the array starting at the given index.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * <p>A negative startIndex will return {@link #INDEX_NOT_FOUND} ({@code -1}). A startIndex larger than
+     * the array length will search from the end of the array.
+     *
+     * @param array  the array to traverse for looking for the object, may be {@code null}
+     * @param valueToFind  the value to find
+     * @param startIndex  the start index to traverse backwards from
+     * @return the last index of the value within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int lastIndexOf(final boolean[] array, final boolean valueToFind, int startIndex) {
+        if (isEmpty(array)) {
+            return INDEX_NOT_FOUND;
+        }
+        if (startIndex < 0) {
+            return INDEX_NOT_FOUND;
+        } else if (startIndex >= array.length) {
+            startIndex = array.length - 1;
+        }
+        for (int i = startIndex; i >= 0; i--) {
+            if (valueToFind == array[i]) {
+                return i;
+            }
+        }
+        return INDEX_NOT_FOUND;
+    }
+    /**
+     * <p>Checks if the value is in the given array.
+     *
+     * <p>The method returns {@code false} if a {@code null} array is passed in.
+     *
+     * @param array  the array to search through
+     * @param valueToFind  the value to find
+     * @return {@code true} if the array contains the object
+     */
+    public static boolean contains(final boolean[] array, final boolean valueToFind) {
+        return indexOf(array, valueToFind) != INDEX_NOT_FOUND;
+    }
+    // Primitive/Object array converters
+    // ----------------------------------------------------------------------
+    // Character array converters
+    // ----------------------------------------------------------------------
+    /**
+     * <p>Converts an array of object Characters to primitives.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  a {@code Character} array, may be {@code null}
+     * @return a {@code char} array, {@code null} if null array input
+     * @throws NullPointerException if array content is {@code null}
+     */
+    public static char[] toPrimitive(final Character[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_CHAR_ARRAY;
+        }
+        final char[] result = new char[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = array[i].charValue();
+        }
+        return result;
+    }
+    /**
+     * <p>Converts an array of object Character to primitives handling {@code null}.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  a {@code Character} array, may be {@code null}
+     * @param valueForNull  the value to insert if {@code null} found
+     * @return a {@code char} array, {@code null} if null array input
+     */
+    public static char[] toPrimitive(final Character[] array, final char valueForNull) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_CHAR_ARRAY;
+        }
+        final char[] result = new char[array.length];
+        for (int i = 0; i < array.length; i++) {
+            final Character b = array[i];
+            result[i] = (b == null ? valueForNull : b.charValue());
+        }
+        return result;
+    }
+    /**
+     * <p>Converts an array of primitive chars to objects.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array a {@code char} array
+     * @return a {@code Character} array, {@code null} if null array input
+     */
+    public static Character[] toObject(final char[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_CHARACTER_OBJECT_ARRAY;
+        }
+        final Character[] result = new Character[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = Character.valueOf(array[i]);
+        }
+        return result;
+     }
+    // Long array converters
+    // ----------------------------------------------------------------------
+    /**
+     * <p>Converts an array of object Longs to primitives.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  a {@code Long} array, may be {@code null}
+     * @return a {@code long} array, {@code null} if null array input
+     * @throws NullPointerException if array content is {@code null}
+     */
+    public static long[] toPrimitive(final Long[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_LONG_ARRAY;
+        }
+        final long[] result = new long[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = array[i].longValue();
+        }
+        return result;
+    }
+    /**
+     * <p>Converts an array of object Long to primitives handling {@code null}.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  a {@code Long} array, may be {@code null}
+     * @param valueForNull  the value to insert if {@code null} found
+     * @return a {@code long} array, {@code null} if null array input
+     */
+    public static long[] toPrimitive(final Long[] array, final long valueForNull) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_LONG_ARRAY;
+        }
+        final long[] result = new long[array.length];
+        for (int i = 0; i < array.length; i++) {
+            final Long b = array[i];
+            result[i] = (b == null ? valueForNull : b.longValue());
+        }
+        return result;
+    }
+    /**
+     * <p>Converts an array of primitive longs to objects.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  a {@code long} array
+     * @return a {@code Long} array, {@code null} if null array input
+     */
+    public static Long[] toObject(final long[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_LONG_OBJECT_ARRAY;
+        }
+        final Long[] result = new Long[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = Long.valueOf(array[i]);
+        }
+        return result;
+    }
+    // Int array converters
+    // ----------------------------------------------------------------------
+    /**
+     * <p>Converts an array of object Integers to primitives.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  a {@code Integer} array, may be {@code null}
+     * @return an {@code int} array, {@code null} if null array input
+     * @throws NullPointerException if array content is {@code null}
+     */
+    public static int[] toPrimitive(final Integer[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_INT_ARRAY;
+        }
+        final int[] result = new int[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = array[i].intValue();
+        }
+        return result;
+    }
+    /**
+     * <p>Converts an array of object Integer to primitives handling {@code null}.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  a {@code Integer} array, may be {@code null}
+     * @param valueForNull  the value to insert if {@code null} found
+     * @return an {@code int} array, {@code null} if null array input
+     */
+    public static int[] toPrimitive(final Integer[] array, final int valueForNull) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_INT_ARRAY;
+        }
+        final int[] result = new int[array.length];
+        for (int i = 0; i < array.length; i++) {
+            final Integer b = array[i];
+            result[i] = (b == null ? valueForNull : b.intValue());
+        }
+        return result;
+    }
+    /**
+     * <p>Converts an array of primitive ints to objects.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  an {@code int} array
+     * @return an {@code Integer} array, {@code null} if null array input
+     */
+    public static Integer[] toObject(final int[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_INTEGER_OBJECT_ARRAY;
+        }
+        final Integer[] result = new Integer[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = Integer.valueOf(array[i]);
+        }
+        return result;
+    }
+    // Short array converters
+    // ----------------------------------------------------------------------
+    /**
+     * <p>Converts an array of object Shorts to primitives.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  a {@code Short} array, may be {@code null}
+     * @return a {@code byte} array, {@code null} if null array input
+     * @throws NullPointerException if array content is {@code null}
+     */
+    public static short[] toPrimitive(final Short[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_SHORT_ARRAY;
+        }
+        final short[] result = new short[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = array[i].shortValue();
+        }
+        return result;
+    }
+    /**
+     * <p>Converts an array of object Short to primitives handling {@code null}.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  a {@code Short} array, may be {@code null}
+     * @param valueForNull  the value to insert if {@code null} found
+     * @return a {@code byte} array, {@code null} if null array input
+     */
+    public static short[] toPrimitive(final Short[] array, final short valueForNull) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_SHORT_ARRAY;
+        }
+        final short[] result = new short[array.length];
+        for (int i = 0; i < array.length; i++) {
+            final Short b = array[i];
+            result[i] = (b == null ? valueForNull : b.shortValue());
+        }
+        return result;
+    }
+    /**
+     * <p>Converts an array of primitive shorts to objects.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  a {@code short} array
+     * @return a {@code Short} array, {@code null} if null array input
+     */
+    public static Short[] toObject(final short[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_SHORT_OBJECT_ARRAY;
+        }
+        final Short[] result = new Short[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = Short.valueOf(array[i]);
+        }
+        return result;
+    }
+    // Byte array converters
+    // ----------------------------------------------------------------------
+    /**
+     * <p>Converts an array of object Bytes to primitives.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  a {@code Byte} array, may be {@code null}
+     * @return a {@code byte} array, {@code null} if null array input
+     * @throws NullPointerException if array content is {@code null}
+     */
+    public static byte[] toPrimitive(final Byte[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_BYTE_ARRAY;
+        }
+        final byte[] result = new byte[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = array[i].byteValue();
+        }
+        return result;
+    }
+    /**
+     * <p>Converts an array of object Bytes to primitives handling {@code null}.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  a {@code Byte} array, may be {@code null}
+     * @param valueForNull  the value to insert if {@code null} found
+     * @return a {@code byte} array, {@code null} if null array input
+     */
+    public static byte[] toPrimitive(final Byte[] array, final byte valueForNull) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_BYTE_ARRAY;
+        }
+        final byte[] result = new byte[array.length];
+        for (int i = 0; i < array.length; i++) {
+            final Byte b = array[i];
+            result[i] = (b == null ? valueForNull : b.byteValue());
+        }
+        return result;
+    }
+    /**
+     * <p>Converts an array of primitive bytes to objects.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  a {@code byte} array
+     * @return a {@code Byte} array, {@code null} if null array input
+     */
+    public static Byte[] toObject(final byte[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_BYTE_OBJECT_ARRAY;
+        }
+        final Byte[] result = new Byte[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = Byte.valueOf(array[i]);
+        }
+        return result;
+    }
+    // Double array converters
+    // ----------------------------------------------------------------------
+    /**
+     * <p>Converts an array of object Doubles to primitives.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  a {@code Double} array, may be {@code null}
+     * @return a {@code double} array, {@code null} if null array input
+     * @throws NullPointerException if array content is {@code null}
+     */
+    public static double[] toPrimitive(final Double[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_DOUBLE_ARRAY;
+        }
+        final double[] result = new double[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = array[i].doubleValue();
+        }
+        return result;
+    }
+    /**
+     * <p>Converts an array of object Doubles to primitives handling {@code null}.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  a {@code Double} array, may be {@code null}
+     * @param valueForNull  the value to insert if {@code null} found
+     * @return a {@code double} array, {@code null} if null array input
+     */
+    public static double[] toPrimitive(final Double[] array, final double valueForNull) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_DOUBLE_ARRAY;
+        }
+        final double[] result = new double[array.length];
+        for (int i = 0; i < array.length; i++) {
+            final Double b = array[i];
+            result[i] = (b == null ? valueForNull : b.doubleValue());
+        }
+        return result;
+    }
+    /**
+     * <p>Converts an array of primitive doubles to objects.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  a {@code double} array
+     * @return a {@code Double} array, {@code null} if null array input
+     */
+    public static Double[] toObject(final double[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_DOUBLE_OBJECT_ARRAY;
+        }
+        final Double[] result = new Double[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = Double.valueOf(array[i]);
+        }
+        return result;
+    }
+    //   Float array converters
+    // ----------------------------------------------------------------------
+    /**
+     * <p>Converts an array of object Floats to primitives.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  a {@code Float} array, may be {@code null}
+     * @return a {@code float} array, {@code null} if null array input
+     * @throws NullPointerException if array content is {@code null}
+     */
+    public static float[] toPrimitive(final Float[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_FLOAT_ARRAY;
+        }
+        final float[] result = new float[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = array[i].floatValue();
+        }
+        return result;
+    }
+    /**
+     * <p>Converts an array of object Floats to primitives handling {@code null}.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  a {@code Float} array, may be {@code null}
+     * @param valueForNull  the value to insert if {@code null} found
+     * @return a {@code float} array, {@code null} if null array input
+     */
+    public static float[] toPrimitive(final Float[] array, final float valueForNull) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_FLOAT_ARRAY;
+        }
+        final float[] result = new float[array.length];
+        for (int i = 0; i < array.length; i++) {
+            final Float b = array[i];
+            result[i] = (b == null ? valueForNull : b.floatValue());
+        }
+        return result;
+    }
+    /**
+     * <p>Converts an array of primitive floats to objects.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  a {@code float} array
+     * @return a {@code Float} array, {@code null} if null array input
+     */
+    public static Float[] toObject(final float[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_FLOAT_OBJECT_ARRAY;
+        }
+        final Float[] result = new Float[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = Float.valueOf(array[i]);
+        }
+        return result;
+    }
+    /**
+     * <p>Create an array of primitive type from an array of wrapper types.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  an array of wrapper object
+     * @return an array of the corresponding primitive type, or the original array
+     * @since 3.5
+     */
+    public static Object toPrimitive(final Object array) {
+        if (array == null) {
+            return null;
+        }
+        final Class<?> ct = array.getClass().getComponentType();
+        final Class<?> pt = ClassUtils.wrapperToPrimitive(ct);
+        if (Integer.TYPE.equals(pt)) {
+            return toPrimitive((Integer[]) array);
+        }
+        if (Long.TYPE.equals(pt)) {
+            return toPrimitive((Long[]) array);
+        }
+        if (Short.TYPE.equals(pt)) {
+            return toPrimitive((Short[]) array);
+        }
+        if (Double.TYPE.equals(pt)) {
+            return toPrimitive((Double[]) array);
+        }
+        if (Float.TYPE.equals(pt)) {
+            return toPrimitive((Float[]) array);
+        }
+        return array;
+    }
+    // Boolean array converters
+    // ----------------------------------------------------------------------
+    /**
+     * <p>Converts an array of object Booleans to primitives.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  a {@code Boolean} array, may be {@code null}
+     * @return a {@code boolean} array, {@code null} if null array input
+     * @throws NullPointerException if array content is {@code null}
+     */
+<<<<<<< /usr/src/app/output/apache/commons-lang/338087d17d0714a54af849cdeb4e28e62d192bbf/src/main/java/org/apache/commons/lang3/ArrayUtils.java/left.java
+    public static boolean[] toPrimitive(final Boolean[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_BOOLEAN_ARRAY;
+        }
+        final boolean[] result = new boolean[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = array[i];
+        }
+        return result;
+    }
+    public static boolean[] toPrimitive(final Boolean[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_BOOLEAN_ARRAY;
+        }
+        final boolean[] result = new boolean[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = array[i].booleanValue();
+        }
+        return result;
+    }
+||||||| /usr/src/app/output/apache/commons-lang/338087d17d0714a54af849cdeb4e28e62d192bbf/src/main/java/org/apache/commons/lang3/ArrayUtils.java/base.java
+    public static boolean[] toPrimitive(final Boolean[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_BOOLEAN_ARRAY;
+        }
+        final boolean[] result = new boolean[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = array[i].booleanValue();
+        }
+        return result;
+    }
+=======
+    public static boolean[] toPrimitive(final Boolean[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_BOOLEAN_ARRAY;
+        }
+        final boolean[] result = new boolean[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = array[i].booleanValue();
+        }
+        return result;
+    }
+>>>>>>> /usr/src/app/output/apache/commons-lang/338087d17d0714a54af849cdeb4e28e62d192bbf/src/main/java/org/apache/commons/lang3/ArrayUtils.java/right.java
+    /**
+     * <p>Converts an array of object Booleans to primitives handling {@code null}.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  a {@code Boolean} array, may be {@code null}
+     * @param valueForNull  the value to insert if {@code null} found
+     * @return a {@code boolean} array, {@code null} if null array input
+     */
+    public static boolean[] toPrimitive(final Boolean[] array, final boolean valueForNull) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_BOOLEAN_ARRAY;
+        }
+        final boolean[] result = new boolean[array.length];
+        for (int i = 0; i < array.length; i++) {
+            final Boolean b = array[i];
+            result[i] = (b == null ? valueForNull : b.booleanValue());
+        }
+        return result;
+    }
+    /**
+     * <p>Converts an array of primitive booleans to objects.
+     *
+     * <p>This method returns {@code null} for a {@code null} input array.
+     *
+     * @param array  a {@code boolean} array
+     * @return a {@code Boolean} array, {@code null} if null array input
+     */
+    public static Boolean[] toObject(final boolean[] array) {
+        if (array == null) {
+            return null;
+        } else if (array.length == 0) {
+            return EMPTY_BOOLEAN_OBJECT_ARRAY;
+        }
+        final Boolean[] result = new Boolean[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = (array[i] ? Boolean.TRUE : Boolean.FALSE);
+        }
+        return result;
+    }
+    // ----------------------------------------------------------------------
+    /**
+     * <p>Checks if an array of Objects is empty or {@code null}.
+     *
+     * @param array  the array to test
+     * @return {@code true} if the array is empty or {@code null}
+     * @since 2.1
+     */
+    public static boolean isEmpty(final Object[] array) {
+        return getLength(array) == 0;
+    }
+    /**
+     * <p>Checks if an array of primitive longs is empty or {@code null}.
+     *
+     * @param array  the array to test
+     * @return {@code true} if the array is empty or {@code null}
+     * @since 2.1
+     */
+    public static boolean isEmpty(final long[] array) {
+        return getLength(array) == 0;
+    }
+    /**
+     * <p>Checks if an array of primitive ints is empty or {@code null}.
+     *
+     * @param array  the array to test
+     * @return {@code true} if the array is empty or {@code null}
+     * @since 2.1
+     */
+    public static boolean isEmpty(final int[] array) {
+        return getLength(array) == 0;
+    }
+    /**
+     * <p>Checks if an array of primitive shorts is empty or {@code null}.
+     *
+     * @param array  the array to test
+     * @return {@code true} if the array is empty or {@code null}
+     * @since 2.1
+     */
+    public static boolean isEmpty(final short[] array) {
+        return getLength(array) == 0;
+    }
+    /**
+     * <p>Checks if an array of primitive chars is empty or {@code null}.
+     *
+     * @param array  the array to test
+     * @return {@code true} if the array is empty or {@code null}
+     * @since 2.1
+     */
+    public static boolean isEmpty(final char[] array) {
+        return getLength(array) == 0;
+    }
+    /**
+     * <p>Checks if an array of primitive bytes is empty or {@code null}.
+     *
+     * @param array  the array to test
+     * @return {@code true} if the array is empty or {@code null}
+     * @since 2.1
+     */
+    public static boolean isEmpty(final byte[] array) {
+        return getLength(array) == 0;
+    }
+    /**
+     * <p>Checks if an array of primitive doubles is empty or {@code null}.
+     *
+     * @param array  the array to test
+     * @return {@code true} if the array is empty or {@code null}
+     * @since 2.1
+     */
+    public static boolean isEmpty(final double[] array) {
+        return getLength(array) == 0;
+    }
+    /**
+     * <p>Checks if an array of primitive floats is empty or {@code null}.
+     *
+     * @param array  the array to test
+     * @return {@code true} if the array is empty or {@code null}
+     * @since 2.1
+     */
+    public static boolean isEmpty(final float[] array) {
+        return getLength(array) == 0;
+    }
+    /**
+     * <p>Checks if an array of primitive booleans is empty or {@code null}.
+     *
+     * @param array  the array to test
+     * @return {@code true} if the array is empty or {@code null}
+     * @since 2.1
+     */
+    public static boolean isEmpty(final boolean[] array) {
+        return getLength(array) == 0;
+    }
+    // ----------------------------------------------------------------------
+    /**
+     * <p>Checks if an array of Objects is not empty and not {@code null}.
+     *
+     * @param <T> the component type of the array
+     * @param array  the array to test
+     * @return {@code true} if the array is not empty and not {@code null}
+     * @since 2.5
+     */
+     public static <T> boolean isNotEmpty(final T[] array) {
+         return !isEmpty(array);
+     }
+    /**
+     * <p>Checks if an array of primitive longs is not empty and not {@code null}.
+     *
+     * @param array  the array to test
+     * @return {@code true} if the array is not empty and not {@code null}
+     * @since 2.5
+     */
+    public static boolean isNotEmpty(final long[] array) {
+        return !isEmpty(array);
+    }
+    /**
+     * <p>Checks if an array of primitive ints is not empty and not {@code null}.
+     *
+     * @param array  the array to test
+     * @return {@code true} if the array is not empty and not {@code null}
+     * @since 2.5
+     */
+    public static boolean isNotEmpty(final int[] array) {
+        return !isEmpty(array);
+    }
+    /**
+     * <p>Checks if an array of primitive shorts is not empty and not {@code null}.
+     *
+     * @param array  the array to test
+     * @return {@code true} if the array is not empty and not {@code null}
+     * @since 2.5
+     */
+    public static boolean isNotEmpty(final short[] array) {
+        return !isEmpty(array);
+    }
+    /**
+     * <p>Checks if an array of primitive chars is not empty and not {@code null}.
+     *
+     * @param array  the array to test
+     * @return {@code true} if the array is not empty and not {@code null}
+     * @since 2.5
+     */
+    public static boolean isNotEmpty(final char[] array) {
+        return !isEmpty(array);
+    }
+    /**
+     * <p>Checks if an array of primitive bytes is not empty and not {@code null}.
+     *
+     * @param array  the array to test
+     * @return {@code true} if the array is not empty and not {@code null}
+     * @since 2.5
+     */
+    public static boolean isNotEmpty(final byte[] array) {
+        return !isEmpty(array);
+    }
+    /**
+     * <p>Checks if an array of primitive doubles is not empty and not {@code null}.
+     *
+     * @param array  the array to test
+     * @return {@code true} if the array is not empty and not {@code null}
+     * @since 2.5
+     */
+    public static boolean isNotEmpty(final double[] array) {
+        return !isEmpty(array);
+    }
+    /**
+     * <p>Checks if an array of primitive floats is not empty and not {@code null}.
+     *
+     * @param array  the array to test
+     * @return {@code true} if the array is not empty and not {@code null}
+     * @since 2.5
+     */
+    public static boolean isNotEmpty(final float[] array) {
+        return !isEmpty(array);
+    }
+    /**
+     * <p>Checks if an array of primitive booleans is not empty and not {@code null}.
+     *
+     * @param array  the array to test
+     * @return {@code true} if the array is not empty and not {@code null}
+     * @since 2.5
+     */
+    public static boolean isNotEmpty(final boolean[] array) {
+        return !isEmpty(array);
+    }
+
+    /**
+     * <p>Copies the given array and adds the given element at the end of the new array.
+     *
+     * <p>The new array contains the same elements of the input
+     * array plus the given element in the last position. The component type of
+     * the new array is the same as that of the input array.
+     *
      * <p>If the input array is {@code null}, a new one element array is returned
      *  whose component type is the same as the element, unless the element itself is null,
      *  in which case the return type is Object[]
@@ -1483,9 +3233,6 @@ public class ArrayUtils {
      * @param valueToFind  the value to find
      * @return {@code true} if the array contains the object
      */
-    public static boolean contains(final boolean[] array, final boolean valueToFind) {
-        return indexOf(array, valueToFind) != INDEX_NOT_FOUND;
-    }
 
     /**
      * <p>Checks if the value is in the given array.
@@ -1496,9 +3243,6 @@ public class ArrayUtils {
      * @param valueToFind  the value to find
      * @return {@code true} if the array contains the object
      */
-    public static boolean contains(final byte[] array, final byte valueToFind) {
-        return indexOf(array, valueToFind) != INDEX_NOT_FOUND;
-    }
 
     /**
      * <p>Checks if the value is in the given array.
@@ -1510,9 +3254,6 @@ public class ArrayUtils {
      * @return {@code true} if the array contains the object
      * @since 2.1
      */
-    public static boolean contains(final char[] array, final char valueToFind) {
-        return indexOf(array, valueToFind) != INDEX_NOT_FOUND;
-    }
 
     /**
      * <p>Checks if the value is in the given array.
@@ -1523,9 +3264,6 @@ public class ArrayUtils {
      * @param valueToFind  the value to find
      * @return {@code true} if the array contains the object
      */
-    public static boolean contains(final double[] array, final double valueToFind) {
-        return indexOf(array, valueToFind) != INDEX_NOT_FOUND;
-    }
 
     /**
      * <p>Checks if a value falling within the given tolerance is in the
@@ -1540,9 +3278,6 @@ public class ArrayUtils {
      * @param tolerance  the array contains the tolerance of the search
      * @return true if value falling within tolerance is in array
      */
-    public static boolean contains(final double[] array, final double valueToFind, final double tolerance) {
-        return indexOf(array, valueToFind, 0, tolerance) != INDEX_NOT_FOUND;
-    }
 
     /**
      * <p>Checks if the value is in the given array.
@@ -1553,9 +3288,6 @@ public class ArrayUtils {
      * @param valueToFind  the value to find
      * @return {@code true} if the array contains the object
      */
-    public static boolean contains(final float[] array, final float valueToFind) {
-        return indexOf(array, valueToFind) != INDEX_NOT_FOUND;
-    }
 
     /**
      * <p>Checks if the value is in the given array.
@@ -1566,9 +3298,6 @@ public class ArrayUtils {
      * @param valueToFind  the value to find
      * @return {@code true} if the array contains the object
      */
-    public static boolean contains(final int[] array, final int valueToFind) {
-        return indexOf(array, valueToFind) != INDEX_NOT_FOUND;
-    }
 
     /**
      * <p>Checks if the value is in the given array.
@@ -1579,9 +3308,6 @@ public class ArrayUtils {
      * @param valueToFind  the value to find
      * @return {@code true} if the array contains the object
      */
-    public static boolean contains(final long[] array, final long valueToFind) {
-        return indexOf(array, valueToFind) != INDEX_NOT_FOUND;
-    }
 
     /**
      * <p>Checks if the object is in the given array.
@@ -1592,9 +3318,6 @@ public class ArrayUtils {
      * @param objectToFind  the object to find
      * @return {@code true} if the array contains the object
      */
-    public static boolean contains(final Object[] array, final Object objectToFind) {
-        return indexOf(array, objectToFind) != INDEX_NOT_FOUND;
-    }
 
     /**
      * <p>Checks if the value is in the given array.
@@ -1605,9 +3328,6 @@ public class ArrayUtils {
      * @param valueToFind  the value to find
      * @return {@code true} if the array contains the object
      */
-    public static boolean contains(final short[] array, final short valueToFind) {
-        return indexOf(array, valueToFind) != INDEX_NOT_FOUND;
-    }
 
     /**
      * Returns a copy of the given array of size 1 greater than the argument.
@@ -2203,9 +3923,6 @@ public class ArrayUtils {
      * @return the index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int indexOf(final boolean[] array, final boolean valueToFind) {
-        return indexOf(array, valueToFind, 0);
-    }
 
     /**
      * <p>Finds the index of the given value in the array starting at the given index.
@@ -2222,20 +3939,6 @@ public class ArrayUtils {
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null}
      *  array input
      */
-    public static int indexOf(final boolean[] array, final boolean valueToFind, int startIndex) {
-        if (isEmpty(array)) {
-            return INDEX_NOT_FOUND;
-        }
-        if (startIndex < 0) {
-            startIndex = 0;
-        }
-        for (int i = startIndex; i < array.length; i++) {
-            if (valueToFind == array[i]) {
-                return i;
-            }
-        }
-        return INDEX_NOT_FOUND;
-    }
 
     // byte IndexOf
     //-----------------------------------------------------------------------
@@ -2249,9 +3952,6 @@ public class ArrayUtils {
      * @return the index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int indexOf(final byte[] array, final byte valueToFind) {
-        return indexOf(array, valueToFind, 0);
-    }
 
     /**
      * <p>Finds the index of the given value in the array starting at the given index.
@@ -2267,20 +3967,6 @@ public class ArrayUtils {
      * @return the index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int indexOf(final byte[] array, final byte valueToFind, int startIndex) {
-        if (array == null) {
-            return INDEX_NOT_FOUND;
-        }
-        if (startIndex < 0) {
-            startIndex = 0;
-        }
-        for (int i = startIndex; i < array.length; i++) {
-            if (valueToFind == array[i]) {
-                return i;
-            }
-        }
-        return INDEX_NOT_FOUND;
-    }
 
     // char IndexOf
     //-----------------------------------------------------------------------
@@ -2295,9 +3981,6 @@ public class ArrayUtils {
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      * @since 2.1
      */
-    public static int indexOf(final char[] array, final char valueToFind) {
-        return indexOf(array, valueToFind, 0);
-    }
 
     /**
      * <p>Finds the index of the given value in the array starting at the given index.
@@ -2314,20 +3997,6 @@ public class ArrayUtils {
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      * @since 2.1
      */
-    public static int indexOf(final char[] array, final char valueToFind, int startIndex) {
-        if (array == null) {
-            return INDEX_NOT_FOUND;
-        }
-        if (startIndex < 0) {
-            startIndex = 0;
-        }
-        for (int i = startIndex; i < array.length; i++) {
-            if (valueToFind == array[i]) {
-                return i;
-            }
-        }
-        return INDEX_NOT_FOUND;
-    }
 
     // double IndexOf
     //-----------------------------------------------------------------------
@@ -2341,9 +4010,6 @@ public class ArrayUtils {
      * @return the index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int indexOf(final double[] array, final double valueToFind) {
-        return indexOf(array, valueToFind, 0);
-    }
 
     /**
      * <p>Finds the index of the given value within a given tolerance in the array.
@@ -2358,9 +4024,6 @@ public class ArrayUtils {
      * @return the index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int indexOf(final double[] array, final double valueToFind, final double tolerance) {
-        return indexOf(array, valueToFind, 0, tolerance);
-    }
 
     /**
      * <p>Finds the index of the given value in the array starting at the given index.
@@ -2376,20 +4039,6 @@ public class ArrayUtils {
      * @return the index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int indexOf(final double[] array, final double valueToFind, int startIndex) {
-        if (isEmpty(array)) {
-            return INDEX_NOT_FOUND;
-        }
-        if (startIndex < 0) {
-            startIndex = 0;
-        }
-        for (int i = startIndex; i < array.length; i++) {
-            if (valueToFind == array[i]) {
-                return i;
-            }
-        }
-        return INDEX_NOT_FOUND;
-    }
 
     /**
      * <p>Finds the index of the given value in the array starting at the given index.
@@ -2408,22 +4057,6 @@ public class ArrayUtils {
      * @return the index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int indexOf(final double[] array, final double valueToFind, int startIndex, final double tolerance) {
-        if (isEmpty(array)) {
-            return INDEX_NOT_FOUND;
-        }
-        if (startIndex < 0) {
-            startIndex = 0;
-        }
-        final double min = valueToFind - tolerance;
-        final double max = valueToFind + tolerance;
-        for (int i = startIndex; i < array.length; i++) {
-            if (array[i] >= min && array[i] <= max) {
-                return i;
-            }
-        }
-        return INDEX_NOT_FOUND;
-    }
 
     // float IndexOf
     //-----------------------------------------------------------------------
@@ -2437,9 +4070,6 @@ public class ArrayUtils {
      * @return the index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int indexOf(final float[] array, final float valueToFind) {
-        return indexOf(array, valueToFind, 0);
-    }
 
     /**
      * <p>Finds the index of the given value in the array starting at the given index.
@@ -2455,20 +4085,6 @@ public class ArrayUtils {
      * @return the index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int indexOf(final float[] array, final float valueToFind, int startIndex) {
-        if (isEmpty(array)) {
-            return INDEX_NOT_FOUND;
-        }
-        if (startIndex < 0) {
-            startIndex = 0;
-        }
-        for (int i = startIndex; i < array.length; i++) {
-            if (valueToFind == array[i]) {
-                return i;
-            }
-        }
-        return INDEX_NOT_FOUND;
-    }
 
    // int IndexOf
 //-----------------------------------------------------------------------
@@ -2482,9 +4098,6 @@ public class ArrayUtils {
  * @return the index of the value within the array,
  *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
  */
-public static int indexOf(final int[] array, final int valueToFind) {
-    return indexOf(array, valueToFind, 0);
-}
 
     /**
      * <p>Finds the index of the given value in the array starting at the given index.
@@ -2500,20 +4113,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int indexOf(final int[] array, final int valueToFind, int startIndex) {
-        if (array == null) {
-            return INDEX_NOT_FOUND;
-        }
-        if (startIndex < 0) {
-            startIndex = 0;
-        }
-        for (int i = startIndex; i < array.length; i++) {
-            if (valueToFind == array[i]) {
-                return i;
-            }
-        }
-        return INDEX_NOT_FOUND;
-    }
 
     // long IndexOf
     //-----------------------------------------------------------------------
@@ -2527,9 +4126,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int indexOf(final long[] array, final long valueToFind) {
-        return indexOf(array, valueToFind, 0);
-    }
 
     /**
      * <p>Finds the index of the given value in the array starting at the given index.
@@ -2545,20 +4141,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int indexOf(final long[] array, final long valueToFind, int startIndex) {
-        if (array == null) {
-            return INDEX_NOT_FOUND;
-        }
-        if (startIndex < 0) {
-            startIndex = 0;
-        }
-        for (int i = startIndex; i < array.length; i++) {
-            if (valueToFind == array[i]) {
-                return i;
-            }
-        }
-        return INDEX_NOT_FOUND;
-    }
 
     // Object IndexOf
     //-----------------------------------------------------------------------
@@ -2625,9 +4207,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int indexOf(final short[] array, final short valueToFind) {
-        return indexOf(array, valueToFind, 0);
-    }
 
     /**
      * <p>Finds the index of the given value in the array starting at the given index.
@@ -2643,20 +4222,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int indexOf(final short[] array, final short valueToFind, int startIndex) {
-        if (array == null) {
-            return INDEX_NOT_FOUND;
-        }
-        if (startIndex < 0) {
-            startIndex = 0;
-        }
-        for (int i = startIndex; i < array.length; i++) {
-            if (valueToFind == array[i]) {
-                return i;
-            }
-        }
-        return INDEX_NOT_FOUND;
-    }
 
     /**
      * <p>Inserts elements into an array at the given index (starting from zero).</p>
@@ -3072,9 +4637,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return {@code true} if the array is empty or {@code null}
      * @since 2.1
      */
-    public static boolean isEmpty(final boolean[] array) {
-        return getLength(array) == 0;
-    }
 
     // IndexOf search
     // ----------------------------------------------------------------------
@@ -3086,9 +4648,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return {@code true} if the array is empty or {@code null}
      * @since 2.1
      */
-    public static boolean isEmpty(final byte[] array) {
-        return getLength(array) == 0;
-    }
 
     /**
      * <p>Checks if an array of primitive chars is empty or {@code null}.
@@ -3097,9 +4656,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return {@code true} if the array is empty or {@code null}
      * @since 2.1
      */
-    public static boolean isEmpty(final char[] array) {
-        return getLength(array) == 0;
-    }
 
     /**
      * <p>Checks if an array of primitive doubles is empty or {@code null}.
@@ -3108,9 +4664,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return {@code true} if the array is empty or {@code null}
      * @since 2.1
      */
-    public static boolean isEmpty(final double[] array) {
-        return getLength(array) == 0;
-    }
 
     /**
      * <p>Checks if an array of primitive floats is empty or {@code null}.
@@ -3119,9 +4672,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return {@code true} if the array is empty or {@code null}
      * @since 2.1
      */
-    public static boolean isEmpty(final float[] array) {
-        return getLength(array) == 0;
-    }
 
 
 
@@ -3132,9 +4682,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return {@code true} if the array is empty or {@code null}
      * @since 2.1
      */
-    public static boolean isEmpty(final int[] array) {
-        return getLength(array) == 0;
-    }
 
     /**
      * <p>Checks if an array of primitive longs is empty or {@code null}.
@@ -3143,9 +4690,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return {@code true} if the array is empty or {@code null}
      * @since 2.1
      */
-    public static boolean isEmpty(final long[] array) {
-        return getLength(array) == 0;
-    }
 
     // ----------------------------------------------------------------------
     /**
@@ -3155,9 +4699,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return {@code true} if the array is empty or {@code null}
      * @since 2.1
      */
-    public static boolean isEmpty(final Object[] array) {
-        return getLength(array) == 0;
-    }
 
     /**
      * <p>Checks if an array of primitive shorts is empty or {@code null}.
@@ -3166,9 +4707,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return {@code true} if the array is empty or {@code null}
      * @since 2.1
      */
-    public static boolean isEmpty(final short[] array) {
-        return getLength(array) == 0;
-    }
 
     /**
      * <p>Compares two arrays, using equals(), handling multi-dimensional arrays
@@ -3194,9 +4732,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return {@code true} if the array is not empty and not {@code null}
      * @since 2.5
      */
-    public static boolean isNotEmpty(final boolean[] array) {
-        return !isEmpty(array);
-    }
 
     /**
      * <p>Checks if an array of primitive bytes is not empty and not {@code null}.
@@ -3205,9 +4740,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return {@code true} if the array is not empty and not {@code null}
      * @since 2.5
      */
-    public static boolean isNotEmpty(final byte[] array) {
-        return !isEmpty(array);
-    }
 
     /**
      * <p>Checks if an array of primitive chars is not empty and not {@code null}.
@@ -3216,9 +4748,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return {@code true} if the array is not empty and not {@code null}
      * @since 2.5
      */
-    public static boolean isNotEmpty(final char[] array) {
-        return !isEmpty(array);
-    }
 
     /**
      * <p>Checks if an array of primitive doubles is not empty and not {@code null}.
@@ -3227,9 +4756,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return {@code true} if the array is not empty and not {@code null}
      * @since 2.5
      */
-    public static boolean isNotEmpty(final double[] array) {
-        return !isEmpty(array);
-    }
 
     /**
      * <p>Checks if an array of primitive floats is not empty and not {@code null}.
@@ -3238,9 +4764,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return {@code true} if the array is not empty and not {@code null}
      * @since 2.5
      */
-    public static boolean isNotEmpty(final float[] array) {
-        return !isEmpty(array);
-    }
 
     /**
      * <p>Checks if an array of primitive ints is not empty and not {@code null}.
@@ -3249,9 +4772,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return {@code true} if the array is not empty and not {@code null}
      * @since 2.5
      */
-    public static boolean isNotEmpty(final int[] array) {
-        return !isEmpty(array);
-    }
 
     /**
      * <p>Checks if an array of primitive longs is not empty and not {@code null}.
@@ -3260,9 +4780,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return {@code true} if the array is not empty and not {@code null}
      * @since 2.5
      */
-    public static boolean isNotEmpty(final long[] array) {
-        return !isEmpty(array);
-    }
 
     /**
      * <p>Checks if an array of primitive shorts is not empty and not {@code null}.
@@ -3271,9 +4788,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return {@code true} if the array is not empty and not {@code null}
      * @since 2.5
      */
-    public static boolean isNotEmpty(final short[] array) {
-        return !isEmpty(array);
-    }
 
     // ----------------------------------------------------------------------
     /**
@@ -3284,9 +4798,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return {@code true} if the array is not empty and not {@code null}
      * @since 2.5
      */
-     public static <T> boolean isNotEmpty(final T[] array) {
-         return !isEmpty(array);
-     }
 
     /**
      * <p>Checks whether two arrays are the same length, treating
@@ -3681,9 +5192,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the last index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int lastIndexOf(final boolean[] array, final boolean valueToFind) {
-        return lastIndexOf(array, valueToFind, Integer.MAX_VALUE);
-    }
 
     /**
      * <p>Finds the last index of the given value in the array starting at the given index.
@@ -3699,22 +5207,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the last index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int lastIndexOf(final boolean[] array, final boolean valueToFind, int startIndex) {
-        if (isEmpty(array)) {
-            return INDEX_NOT_FOUND;
-        }
-        if (startIndex < 0) {
-            return INDEX_NOT_FOUND;
-        } else if (startIndex >= array.length) {
-            startIndex = array.length - 1;
-        }
-        for (int i = startIndex; i >= 0; i--) {
-            if (valueToFind == array[i]) {
-                return i;
-            }
-        }
-        return INDEX_NOT_FOUND;
-    }
 
     /**
      * <p>Finds the last index of the given value within the array.
@@ -3726,9 +5218,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the last index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int lastIndexOf(final byte[] array, final byte valueToFind) {
-        return lastIndexOf(array, valueToFind, Integer.MAX_VALUE);
-    }
 
     /**
      * <p>Finds the last index of the given value in the array starting at the given index.
@@ -3744,22 +5233,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the last index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int lastIndexOf(final byte[] array, final byte valueToFind, int startIndex) {
-        if (array == null) {
-            return INDEX_NOT_FOUND;
-        }
-        if (startIndex < 0) {
-            return INDEX_NOT_FOUND;
-        } else if (startIndex >= array.length) {
-            startIndex = array.length - 1;
-        }
-        for (int i = startIndex; i >= 0; i--) {
-            if (valueToFind == array[i]) {
-                return i;
-            }
-        }
-        return INDEX_NOT_FOUND;
-    }
 
     /**
      * <p>Finds the last index of the given value within the array.
@@ -3772,9 +5245,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      * @since 2.1
      */
-    public static int lastIndexOf(final char[] array, final char valueToFind) {
-        return lastIndexOf(array, valueToFind, Integer.MAX_VALUE);
-    }
 
     /**
      * <p>Finds the last index of the given value in the array starting at the given index.
@@ -3791,22 +5261,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      * @since 2.1
      */
-    public static int lastIndexOf(final char[] array, final char valueToFind, int startIndex) {
-        if (array == null) {
-            return INDEX_NOT_FOUND;
-        }
-        if (startIndex < 0) {
-            return INDEX_NOT_FOUND;
-        } else if (startIndex >= array.length) {
-            startIndex = array.length - 1;
-        }
-        for (int i = startIndex; i >= 0; i--) {
-            if (valueToFind == array[i]) {
-                return i;
-            }
-        }
-        return INDEX_NOT_FOUND;
-    }
 
     /**
      * <p>Finds the last index of the given value within the array.
@@ -3818,9 +5272,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the last index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int lastIndexOf(final double[] array, final double valueToFind) {
-        return lastIndexOf(array, valueToFind, Integer.MAX_VALUE);
-    }
 
     /**
      * <p>Finds the last index of the given value within a given tolerance in the array.
@@ -3835,9 +5286,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int lastIndexOf(final double[] array, final double valueToFind, final double tolerance) {
-        return lastIndexOf(array, valueToFind, Integer.MAX_VALUE, tolerance);
-    }
 
     /**
      * <p>Finds the last index of the given value in the array starting at the given index.
@@ -3853,22 +5301,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the last index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int lastIndexOf(final double[] array, final double valueToFind, int startIndex) {
-        if (isEmpty(array)) {
-            return INDEX_NOT_FOUND;
-        }
-        if (startIndex < 0) {
-            return INDEX_NOT_FOUND;
-        } else if (startIndex >= array.length) {
-            startIndex = array.length - 1;
-        }
-        for (int i = startIndex; i >= 0; i--) {
-            if (valueToFind == array[i]) {
-                return i;
-            }
-        }
-        return INDEX_NOT_FOUND;
-    }
 
     /**
      * <p>Finds the last index of the given value in the array starting at the given index.
@@ -3887,24 +5319,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the last index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int lastIndexOf(final double[] array, final double valueToFind, int startIndex, final double tolerance) {
-        if (isEmpty(array)) {
-            return INDEX_NOT_FOUND;
-        }
-        if (startIndex < 0) {
-            return INDEX_NOT_FOUND;
-        } else if (startIndex >= array.length) {
-            startIndex = array.length - 1;
-        }
-        final double min = valueToFind - tolerance;
-        final double max = valueToFind + tolerance;
-        for (int i = startIndex; i >= 0; i--) {
-            if (array[i] >= min && array[i] <= max) {
-                return i;
-            }
-        }
-        return INDEX_NOT_FOUND;
-    }
 
 
     /**
@@ -3917,9 +5331,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the last index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int lastIndexOf(final float[] array, final float valueToFind) {
-        return lastIndexOf(array, valueToFind, Integer.MAX_VALUE);
-    }
 
     /**
      * <p>Finds the last index of the given value in the array starting at the given index.
@@ -3935,22 +5346,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the last index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int lastIndexOf(final float[] array, final float valueToFind, int startIndex) {
-        if (isEmpty(array)) {
-            return INDEX_NOT_FOUND;
-        }
-        if (startIndex < 0) {
-            return INDEX_NOT_FOUND;
-        } else if (startIndex >= array.length) {
-            startIndex = array.length - 1;
-        }
-        for (int i = startIndex; i >= 0; i--) {
-            if (valueToFind == array[i]) {
-                return i;
-            }
-        }
-        return INDEX_NOT_FOUND;
-    }
 
     /**
      * <p>Finds the last index of the given value within the array.
@@ -3962,9 +5357,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the last index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int lastIndexOf(final int[] array, final int valueToFind) {
-        return lastIndexOf(array, valueToFind, Integer.MAX_VALUE);
-    }
 
     /**
      * <p>Finds the last index of the given value in the array starting at the given index.
@@ -3980,22 +5372,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the last index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int lastIndexOf(final int[] array, final int valueToFind, int startIndex) {
-        if (array == null) {
-            return INDEX_NOT_FOUND;
-        }
-        if (startIndex < 0) {
-            return INDEX_NOT_FOUND;
-        } else if (startIndex >= array.length) {
-            startIndex = array.length - 1;
-        }
-        for (int i = startIndex; i >= 0; i--) {
-            if (valueToFind == array[i]) {
-                return i;
-            }
-        }
-        return INDEX_NOT_FOUND;
-    }
 
     /**
      * <p>Finds the last index of the given value within the array.
@@ -4007,9 +5383,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the last index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int lastIndexOf(final long[] array, final long valueToFind) {
-        return lastIndexOf(array, valueToFind, Integer.MAX_VALUE);
-    }
 
     /**
      * <p>Finds the last index of the given value in the array starting at the given index.
@@ -4025,22 +5398,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the last index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int lastIndexOf(final long[] array, final long valueToFind, int startIndex) {
-        if (array == null) {
-            return INDEX_NOT_FOUND;
-        }
-        if (startIndex < 0) {
-            return INDEX_NOT_FOUND;
-        } else if (startIndex >= array.length) {
-            startIndex = array.length - 1;
-        }
-        for (int i = startIndex; i >= 0; i--) {
-            if (valueToFind == array[i]) {
-                return i;
-            }
-        }
-        return INDEX_NOT_FOUND;
-    }
 
     /**
      * <p>Finds the last index of the given object within the array.
@@ -4052,9 +5409,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the last index of the object within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int lastIndexOf(final Object[] array, final Object objectToFind) {
-        return lastIndexOf(array, objectToFind, Integer.MAX_VALUE);
-    }
 
     /**
      * <p>Finds the last index of the given object in the array starting at the given index.
@@ -4070,30 +5424,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the last index of the object within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int lastIndexOf(final Object[] array, final Object objectToFind, int startIndex) {
-        if (array == null) {
-            return INDEX_NOT_FOUND;
-        }
-        if (startIndex < 0) {
-            return INDEX_NOT_FOUND;
-        } else if (startIndex >= array.length) {
-            startIndex = array.length - 1;
-        }
-        if (objectToFind == null) {
-            for (int i = startIndex; i >= 0; i--) {
-                if (array[i] == null) {
-                    return i;
-                }
-            }
-        } else if (array.getClass().getComponentType().isInstance(objectToFind)) {
-            for (int i = startIndex; i >= 0; i--) {
-                if (objectToFind.equals(array[i])) {
-                    return i;
-                }
-            }
-        }
-        return INDEX_NOT_FOUND;
-    }
 
     /**
      * <p>Finds the last index of the given value within the array.
@@ -4105,9 +5435,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the last index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int lastIndexOf(final short[] array, final short valueToFind) {
-        return lastIndexOf(array, valueToFind, Integer.MAX_VALUE);
-    }
 
     /**
      * <p>Finds the last index of the given value in the array starting at the given index.
@@ -4123,22 +5450,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return the last index of the value within the array,
      *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
      */
-    public static int lastIndexOf(final short[] array, final short valueToFind, int startIndex) {
-        if (array == null) {
-            return INDEX_NOT_FOUND;
-        }
-        if (startIndex < 0) {
-            return INDEX_NOT_FOUND;
-        } else if (startIndex >= array.length) {
-            startIndex = array.length - 1;
-        }
-        for (int i = startIndex; i >= 0; i--) {
-            if (valueToFind == array[i]) {
-                return i;
-            }
-        }
-        return INDEX_NOT_FOUND;
-    }
 
     /**
      * <p>Defensive programming technique to change a {@code null}
@@ -8712,18 +10023,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @param array  a {@code boolean} array
      * @return a {@code Boolean} array, {@code null} if null array input
      */
-    public static Boolean[] toObject(final boolean[] array) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_BOOLEAN_OBJECT_ARRAY;
-        }
-        final Boolean[] result = new Boolean[array.length];
-        for (int i = 0; i < array.length; i++) {
-            result[i] = (array[i] ? Boolean.TRUE : Boolean.FALSE);
-        }
-        return result;
-    }
 
     /**
      * <p>Converts an array of primitive bytes to objects.
@@ -8733,18 +10032,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @param array  a {@code byte} array
      * @return a {@code Byte} array, {@code null} if null array input
      */
-    public static Byte[] toObject(final byte[] array) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_BYTE_OBJECT_ARRAY;
-        }
-        final Byte[] result = new Byte[array.length];
-        for (int i = 0; i < array.length; i++) {
-            result[i] = Byte.valueOf(array[i]);
-        }
-        return result;
-    }
 
     /**
      * <p>Converts an array of primitive chars to objects.
@@ -8754,18 +10041,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @param array a {@code char} array
      * @return a {@code Character} array, {@code null} if null array input
      */
-    public static Character[] toObject(final char[] array) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_CHARACTER_OBJECT_ARRAY;
-        }
-        final Character[] result = new Character[array.length];
-        for (int i = 0; i < array.length; i++) {
-            result[i] = Character.valueOf(array[i]);
-        }
-        return result;
-     }
 
     /**
      * <p>Converts an array of primitive doubles to objects.
@@ -8775,18 +10050,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @param array  a {@code double} array
      * @return a {@code Double} array, {@code null} if null array input
      */
-    public static Double[] toObject(final double[] array) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_DOUBLE_OBJECT_ARRAY;
-        }
-        final Double[] result = new Double[array.length];
-        for (int i = 0; i < array.length; i++) {
-            result[i] = Double.valueOf(array[i]);
-        }
-        return result;
-    }
 
     /**
      * <p>Converts an array of primitive floats to objects.
@@ -8796,18 +10059,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @param array  a {@code float} array
      * @return a {@code Float} array, {@code null} if null array input
      */
-    public static Float[] toObject(final float[] array) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_FLOAT_OBJECT_ARRAY;
-        }
-        final Float[] result = new Float[array.length];
-        for (int i = 0; i < array.length; i++) {
-            result[i] = Float.valueOf(array[i]);
-        }
-        return result;
-    }
 
     /**
      * <p>Converts an array of primitive ints to objects.
@@ -8817,18 +10068,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @param array  an {@code int} array
      * @return an {@code Integer} array, {@code null} if null array input
      */
-    public static Integer[] toObject(final int[] array) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_INTEGER_OBJECT_ARRAY;
-        }
-        final Integer[] result = new Integer[array.length];
-        for (int i = 0; i < array.length; i++) {
-            result[i] = Integer.valueOf(array[i]);
-        }
-        return result;
-    }
 
     /**
      * <p>Converts an array of primitive longs to objects.
@@ -8838,18 +10077,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @param array  a {@code long} array
      * @return a {@code Long} array, {@code null} if null array input
      */
-    public static Long[] toObject(final long[] array) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_LONG_OBJECT_ARRAY;
-        }
-        final Long[] result = new Long[array.length];
-        for (int i = 0; i < array.length; i++) {
-            result[i] = Long.valueOf(array[i]);
-        }
-        return result;
-    }
 
     /**
      * <p>Converts an array of primitive shorts to objects.
@@ -8859,18 +10086,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @param array  a {@code short} array
      * @return a {@code Short} array, {@code null} if null array input
      */
-    public static Short[] toObject(final short[] array) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_SHORT_OBJECT_ARRAY;
-        }
-        final Short[] result = new Short[array.length];
-        for (int i = 0; i < array.length; i++) {
-            result[i] = Short.valueOf(array[i]);
-        }
-        return result;
-    }
 
     // Boolean array converters
     // ----------------------------------------------------------------------
@@ -8883,18 +10098,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return a {@code boolean} array, {@code null} if null array input
      * @throws NullPointerException if array content is {@code null}
      */
-    public static boolean[] toPrimitive(final Boolean[] array) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_BOOLEAN_ARRAY;
-        }
-        final boolean[] result = new boolean[array.length];
-        for (int i = 0; i < array.length; i++) {
-            result[i] = array[i].booleanValue();
-        }
-        return result;
-    }
 
     /**
      * <p>Converts an array of object Booleans to primitives handling {@code null}.
@@ -8905,19 +10108,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @param valueForNull  the value to insert if {@code null} found
      * @return a {@code boolean} array, {@code null} if null array input
      */
-    public static boolean[] toPrimitive(final Boolean[] array, final boolean valueForNull) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_BOOLEAN_ARRAY;
-        }
-        final boolean[] result = new boolean[array.length];
-        for (int i = 0; i < array.length; i++) {
-            final Boolean b = array[i];
-            result[i] = (b == null ? valueForNull : b.booleanValue());
-        }
-        return result;
-    }
 
     // Byte array converters
     // ----------------------------------------------------------------------
@@ -8930,18 +10120,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return a {@code byte} array, {@code null} if null array input
      * @throws NullPointerException if array content is {@code null}
      */
-    public static byte[] toPrimitive(final Byte[] array) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_BYTE_ARRAY;
-        }
-        final byte[] result = new byte[array.length];
-        for (int i = 0; i < array.length; i++) {
-            result[i] = array[i].byteValue();
-        }
-        return result;
-    }
 
     /**
      * <p>Converts an array of object Bytes to primitives handling {@code null}.
@@ -8952,19 +10130,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @param valueForNull  the value to insert if {@code null} found
      * @return a {@code byte} array, {@code null} if null array input
      */
-    public static byte[] toPrimitive(final Byte[] array, final byte valueForNull) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_BYTE_ARRAY;
-        }
-        final byte[] result = new byte[array.length];
-        for (int i = 0; i < array.length; i++) {
-            final Byte b = array[i];
-            result[i] = (b == null ? valueForNull : b.byteValue());
-        }
-        return result;
-    }
 
     // Character array converters
     // ----------------------------------------------------------------------
@@ -8977,18 +10142,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return a {@code char} array, {@code null} if null array input
      * @throws NullPointerException if array content is {@code null}
      */
-    public static char[] toPrimitive(final Character[] array) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_CHAR_ARRAY;
-        }
-        final char[] result = new char[array.length];
-        for (int i = 0; i < array.length; i++) {
-            result[i] = array[i].charValue();
-        }
-        return result;
-    }
 
     /**
      * <p>Converts an array of object Character to primitives handling {@code null}.
@@ -8999,19 +10152,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @param valueForNull  the value to insert if {@code null} found
      * @return a {@code char} array, {@code null} if null array input
      */
-    public static char[] toPrimitive(final Character[] array, final char valueForNull) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_CHAR_ARRAY;
-        }
-        final char[] result = new char[array.length];
-        for (int i = 0; i < array.length; i++) {
-            final Character b = array[i];
-            result[i] = (b == null ? valueForNull : b.charValue());
-        }
-        return result;
-    }
 
     // Double array converters
     // ----------------------------------------------------------------------
@@ -9024,18 +10164,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return a {@code double} array, {@code null} if null array input
      * @throws NullPointerException if array content is {@code null}
      */
-    public static double[] toPrimitive(final Double[] array) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_DOUBLE_ARRAY;
-        }
-        final double[] result = new double[array.length];
-        for (int i = 0; i < array.length; i++) {
-            result[i] = array[i].doubleValue();
-        }
-        return result;
-    }
 
     /**
      * <p>Converts an array of object Doubles to primitives handling {@code null}.
@@ -9046,19 +10174,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @param valueForNull  the value to insert if {@code null} found
      * @return a {@code double} array, {@code null} if null array input
      */
-    public static double[] toPrimitive(final Double[] array, final double valueForNull) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_DOUBLE_ARRAY;
-        }
-        final double[] result = new double[array.length];
-        for (int i = 0; i < array.length; i++) {
-            final Double b = array[i];
-            result[i] = (b == null ? valueForNull : b.doubleValue());
-        }
-        return result;
-    }
 
     //   Float array converters
     // ----------------------------------------------------------------------
@@ -9071,18 +10186,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return a {@code float} array, {@code null} if null array input
      * @throws NullPointerException if array content is {@code null}
      */
-    public static float[] toPrimitive(final Float[] array) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_FLOAT_ARRAY;
-        }
-        final float[] result = new float[array.length];
-        for (int i = 0; i < array.length; i++) {
-            result[i] = array[i].floatValue();
-        }
-        return result;
-    }
 
     /**
      * <p>Converts an array of object Floats to primitives handling {@code null}.
@@ -9093,19 +10196,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @param valueForNull  the value to insert if {@code null} found
      * @return a {@code float} array, {@code null} if null array input
      */
-    public static float[] toPrimitive(final Float[] array, final float valueForNull) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_FLOAT_ARRAY;
-        }
-        final float[] result = new float[array.length];
-        for (int i = 0; i < array.length; i++) {
-            final Float b = array[i];
-            result[i] = (b == null ? valueForNull : b.floatValue());
-        }
-        return result;
-    }
 
     // Int array converters
     // ----------------------------------------------------------------------
@@ -9118,18 +10208,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return an {@code int} array, {@code null} if null array input
      * @throws NullPointerException if array content is {@code null}
      */
-    public static int[] toPrimitive(final Integer[] array) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_INT_ARRAY;
-        }
-        final int[] result = new int[array.length];
-        for (int i = 0; i < array.length; i++) {
-            result[i] = array[i].intValue();
-        }
-        return result;
-    }
 
     /**
      * <p>Converts an array of object Integer to primitives handling {@code null}.
@@ -9140,19 +10218,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @param valueForNull  the value to insert if {@code null} found
      * @return an {@code int} array, {@code null} if null array input
      */
-    public static int[] toPrimitive(final Integer[] array, final int valueForNull) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_INT_ARRAY;
-        }
-        final int[] result = new int[array.length];
-        for (int i = 0; i < array.length; i++) {
-            final Integer b = array[i];
-            result[i] = (b == null ? valueForNull : b.intValue());
-        }
-        return result;
-    }
 
     // Long array converters
     // ----------------------------------------------------------------------
@@ -9165,18 +10230,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return a {@code long} array, {@code null} if null array input
      * @throws NullPointerException if array content is {@code null}
      */
-    public static long[] toPrimitive(final Long[] array) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_LONG_ARRAY;
-        }
-        final long[] result = new long[array.length];
-        for (int i = 0; i < array.length; i++) {
-            result[i] = array[i].longValue();
-        }
-        return result;
-    }
 
     /**
      * <p>Converts an array of object Long to primitives handling {@code null}.
@@ -9187,19 +10240,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @param valueForNull  the value to insert if {@code null} found
      * @return a {@code long} array, {@code null} if null array input
      */
-    public static long[] toPrimitive(final Long[] array, final long valueForNull) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_LONG_ARRAY;
-        }
-        final long[] result = new long[array.length];
-        for (int i = 0; i < array.length; i++) {
-            final Long b = array[i];
-            result[i] = (b == null ? valueForNull : b.longValue());
-        }
-        return result;
-    }
 
     /**
      * <p>Create an array of primitive type from an array of wrapper types.
@@ -9210,29 +10250,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return an array of the corresponding primitive type, or the original array
      * @since 3.5
      */
-    public static Object toPrimitive(final Object array) {
-        if (array == null) {
-            return null;
-        }
-        final Class<?> ct = array.getClass().getComponentType();
-        final Class<?> pt = ClassUtils.wrapperToPrimitive(ct);
-        if (Integer.TYPE.equals(pt)) {
-            return toPrimitive((Integer[]) array);
-        }
-        if (Long.TYPE.equals(pt)) {
-            return toPrimitive((Long[]) array);
-        }
-        if (Short.TYPE.equals(pt)) {
-            return toPrimitive((Short[]) array);
-        }
-        if (Double.TYPE.equals(pt)) {
-            return toPrimitive((Double[]) array);
-        }
-        if (Float.TYPE.equals(pt)) {
-            return toPrimitive((Float[]) array);
-        }
-        return array;
-    }
 
     // Short array converters
     // ----------------------------------------------------------------------
@@ -9245,18 +10262,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @return a {@code byte} array, {@code null} if null array input
      * @throws NullPointerException if array content is {@code null}
      */
-    public static short[] toPrimitive(final Short[] array) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_SHORT_ARRAY;
-        }
-        final short[] result = new short[array.length];
-        for (int i = 0; i < array.length; i++) {
-            result[i] = array[i].shortValue();
-        }
-        return result;
-    }
 
     /**
      * <p>Converts an array of object Short to primitives handling {@code null}.
@@ -9267,19 +10272,6 @@ public static int indexOf(final int[] array, final int valueToFind) {
      * @param valueForNull  the value to insert if {@code null} found
      * @return a {@code byte} array, {@code null} if null array input
      */
-    public static short[] toPrimitive(final Short[] array, final short valueForNull) {
-        if (array == null) {
-            return null;
-        } else if (array.length == 0) {
-            return EMPTY_SHORT_ARRAY;
-        }
-        final short[] result = new short[array.length];
-        for (int i = 0; i < array.length; i++) {
-            final Short b = array[i];
-            result[i] = (b == null ? valueForNull : b.shortValue());
-        }
-        return result;
-    }
 
     // Basic methods handling multi-dimensional arrays
     //-----------------------------------------------------------------------
