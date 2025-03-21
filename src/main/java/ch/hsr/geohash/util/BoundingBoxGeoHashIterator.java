@@ -1,9 +1,6 @@
 package ch.hsr.geohash.util;
-
-import ch.hsr.geohash.GeoHash;
-import ch.hsr.geohash.util.TwoGeoHashBoundingBox;
-
 import java.util.Iterator;
+import ch.hsr.geohash.GeoHash;
 import java.util.NoSuchElementException;
 
 /**
@@ -11,44 +8,54 @@ import java.util.NoSuchElementException;
  * resolution
  */
 public class BoundingBoxGeoHashIterator implements Iterator<GeoHash> {
-	private TwoGeoHashBoundingBox boundingBox;
-	private GeoHash current;
+  private TwoGeoHashBoundingBox boundingBox;
 
-	public BoundingBoxGeoHashIterator(TwoGeoHashBoundingBox bbox) {
-		boundingBox = bbox;
-		current = bbox.getSouthWestCorner();
-	}
+  private GeoHash current;
 
-	public TwoGeoHashBoundingBox getBoundingBox() {
-		return boundingBox;
-	}
+  public BoundingBoxGeoHashIterator(TwoGeoHashBoundingBox bbox) {
+    boundingBox = bbox;
+    current = bbox.getSouthWestCorner();
+  }
 
-	@Override
-	public boolean hasNext() {
-		return current != null;
-	}
+  public TwoGeoHashBoundingBox getBoundingBox() {
+    return boundingBox;
+  }
 
-	@Override
-	public GeoHash next() {
-		if (!hasNext()) {
-			throw new NoSuchElementException();
-		}
+  @Override public boolean hasNext() {
+    return 
+<<<<<<< /usr/src/app/output/kungfoo/geohash-java/1e0aa77a02c168f39dc3c26f64257af4baffac6f/src/main/java/ch/hsr/geohash/util/BoundingBoxGeoHashIterator.java/left.java
+    current.compareTo(boundingBox.getNorthEastCorner()) <= 0
+=======
+    current != null
+>>>>>>> /usr/src/app/output/kungfoo/geohash-java/1e0aa77a02c168f39dc3c26f64257af4baffac6f/src/main/java/ch/hsr/geohash/util/BoundingBoxGeoHashIterator.java/right.java
+    ;
+  }
 
-		GeoHash rv = current;
-		if (rv.equals(boundingBox.getNorthEastCorner())) {
-		    current = null;
-        } else {
-			current = rv.next();
-            while (hasNext() && !boundingBox.getBoundingBox().contains(current.getOriginatingPoint())) {
-                current = current.next();
-            }
-        }
+  @Override public GeoHash next() {
+    if (!hasNext()) {
+      throw new NoSuchElementException();
+    }
+    GeoHash rv = current;
+    if (rv.equals(boundingBox.getTopRight())) {
+      current = null;
+    } else {
+      current = rv.next();
+      while (hasNext() && !boundingBox.getBoundingBox().contains(current.getPoint())) {
+        current = current.next();
+      }
+    }
 
-		return rv;
-	}
+<<<<<<< /usr/src/app/output/kungfoo/geohash-java/1e0aa77a02c168f39dc3c26f64257af4baffac6f/src/main/java/ch/hsr/geohash/util/BoundingBoxGeoHashIterator.java/left.java
+    while (hasNext() && !boundingBox.getBoundingBox().contains(current.getOriginatingPoint())) {
+      current = current.next();
+    }
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
 
-	@Override
-	public void remove() {
-		throw new UnsupportedOperationException();
-	}
+    return rv;
+  }
+
+  @Override public void remove() {
+    throw new UnsupportedOperationException();
+  }
 }
