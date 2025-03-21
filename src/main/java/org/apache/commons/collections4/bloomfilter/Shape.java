@@ -76,7 +76,13 @@ package org.apache.commons.collections4.bloomfilter;
  * <li>If n(A) = &infin; and n(B) &lt; &infin; then n(A &cap; B) = n(B)</li>
  * <li>If n(A) &lt; &infin; and n(B) = &infin; then n(A &cap; B) = n(A)</li>
  * <li>If n(A) = &infin; and n(B) = &infin; then n(A &cap; B) = &infin;</li>
+<<<<<<< /usr/src/app/output/apache/commons-collections/19b2abbac0fe2b46f883f255832fe3436e739110/src/main/java/org/apache/commons/collections4/bloomfilter/Shape.java/left.java
  * <li>If n(A) &lt; &infin; and n(B) &lt; &infin; and n(A &cup; B) = &infin; then n(A &cap; B) is undefined.</li>
+||||||| /usr/src/app/output/apache/commons-collections/19b2abbac0fe2b46f883f255832fe3436e739110/src/main/java/org/apache/commons/collections4/bloomfilter/Shape.java/base.java
+ * <li>If n(A) < &infin; and n(B) < &infin; and n(A &cup; B) = &infin; then n(A &cap; B) is undefined.</li>
+=======
+ * <li>If n(A) &lt &infin; and n(B) &lt; &infin; and n(A &cup; B) = &infin; then n(A &cap; B) is undefined.</li>
+>>>>>>> /usr/src/app/output/apache/commons-collections/19b2abbac0fe2b46f883f255832fe3436e739110/src/main/java/org/apache/commons/collections4/bloomfilter/Shape.java/right.java
  * </ul>
  *
  * @see <a href="https://hur.st/bloomfilter">Bloom Filter calculator</a>
