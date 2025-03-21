@@ -17,11 +17,12 @@ package com.datastax.driver.core;
 
 import java.util.*;
 
+import static org.testng.Assert.assertFalse;
+
 import org.testng.annotations.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import com.datastax.driver.core.exceptions.NoHostAvailableException;

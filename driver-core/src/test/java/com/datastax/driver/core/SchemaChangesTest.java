@@ -49,7 +49,6 @@ public class SchemaChangesTest {
             ccm.remove();
     }
 
-
     @DataProvider(name = "existingKeyspaceName")
     public static Object[][] existingKeyspaceName() {
         return new Object[][]{ { "lowercase" }, { "\"CaseSensitive\"" } };
@@ -165,7 +164,7 @@ public class SchemaChangesTest {
         ListenableFuture<List<ResultSet>> f = Futures.successfulAsList(Lists.newArrayList(
             session.executeAsync("DROP TABLE lowercase.table1"),
             session.executeAsync("DROP TABLE \"CaseSensitive\".table1"),
-            session.executeAsync("DROP TYPE lowercase.type1"),
+            session.executeAsync("DROP TYPE ks.type1"),
             session.executeAsync("DROP TYPE \"CaseSensitive\".type1"),
             session.executeAsync("DROP KEYSPACE lowercase2"),
             session.executeAsync("DROP KEYSPACE \"CaseSensitive2\"")
