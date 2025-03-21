@@ -153,7 +153,13 @@ public final class DefaultRoutes implements Routes {
             .flatMapMany(function((cloudFoundryClient, domains, spaces) -> getRoutes(cloudFoundryClient, request, this.organizationId, this.spaceId)
                 .map(route -> Tuples.of(cloudFoundryClient, domains, route, spaces))))
             .flatMap(function((cloudFoundryClient, domains, route, spaces) -> Mono
+<<<<<<< /usr/src/app/output/cloudfoundry/cf-java-client/a9d35d542d88727dd302fb7a488891077bf28fb5/cloudfoundry-operations/src/main/java/org/cloudfoundry/operations/routes/DefaultRoutes.java/left.java
                 .zip(
+||||||| /usr/src/app/output/cloudfoundry/cf-java-client/a9d35d542d88727dd302fb7a488891077bf28fb5/cloudfoundry-operations/src/main/java/org/cloudfoundry/operations/routes/DefaultRoutes.java/base.java
+                .when(
+=======
+                .when(
+>>>>>>> /usr/src/app/output/cloudfoundry/cf-java-client/a9d35d542d88727dd302fb7a488891077bf28fb5/cloudfoundry-operations/src/main/java/org/cloudfoundry/operations/routes/DefaultRoutes.java/right.java
                     getApplicationNames(cloudFoundryClient, ResourceUtils.getId(route)),
                     getDomainName(domains, ResourceUtils.getEntity(route).getDomainId()),
                     Mono.just(route),
@@ -317,7 +323,7 @@ public final class DefaultRoutes implements Routes {
 
     private static Mono<Optional<String>> getServiceName(CloudFoundryClient cloudFoundryClient, RouteEntity route) {
         return Mono.justOrEmpty(route.getServiceInstanceId())
-            .flatMap(serviceInstanceId -> getServiceInstanceName(cloudFoundryClient, serviceInstanceId, route.getSpaceId()))
+            .then(serviceInstanceId -> getServiceInstanceName(cloudFoundryClient, serviceInstanceId, route.getSpaceId()))
             .defaultIfEmpty(Optional.empty());
     }
 
