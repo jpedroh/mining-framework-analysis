@@ -36,7 +36,6 @@ import hudson.FilePath;
 import hudson.Functions;
 import hudson.Launcher;
 import hudson.RestrictedSince;
-import hudson.Util;
 import hudson.model.*;
 import jenkins.plugins.mailer.tasks.i18n.Messages;
 import hudson.security.Permission;
