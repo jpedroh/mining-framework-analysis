@@ -38,39 +38,18 @@ public class TableMetadata {
     private static final String DEFAULT_KEY_ALIAS    = "key";
     private static final String DEFAULT_COLUMN_ALIAS = "column";
     private static final String DEFAULT_VALUE_ALIAS  = "value";
-
     private static final Pattern lowercaseId = Pattern.compile("[a-z][a-z0-9_]*");
-
     private static final Comparator<ColumnMetadata> columnMetadataComparator = new Comparator<ColumnMetadata>() {
         public int compare(ColumnMetadata c1, ColumnMetadata c2) {
             return c1.getName().compareTo(c2.getName());
         }
     };
-
     private final KeyspaceMetadata keyspace;
     private final String name;
     private final List<ColumnMetadata> partitionKey;
     private final List<ColumnMetadata> clusteringKey;
     private final Map<String, ColumnMetadata> columns;
     private final Options options;
-    private final List<Order> clusteringOrder;
-
-    /**
-     * Clustering orders.
-     * <p>
-     * This is used by {@link #getClusteringOrder} to indicate the clustering
-     * order of a table.
-     */
-    public static enum Order {
-        ASC, DESC;
-
-        static final Predicate<Order> isAscending = new Predicate<Order>() {
-            public boolean apply(Order o) {
-                return o == ASC;
-            }
-        };
-    }
-
     private TableMetadata(KeyspaceMetadata keyspace,
                           String name,
                           List<ColumnMetadata> partitionKey,
@@ -86,7 +65,6 @@ public class TableMetadata {
         this.options = options;
         this.clusteringOrder = clusteringOrder;
     }
-
     static TableMetadata build(KeyspaceMetadata ksm, Row row, Map<String, ColumnMetadata.Raw> rawCols) {
 
         String name = row.getString(CF_NAME);
@@ -100,11 +78,10 @@ public class TableMetadata {
 
         List<ColumnMetadata> partitionKey = nullInitializedList(keyValidator.types.size());
         List<ColumnMetadata> clusteringKey = nullInitializedList(clusteringSize);
-        List<Order> clusteringOrder = nullInitializedList(clusteringSize);
         // We use a linked hashmap because we will keep this in the order of a 'SELECT * FROM ...'.
         LinkedHashMap<String, ColumnMetadata> columns = new LinkedHashMap<String, ColumnMetadata>();
 
-        TableMetadata tm = new TableMetadata(ksm, name, partitionKey, clusteringKey, columns, new Options(row, isCompact), clusteringOrder);
+        TableMetadata tm = new TableMetadata(ksm, name, partitionKey, clusteringKey, columns, new Options(row, isCompact));
 
         // We use this temporary set just so non PK columns are added in lexicographical order, which is the one of a
         // 'SELECT * FROM ...'
@@ -118,7 +95,6 @@ public class TableMetadata {
                     break;
                 case CLUSTERING_KEY:
                     clusteringKey.set(rawCol.componentIndex, col);
-                    clusteringOrder.set(rawCol.componentIndex, rawCol.isReversed ? Order.DESC : Order.ASC);
                     break;
             }
         }
@@ -133,7 +109,6 @@ public class TableMetadata {
         ksm.add(tm);
         return tm;
     }
-
     private static int findClusteringSize(Collection<ColumnMetadata.Raw> cols) {
         int maxId = -1;
         for (ColumnMetadata.Raw col : cols)
@@ -141,14 +116,12 @@ public class TableMetadata {
                 maxId = Math.max(maxId, col.componentIndex);
         return maxId + 1;
     }
-
     private static <T> List<T> nullInitializedList(int size) {
         List<T> l = new ArrayList<T>(size);
         for (int i = 0; i < size; ++i)
             l.add(null);
         return l;
     }
-
     /**
      * Returns the name of this table.
      *
@@ -157,7 +130,6 @@ public class TableMetadata {
     public String getName() {
         return name;
     }
-
     /**
      * Returns the keyspace this table belong to.
      *
@@ -166,7 +138,6 @@ public class TableMetadata {
     public KeyspaceMetadata getKeyspace() {
         return keyspace;
     }
-
     /**
      * Returns metadata on a column of this table.
      *
@@ -177,7 +148,6 @@ public class TableMetadata {
     public ColumnMetadata getColumn(String name) {
         return columns.get(name);
     }
-
     /**
      * Returns a list containing all the columns of this table.
      *
@@ -192,7 +162,6 @@ public class TableMetadata {
     public List<ColumnMetadata> getColumns() {
         return new ArrayList<ColumnMetadata>(columns.values());
     }
-
     /**
      * Returns the list of columns composing the primary key for this table.
      *
@@ -208,7 +177,6 @@ public class TableMetadata {
         pk.addAll(clusteringKey);
         return pk;
     }
-
     /**
      * Returns the list of columns composing the partition key for this table.
      *
@@ -220,7 +188,6 @@ public class TableMetadata {
     public List<ColumnMetadata> getPartitionKey() {
         return Collections.unmodifiableList(partitionKey);
     }
-
     /**
      * Returns the list of columns composing the clustering key for this table.
      *
@@ -230,23 +197,6 @@ public class TableMetadata {
     public List<ColumnMetadata> getClusteringKey() {
         return Collections.unmodifiableList(clusteringKey);
     }
-
-    /**
-     * Returns the clustering order for this table.
-     * <p>
-     * The returned contains the cluster order of each clustering key. The
-     * {@code i}th element of the result correspond to the order (ascending or
-     * descending) of the {@code i}th clustering key (see
-     * {@link #getClusteringKey}). Note that a table defined without any
-     * particular clustering order is equivalent to one for which all the
-     * clustering key are in ascending order.
-     *
-     * @return a list with the clustering order for each clustering key.
-     */
-    public List<Order> getClusteringOrder() {
-        return clusteringOrder;
-    }
-
     /**
      * Returns the options for this table.
      *
@@ -255,10 +205,8 @@ public class TableMetadata {
     public Options getOptions() {
         return options;
     }
-
     // :_(
     private static ObjectMapper jsonMapper = new ObjectMapper(new JsonFactory());
-
     @SuppressWarnings("unchecked")
     static Map<String, String> fromJsonMap(String json) {
         try {
@@ -267,11 +215,9 @@ public class TableMetadata {
             throw new RuntimeException(e);
         }
     }
-
     void add(ColumnMetadata column) {
         columns.put(column.getName(), column);
     }
-
     /**
      * Returns a {@code String} containing CQL queries representing this
      * table and the index on it.
@@ -300,7 +246,6 @@ public class TableMetadata {
         }
         return sb.toString();
     }
-
     /**
      * Returns a CQL query representing this table.
      *
@@ -316,7 +261,6 @@ public class TableMetadata {
     public String asCQLQuery() {
         return asCQLQuery(false);
     }
-
     // Escape a CQL3 identifier based on its value as read from the schema
     // tables. Because it cames from Cassandra, we could just always quote it,
     // but to get a nicer output we don't do it if it's not necessary.
@@ -324,7 +268,6 @@ public class TableMetadata {
         // we don't need to escape if it's lowercase and match non-quoted CQL3 ids.
         return lowercaseId.matcher(ident).matches() ? ident : '"' + ident + '"';
     }
-
     private String asCQLQuery(boolean formatted) {
         StringBuilder sb = new StringBuilder();
 
@@ -372,7 +315,41 @@ public class TableMetadata {
         sb.append(";");
         return sb.toString();
     }
+    private final List<Order> clusteringOrder;
+    /**
+     * Clustering orders.
+     * <p>
+     * This is used by {@link #getClusteringOrder} to indicate the clustering
+     * order of a table.
+     */
+    public static enum Order {
+        ASC, DESC;
 
+        static final Predicate<Order> isAscending = new Predicate<Order>() {
+            public boolean apply(Order o) {
+                return o == ASC;
+            }
+        };
+    }
+    /**
+     * Returns the clustering order for this table.
+     * <p>
+     * The returned contains the cluster order of each clustering key. The
+     * {@code i}th element of the result correspond to the order (ascending or
+     * descending) of the {@code i}th clustering key (see
+     * {@link #getClusteringKey}). Note that a table defined without any
+     * particular clustering order is equivalent to one for which all the
+     * clustering key are in ascending order.
+     *
+     * @return a list with the clustering order for each clustering key.
+     */
+    public List<Order> getClusteringOrder() {
+        return clusteringOrder;
+    }
+    // :_(
+    // Escape a CQL3 identifier based on its value as read from the schema
+    // tables. Because it cames from Cassandra, we could just always quote it,
+    // but to get a nicer output we don't do it if it's not necessary.
     private StringBuilder appendClusteringOrder(StringBuilder sb)
     {
         sb.append("CLUSTERING ORDER BY (");
