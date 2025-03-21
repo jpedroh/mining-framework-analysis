@@ -17,11 +17,10 @@
 package org.apache.commons.math4.util;
 
 import java.util.Iterator;
-
-import org.apache.commons.math4.exception.MathUnsupportedOperationException;
 import org.apache.commons.math4.exception.MaxCountExceededException;
-import org.apache.commons.math4.exception.NotStrictlyPositiveException;
 import org.apache.commons.math4.exception.NullArgumentException;
+import org.apache.commons.math4.exception.MathUnsupportedOperationException;
+import org.apache.commons.math4.exception.NotStrictlyPositiveException;
 import org.apache.commons.math4.exception.ZeroException;
 
 /**
@@ -116,6 +115,12 @@ public class IntegerSequence {
                 .withMaximalCount(max + (step > 0 ? 1 : -1))
                 .withIncrement(step);
         }
+    }
+    
+    public static int size(Iterable<Integer> range) {
+    	int n = 0;
+    	for (Integer i : range) n++;
+    	return n;
     }
 
     /**
@@ -365,5 +370,4 @@ public class IntegerSequence {
             throw new MathUnsupportedOperationException();
         }
     }
-
 }

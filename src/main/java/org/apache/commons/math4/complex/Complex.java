@@ -49,7 +49,17 @@ import org.apache.commons.math4.util.Precision;
  * {@link org.apache.commons.math4.util.Precision#equals(double,double,int)
  * equals for primitive double} in {@link org.apache.commons.math4.util.Precision}
  * conforms with IEEE-754 while this class conforms with the standard behavior
+<<<<<<< /usr/src/app/output/apache/commons-math/b9d440b6507c7c3a12e4b7dcb0acba3d06de5b03/src/main/java/org/apache/commons/math4/complex/Complex.java/left.java
+ * for Java object types.
+ * <p>
+ * Implements Serializable since 2.0
+||||||| /usr/src/app/output/apache/commons-math/b9d440b6507c7c3a12e4b7dcb0acba3d06de5b03/src/main/java/org/apache/commons/math4/complex/Complex.java/base.java
+ * for Java object types.
+ * <br/>
+ * Implements Serializable since 2.0
+=======
  * for Java object types.</p>
+>>>>>>> /usr/src/app/output/apache/commons-math/b9d440b6507c7c3a12e4b7dcb0acba3d06de5b03/src/main/java/org/apache/commons/math4/complex/Complex.java/right.java
  *
  */
 public class Complex implements FieldElement<Complex>, Serializable  {
@@ -399,7 +409,7 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * Returns {@code true} if, both for the real part and for the imaginary
      * part, there is no double value strictly between the arguments or the
      * difference between them is within the range of allowed error
-     * (inclusive).
+     * (inclusive).  Returns {@code false} if either of the arguments is NaN.
      *
      * @param x First value (cannot be {@code null}).
      * @param y Second value (cannot be {@code null}).
@@ -639,11 +649,9 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * <a href="http://mathworld.wolfram.com/InverseCosine.html" TARGET="_top">
      * inverse cosine</a> of this complex number.
      * Implements the formula:
-     * <pre>
-     *  <code>
-     *   acos(z) = -i (log(z + i (sqrt(1 - z<sup>2</sup>))))
-     *  </code>
-     * </pre>
+     * <p>
+     *  {@code acos(z) = -i (log(z + i (sqrt(1 - z<sup>2</sup>))))}
+     * </p>
      * Returns {@link Complex#NaN} if either real or imaginary part of the
      * input argument is {@code NaN} or infinite.
      *
@@ -663,13 +671,11 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * <a href="http://mathworld.wolfram.com/InverseSine.html" TARGET="_top">
      * inverse sine</a> of this complex number.
      * Implements the formula:
-     * <pre>
-     *  <code>
-     *   asin(z) = -i (log(sqrt(1 - z<sup>2</sup>) + iz))
-     *  </code>
-     * </pre>
+     * <p>
+     *  {@code asin(z) = -i (log(sqrt(1 - z<sup>2</sup>) + iz))}
+     * </p><p>
      * Returns {@link Complex#NaN} if either real or imaginary part of the
-     * input argument is {@code NaN} or infinite.
+     * input argument is {@code NaN} or infinite.</p>
      *
      * @return the inverse sine of this complex number.
      * @since 1.2
@@ -687,13 +693,11 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * <a href="http://mathworld.wolfram.com/InverseTangent.html" TARGET="_top">
      * inverse tangent</a> of this complex number.
      * Implements the formula:
-     * <pre>
-     *  <code>
-     *   atan(z) = (i/2) log((i + z)/(i - z))
-     *  </code>
-     * </pre>
+     * <p>
+     * {@code atan(z) = (i/2) log((i + z)/(i - z))}
+     * </p><p>
      * Returns {@link Complex#NaN} if either real or imaginary part of the
-     * input argument is {@code NaN} or infinite.
+     * input argument is {@code NaN} or infinite.</p>
      *
      * @return the inverse tangent of this complex number
      * @since 1.2
@@ -710,27 +714,24 @@ public class Complex implements FieldElement<Complex>, Serializable  {
     /**
      * Compute the
      * <a href="http://mathworld.wolfram.com/Cosine.html" TARGET="_top">
-     * cosine</a>
-     * of this complex number.
+     * cosine</a> of this complex number.
      * Implements the formula:
-     * <pre>
-     *  <code>
-     *   cos(a + bi) = cos(a)cosh(b) - sin(a)sinh(b)i
-     *  </code>
-     * </pre>
+     * <p>
+     *  {@code cos(a + bi) = cos(a)cosh(b) - sin(a)sinh(b)i}
+     * </p><p>
      * where the (real) functions on the right-hand side are
      * {@link FastMath#sin}, {@link FastMath#cos},
      * {@link FastMath#cosh} and {@link FastMath#sinh}.
-     * <br/>
+     * </p><p>
      * Returns {@link Complex#NaN} if either real or imaginary part of the
      * input argument is {@code NaN}.
-     * <br/>
+     * </p><p>
      * Infinite values in real or imaginary parts of the input may result in
-     * infinite or NaN values returned in parts of the result.
+     * infinite or NaN values returned in parts of the result.</p>
      * <pre>
      *  Examples:
      *  <code>
-     *   cos(1 &plusmn; INFINITY i) = 1 &#x2213; INFINITY i
+     *   cos(1 &plusmn; INFINITY i) = 1 \u2213 INFINITY i
      *   cos(&plusmn;INFINITY + i) = NaN + NaN i
      *   cos(&plusmn;INFINITY &plusmn; INFINITY i) = NaN + NaN i
      *  </code>
@@ -755,16 +756,16 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * Implements the formula:
      * <pre>
      *  <code>
-     *   cosh(a + bi) = cosh(a)cos(b) + sinh(a)sin(b)i}
+     *   cosh(a + bi) = cosh(a)cos(b) + sinh(a)sin(b)i
      *  </code>
      * </pre>
      * where the (real) functions on the right-hand side are
      * {@link FastMath#sin}, {@link FastMath#cos},
      * {@link FastMath#cosh} and {@link FastMath#sinh}.
-     * <br/>
+     * <p>
      * Returns {@link Complex#NaN} if either real or imaginary part of the
      * input argument is {@code NaN}.
-     * <br/>
+     * </p>
      * Infinite values in real or imaginary parts of the input may result in
      * infinite or NaN values returned in parts of the result.
      * <pre>
@@ -801,10 +802,10 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * where the (real) functions on the right-hand side are
      * {@link FastMath#exp}, {@link FastMath#cos}, and
      * {@link FastMath#sin}.
-     * <br/>
+     * <p>
      * Returns {@link Complex#NaN} if either real or imaginary part of the
      * input argument is {@code NaN}.
-     * <br/>
+     * </p>
      * Infinite values in real or imaginary parts of the input may result in
      * infinite or NaN values returned in parts of the result.
      * <pre>
@@ -843,10 +844,10 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * where ln on the right hand side is {@link FastMath#log},
      * {@code |a + bi|} is the modulus, {@link Complex#abs},  and
      * {@code arg(a + bi) = }{@link FastMath#atan2}(b, a).
-     * <br/>
+     * <p>
      * Returns {@link Complex#NaN} if either real or imaginary part of the
      * input argument is {@code NaN}.
-     * <br/>
+     * </p>
      * Infinite (or critical) values in real or imaginary parts of the input may
      * result in infinite or NaN values returned in parts of the result.
      * <pre>
@@ -884,13 +885,13 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * </pre>
      * where {@code exp} and {@code log} are {@link #exp} and
      * {@link #log}, respectively.
-     * <br/>
+     * <p>
      * Returns {@link Complex#NaN} if either real or imaginary part of the
      * input argument is {@code NaN} or infinite, or if {@code y}
-     * equals {@link Complex#ZERO}.
+     * equals {@link Complex#ZERO}.</p>
      *
      * @param  x exponent to which this {@code Complex} is to be raised.
-     * @return <code> this<sup>{@code x}</sup></code>.
+     * @return <code> this<sup>x</sup></code>.
      * @throws NullArgumentException if x is {@code null}.
      * @since 1.2
      */
@@ -925,10 +926,10 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * where the (real) functions on the right-hand side are
      * {@link FastMath#sin}, {@link FastMath#cos},
      * {@link FastMath#cosh} and {@link FastMath#sinh}.
-     * <br/>
+     * <p>
      * Returns {@link Complex#NaN} if either real or imaginary part of the
      * input argument is {@code NaN}.
-     * <br/>
+     * </p><p>
      * Infinite values in real or imaginary parts of the input may result in
      * infinite or {@code NaN} values returned in parts of the result.
      * <pre>
@@ -965,10 +966,10 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * where the (real) functions on the right-hand side are
      * {@link FastMath#sin}, {@link FastMath#cos},
      * {@link FastMath#cosh} and {@link FastMath#sinh}.
-     * <br/>
+     * <p>
      * Returns {@link Complex#NaN} if either real or imaginary part of the
      * input argument is {@code NaN}.
-     * <br/>
+     * </p><p>
      * Infinite values in real or imaginary parts of the input may result in
      * infinite or NaN values returned in parts of the result.
      * <pre>
@@ -1006,10 +1007,10 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * <li>{@code |a + bi| = }{@link Complex#abs}(a + bi)</li>
      * <li>{@code sign(b) =  }{@link FastMath#copySign(double,double) copySign(1d, b)}
      * </ul>
-     * <br/>
+     * <p>
      * Returns {@link Complex#NaN} if either real or imaginary part of the
      * input argument is {@code NaN}.
-     * <br/>
+     * </p>
      * Infinite values in real or imaginary parts of the input may result in
      * infinite or NaN values returned in parts of the result.
      * <pre>
@@ -1051,10 +1052,10 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * number.
      * Computes the result directly as
      * {@code sqrt(ONE.subtract(z.multiply(z)))}.
-     * <br/>
+     * <p>
      * Returns {@link Complex#NaN} if either real or imaginary part of the
      * input argument is {@code NaN}.
-     * <br/>
+     * </p>
      * Infinite values in real or imaginary parts of the input may result in
      * infinite or NaN values returned in parts of the result.
      *
@@ -1078,10 +1079,10 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * where the (real) functions on the right-hand side are
      * {@link FastMath#sin}, {@link FastMath#cos}, {@link FastMath#cosh} and
      * {@link FastMath#sinh}.
-     * <br/>
+     * <p>
      * Returns {@link Complex#NaN} if either real or imaginary part of the
      * input argument is {@code NaN}.
-     * <br/>
+     * </p>
      * Infinite (or critical) values in real or imaginary parts of the input may
      * result in infinite or NaN values returned in parts of the result.
      * <pre>
@@ -1129,10 +1130,10 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * where the (real) functions on the right-hand side are
      * {@link FastMath#sin}, {@link FastMath#cos}, {@link FastMath#cosh} and
      * {@link FastMath#sinh}.
-     * <br/>
+     * <p>
      * Returns {@link Complex#NaN} if either real or imaginary part of the
      * input argument is {@code NaN}.
-     * <br/>
+     * </p>
      * Infinite values in real or imaginary parts of the input may result in
      * infinite or NaN values returned in parts of the result.
      * <pre>
@@ -1175,7 +1176,7 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * The value returned is between -PI (not inclusive)
      * and PI (inclusive), with negative values returned for numbers with
      * negative imaginary parts.
-     * <br/>
+     * <p>
      * If either real or imaginary part (or both) is NaN, NaN is returned.
      * Infinite parts are handled as {@code Math.atan2} handles them,
      * essentially treating finite parts as zero in the presence of an
@@ -1200,14 +1201,14 @@ public class Complex implements FieldElement<Complex>, Serializable  {
      * for <i>{@code k=0, 1, ..., n-1}</i>, where {@code abs} and {@code phi}
      * are respectively the {@link #abs() modulus} and
      * {@link #getArgument() argument} of this complex number.
-     * <br/>
+     * <p>
      * If one or both parts of this complex number is NaN, a list with just
      * one element, {@link #NaN} is returned.
      * if neither part is NaN, but at least one part is infinite, the result
      * is a one-element list containing {@link #INF}.
      *
      * @param n Degree of root.
-     * @return a List<Complex> of all {@code n}-th roots of {@code this}.
+     * @return a List of all {@code n}-th roots of {@code this}.
      * @throws NotPositiveException if {@code n <= 0}.
      * @since 2.0
      */
