@@ -60,11 +60,10 @@ public class OnePassRealValueDataIndexer extends OnePassDataIndexer {
     return numUniqueEvents;
   }
 
-
   @Override
   protected List<ComparableEvent> index(List<Event> events, Map<String,Integer> predicateIndex) {
-    Map<String,Integer> omap = new HashMap<String,Integer>();
-    
+    Map<String,Integer> omap = new HashMap<>();
+
     int numEvents = events.size();
     int outcomeCount = 0;
     List<ComparableEvent> eventsToCompare = new ArrayList<>(numEvents);
