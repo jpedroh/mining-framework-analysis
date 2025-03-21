@@ -1,15 +1,6 @@
-/**
- * Copyright (c) 2012 to original author or authors
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- */
 package org.sonatype.maven.polyglot.yaml;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
-
 import org.apache.maven.model.Model;
 import org.sonatype.maven.polyglot.io.ModelWriterSupport;
 import org.yaml.snakeyaml.DumperOptions;
@@ -19,7 +10,6 @@ import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.serializer.Serializer;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
@@ -31,9 +21,7 @@ import java.util.Map;
  * @author bentmann
  * @since 0.7
  */
-@Singleton
-@Named("yaml")
-public class YamlModelWriter extends ModelWriterSupport {
+@Singleton @Named(value = "yaml") public class YamlModelWriter extends ModelWriterSupport {
   public void write(Writer output, Map<String, Object> o, Model model) throws IOException {
     DumperOptions dumperOptions = new DumperOptions();
     dumperOptions.setIndent(2);
