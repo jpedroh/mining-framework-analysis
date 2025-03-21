@@ -180,4 +180,19 @@ public class Faker {
     public Business business() {
         return business;
     }
+
+    /**
+     * Create a string with a fixed size. Can be usefull for testing
+     * validator based on length string for example
+     *
+     * @param numberOfLetters size of the expected String
+     * @return a string with a fixed size
+     */
+    public String fixedString(int numberOfLetters) {
+        StringBuilder builder = new StringBuilder();
+        while (builder.length() < numberOfLetters) {
+            builder.append(sentence());
+        }
+        return StringUtils.substring(builder.toString(), 0, numberOfLetters);
+    }
 }
