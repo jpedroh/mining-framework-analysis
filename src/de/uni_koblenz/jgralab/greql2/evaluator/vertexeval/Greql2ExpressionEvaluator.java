@@ -103,7 +103,7 @@ public class Greql2ExpressionEvaluator extends
 		initializeBoundVariables(evaluator);
 
 		Schema graphSchema = evaluator.getSchemaOfDataGraph();
-		if ((vertex.get_importedTypes() != null) && (graph != null)) {
+		if ((vertex.get_importedTypes() != null) && (graphSchema != null)) {
 			for (String importedType : vertex.get_importedTypes()) {
 				if (importedType.endsWith(".*")) {
 					String packageName = importedType.substring(0,
