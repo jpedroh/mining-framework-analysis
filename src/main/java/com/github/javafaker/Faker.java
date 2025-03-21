@@ -1,9 +1,7 @@
 package com.github.javafaker;
-
 import com.github.javafaker.service.CountryService;
 import com.github.javafaker.service.FakeValuesService;
 import com.github.javafaker.service.RandomService;
-
 import java.util.Locale;
 import java.util.Random;
 
@@ -14,49 +12,61 @@ import java.util.Random;
  * @author ren
  */
 public class Faker {
-    private final RandomService randomService;
-    private final FakeValuesService fakeValuesService;
-    private final Lorem lorem;
-    private final Name name;
-    private final Internet internet;
-    private final PhoneNumber phoneNumber;
-    private final Address address;
-    private final Business business;
-    private final Options options;
-    private final Code code;
-    private final Finance finance;
-    private final CountryService countryService;
-    private final DateAndTime dateAndTime;
+  private final RandomService randomService;
 
-    public Faker() {
-        this(Locale.ENGLISH);
-    }
+  private final FakeValuesService fakeValuesService;
 
-    public Faker(Locale locale) {
-        this(locale, null);
-    }
+  private final Lorem lorem;
 
-    public Faker(Random random) {
-        this(Locale.ENGLISH, random);
-    }
+  private final Name name;
 
-    public Faker(Locale locale, Random random) {
-        this.randomService = new RandomService(random);
-        this.fakeValuesService = new FakeValuesService(locale, randomService);
-        this.lorem = new Lorem(fakeValuesService, randomService);
-        this.name = new Name(fakeValuesService);
-        this.internet = new Internet(name, fakeValuesService);
-        this.phoneNumber = new PhoneNumber(fakeValuesService);
-        this.address = new Address(name, fakeValuesService, randomService);
-        this.business = new Business(fakeValuesService);
-        this.options = new Options(randomService);
-        this.code = new Code(randomService);
-        this.finance = new Finance(fakeValuesService, randomService);
-        this.countryService = new CountryService(fakeValuesService, randomService);
-        this.dateAndTime = new DateAndTime(randomService);
-    }
+  private final Internet internet;
 
-    /**
+  private final PhoneNumber phoneNumber;
+
+  private final Address address;
+
+  private final Business business;
+
+  private final Options options;
+
+  private final Code code;
+
+  private final Finance finance;
+
+  private final CountryService countryService;
+
+  private final DateAndTime dateAndTime;
+
+  public Faker() {
+    this(Locale.ENGLISH);
+  }
+
+  public Faker(Locale locale) {
+    this(locale, null);
+  }
+
+  public Faker(Random random) {
+    this(Locale.ENGLISH, random);
+  }
+
+  public Faker(Locale locale, Random random) {
+    this.randomService = new RandomService(random);
+    this.fakeValuesService = new FakeValuesService(locale, randomService);
+    this.lorem = new Lorem(fakeValuesService, randomService);
+    this.name = new Name(fakeValuesService);
+    this.internet = new Internet(name, fakeValuesService);
+    this.phoneNumber = new PhoneNumber(fakeValuesService);
+    this.address = new Address(name, fakeValuesService, randomService);
+    this.business = new Business(fakeValuesService);
+    this.options = new Options(randomService);
+    this.code = new Code(randomService);
+    this.finance = new Finance(fakeValuesService, randomService);
+    this.countryService = new CountryService(fakeValuesService, randomService);
+    this.dateAndTime = new DateAndTime(randomService);
+  }
+
+  /**
      * Returns a string with the '#' characters in the parameter replaced with random digits between 0-9 inclusive.
      *
      * For example, the string "ABC##EFG" could be replaced with a string like "ABC99EFG".
@@ -64,11 +74,11 @@ public class Faker {
      * @param numberString
      * @return
      */
-    public String numerify(String numberString) {
-        return fakeValuesService.numerify(numberString);
-    }
+  public String numerify(String numberString) {
+    return fakeValuesService.numerify(numberString);
+  }
 
-    /**
+  /**
      * Returns a string with the '?' characters in the parameter replaced with random alphabetic
      * characters.
      * 
@@ -77,61 +87,62 @@ public class Faker {
      * @param letterString
      * @return
      */
-    public String letterify(String letterString) {
-        return fakeValuesService.letterify(letterString);
-    }
+  public String letterify(String letterString) {
+    return fakeValuesService.letterify(letterString);
+  }
 
-    /**
+  /**
      * Applies both a {@link #numerify(String)} and a {@link #letterify(String)}
      * over the incoming string.
      *
      * @param string
      * @return
      */
-    public String bothify(String string) {
-        return fakeValuesService.bothify(string);
-    }
+  public String bothify(String string) {
+    return fakeValuesService.bothify(string);
+  }
 
-    public Name name() {
-        return name;
-    }
+  public Name name() {
+    return name;
+  }
 
-    public Internet internet() {
-        return internet;
-    }
+  public Internet internet() {
+    return internet;
+  }
 
-    public PhoneNumber phoneNumber() {
-        return phoneNumber;
-    }
+  public PhoneNumber phoneNumber() {
+    return phoneNumber;
+  }
 
-    public Lorem lorem() {
-        return lorem;
-    }
+  public Lorem lorem() {
+    return lorem;
+  }
 
-    public Address address() {
-        return address;
-    }
-    
-    public Country country() {
-        return countryService.country();
-    }
+  public Address address() {
+    return address;
+  }
 
-    public Business business() {
-        return business;
-    }
+  public Country country() {
+    return countryService.country();
+  }
 
-    public Options options() {
-        return options;
-    }
+  public Business business() {
+    return business;
+  }
 
-    public Code code() {
-        return code;
-    }
+  public Options options() {
+    return options;
+  }
 
-    public Finance finance() { return finance; }
+  public Code code() {
+    return code;
+  }
 
-    public DateAndTime date() {
-        return dateAndTime;
-    }
+  public Finance finance() {
+    return finance;
+  }
 
+  public DateAndTime date() {
+    return dateAndTime;
+  }
 }
