@@ -326,8 +326,8 @@ public final class DefaultApplications implements Applications {
     @Override
     public Flux<Task> listTasks(ListApplicationTasksRequest request) {
         return Mono
-            .zip(this.cloudFoundryClient, this.spaceId)
-            .flatMap(function((cloudFoundryClient, spaceId) -> Mono.zip(
+            .when(this.cloudFoundryClient, this.spaceId)
+            .then(function((cloudFoundryClient, spaceId) -> Mono.when(
                 Mono.just(cloudFoundryClient),
                 getApplicationId(cloudFoundryClient, request.getName(), spaceId))
             ))
@@ -479,12 +479,12 @@ public final class DefaultApplications implements Applications {
     @Override
     public Mono<Task> runTask(RunApplicationTaskRequest request) {
         return Mono
-            .zip(this.cloudFoundryClient, this.spaceId)
-            .flatMap(function((cloudFoundryClient, spaceId) -> Mono.zip(
+            .when(this.cloudFoundryClient, this.spaceId)
+            .then(function((cloudFoundryClient, spaceId) -> Mono.when(
                 Mono.just(cloudFoundryClient),
                 getApplicationIdV3(cloudFoundryClient, request.getApplicationName(), spaceId))
             ))
-            .flatMap(function((cloudFoundryClient, applicationId) -> requestCreateTask(cloudFoundryClient, applicationId, request)))
+            .then(function((cloudFoundryClient, applicationId) -> requestCreateTask(cloudFoundryClient, applicationId, request)))
             .map(DefaultApplications::toTask)
             .transform(OperationsLogging.log("Run Application Task Instance"))
             .checkpoint();
@@ -580,16 +580,16 @@ public final class DefaultApplications implements Applications {
     @Override
     public Mono<Void> terminateTask(TerminateApplicationTaskRequest request) {
         return Mono
-            .zip(this.cloudFoundryClient, this.spaceId)
-            .flatMap(function((cloudFoundryClient, spaceId) -> Mono.zip(
+            .when(this.cloudFoundryClient, this.spaceId)
+            .then(function((cloudFoundryClient, spaceId) -> Mono.when(
                 Mono.just(cloudFoundryClient),
                 getApplicationIdV3(cloudFoundryClient, request.getApplicationName(), spaceId))
             ))
-            .flatMap(function((cloudFoundryClient, applicationId) -> Mono.zip(
+            .then(function((cloudFoundryClient, applicationId) -> Mono.when(
                 Mono.just(cloudFoundryClient),
                 getTaskId(cloudFoundryClient, applicationId, request.getSequenceId()))
             ))
-            .flatMap(function(DefaultApplications::requestTerminateTask))
+            .then(function(DefaultApplications::requestTerminateTask))
             .then()
             .transform(OperationsLogging.log("Terminate Application Task Instance"))
             .checkpoint();
