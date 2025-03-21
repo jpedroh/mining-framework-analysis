@@ -1,18 +1,8 @@
 package com.github.javafaker.service;
-
-import com.github.javafaker.Address;
-import com.github.javafaker.Faker;
-import com.github.javafaker.Name;
-import com.github.javafaker.service.files.En;
-import com.mifmif.common.regex.Generex;
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.JarURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -21,15 +11,20 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import com.github.javafaker.service.files.En;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.yaml.snakeyaml.Yaml;
+
+import com.github.javafaker.Address;
+import com.github.javafaker.Faker;
+import com.github.javafaker.Name;
+import com.mifmif.common.regex.Generex;
 
 public class FakeValuesService {
     private static final Pattern EXPRESSION_PATTERN = Pattern.compile("#\\{([a-z0-9A-Z_.]+)\\s?(?:'([^']+)')?(?:,'([^']+)')*\\}");
@@ -83,8 +78,16 @@ public class FakeValuesService {
                 for (String file : En.FILES) {
                     final InputStream stream = findStream("/en/" + file.toString());
                     if (stream != null) {
+<<<<<<< /usr/src/app/output/dius/java-faker/8aeb6f18dd63218e7a7b06806e0cbdf5b5818789/src/main/java/com/github/javafaker/service/FakeValuesService.java/left.java
                         all.add(fakerFromStream(stream, filename.toString()));
                         loadedLocales.add(l);
+||||||| /usr/src/app/output/dius/java-faker/8aeb6f18dd63218e7a7b06806e0cbdf5b5818789/src/main/java/com/github/javafaker/service/FakeValuesService.java/base.java
+                        Map map = fakerFromStream(stream, filename.toString());
+                        all.add(map);
+                        loadedLocales.add(l);
+=======
+                        all.add(fakerFromStream(stream, filename.toString()));
+>>>>>>> /usr/src/app/output/dius/java-faker/8aeb6f18dd63218e7a7b06806e0cbdf5b5818789/src/main/java/com/github/javafaker/service/FakeValuesService.java/right.java
                     }
                 }
                 loadedLocales.add(l);
@@ -108,6 +111,7 @@ public class FakeValuesService {
         }
 
         this.fakeValuesMaps = Collections.unmodifiableList(all);
+<<<<<<< /usr/src/app/output/dius/java-faker/8aeb6f18dd63218e7a7b06806e0cbdf5b5818789/src/main/java/com/github/javafaker/service/FakeValuesService.java/left.java
     }
 
     private void loadFromJarFile(List<Map<String, Object>> all, Set<Locale> loadedLocales, Locale locale, StringBuilder filename) {
@@ -147,6 +151,49 @@ public class FakeValuesService {
         } else {
             return new File(url.getPath()).listFiles();
         }
+||||||| /usr/src/app/output/dius/java-faker/8aeb6f18dd63218e7a7b06806e0cbdf5b5818789/src/main/java/com/github/javafaker/service/FakeValuesService.java/base.java
+    }
+
+    private void loadFromJarFile(List<Map<String, Object>> all, Set<Locale> loadedLocales, Locale locale, StringBuilder filename) {
+        try {
+            ClassLoader loader = getClass().getClassLoader();
+            URL url = loader.getResource(filename.toString());
+            JarURLConnection connection = (JarURLConnection) url.openConnection();
+            JarFile jarFile = connection.getJarFile();
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry jarEntry = entries.nextElement();
+                String jarEntryName = jarEntry.getName();
+                if (jarEntryName.contains(filename.toString() + "/") && jarEntryName.endsWith(".yml")) {
+                    InputStream inputStream = jarFile.getInputStream(jarEntry);
+                    if (inputStream != null) {
+                        Map map = fakerFromStream(inputStream, filename.toString());
+                        all.add(map);
+                        loadedLocales.add(locale);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new LocaleDoesNotExistException(filename.toString());
+        }
+    }
+
+    private boolean isJarFile(String fileName) {
+        ClassLoader loader = getClass().getClassLoader();
+        URL url = loader.getResource(fileName);
+        return url != null && url.getProtocol().equals("jar");
+    }
+
+    private File[] listFilesInDirectoryOnClasspath(String dir) {
+        ClassLoader loader = getClass().getClassLoader();
+        URL url = loader.getResource(dir);
+        if (url == null) {
+            return new File[0];
+        } else {
+            return new File(url.getPath()).listFiles();
+        }
+=======
+>>>>>>> /usr/src/app/output/dius/java-faker/8aeb6f18dd63218e7a7b06806e0cbdf5b5818789/src/main/java/com/github/javafaker/service/FakeValuesService.java/right.java
     }
 
     /**
@@ -213,7 +260,13 @@ public class FakeValuesService {
         if (streamOnClass != null) {
             return streamOnClass;
         }
+<<<<<<< /usr/src/app/output/dius/java-faker/8aeb6f18dd63218e7a7b06806e0cbdf5b5818789/src/main/java/com/github/javafaker/service/FakeValuesService.java/left.java
         return ClassLoader.getSystemResourceAsStream(filenameWithExtension);
+||||||| /usr/src/app/output/dius/java-faker/8aeb6f18dd63218e7a7b06806e0cbdf5b5818789/src/main/java/com/github/javafaker/service/FakeValuesService.java/base.java
+        return getClass().getClassLoader().getResourceAsStream(filenameWithExtension);
+=======
+        return getClass().getClassLoader().getResourceAsStream(filename);
+>>>>>>> /usr/src/app/output/dius/java-faker/8aeb6f18dd63218e7a7b06806e0cbdf5b5818789/src/main/java/com/github/javafaker/service/FakeValuesService.java/right.java
     }
 
     /**
