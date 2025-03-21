@@ -1,12 +1,13 @@
 package com.github.javafaker.service;
-
 import static com.github.javafaker.matchers.MatchesRegularExpression.matchesRegularExpression;
+import com.github.javafaker.AbstractFakerTest;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.oneOf;
 import static org.junit.Assert.fail;
+import com.github.javafaker.Faker;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -14,220 +15,152 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-
 import java.util.Arrays;
+import com.github.javafaker.Superhero;
 import java.util.List;
-import java.util.Locale;
-
 import org.hamcrest.core.Is;
+import java.util.Locale;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import com.github.javafaker.AbstractFakerTest;
-import com.github.javafaker.Faker;
-import com.github.javafaker.Superhero;
-
 public class FakeValuesServiceTest extends AbstractFakerTest {
+  @Mock private RandomService randomService;
 
-    @Mock
-    private RandomService randomService;
+  private FakeValuesService fakeValuesService;
 
-    private FakeValuesService fakeValuesService;
+  @Before public void before() {
+    super.before();
+    MockitoAnnotations.initMocks(this);
+    when(randomService.nextInt(anyInt())).thenReturn(0);
+    fakeValuesService = spy(new FakeValuesService(new Locale("test"), randomService));
+  }
 
-    @Before
-    public void before() {
-        super.before();
-        MockitoAnnotations.initMocks(this);
+  @Test(expected = LocaleDoesNotExistException.class) public void localeShouldThrowException() {
+    new FakeValuesService(new Locale("Does not exist"), randomService);
+  }
 
-        // always return the first element
-        when(randomService.nextInt(anyInt())).thenReturn(0);
-        
-        fakeValuesService = spy(new FakeValuesService(new Locale("test"), randomService));
-    }
+  @Test public void fetchStringShouldReturnValue() {
+    assertThat(fakeValuesService.fetchString("property.dummy"), is("x"));
+  }
 
-    @Test(expected = LocaleDoesNotExistException.class)
-    public void localeShouldThrowException() {
-        new FakeValuesService(new Locale("Does not exist"), randomService);
-    }
+  @Test public void fetchShouldReturnValue() {
+    assertThat(fakeValuesService.fetch("property.dummy"), Is.<Object>is("x"));
+  }
 
-    @Test
-    public void fetchStringShouldReturnValue() {
-        assertThat(fakeValuesService.fetchString("property.dummy"), is("x"));
-    }
+  @Test public void fetchObjectShouldReturnValue() {
+    assertThat(fakeValuesService.fetchObject("property.dummy"), Is.<Object>is(Arrays.asList("x", "y", "z")));
+  }
 
-    @Test
-    public void fetchShouldReturnValue() {
-        assertThat(fakeValuesService.fetch("property.dummy"), Is.<Object>is("x"));
-    }
+  @Test public void safeFetchShouldReturnValueInList() {
+    doReturn(0).when(randomService).nextInt(Mockito.anyInt());
+    assertThat(fakeValuesService.safeFetch("property.dummy", null), is("x"));
+  }
 
-    @Test
-    public void fetchObjectShouldReturnValue() {
-        assertThat(fakeValuesService.fetchObject("property.dummy"), Is.<Object>is(Arrays.asList("x", "y", "z")));
-    }
+  @Test public void safeFetchShouldReturnSimpleList() {
+    assertThat(fakeValuesService.safeFetch("property.simple", null), is("hello"));
+  }
 
-    @Test
-    public void safeFetchShouldReturnValueInList() {
-        doReturn(0).when(randomService).nextInt(Mockito.anyInt());
-        assertThat(fakeValuesService.safeFetch("property.dummy", null), is("x"));
-    }
+  @Test public void safeFetchShouldReturnEmptyStringWhenPropertyDoesntExist() {
+    assertThat(fakeValuesService.safeFetch("property.dummy2", ""), emptyString());
+  }
 
-    @Test
-    public void safeFetchShouldReturnSimpleList() {
-        assertThat(fakeValuesService.safeFetch("property.simple", null), is("hello"));
-    }
+  @Test public void bothify2Args() {
+    final DummyService dummy = mock(DummyService.class);
+    Faker f = new Faker();
+    String value = fakeValuesService.resolve("property.bothify_2", dummy, f);
+    assertThat(value, matchesRegularExpression("[A-Z]{2}\\d{2}"));
+  }
 
-    @Test
-    public void safeFetchShouldReturnEmptyStringWhenPropertyDoesntExist() {
-        assertThat(fakeValuesService.safeFetch("property.dummy2", ""), emptyString());
-    }
-    
-    @Test
-    public void bothify2Args() {
-        final DummyService dummy = mock(DummyService.class);
-        
-        Faker f = new Faker();
+  @Test public void regexifyDirective() {
+    final DummyService dummy = mock(DummyService.class);
+    String value = fakeValuesService.resolve("property.regexify1", dummy, faker);
+    assertThat(value, oneOf("55", "44", "45", "54"));
+    verify(faker).regexify("[45]{2}");
+  }
 
-        String value = fakeValuesService.resolve("property.bothify_2", dummy, f);
-        assertThat(value, matchesRegularExpression("[A-Z]{2}\\d{2}"));
-    }
+  @Test public void regexifySlashFormatDirective() {
+    final DummyService dummy = mock(DummyService.class);
+    String value = fakeValuesService.resolve("property.regexify_slash_format", dummy, faker);
+    assertThat(value, oneOf("55", "44", "45", "54"));
+    verify(faker).regexify("[45]{2}");
+  }
 
-    @Test
-    public void regexifyDirective() {
-        final DummyService dummy = mock(DummyService.class);
+  @Test public void regexifyDirective2() {
+    final DummyService dummy = mock(DummyService.class);
+    String value = fakeValuesService.resolve("property.regexify_cell", dummy, faker);
+    assertThat(value, oneOf("479", "459"));
+    verify(faker).regexify("4[57]9");
+  }
 
-        String value = fakeValuesService.resolve("property.regexify1", dummy, faker);
-        assertThat(value, oneOf("55", "44", "45", "54"));
-        verify(faker).regexify("[45]{2}");
-    }
+  @Test public void resolveKeyToPropertyWithAPropertyWithoutAnObject() {
+    final DummyService dummy = mock(DummyService.class);
+    doReturn("Yo!").when(dummy).hello();
+    final String actual = fakeValuesService.resolve("property.simpleResolution", dummy, faker);
+    assertThat(actual, is("Yo!"));
+    verify(dummy).hello();
+    verifyZeroInteractions(faker);
+  }
 
-    @Test
-    public void regexifySlashFormatDirective() {
-        final DummyService dummy = mock(DummyService.class);
+  @Test public void resolveKeyToPropertyWithAPropertyWithAnObject() {
+    final Superhero person = mock(Superhero.class);
+    final DummyService dummy = mock(DummyService.class);
+    doReturn(person).when(faker).superhero();
+    doReturn("Luke Cage").when(person).name();
+    final String actual = fakeValuesService.resolve("property.advancedResolution", dummy, faker);
+    assertThat(actual, is("Luke Cage"));
+    verify(faker).superhero();
+    verify(person).name();
+  }
 
-        String value = fakeValuesService.resolve("property.regexify_slash_format", dummy, faker);
-        assertThat(value, oneOf("55", "44", "45", "54"));
-        verify(faker).regexify("[45]{2}");
-    }
+  @Test public void resolveKeyToPropertyWithAList() {
+    final DummyService dummy = mock(DummyService.class);
+    doReturn(0).when(randomService).nextInt(Mockito.anyInt());
+    doReturn("Yo!").when(dummy).hello();
+    final String actual = fakeValuesService.resolve("property.resolutionWithList", dummy, faker);
+    assertThat(actual, is("Yo!"));
+    verify(dummy).hello();
+  }
 
-    @Test
-    public void regexifyDirective2() {
-        final DummyService dummy = mock(DummyService.class);
+  @Test public void resolveKeyWithMultiplePropertiesShouldJoinResults() {
+    final Superhero person = mock(Superhero.class);
+    final DummyService dummy = mock(DummyService.class);
+    doReturn(person).when(faker).superhero();
+    doReturn("Yo Superman!").when(dummy).hello();
+    doReturn("up up and away").when(person).descriptor();
+    String actual = fakeValuesService.resolve("property.multipleResolution", dummy, faker);
+    assertThat(actual, is("Yo Superman! up up and away"));
+    verify(faker).superhero();
+    verify(person).descriptor();
+    verify(dummy).hello();
+  }
 
-        String value = fakeValuesService.resolve("property.regexify_cell", dummy, faker);
-        assertThat(value, oneOf("479", "459"));
-        verify(faker).regexify("4[57]9");
-    }
+  @Test public void testLocaleChain() {
+    final List<Locale> chain = fakeValuesService.localeChain(Locale.SIMPLIFIED_CHINESE);
+    assertThat(chain, contains(Locale.SIMPLIFIED_CHINESE, Locale.CHINESE, Locale.ENGLISH));
+  }
 
-    @Test
-    public void resolveKeyToPropertyWithAPropertyWithoutAnObject() {
-        // #{hello} -> DummyService.hello
+  @Test public void testLocaleChainEnglish() {
+    final List<Locale> chain = fakeValuesService.localeChain(Locale.ENGLISH);
+    assertThat(chain, contains(Locale.ENGLISH));
+  }
 
-        // given
-        final DummyService dummy = mock(DummyService.class);
-        doReturn("Yo!").when(dummy).hello();
+  @Test public void testLocaleChainLanguageOnly() {
+    final List<Locale> chain = fakeValuesService.localeChain(Locale.CHINESE);
+    assertThat(chain, contains(Locale.CHINESE, Locale.ENGLISH));
+  }
 
-        // when
-        final String actual = fakeValuesService.resolve("property.simpleResolution", dummy, faker);
+  @Test public void expressionWithInvalidFakerObject() {
+    expressionShouldFailWith("#{ObjectNotOnFaker.methodName}", "Unable to resolve #{ObjectNotOnFaker.methodName} directive.");
+  }
 
-        // then
-        assertThat(actual, is("Yo!"));
-        verify(dummy).hello();
-        verifyZeroInteractions(faker);
-    }
+  @Test public void expressionWithValidFakerObjectButInvalidMethod() {
+    expressionShouldFailWith("#{Name.nonExistentMethod}", "Unable to resolve #{Name.nonExistentMethod} directive.");
+  }
 
-    @Test
-    public void resolveKeyToPropertyWithAPropertyWithAnObject() {
-        // given
-        final Superhero person = mock(Superhero.class);
-        final DummyService dummy = mock(DummyService.class);
-        doReturn(person).when(faker).superhero();
-        doReturn("Luke Cage").when(person).name();
-
-        // when
-        final String actual = fakeValuesService.resolve("property.advancedResolution", dummy, faker);
-
-        // then
-        assertThat(actual, is("Luke Cage"));
-        verify(faker).superhero();
-        verify(person).name();
-    }
-
-    @Test
-    public void resolveKeyToPropertyWithAList() {
-        // property.resolutionWithList -> #{hello}
-        // #{hello} -> DummyService.hello
-
-        // given
-        final DummyService dummy = mock(DummyService.class);
-        doReturn(0).when(randomService).nextInt(Mockito.anyInt());
-        doReturn("Yo!").when(dummy).hello();
-
-        // when
-        final String actual = fakeValuesService.resolve("property.resolutionWithList", dummy, faker);
-
-        // then
-        assertThat(actual, is("Yo!"));
-        verify(dummy).hello();
-    }
-
-    @Test
-    public void resolveKeyWithMultiplePropertiesShouldJoinResults() {
-        // given
-        final Superhero person = mock(Superhero.class);
-        final DummyService dummy = mock(DummyService.class);
-        doReturn(person).when(faker).superhero();
-
-        doReturn("Yo Superman!").when(dummy).hello();
-        doReturn("up up and away").when(person).descriptor();
-
-        // when
-        String actual = fakeValuesService.resolve("property.multipleResolution", dummy, faker);
-
-        // then
-        assertThat(actual, is("Yo Superman! up up and away"));
-
-        verify(faker).superhero();
-        verify(person).descriptor();
-        verify(dummy).hello();
-    }
-
-    @Test
-    public void testLocaleChain() {
-        final List<Locale> chain = fakeValuesService.localeChain(Locale.SIMPLIFIED_CHINESE);
-
-        assertThat(chain, contains(Locale.SIMPLIFIED_CHINESE, Locale.CHINESE, Locale.ENGLISH));
-    }
-    
-    @Test
-    public void testLocaleChainEnglish() {
-        final List<Locale> chain = fakeValuesService.localeChain(Locale.ENGLISH);
-
-        assertThat(chain, contains(Locale.ENGLISH));
-    }
-    
-    @Test
-    public void testLocaleChainLanguageOnly() {
-        final List<Locale> chain = fakeValuesService.localeChain(Locale.CHINESE);
-
-        assertThat(chain, contains(Locale.CHINESE, Locale.ENGLISH));
-    }
-    
-    @Test
-    public void expressionWithInvalidFakerObject() {
-        expressionShouldFailWith("#{ObjectNotOnFaker.methodName}", 
-                "Unable to resolve #{ObjectNotOnFaker.methodName} directive.");
-    }
-    
-    @Test
-    public void expressionWithValidFakerObjectButInvalidMethod() {
-        expressionShouldFailWith("#{Name.nonExistentMethod}", 
-                "Unable to resolve #{Name.nonExistentMethod} directive.");
-    }
-
-    /**
+  /**
      * Two things are important here:
      * 1) the message in the exception should be USEFUL
      * 2) a {@link RuntimeException} should be thrown.
@@ -235,13 +168,11 @@ public class FakeValuesServiceTest extends AbstractFakerTest {
      * if the message changes, it's ok to update the test provided
      * the two conditions above are still true.
      */
-    @Test
-    public void expressionWithValidFakerObjectValidMethodInvalidArgs() {
-        expressionShouldFailWith("#{Number.number_between 'x','y'}", 
-                "Unable to resolve #{Number.number_between 'x','y'} directive.");
-    }
-    
-    /**
+  @Test public void expressionWithValidFakerObjectValidMethodInvalidArgs() {
+    expressionShouldFailWith("#{Number.number_between \'x\',\'y\'}", "Unable to resolve #{Number.number_between \'x\',\'y\'} directive.");
+  }
+
+  /**
      * Two things are important here:
      * 1) the message in the exception should be USEFUL
      * 2) a {@link RuntimeException} should be thrown.
@@ -249,58 +180,48 @@ public class FakeValuesServiceTest extends AbstractFakerTest {
      * if the message changes, it's ok to update the test provided
      * the two conditions above are still true.
      */
-    @Test
-    public void expressionCompletelyUnresolvable() {
-        expressionShouldFailWith("#{x}", "Unable to resolve #{x} directive.");
+  @Test public void expressionCompletelyUnresolvable() {
+    expressionShouldFailWith("#{x}", "Unable to resolve #{x} directive.");
+  }
+
+  private void expressionShouldFailWith(String expression, String errorMessage) {
+    try {
+      fakeValuesService.expression(expression, faker);
+      fail("Should have failed with RuntimeException and message of " + errorMessage);
+    } catch (RuntimeException re) {
+      assertThat(re.getMessage(), is(errorMessage));
     }
-    
-    private void expressionShouldFailWith(String expression, String errorMessage) {
-        try {
-            fakeValuesService.expression(expression, faker);
-            fail("Should have failed with RuntimeException and message of " + errorMessage);
-        } catch (RuntimeException re) {
-            assertThat(re.getMessage(), is(errorMessage));
-        }
-    }
-    @Test
-    public void resolveUsingTheSameKeyTwice() {
-        // #{hello} -> DummyService.hello
+  }
 
-        // given
-        final DummyService dummy = mock(DummyService.class);
-        when(dummy.hello()).thenReturn("1").thenReturn("2");
+  @Test public void resolveUsingTheSameKeyTwice() {
+    final DummyService dummy = mock(DummyService.class);
+    when(dummy.hello()).thenReturn("1").thenReturn("2");
+    final String actual = fakeValuesService.resolve("property.sameResolution", dummy, faker);
+    assertThat(actual, is("1 2"));
+    verifyZeroInteractions(faker);
+  }
 
-        // when
-        final String actual = fakeValuesService.resolve("property.sameResolution", dummy, faker);
-
-        // then
-        assertThat(actual, is("1 2"));
-        verifyZeroInteractions(faker);
+  public static class DummyService {
+    public String firstName() {
+      return "John";
     }
 
-    public static class DummyService {
-        public String firstName() {
-            return "John";
-        }
-
-        public String lastName() {
-            return "Smith";
-        }
-        
-        public String hello() {
-            return "Hello";
-        }
+    public String lastName() {
+      return "Smith";
     }
 
-    @Test
-    public void resolveWithLocaleSimpleValuesInAnotherFile() {
-        assertThat(fakeValuesService.safeFetch("other1.simple", null), is("hello"));
-        assertThat(fakeValuesService.safeFetch("other2.simple", null), is("goodbye"));
+    public String hello() {
+      return "Hello";
     }
+  }
 
-    @Test
-    public void resolveWithLocaleSimpleArrayValuesInAnotherFile() {
-        assertThat(fakeValuesService.fetchObject("other1.dummy"), Is.<Object>is(Arrays.asList("x", "y", "z")));
-        assertThat(fakeValuesService.fetchObject("other2.dummy"), Is.<Object>is(Arrays.asList(1, 2, 3)));
-    }
+  @Test public void resolveWithLocaleSimpleValuesInAnotherFile() {
+    assertThat(fakeValuesService.safeFetch("other1.simple", null), is("hello"));
+    assertThat(fakeValuesService.safeFetch("other2.simple", null), is("goodbye"));
+  }
+
+  @Test public void resolveWithLocaleSimpleArrayValuesInAnotherFile() {
+    assertThat(fakeValuesService.fetchObject("other1.dummy"), Is.<Object>is(Arrays.asList("x", "y", "z")));
+    assertThat(fakeValuesService.fetchObject("other2.dummy"), Is.<Object>is(Arrays.asList(1, 2, 3)));
+  }
 }
