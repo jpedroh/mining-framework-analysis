@@ -1,21 +1,8 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.apache.commons.lang3;
-
+import org.apache.commons.lang3.stream.FailableDoubleStream;
+import org.apache.commons.lang3.stream.FailableIntStream;
+import org.apache.commons.lang3.stream.FailableLongStream;
+import org.apache.commons.lang3.stream.FailableStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,11 +18,6 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
-
-import org.apache.commons.lang3.stream.FailableDoubleStream;
-import org.apache.commons.lang3.stream.FailableIntStream;
-import org.apache.commons.lang3.stream.FailableLongStream;
-import org.apache.commons.lang3.stream.FailableStream;
 
 /**
  * Provides utility functions, and classes for working with the
@@ -65,30 +47,29 @@ import org.apache.commons.lang3.stream.FailableStream;
  * @since 3.10
  */
 public class Streams {
-    /**
+  /**
      * <p>Streams instances should NOT be constructed in standard programming.
      * Instead, the class should be used as {@code Streams.failableStream(stream)}.</p>
      *
      * <p>This constructor is public to permit tools that require a JavaBean instance
      * to operate.</p>
      */
-    @SuppressWarnings("java:S1118")
-    public Streams() {
-        super();
-    }
+  @SuppressWarnings(value = { "java:S1118" }) public Streams() {
+    super();
+  }
 
-    /**
+  /**
      * Converts the given {@link Stream stream} into a {@link FailableStream}.
      *
      * @param <O>    The stream element type.
      * @param stream The stream which is being converted.
      * @return The {@link FailableStream} which has been created by converting the stream.
      */
-    public static <O> FailableStream<O> failableStream(final Stream<O> stream) {
-        return new FailableStream<>(stream);
-    }
+  public static <O extends java.lang.Object> FailableStream<O> failableStream(final Stream<O> stream) {
+    return new FailableStream<>(stream);
+  }
 
-    /**
+  /**
      * Converts the given {@link Collection} into a {@link FailableStream}.
      *
      * @param <O>        The collection element type.
@@ -96,82 +77,77 @@ public class Streams {
      * @return The {@link FailableStream} which has been created by converting
      * the stream obtained from the collection.
      */
-    public static <O> FailableStream<O> failableStream(final Collection<O> collection) {
-        return failableStream(collection.stream());
-    }
+  public static <O extends java.lang.Object> FailableStream<O> failableStream(final Collection<O> collection) {
+    return failableStream(collection.stream());
+  }
 
-    /**
+  /**
      * Converts the given {@link DoubleStream} into a {@link FailableDoubleStream}.
      *
      * @param doubleStream The double stream which is being converted.
      * @return The {@link FailableDoubleStream} which has been created by converting the stream.
      */
-    public static FailableDoubleStream failableDoubleStream(final DoubleStream doubleStream) {
-        return new FailableDoubleStream(doubleStream);
-    }
+  public static FailableDoubleStream failableDoubleStream(final DoubleStream doubleStream) {
+    return new FailableDoubleStream(doubleStream);
+  }
 
-    /**
+  /**
      * Converts the given {@link IntStream} into a {@link FailableIntStream}.
      *
      * @param intStream The int stream which is being converted.
      * @return The {@link FailableIntStream} which has been created by converting the stream.
      */
-    public static FailableIntStream failableIntStream(final IntStream intStream) {
-        return new FailableIntStream(intStream);
-    }
+  public static FailableIntStream failableIntStream(final IntStream intStream) {
+    return new FailableIntStream(intStream);
+  }
 
-    /**
+  /**
      * Converts the given {@link LongStream} into a {@link FailableLongStream}.
      *
      * @param longStream The long stream which is being converted.
      * @return The {@link FailableLongStream} which has been created by converting the stream.
      */
-    public static FailableLongStream failableLongStream(final LongStream longStream) {
-        return new FailableLongStream(longStream);
+  public static FailableLongStream failableLongStream(final LongStream longStream) {
+    return new FailableLongStream(longStream);
+  }
+
+  public static class ArrayCollector<O extends java.lang.Object> implements Collector<O, List<O>, O[]> {
+    private static final Set<Characteristics> characteristics = Collections.emptySet();
+
+    private final Class<O> elementType;
+
+    public ArrayCollector(final Class<O> elementType) {
+      this.elementType = elementType;
     }
 
-    public static class ArrayCollector<O> implements Collector<O, List<O>, O[]> {
-        private static final Set<Characteristics> characteristics = Collections.emptySet();
-        private final Class<O> elementType;
-
-        public ArrayCollector(final Class<O> elementType) {
-            this.elementType = elementType;
-        }
-
-        @Override
-        public Supplier<List<O>> supplier() {
-            return ArrayList::new;
-        }
-
-        @Override
-        public BiConsumer<List<O>, O> accumulator() {
-            return List::add;
-        }
-
-        @Override
-        public BinaryOperator<List<O>> combiner() {
-            return (left, right) -> {
-                left.addAll(right);
-                return left;
-            };
-        }
-
-        @Override
-        public Function<List<O>, O[]> finisher() {
-            return list -> {
-                @SuppressWarnings("unchecked")
-                final O[] array = (O[]) Array.newInstance(elementType, list.size());
-                return list.toArray(array);
-            };
-        }
-
-        @Override
-        public Set<Characteristics> characteristics() {
-            return characteristics;
-        }
+    @Override public Supplier<List<O>> supplier() {
+      return ArrayList::new;
     }
 
-    /**
+    @Override public BiConsumer<List<O>, O> accumulator() {
+      return List::add;
+    }
+
+    @Override public BinaryOperator<List<O>> combiner() {
+      return (left, right) -> {
+        left.addAll(right);
+        return left;
+      };
+    }
+
+    @Override public Function<List<O>, O[]> finisher() {
+      return (list) -> {
+        @SuppressWarnings(value = { "unchecked" }) final O[] array = (O[]) Array.newInstance(elementType, list.size());
+        return list.toArray(array);
+      };
+    }
+
+    @Override public Set<Characteristics> characteristics() {
+      return characteristics;
+    }
+  }
+
+  /**
      * Returns a {@code Collector} that accumulates the input elements into a
      * new array.
      *
@@ -180,7 +156,7 @@ public class Streams {
      * @return a {@code Collector} which collects all the input elements into an
      * array, in encounter order
      */
-    public static <O> Collector<O, List<O>, O[]> toArray(final Class<O> pElementType) {
-        return new ArrayCollector<>(pElementType);
-    }
+  public static <O extends java.lang.Object> Collector<O, List<O>, O[]> toArray(final Class<O> pElementType) {
+    return new ArrayCollector<>(pElementType);
+  }
 }
