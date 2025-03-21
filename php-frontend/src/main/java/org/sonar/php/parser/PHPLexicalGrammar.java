@@ -1,24 +1,4 @@
-/*
- * SonarQube PHP Plugin
- * Copyright (C) 2010-2021 SonarSource SA
- * mailto:info AT sonarsource DOT com
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */
 package org.sonar.php.parser;
-
 import com.sonar.sslr.api.GenericTokenType;
 import org.sonar.php.api.PHPKeyword;
 import org.sonar.php.api.PHPPunctuator;
@@ -27,55 +7,39 @@ import org.sonar.sslr.grammar.LexerlessGrammarBuilder;
 import org.sonar.sslr.parser.LexerlessGrammar;
 
 public enum PHPLexicalGrammar implements GrammarRuleKey {
-
   COMPILATION_UNIT,
   SCRIPT,
-
-  /**
-   * Declaration
-   */
-
   FUNCTION_DECLARATION,
   CLASS_DECLARATION,
   INTERFACE_DECLARATION,
   TRAIT_DECLARATION,
   ENUM_DECLARATION,
-
   CLASS_MEMBER,
   ENUM_MEMBER,
-
   METHOD_DECLARATION,
   CLASS_VARIABLE_DECLARATION,
   CLASS_CONSTANT_DECLARATION,
   TRAIT_USE_STATEMENT,
-
   NAMESPACE_NAME,
   INTERFACE_LIST,
   PARAMETER_LIST,
   PARAMETER,
-
   VARIABLE_DECLARATION,
   MEMBER_MODIFIER,
   CLASS_CONST_MODIFIER,
   VISIBILITY_MODIFIER,
   MEMBER_CONST_DECLARATION,
   FUNCTION_CALL_ARGUMENT,
-
   TRAIT_METHOD_REFERENCE_FULLY_QUALIFIED,
   TRAIT_METHOD_REFERENCE,
   TRAIT_ALIAS,
   TRAIT_PRECEDENCE,
-
   TYPE,
   TYPE_NAME,
   RETURN_TYPE_CLAUSE,
   UNION_TYPE,
   INTERSECTION_TYPE,
   DECLARED_TYPE,
-
-  /**
-   * Lexical
-   */
   EOF,
   NOWDOC,
   HEREDOC,
@@ -94,44 +58,24 @@ public enum PHPLexicalGrammar implements GrammarRuleKey {
   ANYTHING_BUT_START_TAG,
   INLINE_HTML,
   KEYWORDS,
-
-  /**
-   * SPACING
-   */
   SPACING,
-
-  /**
-   * End of statement.
-   */
   EOS,
-
-  /**
-   * Statement
-   */
   TOP_STATEMENT,
   STATEMENT,
   INNER_STATEMENT,
-
   BLOCK,
-
   EMPTY_STATEMENT,
-
   INLINE_HTML_STATEMENT,
-
   NAMESPACE_STATEMENT,
   DECLARE_STATEMENT,
-
   CONSTANT_DECLARATION,
   CONSTANT_VAR,
-
   USE_STATEMENT,
   USE_CLAUSE,
   GROUP_USE_CLAUSE,
-
   EXPRESSION_STATEMENT,
   EXPRESSION_LIST_STATEMENT,
   ECHO_STATEMENT,
-
   IF_STATEMENT,
   ELSEIF_CLAUSE,
   ELSE_CLAUSE,
@@ -139,46 +83,32 @@ public enum PHPLexicalGrammar implements GrammarRuleKey {
   STANDARD_IF_STATEMENT,
   ALTERNATIVE_ELSEIF_CLAUSE,
   ALTERNATIVE_ELSE_CLAUSE,
-
   WHILE_STATEMENT,
   ALTERNATIVE_WHILE_STATEMENT,
-
   DO_WHILE_STATEMENT,
-
   FOR_STATEMENT,
   FOR_EXPR,
-
   FOREACH_STATEMENT,
   FOREACH_VARIABLE,
-
   MATCH_EXPRESSION,
   MATCH_CLAUSE,
-
   SWITCH_STATEMENT,
   SWITCH_CASE_CLAUSE,
-
   LABEL,
   BREAK_STATEMENT,
   CONTINUE_STATEMENT,
   RETURN_STATEMENT,
   THROW_STATEMENT,
   GOTO_STATEMENT,
-
   TRY_STATEMENT,
   CATCH_BLOCK,
-
   GLOBAL_STATEMENT,
   GLOBAL_VAR,
   STATIC_STATEMENT,
   STATIC_VAR,
   UNSET_VARIABLE_STATEMENT,
   UNSET_VARIABLES,
-
   ENUM_CASE,
-
-  /**
-   * Expression
-   */
   PRIMARY_EXPRESSION,
   MEMBER_EXPRESSION,
   NEW_OBJECT_EXPRESSION,
@@ -219,7 +149,6 @@ public enum PHPLexicalGrammar implements GrammarRuleKey {
   ENCAPS_VAR,
   EXIT_EXPRESSION,
   CALLABLE_CONVERT,
-
   NULL,
   CLASS_CONSTANT,
   FILE_CONSTANT,
@@ -235,7 +164,6 @@ public enum PHPLexicalGrammar implements GrammarRuleKey {
   REGULAR_STRING_LITERAL,
   VARIABLE_VARIABLE_DOLLAR,
   ENUM,
-
   ISSET,
   EMPTY,
   WHITESPACES,
@@ -247,10 +175,8 @@ public enum PHPLexicalGrammar implements GrammarRuleKey {
   REQUIRE,
   CLONE,
   PRINT,
-
   SELF,
   PARENT,
-
   MIXED,
   INTEGER,
   INT,
@@ -263,9 +189,7 @@ public enum PHPLexicalGrammar implements GrammarRuleKey {
   BOOL,
   BINARY,
   ITERABLE,
-
   FROM,
-
   ATTRIBUTE,
   ATTRIBUTE_GROUP
   ;
@@ -276,50 +200,33 @@ public enum PHPLexicalGrammar implements GrammarRuleKey {
 
   public static LexerlessGrammarBuilder createGrammarBuilder() {
     LexerlessGrammarBuilder b = LexerlessGrammarBuilder.create();
-
     lexical(b);
     punctuators(b);
     keywords(b);
-
     return b;
   }
 
   public static void lexical(LexerlessGrammarBuilder b) {
-    b.rule(SPACING).is(
-      b.skippedTrivia(b.regexp("[" + LexicalConstant.LINE_TERMINATOR + LexicalConstant.WHITESPACE + "]*+")),
-      b.zeroOrMore(
-        b.commentTrivia(b.regexp(LexicalConstant.COMMENT)),
-        b.skippedTrivia(b.regexp("[" + LexicalConstant.LINE_TERMINATOR + LexicalConstant.WHITESPACE + "]*+")))
-      ).skip();
-
-    // Literals
+    b.rule(SPACING).is(b.skippedTrivia(b.regexp("[" + LexicalConstant.LINE_TERMINATOR + LexicalConstant.WHITESPACE + "]*+")), b.zeroOrMore(b.commentTrivia(b.regexp(LexicalConstant.COMMENT)), b.skippedTrivia(b.regexp("[" + LexicalConstant.LINE_TERMINATOR + LexicalConstant.WHITESPACE + "]*+")))).skip();
     b.rule(NOWDOC).is(SPACING, b.regexp(LexicalConstant.NOWDOC));
     b.rule(HEREDOC).is(SPACING, b.regexp(LexicalConstant.HEREDOC));
     b.rule(NUMERIC_LITERAL).is(SPACING, b.regexp(LexicalConstant.NUMERIC_LITERAL));
     b.rule(REGULAR_STRING_LITERAL).is(SPACING, b.regexp(LexicalConstant.STRING_LITERAL));
-
     b.rule(STRING_WITH_ENCAPS_VAR_CHARACTERS).is(b.regexp(LexicalConstant.STRING_WITH_ENCAPS_VAR_CHARACTERS));
     b.rule(STRING_CHARACTERS_EXECUTION).is(b.regexp(LexicalConstant.STRING_CHARACTERS_EXECUTION));
     b.rule(HEREDOC_STRING_CHARACTERS).is(b.regexp(LexicalConstant.HEREDOC_STRING_CHARACTERS));
     b.rule(DOUBLE_QUOTE).is("\"");
     b.rule(BACKTICK).is("`");
-    // FIXME: this recovery is introduce in order to parse ${var}, as expression cannot match keywords.
     b.rule(SEMI_COMPLEX_RECOVERY_EXPRESSION).is(b.regexp("[^}]++"));
-
-    // Identifier
     b.rule(WHITESPACES).is(b.regexp("[" + LexicalConstant.WHITESPACE + "]*+"));
     b.rule(REGULAR_VAR_IDENTIFIER).is(SPACING, VARIABLE_IDENTIFIER).skip();
     b.rule(VARIABLE_IDENTIFIER).is(b.regexp(LexicalConstant.VAR_IDENTIFIER));
     b.rule(IDENTIFIER).is(SPACING, b.firstOf(b.sequence(b.nextNot(KEYWORDS), b.regexp(LexicalConstant.IDENTIFIER)), b.regexp("(?i)match")));
     b.rule(IDENTIFIER_OR_KEYWORD).is(SPACING, b.regexp(LexicalConstant.IDENTIFIER));
-
-    // Tags & Inline HTML
     b.rule(FILE_OPENING_TAG).is(SPACING, b.regexp(LexicalConstant.PHP_START_TAG)).skip();
     b.rule(INLINE_HTML).is(SPACING, b.regexp(LexicalConstant.PHP_END_TAG)).skip();
     b.rule(ANYTHING_BUT_START_TAG).is(SPACING, b.regexp(LexicalConstant.ANYTHING_BUT_START_TAG)).skip();
-
     b.rule(EOF).is(b.token(GenericTokenType.EOF, b.endOfInput())).skip();
-
     b.rule(NULL).is(word(b, "NULL")).skip();
     b.rule(CLASS_CONSTANT).is(word(b, "__CLASS__")).skip();
     b.rule(FILE_CONSTANT).is(word(b, "__FILE__")).skip();
@@ -330,12 +237,9 @@ public enum PHPLexicalGrammar implements GrammarRuleKey {
     b.rule(NAMESPACE_CONSTANT).is(word(b, "__NAMESPACE__")).skip();
     b.rule(TRAIT_CONSTANT).is(word(b, "__TRAIT__")).skip();
     b.rule(ENUM).is(word(b, "enum")).skip();
-
     b.rule(BOOLEAN_LITERAL).is(b.firstOf(word(b, "TRUE"), word(b, "FALSE")));
-
     b.rule(NEXT_IS_DOLLAR).is(b.next(PHPPunctuator.DOLLAR));
     b.rule(VARIABLE_VARIABLE_DOLLAR).is(PHPPunctuator.DOLLAR, b.nextNot(b.firstOf(IDENTIFIER, KEYWORDS, PHPPunctuator.LCURLYBRACE)));
-
     b.rule(ISSET).is(word(b, "ISSET")).skip();
     b.rule(EMPTY).is(word(b, "EMPTY")).skip();
     b.rule(INCLUDE_ONCE).is(word(b, "INCLUDE_ONCE")).skip();
@@ -345,10 +249,8 @@ public enum PHPLexicalGrammar implements GrammarRuleKey {
     b.rule(REQUIRE).is(word(b, "REQUIRE")).skip();
     b.rule(CLONE).is(word(b, "CLONE")).skip();
     b.rule(PRINT).is(word(b, "PRINT")).skip();
-
     b.rule(SELF).is(word(b, "SELF")).skip();
     b.rule(PARENT).is(word(b, "PARENT")).skip();
-
     b.rule(MIXED).is(word(b, "MIXED")).skip();
     b.rule(INTEGER).is(word(b, "INTEGER")).skip();
     b.rule(INT).is(word(b, "INT")).skip();
@@ -361,31 +263,19 @@ public enum PHPLexicalGrammar implements GrammarRuleKey {
     b.rule(BOOL).is(word(b, "BOOL")).skip();
     b.rule(BINARY).is(word(b, "BINARY")).skip();
     b.rule(ITERABLE).is(word(b, "ITERABLE")).skip();
-
     b.rule(FROM).is(word(b, "FROM")).skip();
-
   }
 
   private static void keywords(LexerlessGrammarBuilder b) {
     Object[] rest = new Object[PHPKeyword.values().length - 2];
-
     for (int i = 0; i < PHPKeyword.values().length; i++) {
       PHPKeyword tokenType = PHPKeyword.values()[i];
-
-      // PHP keywords are case insensitive
       b.rule(tokenType).is(SPACING, b.regexp("(?i)" + tokenType.getValue()), b.nextNot(b.regexp(LexicalConstant.IDENTIFIER_PART))).skip();
       if (i > 1) {
         rest[i - 2] = b.regexp("(?i)" + tokenType.getValue());
       }
     }
-
-    b.rule(KEYWORDS).is(SPACING,
-      b.firstOf(
-        PHPKeyword.getKeywordValues()[0],
-        PHPKeyword.getKeywordValues()[1],
-        rest),
-      b.nextNot(b.regexp(LexicalConstant.IDENTIFIER_PART))
-      );
+    b.rule(KEYWORDS).is(SPACING, b.firstOf(PHPKeyword.getKeywordValues()[0], PHPKeyword.getKeywordValues()[1], rest), b.nextNot(b.regexp(LexicalConstant.IDENTIFIER_PART)));
   }
 
   private static void punctuators(LexerlessGrammarBuilder b) {
@@ -397,5 +287,4 @@ public enum PHPLexicalGrammar implements GrammarRuleKey {
   private static Object word(LexerlessGrammarBuilder b, String word) {
     return b.sequence(SPACING, b.regexp("(?i)" + word), b.nextNot(b.regexp(LexicalConstant.IDENTIFIER_PART)));
   }
-
 }
