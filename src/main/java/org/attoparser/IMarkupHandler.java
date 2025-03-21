@@ -1,24 +1,4 @@
-/*
- * =============================================================================
- * 
- *   Copyright (c) 2012-2014, The ATTOPARSER team (http://www.attoparser.org)
- * 
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- * 
- * =============================================================================
- */
 package org.attoparser;
-
 import org.attoparser.config.ParseConfiguration;
 import org.attoparser.select.ParseSelection;
 
@@ -150,9 +130,7 @@ import org.attoparser.select.ParseSelection;
  *
  */
 public interface IMarkupHandler {
-
-
-    /**
+  /**
      * <p>
      *   Sets the {@link org.attoparser.config.ParseConfiguration} object that will be used during the parsing
      *   operation. This object will normally have been specified to the parser object during its instantiation
@@ -168,10 +146,9 @@ public interface IMarkupHandler {
      *
      * @param parseConfiguration the configuration object.
      */
-    public void setParseConfiguration(final ParseConfiguration parseConfiguration);
+  public void setParseConfiguration(final ParseConfiguration parseConfiguration);
 
-
-    /**
+  /**
      * <p>
      *   Sets the {@link org.attoparser.ParseStatus} object that will be used during the parsing operation. This
      *   object can be used for instructing the parser about specific low-level conditions arisen during event
@@ -188,10 +165,9 @@ public interface IMarkupHandler {
      *
      * @param status the status object.
      */
-    public void setParseStatus(final ParseStatus status);
+  public void setParseStatus(final ParseStatus status);
 
-
-    /**
+  /**
      * <p>
      *   Sets the {@link org.attoparser.select.ParseSelection} object that represents the different levels of
      *   selectors (if any) that are currently active for the fired events.
@@ -206,12 +182,9 @@ public interface IMarkupHandler {
      *
      * @param selection the selection object.
      */
-    public void setParseSelection(final ParseSelection selection);
+  public void setParseSelection(final ParseSelection selection);
 
-
-
-
-    /**
+  /**
      * <p>
      *   Called at the beginning of document parsing.
      * </p>
@@ -221,12 +194,9 @@ public interface IMarkupHandler {
      * @param col the column of the document where parsing starts (usually number 1).
      * @throws ParseException if any exceptions occur during handling.
      */
-    public void handleDocumentStart(final long startTimeNanos, final int line, final int col)
-            throws ParseException;
+  public void handleDocumentStart(final long startTimeNanos, final int line, final int col) throws ParseException;
 
-
-
-    /**
+  /**
      * <p>
      *   Called at the end of document parsing.
      * </p>
@@ -238,13 +208,9 @@ public interface IMarkupHandler {
      * @param col the column of the document where the parsing ends (usually the last one).
      * @throws ParseException if any exceptions occur during handling.
      */
-    public void handleDocumentEnd(
-            final long endTimeNanos, final long totalTimeNanos, final int line, final int col)
-            throws ParseException;
+  public void handleDocumentEnd(final long endTimeNanos, final long totalTimeNanos, final int line, final int col) throws ParseException;
 
-
-
-    /**
+  /**
      * <p>
      *   Called when a XML Declaration is found.
      * </p>
@@ -290,23 +256,9 @@ public interface IMarkupHandler {
      * @param col the column in the original document where this artifact starts.
      * @throws ParseException if any exceptions occur during handling.
      */
-    public void handleXmlDeclaration(
-            final char[] buffer,
-            final int keywordOffset, final int keywordLen,
-            final int keywordLine, final int keywordCol,
-            final int versionOffset, final int versionLen,
-            final int versionLine, final int versionCol,
-            final int encodingOffset, final int encodingLen,
-            final int encodingLine, final int encodingCol,
-            final int standaloneOffset, final int standaloneLen,
-            final int standaloneLine, final int standaloneCol,
-            final int outerOffset, final int outerLen,
-            final int line, final int col)
-            throws ParseException;
+  public void handleXmlDeclaration(final char[] buffer, final int keywordOffset, final int keywordLen, final int keywordLine, final int keywordCol, final int versionOffset, final int versionLen, final int versionLine, final int versionCol, final int encodingOffset, final int encodingLen, final int encodingLine, final int encodingCol, final int standaloneOffset, final int standaloneLen, final int standaloneLine, final int standaloneCol, final int outerOffset, final int outerLen, final int line, final int col) throws ParseException;
 
-
-
-    /**
+  /**
      * <p>
      *   Called when a DOCTYPE clause is found.
      * </p>
@@ -365,27 +317,9 @@ public interface IMarkupHandler {
      * @param outerCol the column in the original document where this artifact starts.
      * @throws ParseException if any exceptions occur during handling.
      */
-    public void handleDocType(
-            final char[] buffer,
-            final int keywordOffset, final int keywordLen,
-            final int keywordLine, final int keywordCol,
-            final int elementNameOffset, final int elementNameLen,
-            final int elementNameLine, final int elementNameCol,
-            final int typeOffset, final int typeLen,
-            final int typeLine, final int typeCol,
-            final int publicIdOffset, final int publicIdLen,
-            final int publicIdLine, final int publicIdCol,
-            final int systemIdOffset, final int systemIdLen,
-            final int systemIdLine, final int systemIdCol,
-            final int internalSubsetOffset, final int internalSubsetLen,
-            final int internalSubsetLine, final int internalSubsetCol,
-            final int outerOffset, final int outerLen,
-            final int outerLine, final int outerCol)
-            throws ParseException;
+  public void handleDocType(final char[] buffer, final int keywordOffset, final int keywordLen, final int keywordLine, final int keywordCol, final int elementNameOffset, final int elementNameLen, final int elementNameLine, final int elementNameCol, final int typeOffset, final int typeLen, final int typeLine, final int typeCol, final int publicIdOffset, final int publicIdLen, final int publicIdLine, final int publicIdCol, final int systemIdOffset, final int systemIdLen, final int systemIdLine, final int systemIdCol, final int internalSubsetOffset, final int internalSubsetLen, final int internalSubsetLine, final int internalSubsetCol, final int outerOffset, final int outerLen, final int outerLine, final int outerCol) throws ParseException;
 
-
-
-    /**
+  /**
      * <p>
      *   Called when a CDATA section is found.
      * </p>
@@ -416,16 +350,9 @@ public interface IMarkupHandler {
      * @param col the column in the original document where this artifact starts.
      * @throws ParseException if any exceptions occur during handling.
      */
-    public void handleCDATASection(
-            final char[] buffer,
-            final int contentOffset, final int contentLen,
-            final int outerOffset, final int outerLen,
-            final int line, final int col)
-            throws ParseException;
+  public void handleCDATASection(final char[] buffer, final int contentOffset, final int contentLen, final int outerOffset, final int outerLen, final int line, final int col) throws ParseException;
 
-
-
-    /**
+  /**
      * <p>
      *   Called when a comment is found.
      * </p>
@@ -456,15 +383,9 @@ public interface IMarkupHandler {
      * @param col the column in the original document where this artifact starts.
      * @throws ParseException if any exceptions occur during handling.
      */
-    public void handleComment(
-            final char[] buffer,
-            final int contentOffset, final int contentLen,
-            final int outerOffset, final int outerLen,
-            final int line, final int col)
-            throws ParseException;
+  public void handleComment(final char[] buffer, final int contentOffset, final int contentLen, final int outerOffset, final int outerLen, final int line, final int col) throws ParseException;
 
-
-    /**
+  /**
      * <p>
      *   Called when a <i>text</i> artifact is found.
      * </p>
@@ -493,14 +414,9 @@ public interface IMarkupHandler {
      * @param col the column in the original document where this text artifact starts.
      * @throws ParseException if any exceptions occur during handling.
      */
-    public void handleText(
-            final char[] buffer,
-            final int offset, final int len,
-            final int line, final int col)
-            throws ParseException;
+  public void handleText(final char[] buffer, final int offset, final int len, final int line, final int col) throws ParseException;
 
-
-    /**
+  /**
      * <p>
      *   Called when a standalone element (an element with no closing tag) is found. The name of
      *   the element is also reported.
@@ -523,14 +439,9 @@ public interface IMarkupHandler {
      * @param col the column in the original document where this artifact starts.
      * @throws ParseException if any exceptions occur during handling.
      */
-    public void handleStandaloneElementStart(
-            final char[] buffer,
-            final int nameOffset, final int nameLen,
-            final boolean minimized,
-            final int line, final int col)
-            throws ParseException;
+  public void handleStandaloneElementStart(final char[] buffer, final int nameOffset, final int nameLen, final boolean minimized, final int line, final int col) throws ParseException;
 
-    /**
+  /**
      * <p>
      *   Called when the end of a standalone element (an element with no closing tag) is found
      * </p>
@@ -552,15 +463,9 @@ public interface IMarkupHandler {
      * @param col the column in the original document where the element ending structure appears.
      * @throws ParseException if any exceptions occur during handling.
      */
-    public void handleStandaloneElementEnd(
-            final char[] buffer,
-            final int nameOffset, final int nameLen,
-            final boolean minimized,
-            final int line, final int col)
-            throws ParseException;
+  public void handleStandaloneElementEnd(final char[] buffer, final int nameOffset, final int nameLen, final boolean minimized, final int line, final int col) throws ParseException;
 
-
-    /**
+  /**
      * <p>
      *   Called when an open element (an <i>open tag</i>) is found. The name of
      *   the element is also reported.
@@ -582,13 +487,9 @@ public interface IMarkupHandler {
      * @param col the column in the original document where this artifact starts.
      * @throws ParseException if any exceptions occur during handling.
      */
-    public void handleOpenElementStart(
-            final char[] buffer,
-            final int nameOffset, final int nameLen,
-            final int line, final int col)
-            throws ParseException;
+  public void handleOpenElementStart(final char[] buffer, final int nameOffset, final int nameLen, final int line, final int col) throws ParseException;
 
-    /**
+  /**
      * <p>
      *   Called when the end of an open element (an <i>open tag</i>) is found.
      * </p>
@@ -609,14 +510,9 @@ public interface IMarkupHandler {
      * @param col the column in the original document where the element ending structure appears.
      * @throws ParseException if any exceptions occur during handling.
      */
-    public void handleOpenElementEnd(
-            final char[] buffer,
-            final int nameOffset, final int nameLen,
-            final int line, final int col)
-            throws ParseException;
+  public void handleOpenElementEnd(final char[] buffer, final int nameOffset, final int nameLen, final int line, final int col) throws ParseException;
 
-
-    /**
+  /**
      * <p>
      *   Called for signaling the start of an auto-open element (a synthetic <i>open tag</i>),
      *   created for adapting parsed markup to a specification such as, for example, HTML5. The name of the
@@ -639,13 +535,9 @@ public interface IMarkupHandler {
      * @param col the column in the original document where this artifact starts.
      * @throws ParseException if any exceptions occur during handling.
      */
-    public void handleAutoOpenElementStart(
-            final char[] buffer,
-            final int nameOffset, final int nameLen,
-            final int line, final int col)
-            throws ParseException;
+  public void handleAutoOpenElementStart(final char[] buffer, final int nameOffset, final int nameLen, final int line, final int col) throws ParseException;
 
-    /**
+  /**
      * <p>
      *   Called for signaling the end of an auto-open element (a synthetic <i>open tag</i>),
      *   created for adapting parsed markup to a specification such as, for example, HTML5. The name of the
@@ -668,14 +560,9 @@ public interface IMarkupHandler {
      * @param col the column in the original document where the element ending structure appears.
      * @throws ParseException if any exceptions occur during handling.
      */
-    public void handleAutoOpenElementEnd(
-            final char[] buffer,
-            final int nameOffset, final int nameLen,
-            final int line, final int col)
-            throws ParseException;
+  public void handleAutoOpenElementEnd(final char[] buffer, final int nameOffset, final int nameLen, final int line, final int col) throws ParseException;
 
-
-    /**
+  /**
      * <p>
      *   Called when the start of a close element (a <i>close tag</i>) is found. The name of
      *   the element is also reported.
@@ -697,13 +584,9 @@ public interface IMarkupHandler {
      * @param col the column in the original document where this artifact starts.
      * @throws ParseException if any exceptions occur during handling.
      */
-    public void handleCloseElementStart(
-            final char[] buffer,
-            final int nameOffset, final int nameLen,
-            final int line, final int col)
-            throws ParseException;
+  public void handleCloseElementStart(final char[] buffer, final int nameOffset, final int nameLen, final int line, final int col) throws ParseException;
 
-    /**
+  /**
      * <p>
      *   Called when the end of a close element (a <i>close tag</i>) is found.
      * </p>
@@ -724,14 +607,9 @@ public interface IMarkupHandler {
      * @param col the column in the original document where the element ending structure appears.
      * @throws ParseException if any exceptions occur during handling.
      */
-    public void handleCloseElementEnd(
-            final char[] buffer,
-            final int nameOffset, final int nameLen,
-            final int line, final int col)
-            throws ParseException;
+  public void handleCloseElementEnd(final char[] buffer, final int nameOffset, final int nameLen, final int line, final int col) throws ParseException;
 
-
-    /**
+  /**
      * <p>
      *   Called for signaling the start of an auto-close element (a synthetic <i>close tag</i>),
      *   created for balancing an unclosed tag. The name of the element is also reported.
@@ -753,13 +631,9 @@ public interface IMarkupHandler {
      * @param col the column in the original document where this artifact starts.
      * @throws ParseException if any exceptions occur during handling.
      */
-    public void handleAutoCloseElementStart(
-            final char[] buffer,
-            final int nameOffset, final int nameLen,
-            final int line, final int col)
-            throws ParseException;
+  public void handleAutoCloseElementStart(final char[] buffer, final int nameOffset, final int nameLen, final int line, final int col) throws ParseException;
 
-    /**
+  /**
      * <p>
      *   Called for signaling the end of an auto-close element, created for
      *   balancing an unclosed tag.
@@ -781,14 +655,9 @@ public interface IMarkupHandler {
      * @param col the column in the original document where the element ending structure appears.
      * @throws ParseException if any exceptions occur during handling.
      */
-    public void handleAutoCloseElementEnd(
-            final char[] buffer,
-            final int nameOffset, final int nameLen,
-            final int line, final int col)
-            throws ParseException;
+  public void handleAutoCloseElementEnd(final char[] buffer, final int nameOffset, final int nameLen, final int line, final int col) throws ParseException;
 
-
-    /**
+  /**
      * <p>
      *   Called when the start of an unmatched close element (<i>close tag</i>) is found. The name of
      *   the element is also reported.
@@ -810,13 +679,9 @@ public interface IMarkupHandler {
      * @param col the column in the original document where this artifact starts.
      * @throws ParseException if any exceptions occur during handling.
      */
-    public void handleUnmatchedCloseElementStart(
-            final char[] buffer,
-            final int nameOffset, final int nameLen,
-            final int line, final int col)
-            throws ParseException;
+  public void handleUnmatchedCloseElementStart(final char[] buffer, final int nameOffset, final int nameLen, final int line, final int col) throws ParseException;
 
-    /**
+  /**
      * <p>
      *   Called when the end of an unmatched close element (<i>close tag</i>) is found.
      * </p>
@@ -837,14 +702,9 @@ public interface IMarkupHandler {
      * @param col the column in the original document where the element ending structure appears.
      * @throws ParseException if any exceptions occur during handling.
      */
-    public void handleUnmatchedCloseElementEnd(
-            final char[] buffer,
-            final int nameOffset, final int nameLen,
-            final int line, final int col)
-            throws ParseException;
+  public void handleUnmatchedCloseElementEnd(final char[] buffer, final int nameOffset, final int nameLen, final int line, final int col) throws ParseException;
 
-
-    /**
+  /**
      * <p>
      *   Called when an attribute is found.
      * </p>
@@ -885,19 +745,9 @@ public interface IMarkupHandler {
      * @param valueCol the column in the original document where the <i>value</i> (outer) partition starts.
      * @throws ParseException if any exceptions occur during handling.
      */
-    public void handleAttribute(
-            final char[] buffer,
-            final int nameOffset, final int nameLen,
-            final int nameLine, final int nameCol,
-            final int operatorOffset, final int operatorLen,
-            final int operatorLine, final int operatorCol,
-            final int valueContentOffset, final int valueContentLen,
-            final int valueOuterOffset, final int valueOuterLen,
-            final int valueLine, final int valueCol)
-            throws ParseException;
+  public void handleAttribute(final char[] buffer, final int nameOffset, final int nameLen, final int nameLine, final int nameCol, final int operatorOffset, final int operatorLen, final int operatorLine, final int operatorCol, final int valueContentOffset, final int valueContentLen, final int valueOuterOffset, final int valueOuterLen, final int valueLine, final int valueCol) throws ParseException;
 
-
-    /**
+  /**
      * <p>
      *   Called when an amount of white space is found inside an element.
      * </p>
@@ -926,15 +776,9 @@ public interface IMarkupHandler {
      * @param col the column in the original document where the artifact starts.
      * @throws ParseException if any exceptions occur during handling.
      */
-    public void handleInnerWhiteSpace(
-            final char[] buffer,
-            final int offset, final int len,
-            final int line, final int col)
-            throws ParseException;
+  public void handleInnerWhiteSpace(final char[] buffer, final int offset, final int len, final int line, final int col) throws ParseException;
 
-
-
-    /**
+  /**
      * <p>
      *   Called when a Processing Instruction is found.
      * </p>
@@ -977,14 +821,5 @@ public interface IMarkupHandler {
      * @param col the column in the original document where this artifact starts.
      * @throws ParseException if any exceptions occur during handling.
      */
-    public void handleProcessingInstruction(
-            final char[] buffer,
-            final int targetOffset, final int targetLen,
-            final int targetLine, final int targetCol,
-            final int contentOffset, final int contentLen,
-            final int contentLine, final int contentCol,
-            final int outerOffset, final int outerLen,
-            final int line, final int col)
-            throws ParseException;
-
+  public void handleProcessingInstruction(final char[] buffer, final int targetOffset, final int targetLen, final int targetLine, final int targetCol, final int contentOffset, final int contentLen, final int contentLine, final int contentCol, final int outerOffset, final int outerLen, final int line, final int col) throws ParseException;
 }
