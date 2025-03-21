@@ -326,8 +326,22 @@ public class ManualConditionTest {
             // Re-execute promotion as unspecified user with Promotion/Promote
             cond.setUsers("non-promoter");
             wc.login("promoter", "promoter");
+<<<<<<< /usr/src/app/output/jenkinsci/promoted-builds-plugin/90cff675a1008c2167bd647a27a4c62f3b9a9c6a/src/test/java/hudson/plugins/promoted_builds/conditions/ManualConditionTest.java/left.java
             // Status#doBuild does a bare `return;` without scheduling the build in this case, which is why we use goTo with "" for the MIME type.
+            try {
+                wc.goTo(String.format("job/%s/%d/promotion/%s/build?json={}", p.getName(), b.getNumber(), pp.getName()), "");
+            } catch (FailingHttpStatusCodeException e) {
+                assertThat(e.getStatusCode(), equalTo(404)); // Redirect after the build is broken.
+            }
+||||||| /usr/src/app/output/jenkinsci/promoted-builds-plugin/90cff675a1008c2167bd647a27a4c62f3b9a9c6a/src/test/java/hudson/plugins/promoted_builds/conditions/ManualConditionTest.java/base.java
+            try {
+                wc.goTo(String.format("job/%s/%d/promotion/%s/build?json={}", p.getName(), b.getNumber(), pp.getName()), "");
+            } catch (FailingHttpStatusCodeException e) {
+                assertThat(e.getStatusCode(), equalTo(404)); // Redirect after the build is broken.
+            }
+=======
             wc.goTo(String.format("job/%s/%d/promotion/%s/build?json={}", p.getName(), b.getNumber(), pp.getName()), "");
+>>>>>>> /usr/src/app/output/jenkinsci/promoted-builds-plugin/90cff675a1008c2167bd647a27a4c62f3b9a9c6a/src/test/java/hudson/plugins/promoted_builds/conditions/ManualConditionTest.java/right.java
             assertThat(pp.getBuildByNumber(4), nullValue());
         }
     }
