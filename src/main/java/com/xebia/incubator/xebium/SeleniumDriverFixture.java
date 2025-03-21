@@ -18,7 +18,6 @@
 
 package com.xebia.incubator.xebium;
 
-import com.google.common.base.Supplier;
 import com.thoughtworks.selenium.CommandProcessor;
 import com.thoughtworks.selenium.HttpCommandProcessor;
 import com.thoughtworks.selenium.SeleniumException;
@@ -26,6 +25,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverCommandProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.google.common.base.Supplier;
 
 import java.io.File;
 import java.io.IOException;
