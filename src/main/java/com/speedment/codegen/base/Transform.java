@@ -45,6 +45,7 @@ public interface Transform<F, T> {
      *               not be done for that input
      */
     Optional<T> transform(Generator gen, F model);
+<<<<<<< /usr/src/app/output/pyknic/codegen/3e0d4067f68ebf4163e850c7031571271b4893e0/src/main/java/com/speedment/codegen/base/Transform.java/left.java
     
     /**
      * Returns true if this transform is or contains the specified 
@@ -57,4 +58,11 @@ public interface Transform<F, T> {
     default boolean is(Class<? extends Transform<?, ?>> transformer) {
         return transformer.isAssignableFrom(getClass());
     }
+||||||| /usr/src/app/output/pyknic/codegen/3e0d4067f68ebf4163e850c7031571271b4893e0/src/main/java/com/speedment/codegen/base/Transform.java/base.java
+=======
+    
+    default boolean is(Class<? extends Transform<?, ?>> transformer) {
+        return transformer.isAssignableFrom(getClass());
+    }
+>>>>>>> /usr/src/app/output/pyknic/codegen/3e0d4067f68ebf4163e850c7031571271b4893e0/src/main/java/com/speedment/codegen/base/Transform.java/right.java
 }

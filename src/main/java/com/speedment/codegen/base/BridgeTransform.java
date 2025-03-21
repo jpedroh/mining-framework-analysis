@@ -36,7 +36,6 @@ public class BridgeTransform<A, B> implements Transform<A, B> {
     private final Class<B> to;
     private final TransformFactory factory;
     private Class<?> end;
-    
     /**
      * Constructs a new transform from one model class to another. The bridge
      * requires a factory to create the intermediate steps.
@@ -53,7 +52,6 @@ public class BridgeTransform<A, B> implements Transform<A, B> {
         this.steps = new ArrayList<>();
         this.end   = requireNonNull(from);
     }
-    
     /**
      * Creates a shallow copy of a bridge.
      * 
@@ -66,7 +64,6 @@ public class BridgeTransform<A, B> implements Transform<A, B> {
         end     = prototype.end;
         factory = prototype.factory;
     }
-    
     /**
      * Transforms the specified model using this transform. A code generator is
      * supplied so that the transform can initiate new generation processes to
@@ -112,7 +109,6 @@ public class BridgeTransform<A, B> implements Transform<A, B> {
             }
         }
     }
-    
     /**
      * Creates a bridge from one model type to another. A factory is supplied so
      * that intermediate steps can be resolved.
@@ -128,7 +124,6 @@ public class BridgeTransform<A, B> implements Transform<A, B> {
     public static <A, B, T extends Transform<A, B>> Stream<T> create(TransformFactory factory, Class<A> from, Class<B> to) {
         return create(factory, new BridgeTransform<>(from, to, factory));
     }
-    
     /**
      * Takes a bridge and completes it if it is not finished. Returns all valid 
      * paths through the graph as a <code>Stream</code>.
@@ -169,7 +164,6 @@ public class BridgeTransform<A, B> implements Transform<A, B> {
             return bridges.stream().flatMap(i -> i);
         }
     }
-
     /**
      * Returns true if this transform is or contains the specified 
      * transformer. This is used internally by the code generator to avoid 
@@ -182,7 +176,6 @@ public class BridgeTransform<A, B> implements Transform<A, B> {
     public boolean is(Class<? extends Transform<?, ?>> transformer) {
         return steps.stream().anyMatch(t -> t.is(transformer));
     }
-    
     /**
      * Attempts to add a new step to the bridge. If the step is already part of
      * the bridge, it will not be added. Returns true if the step was added.

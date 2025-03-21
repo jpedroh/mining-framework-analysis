@@ -58,6 +58,10 @@ public class DefaultDependencyManager implements DependencyManager {
 		ignorePackages = Arrays.stream(ignoredPackages)
 			.collect(Collectors.toSet());
 	}
+    /**
+	 * Initalises the DependencyManager.
+	 * @param ignoredPackages Packages that should be ignored.
+	 */
 	
 	/**
 	 * Initalises the DependencyManager.

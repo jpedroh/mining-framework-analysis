@@ -97,15 +97,15 @@ public class ImportImpl implements Import {
     public Optional<String> getStaticMember() {
         return Optional.ofNullable(staticMember);
     }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Import setStaticMember(String member) {
         staticMember = member;
         return this;
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     /**
      * {@inheritDoc}

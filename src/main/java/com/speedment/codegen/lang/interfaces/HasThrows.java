@@ -17,13 +17,19 @@
 package com.speedment.codegen.lang.interfaces;
 
 import com.speedment.codegen.lang.models.Type;
+import java.util.Collection;
 import java.util.Set;
 
 /**
  * A trait for models that can throw exceptions.
  * 
  * @author Emil Forslund
+<<<<<<< /usr/src/app/output/pyknic/codegen/3e0d4067f68ebf4163e850c7031571271b4893e0/src/main/java/com/speedment/codegen/lang/interfaces/HasThrows.java/left.java
  * @param <T> The extending type
+||||||| /usr/src/app/output/pyknic/codegen/3e0d4067f68ebf4163e850c7031571271b4893e0/src/main/java/com/speedment/codegen/lang/interfaces/HasThrows.java/base.java
+=======
+ * @param <T>
+>>>>>>> /usr/src/app/output/pyknic/codegen/3e0d4067f68ebf4163e850c7031571271b4893e0/src/main/java/com/speedment/codegen/lang/interfaces/HasThrows.java/right.java
  */
 public interface HasThrows<T extends HasThrows<T>> {
     
@@ -36,7 +42,13 @@ public interface HasThrows<T extends HasThrows<T>> {
      */
     @SuppressWarnings("unchecked")
     default T add(final Type exception) {
-        getExceptions().add(exception);
+        getExceptions().add(exception.copy());
+        return (T) this;
+    }
+    
+    @SuppressWarnings("unchecked")
+    default T addAllExceptions(final Collection<? extends Type> exceptions) {
+        exceptions.forEach(this::add);
         return (T) this;
     }
     

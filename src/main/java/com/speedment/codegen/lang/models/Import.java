@@ -30,6 +30,7 @@ import java.util.function.Supplier;
  */
 public interface Import extends Copyable<Import>, HasType<Import>, 
     ImportModifier<Import> {
+<<<<<<< /usr/src/app/output/pyknic/codegen/3e0d4067f68ebf4163e850c7031571271b4893e0/src/main/java/com/speedment/codegen/lang/models/Import.java/left.java
     
     /**
      * Returns any static member referenced in this import. For non-static
@@ -47,6 +48,12 @@ public interface Import extends Copyable<Import>, HasType<Import>,
      * @return        a reference to this model
      */
     Import setStaticMember(String member);
+||||||| /usr/src/app/output/pyknic/codegen/3e0d4067f68ebf4163e850c7031571271b4893e0/src/main/java/com/speedment/codegen/lang/models/Import.java/base.java
+=======
+    
+    Optional<String> getStaticMember();
+    Import setStaticMember(String member);
+>>>>>>> /usr/src/app/output/pyknic/codegen/3e0d4067f68ebf4163e850c7031571271b4893e0/src/main/java/com/speedment/codegen/lang/models/Import.java/right.java
 
     /**
      * Factory holder.
