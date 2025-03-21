@@ -36,11 +36,13 @@ public class TestNextXxx
         _testIsNextTokenName3(false);
         _testIsNextTokenName3(true);
     }
-
+    
     public void testIsNextTokenName4() throws Exception {
         _testIsNextTokenName4(false);
         _testIsNextTokenName4(true);
     }
+    
+    // [Issue#34]
     
     // [jackson-core#34]
     public void testIssue34() throws Exception
@@ -243,7 +245,7 @@ public class TestNextXxx
         assertNull(p.nextFieldName());
         assertNull(p.getCurrentToken());
 
-        p.close();
+        jp.close();
     }
 
     private void _testIsNextTokenName4(boolean useStream) throws Exception
@@ -264,7 +266,7 @@ public class TestNextXxx
         assertToken(JsonToken.END_OBJECT, jp.nextToken());
         assertNull(jp.nextToken());
 
-        jp.close();
+        p.close();
     }
 
     private void _testNextFieldNameIndent(boolean useStream) throws Exception
@@ -284,7 +286,7 @@ public class TestNextXxx
 
         p.close();
     }
-
+    
     private void _textNextText(boolean useStream) throws Exception
     {
         final String DOC = aposToQuotes("{'a':'123','b':5,'c':[false,'foo']}");
