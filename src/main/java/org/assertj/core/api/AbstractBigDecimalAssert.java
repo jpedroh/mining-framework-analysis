@@ -1,20 +1,6 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2015 the original author or authors.
- */
 package org.assertj.core.api;
-
 import java.math.BigDecimal;
 import java.util.Comparator;
-
 import org.assertj.core.data.Offset;
 import org.assertj.core.data.Percentage;
 import org.assertj.core.internal.BigDecimals;
@@ -35,11 +21,8 @@ import org.assertj.core.util.VisibleForTesting;
  * @author Joel Costigliola
  * @author Mikhail Mazursky
  */
-public abstract class AbstractBigDecimalAssert<S extends AbstractBigDecimalAssert<S>> extends
-    AbstractComparableAssert<S, BigDecimal> implements NumberAssert<S, BigDecimal> {
-
-  @VisibleForTesting
-  BigDecimals bigDecimals = BigDecimals.instance();
+public abstract class AbstractBigDecimalAssert<S extends AbstractBigDecimalAssert<S>> extends AbstractComparableAssert<S, BigDecimal> implements NumberAssert<S, BigDecimal> {
+  @VisibleForTesting BigDecimals bigDecimals = BigDecimals.instance();
 
   protected AbstractBigDecimalAssert(BigDecimal actual, Class<?> selfType) {
     super(actual, selfType);
@@ -57,8 +40,7 @@ public abstract class AbstractBigDecimalAssert<S extends AbstractBigDecimalAsser
    * 
    * </p>
    */
-  @Override
-  public S isZero() {
+  @Override public S isZero() {
     bigDecimals.assertIsZero(info, actual);
     return myself;
   }
@@ -75,8 +57,7 @@ public abstract class AbstractBigDecimalAssert<S extends AbstractBigDecimalAsser
    * 
    * </p>
    */
-  @Override
-  public S isNotZero() {
+  @Override public S isNotZero() {
     bigDecimals.assertIsNotZero(info, actual);
     return myself;
   }
@@ -93,8 +74,7 @@ public abstract class AbstractBigDecimalAssert<S extends AbstractBigDecimalAsser
    * 
    * </p>
    */
-  @Override
-  public S isPositive() {
+  @Override public S isPositive() {
     bigDecimals.assertIsPositive(info, actual);
     return myself;
   }
@@ -111,8 +91,7 @@ public abstract class AbstractBigDecimalAssert<S extends AbstractBigDecimalAsser
    * 
    * </p>
    */
-  @Override
-  public S isNegative() {
+  @Override public S isNegative() {
     bigDecimals.assertIsNegative(info, actual);
     return myself;
   }
@@ -129,8 +108,7 @@ public abstract class AbstractBigDecimalAssert<S extends AbstractBigDecimalAsser
    * 
    * </p>
    */
-  @Override
-  public S isNotPositive() {
+  @Override public S isNotPositive() {
     bigDecimals.assertIsNotPositive(info, actual);
     return myself;
   }
@@ -147,8 +125,7 @@ public abstract class AbstractBigDecimalAssert<S extends AbstractBigDecimalAsser
    * 
    * </p>
    */
-  @Override
-  public S isNotNegative() {
+  @Override public S isNotNegative() {
     bigDecimals.assertIsNotNegative(info, actual);
     return myself;
   }
@@ -170,8 +147,7 @@ public abstract class AbstractBigDecimalAssert<S extends AbstractBigDecimalAsser
    * considered equal in value (not like {@link BigDecimal#equals(Object)}.
    * </p>
    */
-  @Override
-  public S isBetween(BigDecimal start, BigDecimal end) {
+  @Override public S isBetween(BigDecimal start, BigDecimal end) {
     bigDecimals.assertIsBetween(info, actual, start, end);
     return myself;
   }
@@ -190,8 +166,7 @@ public abstract class AbstractBigDecimalAssert<S extends AbstractBigDecimalAsser
    * 
    * </p>
    */
-  @Override
-  public S isStrictlyBetween(BigDecimal start, BigDecimal end) {
+  @Override public S isStrictlyBetween(BigDecimal start, BigDecimal end) {
     bigDecimals.assertIsStrictlyBetween(info, actual, start, end);
     return myself;
   }
@@ -246,15 +221,13 @@ public abstract class AbstractBigDecimalAssert<S extends AbstractBigDecimalAsser
     return isNotEqualByComparingTo(new BigDecimal(expected));
   }
 
-  @Override
-  public S usingComparator(Comparator<? super BigDecimal> customComparator) {
+  @Override public S usingComparator(Comparator<? super BigDecimal> customComparator) {
     super.usingComparator(customComparator);
     this.bigDecimals = new BigDecimals(new ComparatorBasedComparisonStrategy(customComparator));
     return myself;
   }
 
-  @Override
-  public S usingDefaultComparator() {
+  @Override public S usingDefaultComparator() {
     super.usingDefaultComparator();
     this.bigDecimals = BigDecimals.instance();
     return myself;
@@ -280,8 +253,7 @@ public abstract class AbstractBigDecimalAssert<S extends AbstractBigDecimalAsser
    * // but if difference is greater than given offset value assertion will fail :
    * assertThat(actual).isCloseTo(other, within(new BigDecimal("0.01")));</code></pre>
    */
-  @Override
-  public S isCloseTo(final BigDecimal other, final Offset<BigDecimal> offset) {
+  @Override public S isCloseTo(final BigDecimal other, final Offset<BigDecimal> offset) {
     bigDecimals.assertIsCloseTo(info, actual, other, offset);
     return myself;
   }
@@ -307,8 +279,7 @@ public abstract class AbstractBigDecimalAssert<S extends AbstractBigDecimalAsser
    * @throws NullPointerException if the expected number is {@code null}.
    * @throws AssertionError if the actual value is not equal to the given one.
    */
-  @Override
-  public S isCloseTo(BigDecimal expected, Percentage percentage) {
+  @Override public S isCloseTo(BigDecimal expected, Percentage percentage) {
     bigDecimals.assertIsCloseToPercentage(info, actual, expected, percentage);
     return myself;
   }
