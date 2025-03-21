@@ -46,7 +46,6 @@ public class HardCodedCredentialsCheck extends PHPVisitorCheck {
   private static final String LITERAL_PATTERN_SUFFIX = "=(?!([\\?:']|%s))..";
   private static final int LITERAL_PATTERN_SUFFIX_LENGTH = LITERAL_PATTERN_SUFFIX.length();
   private static final int MIN_LENGTH_OF_HARDCODED_PASSWORD = 2;
-
   private static final Map<String, Integer> CONNECT_FUNCTIONS = new TreeMap<String, Integer>(String.CASE_INSENSITIVE_ORDER) {{
     put("ldap_bind", 3);
     put("pdo", 3);
