@@ -1,21 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.apache.commons.lang3;
-
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.reflect.UndeclaredThrowableException;
@@ -27,7 +10,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
 
 /** This class provides utility functions, and classes for working with the
  * {@code java.util.function} package, or more generally, with Java 8
@@ -54,104 +36,94 @@ import java.util.function.Supplier;
  * Lambda expressions is met better than the second version.
  */
 public class Functions {
-
-    @FunctionalInterface
-    public interface FailableRunnable<T extends Throwable> {
-        /**
+  @FunctionalInterface public interface FailableRunnable<T extends Throwable> {
+    /**
          * Runs the function.
          * @throws T if the function fails
          */
-        void run() throws T;
-    }
+    void run() throws T;
+  }
 
-    @FunctionalInterface
-    public interface FailableCallable<O, T extends Throwable> {
-        /**
+  @FunctionalInterface public interface FailableCallable<O extends java.lang.Object, T extends Throwable> {
+    /**
          * Calls the callable.
          * @return The value returned from the callable
          * @throws T if the callable fails
          */
-        O call() throws T;
-    }
+    O call() throws T;
+  }
 
-    @FunctionalInterface
-    public interface FailableConsumer<O, T extends Throwable> {
-        /**
+  @FunctionalInterface public interface FailableConsumer<O extends java.lang.Object, T extends Throwable> {
+    /**
          * Accepts the consumer.
          * @param pObject the parameter for the consumable to accept
          * @throws T if the consumer fails
          */
-        void accept(O pObject) throws T;
-    }
+    void accept(O pObject) throws T;
+  }
 
-    @FunctionalInterface
-    public interface FailableBiConsumer<O1, O2, T extends Throwable> {
-        /**
+  @FunctionalInterface public interface FailableBiConsumer<O1 extends java.lang.Object, O2 extends java.lang.Object, T extends Throwable> {
+    /**
          * Accepts the consumer.
          * @param pObject1 the first parameter for the consumable to accept
          * @param pObject2 the second parameter for the consumable to accept
          * @throws T if the consumer fails
          */
-        void accept(O1 pObject1, O2 pObject2) throws T;
-    }
+    void accept(O1 pObject1, O2 pObject2) throws T;
+  }
 
-    @FunctionalInterface
-    public interface FailableFunction<I, O, T extends Throwable> {
-        /**
+  @FunctionalInterface public interface FailableFunction<I extends java.lang.Object, O extends java.lang.Object, T extends Throwable> {
+    /**
          * Apply the function.
          * @param pInput the input for the function
          * @return the result of the function
          * @throws T if the function fails
          */
-        O apply(I pInput) throws T;
-    }
+    O apply(I pInput) throws T;
+  }
 
-    @FunctionalInterface
-    public interface FailableBiFunction<I1, I2, O, T extends Throwable> {
-        /**
+  @FunctionalInterface public interface FailableBiFunction<I1 extends java.lang.Object, I2 extends java.lang.Object, O extends java.lang.Object, T extends Throwable> {
+    /**
          * Apply the function.
          * @param pInput1 the first input for the function
          * @param pInput2 the second input for the function
          * @return the result of the function
          * @throws T if the function fails
          */
-        O apply(I1 pInput1, I2 pInput2) throws T;
-    }
+    O apply(I1 pInput1, I2 pInput2) throws T;
+  }
 
-    @FunctionalInterface
-    public interface FailablePredicate<O, T extends Throwable> {
-        /**
+  @FunctionalInterface public interface FailablePredicate<O extends java.lang.Object, T extends Throwable> {
+    /**
          * Test the predicate.
          * @param pObject the object to test the predicate on
          * @return the predicate's evaluation
          * @throws T if the predicate fails
          */
-        boolean test(O pObject) throws T;
-    }
+    boolean test(O pObject) throws T;
+  }
 
-    @FunctionalInterface
-    public interface FailableBiPredicate<O1, O2, T extends Throwable> {
-        /**
+  @FunctionalInterface public interface FailableBiPredicate<O1 extends java.lang.Object, O2 extends java.lang.Object, T extends Throwable> {
+    /**
          * Test the predicate.
          * @param pObject1 the first object to test the predicate on
          * @param pObject2 the second object to test the predicate on
          * @return the predicate's evaluation
          * @throws T if the predicate fails
          */
-        boolean test(O1 pObject1, O2 pObject2) throws T;
-    }
+    boolean test(O1 pObject1, O2 pObject2) throws T;
+  }
 
-    @FunctionalInterface
-    public interface FailableSupplier<O, T extends Throwable> {
-        /**
+  @FunctionalInterface public interface FailableSupplier<O extends java.lang.Object, T extends Throwable> {
+    /**
          * Supplies an object
          * @return the suppliers result
          * @throws T if the supplier fails
          */
-        O get() throws T;
-    }
+    O get() throws T;
+  }
 
-    /**
+  /**
      * <p>Converts the given {@link FailableRunnable} into a standard {@link Runnable}.</p>
      *
      * <p>If the execution of the failable argument throws an exception it is enveloped
@@ -160,11 +132,11 @@ public class Functions {
      * @param pRunnable a {@code FailableRunnable}
      * @return a standard {@code Runnable}
      */
-    public static Runnable asRunnable(FailableRunnable<?> pRunnable) {
-        return () -> run(pRunnable);
-    }
+  public static Runnable asRunnable(FailableRunnable<?> pRunnable) {
+    return () -> run(pRunnable);
+  }
 
-    /**
+  /**
      * Converts the given {@link FailableConsumer} into a standard {@link Consumer}.
      *
      * <p>If the execution of the failable argument throws an exception it is enveloped
@@ -174,11 +146,11 @@ public class Functions {
      * @param pConsumer a {@code FailableConsumer}
      * @return a standard {@code Consumer}
      */
-    public static <I> Consumer<I> asConsumer(FailableConsumer<I, ?> pConsumer) {
-        return pInput -> accept(pConsumer, pInput);
-    }
+  public static <I extends java.lang.Object> Consumer<I> asConsumer(FailableConsumer<I, ?> pConsumer) {
+    return (pInput) -> accept(pConsumer, pInput);
+  }
 
-    /**
+  /**
      * Converts the given {@link FailableCallable} into a standard {@link Callable}.
      *
      * <p>If the execution of the failable argument throws an exception it is enveloped
@@ -188,11 +160,11 @@ public class Functions {
      * @param pCallable a {@code FailableCallable}
      * @return a standard {@code Callable}
      */
-    public static <O> Callable<O> asCallable(FailableCallable<O, ?> pCallable) {
-        return () -> call(pCallable);
-    }
+  public static <O extends java.lang.Object> Callable<O> asCallable(FailableCallable<O, ?> pCallable) {
+    return () -> call(pCallable);
+  }
 
-    /**
+  /**
      * Converts the given {@link FailableBiConsumer} into a standard {@link BiConsumer}.
      *
      * <p>If the execution of the failable argument throws an exception it is enveloped
@@ -203,11 +175,11 @@ public class Functions {
      * @param pConsumer a failable {@code BiConsumer}
      * @return a standard {@code BiConsumer}
      */
-    public static <I1, I2> BiConsumer<I1, I2> asBiConsumer(FailableBiConsumer<I1, I2, ?> pConsumer) {
-        return (pInput1, pInput2) -> accept(pConsumer, pInput1, pInput2);
-    }
+  public static <I1 extends java.lang.Object, I2 extends java.lang.Object> BiConsumer<I1, I2> asBiConsumer(FailableBiConsumer<I1, I2, ?> pConsumer) {
+    return (pInput1, pInput2) -> accept(pConsumer, pInput1, pInput2);
+  }
 
-    /**
+  /**
      * Converts the given {@link FailableFunction} into a standard {@link Function}.
      *
      * <p>If the execution of the failable argument throws an exception it is enveloped
@@ -218,11 +190,11 @@ public class Functions {
      * @param pFunction a {code FailableFunction}
      * @return a standard {@code Function}
      */
-    public static <I, O> Function<I, O> asFunction(FailableFunction<I, O, ?> pFunction) {
-        return pInput -> apply(pFunction, pInput);
-    }
+  public static <I extends java.lang.Object, O extends java.lang.Object> Function<I, O> asFunction(FailableFunction<I, O, ?> pFunction) {
+    return (pInput) -> apply(pFunction, pInput);
+  }
 
-    /**
+  /**
      * Converts the given {@link FailableBiFunction} into a standard {@link BiFunction}.
      *
      * <p>If the execution of the failable argument throws an exception it is enveloped
@@ -234,11 +206,11 @@ public class Functions {
      * @param pFunction a {@code FailableBiFunction}
      * @return a standard {@code BiFunction}
      */
-    public static <I1, I2, O> BiFunction<I1, I2, O> asBiFunction(FailableBiFunction<I1, I2, O, ?> pFunction) {
-        return (pInput1, pInput2) -> apply(pFunction, pInput1, pInput2);
-    }
+  public static <I1 extends java.lang.Object, I2 extends java.lang.Object, O extends java.lang.Object> BiFunction<I1, I2, O> asBiFunction(FailableBiFunction<I1, I2, O, ?> pFunction) {
+    return (pInput1, pInput2) -> apply(pFunction, pInput1, pInput2);
+  }
 
-    /**
+  /**
      * Converts the given {@link FailablePredicate} into a standard {@link Predicate}.
      *
      * <p>If the execution of the failable argument throws an exception it is enveloped
@@ -248,11 +220,11 @@ public class Functions {
      * @param pPredicate a {@code FailablePredicate}
      * @return a standard {@code Predicate}
      */
-    public static <I> Predicate<I> asPredicate(FailablePredicate<I, ?> pPredicate) {
-        return pInput -> test(pPredicate, pInput);
-    }
+  public static <I extends java.lang.Object> Predicate<I> asPredicate(FailablePredicate<I, ?> pPredicate) {
+    return (pInput) -> test(pPredicate, pInput);
+  }
 
-    /**
+  /**
      * Converts the given {@link FailableBiPredicate} into a standard {@link BiPredicate}.
      *
      * <p>If the execution of the failable argument throws an exception it is enveloped
@@ -263,11 +235,11 @@ public class Functions {
      * @param pPredicate a {@code FailableBiPredicate}
      * @return a standard {@code BiPredicate}
      */
-    public static <I1, I2> BiPredicate<I1, I2> asBiPredicate(FailableBiPredicate<I1, I2, ?> pPredicate) {
-        return (pInput1, pInput2) -> test(pPredicate, pInput1, pInput2);
-    }
+  public static <I1 extends java.lang.Object, I2 extends java.lang.Object> BiPredicate<I1, I2> asBiPredicate(FailableBiPredicate<I1, I2, ?> pPredicate) {
+    return (pInput1, pInput2) -> test(pPredicate, pInput1, pInput2);
+  }
 
-    /**
+  /**
      * Converts the given {@link FailableSupplier} into a standard {@link Supplier}.
      *
      * <p>If the execution of the failable argument throws an exception it is enveloped
@@ -277,11 +249,11 @@ public class Functions {
      * @param pSupplier a {@code FailableSupplier}
      * @return a standard {@code Supplier}
      */
-    public static <O> Supplier<O> asSupplier(FailableSupplier<O, ?> pSupplier) {
-        return () -> get(pSupplier);
-    }
+  public static <O extends java.lang.Object> Supplier<O> asSupplier(FailableSupplier<O, ?> pSupplier) {
+    return () -> get(pSupplier);
+  }
 
-    /**
+  /**
      * Runs a runnable and rethrows any exception as a {@link RuntimeException}.
      *
      * <p>If the execution of the failable argument throws an exception it is enveloped
@@ -290,15 +262,15 @@ public class Functions {
      * @param pRunnable The runnable to run
      * @param <T> the type of checked exception the runnable may throw
      */
-    public static <T extends Throwable> void run(FailableRunnable<T> pRunnable) {
-        try {
-            pRunnable.run();
-        } catch (Throwable t) {
-            throw rethrow(t);
-        }
+  public static <T extends Throwable> void run(FailableRunnable<T> pRunnable) {
+    try {
+      pRunnable.run();
+    } catch (Throwable t) {
+      throw rethrow(t);
     }
+  }
 
-    /**
+  /**
      * Calls a callable and rethrows any exception as a {@link RuntimeException}.
      *
      * <p>If the execution of the failable argument throws an exception it is enveloped
@@ -309,11 +281,11 @@ public class Functions {
      * @param <T> the type of checked exception the callable may throw
      * @return the value returned from the callable
      */
-    public static <O, T extends Throwable> O call(FailableCallable<O, T> pCallable) {
-        return get(() -> pCallable.call());
-    }
+  public static <O extends java.lang.Object, T extends Throwable> O call(FailableCallable<O, T> pCallable) {
+    return get(() -> pCallable.call());
+  }
 
-    /**
+  /**
      * Consumes a consumer and rethrows any exception as a {@link RuntimeException}.
      *
      * <p>If the execution of the failable argument throws an exception it is enveloped
@@ -324,11 +296,11 @@ public class Functions {
      * @param <O> the type the consumer accepts
      * @param <T> the type of checked exception the consumer may throw
      */
-    public static <O, T extends Throwable> void accept(FailableConsumer<O, T> pConsumer, O pObject) {
-        run(() -> pConsumer.accept(pObject));
-    }
+  public static <O extends java.lang.Object, T extends Throwable> void accept(FailableConsumer<O, T> pConsumer, O pObject) {
+    run(() -> pConsumer.accept(pObject));
+  }
 
-    /**
+  /**
      * Consumes a consumer and rethrows any exception as a {@link RuntimeException}.
      *
      * <p>If the execution of the failable argument throws an exception it is enveloped
@@ -341,11 +313,11 @@ public class Functions {
      * @param <O2> the type of the second argument the consumer accepts
      * @param <T> the type of checked exception the consumer may throw
      */
-    public static <O1, O2, T extends Throwable> void accept(FailableBiConsumer<O1, O2, T> pConsumer, O1 pObject1, O2 pObject2) {
-        run(() -> pConsumer.accept(pObject1, pObject2));
-    }
+  public static <O1 extends java.lang.Object, O2 extends java.lang.Object, T extends Throwable> void accept(FailableBiConsumer<O1, O2, T> pConsumer, O1 pObject1, O2 pObject2) {
+    run(() -> pConsumer.accept(pObject1, pObject2));
+  }
 
-    /**
+  /**
      * Applies a function and rethrows any exception as a {@link RuntimeException}.
      *
      * <p>If the execution of the failable argument throws an exception it is enveloped
@@ -358,11 +330,11 @@ public class Functions {
      * @param <T> the type of checked exception the function may throw
      * @return the value returned from the function
      */
-    public static <I, O, T extends Throwable> O apply(FailableFunction<I, O, T> pFunction, I pInput) {
-        return get(() -> pFunction.apply(pInput));
-    }
+  public static <I extends java.lang.Object, O extends java.lang.Object, T extends Throwable> O apply(FailableFunction<I, O, T> pFunction, I pInput) {
+    return get(() -> pFunction.apply(pInput));
+  }
 
-    /**
+  /**
      * Applies a function and rethrows any exception as a {@link RuntimeException}.
      *
      * <p>If the execution of the failable argument throws an exception it is enveloped
@@ -377,11 +349,11 @@ public class Functions {
      * @param <T> the type of checked exception the function may throw
      * @return the value returned from the function
      */
-    public static <I1, I2, O, T extends Throwable> O apply(FailableBiFunction<I1, I2, O, T> pFunction, I1 pInput1, I2 pInput2) {
-        return get(() -> pFunction.apply(pInput1, pInput2));
-    }
+  public static <I1 extends java.lang.Object, I2 extends java.lang.Object, O extends java.lang.Object, T extends Throwable> O apply(FailableBiFunction<I1, I2, O, T> pFunction, I1 pInput1, I2 pInput2) {
+    return get(() -> pFunction.apply(pInput1, pInput2));
+  }
 
-    /**
+  /**
      * Tests a predicate and rethrows any exception as a {@link RuntimeException}.
      *
      * <p>If the execution of the failable argument throws an exception it is enveloped
@@ -393,11 +365,11 @@ public class Functions {
      * @param <T> the type of checked exception the predicate may throw
      * @return the boolean value returned by the predicate
      */
-    public static <O, T extends Throwable> boolean test(FailablePredicate<O, T> pPredicate, O pObject) {
-        return get(() -> pPredicate.test(pObject));
-    }
+  public static <O extends java.lang.Object, T extends Throwable> boolean test(FailablePredicate<O, T> pPredicate, O pObject) {
+    return get(() -> pPredicate.test(pObject));
+  }
 
-    /**
+  /**
      * Tests a predicate and rethrows any exception as a {@link RuntimeException}.
      *
      * <p>If the execution of the failable argument throws an exception it is enveloped
@@ -411,11 +383,11 @@ public class Functions {
      * @param <T> the type of checked exception the predicate may throw
      * @return the boolean value returned by the predicate
      */
-    public static <O1, O2, T extends Throwable> boolean test(FailableBiPredicate<O1, O2, T> pPredicate, O1 pObject1, O2 pObject2) {
-        return get(() -> pPredicate.test(pObject1, pObject2));
-    }
+  public static <O1 extends java.lang.Object, O2 extends java.lang.Object, T extends Throwable> boolean test(FailableBiPredicate<O1, O2, T> pPredicate, O1 pObject1, O2 pObject2) {
+    return get(() -> pPredicate.test(pObject1, pObject2));
+  }
 
-    /**
+  /**
      * Invokes the supplier, and returns the result.
      *
      * <p>If the execution of the failable argument throws an exception it is enveloped
@@ -426,16 +398,15 @@ public class Functions {
      * @param <T> The type of checked exception, which the supplier can throw.
      * @return The object, which has been created by the supplier
      */
-    public static <O, T extends Throwable> O get(FailableSupplier<O, T> pSupplier) {
-        try {
-            return pSupplier.get();
-        } catch (Throwable t) {
-            throw rethrow(t);
-        }
+  public static <O extends java.lang.Object, T extends Throwable> O get(FailableSupplier<O, T> pSupplier) {
+    try {
+      return pSupplier.get();
+    } catch (Throwable t) {
+      throw rethrow(t);
     }
+  }
 
-
-    /**
+  /**
      * A simple try-with-resources implementation, that can be used, if your
      * objects do not implement the {@link AutoCloseable} interface. The method
      * executes the {@code pAction}. The method guarantees, that <em>all</em>
@@ -457,50 +428,47 @@ public class Functions {
      *   instance of {@link FailableRunnable}, which will be executed.
      * @see #tryWithResources(FailableRunnable, FailableRunnable...)
      */
-    @SafeVarargs
-    public static void tryWithResources(FailableRunnable<? extends Throwable> pAction,
-                                        FailableConsumer<Throwable, ? extends Throwable> pErrorHandler,
-                                        FailableRunnable<? extends Throwable>... pResources) {
-        final FailableConsumer<Throwable, ? extends Throwable> errorHandler;
-        if (pErrorHandler == null) {
-            errorHandler = Functions::rethrow;
-        } else {
-            errorHandler = pErrorHandler;
-        }
-        if (pResources != null) {
-            for (FailableRunnable<? extends Throwable> runnable : pResources) {
-                if (runnable == null) {
-                    throw new NullPointerException("A resource action must not be null.");
-                }
-            }
-        }
-        Throwable th = null;
-        try {
-            pAction.run();
-        } catch (Throwable t) {
-            th = t;
-        }
-        if (pResources != null) {
-            for (FailableRunnable<?> runnable : pResources) {
-                try {
-                    runnable.run();
-                } catch (Throwable t) {
-                    if (th == null) {
-                        th = t;
-                    }
-                }
-            }
-        }
-        if (th != null) {
-            try {
-                errorHandler.accept(th);
-            } catch (Throwable t) {
-                throw rethrow(t);
-            }
-        }
+  @SafeVarargs public static void tryWithResources(FailableRunnable<? extends Throwable> pAction, FailableConsumer<Throwable, ? extends Throwable> pErrorHandler, FailableRunnable<? extends Throwable>... pResources) {
+    final FailableConsumer<Throwable, ? extends Throwable> errorHandler;
+    if (pErrorHandler == null) {
+      errorHandler = Functions::rethrow;
+    } else {
+      errorHandler = pErrorHandler;
     }
+    if (pResources != null) {
+      for (FailableRunnable<? extends Throwable> runnable : pResources) {
+        if (runnable == null) {
+          throw new NullPointerException("A resource action must not be null.");
+        }
+      }
+    }
+    Throwable th = null;
+    try {
+      pAction.run();
+    } catch (Throwable t) {
+      th = t;
+    }
+    if (pResources != null) {
+      for (FailableRunnable<?> runnable : pResources) {
+        try {
+          runnable.run();
+        } catch (Throwable t) {
+          if (th == null) {
+            th = t;
+          }
+        }
+      }
+    }
+    if (th != null) {
+      try {
+        errorHandler.accept(th);
+      } catch (Throwable t) {
+        throw rethrow(t);
+      }
+    }
+  }
 
-    /**
+  /**
      * A simple try-with-resources implementation, that can be used, if your
      * objects do not implement the {@link AutoCloseable} interface. The method
      * executes the {@code pAction}. The method guarantees, that <em>all</em>
@@ -519,14 +487,12 @@ public class Functions {
      *   instance of {@link FailableRunnable}, which will be executed.
      * @see #tryWithResources(FailableRunnable, FailableConsumer, FailableRunnable...)
      */
-    @SafeVarargs
-    public static void tryWithResources(FailableRunnable<? extends Throwable> pAction,
-                                        FailableRunnable<? extends Throwable>... pResources) {
-        tryWithResources(pAction, null, pResources);
-    }
+  @SafeVarargs public static void tryWithResources(FailableRunnable<? extends Throwable> pAction, FailableRunnable<? extends Throwable>... pResources) {
+    tryWithResources(pAction, null, pResources);
+  }
 
-    /**
-     * <p>Rethrows a {@link Throwable} as an unchecked exception. If the argument is
+  /**
+     * <p>Rethrow a {@link Throwable} as an unchecked exception. If the argument is
      * already unchecked, namely a {@code RuntimeException} or {@code Error} then
      * the argument will be rethrown without modification. If the exception is
      * {@code IOException} then it will be enveloped into a {@code UncheckedIOException}.
@@ -548,21 +514,44 @@ public class Functions {
      * @param pThrowable The throwable to rethrow possibly enveloped into an unchecked exception
      * @return Never returns anything, this method never terminates normally.
      */
-    public static RuntimeException rethrow(Throwable pThrowable) {
-        if (pThrowable == null) {
-            throw new NullPointerException("The Throwable must not be null.");
-        } else if (pThrowable instanceof RuntimeException) {
-            throw (RuntimeException) pThrowable;
-        } else if (pThrowable instanceof Error) {
-            throw (Error) pThrowable;
-        } else if (pThrowable instanceof IOException) {
-            throw popStackTrace(new UncheckedIOException((IOException) pThrowable));
+  public static RuntimeException rethrow(Throwable pThrowable) {
+    if (pThrowable == null) {
+      throw new NullPointerException("The Throwable must not be null.");
+    } else 
+<<<<<<< /usr/src/app/output/apache/commons-lang/3dc5b155952bbe0a6904496cc8e87f3a512bcb34/src/main/java/org/apache/commons/lang3/Functions.java/left.java
+    {
+      if (pThrowable instanceof RuntimeException) {
+        throw (RuntimeException) pThrowable;
+      } else {
+        if (pThrowable instanceof Error) {
+          throw (Error) pThrowable;
         } else {
+          if (pThrowable instanceof IOException) {
+            throw popStackTrace(new UncheckedIOException((IOException) pThrowable));
+          } else {
             throw popStackTrace(new UndeclaredThrowableException(pThrowable));
+          }
         }
+      }
     }
+=======
+    if (pThrowable instanceof RuntimeException) {
+      throw (RuntimeException) pThrowable;
+    } else {
+      if (pThrowable instanceof Error) {
+        throw (Error) pThrowable;
+      } else {
+        if (pThrowable instanceof IOException) {
+          throw new UncheckedIOException((IOException) pThrowable);
+        } else {
+          throw new UndeclaredThrowableException(pThrowable);
+        }
+      }
+    }
+>>>>>>> /usr/src/app/output/apache/commons-lang/3dc5b155952bbe0a6904496cc8e87f3a512bcb34/src/main/java/org/apache/commons/lang3/Functions.java/right.java
+  }
 
-    /**
+  /**
      * Remove the last element from the stack trace of the throwable. This method is called
      * from rethrow and the stack trace modification will show the throwable as if it was
      * thrown from the line where the method {@link #rethrow(Throwable)} was invoked.
@@ -570,11 +559,11 @@ public class Functions {
      * @param t the throwable that is to be modified
      * @return the original throwable object but with modified stack trace
      */
-    private static <T  extends Throwable> T popStackTrace(T t) {
-        final StackTraceElement[] oldTrace = t.getStackTrace();
-        final StackTraceElement[] newTrace = new StackTraceElement[oldTrace.length - 1];
-        System.arraycopy(oldTrace, 1, newTrace, 0, newTrace.length);
-        t.setStackTrace(newTrace);
-        return t;
-    }
+  private static <T extends Throwable> T popStackTrace(T t) {
+    final StackTraceElement[] oldTrace = t.getStackTrace();
+    final StackTraceElement[] newTrace = new StackTraceElement[oldTrace.length - 1];
+    System.arraycopy(oldTrace, 1, newTrace, 0, newTrace.length);
+    t.setStackTrace(newTrace);
+    return t;
+  }
 }
