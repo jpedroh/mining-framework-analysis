@@ -54,11 +54,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.WeakHashMap;
+
+import static java.util.Arrays.*;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static java.util.Arrays.*;
 import static org.kohsuke.github.Previews.*;
 
 /**
