@@ -1,17 +1,8 @@
-/**
- * The contents of this file are subject to the license and copyright
- * detailed in the LICENSE and NOTICE files at the root of the source
- * tree and available online at
- *
- * http://www.dspace.org/license/
- */
 package org.dspace.authenticate.service;
-
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
-
 import org.dspace.authenticate.AuthenticationMethod;
 import org.dspace.core.Context;
 import org.dspace.eperson.EPerson;
@@ -44,9 +35,7 @@ import org.dspace.eperson.Group;
  * @see AuthenticationMethod
  */
 public interface AuthenticationService {
-
-
-    /**
+  /**
      * Test credentials for authenticity.
      * Apply the given credentials to each authenticate() method in
      * the stack.  Returns upon the first <code>SUCCESS</code>, or otherwise
@@ -68,13 +57,9 @@ public interface AuthenticationService {
      * <br>NO_SUCH_USER    - user not found using this method.
      * <br>BAD_ARGS        - user/password not appropriate for this method
      */
-    public int authenticate(Context context,
-                            String username,
-                            String password,
-                            String realm,
-                            HttpServletRequest request);
+  public int authenticate(Context context, String username, String password, String realm, HttpServletRequest request);
 
-    /**
+  /**
      * Test credentials for authenticity, using only Implicit methods.
      * Just like <code>authenticate()</code>, except it only invokes the
      * <em>implicit</em> authentication methods the stack.
@@ -95,14 +80,9 @@ public interface AuthenticationService {
      * <br>NO_SUCH_USER    - user not found using this method.
      * <br>BAD_ARGS        - user/password not appropriate for this method
      */
-    public int authenticateImplicit(Context context,
-                                    String username,
-                                    String password,
-                                    String realm,
-                                    HttpServletRequest request);
+  public int authenticateImplicit(Context context, String username, String password, String realm, HttpServletRequest request);
 
-
-    /**
+  /**
      * Predicate, can a new EPerson be created.
      * Invokes <code>canSelfRegister()</code> of every authentication
      * method in the stack, and returns true if any of them is true.
@@ -113,11 +93,9 @@ public interface AuthenticationService {
      * @return true if new ePerson should be created.
      * @throws SQLException if database error
      */
-    public boolean canSelfRegister(Context context,
-                                   HttpServletRequest request,
-                                   String username) throws SQLException;
+  public boolean canSelfRegister(Context context, HttpServletRequest request, String username) throws SQLException;
 
-    /**
+  /**
      * Predicate, can user set EPerson password.
      * Returns true if the <code>allowSetPassword()</code> method of any
      * member of the stack returns true.
@@ -128,23 +106,18 @@ public interface AuthenticationService {
      * @return true if this method allows user to change ePerson password.
      * @throws SQLException if database error
      */
-    public boolean allowSetPassword(Context context,
-                                    HttpServletRequest request,
-                                    String username) throws SQLException;
+  public boolean allowSetPassword(Context context, HttpServletRequest request, String username) throws SQLException;
 
-    public void initEPerson(Context context,
-                            HttpServletRequest request,
-                            EPerson eperson)
-        throws SQLException;
+  public void initEPerson(Context context, HttpServletRequest request, EPerson eperson) throws SQLException;
 
-    /**
+  /**
      * Update the last active (login) timestamp on the current authenticated user
      *
      * @param context The authenticated context
      */
-    public void updateLastActiveDate(Context context);
+  public void updateLastActiveDate(Context context);
 
-    /**
+  /**
      * Get list of extra groups that user implicitly belongs to.
      * Returns accumulation of groups of all the <code>getSpecialGroups()</code>
      * methods in the stack.
@@ -156,28 +129,27 @@ public interface AuthenticationService {
      * groups.
      * @throws SQLException if database error
      */
-    public List<Group> getSpecialGroups(Context context,
-                                        HttpServletRequest request) throws SQLException;
+  public List<Group> getSpecialGroups(Context context, HttpServletRequest request) throws SQLException;
 
-    /**
+  /**
      * Get stack of authentication methods.
      * Return an <code>Iterator</code> that steps through each configured
      * authentication method, in order of precedence.
      *
      * @return Iterator object.
      */
-    public Iterator<AuthenticationMethod> authenticationMethodIterator();
+  public Iterator<AuthenticationMethod> authenticationMethodIterator();
 
-    /**
+  /**
      * Retrieves the currently used authentication method name based on the context and the request
      *
      * @param context A valid DSpace context.
      * @param request The request that started this operation, or null if not applicable.
      * @return the currently used authentication method name
      */
-    public String getAuthenticationMethod(Context context, HttpServletRequest request);
+  public String getAuthenticationMethod(Context context, HttpServletRequest request);
 
-    /**
+  /**
      * Check if the given current password is valid to change the password of the
      * given ePerson.
      *
@@ -187,6 +159,5 @@ public interface AuthenticationService {
      * @return                 true if the provided password matches with current
      *                         password
      */
-    public boolean canChangePassword(Context context, EPerson ePerson, String currentPassword);
-
+  public boolean canChangePassword(Context context, EPerson ePerson, String currentPassword);
 }

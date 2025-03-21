@@ -1,14 +1,5 @@
-/**
- * The contents of this file are subject to the license and copyright
- * detailed in the LICENSE and NOTICE files at the root of the source
- * tree and available online at
- *
- * http://www.dspace.org/license/
- */
 package org.dspace.app.rest;
-
 import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.dspace.app.rest.converter.ConverterService;
@@ -36,43 +27,30 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * This controller adds additional subresource methods to allow connecting scripts with processes
  */
-@RestController
-@RequestMapping("/api/" + ScriptRest.CATEGORY + "/" + ScriptRest.PLURAL_NAME + "/{name}/processes")
-public class ScriptProcessesController {
+@RestController @RequestMapping(value = "/api/" + ScriptRest.CATEGORY + "/" + ScriptRest.PLURAL_NAME + "/{name}/processes") public class ScriptProcessesController {
+  private static final Logger log = LogManager.getLogger();
 
-    private static final Logger log = LogManager.getLogger();
+  @Autowired private ConverterService converter;
 
-    @Autowired
-    private ConverterService converter;
+  @Autowired private ScriptRestRepository scriptRestRepository;
 
-    @Autowired
-    private ScriptRestRepository scriptRestRepository;
+  @Autowired private RequestService requestService;
 
-    @Autowired
-    private RequestService requestService;
-
-    /**
+  /**
      * This method can be called by sending a POST request to the system/scripts/{name}/processes endpoint
      * This will start a process for the script that matches the given name
      * @param scriptName    The name of the script that we want to start a process for
-     * @param files         (Optional) any files that need to be passed to the script for it to run
      * @return              The ProcessResource object for the created process
      * @throws Exception    If something goes wrong
      */
-    @RequestMapping(method = RequestMethod.POST)
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<RepresentationModel<?>> startProcess(
-        @PathVariable(name = "name") String scriptName,
-        @RequestParam(name = "file", required = false) List<MultipartFile> files)
-        throws Exception {
-        if (log.isTraceEnabled()) {
-            log.trace("Starting Process for Script with name: " + scriptName);
-        }
-        Context context = ContextUtil.obtainContext(requestService.getCurrentRequest().getHttpServletRequest());
-        ProcessRest processRest = scriptRestRepository.startProcess(context, scriptName, files);
-        ProcessResource processResource = converter.toResource(processRest);
-        context.complete();
-        return ControllerUtils.toResponseEntity(HttpStatus.ACCEPTED, new HttpHeaders(), processResource);
+  @RequestMapping(method = RequestMethod.POST) @PreAuthorize(value = "hasAuthority(\'ADMIN\')") public ResponseEntity<RepresentationModel<?>> startProcess(@PathVariable(name = "name") String scriptName, @RequestParam(name = "file", required = false) List<MultipartFile> files) throws Exception {
+    if (log.isTraceEnabled()) {
+      log.trace("Starting Process for Script with name: " + scriptName);
     }
-
+    Context context = ContextUtil.obtainContext(requestService.getCurrentRequest().getHttpServletRequest());
+    ProcessRest processRest = scriptRestRepository.startProcess(context, scriptName, files);
+    ProcessResource processResource = converter.toResource(processRest);
+    context.complete();
+    return ControllerUtils.toResponseEntity(HttpStatus.ACCEPTED, new HttpHeaders(), processResource);
+  }
 }

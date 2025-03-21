@@ -1,18 +1,8 @@
-/**
- * The contents of this file are subject to the license and copyright
- * detailed in the LICENSE and NOTICE files at the root of the source
- * tree and available online at
- *
- * http://www.dspace.org/license/
- */
 package org.dspace.app.rest;
-
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,190 +37,98 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * The controller for the api/discover endpoint
  */
-@RestController
-@RequestMapping("/api/" + SearchResultsRest.CATEGORY)
-public class DiscoveryRestController implements InitializingBean {
+@RestController @RequestMapping(value = "/api/" + SearchResultsRest.CATEGORY) public class DiscoveryRestController implements InitializingBean {
+  private static final Logger log = LogManager.getLogger();
 
-    private static final Logger log = LogManager.getLogger();
+  private static final String SOLR_PARSE_ERROR_CLASS = "org.apache.solr.search.SyntaxError";
 
-    private static final String SOLR_PARSE_ERROR_CLASS = "org.apache.solr.search.SyntaxError";
+  @Autowired protected Utils utils;
 
-    @Autowired
-    protected Utils utils;
+  @Autowired private DiscoverableEndpointsService discoverableEndpointsService;
 
-    @Autowired
-    private DiscoverableEndpointsService discoverableEndpointsService;
+  @Autowired private DiscoveryRestRepository discoveryRestRepository;
 
-    @Autowired
-    private DiscoveryRestRepository discoveryRestRepository;
+  @Autowired private HalLinkService halLinkService;
 
-    @Autowired
-    private HalLinkService halLinkService;
+  @Autowired private ConverterService converter;
 
-    @Autowired
-    private ConverterService converter;
+  @Override public void afterPropertiesSet() throws Exception {
+    discoverableEndpointsService.register(this, Arrays.asList(Link.of("/api/" + SearchResultsRest.CATEGORY, SearchResultsRest.CATEGORY)));
+  }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        discoverableEndpointsService
-            .register(this, Arrays.asList(Link.of("/api/" + SearchResultsRest.CATEGORY, SearchResultsRest.CATEGORY)));
+  @RequestMapping(method = RequestMethod.GET) public SearchSupportResource getSearchSupport(@RequestParam(name = "scope", required = false) String dsoScope, @RequestParam(name = "configuration", required = false) String configuration) throws Exception {
+    SearchSupportRest searchSupportRest = discoveryRestRepository.getSearchSupport();
+    SearchSupportResource searchSupportResource = converter.toResource(searchSupportRest);
+    return searchSupportResource;
+  }
+
+  @RequestMapping(method = RequestMethod.GET, value = "/search") public SearchConfigurationResource getSearchConfiguration(@RequestParam(name = "scope", required = false) String dsoScope, @RequestParam(name = "configuration", required = false) String configuration) throws Exception {
+    if (log.isTraceEnabled()) {
+      log.trace("Retrieving search configuration for scope " + StringUtils.trimToEmpty(dsoScope) + " and configuration name " + StringUtils.trimToEmpty(configuration));
     }
+    SearchConfigurationRest searchConfigurationRest = discoveryRestRepository.getSearchConfiguration(dsoScope, configuration);
+    SearchConfigurationResource searchConfigurationResource = converter.toResource(searchConfigurationRest);
+    return searchConfigurationResource;
+  }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public SearchSupportResource getSearchSupport(@RequestParam(name = "scope", required = false) String dsoScope,
-                                                  @RequestParam(name = "configuration", required = false) String
-                                                  configuration)
-        throws Exception {
-
-        SearchSupportRest searchSupportRest = discoveryRestRepository.getSearchSupport();
-        SearchSupportResource searchSupportResource = converter.toResource(searchSupportRest);
-        return searchSupportResource;
+  @RequestMapping(method = RequestMethod.GET, value = "/search/facets") public FacetsResource getFacets(@RequestParam(name = "query", required = false) String query, @RequestParam(name = "dsoType", required = false) List<String> dsoTypes, @RequestParam(name = "scope", required = false) String dsoScope, @RequestParam(name = "configuration", required = false) String configuration, List<SearchFilter> searchFilters, Pageable page) throws Exception {
+    dsoTypes = emptyIfNull(dsoTypes);
+    if (log.isTraceEnabled()) {
+      log.trace("Searching with scope: " + StringUtils.trimToEmpty(dsoScope) + ", configuration name: " + StringUtils.trimToEmpty(configuration) + ", dsoTypes: " + String.join(", ", dsoTypes) + ", query: " + StringUtils.trimToEmpty(query) + ", filters: " + Objects.toString(searchFilters));
     }
+    SearchResultsRest searchResultsRest = discoveryRestRepository.getAllFacets(query, dsoTypes, dsoScope, configuration, searchFilters);
+    FacetsResource facetsResource = new FacetsResource(searchResultsRest, page);
+    halLinkService.addLinks(facetsResource, page);
+    return facetsResource;
+  }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/search")
-    public SearchConfigurationResource getSearchConfiguration(
-        @RequestParam(name = "scope", required = false) String dsoScope,
-        @RequestParam(name = "configuration", required = false) String configuration) throws Exception {
-        if (log.isTraceEnabled()) {
-            log.trace("Retrieving search configuration for scope " + StringUtils.trimToEmpty(dsoScope)
-                          + " and configuration name " + StringUtils.trimToEmpty(configuration));
-        }
-
-        SearchConfigurationRest searchConfigurationRest = discoveryRestRepository
-            .getSearchConfiguration(dsoScope, configuration);
-
-        SearchConfigurationResource searchConfigurationResource = converter.toResource(searchConfigurationRest);
-        return searchConfigurationResource;
+  @RequestMapping(method = RequestMethod.GET, value = "/search/objects") public SearchResultsResource getSearchObjects(@RequestParam(name = "query", required = false) String query, @RequestParam(name = "dsoType", required = false) List<String> dsoTypes, @RequestParam(name = "scope", required = false) String dsoScope, @RequestParam(name = "configuration", required = false) String configuration, List<SearchFilter> searchFilters, Pageable page) throws Exception {
+    dsoTypes = emptyIfNull(dsoTypes);
+    if (log.isTraceEnabled()) {
+      log.trace("Searching with scope: " + StringUtils.trimToEmpty(dsoScope) + ", configuration name: " + StringUtils.trimToEmpty(configuration) + ", dsoTypes: " + String.join(", ", dsoTypes) + ", query: " + StringUtils.trimToEmpty(query) + ", filters: " + Objects.toString(searchFilters) + ", page: " + Objects.toString(page));
     }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/search/facets")
-    public FacetsResource getFacets(@RequestParam(name = "query", required = false) String query,
-                                    @RequestParam(name = "dsoType", required = false) List<String> dsoTypes,
-                                    @RequestParam(name = "scope", required = false) String dsoScope,
-                                    @RequestParam(name = "configuration", required = false) String configuration,
-                                    List<SearchFilter> searchFilters,
-                                    Pageable page) throws Exception {
-
-        dsoTypes = emptyIfNull(dsoTypes);
-
-        if (log.isTraceEnabled()) {
-            log.trace("Searching with scope: " + StringUtils.trimToEmpty(dsoScope)
-                    + ", configuration name: " + StringUtils.trimToEmpty(configuration)
-                    + ", dsoTypes: " + String.join(", ", dsoTypes)
-                    + ", query: " + StringUtils.trimToEmpty(query)
-                    + ", filters: " + Objects.toString(searchFilters));
-        }
-
-        SearchResultsRest searchResultsRest = discoveryRestRepository
-            .getAllFacets(query, dsoTypes, dsoScope, configuration, searchFilters);
-
-        FacetsResource facetsResource = new FacetsResource(searchResultsRest, page);
-        halLinkService.addLinks(facetsResource, page);
-
-        return facetsResource;
+    try {
+      SearchResultsRest searchResultsRest = discoveryRestRepository.getSearchObjects(query, dsoTypes, dsoScope, configuration, searchFilters, page, utils.obtainProjection());
+      SearchResultsResource searchResultsResource = new SearchResultsResource(searchResultsRest, utils, page);
+      halLinkService.addLinks(searchResultsResource, page);
+      return searchResultsResource;
+    } catch (IllegalArgumentException e) {
+      boolean isParsingException = e.getMessage().contains(SOLR_PARSE_ERROR_CLASS);
+      if (isParsingException) {
+        throw new UnprocessableEntityException(e.getMessage());
+      } else {
+        throw e;
+      }
     }
+  }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/search/objects")
-    public SearchResultsResource getSearchObjects(@RequestParam(name = "query", required = false) String query,
-                                                  @RequestParam(name = "dsoType", required = false)
-                                                          List<String> dsoTypes,
-                                                  @RequestParam(name = "scope", required = false) String dsoScope,
-                                                  @RequestParam(name = "configuration", required = false) String
-                                                      configuration,
-                                                  List<SearchFilter> searchFilters,
-                                                  Pageable page) throws Exception {
-
-        dsoTypes = emptyIfNull(dsoTypes);
-
-        if (log.isTraceEnabled()) {
-            log.trace("Searching with scope: " + StringUtils.trimToEmpty(dsoScope)
-                    + ", configuration name: " + StringUtils.trimToEmpty(configuration)
-                    + ", dsoTypes: " + String.join(", ", dsoTypes)
-                    + ", query: " + StringUtils.trimToEmpty(query)
-                    + ", filters: " + Objects.toString(searchFilters)
-                    + ", page: " + Objects.toString(page));
-        }
-
-        //Get the Search results in JSON format
-        try {
-            SearchResultsRest searchResultsRest = discoveryRestRepository.getSearchObjects(query, dsoTypes, dsoScope,
-                configuration, searchFilters, page, utils.obtainProjection());
-
-            //Convert the Search JSON results to paginated HAL resources
-            SearchResultsResource searchResultsResource = new SearchResultsResource(searchResultsRest, utils, page);
-            halLinkService.addLinks(searchResultsResource, page);
-            return searchResultsResource;
-        } catch (IllegalArgumentException e) {
-            boolean isParsingException = e.getMessage().contains(SOLR_PARSE_ERROR_CLASS);
-            if (isParsingException) {
-                throw new UnprocessableEntityException(e.getMessage());
-            } else {
-                throw e;
-            }
-        }
+  @RequestMapping(method = RequestMethod.GET, value = "/facets") public FacetConfigurationResource getFacetsConfiguration(@RequestParam(name = "scope", required = false) String dsoScope, @RequestParam(name = "configuration", required = false) String configuration, Pageable pageable) throws Exception {
+    if (log.isTraceEnabled()) {
+      log.trace("Retrieving facet configuration for scope " + StringUtils.trimToEmpty(dsoScope) + " and configuration name " + StringUtils.trimToEmpty(configuration));
     }
+    FacetConfigurationRest facetConfigurationRest = discoveryRestRepository.getFacetsConfiguration(dsoScope, configuration);
+    FacetConfigurationResource facetConfigurationResource = converter.toResource(facetConfigurationRest);
+    halLinkService.addLinks(facetConfigurationResource, pageable);
+    return facetConfigurationResource;
+  }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/facets")
-    public FacetConfigurationResource getFacetsConfiguration(
-        @RequestParam(name = "scope", required = false) String dsoScope,
-        @RequestParam(name = "configuration", required = false) String configuration,
-        Pageable pageable) throws Exception {
-        if (log.isTraceEnabled()) {
-            log.trace("Retrieving facet configuration for scope " + StringUtils.trimToEmpty(dsoScope)
-                          + " and configuration name " + StringUtils.trimToEmpty(configuration));
-        }
-
-        FacetConfigurationRest facetConfigurationRest = discoveryRestRepository
-            .getFacetsConfiguration(dsoScope, configuration);
-        FacetConfigurationResource facetConfigurationResource = converter.toResource(facetConfigurationRest);
-
-        halLinkService.addLinks(facetConfigurationResource, pageable);
-        return facetConfigurationResource;
+  @RequestMapping(method = RequestMethod.GET, value = "/facets/{name}") public RepresentationModel getFacetValues(@PathVariable(value = "name") String facetName, @RequestParam(name = "prefix", required = false) String prefix, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "dsoType", required = false) List<String> dsoTypes, @RequestParam(name = "scope", required = false) String dsoScope, @RequestParam(name = "configuration", required = false) String configuration, List<SearchFilter> searchFilters, Pageable page) throws Exception {
+    dsoTypes = emptyIfNull(dsoTypes);
+    if (log.isTraceEnabled()) {
+      log.trace("Facetting on facet " + facetName + " with scope: " + StringUtils.trimToEmpty(dsoScope) + ", dsoTypes: " + String.join(", ", dsoTypes) + ", prefix: " + StringUtils.trimToEmpty(prefix) + ", query: " + StringUtils.trimToEmpty(query) + ", filters: " + Objects.toString(searchFilters) + ", page: " + Objects.toString(page));
     }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/facets/{name}")
-    public RepresentationModel getFacetValues(@PathVariable("name") String facetName,
-                                              @RequestParam(name = "prefix", required = false) String prefix,
-                                              @RequestParam(name = "query", required = false) String query,
-                                              @RequestParam(name = "dsoType", required = false) List<String> dsoTypes,
-                                              @RequestParam(name = "scope", required = false) String dsoScope,
-                                              @RequestParam(name = "configuration", required = false) String
-                                                      configuration,
-                                              List<SearchFilter> searchFilters,
-                                              Pageable page) throws Exception {
-
-        dsoTypes = emptyIfNull(dsoTypes);
-
-        if (log.isTraceEnabled()) {
-            log.trace("Facetting on facet " + facetName + " with scope: " + StringUtils.trimToEmpty(dsoScope)
-                          + ", dsoTypes: " + String.join(", ", dsoTypes)
-                          + ", prefix: " + StringUtils.trimToEmpty(prefix)
-                          + ", query: " + StringUtils.trimToEmpty(query)
-                          + ", filters: " + Objects.toString(searchFilters)
-                          + ", page: " + Objects.toString(page));
-        }
-
-        try {
-            FacetResultsRest facetResultsRest = discoveryRestRepository
-                .getFacetObjects(facetName, prefix, query, dsoTypes, dsoScope, configuration, searchFilters, page);
-
-            FacetResultsResource facetResultsResource = converter.toResource(facetResultsRest);
-
-            halLinkService.addLinks(facetResultsResource, page);
-            return facetResultsResource;
-        } catch (Exception e) {
-            boolean isParsingException = e.getMessage().contains(SOLR_PARSE_ERROR_CLASS);
-            /*
-             * We unfortunately have to do a string comparison to locate the source of the error, as Solr only sends
-             * back a generic exception, and the org.apache.solr.search.SyntaxError is only available as plain text
-             * in the error message.
-             */
-            if (isParsingException) {
-                throw new UnprocessableEntityException(e.getMessage());
-            } else {
-                throw e;
-            }
-        }
+    try {
+      FacetResultsRest facetResultsRest = discoveryRestRepository.getFacetObjects(facetName, prefix, query, dsoTypes, dsoScope, configuration, searchFilters, page);
+      FacetResultsResource facetResultsResource = converter.toResource(facetResultsRest);
+      halLinkService.addLinks(facetResultsResource, page);
+      return facetResultsResource;
+    } catch (Exception e) {
+      boolean isParsingException = e.getMessage().contains(SOLR_PARSE_ERROR_CLASS);
+      if (isParsingException) {
+        throw new UnprocessableEntityException(e.getMessage());
+      } else {
+        throw e;
+      }
     }
-
+  }
 }

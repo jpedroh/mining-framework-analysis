@@ -1,19 +1,10 @@
-/**
- * The contents of this file are subject to the license and copyright
- * detailed in the LICENSE and NOTICE files at the root of the source
- * tree and available online at
- *
- * http://www.dspace.org/license/
- */
 package org.dspace.authenticate;
-
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,21 +35,17 @@ import org.dspace.services.factory.DSpaceServicesFactory;
  *
  * @author Larry Stone
  */
-public class PasswordAuthentication
-    implements AuthenticationMethod {
-
-    /**
+public class PasswordAuthentication implements AuthenticationMethod {
+  /**
      * log4j category
      */
-    private static final Logger log = LogManager.getLogger();
+  private static final Logger log = LogManager.getLogger();
 
-    private static final String PASSWORD_AUTHENTICATED = "password.authenticated";
+  private static final String PASSWORD_AUTHENTICATED = "password.authenticated";
 
-    private EPersonService ePersonService = EPersonServiceFactory.getInstance().getEPersonService();
+  private EPersonService ePersonService = EPersonServiceFactory.getInstance().getEPersonService();
 
-
-
-    /**
+  /**
      * Look to see if this email address is allowed to register.
      * <p>
      * The configuration key domain.valid is examined
@@ -70,106 +57,75 @@ public class PasswordAuthentication
      * @param email email
      * @throws SQLException if database error
      */
-    @Override
-    public boolean canSelfRegister(Context context,
-                                   HttpServletRequest request,
-                                   String email)
-        throws SQLException {
-        // Is there anything set in domain.valid?
-        String[] domains = DSpaceServicesFactory.getInstance().getConfigurationService()
-                                                .getArrayProperty("authentication-password.domain.valid");
-        if ((domains == null) || (domains.length == 0)) {
-            // No conditions set, so must be able to self register
-            return true;
-        } else {
-            // Itterate through all domains
-            String check;
-            email = email.trim().toLowerCase();
-            for (int i = 0; i < domains.length; i++) {
-                check = domains[i].trim().toLowerCase();
-                if (email.endsWith(check)) {
-                    // A match, so we can register this user
-                    return true;
-                }
-            }
-
-            // No match
-            return false;
+  @Override public boolean canSelfRegister(Context context, HttpServletRequest request, String email) throws SQLException {
+    String[] domains = DSpaceServicesFactory.getInstance().getConfigurationService().getArrayProperty("authentication-password.domain.valid");
+    if ((domains == null) || (domains.length == 0)) {
+      return true;
+    } else {
+      String check;
+      email = email.trim().toLowerCase();
+      for (int i = 0; i < domains.length; i++) {
+        check = domains[i].trim().toLowerCase();
+        if (email.endsWith(check)) {
+          return true;
         }
+      }
+      return false;
     }
+  }
 
-    /**
+  /**
      * Nothing extra to initialize.
      *
      * @throws SQLException if database error
      */
-    @Override
-    public void initEPerson(Context context, HttpServletRequest request,
-                            EPerson eperson)
-        throws SQLException {
-    }
+  @Override public void initEPerson(Context context, HttpServletRequest request, EPerson eperson) throws SQLException {
+  }
 
-    /**
+  /**
      * We always allow the user to change their password.
      *
      * @throws SQLException if database error
      */
-    @Override
-    public boolean allowSetPassword(Context context,
-                                    HttpServletRequest request,
-                                    String username)
-        throws SQLException {
-        return true;
-    }
+  @Override public boolean allowSetPassword(Context context, HttpServletRequest request, String username) throws SQLException {
+    return true;
+  }
 
-    /**
+  /**
      * This is an explicit method, since it needs username and password
      * from some source.
      *
      * @return false
      */
-    @Override
-    public boolean isImplicit() {
-        return false;
-    }
+  @Override public boolean isImplicit() {
+    return false;
+  }
 
-    /**
+  /**
      * Add authenticated users to the group defined in authentication-password.cfg by
      * the login.specialgroup key.
      */
-    @Override
-    public List<Group> getSpecialGroups(Context context, HttpServletRequest request) {
-        // Prevents anonymous users from being added to this group, and the second check
-        // ensures they are password users
-        try {
-            if (context.getCurrentUser() != null
-                && StringUtils.isNotBlank(
-                EPersonServiceFactory.getInstance().getEPersonService().getPasswordHash(context.getCurrentUser())
-                                     .toString())) {
-                String groupName = DSpaceServicesFactory.getInstance().getConfigurationService()
-                                                        .getProperty("authentication-password.login.specialgroup");
-                if ((groupName != null) && !groupName.trim().isEmpty()) {
-                    Group specialGroup = EPersonServiceFactory.getInstance().getGroupService()
-                                                              .findByName(context, groupName);
-                    if (specialGroup == null) {
-                        // Oops - the group isn't there.
-                        log.warn(LogHelper.getHeader(context,
-                                                      "password_specialgroup",
-                                                      "Group defined in modules/authentication-password.cfg login" +
-                                                          ".specialgroup does not exist"));
-                        return Collections.EMPTY_LIST;
-                    } else {
-                        return Arrays.asList(specialGroup);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.error(LogHelper.getHeader(context, "getSpecialGroups", ""), e);
+  @Override public List<Group> getSpecialGroups(Context context, HttpServletRequest request) {
+    try {
+      if (context.getCurrentUser() != null && StringUtils.isNotBlank(EPersonServiceFactory.getInstance().getEPersonService().getPasswordHash(context.getCurrentUser()).toString())) {
+        String groupName = DSpaceServicesFactory.getInstance().getConfigurationService().getProperty("authentication-password.login.specialgroup");
+        if ((groupName != null) && !groupName.trim().isEmpty()) {
+          Group specialGroup = EPersonServiceFactory.getInstance().getGroupService().findByName(context, groupName);
+          if (specialGroup == null) {
+            log.warn(LogHelper.getHeader(context, "password_specialgroup", "Group defined in modules/authentication-password.cfg login" + ".specialgroup does not exist"));
+            return Collections.EMPTY_LIST;
+          } else {
+            return Arrays.asList(specialGroup);
+          }
         }
-        return Collections.EMPTY_LIST;
+      }
+    } catch (Exception e) {
+      log.error(LogHelper.getHeader(context, "getSpecialGroups", ""), e);
     }
+    return Collections.EMPTY_LIST;
+  }
 
-    /**
+  /**
      * Check credentials: username must match the email address of an
      * EPerson record, and that EPerson must be allowed to login.
      * Password must match its password.  Also checks for EPerson that
@@ -193,51 +149,40 @@ public class PasswordAuthentication
      * <br>BAD_ARGS        - missing username, or user matched but cannot login.
      * @throws SQLException if database error
      */
-    @Override
-    public int authenticate(Context context,
-                            String username,
-                            String password,
-                            String realm,
-                            HttpServletRequest request)
-        throws SQLException {
-        if (username != null && password != null) {
-            EPerson eperson = null;
-            log.info(LogHelper.getHeader(context, "authenticate", "attempting password auth of user=" + username));
-            eperson = EPersonServiceFactory.getInstance().getEPersonService()
-                                           .findByEmail(context, username.toLowerCase());
-
-            if (eperson == null) {
-                // lookup failed.
-                return NO_SUCH_USER;
-            } else if (!eperson.canLogIn()) {
-                // cannot login this way
-                return BAD_ARGS;
-            } else if (eperson.getRequireCertificate()) {
-                // this user can only login with x.509 certificate
-                log.warn(LogHelper.getHeader(context, "authenticate",
-                                              "rejecting PasswordAuthentication because " + username + " requires " +
-                                                  "certificate."));
-                return CERT_REQUIRED;
-            } else if (EPersonServiceFactory.getInstance().getEPersonService()
-                                            .checkPassword(context, eperson, password)) {
-                // login is ok if password matches:
-                context.setCurrentUser(eperson);
-                if (request != null) {
-                    request.setAttribute(PASSWORD_AUTHENTICATED, true);
-                }
-                log.info(LogHelper.getHeader(context, "authenticate", "type=PasswordAuthentication"));
-                return SUCCESS;
-            } else {
-                return BAD_CREDENTIALS;
-            }
+  @Override public int authenticate(Context context, String username, String password, String realm, HttpServletRequest request) throws SQLException {
+    if (username != null && password != null) {
+      EPerson eperson = null;
+      log.info(LogHelper.getHeader(context, "authenticate", "attempting password auth of user=" + username));
+      eperson = EPersonServiceFactory.getInstance().getEPersonService().findByEmail(context, username.toLowerCase());
+      if (eperson == null) {
+        return NO_SUCH_USER;
+      } else {
+        if (!eperson.canLogIn()) {
+          return BAD_ARGS;
         } else {
-            // BAD_ARGS always defers to the next authentication method.
-            // It means this method cannot use the given credentials.
-            return BAD_ARGS;
+          if (eperson.getRequireCertificate()) {
+            log.warn(LogHelper.getHeader(context, "authenticate", "rejecting PasswordAuthentication because " + username + " requires " + "certificate."));
+            return CERT_REQUIRED;
+          } else {
+            if (EPersonServiceFactory.getInstance().getEPersonService().checkPassword(context, eperson, password)) {
+              context.setCurrentUser(eperson);
+              if (request != null) {
+                request.setAttribute(PASSWORD_AUTHENTICATED, true);
+              }
+              log.info(LogHelper.getHeader(context, "authenticate", "type=PasswordAuthentication"));
+              return SUCCESS;
+            } else {
+              return BAD_CREDENTIALS;
+            }
+          }
         }
+      }
+    } else {
+      return BAD_ARGS;
     }
+  }
 
-    /**
+  /**
      * Returns URL of password-login servlet.
      *
      * @param context  DSpace context, will be modified (EPerson set) upon success.
@@ -245,34 +190,25 @@ public class PasswordAuthentication
      * @param response The HTTP response from the servlet method.
      * @return fully-qualified URL
      */
-    @Override
-    public String loginPageURL(Context context,
-                               HttpServletRequest request,
-                               HttpServletResponse response) {
-        return null;
-    }
+  @Override public String loginPageURL(Context context, HttpServletRequest request, HttpServletResponse response) {
+    return null;
+  }
 
-    @Override
-    public String getName() {
-        return "password";
-    }
+  @Override public String getName() {
+    return "password";
+  }
 
-
-    @Override
-    public boolean isUsed(final Context context, final HttpServletRequest request) {
-        if (request != null &&
-                context.getCurrentUser() != null &&
-                request.getAttribute(PASSWORD_AUTHENTICATED) != null) {
-            return true;
-        }
-        return false;
+  @Override public boolean isUsed(final Context context, final HttpServletRequest request) {
+    if (request != null && context.getCurrentUser() != null && request.getAttribute(PASSWORD_AUTHENTICATED) != null) {
+      return true;
     }
+    return false;
+  }
 
-    @Override
-    public boolean canChangePassword(Context context, EPerson ePerson, String currentPassword) {
-        if (context == null || ePerson == null) {
-            return false;
-        }
-        return ePersonService.checkPassword(context, ePerson, currentPassword);
+  @Override public boolean canChangePassword(Context context, EPerson ePerson, String currentPassword) {
+    if (context == null || ePerson == null) {
+      return false;
     }
+    return ePersonService.checkPassword(context, ePerson, currentPassword);
+  }
 }

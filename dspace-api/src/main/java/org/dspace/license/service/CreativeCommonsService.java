@@ -1,18 +1,9 @@
-/**
- * The contents of this file are subject to the license and copyright
- * detailed in the LICENSE and NOTICE files at the root of the source
- * tree and available online at
- *
- * http://www.dspace.org/license/
- */
 package org.dspace.license.service;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-
 import org.dspace.authorize.AuthorizeException;
 import org.dspace.content.Bitstream;
 import org.dspace.content.Item;
@@ -28,10 +19,9 @@ import org.jdom2.Document;
  * @author kevinvandevelde at atmire.com
  */
 public interface CreativeCommonsService {
+  public static final String CC_BUNDLE_NAME = "CC-LICENSE";
 
-    public static final String CC_BUNDLE_NAME = "CC-LICENSE";
-
-    /**
+  /**
      * setLicenseRDF
      *
      * CC Web Service method for setting the RDF bitstream
@@ -44,11 +34,9 @@ public interface CreativeCommonsService {
      * @throws AuthorizeException Exception indicating the current user of the context does not have permission
      *                            to perform a particular action.
      */
-    public void setLicenseRDF(Context context, Item item, String licenseRdf)
-            throws SQLException, IOException, AuthorizeException;
+  public void setLicenseRDF(Context context, Item item, String licenseRdf) throws SQLException, IOException, AuthorizeException;
 
-
-    /**
+  /**
      * Used by DSpaceMetsIngester
      *
      * @param context    The relevant DSpace Context.
@@ -65,11 +53,9 @@ public interface CreativeCommonsService {
      *
      *                            * // PATCHED 12/01 FROM JIRA re: mimetypes for CCLicense and License RDF wjb
      */
-    public void setLicense(Context context, Item item,
-                           InputStream licenseStm, String mimeType)
-            throws SQLException, IOException, AuthorizeException;
+  public void setLicense(Context context, Item item, InputStream licenseStm, String mimeType) throws SQLException, IOException, AuthorizeException;
 
-    /**
+  /**
      * Removes the license file from the item
      *
      * @param context   - The relevant DSpace Context
@@ -78,31 +64,27 @@ public interface CreativeCommonsService {
      * @throws IOException
      * @throws AuthorizeException
      */
-    public void removeLicenseFile(Context context, Item item)
-            throws SQLException, IOException, AuthorizeException;
+  public void removeLicenseFile(Context context, Item item) throws SQLException, IOException, AuthorizeException;
 
+  public String getLicenseURL(Context context, Item item) throws SQLException, IOException, AuthorizeException;
 
-    public String getLicenseURL(Context context, Item item)
-            throws SQLException, IOException, AuthorizeException;
-
-
-    /**
+  /**
      * Returns the stored license uri of the item
      *
      * @param item  - The item for which to retrieve the stored license uri
      * @return the stored license uri of the item
      */
-    public String getLicenseURI(Item item);
+  public String getLicenseURI(Item item);
 
-    /**
+  /**
      * Returns the stored license name of the item
      *
      * @param item  - The item for which to retrieve the stored license name
      * @return the stored license name of the item
      */
-    public String getLicenseName(Item item);
+  public String getLicenseName(Item item);
 
-    /**
+  /**
      * Get Creative Commons license RDF, returning Bitstream object.
      *
      * @param item bitstream's parent item
@@ -112,10 +94,9 @@ public interface CreativeCommonsService {
      * @throws AuthorizeException Exception indicating the current user of the context does not have permission
      *                            to perform a particular action.
      */
-    public Bitstream getLicenseRdfBitstream(Item item)
-            throws SQLException, IOException, AuthorizeException;
+  public Bitstream getLicenseRdfBitstream(Item item) throws SQLException, IOException, AuthorizeException;
 
-    /**
+  /**
      * Get Creative Commons license Text, returning Bitstream object.
      *
      * @param item bitstream's parent item
@@ -127,20 +108,18 @@ public interface CreativeCommonsService {
      * @deprecated the bitstream with the license in the textual format it
      * is no longer stored (see https://jira.duraspace.org/browse/DS-2604)
      */
-    @Deprecated
-    public Bitstream getLicenseTextBitstream(Item item)
-            throws SQLException, IOException, AuthorizeException;
+  @Deprecated public Bitstream getLicenseTextBitstream(Item item) throws SQLException, IOException, AuthorizeException;
 
-    /**
+  /**
      * Get a few license-specific properties. We expect these to be cached at
      * least per server run.
      *
      * @param fieldId name of the property.
      * @return its value.
      */
-    public String getCCField(String fieldId);
+  public String getCCField(String fieldId);
 
-    /**
+  /**
      * Apply same transformation on the document to retrieve only the most
      * relevant part of the document passed as parameter. If no transformation
      * is needed then take in consideration to empty the CreativeCommons.xml
@@ -149,9 +128,9 @@ public interface CreativeCommonsService {
      *                the license rdf
      * @return the document license in textual format after the transformation
      */
-    public String fetchLicenseRDF(Document license);
+  public String fetchLicenseRDF(Document license);
 
-    /**
+  /**
      * Remove license information, delete also the bitstream
      *
      * @param context   - DSpace Context
@@ -161,42 +140,41 @@ public interface CreativeCommonsService {
      * @throws IOException        A general class of exceptions produced by failed or interrupted I/O operations.
      * @throws SQLException       An exception that provides information on a database access error or other errors.
      */
-    public void removeLicense(Context context, Item item)
-            throws AuthorizeException, IOException, SQLException;
+  public void removeLicense(Context context, Item item) throws AuthorizeException, IOException, SQLException;
 
-    /**
+  /**
      * Find all CC Licenses using the default language found in the configuration
      *
      * @return A list of available CC Licenses
      */
-    public List<CCLicense> findAllCCLicenses();
+  public List<CCLicense> findAllCCLicenses();
 
-    /**
+  /**
      * Find all CC Licenses for the provided language
      *
      * @param language - the language for which to find the CC Licenses
      * @return A list of available CC Licenses for the provided language
      */
-    public List<CCLicense> findAllCCLicenses(String language);
+  public List<CCLicense> findAllCCLicenses(String language);
 
-    /**
+  /**
      * Find the CC License corresponding to the provided ID using the default language found in the configuration
      *
      * @param id - the ID of the license to be found
      * @return the corresponding license if found or null when not found
      */
-    public CCLicense findOne(String id);
+  public CCLicense findOne(String id);
 
-    /**
+  /**
      * Find the CC License corresponding to the provided ID and provided language
      *
      * @param id       - the ID of the license to be found
      * @param language - the language for which to find the CC License
      * @return the corresponding license if found or null when not found
      */
-    public CCLicense findOne(String id, String language);
+  public CCLicense findOne(String id, String language);
 
-    /**
+  /**
      * Retrieve the CC License URI for the provided license ID, based on the provided answers, using the default
      * language found in the configuration
      *
@@ -204,9 +182,9 @@ public interface CreativeCommonsService {
      * @param answerMap - the answers to the different field questions
      * @return the corresponding license URI
      */
-    public String retrieveLicenseUri(String licenseId, Map<String, String> answerMap);
+  public String retrieveLicenseUri(String licenseId, Map<String, String> answerMap);
 
-    /**
+  /**
      * Retrieve the CC License URI for the provided license ID and language based on the provided answers
      *
      * @param licenseId - the ID of the license
@@ -214,9 +192,9 @@ public interface CreativeCommonsService {
      * @param answerMap - the answers to the different field questions
      * @return the corresponding license URI
      */
-    public String retrieveLicenseUri(String licenseId, String language, Map<String, String> answerMap);
+  public String retrieveLicenseUri(String licenseId, String language, Map<String, String> answerMap);
 
-    /**
+  /**
      * Retrieve the full answer map containing empty values when an answer for a field was not provided in the
      * answerMap, using the default language found in the configuration
      *
@@ -224,9 +202,9 @@ public interface CreativeCommonsService {
      * @param answerMap - the answers to the different field questions
      * @return the answerMap supplemented with all other license fields with a blank answer
      */
-    public Map<String, String> retrieveFullAnswerMap(String licenseId, Map<String, String> answerMap);
+  public Map<String, String> retrieveFullAnswerMap(String licenseId, Map<String, String> answerMap);
 
-    /**
+  /**
      * Retrieve the full answer map for a provided language, containing empty values when an answer for a field was not
      * provided in the answerMap.
      *
@@ -235,9 +213,9 @@ public interface CreativeCommonsService {
      * @param answerMap - the answers to the different field questions
      * @return the answerMap supplemented with all other license fields with a blank answer for the provided language
      */
-    public Map<String, String> retrieveFullAnswerMap(String licenseId, String language, Map<String, String> answerMap);
+  public Map<String, String> retrieveFullAnswerMap(String licenseId, String language, Map<String, String> answerMap);
 
-    /**
+  /**
      * Verify whether the answer map contains a valid response to all field questions and no answers that don't have a
      * corresponding question in the license, using the default language found in the config to check the license
      *
@@ -245,9 +223,9 @@ public interface CreativeCommonsService {
      * @param fullAnswerMap - the answers to the different field questions
      * @return whether the information is valid
      */
-    public boolean verifyLicenseInformation(String licenseId, Map<String, String> fullAnswerMap);
+  public boolean verifyLicenseInformation(String licenseId, Map<String, String> fullAnswerMap);
 
-    /**
+  /**
      * Verify whether the answer map contains a valid response to all field questions and no answers that don't have a
      * corresponding question in the license, using the provided language to check the license
      *
@@ -256,9 +234,9 @@ public interface CreativeCommonsService {
      * @param fullAnswerMap - the answers to the different field questions
      * @return whether the information is valid
      */
-    public boolean verifyLicenseInformation(String licenseId, String language, Map<String, String> fullAnswerMap);
+  public boolean verifyLicenseInformation(String licenseId, String language, Map<String, String> fullAnswerMap);
 
-    /**
+  /**
      * Update the license of the item with a new one based on the provided license URI
      *
      * @param context       - The relevant DSpace context
@@ -268,10 +246,9 @@ public interface CreativeCommonsService {
      * @throws AuthorizeException
      * @throws SQLException
      */
-    public boolean updateLicense(final Context context, String licenseUri, final Item item)
-            throws AuthorizeException, SQLException;
+  public boolean updateLicense(final Context context, String licenseUri, final Item item) throws AuthorizeException, SQLException;
 
-    /**
+  /**
      * Add a new license to the item
      *
      * @param context       - The relevant Dspace context
@@ -283,6 +260,5 @@ public interface CreativeCommonsService {
      * @throws IOException
      * @throws AuthorizeException
      */
-    public void addLicense(Context context, Item item, String licenseUri, String licenseName, Document doc)
-            throws SQLException, IOException, AuthorizeException;
+  public void addLicense(Context context, Item item, String licenseUri, String licenseName, Document doc) throws SQLException, IOException, AuthorizeException;
 }

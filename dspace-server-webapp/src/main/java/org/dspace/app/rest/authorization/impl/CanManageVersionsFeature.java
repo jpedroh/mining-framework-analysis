@@ -1,15 +1,8 @@
-/**
- * The contents of this file are subject to the license and copyright
- * detailed in the LICENSE and NOTICE files at the root of the source
- * tree and available online at
- *
- * http://www.dspace.org/license/
- */
 package org.dspace.app.rest.authorization.impl;
 import java.sql.SQLException;
 import java.util.Objects;
 import java.util.UUID;
-
+import org.apache.commons.lang.StringUtils;
 import org.dspace.app.rest.authorization.AuthorizationFeature;
 import org.dspace.app.rest.authorization.AuthorizationFeatureDocumentation;
 import org.dspace.app.rest.model.BaseObjectRest;
@@ -28,42 +21,45 @@ import org.springframework.stereotype.Component;
  * 
  * @author Mykhaylo Boychuk (mykhaylo.boychuk at 4science.it)
  */
-@Component
-@AuthorizationFeatureDocumentation(name = CanManageVersionsFeature.NAME,
-    description = "It can be used to verify if the user can create/delete or update the version of an Item")
-public class CanManageVersionsFeature implements AuthorizationFeature {
+@Component @AuthorizationFeatureDocumentation(name = CanManageVersionsFeature.NAME, description = "It can be used to verify if the user can create/delete or update the version of an Item") public class CanManageVersionsFeature implements AuthorizationFeature {
+  public static final String NAME = "canManageVersions";
 
-    public static final String NAME = "canManageVersions";
+  @Autowired private ItemService itemService;
 
-    @Autowired
-    private ItemService itemService;
-    @Autowired
-    private AuthorizeService authorizeService;
-    @Autowired
-    private ConfigurationService configurationService;
+  @Autowired private AuthorizeService authorizeService;
 
+  @Autowired private ConfigurationService configurationService;
 
-    @Override
-    @SuppressWarnings("rawtypes")
-    public boolean isAuthorized(Context context, BaseObjectRest object) throws SQLException {
-        if (object instanceof ItemRest) {
-            boolean isEnabled = configurationService.getBooleanProperty("versioning.enabled", true);
-            if (!isEnabled || Objects.isNull(context.getCurrentUser())) {
-                return false;
-            }
-            Item item = itemService.find(context, UUID.fromString(((ItemRest) object).getUuid()));
-            if (Objects.nonNull(item)) {
-                return authorizeService.isAdmin(context, item);
-            }
-        }
+  @Override @SuppressWarnings(value = { "rawtypes" }) public boolean isAuthorized(Context context, BaseObjectRest object) throws SQLException {
+    if (object instanceof ItemRest) {
+      boolean isEnabled = configurationService.getBooleanProperty("versioning.enabled", true);
+      if (!isEnabled || Objects.isNull(context.getCurrentUser())) {
         return false;
-    }
+      }
+      Item item = itemService.find(context, UUID.fromString(((ItemRest) object).getUuid()));
+      if (Objects.nonNull(item)) {
 
-    @Override
-    public String[] getSupportedTypes() {
-        return new String[]{
-            ItemRest.CATEGORY + "." + ItemRest.NAME
-        };
-    }
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/authorization/impl/CanManageVersionsFeature.java/left.java
+        boolean isBlockEntity = configurationService.getBooleanProperty("versioning.block.entity", true);
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
 
+
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/authorization/impl/CanManageVersionsFeature.java/left.java
+        boolean hasEntityType = StringUtils.isNotBlank(itemService.getMetadataFirstValue(item, "dspace", "entity", "type", Item.ANY));
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
+        if (isBlockEntity && hasEntityType) {
+          return false;
+        }
+        return authorizeService.isAdmin(context, item);
+      }
+    }
+    return false;
+  }
+
+  @Override public String[] getSupportedTypes() {
+    return new String[] { ItemRest.CATEGORY + "." + ItemRest.NAME };
+  }
 }

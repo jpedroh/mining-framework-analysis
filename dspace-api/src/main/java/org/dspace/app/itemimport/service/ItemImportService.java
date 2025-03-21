@@ -1,17 +1,8 @@
-/**
- * The contents of this file are subject to the license and copyright
- * detailed in the LICENSE and NOTICE files at the root of the source
- * tree and available online at
- *
- * http://www.dspace.org/license/
- */
 package org.dspace.app.itemimport.service;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import javax.mail.MessagingException;
-
 import org.dspace.app.itemimport.BatchUpload;
 import org.dspace.content.Collection;
 import org.dspace.core.Context;
@@ -35,9 +26,7 @@ import org.dspace.scripts.handler.DSpaceRunnableHandler;
  * allow the registration of files (bitstreams) into DSpace.
  */
 public interface ItemImportService {
-
-
-    /**
+  /**
      * @param c             DSpace Context
      * @param mycollections List of Collections
      * @param sourceDir     source location
@@ -45,10 +34,9 @@ public interface ItemImportService {
      * @param template      whether to use template item
      * @throws Exception if error
      */
-    public void addItemsAtomic(Context c, List<Collection> mycollections, String sourceDir, String mapFile,
-                               boolean template) throws Exception;
+  public void addItemsAtomic(Context c, List<Collection> mycollections, String sourceDir, String mapFile, boolean template) throws Exception;
 
-    /**
+  /**
      * Add items
      *
      * @param c             DSpace Context
@@ -58,19 +46,18 @@ public interface ItemImportService {
      * @param template      whether to use template item
      * @throws Exception if error
      */
-    public void addItems(Context c, List<Collection> mycollections,
-                         String sourceDir, String mapFile, boolean template) throws Exception;
+  public void addItems(Context c, List<Collection> mycollections, String sourceDir, String mapFile, boolean template) throws Exception;
 
-    /**
+  /**
      * Unzip a file
      *
      * @param zipfile file
      * @return unzip location
      * @throws IOException if error
      */
-    public String unzip(File zipfile) throws IOException;
+  public String unzip(File zipfile) throws IOException;
 
-    /**
+  /**
      * Unzip a file to a destination
      *
      * @param zipfile file
@@ -78,9 +65,9 @@ public interface ItemImportService {
      * @return unzip location
      * @throws IOException if error
      */
-    public String unzip(File zipfile, String destDir) throws IOException;
+  public String unzip(File zipfile, String destDir) throws IOException;
 
-    /**
+  /**
      * Unzip a file in a specific source directory
      *
      * @param sourcedir   source directory
@@ -88,9 +75,9 @@ public interface ItemImportService {
      * @return unzip location
      * @throws IOException if error
      */
-    public String unzip(String sourcedir, String zipfilename) throws IOException;
+  public String unzip(String sourcedir, String zipfilename) throws IOException;
 
-    /**
+  /**
      * Given a public URL to a zip file that has the Simple Archive Format, this method imports the contents to DSpace
      *
      * @param url              The public URL of the zip file
@@ -102,10 +89,9 @@ public interface ItemImportService {
      * @param template         whether to use template item
      * @throws Exception if error
      */
-    public void processUIImport(String url, Collection owningCollection, String[] collections, String resumeDir,
-                                String inputType, Context context, boolean template) throws Exception;
+  public void processUIImport(String url, Collection owningCollection, String[] collections, String resumeDir, String inputType, Context context, boolean template) throws Exception;
 
-    /**
+  /**
      * If a batch import is done in a new thread we are unable to communicate
      * with calling method about success or failure. We accomplish this
      * communication with email instead. Send a success email once the batch
@@ -116,10 +102,9 @@ public interface ItemImportService {
      * @param fileName - the filepath to the mapfile created by the batch import
      * @throws MessagingException if error
      */
-    public void emailSuccessMessage(Context context, EPerson eperson,
-                                    String fileName) throws MessagingException;
+  public void emailSuccessMessage(Context context, EPerson eperson, String fileName) throws MessagingException;
 
-    /**
+  /**
      * If a batch import is done in a new thread we are unable to communicate
      * with calling method about success or failure. We accomplis this
      * communication with email instead. Send an error email if the batch
@@ -129,40 +114,36 @@ public interface ItemImportService {
      * @param error   - the error message
      * @throws MessagingException if error
      */
-    public void emailErrorMessage(EPerson eperson, String error)
-        throws MessagingException;
+  public void emailErrorMessage(EPerson eperson, String error) throws MessagingException;
 
-
-    /**
+  /**
      * Get imports available for a person
      *
      * @param eperson EPerson object
      * @return List of batch uploads
      * @throws Exception if error
      */
-    public List<BatchUpload> getImportsAvailable(EPerson eperson)
-        throws Exception;
+  public List<BatchUpload> getImportsAvailable(EPerson eperson) throws Exception;
 
-    /**
+  /**
      * Get import upload directory
      *
      * @param ePerson EPerson object
      * @return directory
      * @throws Exception if error
      */
-    public String getImportUploadableDirectory(EPerson ePerson)
-        throws Exception;
+  public String getImportUploadableDirectory(EPerson ePerson) throws Exception;
 
-    /**
+  /**
      * Delete a batch by ID
      *
      * @param c        DSpace Context
      * @param uploadId identifier
      * @throws Exception if error
      */
-    public void deleteBatchUpload(Context c, String uploadId) throws Exception;
+  public void deleteBatchUpload(Context c, String uploadId) throws Exception;
 
-    /**
+  /**
      * Replace items
      *
      * @param c             DSpace Context
@@ -172,74 +153,73 @@ public interface ItemImportService {
      * @param template      whether to use template item
      * @throws Exception if error
      */
-    public void replaceItems(Context c, List<Collection> mycollections, String sourcedir, String mapfile,
-                             boolean template) throws Exception;
+  public void replaceItems(Context c, List<Collection> mycollections, String sourcedir, String mapfile, boolean template) throws Exception;
 
-    /**
+  /**
      * Delete items via mapfile
      *
      * @param c       DSpace Context
      * @param mapfile map file
      * @throws Exception if error
      */
-    public void deleteItems(Context c, String mapfile) throws Exception;
+  public void deleteItems(Context c, String mapfile) throws Exception;
 
-    /**
+  /**
      * Get temporary work directory
      *
      * @return directory as string
      */
-    public String getTempWorkDir();
+  public String getTempWorkDir();
 
-    /**
+  /**
      * Get temporary work directory (as File)
      *
      * @return directory as File
      * @throws java.io.IOException if the directory cannot be created.
      */
-    public File getTempWorkDirFile() throws IOException;
+  public File getTempWorkDirFile() throws IOException;
 
-    /**
+  /**
      * Cleanup
      */
-    public void cleanupZipTemp();
+  public void cleanupZipTemp();
 
-    /**
+  /**
      * Set test flag
      *
      * @param isTest true or false
      */
-    public void setTest(boolean isTest);
+  public void setTest(boolean isTest);
 
-    /**
+  /**
      * Set resume flag
      *
      * @param isResume true or false
      */
-    public void setResume(boolean isResume);
+  public void setResume(boolean isResume);
 
-    /**
+  /**
      * Set use workflow
      *
      * @param useWorkflow whether to enable workflow
      */
-    public void setUseWorkflow(boolean useWorkflow);
+  public void setUseWorkflow(boolean useWorkflow);
 
-    /**
+  /**
      * @param useWorkflowSendMail whether to send mail
      */
-    public void setUseWorkflowSendEmail(boolean useWorkflowSendMail);
+  public void setUseWorkflowSendEmail(boolean useWorkflowSendMail);
 
-    /**
+  /**
      * Set quiet flag
      *
      * @param isQuiet true or false
      */
-    public void setQuiet(boolean isQuiet);
+  public void setQuiet(boolean isQuiet);
 
-    /**
+  /**
      * Set the DSpace Runnable Handler
      * @param handler
      */
-    public void setHandler(DSpaceRunnableHandler handler);
+  public void setHandler(DSpaceRunnableHandler handler);
 }

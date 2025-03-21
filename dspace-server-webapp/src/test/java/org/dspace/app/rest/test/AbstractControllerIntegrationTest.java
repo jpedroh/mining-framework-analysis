@@ -1,24 +1,14 @@
-/**
- * The contents of this file are subject to the license and copyright
- * detailed in the LICENSE and NOTICE files at the root of the source
- * tree and available online at
- *
- * http://www.dspace.org/license/
- */
 package org.dspace.app.rest.test;
-
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
-
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import javax.servlet.Filter;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -63,146 +53,93 @@ import org.springframework.web.context.WebApplicationContext;
  * @author Tim Donohue
  * @see org.dspace.app.rest.test.AbstractWebClientIntegrationTest
  */
-// Run tests with JUnit and Spring TestContext Framework
-@RunWith(SpringRunner.class)
-// Specify main class to use to load Spring ApplicationContext
-// NOTE: By default, Spring caches and reuses ApplicationContext for each integration test (to speed up tests)
-// See: https://docs.spring.io/spring/docs/current/spring-framework-reference/testing.html#integration-testing
-@SpringBootTest(classes = Application.class)
-// Load DSpace initializers in Spring ApplicationContext (to initialize DSpace Kernel & Configuration)
-@ContextConfiguration(initializers = { DSpaceKernelInitializer.class, DSpaceConfigurationInitializer.class })
-// Tell Spring to make ApplicationContext an instance of WebApplicationContext (for web-based tests)
-@WebAppConfiguration
-// Load our src/test/resources/application-test.properties to override some settings in default application.properties
-@TestPropertySource(locations = "classpath:application-test.properties")
-// Enable our custom Logging listener to log when each test method starts/stops
-@TestExecutionListeners(listeners = {LoggingTestExecutionListener.class},
-    mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-public class AbstractControllerIntegrationTest extends AbstractIntegrationTestWithDatabase {
+@RunWith(value = SpringRunner.class) @SpringBootTest(classes = Application.class) @ContextConfiguration(initializers = { DSpaceKernelInitializer.class, DSpaceConfigurationInitializer.class }) @WebAppConfiguration @TestPropertySource(locations = "classpath:application-test.properties") @TestExecutionListeners(listeners = { LoggingTestExecutionListener.class }, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS) public class AbstractControllerIntegrationTest extends AbstractIntegrationTestWithDatabase {
+  protected static final String AUTHORIZATION_HEADER = "Authorization";
 
-    protected static final String AUTHORIZATION_HEADER = "Authorization";
-    protected static final String AUTHORIZATION_COOKIE = "Authorization-cookie";
+  protected static final String AUTHORIZATION_COOKIE = "Authorization-cookie";
 
-    //The Authorization header contains a value like "Bearer TOKENVALUE". This constant string represents the part that
-    //sits before the actual authentication token and can be used to easily compose or parse the Authorization header.
-    protected static final String AUTHORIZATION_TYPE = "Bearer ";
+  protected static final String AUTHORIZATION_TYPE = "Bearer ";
 
-    public static final String REST_SERVER_URL = "http://localhost/api/";
-    public static final String BASE_REST_SERVER_URL = "http://localhost";
+  public static final String REST_SERVER_URL = "http://localhost/api/";
 
-    // Our standard/expected content type
-    protected MediaType contentType = new MediaType(MediaTypes.HAL_JSON.getType(),
-                                                    MediaTypes.HAL_JSON.getSubtype(), StandardCharsets.UTF_8);
+  public static final String BASE_REST_SERVER_URL = "http://localhost";
 
-    protected MediaType textUriContentType = RestMediaTypes.TEXT_URI_LIST;
+  protected MediaType contentType = new MediaType(MediaTypes.HAL_JSON.getType(), MediaTypes.HAL_JSON.getSubtype(), StandardCharsets.UTF_8);
 
-    protected HttpMessageConverter mappingJackson2HttpMessageConverter;
+  protected MediaType textUriContentType = RestMediaTypes.TEXT_URI_LIST;
 
-    @Autowired
-    private WebApplicationContext webApplicationContext;
+  protected HttpMessageConverter mappingJackson2HttpMessageConverter;
 
-    @Autowired
-    private List<Filter> requestFilters;
+  @Autowired private WebApplicationContext webApplicationContext;
 
-    @Autowired
-    void setConverters(HttpMessageConverter<?>[] converters) {
+  @Autowired private List<Filter> requestFilters;
 
-        this.mappingJackson2HttpMessageConverter = Arrays.asList(converters).stream().filter(
-            hmc -> hmc instanceof MappingJackson2HttpMessageConverter).findAny().get();
+  @Autowired void setConverters(HttpMessageConverter<?>[] converters) {
+    this.mappingJackson2HttpMessageConverter = Arrays.asList(converters).stream().filter((hmc) -> hmc instanceof MappingJackson2HttpMessageConverter).findAny().get();
+    Assert.assertNotNull("the JSON message converter must not be null", this.mappingJackson2HttpMessageConverter);
+  }
 
-        Assert.assertNotNull("the JSON message converter must not be null",
-                             this.mappingJackson2HttpMessageConverter);
-    }
-
-    /**
+  /**
      * Create a test web client without an authorization token (an anonymous
      * session).
      *
      * @return the test client.
      * @throws SQLException passed through.
      */
-    public MockMvc getClient() throws SQLException {
-        return getClient(null);
-    }
+  public MockMvc getClient() throws SQLException {
+    return getClient(null);
+  }
 
-    /**
+  /**
      * Create a test web client which uses a given authorization token.
      *
      * @param authToken a suitable Bearer token.
      * @return the test client.
      * @throws SQLException passed through.
      */
-    public MockMvc getClient(String authToken) throws SQLException {
-        if (context != null && context.isValid()) {
-            context.commit();
-        }
-
-        DefaultMockMvcBuilder mockMvcBuilder = webAppContextSetup(webApplicationContext)
-            //Always log the response to debug
-            .alwaysDo(MockMvcResultHandlers.print())
-            //Add all filter implementations
-            .addFilters(new ErrorPageFilter())
-            .addFilters(requestFilters.toArray(new Filter[requestFilters.size()]))
-            // Enable/Integrate Spring Security with MockMVC
-            .apply(springSecurity());
-
-        // Make sure all MockMvc requests (in all tests) include a valid CSRF token (in header) by default.
-        // If an authToken was passed in, also make sure request sends the authToken in the "Authorization" header
-        if (StringUtils.isNotBlank(authToken)) {
-            mockMvcBuilder.defaultRequest(
-                get("/").with(csrf().asHeader()).header(AUTHORIZATION_HEADER, AUTHORIZATION_TYPE + authToken));
-        } else {
-            mockMvcBuilder.defaultRequest(get("/").with(csrf().asHeader()));
-        }
-
-        return mockMvcBuilder
-            .build();
+  public MockMvc getClient(String authToken) throws SQLException {
+    if (context != null && context.isValid()) {
+      context.commit();
     }
-
-    public MockHttpServletResponse getAuthResponse(String user, String password) throws Exception {
-        return getClient().perform(post("/api/authn/login")
-                                       .param("user", user)
-                                       .param("password", password))
-                          .andReturn().getResponse();
+    DefaultMockMvcBuilder mockMvcBuilder = webAppContextSetup(webApplicationContext).alwaysDo(MockMvcResultHandlers.print()).addFilters(new ErrorPageFilter()).addFilters(requestFilters.toArray(new Filter[requestFilters.size()])).apply(springSecurity());
+    if (StringUtils.isNotBlank(authToken)) {
+      mockMvcBuilder.defaultRequest(get("/").with(csrf().asHeader()).header(AUTHORIZATION_HEADER, AUTHORIZATION_TYPE + authToken));
+    } else {
+      mockMvcBuilder.defaultRequest(get("/").with(csrf().asHeader()));
     }
+    return mockMvcBuilder.build();
+  }
 
-    public MockHttpServletResponse getAuthResponseWithXForwardedForHeader(String user, String password,
-                                                                          String xForwardedFor) throws Exception {
-        return getClient().perform(post("/api/authn/login")
-                                       .param("user", user)
-                                       .param("password", password)
-                                       .header("X-Forwarded-For", xForwardedFor))
-                          .andReturn().getResponse();
+  public MockHttpServletResponse getAuthResponse(String user, String password) throws Exception {
+    return getClient().perform(post("/api/authn/login").param("user", user).param("password", password)).andReturn().getResponse();
+  }
+
+  public MockHttpServletResponse getAuthResponseWithXForwardedForHeader(String user, String password, String xForwardedFor) throws Exception {
+    return getClient().perform(post("/api/authn/login").param("user", user).param("password", password).header("X-Forwarded-For", xForwardedFor)).andReturn().getResponse();
+  }
+
+  public String getAuthToken(String user, String password) throws Exception {
+    return StringUtils.substringAfter(getAuthResponse(user, password).getHeader(AUTHORIZATION_HEADER), AUTHORIZATION_TYPE);
+  }
+
+  public String getAuthTokenWithXForwardedForHeader(String user, String password, String xForwardedFor) throws Exception {
+    return StringUtils.substringAfter(getAuthResponseWithXForwardedForHeader(user, password, xForwardedFor).getHeader(AUTHORIZATION_HEADER), AUTHORIZATION_TYPE);
+  }
+
+  public String getPatchContent(List<Operation> ops) {
+    ObjectMapper objectMapper = new ObjectMapper();
+    try {
+      return objectMapper.writeValueAsString(ops);
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
     }
+    return null;
+  }
 
-
-    public String getAuthToken(String user, String password) throws Exception {
-        return StringUtils.substringAfter(
-            getAuthResponse(user, password).getHeader(AUTHORIZATION_HEADER),
-            AUTHORIZATION_TYPE);
-    }
-
-    public String getAuthTokenWithXForwardedForHeader(String user, String password, String xForwardedFor)
-        throws Exception {
-        return StringUtils.substringAfter(
-            getAuthResponseWithXForwardedForHeader(user, password, xForwardedFor).getHeader(AUTHORIZATION_HEADER),
-            AUTHORIZATION_TYPE);
-    }
-
-    public String getPatchContent(List<Operation> ops) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.writeValueAsString(ops);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static RequestPostProcessor ip(final String ipAddress) {
-        return request -> {
-            request.setRemoteAddr(ipAddress);
-            return request;
-        };
-    }
+  public static RequestPostProcessor ip(final String ipAddress) {
+    return (request) -> {
+      request.setRemoteAddr(ipAddress);
+      return request;
+    };
+  }
 }

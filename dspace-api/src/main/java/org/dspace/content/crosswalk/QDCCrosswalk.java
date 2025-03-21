@@ -1,12 +1,4 @@
-/**
- * The contents of this file are subject to the license and copyright
- * detailed in the LICENSE and NOTICE files at the root of the source
- * tree and available online at
- *
- * http://www.dspace.org/license/
- */
 package org.dspace.content.crosswalk;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -18,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -94,102 +85,85 @@ import org.jdom2.input.SAXBuilder;
  *
  * @author Larry Stone
  */
-public class QDCCrosswalk extends SelfNamedPlugin
-    implements DisseminationCrosswalk, IngestionCrosswalk {
-    /**
+public class QDCCrosswalk extends SelfNamedPlugin implements DisseminationCrosswalk, IngestionCrosswalk {
+  /**
      * log4j category
      */
-    private static final Logger log = LogManager.getLogger(QDCCrosswalk.class);
+  private static final Logger log = LogManager.getLogger(QDCCrosswalk.class);
 
-    // map of qdc to JDOM Element
-    private final Map<String, Element> qdc2element = new HashMap<>();
+  private final Map<String, Element> qdc2element = new HashMap<>();
 
-    // map of JDOM Element to qdc Metadatum
-    private final Map<String, String> element2qdc = new HashMap<>();
+  private final Map<String, String> element2qdc = new HashMap<>();
 
-    // the XML namespaces from config file for this name.
-    private Namespace namespaces[] = null;
+  private Namespace namespaces[] = null;
 
-    private static final Namespace DCTERMS_NS =
-        Namespace.getNamespace("dcterms", "http://purl.org/dc/terms/");
+  private static final Namespace DCTERMS_NS = Namespace.getNamespace("dcterms", "http://purl.org/dc/terms/");
 
-    // sentinal: done init?
-    private boolean inited = false;
+  private boolean inited = false;
 
-    // my plugin name
-    private String myName = null;
+  private String myName = null;
 
-    // prefix of all DSpace Configuration entries.
-    private static final String CONFIG_PREFIX = "crosswalk.qdc";
+  private static final String CONFIG_PREFIX = "crosswalk.qdc";
 
-    // XML schemaLocation fragment for this crosswalk, from config.
-    private String schemaLocation = null;
+  private String schemaLocation = null;
 
-    private static final SAXBuilder builder = new SAXBuilder();
+  private static final SAXBuilder builder = new SAXBuilder();
 
-    protected ItemService itemService = ContentServiceFactory.getInstance().getItemService();
+  protected ItemService itemService = ContentServiceFactory.getInstance().getItemService();
 
-    protected final ConfigurationService configurationService
-            = DSpaceServicesFactory.getInstance().getConfigurationService();
+  protected final ConfigurationService configurationService = DSpaceServicesFactory.getInstance().getConfigurationService();
 
-    private final CrosswalkMetadataValidator metadataValidator = new CrosswalkMetadataValidator();
+  private final CrosswalkMetadataValidator metadataValidator = new CrosswalkMetadataValidator();
 
-    /**
+  /**
      * Fill in the plugin-name table from DSpace configuration entries
      * for configuration files for flavors of QDC crosswalk:
      */
-    private static String aliases[] = null;
+  private static String aliases[] = null;
 
-    static {
-        initStatic();
-    }
+  static {
+    initStatic();
+  }
 
-    /**
+  /**
      * Call this method again in tests to repeat initialization if necessary.
      */
-    public static void initStatic() {
-        List<String> aliasList = new ArrayList<>();
-        String propname = CONFIG_PREFIX + ".properties.";
-        List<String> configKeys =
-            DSpaceServicesFactory.getInstance().getConfigurationService().getPropertyKeys(propname);
-        for (String key : configKeys) {
-            aliasList.add(key.substring(propname.length()));
-        }
-        aliases = (String[]) aliasList.toArray(new String[aliasList.size()]);
+  public static void initStatic() {
+    List<String> aliasList = new ArrayList<>();
+    String propname = CONFIG_PREFIX + ".properties.";
+    List<String> configKeys = DSpaceServicesFactory.getInstance().getConfigurationService().getPropertyKeys(propname);
+    for (String key : configKeys) {
+      aliasList.add(key.substring(propname.length()));
     }
+    aliases = (String[]) aliasList.toArray(new String[aliasList.size()]);
+  }
 
-    public static String[] getPluginNames() {
-        return (String[]) ArrayUtils.clone(aliases);
+  public static String[] getPluginNames() {
+    return (String[]) ArrayUtils.clone(aliases);
+  }
+
+  private String makeQualifiedTagName(Element element) {
+    String prefix = "";
+    Namespace ns = element.getNamespace();
+    if (ns != null) {
+      prefix = ns.getPrefix() + ":";
     }
-
-    // utility: return "fully qualified" name of XML element, for a
-    // hashtable key to use on ingesting elements.
-    // Format is {prefix:}name  where prefix is optional.
-    private String makeQualifiedTagName(Element element) {
-        String prefix = "";
-        Namespace ns = element.getNamespace();
-        if (ns != null) {
-            prefix = ns.getPrefix() + ":";
-        }
-
-        String tagName;
-        String nsQualifier = element.getAttributeValue("type", DisseminationCrosswalk.XSI_NS);
-
-        if (nsQualifier == null || nsQualifier.length() < 1) {
-            String qualifier = element.getAttributeValue("type");
-            if (qualifier == null || qualifier.length() < 1) {
-                tagName = prefix + element.getName();
-            } else {
-                tagName = prefix + element.getName() + qualifier;
-            }
-        } else {
-            tagName = prefix + element.getName() + nsQualifier;
-        }
-
-        return tagName;
+    String tagName;
+    String nsQualifier = element.getAttributeValue("type", DisseminationCrosswalk.XSI_NS);
+    if (nsQualifier == null || nsQualifier.length() < 1) {
+      String qualifier = element.getAttributeValue("type");
+      if (qualifier == null || qualifier.length() < 1) {
+        tagName = prefix + element.getName();
+      } else {
+        tagName = prefix + element.getName() + qualifier;
+      }
+    } else {
+      tagName = prefix + element.getName() + nsQualifier;
     }
+    return tagName;
+  }
 
-    /**
+  /**
      * Initialize Crosswalk table from a properties file
      * which itself is the value of the DSpace configuration property
      * "crosswalk.qdc.properties.X", where "X" is the alias name of this instance.
@@ -212,113 +186,88 @@ public class QDCCrosswalk extends SelfNamedPlugin
      *
      * dc.coverage.temporal = <dcterms:temporal />
      */
-    private void init()
-        throws CrosswalkException, IOException {
-        if (inited) {
-            return;
-        }
-        inited = true;
-
-        myName = getPluginInstanceName();
-        if (myName == null) {
-            throw new CrosswalkInternalException("Cannot determine plugin name. " +
-                                                     "You must use PluginService to instantiate QDCCrosswalk so the " +
-                                                     "instance knows its name.");
-        }
-
-        // grovel DSpace configuration for namespaces
-        List<Namespace> nsList = new ArrayList<>();
-        String propname = CONFIG_PREFIX + ".namespace." + myName + ".";
-        List<String> configKeys = configurationService.getPropertyKeys(propname);
-        for (String key : configKeys) {
-            nsList.add(Namespace.getNamespace(key.substring(propname.length()),
-                                                configurationService.getProperty(key)));
-        }
-        nsList.add(Namespace.XML_NAMESPACE);
-        namespaces = (Namespace[]) nsList.toArray(new Namespace[nsList.size()]);
-
-        // get XML schemaLocation fragment from config
-        schemaLocation = configurationService.getProperty(CONFIG_PREFIX + ".schemaLocation." + myName);
-
-        // read properties
-        String cmPropName = CONFIG_PREFIX + ".properties." + myName;
-        String propsFilename = configurationService.getProperty(cmPropName);
-        if (propsFilename == null) {
-            throw new CrosswalkInternalException("Configuration error: " +
-                                                     "No properties file configured for QDC crosswalk named \"" +
-                                                     myName + "\"");
-        }
-
-        String parent = configurationService.getProperty("dspace.dir") +
-            File.separator + "config" + File.separator;
-        File propsFile = new File(parent, propsFilename);
-        Properties qdcProps = new Properties();
-        FileInputStream pfs = null;
-        try {
-            pfs = new FileInputStream(propsFile);
-            qdcProps.load(pfs);
-        } finally {
-            if (pfs != null) {
-                try {
-                    pfs.close();
-                } catch (IOException ioe) {
-                    // ignore
-                }
-            }
-        }
-
-        // grovel properties to initialize qdc->element and element->qdc maps.
-        // evaluate the XML fragment with a wrapper including namespaces.
-        String postlog = "</wrapper>";
-        StringBuilder prologb = new StringBuilder("<wrapper");
-        for (int i = 0; i < namespaces.length; ++i) {
-            prologb.append(" xmlns:");
-            prologb.append(namespaces[i].getPrefix());
-            prologb.append("=\"");
-            prologb.append(namespaces[i].getURI());
-            prologb.append("\"");
-        }
-        prologb.append(">");
-        String prolog = prologb.toString();
-        Enumeration<String> qdcKeys = (Enumeration<String>) qdcProps.propertyNames();
-        while (qdcKeys.hasMoreElements()) {
-            String qdc = qdcKeys.nextElement();
-            String val = qdcProps.getProperty(qdc);
-            try {
-                Document d = builder.build(new StringReader(prolog + val + postlog));
-                Element element = (Element) d.getRootElement().getContent(0);
-                qdc2element.put(qdc, element);
-                element2qdc.put(makeQualifiedTagName(element), qdc);
-                log.debug("Building Maps: qdc=\"" + qdc + "\", element=\"" + element.toString() + "\"");
-            } catch (org.jdom2.JDOMException je) {
-                throw new CrosswalkInternalException(
-                    "Failed parsing XML fragment in properties file: \"" + prolog + val + postlog + "\": " + je
-                        .toString(), je);
-            }
-        }
+  private void init() throws CrosswalkException, IOException {
+    if (inited) {
+      return;
     }
-
-    @Override
-    public Namespace[] getNamespaces() {
-        try {
-            init();
-        } catch (IOException | CrosswalkException e) {
-            // ignore
-        }
-        return (Namespace[]) ArrayUtils.clone(namespaces);
+    inited = true;
+    myName = getPluginInstanceName();
+    if (myName == null) {
+      throw new CrosswalkInternalException("Cannot determine plugin name. " + "You must use PluginService to instantiate QDCCrosswalk so the " + "instance knows its name.");
     }
-
-    @Override
-    public String getSchemaLocation() {
-        try {
-            init();
-        } catch (IOException | CrosswalkException e) {
-            // ignore
-        }
-        return schemaLocation;
+    List<Namespace> nsList = new ArrayList<>();
+    String propname = CONFIG_PREFIX + ".namespace." + myName + ".";
+    List<String> configKeys = configurationService.getPropertyKeys(propname);
+    for (String key : configKeys) {
+      nsList.add(Namespace.getNamespace(key.substring(propname.length()), configurationService.getProperty(key)));
     }
+    nsList.add(Namespace.XML_NAMESPACE);
+    namespaces = (Namespace[]) nsList.toArray(new Namespace[nsList.size()]);
+    schemaLocation = configurationService.getProperty(CONFIG_PREFIX + ".schemaLocation." + myName);
+    String cmPropName = CONFIG_PREFIX + ".properties." + myName;
+    String propsFilename = configurationService.getProperty(cmPropName);
+    if (propsFilename == null) {
+      throw new CrosswalkInternalException("Configuration error: " + "No properties file configured for QDC crosswalk named \"" + myName + "\"");
+    }
+    String parent = configurationService.getProperty("dspace.dir") + File.separator + "config" + File.separator;
+    File propsFile = new File(parent, propsFilename);
+    Properties qdcProps = new Properties();
+    FileInputStream pfs = null;
+    try {
+      pfs = new FileInputStream(propsFile);
+      qdcProps.load(pfs);
+    }  finally {
+      if (pfs != null) {
+        try {
+          pfs.close();
+        } catch (IOException ioe) {
+        }
+      }
+    }
+    String postlog = "</wrapper>";
+    StringBuilder prologb = new StringBuilder("<wrapper");
+    for (int i = 0; i < namespaces.length; ++i) {
+      prologb.append(" xmlns:");
+      prologb.append(namespaces[i].getPrefix());
+      prologb.append("=\"");
+      prologb.append(namespaces[i].getURI());
+      prologb.append("\"");
+    }
+    prologb.append(">");
+    String prolog = prologb.toString();
+    Enumeration<String> qdcKeys = (Enumeration<String>) qdcProps.propertyNames();
+    while (qdcKeys.hasMoreElements()) {
+      String qdc = qdcKeys.nextElement();
+      String val = qdcProps.getProperty(qdc);
+      try {
+        Document d = builder.build(new StringReader(prolog + val + postlog));
+        Element element = (Element) d.getRootElement().getContent(0);
+        qdc2element.put(qdc, element);
+        element2qdc.put(makeQualifiedTagName(element), qdc);
+        log.debug("Building Maps: qdc=\"" + qdc + "\", element=\"" + element.toString() + "\"");
+      } catch (org.jdom2.JDOMException je) {
+        throw new CrosswalkInternalException("Failed parsing XML fragment in properties file: \"" + prolog + val + postlog + "\": " + je.toString(), je);
+      }
+    }
+  }
 
-    /**
+  @Override public Namespace[] getNamespaces() {
+    try {
+      init();
+    } catch (IOException | CrosswalkException e) {
+    }
+    return (Namespace[]) ArrayUtils.clone(namespaces);
+  }
+
+  @Override public String getSchemaLocation() {
+    try {
+      init();
+    } catch (IOException | CrosswalkException e) {
+    }
+    return schemaLocation;
+  }
+
+  /**
      * Returns object's metadata in MODS format, as XML structure node.
      *
      * @param context context
@@ -326,142 +275,102 @@ public class QDCCrosswalk extends SelfNamedPlugin
      * @throws IOException        if IO error
      * @throws SQLException       if database error
      * @throws AuthorizeException if authorization error
-     * @return List of Elements
      */
-    @Override
-    public List<Element> disseminateList(Context context, DSpaceObject dso)
-        throws CrosswalkException,
-        IOException, SQLException, AuthorizeException {
-        return disseminateListInternal(dso, true);
+  @Override public List<Element> disseminateList(Context context, DSpaceObject dso) throws CrosswalkException, IOException, SQLException, AuthorizeException {
+    return disseminateListInternal(dso, true);
+  }
+
+  private List<Element> disseminateListInternal(DSpaceObject dso, boolean addSchema) throws CrosswalkException, IOException, SQLException, AuthorizeException {
+    if (dso.getType() != Constants.ITEM) {
+      throw new CrosswalkObjectNotSupported("QDCCrosswalk can only crosswalk an Item.");
     }
-
-    private List<Element> disseminateListInternal(DSpaceObject dso, boolean addSchema)
-        throws CrosswalkException,
-        IOException, SQLException, AuthorizeException {
-        if (dso.getType() != Constants.ITEM) {
-            throw new CrosswalkObjectNotSupported("QDCCrosswalk can only crosswalk an Item.");
+    Item item = (Item) dso;
+    init();
+    List<MetadataValue> dc = itemService.getMetadata(item, Item.ANY, Item.ANY, Item.ANY, Item.ANY);
+    List<Element> result = new ArrayList<>(dc.size());
+    for (int i = 0; i < dc.size(); i++) {
+      MetadataValue metadataValue = dc.get(i);
+      MetadataField metadataField = metadataValue.getMetadataField();
+      MetadataSchema metadataSchema = metadataField.getMetadataSchema();
+      String qdc = metadataSchema.getName() + "." + ((metadataField.getQualifier() == null) ? metadataField.getElement() : (metadataField.getElement() + "." + metadataField.getQualifier()));
+      Element elt = qdc2element.get(qdc);
+      if (elt == null) {
+        if (metadataField.getMetadataSchema().getName().equals(MetadataSchemaEnum.DC.getName())) {
+          log.warn("WARNING: " + myName + ": No QDC mapping for \"" + qdc + "\"");
         }
-        Item item = (Item) dso;
-        init();
+      } else {
+        Element qe = (Element) elt.clone();
+        qe.setText(metadataValue.getValue());
+        if (addSchema && schemaLocation != null) {
+          qe.setAttribute("schemaLocation", schemaLocation, XSI_NS);
+        }
+        if (metadataValue.getLanguage() != null) {
+          qe.setAttribute("lang", metadataValue.getLanguage(), Namespace.XML_NAMESPACE);
+        }
+        result.add(qe);
+      }
+    }
+    return result;
+  }
 
-        List<MetadataValue> dc = itemService.getMetadata(item, Item.ANY, Item.ANY, Item.ANY, Item.ANY);
-        List<Element> result = new ArrayList<>(dc.size());
-        for (int i = 0; i < dc.size(); i++) {
-            MetadataValue metadataValue = dc.get(i);
-            MetadataField metadataField = metadataValue.getMetadataField();
-            MetadataSchema metadataSchema = metadataField.getMetadataSchema();
+  @Override public Element disseminateElement(Context context, DSpaceObject dso) throws CrosswalkException, IOException, SQLException, AuthorizeException {
+    init();
+    Element root = new Element("qualifieddc", DCTERMS_NS);
+    if (schemaLocation != null) {
+      root.setAttribute("schemaLocation", schemaLocation, XSI_NS);
+    }
+    root.addContent(disseminateListInternal(dso, false));
+    return root;
+  }
 
-            // Compose qualified DC name - schema.element[.qualifier]
-            // e.g. "dc.title", "dc.subject.lcc", "lom.Classification.Keyword"
-            String qdc = metadataSchema.getName() + "." +
-                ((metadataField.getQualifier() == null) ? metadataField.getElement()
-                    : (metadataField.getElement() + "." + metadataField.getQualifier()));
+  @Override public boolean canDisseminate(DSpaceObject dso) {
+    return true;
+  }
 
-            Element elt = qdc2element.get(qdc);
+  @Override public void ingest(Context context, DSpaceObject dso, Element root, boolean createMissingMetadataFields) throws CrosswalkException, IOException, SQLException, AuthorizeException {
+    init();
+    if (!(root.getName().equals("qualifieddc"))) {
+      throw new MetadataValidationException("Wrong root element for Qualified DC: " + root.toString());
+    }
+    ingest(context, dso, root.getChildren(), createMissingMetadataFields);
+  }
 
-            // only complain about missing elements in the DC schema:
-            if (elt == null) {
-                if (metadataField.getMetadataSchema().getName().equals(MetadataSchemaEnum.DC.getName())) {
-                    log.warn("WARNING: " + myName + ": No QDC mapping for \"" + qdc + "\"");
-                }
+  @Override public void ingest(Context context, DSpaceObject dso, List<Element> ml, boolean createMissingMetadataFields) throws CrosswalkException, IOException, SQLException, AuthorizeException {
+    init();
+    if (dso.getType() != Constants.ITEM) {
+      throw new CrosswalkInternalException("Wrong target object type, QDCCrosswalk can only crosswalk to an Item.");
+    }
+    Item item = (Item) dso;
+    for (Element me : ml) {
+      String key = makeQualifiedTagName(me);
+      if ("qualifieddc".equals(me.getName())) {
+        ingest(context, dso, me.getChildren(), createMissingMetadataFields);
+      } else {
+        if (element2qdc.containsKey(key)) {
+          String qdc[] = (element2qdc.get(key)).split("\\.");
+          MetadataField metadataField;
+          if (qdc.length == 3) {
+            metadataField = metadataValidator.checkMetadata(context, qdc[0], qdc[1], qdc[2], createMissingMetadataFields);
+          } else {
+            if (qdc.length == 2) {
+              metadataField = metadataValidator.checkMetadata(context, qdc[0], qdc[1], null, createMissingMetadataFields);
             } else {
-                Element qe = (Element) elt.clone();
-                qe.setText(metadataValue.getValue());
-                if (addSchema && schemaLocation != null) {
-                    qe.setAttribute("schemaLocation", schemaLocation, XSI_NS);
-                }
-                if (metadataValue.getLanguage() != null) {
-                    qe.setAttribute("lang", metadataValue.getLanguage(), Namespace.XML_NAMESPACE);
-                }
-                result.add(qe);
+              throw new CrosswalkInternalException("Unrecognized format in QDC element identifier for key=\"" + key + "\", qdc=\"" + element2qdc.get(key) + "\"");
             }
+          }
+          String lang = me.getAttributeValue("lang", Namespace.XML_NAMESPACE);
+          if (lang == null) {
+            lang = me.getAttributeValue("lang");
+          }
+          itemService.addMetadata(context, item, metadataField, lang, me.getText());
+        } else {
+          log.warn("WARNING: " + myName + ": No mapping for Element=\"" + key + "\" to qdc.");
         }
-        return result;
+      }
     }
+  }
 
-    @Override
-    public Element disseminateElement(Context context, DSpaceObject dso)
-        throws CrosswalkException,
-        IOException, SQLException, AuthorizeException {
-        init();
-        Element root = new Element("qualifieddc", DCTERMS_NS);
-        if (schemaLocation != null) {
-            root.setAttribute("schemaLocation", schemaLocation, XSI_NS);
-        }
-        root.addContent(disseminateListInternal(dso, false));
-        return root;
-    }
-
-    @Override
-    public boolean canDisseminate(DSpaceObject dso) {
-        return true;
-    }
-
-    @Override
-    public void ingest(Context context, DSpaceObject dso, Element root, boolean createMissingMetadataFields)
-        throws CrosswalkException, IOException, SQLException, AuthorizeException {
-        init();
-
-        // NOTE:  don't bother comparing namespace on root element
-        // because DCMI doesn't specify one, and every app uses its
-        // own..  just give up in the face of this madness and accept
-        // anything with the right name.
-        if (!(root.getName().equals("qualifieddc"))) {
-            throw new MetadataValidationException("Wrong root element for Qualified DC: " + root.toString());
-        }
-        ingest(context, dso, root.getChildren(), createMissingMetadataFields);
-    }
-
-    @Override
-    public void ingest(Context context, DSpaceObject dso, List<Element> ml, boolean createMissingMetadataFields)
-        throws CrosswalkException, IOException, SQLException, AuthorizeException {
-        init();
-
-        // for now, forget about any targets but item.
-        if (dso.getType() != Constants.ITEM) {
-            throw new CrosswalkInternalException(
-                "Wrong target object type, QDCCrosswalk can only crosswalk to an Item.");
-        }
-
-        Item item = (Item) dso;
-
-        for (Element me : ml) {
-            String key = makeQualifiedTagName(me);
-
-            // if the root element gets passed here, recurse:
-            if ("qualifieddc".equals(me.getName())) {
-                ingest(context, dso, me.getChildren(), createMissingMetadataFields);
-            } else if (element2qdc.containsKey(key)) {
-                String qdc[] = (element2qdc.get(key)).split("\\.");
-
-                MetadataField metadataField;
-                if (qdc.length == 3) {
-                    metadataField = metadataValidator
-                        .checkMetadata(context, qdc[0], qdc[1], qdc[2], createMissingMetadataFields);
-                } else if (qdc.length == 2) {
-                    metadataField = metadataValidator
-                        .checkMetadata(context, qdc[0], qdc[1], null, createMissingMetadataFields);
-                } else {
-                    throw new CrosswalkInternalException(
-                        "Unrecognized format in QDC element identifier for key=\"" + key + "\", qdc=\"" + element2qdc
-                            .get(key) + "\"");
-                }
-
-                // get language - prefer xml:lang, accept lang.
-                String lang = me.getAttributeValue("lang", Namespace.XML_NAMESPACE);
-                if (lang == null) {
-                    lang = me.getAttributeValue("lang");
-                }
-
-                itemService.addMetadata(context, item, metadataField, lang, me.getText());
-            } else {
-                log.warn("WARNING: " + myName + ": No mapping for Element=\"" + key + "\" to qdc.");
-            }
-        }
-    }
-
-    @Override
-    public boolean preferList() {
-        return true;
-    }
+  @Override public boolean preferList() {
+    return true;
+  }
 }

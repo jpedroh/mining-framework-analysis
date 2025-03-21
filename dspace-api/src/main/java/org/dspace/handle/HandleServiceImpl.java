@@ -1,18 +1,9 @@
-/**
- * The contents of this file are subject to the license and copyright
- * detailed in the LICENSE and NOTICE files at the root of the source
- * tree and available online at
- *
- * http://www.dspace.org/license/
- */
 package org.dspace.handle;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -39,297 +30,191 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Peter Breton
  */
 public class HandleServiceImpl implements HandleService {
-    /**
+  /**
      * log category
      */
-    private static final Logger log = LogManager.getLogger();
+  private static final Logger log = LogManager.getLogger();
 
-    /**
+  /**
      * Prefix registered to no one
      */
-    static final String EXAMPLE_PREFIX = "123456789";
+  static final String EXAMPLE_PREFIX = "123456789";
 
-    @Autowired(required = true)
-    protected HandleDAO handleDAO;
+  @Autowired(required = true) protected HandleDAO handleDAO;
 
-    @Autowired(required = true)
-    protected ConfigurationService configurationService;
+  @Autowired(required = true) protected ConfigurationService configurationService;
 
-    @Autowired
-    protected SiteService siteService;
+  @Autowired protected SiteService siteService;
 
-    private static final Pattern[] IDENTIFIER_PATTERNS = {
-        Pattern.compile("^hdl:(.*)$"),
-        Pattern.compile("^info:hdl/(.*)$"),
-        Pattern.compile("^https?://hdl\\.handle\\.net/(.*)$"),
-        Pattern.compile("^https?://.+/handle/(.*)$")
-    };
+  private static final Pattern[] IDENTIFIER_PATTERNS = { Pattern.compile("^hdl:(.*)$"), Pattern.compile("^info:hdl/(.*)$"), Pattern.compile("^https?://hdl\\.handle\\.net/(.*)$"), Pattern.compile("^https?://.+/handle/(.*)$") };
 
-    /**
+  /**
      * Public Constructor
      */
-    protected HandleServiceImpl() {
+  protected HandleServiceImpl() {
+  }
+
+  @Override public String resolveToURL(Context context, String handle) throws SQLException {
+    Handle dbhandle = findHandleInternal(context, handle);
+    if (dbhandle == null) {
+      return null;
     }
+    String url = configurationService.getProperty("dspace.ui.url") + "/handle/" + handle;
+    log.debug("Resolved {} to {}", handle, url);
+    return url;
+  }
 
-    @Override
-    public String resolveToURL(Context context, String handle)
-        throws SQLException {
-        Handle dbhandle = findHandleInternal(context, handle);
-
-        if (dbhandle == null) {
-            return null;
-        }
-
-        String url = configurationService.getProperty("dspace.ui.url")
-            + "/handle/" + handle;
-
-        log.debug("Resolved {} to {}", handle, url);
-
-        return url;
+  @Override public String resolveUrlToHandle(Context context, String url) throws SQLException {
+    String dspaceUrl = configurationService.getProperty("dspace.ui.url") + "/handle/";
+    String handleResolver = getCanonicalPrefix();
+    String handle = null;
+    if (url.startsWith(dspaceUrl)) {
+      handle = url.substring(dspaceUrl.length());
     }
-
-    @Override
-    public String resolveUrlToHandle(Context context, String url)
-        throws SQLException {
-        String dspaceUrl = configurationService.getProperty("dspace.ui.url")
-            + "/handle/";
-        String handleResolver = getCanonicalPrefix();
-
-        String handle = null;
-
-        if (url.startsWith(dspaceUrl)) {
-            handle = url.substring(dspaceUrl.length());
-        }
-
-        if (url.startsWith(handleResolver)) {
-            handle = url.substring(handleResolver.length());
-        }
-
-        if (null == handle) {
-            return null;
-        }
-
-        // remove trailing slashes
-        while (handle.startsWith("/")) {
-            handle = handle.substring(1);
-        }
-        Handle dbhandle = findHandleInternal(context, handle);
-
-        return (null == dbhandle) ? null : handle;
+    if (url.startsWith(handleResolver)) {
+      handle = url.substring(handleResolver.length());
     }
-
-    @Override
-    public String getCanonicalPrefix() {
-        // Let the admin define a new prefix, if not then we'll use the
-        // CNRI default. This allows the admin to use "hdl:" if they want to or
-        // use a locally branded prefix handle.myuni.edu.
-        String handlePrefix = configurationService.getProperty("handle.canonical.prefix",
-                "https://hdl.handle.net/");
-
-        return handlePrefix;
+    if (null == handle) {
+      return null;
     }
-
-    @Override
-    public String getCanonicalForm(String handle) {
-        return getCanonicalPrefix() + handle;
+    while (handle.startsWith("/")) {
+      handle = handle.substring(1);
     }
+    Handle dbhandle = findHandleInternal(context, handle);
+    return (null == dbhandle) ? null : handle;
+  }
 
-    @Override
-    public String createHandle(Context context, DSpaceObject dso)
-        throws SQLException {
-        Handle handle = handleDAO.create(context, new Handle());
-        String handleId = createId(context);
+  @Override public String getCanonicalPrefix() {
+    String handlePrefix = configurationService.getProperty("handle.canonical.prefix", "https://hdl.handle.net/");
+    return handlePrefix;
+  }
 
-        handle.setHandle(handleId);
-        handle.setDSpaceObject(dso);
-        dso.addHandle(handle);
-        handle.setResourceTypeId(dso.getType());
-        handleDAO.save(context, handle);
+  @Override public String getCanonicalForm(String handle) {
+    return getCanonicalPrefix() + handle;
+  }
 
-        log.debug("Created new handle for {} (ID={}) {}",
-            () -> Constants.typeText[dso.getType()],
-            () -> dso.getID(),
-            () -> handleId);
+  @Override public String createHandle(Context context, DSpaceObject dso) throws SQLException {
+    Handle handle = handleDAO.create(context, new Handle());
+    String handleId = createId(context);
+    handle.setHandle(handleId);
+    handle.setDSpaceObject(dso);
+    dso.addHandle(handle);
+    handle.setResourceTypeId(dso.getType());
+    handleDAO.save(context, handle);
+    log.debug("Created new handle for {} (ID={}) {}", () -> Constants.typeText[dso.getType()], () -> dso.getID(), () -> handleId);
+    return handleId;
+  }
 
-        return handleId;
-    }
+  @Override public String createHandle(Context context, DSpaceObject dso, String suppliedHandle) throws SQLException, IllegalStateException {
+    return createHandle(context, dso, suppliedHandle, false);
+  }
 
-    @Override
-    public String createHandle(Context context, DSpaceObject dso,
-                               String suppliedHandle) throws SQLException, IllegalStateException {
-        return createHandle(context, dso, suppliedHandle, false);
-    }
-
-    @Override
-    public String createHandle(Context context, DSpaceObject dso,
-                               String suppliedHandle, boolean force) throws SQLException, IllegalStateException {
-        //Check if the supplied handle is already in use -- cannot use the same handle twice
-        Handle handle = findHandleInternal(context, suppliedHandle);
-        if (handle != null && handle.getDSpaceObject() != null) {
-            //Check if this handle is already linked up to this specified DSpace Object
-            if (handle.getDSpaceObject().getID().equals(dso.getID())) {
-                //This handle already links to this DSpace Object -- so, there's nothing else we need to do
-                return suppliedHandle;
-            } else {
-                //handle found in DB table & already in use by another existing resource
-                throw new IllegalStateException(
-                    "Attempted to create a handle which is already in use: " + suppliedHandle);
-            }
-        } else if (handle != null && handle.getResourceTypeId() != null) {
-            //If there is a 'resource_type_id' (but 'resource_id' is empty), then the object using
-            // this handle was previously unbound (see unbindHandle() method) -- likely because object was deleted
-            int previousType = handle.getResourceTypeId();
-
-            //Since we are restoring an object to a pre-existing handle, double check we are restoring the same
-            // *type* of object
-            // (e.g. we will not allow an Item to be restored to a handle previously used by a Collection)
-            if (previousType != dso.getType()) {
-                throw new IllegalStateException("Attempted to reuse a handle previously used by a " +
-                                                    Constants.typeText[previousType] + " for a new " +
-                                                    Constants.typeText[dso.getType()]);
-            }
-        } else if (handle == null) {
-            //if handle not found, create it
-            //handle not found in DB table -- create a new table entry
-            handle = handleDAO.create(context, new Handle());
-            handle.setHandle(suppliedHandle);
-        }
-
-        handle.setResourceTypeId(dso.getType());
-        handle.setDSpaceObject(dso);
-        dso.addHandle(handle);
-        handleDAO.save(context, handle);
-
-        log.debug("Created new handle for {} (ID={}) {}",
-            () -> Constants.typeText[dso.getType()],
-            () -> dso.getID(),
-            () -> suppliedHandle);
-
+  @Override public String createHandle(Context context, DSpaceObject dso, String suppliedHandle, boolean force) throws SQLException, IllegalStateException {
+    Handle handle = findHandleInternal(context, suppliedHandle);
+    if (handle != null && handle.getDSpaceObject() != null) {
+      if (handle.getDSpaceObject().getID().equals(dso.getID())) {
         return suppliedHandle;
-    }
-
-    @Override
-    public void unbindHandle(Context context, DSpaceObject dso)
-        throws SQLException {
-        List<Handle> handles = getInternalHandles(context, dso);
-        if (CollectionUtils.isNotEmpty(handles)) {
-            for (Handle handle : handles) {
-                //Only set the "resouce_id" column to null when unbinding a handle.
-                // We want to keep around the "resource_type_id" value, so that we
-                // can verify during a restore whether the same *type* of resource
-                // is reusing this handle!
-                handle.setDSpaceObject(null);
-
-                //Also remove the handle from the DSO list to keep a consistent model
-                dso.getHandles().remove(handle);
-
-                handleDAO.save(context, handle);
-
-                log.debug("Unbound Handle {} from object {} id={}",
-                    () -> handle.getHandle(),
-                    () -> Constants.typeText[dso.getType()],
-                    () -> dso.getID());
-            }
-        } else {
-            log.trace(
-                "Cannot find Handle entry to unbind for object {} id={}. Handle could have been unbound before.",
-                    Constants.typeText[dso.getType()], dso.getID());
+      } else {
+        throw new IllegalStateException("Attempted to create a handle which is already in use: " + suppliedHandle);
+      }
+    } else {
+      if (handle != null && handle.getResourceTypeId() != null) {
+        int previousType = handle.getResourceTypeId();
+        if (previousType != dso.getType()) {
+          throw new IllegalStateException("Attempted to reuse a handle previously used by a " + Constants.typeText[previousType] + " for a new " + Constants.typeText[dso.getType()]);
         }
-    }
-
-    @Override
-    public DSpaceObject resolveToObject(Context context, String handle)
-        throws IllegalStateException, SQLException {
-        Handle dbhandle = findHandleInternal(context, handle);
-        // check if handle was allocated previously, but is currently not
-        // associated with a DSpaceObject
-        // (this may occur when 'unbindHandle()' is called for an obj that was removed)
-        if (dbhandle == null || (dbhandle.getDSpaceObject() == null)
-            || (dbhandle.getResourceTypeId() == null)) {
-            //if handle has been unbound, just return null (as this will result in a PageNotFound)
-            return null;
+      } else {
+        if (handle == null) {
+          handle = handleDAO.create(context, new Handle());
+          handle.setHandle(suppliedHandle);
         }
-
-        return dbhandle.getDSpaceObject();
+      }
     }
+    handle.setResourceTypeId(dso.getType());
+    handle.setDSpaceObject(dso);
+    dso.addHandle(handle);
+    handleDAO.save(context, handle);
+    log.debug("Created new handle for {} (ID={}) {}", () -> Constants.typeText[dso.getType()], () -> dso.getID(), () -> suppliedHandle);
+    return suppliedHandle;
+  }
 
-    @Override
-    public String findHandle(Context context, DSpaceObject dso)
-        throws SQLException {
-        List<Handle> handles = getInternalHandles(context, dso);
-        if (CollectionUtils.isEmpty(handles)) {
-            return null;
-        } else {
-            //TODO: Move this code away from the HandleService & into the Identifier provider
-            //Attempt to retrieve a handle that does NOT look like {handle.part}/{handle.part}.{version}
-            String result = handles.iterator().next().getHandle();
-            for (Handle handle : handles) {
-                //Ensure that the handle doesn't look like this 12346/213.{version}
-                //If we find a match that indicates that we have a proper handle
-                if (!handle.getHandle().matches(".*/.*\\.\\d+")) {
-                    result = handle.getHandle();
-                }
-            }
+  @Override public void unbindHandle(Context context, DSpaceObject dso) throws SQLException {
+    List<Handle> handles = getInternalHandles(context, dso);
+    if (CollectionUtils.isNotEmpty(handles)) {
+      for (Handle handle : handles) {
+        handle.setDSpaceObject(null);
+        dso.getHandles().remove(handle);
+        handleDAO.save(context, handle);
+        log.debug("Unbound Handle {} from object {} id={}", () -> handle.getHandle(), () -> Constants.typeText[dso.getType()], () -> dso.getID());
+      }
+    } else {
+      log.trace("Cannot find Handle entry to unbind for object {} id={}. Handle could have been unbound before.", Constants.typeText[dso.getType()], dso.getID());
+    }
+  }
 
-            return result;
+  @Override public DSpaceObject resolveToObject(Context context, String handle) throws IllegalStateException, SQLException {
+    Handle dbhandle = findHandleInternal(context, handle);
+    if (dbhandle == null || (dbhandle.getDSpaceObject() == null) || (dbhandle.getResourceTypeId() == null)) {
+      return null;
+    }
+    return dbhandle.getDSpaceObject();
+  }
+
+  @Override public String findHandle(Context context, DSpaceObject dso) throws SQLException {
+    List<Handle> handles = getInternalHandles(context, dso);
+    if (CollectionUtils.isEmpty(handles)) {
+      return null;
+    } else {
+      String result = handles.iterator().next().getHandle();
+      for (Handle handle : handles) {
+        if (!handle.getHandle().matches(".*/.*\\.\\d+")) {
+          result = handle.getHandle();
         }
+      }
+      return result;
     }
+  }
 
-    @Override
-    public List<String> getHandlesForPrefix(Context context, String prefix)
-        throws SQLException {
-        List<Handle> handles = handleDAO.findByPrefix(context, prefix);
-        List<String> handleStrings = new ArrayList<>(handles.size());
-        for (Handle handle : handles) {
-            handleStrings.add(handle.getHandle());
-        }
-        return handleStrings;
+  @Override public List<String> getHandlesForPrefix(Context context, String prefix) throws SQLException {
+    List<Handle> handles = handleDAO.findByPrefix(context, prefix);
+    List<String> handleStrings = new ArrayList<>(handles.size());
+    for (Handle handle : handles) {
+      handleStrings.add(handle.getHandle());
     }
+    return handleStrings;
+  }
 
-    @Override
-    public String getPrefix() {
-        String prefix = configurationService.getProperty("handle.prefix");
-        if (StringUtils.isBlank(prefix)) {
-            prefix = EXAMPLE_PREFIX; // XXX no good way to exit cleanly
-            log.error("handle.prefix is not configured; using {}", prefix);
-        }
-        return prefix;
+  @Override public String getPrefix() {
+    String prefix = configurationService.getProperty("handle.prefix");
+    if (StringUtils.isBlank(prefix)) {
+      prefix = EXAMPLE_PREFIX;
+      log.error("handle.prefix is not configured; using {}", prefix);
     }
+    return prefix;
+  }
 
-    @Override
-    public long countHandlesByPrefix(Context context, String prefix) throws SQLException {
-        return handleDAO.countHandlesByPrefix(context, prefix);
+  @Override public long countHandlesByPrefix(Context context, String prefix) throws SQLException {
+    return handleDAO.countHandlesByPrefix(context, prefix);
+  }
+
+  @Override public int updateHandlesWithNewPrefix(Context context, String newPrefix, String oldPrefix) throws SQLException {
+    return handleDAO.updateHandlesWithNewPrefix(context, newPrefix, oldPrefix);
+  }
+
+  @Override public void modifyHandleDSpaceObject(Context context, String handle, DSpaceObject newOwner) throws SQLException {
+    Handle dbHandle = findHandleInternal(context, handle);
+    if (dbHandle != null) {
+      if (dbHandle.getDSpaceObject() != null) {
+        dbHandle.getDSpaceObject().getHandles().remove(dbHandle);
+      }
+      dbHandle.setDSpaceObject(newOwner);
+      dbHandle.setResourceTypeId(newOwner.getType());
+      newOwner.getHandles().add(0, dbHandle);
+      handleDAO.save(context, dbHandle);
     }
+  }
 
-    @Override
-    public int updateHandlesWithNewPrefix(Context context, String newPrefix, String oldPrefix) throws SQLException {
-        return handleDAO.updateHandlesWithNewPrefix(context, newPrefix, oldPrefix);
-    }
-
-    @Override
-    public void modifyHandleDSpaceObject(Context context, String handle, DSpaceObject newOwner) throws SQLException {
-        Handle dbHandle = findHandleInternal(context, handle);
-        if (dbHandle != null) {
-            // Check if we have to remove the handle from the current handle list
-            // or if object is alreday deleted.
-            if (dbHandle.getDSpaceObject() != null) {
-                // Remove the old handle from the current handle list
-                dbHandle.getDSpaceObject().getHandles().remove(dbHandle);
-            }
-            // Transfer the current handle to the new object
-            dbHandle.setDSpaceObject(newOwner);
-            dbHandle.setResourceTypeId(newOwner.getType());
-            newOwner.getHandles().add(0, dbHandle);
-            handleDAO.save(context, dbHandle);
-        }
-
-    }
-
-    ////////////////////////////////////////
-    // Internal methods
-    ////////////////////////////////////////
-
-    /**
+  /**
      * Return the handle for an Object, or null if the Object has no handle.
      *
      * @param context DSpace context
@@ -337,12 +222,11 @@ public class HandleServiceImpl implements HandleService {
      * @return The handle for object, or null if the object has no handle.
      * @throws SQLException If a database error occurs
      */
-    protected List<Handle> getInternalHandles(Context context, DSpaceObject dso)
-        throws SQLException {
-        return handleDAO.getHandlesByDSpaceObject(context, dso);
-    }
+  protected List<Handle> getInternalHandles(Context context, DSpaceObject dso) throws SQLException {
+    return handleDAO.getHandlesByDSpaceObject(context, dso);
+  }
 
-    /**
+  /**
      * Find the database row corresponding to handle.
      *
      * @param context DSpace context
@@ -350,74 +234,57 @@ public class HandleServiceImpl implements HandleService {
      * @return The database row corresponding to the handle
      * @throws SQLException If a database error occurs
      */
-    protected Handle findHandleInternal(Context context, String handle)
-        throws SQLException {
-        if (handle == null) {
-            throw new IllegalArgumentException("Handle is null");
-        }
-
-        return handleDAO.findByHandle(context, handle);
+  protected Handle findHandleInternal(Context context, String handle) throws SQLException {
+    if (handle == null) {
+      throw new IllegalArgumentException("Handle is null");
     }
+    return handleDAO.findByHandle(context, handle);
+  }
 
-    /**
+  /**
      * Create/mint a new handle id.
      *
      * @param context DSpace Context
      * @return A new handle id
      * @throws SQLException If a database error occurs
      */
-    protected String createId(Context context) throws SQLException {
-        // Get configured prefix
-        String handlePrefix = getPrefix();
+  protected String createId(Context context) throws SQLException {
+    String handlePrefix = getPrefix();
+    Long handleSuffix = handleDAO.getNextHandleSuffix(context);
+    return handlePrefix + (handlePrefix.endsWith("/") ? "" : "/") + handleSuffix.toString();
+  }
 
-        // Get next available suffix (as a Long, since DSpace uses an incrementing sequence)
-        Long handleSuffix = handleDAO.getNextHandleSuffix(context);
+  @Override public int countTotal(Context context) throws SQLException {
+    return handleDAO.countRows(context);
+  }
 
-        return handlePrefix + (handlePrefix.endsWith("/") ? "" : "/") + handleSuffix.toString();
+  @Override public String parseHandle(String identifier) {
+    if (identifier == null) {
+      return null;
     }
-
-    @Override
-    public int countTotal(Context context) throws SQLException {
-        return handleDAO.countRows(context);
+    if (identifier.startsWith(getPrefix() + "/")) {
+      return identifier;
     }
-
-    @Override
-    public String parseHandle(String identifier) {
-        if (identifier == null) {
-            return null;
-        }
-        if (identifier.startsWith(getPrefix() + "/")) {
-            // prefix is the equivalent of 123456789 in 123456789/???; don't strip
-            return identifier;
-        }
-
-        String canonicalPrefix = configurationService.getProperty("handle.canonical.prefix");
-        if (identifier.startsWith(canonicalPrefix + "/")) {
-            // prefix is the equivalent of https://hdl.handle.net/ in https://hdl.handle.net/123456789/???; strip
-            return StringUtils.stripStart(identifier, canonicalPrefix);
-        }
-
-        for (Pattern pattern : IDENTIFIER_PATTERNS) {
-            Matcher matcher = pattern.matcher(identifier);
-            if (matcher.matches()) {
-                return matcher.group(1);
-            }
-        }
-
-        // Check additional prefixes supported in the config file
-        String[] additionalPrefixes = getAdditionalPrefixes();
-        for (String additionalPrefix : additionalPrefixes) {
-            if (identifier.startsWith(additionalPrefix + "/")) {
-                // prefix is the equivalent of 123456789 in 123456789/???; don't strip
-                return identifier;
-            }
-        }
-
-        return null;
+    String canonicalPrefix = configurationService.getProperty("handle.canonical.prefix");
+    if (identifier.startsWith(canonicalPrefix + "/")) {
+      return StringUtils.stripStart(identifier, canonicalPrefix);
     }
-
-    @Override
-    public String[] getAdditionalPrefixes() {
-        return configurationService.getArrayProperty("handle.additional.prefixes");
+    for (Pattern pattern : IDENTIFIER_PATTERNS) {
+      Matcher matcher = pattern.matcher(identifier);
+      if (matcher.matches()) {
+        return matcher.group(1);
+      }
     }
+    String[] additionalPrefixes = getAdditionalPrefixes();
+    for (String additionalPrefix : additionalPrefixes) {
+      if (identifier.startsWith(additionalPrefix + "/")) {
+        return identifier;
+      }
+    }
+    return null;
+  }
+
+  @Override public String[] getAdditionalPrefixes() {
+    return configurationService.getArrayProperty("handle.additional.prefixes");
+  }
 }

@@ -1,16 +1,7 @@
-/**
- * The contents of this file are subject to the license and copyright
- * detailed in the LICENSE and NOTICE files at the root of the source
- * tree and available online at
- *
- * http://www.dspace.org/license/
- */
 package org.dspace.content.service;
-
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
-
 import org.dspace.authorize.AuthorizeException;
 import org.dspace.content.Item;
 import org.dspace.content.Relationship;
@@ -24,8 +15,7 @@ import org.dspace.service.DSpaceCRUDService;
  * This Service will use the DAO classes to access the information about Relationships from the database
  */
 public interface RelationshipService extends DSpaceCRUDService<Relationship> {
-
-    /**
+  /**
      * Retrieves the list of Relationships currently in the system for which the given Item is either
      * a leftItem or a rightItem object
      * @param context   The relevant DSpace context
@@ -33,9 +23,9 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      * @return          The list of relationships for which each relationship adheres to the above listed constraint
      * @throws SQLException If something goes wrong
      */
-    public List<Relationship> findByItem(Context context, Item item) throws SQLException;
+  public List<Relationship> findByItem(Context context, Item item) throws SQLException;
 
-    /**
+  /**
      * Retrieves the list of Relationships currently in the system for which the given Item is either
      * a leftItem or a rightItem object
      * @param context         The relevant DSpace context
@@ -48,10 +38,9 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      *                        listed constraint
      * @throws SQLException   If something goes wrong
      */
-    List<Relationship> findByItem(Context context, Item item, Integer limit, Integer offset, boolean excludeTilted)
-            throws SQLException;
+  List<Relationship> findByItem(Context context, Item item, Integer limit, Integer offset, boolean excludeTilted) throws SQLException;
 
-    /**
+  /**
      * Retrieves the list of Relationships currently in the system for which the given Item is either
      * a leftItem or a rightItem object
      * @param context           The relevant DSpace context
@@ -66,19 +55,17 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      *                          listed constraint
      * @throws SQLException     If something goes wrong
      */
-    List<Relationship> findByItem(
-        Context context, Item item, Integer limit, Integer offset, boolean excludeTilted, boolean excludeNonLatest
-    ) throws SQLException;
+  List<Relationship> findByItem(Context context, Item item, Integer limit, Integer offset, boolean excludeTilted, boolean excludeNonLatest) throws SQLException;
 
-    /**
+  /**
      * Retrieves the full list of relationships currently in the system
      * @param context   The relevant DSpace context
      * @return  The list of all relationships currently in the system
      * @throws SQLException If something goes wrong
      */
-    public List<Relationship> findAll(Context context) throws SQLException;
+  public List<Relationship> findAll(Context context) throws SQLException;
 
-    /**
+  /**
      * Retrieves the full list of relationships currently in the system
      * @param context   The relevant DSpace context
      * @param limit     paging limit
@@ -86,9 +73,9 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      * @return  The list of all relationships currently in the system
      * @throws SQLException If something goes wrong
      */
-    List<Relationship> findAll(Context context, Integer limit, Integer offset) throws SQLException;
+  List<Relationship> findAll(Context context, Integer limit, Integer offset) throws SQLException;
 
-    /**
+  /**
      * This method creates a relationship object in the database equal to the given relationship param
      * if this is a valid relationship
      * @param context       The relevant DSpace context
@@ -97,9 +84,9 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      * @throws SQLException         If something goes wrong
      * @throws AuthorizeException   If something goes wrong with authorizations
      */
-    public Relationship create(Context context, Relationship relationship) throws SQLException, AuthorizeException;
+  public Relationship create(Context context, Relationship relationship) throws SQLException, AuthorizeException;
 
-    /**
+  /**
      * Move the given relationship to a new leftPlace and/or rightPlace.
      *
      * This will
@@ -118,10 +105,9 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      * @throws SQLException         If something goes wrong
      * @throws AuthorizeException   If the user is not authorized to update the Relationship or its Items
      */
-    Relationship move(Context context, Relationship relationship, Integer newLeftPlace, Integer newRightPlace)
-            throws SQLException, AuthorizeException;
+  Relationship move(Context context, Relationship relationship, Integer newLeftPlace, Integer newRightPlace) throws SQLException, AuthorizeException;
 
-    /**
+  /**
      * Move the given relationship to a new leftItem and/or rightItem.
      *
      * This will
@@ -141,13 +127,11 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      * @throws SQLException         If something goes wrong
      * @throws AuthorizeException   If the user is not authorized to update the Relationship or its Items
      */
-    Relationship move(Context context, Relationship relationship, Item newLeftItem, Item newRightItem)
-            throws SQLException, AuthorizeException;
+  Relationship move(Context context, Relationship relationship, Item newLeftItem, Item newRightItem) throws SQLException, AuthorizeException;
 
-    /**
+  /**
      * This method returns a list of Relationships for which the leftItem or rightItem is equal to the given
      * Item object and for which the RelationshipType object is equal to the relationshipType property
-     * NOTE: tilted relationships are NEVER excluded when fetching one relationship type
      * @param context           The relevant DSpace context
      * @param item              The Item object to be matched on the leftItem or rightItem for the relationship
      * @param relationshipType  The RelationshipType object that will be used to check the Relationship on
@@ -155,14 +139,11 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      *          for which the relationshipType property is equal to the given RelationshipType
      * @throws SQLException If something goes wrong
      */
-    public List<Relationship> findByItemAndRelationshipType(Context context, Item item,
-                                                            RelationshipType relationshipType)
-        throws SQLException;
+  public List<Relationship> findByItemAndRelationshipType(Context context, Item item, RelationshipType relationshipType) throws SQLException;
 
-    /**
+  /**
      * This method returns a list of Relationships for which the leftItem or rightItem is equal to the given
      * Item object and for which the RelationshipType object is equal to the relationshipType property
-     * NOTE: tilted relationships are NEVER excluded when fetching one relationship type
      * @param context           The relevant DSpace context
      * @param item              The Item object to be matched on the leftItem or rightItem for the relationship
      * @param relationshipType  The RelationshipType object that will be used to check the Relationship on
@@ -170,11 +151,9 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      *          for which the relationshipType property is equal to the given RelationshipType
      * @throws SQLException If something goes wrong
      */
-    public List<Relationship> findByItemAndRelationshipType(Context context, Item item,
-                                                            RelationshipType relationshipType, int limit, int offset)
-            throws SQLException;
+  public List<Relationship> findByItemAndRelationshipType(Context context, Item item, RelationshipType relationshipType, int limit, int offset) throws SQLException;
 
-    /**
+  /**
      * This method returns a list of Relationships for which the leftItem or rightItem is equal to the given
      * Item object and for which the RelationshipType object is equal to the relationshipType property
      * NOTE: tilted relationships are NEVER excluded when fetching one relationship type
@@ -187,14 +166,11 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      *          for which the relationshipType property is equal to the given RelationshipType
      * @throws SQLException If something goes wrong
      */
-    public List<Relationship> findByItemAndRelationshipType(
-        Context context, Item item, RelationshipType relationshipType, int limit, int offset, boolean excludeNonLatest
-    ) throws SQLException;
+  public List<Relationship> findByItemAndRelationshipType(Context context, Item item, RelationshipType relationshipType, int limit, int offset, boolean excludeNonLatest) throws SQLException;
 
-    /**
+  /**
      * This method returns a list of Relationships for which the leftItem or rightItem is equal to the given
      * Item object and for which the RelationshipType object is equal to the relationshipType property
-     * NOTE: tilted relationships are NEVER excluded when fetching one relationship type
      * @param context           The relevant DSpace context
      * @param item              The Item object to be matched on the leftItem or rightItem for the relationship
      * @param relationshipType  The RelationshipType object that will be used to check the Relationship on
@@ -203,12 +179,9 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      *          for which the relationshipType property is equal to the given RelationshipType
      * @throws SQLException If something goes wrong
      */
-    public List<Relationship> findByItemAndRelationshipType(Context context, Item item,
-                                                            RelationshipType relationshipType, boolean isLeft,
-                                                            int limit, int offset)
-            throws SQLException;
+  public List<Relationship> findByItemAndRelationshipType(Context context, Item item, RelationshipType relationshipType, boolean isLeft, int limit, int offset) throws SQLException;
 
-    /**
+  /**
      * This method returns a list of Relationships for which the leftItem or rightItem is equal to the given
      * Item object and for which the RelationshipType object is equal to the relationshipType property
      * NOTE: tilted relationships are NEVER excluded when fetching one relationship type
@@ -222,12 +195,9 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      *          for which the relationshipType property is equal to the given RelationshipType
      * @throws SQLException If something goes wrong
      */
-    public List<Relationship> findByItemAndRelationshipType(
-        Context context, Item item, RelationshipType relationshipType, boolean isLeft, int limit, int offset,
-        boolean excludeNonLatest
-    ) throws SQLException;
+  public List<Relationship> findByItemAndRelationshipType(Context context, Item item, RelationshipType relationshipType, boolean isLeft, int limit, int offset, boolean excludeNonLatest) throws SQLException;
 
-    /**
+  /**
      * This method returns the UUIDs of all items that have a relationship with the given item, from the perspective
      * of the other item. In other words, given a relationship with the given item, the given item should have
      * "latest status" in order for the other item uuid to be returned.
@@ -251,11 +221,9 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      * @return a list containing pairs of relationship ids and item uuids.
      * @throws SQLException if something goes wrong.
      */
-    public List<ItemUuidAndRelationshipId> findByLatestItemAndRelationshipType(
-        Context context, Item latestItem, RelationshipType relationshipType, boolean isLeft
-    ) throws SQLException;
+  public List<ItemUuidAndRelationshipId> findByLatestItemAndRelationshipType(Context context, Item latestItem, RelationshipType relationshipType, boolean isLeft) throws SQLException;
 
-    /**
+  /**
      * This method will update the given item's metadata order.
      * If the relationships for the item have been modified and will calculate the place based on a
      * metadata field, this function will ensure the place is calculated.
@@ -266,25 +234,22 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      * @throws AuthorizeException
      *                          If the user is not authorized to update the item
      */
-    public void updateItem(Context context, Item relatedItem) throws SQLException, AuthorizeException;
+  public void updateItem(Context context, Item relatedItem) throws SQLException, AuthorizeException;
 
-
-    /**
+  /**
      * This method returns a list of Relationship objects for which the relationshipType property is equal to the given
      * RelationshipType object
-     * NOTE: tilted relationships are NEVER excluded when fetching one relationship type
      * @param context           The relevant DSpace context
      * @param relationshipType  The RelationshipType object that will be used to check the Relationship on
      * @return  The list of Relationship objects for which the given RelationshipType object is equal
      *          to the relationshipType property
      * @throws SQLException If something goes wrong
      */
-    List<Relationship> findByRelationshipType(Context context, RelationshipType relationshipType) throws SQLException;
+  List<Relationship> findByRelationshipType(Context context, RelationshipType relationshipType) throws SQLException;
 
-    /**
+  /**
      * This method returns a list of Relationship objets for which the relationshipType property is equal to the given
      * RelationshipType object
-     * NOTE: tilted relationships are NEVER excluded when fetching one relationship type
      * @param context           The relevant DSpace context
      * @param relationshipType  The RelationshipType object that will be used to check the Relationship on
      * @param limit             paging limit
@@ -293,32 +258,10 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      *          to the relationshipType property
      * @throws SQLException If something goes wrong
      */
-    List<Relationship> findByRelationshipType(Context context, RelationshipType relationshipType, Integer limit,
-                                              Integer offset) throws SQLException;
+  List<Relationship> findByRelationshipType(Context context, RelationshipType relationshipType, Integer limit, Integer offset) throws SQLException;
 
-    /**
+  /**
      * This method is used to construct a Relationship object with all it's variables
-     * @param c                   The relevant DSpace context
-     * @param leftItem            The leftItem Item object for the relationship
-     * @param rightItem           The rightItem Item object for the relationship
-     * @param relationshipType    The RelationshipType object for the relationship
-     * @param leftPlace           The leftPlace integer for the relationship
-     * @param rightPlace          The rightPlace integer for the relationship
-     * @param leftwardValue       The leftwardValue string for the relationship
-     * @param rightwardValue      The rightwardValue string for the relationship
-     * @param latestVersionStatus The latestVersionStatus value for the relationship
-     * @return                    The created Relationship object with the given properties
-     * @throws AuthorizeException   If something goes wrong
-     * @throws SQLException         If something goes wrong
-     */
-    Relationship create(
-        Context c, Item leftItem, Item rightItem, RelationshipType relationshipType, int leftPlace, int rightPlace,
-        String leftwardValue, String rightwardValue, LatestVersionStatus latestVersionStatus
-    ) throws AuthorizeException, SQLException;
-
-    /**
-     * This method is used to construct a Relationship object with all it's variables,
-     * except the latest version status
      * @param c                 The relevant DSpace context
      * @param leftItem          The leftItem Item object for the relationship
      * @param rightItem         The rightItem Item object for the relationship
@@ -331,13 +274,24 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      * @throws AuthorizeException   If something goes wrong
      * @throws SQLException         If something goes wrong
      */
-    Relationship create(
-        Context c, Item leftItem, Item rightItem, RelationshipType relationshipType, int leftPlace, int rightPlace,
-        String leftwardValue, String rightwardValue
-    ) throws AuthorizeException, SQLException;
+  Relationship create(Context c, Item leftItem, Item rightItem, RelationshipType relationshipType, int leftPlace, int rightPlace, String leftwardValue, String rightwardValue, LatestVersionStatus latestVersionStatus) throws AuthorizeException, SQLException;
 
+  /**
+     * This method is used to construct a Relationship object with all it's variables,
+     * except the leftward and rightward labels
+     * @param c                 The relevant DSpace context
+     * @param leftItem          The leftItem Item object for the relationship
+     * @param rightItem         The rightItem Item object for the relationship
+     * @param relationshipType  The RelationshipType object for the relationship
+     * @param leftPlace         The leftPlace integer for the relationship
+     * @param rightPlace        The rightPlace integer for the relationship
+     * @return                  The created Relationship object with the given properties
+     * @throws AuthorizeException   If something goes wrong
+     * @throws SQLException         If something goes wrong
+     */
+  Relationship create(Context c, Item leftItem, Item rightItem, RelationshipType relationshipType, int leftPlace, int rightPlace, String leftwardValue, String rightwardValue) throws AuthorizeException, SQLException;
 
-    /**
+  /**
      * This method is used to construct a Relationship object with all it's variables,
      * except the leftward label, rightward label and latest version status
      * @param c                 The relevant DSpace context
@@ -350,11 +304,9 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      * @throws AuthorizeException   If something goes wrong
      * @throws SQLException         If something goes wrong
      */
-    Relationship create(Context c, Item leftItem, Item rightItem, RelationshipType relationshipType,
-                        int leftPlace, int rightPlace)
-        throws AuthorizeException, SQLException;
+  Relationship create(Context c, Item leftItem, Item rightItem, RelationshipType relationshipType, int leftPlace, int rightPlace) throws AuthorizeException, SQLException;
 
-    /**
+  /**
      * This method returns a list of Relationship objects for the given typeName
      * @param context           The relevant DSpace context
      * @param typeName          The leftward or rightward typeName of the relationship type
@@ -362,9 +314,9 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      *          relationshipType property
      * @throws SQLException If something goes wrong
      */
-    List<Relationship> findByTypeName(Context context, String typeName) throws SQLException;
+  List<Relationship> findByTypeName(Context context, String typeName) throws SQLException;
 
-    /**
+  /**
      * This method returns a list of Relationship objects for the given typeName
      * @param context           The relevant DSpace context
      * @param typeName          The leftward or rightward typeName of the relationship type
@@ -374,30 +326,28 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      *          relationshipType property
      * @throws SQLException If something goes wrong
      */
-    List<Relationship> findByTypeName(Context context, String typeName, Integer limit, Integer offset)
-            throws SQLException;
+  List<Relationship> findByTypeName(Context context, String typeName, Integer limit, Integer offset) throws SQLException;
 
-
-    /**
+  /**
      * counts all relationships
      *
      * @param context DSpace context object
      * @return total relationships
      * @throws SQLException if database error
      */
-    int countTotal(Context context) throws SQLException;
+  int countTotal(Context context) throws SQLException;
 
-    /**
+  /**
      * Count total number of relationships (rows in relationship table) by a relationship type
-     * NOTE: tilted relationships are NEVER excluded when fetching one relationship type
+     *
      * @param context context
      * @param relationshipType relationship type to filter by
      * @return total count
      * @throws SQLException if database error
      */
-    int countByRelationshipType(Context context, RelationshipType relationshipType) throws SQLException;
+  int countByRelationshipType(Context context, RelationshipType relationshipType) throws SQLException;
 
-    /**
+  /**
      * This method returns a count of Relationship objects that have the given Item object
      * as a leftItem or a rightItem
      * @param context   The relevant DSpace context
@@ -407,9 +357,9 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      *                  right item that is equal to the given item
      * @throws SQLException If something goes wrong
      */
-    int countByItem(Context context, Item item) throws SQLException;
+  int countByItem(Context context, Item item) throws SQLException;
 
-    /**
+  /**
      * This method returns a count of Relationship objects that have the given Item object
      * as a leftItem or a rightItem
      * @param context           The relevant DSpace context
@@ -422,22 +372,21 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      *                  right item that is equal to the given item
      * @throws SQLException If something goes wrong
      */
-    int countByItem(Context context, Item item, boolean excludeTilted, boolean excludeNonLatest) throws SQLException;
+  int countByItem(Context context, Item item, boolean excludeTilted, boolean excludeNonLatest) throws SQLException;
 
-    /**
+  /**
      * Count total number of relationships (rows in relationship table) by a relationship type and a boolean indicating
      * whether the relationship should contain the item on the left side or not
-     * NOTE: tilted relationships are NEVER excluded when fetching one relationship type
+     *
      * @param context context
      * @param relationshipType relationship type to filter by
      * @param isLeft Indicating whether the counted Relationships should have the given Item on the left side or not
      * @return total count with the given parameters
      * @throws SQLException if database error
      */
-    int countByItemAndRelationshipType(Context context, Item item, RelationshipType relationshipType, boolean isLeft)
-            throws SQLException;
+  int countByItemAndRelationshipType(Context context, Item item, RelationshipType relationshipType, boolean isLeft) throws SQLException;
 
-    /**
+  /**
      * Count total number of relationships (rows in relationship table) by a relationship type and a boolean indicating
      * whether the relationship should contain the item on the left side or not
      * NOTE: tilted relationships are NEVER excluded when fetching one relationship type
@@ -449,11 +398,9 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      * @return total count with the given parameters
      * @throws SQLException if database error
      */
-    int countByItemAndRelationshipType(
-        Context context, Item item, RelationshipType relationshipType, boolean isLeft, boolean excludeNonLatest
-    ) throws SQLException;
+  int countByItemAndRelationshipType(Context context, Item item, RelationshipType relationshipType, boolean isLeft, boolean excludeNonLatest) throws SQLException;
 
-    /**
+  /**
      * Count total number of relationships (rows in relationship table)
      * by a relationship leftward or rightward typeName
      *
@@ -462,10 +409,9 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      * @return total count
      * @throws SQLException if database error
      */
-    int countByTypeName(Context context, String typeName)
-            throws SQLException;
+  int countByTypeName(Context context, String typeName) throws SQLException;
 
-    /**
+  /**
      * This method is used to delete a Relationship whilst given the possibility to copy the Virtual Metadata created
      * by this relationship to the left and/or right item
      * @param context           The relevant DSpace context
@@ -473,10 +419,9 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      * @param copyToLeftItem    A boolean indicating whether we should copy metadata to the left item or not
      * @param copyToRightItem   A boolean indicating whether we should copy metadata to the right item or not
      */
-    void delete(Context context, Relationship relationship, boolean copyToLeftItem, boolean copyToRightItem)
-        throws SQLException, AuthorizeException;
+  void delete(Context context, Relationship relationship, boolean copyToLeftItem, boolean copyToRightItem) throws SQLException, AuthorizeException;
 
-    /**
+  /**
      * This method is used to delete a Relationship whilst given the possibility to copy the Virtual Metadata created
      * by this relationship to the left and/or right item.
      * This method will bypass the cardinality checks on the {@link RelationshipType} for the given {@link Relationship}
@@ -487,10 +432,9 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      * @param copyToLeftItem    A boolean indicating whether we should copy metadata to the left item or not
      * @param copyToRightItem   A boolean indicating whether we should copy metadata to the right item or not
      */
-    void forceDelete(Context context, Relationship relationship, boolean copyToLeftItem, boolean copyToRightItem)
-        throws SQLException, AuthorizeException;
+  void forceDelete(Context context, Relationship relationship, boolean copyToLeftItem, boolean copyToRightItem) throws SQLException, AuthorizeException;
 
-    /**
+  /**
      * This method is used to retrieve relationships that match focusItem
      * on the one hand and matches list of related items elsewhere.
      *
@@ -505,11 +449,9 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      * @return
      * @throws SQLException      If database error
      */
-    public List<Relationship> findByItemRelationshipTypeAndRelatedList(Context context, UUID focusUUID,
-                RelationshipType relationshipType, List<UUID> items, boolean isLeft,
-                int offset, int limit) throws SQLException;
+  public List<Relationship> findByItemRelationshipTypeAndRelatedList(Context context, UUID focusUUID, RelationshipType relationshipType, List<UUID> items, boolean isLeft, int offset, int limit) throws SQLException;
 
-    /**
+  /**
      * Count total number of relationships that match focusItem
      * on the one hand and matches list of related items elsewhere.
      *
@@ -522,7 +464,5 @@ public interface RelationshipService extends DSpaceCRUDService<Relationship> {
      * @return
      * @throws SQLException      If database error
      */
-    public int countByItemRelationshipTypeAndRelatedList(Context context, UUID focusUUID,
-           RelationshipType relationshipType, List<UUID> items, boolean isLeft) throws SQLException;
-
+  public int countByItemRelationshipTypeAndRelatedList(Context context, UUID focusUUID, RelationshipType relationshipType, List<UUID> items, boolean isLeft) throws SQLException;
 }

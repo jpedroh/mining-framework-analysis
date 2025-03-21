@@ -1,21 +1,11 @@
-/**
- * The contents of this file are subject to the license and copyright
- * detailed in the LICENSE and NOTICE files at the root of the source
- * tree and available online at
- *
- * http://www.dspace.org/license/
- */
 package org.dspace.authenticate;
-
 import java.sql.SQLException;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.dspace.core.Context;
 import org.dspace.eperson.EPerson;
 import org.dspace.eperson.Group;
-
 
 /**
  * Implement this interface to participate in the stackable
@@ -38,38 +28,32 @@ import org.dspace.eperson.Group;
  * @see org.dspace.authenticate.service.AuthenticationService
  */
 public interface AuthenticationMethod {
-
-    /**
-     * Symbolic return values for authenticate() method:
-     */
-
-    /**
+  /**
      * Authenticated OK, EPerson has been set.
      */
-    public static final int SUCCESS = 1;
+  public static final int SUCCESS = 1;
 
-    /**
+  /**
      * User exists, but credentials (<em>e.g.</em> passwd) don't match.
      */
-    public static final int BAD_CREDENTIALS = 2;
+  public static final int BAD_CREDENTIALS = 2;
 
-    /**
+  /**
      * Not allowed to login this way without X.509 certificate.
      */
-    public static final int CERT_REQUIRED = 3;
+  public static final int CERT_REQUIRED = 3;
 
-    /**
+  /**
      * User not found using this method.
      */
-    public static final int NO_SUCH_USER = 4;
+  public static final int NO_SUCH_USER = 4;
 
-    /**
+  /**
      * User or password is not appropriate for this method.
      */
-    public static final int BAD_ARGS = 5;
+  public static final int BAD_ARGS = 5;
 
-
-    /**
+  /**
      * Predicate, whether to allow new EPerson to be created.
      * The answer determines whether a new user is created when
      * the credentials describe a valid entity but there is no
@@ -82,12 +66,9 @@ public interface AuthenticationMethod {
      * @return true if new ePerson should be created.
      * @throws SQLException if database error
      */
-    public boolean canSelfRegister(Context context,
-                                   HttpServletRequest request,
-                                   String username)
-        throws SQLException;
+  public boolean canSelfRegister(Context context, HttpServletRequest request, String username) throws SQLException;
 
-    /**
+  /**
      * Initialize a new EPerson record for a self-registered new user.
      * Set any data in the EPerson that is specific to this authentication
      * method.
@@ -98,12 +79,9 @@ public interface AuthenticationMethod {
      *                registration form will have been filled out.
      * @throws SQLException if database error
      */
-    public void initEPerson(Context context,
-                            HttpServletRequest request,
-                            EPerson eperson)
-        throws SQLException;
+  public void initEPerson(Context context, HttpServletRequest request, EPerson eperson) throws SQLException;
 
-    /**
+  /**
      * Should (or can) we allow the user to change their password.
      * Note that this means the password stored in the EPerson record, so if
      * <em>any</em> method in the stack returns true, the user is
@@ -115,12 +93,9 @@ public interface AuthenticationMethod {
      * @return true if this method allows user to change ePerson password.
      * @throws SQLException if database error
      */
-    public boolean allowSetPassword(Context context,
-                                    HttpServletRequest request,
-                                    String username)
-        throws SQLException;
+  public boolean allowSetPassword(Context context, HttpServletRequest request, String username) throws SQLException;
 
-    /**
+  /**
      * Predicate, is this an implicit authentication method.
      * An implicit method gets credentials from the environment (such as
      * an HTTP request or even Java system properties) rather than the
@@ -129,9 +104,9 @@ public interface AuthenticationMethod {
      *
      * @return true if this method uses implicit authentication.
      */
-    public boolean isImplicit();
+  public boolean isImplicit();
 
-    /**
+  /**
      * Get list of extra groups that user implicitly belongs to. Note that this
      * method will be invoked regardless of the authentication status of the
      * user (logged-in or not) e.g. a group that depends on the client
@@ -150,10 +125,9 @@ public interface AuthenticationMethod {
      * <code>null</code>.
      * @throws SQLException if database error
      */
-    public List<Group> getSpecialGroups(Context context, HttpServletRequest request)
-        throws SQLException;
+  public List<Group> getSpecialGroups(Context context, HttpServletRequest request) throws SQLException;
 
-    /**
+  /**
      * Authenticate the given or implicit credentials.
      * This is the heart of the authentication method: test the
      * credentials for authenticity, and if accepted, attempt to match
@@ -177,15 +151,9 @@ public interface AuthenticationMethod {
      * <br>BAD_ARGS        - user/pw not appropriate for this method
      * @throws SQLException if database error
      */
+  public int authenticate(Context context, String username, String password, String realm, HttpServletRequest request) throws SQLException;
 
-    public int authenticate(Context context,
-                            String username,
-                            String password,
-                            String realm,
-                            HttpServletRequest request)
-        throws SQLException;
-
-    /**
+  /**
      * Get an external login page to which to redirect.
      *
      * Returns URL (as string) to which to redirect to obtain
@@ -207,25 +175,23 @@ public interface AuthenticationMethod {
      *
      * @return fully-qualified URL or null
      */
-    public String loginPageURL(Context context,
-                               HttpServletRequest request,
-                               HttpServletResponse response);
+  public String loginPageURL(Context context, HttpServletRequest request, HttpServletResponse response);
 
-    /**
+  /**
      * Returns a short name that uniquely identifies this authentication method
      * @return The authentication method name
      */
-    public String getName();
+  public String getName();
 
-    /**
+  /**
      * Get whether the authentication method is being used.
      * @param context   The DSpace context
      * @param request   The current request
      * @return whether the authentication method is being used.
      */
-    public boolean isUsed(Context context, HttpServletRequest request);
+  public boolean isUsed(Context context, HttpServletRequest request);
 
-    /**
+  /**
      * Check if the given current password is valid to change the password of the
      * given ePerson
      * @param  context         The DSpace context
@@ -234,5 +200,5 @@ public interface AuthenticationMethod {
      * @return                 true if the provided password matches with current
      *                         password
      */
-    public boolean canChangePassword(Context context, EPerson ePerson, String currentPassword);
+  public boolean canChangePassword(Context context, EPerson ePerson, String currentPassword);
 }

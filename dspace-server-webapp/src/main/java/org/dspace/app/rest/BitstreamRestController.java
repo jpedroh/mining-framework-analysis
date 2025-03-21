@@ -1,16 +1,7 @@
-/**
- * The contents of this file are subject to the license and copyright
- * detailed in the LICENSE and NOTICE files at the root of the source
- * tree and available online at
- *
- * http://www.dspace.org/license/
- */
 package org.dspace.app.rest;
-
 import static org.dspace.app.rest.utils.ContextUtil.obtainContext;
 import static org.dspace.app.rest.utils.RegexUtils.REGEX_REQUESTMAPPING_IDENTIFIER_AS_UUID;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -18,7 +9,6 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
-
 import org.apache.catalina.connector.ClientAbortException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
@@ -66,135 +56,117 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Tom Desair (tom dot desair at atmire dot com)
  * @author Frederic Van Reet (frederic dot vanreet at atmire dot com)
  */
-@RestController
-@RequestMapping("/api/" + BitstreamRest.CATEGORY + "/" + BitstreamRest.PLURAL_NAME
-    + REGEX_REQUESTMAPPING_IDENTIFIER_AS_UUID)
-public class BitstreamRestController {
+@RestController @RequestMapping(value = "/api/" + BitstreamRest.CATEGORY + "/" + BitstreamRest.PLURAL_NAME + REGEX_REQUESTMAPPING_IDENTIFIER_AS_UUID) public class BitstreamRestController {
+  private static final Logger log = org.apache.logging.log4j.LogManager.getLogger(BitstreamRestController.class);
 
-    private static final Logger log = org.apache.logging.log4j.LogManager
-            .getLogger(BitstreamRestController.class);
+  private static final int BUFFER_SIZE = 4096 * 10;
 
-    //Most file systems are configured to use block sizes of 4096 or 8192 and our buffer should be a multiple of that.
-    private static final int BUFFER_SIZE = 4096 * 10;
+  @Autowired private BitstreamService bitstreamService;
 
-    @Autowired
-    private BitstreamService bitstreamService;
+  @Autowired BitstreamFormatService bitstreamFormatService;
 
-    @Autowired
-    BitstreamFormatService bitstreamFormatService;
+  @Autowired private EventService eventService;
 
-    @Autowired
-    private EventService eventService;
+  @Autowired private CitationDocumentService citationDocumentService;
 
-    @Autowired
-    private CitationDocumentService citationDocumentService;
+  @Autowired private ConfigurationService configurationService;
 
-    @Autowired
-    private ConfigurationService configurationService;
+  @Autowired ConverterService converter;
 
-    @Autowired
-    ConverterService converter;
+  @Autowired Utils utils;
 
-    @Autowired
-    Utils utils;
-
-    @PreAuthorize("hasPermission(#uuid, 'BITSTREAM', 'READ')")
-    @RequestMapping( method = {RequestMethod.GET, RequestMethod.HEAD}, value = "content")
-    public ResponseEntity retrieve(@PathVariable UUID uuid, HttpServletResponse response,
-                         HttpServletRequest request) throws IOException, SQLException, AuthorizeException {
-
-
-        Context context = ContextUtil.obtainContext(request);
-
-        Bitstream bit = bitstreamService.find(context, uuid);
-        EPerson currentUser = context.getCurrentUser();
-
-        if (bit == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return null;
-        }
-
-        Long lastModified = bitstreamService.getLastModified(bit);
-        BitstreamFormat format = bit.getFormat(context);
-        String mimetype = format.getMIMEType();
-        String name = getBitstreamName(bit, format);
-
-        if (StringUtils.isBlank(request.getHeader("Range"))) {
-            //We only log a download request when serving a request without Range header. This is because
-            //a browser always sends a regular request first to check for Range support.
-            eventService.fireEvent(
-                new UsageEvent(
-                    UsageEvent.Action.VIEW,
-                    request,
-                    context,
-                    bit));
-        }
-
-        try {
-            long filesize = bit.getSizeBytes();
-            Boolean citationEnabledForBitstream = citationDocumentService.isCitationEnabledForBitstream(bit, context);
-
-            HttpHeadersInitializer httpHeadersInitializer = new HttpHeadersInitializer()
-                .withBufferSize(BUFFER_SIZE)
-                .withFileName(name)
-                .withChecksum(bit.getChecksum())
-                .withMimetype(mimetype)
-                .with(request)
-                .with(response);
-
-            if (lastModified != null) {
-                httpHeadersInitializer.withLastModified(lastModified);
-            }
-
-            //Determine if we need to send the file as a download or if the browser can open it inline
-            long dispositionThreshold = configurationService.getLongProperty("webui.content_disposition_threshold");
-            if (dispositionThreshold >= 0 && filesize > dispositionThreshold) {
-                httpHeadersInitializer.withDisposition(HttpHeadersInitializer.CONTENT_DISPOSITION_ATTACHMENT);
-            }
-
-            org.dspace.app.rest.utils.BitstreamResource bitstreamResource =
-                new org.dspace.app.rest.utils.BitstreamResource(name, uuid,
-                    currentUser != null ? currentUser.getID() : null,
-                    context.getSpecialGroupUuids(), citationEnabledForBitstream);
-
-            //We have all the data we need, close the connection to the database so that it doesn't stay open during
-            //download/streaming
-            context.complete();
-
-            //Send the data
-            if (httpHeadersInitializer.isValid()) {
-                HttpHeaders httpHeaders = httpHeadersInitializer.initialiseHeaders();
-                return ResponseEntity.ok().headers(httpHeaders).body(bitstreamResource);
-            }
-
-        } catch (ClientAbortException ex) {
-            log.debug("Client aborted the request before the download was completed. " +
-                          "Client is probably switching to a Range request.", ex);
-        } catch (Exception e) {
-            throw e;
-        }
-        return null;
+  @PreAuthorize(value = "hasPermission(#uuid, \'BITSTREAM\', \'READ\')") @RequestMapping(method = { RequestMethod.GET, RequestMethod.HEAD }, value = "content") public ResponseEntity retrieve(@PathVariable UUID uuid, HttpServletResponse response, HttpServletRequest request) throws IOException, SQLException, AuthorizeException {
+    Context context = ContextUtil.obtainContext(request);
+    Bitstream bit = bitstreamService.find(context, uuid);
+    EPerson currentUser = context.getCurrentUser();
+    if (bit == null) {
+      response.sendError(HttpServletResponse.SC_NOT_FOUND);
+      return null;
     }
-
-    private String getBitstreamName(Bitstream bit, BitstreamFormat format) {
-        String name = bit.getName();
-        if (name == null) {
-            // give a default name to the file based on the UUID and the primary extension of the format
-            name = bit.getID().toString();
-            if (format != null && format.getExtensions() != null && format.getExtensions().size() > 0) {
-                name += "." + format.getExtensions().get(0);
-            }
-        }
-        return name;
+    Long lastModified = bitstreamService.getLastModified(bit);
+    BitstreamFormat format = bit.getFormat(context);
+    String mimetype = format.getMIMEType();
+    String name = getBitstreamName(bit, format);
+    if (StringUtils.isBlank(request.getHeader("Range"))) {
+      eventService.fireEvent(new UsageEvent(UsageEvent.Action.VIEW, request, context, bit));
     }
+    try {
+      long filesize = bit.getSizeBytes();
 
-    private boolean isNotAnErrorResponse(HttpServletResponse response) {
-        Response.Status.Family responseCode = Response.Status.Family.familyOf(response.getStatus());
-        return responseCode.equals(Response.Status.Family.SUCCESSFUL)
-            || responseCode.equals(Response.Status.Family.REDIRECTION);
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/BitstreamRestController.java/left.java
+      if (citationDocumentService.isCitationEnabledForBitstream(bit, context)) {
+        final Pair<InputStream, Long> citedDocument = citationDocumentService.makeCitedDocument(context, bit);
+        filesize = citedDocument.getRight();
+        citedDocument.getLeft().close();
+      } else {
+        filesize = bit.getSizeBytes();
+      }
+=======
+      Boolean citationEnabledForBitstream = citationDocumentService.isCitationEnabledForBitstream(bit, context);
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/BitstreamRestController.java/right.java
+
+      HttpHeadersInitializer httpHeadersInitializer = new HttpHeadersInitializer().withBufferSize(BUFFER_SIZE).withFileName(name).
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/BitstreamRestController.java/left.java
+      withLength(filesize)
+=======
+      withChecksum(bit.getChecksum())
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/BitstreamRestController.java/right.java
+      .
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/BitstreamRestController.java/left.java
+      withChecksum(bit.getChecksum())
+=======
+      withMimetype(mimetype)
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/BitstreamRestController.java/right.java
+      .
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/BitstreamRestController.java/left.java
+      withMimetype(mimetype).with(request).with(response)
+=======
+      with(request).with(response)
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/BitstreamRestController.java/right.java
+      ;
+      if (lastModified != null) {
+        httpHeadersInitializer.withLastModified(lastModified);
+      }
+      long dispositionThreshold = configurationService.getLongProperty("webui.content_disposition_threshold");
+      if (dispositionThreshold >= 0 && filesize > dispositionThreshold) {
+        httpHeadersInitializer.withDisposition(HttpHeadersInitializer.CONTENT_DISPOSITION_ATTACHMENT);
+      }
+      org.dspace.app.rest.utils.BitstreamResource bitstreamResource = new org.dspace.app.rest.utils.BitstreamResource(bit, name, uuid, filesize, currentUser != null ? currentUser.getID() : null, 
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+      context.getSpecialGroupUuids()
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/BitstreamRestController.java/right.java
+      , citationEnabledForBitstream);
+      context.complete();
+      if (httpHeadersInitializer.isValid()) {
+        HttpHeaders httpHeaders = httpHeadersInitializer.initialiseHeaders();
+        return ResponseEntity.ok().headers(httpHeaders).body(bitstreamResource);
+      }
+    } catch (ClientAbortException ex) {
+      log.debug("Client aborted the request before the download was completed. " + "Client is probably switching to a Range request.", ex);
+    } catch (Exception e) {
+      throw e;
     }
+    return null;
+  }
 
-    /**
+  private String getBitstreamName(Bitstream bit, BitstreamFormat format) {
+    String name = bit.getName();
+    if (name == null) {
+      name = bit.getID().toString();
+      if (format != null && format.getExtensions() != null && format.getExtensions().size() > 0) {
+        name += "." + format.getExtensions().get(0);
+      }
+    }
+    return name;
+  }
+
+  private boolean isNotAnErrorResponse(HttpServletResponse response) {
+    Response.Status.Family responseCode = Response.Status.Family.familyOf(response.getStatus());
+    return responseCode.equals(Response.Status.Family.SUCCESSFUL) || responseCode.equals(Response.Status.Family.REDIRECTION);
+  }
+
+  /**
      * This method will update the bitstream format of the bitstream that corresponds to the provided bitstream uuid.
      *
      * @param uuid The UUID of the bitstream for which to update the bitstream format
@@ -202,34 +174,20 @@ public class BitstreamRestController {
      * @return The wrapped resource containing the bitstream which in turn contains the bitstream format
      * @throws SQLException       If something goes wrong in the database
      */
-    @RequestMapping(method = PUT, consumes = {"text/uri-list"}, value = "format")
-    @PreAuthorize("hasPermission(#uuid, 'BITSTREAM','WRITE')")
-    @PostAuthorize("returnObject != null")
-    public BitstreamResource updateBitstreamFormat(@PathVariable UUID uuid,
-                                                   HttpServletRequest request) throws SQLException {
-
-        Context context = obtainContext(request);
-
-        List<BitstreamFormat> bitstreamFormats = utils.constructBitstreamFormatList(request, context);
-
-        if (bitstreamFormats.size() > 1) {
-            throw new DSpaceBadRequestException("Only one bitstream format is allowed");
-        }
-
-        BitstreamFormat bitstreamFormat = bitstreamFormats.stream().findFirst()
-                .orElseThrow(() -> new DSpaceBadRequestException("No valid bitstream format was provided"));
-
-        Bitstream bitstream = bitstreamService.find(context, uuid);
-
-        if (bitstream == null) {
-            throw new ResourceNotFoundException("Bitstream with id: " + uuid + " not found");
-        }
-
-        bitstream.setFormat(context, bitstreamFormat);
-
-        context.commit();
-
-        BitstreamRest bitstreamRest = converter.toRest(context.reloadEntity(bitstream), utils.obtainProjection());
-        return converter.toResource(bitstreamRest);
+  @RequestMapping(method = PUT, consumes = { "text/uri-list" }, value = "format") @PreAuthorize(value = "hasPermission(#uuid, \'BITSTREAM\',\'WRITE\')") @PostAuthorize(value = "returnObject != null") public BitstreamResource updateBitstreamFormat(@PathVariable UUID uuid, HttpServletRequest request) throws SQLException {
+    Context context = obtainContext(request);
+    List<BitstreamFormat> bitstreamFormats = utils.constructBitstreamFormatList(request, context);
+    if (bitstreamFormats.size() > 1) {
+      throw new DSpaceBadRequestException("Only one bitstream format is allowed");
     }
+    BitstreamFormat bitstreamFormat = bitstreamFormats.stream().findFirst().orElseThrow(() -> new DSpaceBadRequestException("No valid bitstream format was provided"));
+    Bitstream bitstream = bitstreamService.find(context, uuid);
+    if (bitstream == null) {
+      throw new ResourceNotFoundException("Bitstream with id: " + uuid + " not found");
+    }
+    bitstream.setFormat(context, bitstreamFormat);
+    context.commit();
+    BitstreamRest bitstreamRest = converter.toRest(context.reloadEntity(bitstream), utils.obtainProjection());
+    return converter.toResource(bitstreamRest);
+  }
 }

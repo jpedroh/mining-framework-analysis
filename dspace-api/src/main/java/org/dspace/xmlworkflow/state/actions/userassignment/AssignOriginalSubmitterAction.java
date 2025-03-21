@@ -1,12 +1,4 @@
-/**
- * The contents of this file are subject to the license and copyright
- * detailed in the LICENSE and NOTICE files at the root of the source
- * tree and available online at
- *
- * http://www.dspace.org/license/
- */
 package org.dspace.xmlworkflow.state.actions.userassignment;
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -14,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
-
 import org.dspace.authorize.AuthorizeException;
 import org.dspace.core.Context;
 import org.dspace.core.LogHelper;
@@ -41,87 +32,58 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Mark Diggory (markd at atmire dot com)
  */
 public class AssignOriginalSubmitterAction extends UserSelectionAction {
+  @Autowired(required = true) protected WorkflowRequirementsService workflowRequirementsService;
 
-    @Autowired(required = true)
-    protected WorkflowRequirementsService workflowRequirementsService;
+  @Override public boolean isFinished(XmlWorkflowItem wfi) {
+    return false;
+  }
 
-    @Override
-    public boolean isFinished(XmlWorkflowItem wfi) {
-        return false;
+  @Override public void regenerateTasks(Context c, XmlWorkflowItem wfi, RoleMembers roleMembers) throws SQLException {
+  }
+
+  @Override public boolean isValidUserSelection(Context context, XmlWorkflowItem wfi, boolean hasUI) throws WorkflowConfigurationException, SQLException {
+    return wfi.getSubmitter() != null;
+  }
+
+  @Override public boolean usesTaskPool() {
+    return false;
+  }
+
+  @Override public void activate(Context c, XmlWorkflowItem wf) throws SQLException, IOException {
+  }
+
+  @Override public void alertUsersOnActivation(Context c, XmlWorkflowItem wfi, RoleMembers roleMembers) throws IOException, SQLException {
+    if (wfi.getSubmitter() != null) {
+      try {
+        XmlWorkflowService xmlWorkflowService = XmlWorkflowServiceFactory.getInstance().getXmlWorkflowService();
+        xmlWorkflowService.alertUsersOnTaskActivation(c, wfi, "submit_task", Arrays.asList(wfi.getSubmitter()), wfi.getItem().getName(), wfi.getCollection().getName(), wfi.getSubmitter().getFullName(), "New task available.", xmlWorkflowService.getMyDSpaceLink());
+      } catch (MessagingException e) {
+        log.info(LogHelper.getHeader(c, "error emailing user(s) for claimed task", "step: " + getParent().getStep().getId() + " workflowitem: " + wfi.getID()));
+      }
     }
+  }
 
-    @Override
-    public void regenerateTasks(Context c, XmlWorkflowItem wfi, RoleMembers roleMembers) throws SQLException {
-
+  @Override public ActionResult execute(Context c, XmlWorkflowItem wfi, Step step, HttpServletRequest request) throws SQLException, AuthorizeException, IOException, WorkflowException {
+    EPerson submitter = wfi.getSubmitter();
+    WorkflowActionConfig nextAction = getParent().getStep().getNextAction(this.getParent());
+    while (nextAction != null && !nextAction.requiresUI()) {
+      nextAction = nextAction.getStep().getNextAction(nextAction);
     }
-
-    @Override
-    public boolean isValidUserSelection(Context context, XmlWorkflowItem wfi, boolean hasUI)
-        throws WorkflowConfigurationException, SQLException {
-        return wfi.getSubmitter() != null;
+    if (nextAction == null) {
+      log.error("Could not find next action for step with id: " + step.getId() + " to assign a submitter to. Aborting the action.");
+      throw new IllegalStateException();
     }
-
-    @Override
-    public boolean usesTaskPool() {
-        return false;
+    if (submitter != null) {
+      createTaskForEPerson(c, wfi, step, nextAction, submitter);
     }
+    return new ActionResult(ActionResult.TYPE.TYPE_OUTCOME, ActionResult.OUTCOME_COMPLETE);
+  }
 
-    @Override
-    public void activate(Context c, XmlWorkflowItem wf) throws SQLException, IOException {
+  @Override public List<String> getOptions() {
+    return new ArrayList<>();
+  }
 
-    }
-
-    @Override
-    public void alertUsersOnActivation(Context c, XmlWorkflowItem wfi, RoleMembers roleMembers)
-        throws IOException, SQLException {
-        if (wfi.getSubmitter() != null) {
-            try {
-                XmlWorkflowService xmlWorkflowService = XmlWorkflowServiceFactory.getInstance().getXmlWorkflowService();
-                xmlWorkflowService.alertUsersOnTaskActivation(c, wfi, "submit_task", Arrays.asList(wfi.getSubmitter()),
-                        //The arguments
-                        wfi.getItem().getName(),
-                        wfi.getCollection().getName(),
-                        wfi.getSubmitter().getFullName(),
-                        //TODO: message
-                        "New task available.",
-                        xmlWorkflowService.getMyDSpaceLink()
-                );
-            } catch (MessagingException e) {
-                log.info(LogHelper.getHeader(c, "error emailing user(s) for claimed task",
-                                          "step: " + getParent().getStep().getId() + " workflowitem: " + wfi.getID()));
-            }
-        }
-    }
-
-
-    @Override
-    public ActionResult execute(Context c, XmlWorkflowItem wfi, Step step, HttpServletRequest request)
-        throws SQLException, AuthorizeException, IOException, WorkflowException {
-        EPerson submitter = wfi.getSubmitter();
-        WorkflowActionConfig nextAction = getParent().getStep().getNextAction(this.getParent());
-        //Retrieve the action which has a user interface
-        while (nextAction != null && !nextAction.requiresUI()) {
-            nextAction = nextAction.getStep().getNextAction(nextAction);
-        }
-        if (nextAction == null) {
-            //Should never occur, but just in case
-            log.error("Could not find next action for step with id: " + step
-                .getId() + " to assign a submitter to. Aborting the action.");
-            throw new IllegalStateException();
-        }
-        if (submitter != null) {
-            createTaskForEPerson(c, wfi, step, nextAction, submitter);
-        }
-        //It is important that we return to the submission page since we will continue our actions with the submitter
-        return new ActionResult(ActionResult.TYPE.TYPE_OUTCOME, ActionResult.OUTCOME_COMPLETE);
-    }
-
-    @Override
-    public List<String> getOptions() {
-        return new ArrayList<>();
-    }
-
-    /**
+  /**
      * Create a claimed task for the user IF this user doesn't have a claimed action for this workflow item
      *
      * @param c            the dspace context
@@ -133,13 +95,10 @@ public class AssignOriginalSubmitterAction extends UserSelectionAction {
      * @throws AuthorizeException ...
      * @throws IOException        ...
      */
-    protected void createTaskForEPerson(Context c, XmlWorkflowItem wfi, Step step, WorkflowActionConfig actionConfig,
-                                        EPerson user) throws SQLException, AuthorizeException, IOException {
-        if (claimedTaskService.find(c, wfi, step.getId(), actionConfig.getId()) != null) {
-            workflowRequirementsService.addClaimedUser(c, wfi, step, user);
-            XmlWorkflowServiceFactory.getInstance().getXmlWorkflowService()
-                                     .createOwnedTask(c, wfi, step, actionConfig, user);
-        }
+  protected void createTaskForEPerson(Context c, XmlWorkflowItem wfi, Step step, WorkflowActionConfig actionConfig, EPerson user) throws SQLException, AuthorizeException, IOException {
+    if (claimedTaskService.find(c, wfi, step.getId(), actionConfig.getId()) != null) {
+      workflowRequirementsService.addClaimedUser(c, wfi, step, user);
+      XmlWorkflowServiceFactory.getInstance().getXmlWorkflowService().createOwnedTask(c, wfi, step, actionConfig, user);
     }
-
+  }
 }

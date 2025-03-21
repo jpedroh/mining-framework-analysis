@@ -1,12 +1,4 @@
-/**
- * The contents of this file are subject to the license and copyright
- * detailed in the LICENSE and NOTICE files at the root of the source
- * tree and available online at
- *
- * http://www.dspace.org/license/
- */
 package org.dspace.app.sherpa.v2;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -30,80 +22,86 @@ import java.util.List;
  * @see SHERPAPublisherPolicy
  */
 public class SHERPAPermittedVersion implements Serializable {
+  private static final long serialVersionUID = 4992181606327727442L;
 
-    private static final long serialVersionUID = 4992181606327727442L;
+  private String articleVersion;
 
-    // Version (submitted, accepted, published)
-    private String articleVersion;
+  private int option;
 
-    // Option number
-    private int option;
+  private List<String> conditions;
 
-    // General conditions
-    private List<String> conditions;
-    // Prerequisites (eg. if required by funder)
-    private List<String> prerequisites;
-    // Allowed locations
-    private List<String> locations;
-    // Required license(s)
-    private List<String> licenses;
-    // Embargo
-    private SHERPAEmbargo embargo;
+  private List<String> prerequisites;
 
-    public String getArticleVersion() {
-        return articleVersion;
-    }
+  private List<String> locations;
 
-    public void setArticleVersion(String articleVersion) {
-        this.articleVersion = articleVersion;
-    }
+  private List<String> licenses;
 
-    public List<String> getConditions() {
-        return conditions;
-    }
+  private SHERPAEmbargo embargo;
 
-    public void setConditions(List<String> conditions) {
-        this.conditions = conditions;
-    }
 
-    public List<String> getPrerequisites() {
-        return prerequisites;
-    }
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/sherpa/v2/SHERPAPermittedVersion.java/left.java
+  protected static class SHERPAEmbargo {
+    String units;
 
-    public void setPrerequisites(List<String> prerequisites) {
-        this.prerequisites = prerequisites;
-    }
+    int amount;
+  }
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
 
-    public List<String> getLocations() {
-        return locations;
-    }
 
-    public void setLocations(List<String> locations) {
-        this.locations = locations;
-    }
+  public String getArticleVersion() {
+    return articleVersion;
+  }
 
-    public List<String> getLicenses() {
-        return licenses;
-    }
+  public void setArticleVersion(String articleVersion) {
+    this.articleVersion = articleVersion;
+  }
 
-    public void setLicenses(List<String> licenses) {
-        this.licenses = licenses;
-    }
+  public List<String> getConditions() {
+    return conditions;
+  }
 
-    public SHERPAEmbargo getEmbargo() {
-        return embargo;
-    }
+  public void setConditions(List<String> conditions) {
+    this.conditions = conditions;
+  }
 
-    public void setEmbargo(SHERPAEmbargo embargo) {
-        this.embargo = embargo;
-    }
+  public List<String> getPrerequisites() {
+    return prerequisites;
+  }
 
-    public int getOption() {
-        return option;
-    }
+  public void setPrerequisites(List<String> prerequisites) {
+    this.prerequisites = prerequisites;
+  }
 
-    public void setOption(int option) {
-        this.option = option;
-    }
+  public List<String> getLocations() {
+    return locations;
+  }
 
+  public void setLocations(List<String> locations) {
+    this.locations = locations;
+  }
+
+  public List<String> getLicenses() {
+    return licenses;
+  }
+
+  public void setLicenses(List<String> licenses) {
+    this.licenses = licenses;
+  }
+
+  public SHERPAEmbargo getEmbargo() {
+    return embargo;
+  }
+
+  public void setEmbargo(SHERPAEmbargo embargo) {
+    this.embargo = embargo;
+  }
+
+  public int getOption() {
+    return option;
+  }
+
+  public void setOption(int option) {
+    this.option = option;
+  }
 }

@@ -1,12 +1,4 @@
-/**
- * The contents of this file are subject to the license and copyright
- * detailed in the LICENSE and NOTICE files at the root of the source
- * tree and available online at
- *
- * http://www.dspace.org/license/
- */
 package org.dspace.authenticate;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +6,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
-
 import org.dspace.authenticate.service.AuthenticationService;
 import org.dspace.authorize.AuthorizeException;
 import org.dspace.core.Context;
@@ -53,170 +44,122 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @see AuthenticationMethod
  */
 public class AuthenticationServiceImpl implements AuthenticationService {
-
-    /**
+  /**
      * SLF4J logging category
      */
-    private final Logger log = (Logger) LoggerFactory.getLogger(AuthenticationServiceImpl.class);
+  private final Logger log = (Logger) LoggerFactory.getLogger(AuthenticationServiceImpl.class);
 
-    @Autowired(required = true)
-    protected EPersonService ePersonService;
+  @Autowired(required = true) protected EPersonService ePersonService;
 
-    protected AuthenticationServiceImpl() {
+  protected AuthenticationServiceImpl() {
+  }
 
-    }
+  public List<AuthenticationMethod> getAuthenticationMethodStack() {
+    return Arrays.asList((AuthenticationMethod[]) CoreServiceFactory.getInstance().getPluginService().getPluginSequence(AuthenticationMethod.class));
+  }
 
-    public List<AuthenticationMethod> getAuthenticationMethodStack() {
-        return Arrays.asList((AuthenticationMethod[]) CoreServiceFactory.getInstance().getPluginService()
-                                                                        .getPluginSequence(AuthenticationMethod.class));
-    }
+  @Override public int authenticate(Context context, String username, String password, String realm, HttpServletRequest request) {
+    return authenticateInternal(context, username, password, realm, request, false);
+  }
 
-    @Override
-    public int authenticate(Context context,
-                            String username,
-                            String password,
-                            String realm,
-                            HttpServletRequest request) {
-        return authenticateInternal(context, username, password, realm,
-                                    request, false);
-    }
+  @Override public int authenticateImplicit(Context context, String username, String password, String realm, HttpServletRequest request) {
+    return authenticateInternal(context, username, password, realm, request, true);
+  }
 
-    @Override
-    public int authenticateImplicit(Context context,
-                                    String username,
-                                    String password,
-                                    String realm,
-                                    HttpServletRequest request) {
-        return authenticateInternal(context, username, password, realm,
-                                    request, true);
-    }
-
-    protected int authenticateInternal(Context context,
-                                       String username,
-                                       String password,
-                                       String realm,
-                                       HttpServletRequest request,
-                                       boolean implicitOnly) {
-        // better is lowest, so start with the highest.
-        int bestRet = AuthenticationMethod.BAD_ARGS;
-
-        // return on first success, otherwise "best" outcome.
-        for (AuthenticationMethod aMethodStack : getAuthenticationMethodStack()) {
-            if (!implicitOnly || aMethodStack.isImplicit()) {
-                int ret = 0;
-                try {
-                    ret = aMethodStack.authenticate(context, username, password, realm, request);
-                } catch (SQLException e) {
-                    ret = AuthenticationMethod.NO_SUCH_USER;
-                }
-                if (ret == AuthenticationMethod.SUCCESS) {
-                    updateLastActiveDate(context);
-                    return ret;
-                }
-                if (ret < bestRet) {
-                    bestRet = ret;
-                }
-            }
+  protected int authenticateInternal(Context context, String username, String password, String realm, HttpServletRequest request, boolean implicitOnly) {
+    int bestRet = AuthenticationMethod.BAD_ARGS;
+    for (AuthenticationMethod aMethodStack : getAuthenticationMethodStack()) {
+      if (!implicitOnly || aMethodStack.isImplicit()) {
+        int ret = 0;
+        try {
+          ret = aMethodStack.authenticate(context, username, password, realm, request);
+        } catch (SQLException e) {
+          ret = AuthenticationMethod.NO_SUCH_USER;
         }
-        return bestRet;
-    }
-
-    public void updateLastActiveDate(Context context) {
-        EPerson me = context.getCurrentUser();
-        if (me != null) {
-            me.setLastActive(new Date());
-            try {
-                ePersonService.update(context, me);
-            } catch (SQLException ex) {
-                log.error("Could not update last-active stamp", ex);
-            } catch (AuthorizeException ex) {
-                log.error("Could not update last-active stamp", ex);
-            }
+        if (ret == AuthenticationMethod.SUCCESS) {
+          updateLastActiveDate(context);
+          return ret;
         }
-    }
-
-    @Override
-    public boolean canSelfRegister(Context context,
-                                   HttpServletRequest request,
-                                   String username)
-        throws SQLException {
-        for (AuthenticationMethod method : getAuthenticationMethodStack()) {
-            if (method.canSelfRegister(context, request, username)) {
-                return true;
-            }
+        if (ret < bestRet) {
+          bestRet = ret;
         }
-        return false;
+      }
     }
+    return bestRet;
+  }
 
-    @Override
-    public boolean allowSetPassword(Context context,
-                                    HttpServletRequest request,
-                                    String username)
-        throws SQLException {
-        for (AuthenticationMethod method : getAuthenticationMethodStack()) {
-            if (method.allowSetPassword(context, request, username)) {
-                return true;
-            }
-        }
-        return false;
+  public void updateLastActiveDate(Context context) {
+    EPerson me = context.getCurrentUser();
+    if (me != null) {
+      me.setLastActive(new Date());
+      try {
+        ePersonService.update(context, me);
+      } catch (SQLException ex) {
+        log.error("Could not update last-active stamp", ex);
+      } catch (AuthorizeException ex) {
+        log.error("Could not update last-active stamp", ex);
+      }
     }
+  }
 
-    @Override
-    public void initEPerson(Context context,
-                            HttpServletRequest request,
-                            EPerson eperson)
-        throws SQLException {
-        for (AuthenticationMethod method : getAuthenticationMethodStack()) {
-            method.initEPerson(context, request, eperson);
-        }
+  @Override public boolean canSelfRegister(Context context, HttpServletRequest request, String username) throws SQLException {
+    for (AuthenticationMethod method : getAuthenticationMethodStack()) {
+      if (method.canSelfRegister(context, request, username)) {
+        return true;
+      }
     }
+    return false;
+  }
 
-    @Override
-    public List<Group> getSpecialGroups(Context context,
-                                        HttpServletRequest request)
-        throws SQLException {
-        List<Group> result = new ArrayList<>();
-        int totalLen = 0;
-
-        for (AuthenticationMethod method : getAuthenticationMethodStack()) {
-            List<Group> gl = method.getSpecialGroups(context, request);
-            if (gl.size() > 0) {
-                result.addAll(gl);
-                totalLen += gl.size();
-            }
-        }
-
-        return result;
+  @Override public boolean allowSetPassword(Context context, HttpServletRequest request, String username) throws SQLException {
+    for (AuthenticationMethod method : getAuthenticationMethodStack()) {
+      if (method.allowSetPassword(context, request, username)) {
+        return true;
+      }
     }
+    return false;
+  }
 
-    @Override
-    public Iterator<AuthenticationMethod> authenticationMethodIterator() {
-        return getAuthenticationMethodStack().iterator();
+  @Override public void initEPerson(Context context, HttpServletRequest request, EPerson eperson) throws SQLException {
+    for (AuthenticationMethod method : getAuthenticationMethodStack()) {
+      method.initEPerson(context, request, eperson);
     }
+  }
 
-    @Override
-    public String getAuthenticationMethod(final Context context, final HttpServletRequest request) {
-        final Iterator<AuthenticationMethod> authenticationMethodIterator = authenticationMethodIterator();
-
-        while (authenticationMethodIterator.hasNext()) {
-            final AuthenticationMethod authenticationMethod = authenticationMethodIterator.next();
-            if (authenticationMethod.isUsed(context, request)) {
-                return authenticationMethod.getName();
-            }
-        }
-
-        return null;
+  @Override public List<Group> getSpecialGroups(Context context, HttpServletRequest request) throws SQLException {
+    List<Group> result = new ArrayList<>();
+    int totalLen = 0;
+    for (AuthenticationMethod method : getAuthenticationMethodStack()) {
+      List<Group> gl = method.getSpecialGroups(context, request);
+      if (gl.size() > 0) {
+        result.addAll(gl);
+        totalLen += gl.size();
+      }
     }
+    return result;
+  }
 
-    @Override
-    public boolean canChangePassword(Context context, EPerson ePerson, String currentPassword) {
+  @Override public Iterator<AuthenticationMethod> authenticationMethodIterator() {
+    return getAuthenticationMethodStack().iterator();
+  }
 
-        for (AuthenticationMethod method : getAuthenticationMethodStack()) {
-            if (method.getName().equals(context.getAuthenticationMethod())) {
-                return method.canChangePassword(context, ePerson, currentPassword);
-            }
-        }
-
-        return false;
+  @Override public String getAuthenticationMethod(final Context context, final HttpServletRequest request) {
+    final Iterator<AuthenticationMethod> authenticationMethodIterator = authenticationMethodIterator();
+    while (authenticationMethodIterator.hasNext()) {
+      final AuthenticationMethod authenticationMethod = authenticationMethodIterator.next();
+      if (authenticationMethod.isUsed(context, request)) {
+        return authenticationMethod.getName();
+      }
     }
+    return null;
+  }
+
+  @Override public boolean canChangePassword(Context context, EPerson ePerson, String currentPassword) {
+    for (AuthenticationMethod method : getAuthenticationMethodStack()) {
+      if (method.getName().equals(context.getAuthenticationMethod())) {
+        return method.canChangePassword(context, ePerson, currentPassword);
+      }
+    }
+    return false;
+  }
 }
