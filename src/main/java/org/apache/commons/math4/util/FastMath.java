@@ -1469,6 +1469,212 @@ public class FastMath {
         if (y == 0) {
             // y = -0 or y = +0
             return 1.0;
+<<<<<<< /usr/src/app/output/apache/commons-math/a6804eaa74dd04734bac4081d16fc058030dce13/src/main/java/org/apache/commons/math4/util/FastMath.java/left.java
+        } else if (x != x) { // X is NaN
+            return x;
+        } else if (y != y) { // y is NaN
+            return y;
+        } else if (x == 0) {
+            long bits = Double.doubleToRawLongBits(x);
+            if ((bits & 0x8000000000000000L) != 0) {
+                // -zero
+                long yi = (long) y;
+
+                if (y < 0 && y == yi && (yi & 1) == 1) {
+                    return Double.NEGATIVE_INFINITY;
+                }
+
+                if (y > 0 && y == yi && (yi & 1) == 1) {
+                    return -0.0;
+                }
+            }
+
+            if (y < 0) {
+                return Double.POSITIVE_INFINITY;
+            } else {
+                return 0.0;
+            }
+        } else if (x == Double.POSITIVE_INFINITY) {
+            if (y < 0.0) {
+                return 0.0;
+            } else {
+                return Double.POSITIVE_INFINITY;
+            }
+        } else if (y == Double.POSITIVE_INFINITY) {
+            if (x * x == 1.0) {
+                return Double.NaN;
+            }
+
+            if (x * x > 1.0) {
+                return Double.POSITIVE_INFINITY;
+            } else {
+                return 0.0;
+            }
+        } else if (x == Double.NEGATIVE_INFINITY) {
+            if (y < 0) {
+                long yi = (long) y;
+                if (y == yi && (yi & 1) == 1) {
+                    return -0.0;
+                }
+
+                return 0.0;
+            }
+
+            if (y > 0)  {
+                long yi = (long) y;
+                if (y == yi && (yi & 1) == 1) {
+                    return Double.NEGATIVE_INFINITY;
+                }
+
+                return Double.POSITIVE_INFINITY;
+            }
+        } else if (y == Double.NEGATIVE_INFINITY) {
+            if (x * x == 1.0) {
+                return Double.NaN;
+            }
+
+            if (x * x < 1.0) {
+                return Double.POSITIVE_INFINITY;
+            } else {
+                return 0.0;
+            }
+        } else if (x < 0) { /* Handle special case x<0 */
+            // y is an even integer in this case
+            if (y >= TWO_POWER_53 || y <= -TWO_POWER_53) {
+                return pow(-x, y);
+            }
+
+            if (y == (long) y) {
+                // If y is an integer
+                return ((long)y & 1) == 0 ? pow(-x, y) : -pow(-x, y);
+            } else {
+                return Double.NaN;
+            }
+        }
+
+        /* Split y into ya and yb such that y = ya+yb */
+        double ya;
+        double yb;
+        if (y < 8e298 && y > -8e298) {
+            double tmp1 = y * HEX_40000000;
+            ya = y + tmp1 - tmp1;
+            yb = y - ya;
+||||||| /usr/src/app/output/apache/commons-math/a6804eaa74dd04734bac4081d16fc058030dce13/src/main/java/org/apache/commons/math4/util/FastMath.java/base.java
+        }
+
+        if (x != x) { // X is NaN
+            return x;
+        }
+
+        if (x == 0) {
+            long bits = Double.doubleToRawLongBits(x);
+            if ((bits & 0x8000000000000000L) != 0) {
+                // -zero
+                long yi = (long) y;
+
+                if (y < 0 && y == yi && (yi & 1) == 1) {
+                    return Double.NEGATIVE_INFINITY;
+                }
+
+                if (y > 0 && y == yi && (yi & 1) == 1) {
+                    return -0.0;
+                }
+            }
+
+            if (y < 0) {
+                return Double.POSITIVE_INFINITY;
+            }
+            if (y > 0) {
+                return 0.0;
+            }
+
+            return Double.NaN;
+        }
+
+        if (x == Double.POSITIVE_INFINITY) {
+            if (y != y) { // y is NaN
+                return y;
+            }
+            if (y < 0.0) {
+                return 0.0;
+            } else {
+                return Double.POSITIVE_INFINITY;
+            }
+        }
+
+        if (y == Double.POSITIVE_INFINITY) {
+            if (x * x == 1.0) {
+                return Double.NaN;
+            }
+
+            if (x * x > 1.0) {
+                return Double.POSITIVE_INFINITY;
+            } else {
+                return 0.0;
+            }
+        }
+
+        if (x == Double.NEGATIVE_INFINITY) {
+            if (y != y) { // y is NaN
+                return y;
+            }
+
+            if (y < 0) {
+                long yi = (long) y;
+                if (y == yi && (yi & 1) == 1) {
+                    return -0.0;
+                }
+
+                return 0.0;
+            }
+
+            if (y > 0)  {
+                long yi = (long) y;
+                if (y == yi && (yi & 1) == 1) {
+                    return Double.NEGATIVE_INFINITY;
+                }
+
+                return Double.POSITIVE_INFINITY;
+            }
+        }
+
+        if (y == Double.NEGATIVE_INFINITY) {
+
+            if (x * x == 1.0) {
+                return Double.NaN;
+            }
+
+            if (x * x < 1.0) {
+                return Double.POSITIVE_INFINITY;
+            } else {
+                return 0.0;
+            }
+        }
+
+        /* Handle special case x<0 */
+        if (x < 0) {
+            // y is an even integer in this case
+            if (y >= TWO_POWER_53 || y <= -TWO_POWER_53) {
+                return pow(-x, y);
+            }
+
+            if (y == (long) y) {
+                // If y is an integer
+                return ((long)y & 1) == 0 ? pow(-x, y) : -pow(-x, y);
+            } else {
+                return Double.NaN;
+            }
+        }
+
+        /* Split y into ya and yb such that y = ya+yb */
+        double ya;
+        double yb;
+        if (y < 8e298 && y > -8e298) {
+            double tmp1 = y * HEX_40000000;
+            ya = y + tmp1 - tmp1;
+            yb = y - ya;
+=======
+>>>>>>> /usr/src/app/output/apache/commons-math/a6804eaa74dd04734bac4081d16fc058030dce13/src/main/java/org/apache/commons/math4/util/FastMath.java/right.java
         } else {
 
             final long yBits        = Double.doubleToRawLongBits(y);
