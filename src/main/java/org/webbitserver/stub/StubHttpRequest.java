@@ -4,12 +4,7 @@ import org.webbitserver.HttpRequest;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-<<<<<<< HEAD
-import java.util.HashMap;
-import java.util.Map;
-=======
 import java.util.*;
->>>>>>> 94a178a0402451a97a1b3ed10698e2a1f5d1687e
 
 /**
  * Implementation of HttpRequest that is easy to construct manually and populate.
