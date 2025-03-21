@@ -20,21 +20,18 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.*;
-
 import com.google.common.reflect.TypeToken;
 import org.testng.annotations.Test;
-
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
-
 import com.datastax.driver.core.exceptions.InvalidTypeException;
 import com.datastax.driver.core.utils.Bytes;
-
 import static com.datastax.driver.core.Assertions.assertThat;
-
 /**
  * DataType simple unit tests.
  */
+import java.util.Arrays;
+import java.util.List;
 public class DataTypeTest {
 
     static boolean exclude(DataType t) {
@@ -238,6 +235,12 @@ public class DataTypeTest {
             serializeDeserializeCollectionsTest(v);
     }
 
+<<<<<<< /usr/src/app/output/datastax/java-driver/4106cdc51127c8d742ef83d3ba8b0d14d648d0d3/driver-core/src/test/java/com/datastax/driver/core/DataTypeTest.java/left.java
+||||||| /usr/src/app/output/datastax/java-driver/4106cdc51127c8d742ef83d3ba8b0d14d648d0d3/driver-core/src/test/java/com/datastax/driver/core/DataTypeTest.java/base.java
+    @Test(groups = "long")
+=======
+    @Test(groups = "unit")
+>>>>>>> /usr/src/app/output/datastax/java-driver/4106cdc51127c8d742ef83d3ba8b0d14d648d0d3/driver-core/src/test/java/com/datastax/driver/core/DataTypeTest.java/right.java
     public void serializeDeserializeCollectionsTest(ProtocolVersion version) {
 
         List<String> l = Arrays.asList("foo", "bar");

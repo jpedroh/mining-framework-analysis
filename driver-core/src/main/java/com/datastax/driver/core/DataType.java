@@ -154,12 +154,14 @@ public abstract class DataType {
     protected final DataType.Name name;
 
     private static final Map<Name, DataType> primitiveTypeMap = new EnumMap<Name, DataType>(Name.class);
+
     static {
         for (Name name : Name.values()) {
             if (!name.isCollection() && name != Name.CUSTOM && name != Name.UDT && name != Name.TUPLE)
                 primitiveTypeMap.put(name, new DataType.Native(name));
         }
     }
+
     private static final Set<DataType> primitiveTypeSet = ImmutableSet.copyOf(primitiveTypeMap.values());
 
     protected DataType(DataType.Name name) {
@@ -212,6 +214,7 @@ public abstract class DataType {
      *
      * @return The ASCII type.
      */
+
     public static DataType ascii() {
         return primitiveTypeMap.get(Name.ASCII);
     }
@@ -221,6 +224,7 @@ public abstract class DataType {
      *
      * @return The BIGINT type.
      */
+
     public static DataType bigint() {
         return primitiveTypeMap.get(Name.BIGINT);
     }
@@ -230,6 +234,7 @@ public abstract class DataType {
      *
      * @return The BLOB type.
      */
+
     public static DataType blob() {
         return primitiveTypeMap.get(Name.BLOB);
     }
@@ -239,6 +244,7 @@ public abstract class DataType {
      *
      * @return The BOOLEAN type.
      */
+
     public static DataType cboolean() {
         return primitiveTypeMap.get(Name.BOOLEAN);
     }
@@ -248,6 +254,7 @@ public abstract class DataType {
      *
      * @return The COUNTER type.
      */
+
     public static DataType counter() {
         return primitiveTypeMap.get(Name.COUNTER);
     }
@@ -257,6 +264,7 @@ public abstract class DataType {
      *
      * @return The DECIMAL type.
      */
+
     public static DataType decimal() {
         return primitiveTypeMap.get(Name.DECIMAL);
     }
@@ -266,6 +274,7 @@ public abstract class DataType {
      *
      * @return The DOUBLE type.
      */
+
     public static DataType cdouble() {
         return primitiveTypeMap.get(Name.DOUBLE);
     }
@@ -275,6 +284,7 @@ public abstract class DataType {
      *
      * @return The FLOAT type.
      */
+
     public static DataType cfloat() {
         return primitiveTypeMap.get(Name.FLOAT);
     }
@@ -284,6 +294,7 @@ public abstract class DataType {
      *
      * @return The INET type.
      */
+
     public static DataType inet() {
         return primitiveTypeMap.get(Name.INET);
     }
@@ -293,6 +304,7 @@ public abstract class DataType {
      *
      * @return The INT type.
      */
+
     public static DataType cint() {
         return primitiveTypeMap.get(Name.INT);
     }
@@ -302,6 +314,7 @@ public abstract class DataType {
      *
      * @return The TEXT type.
      */
+
     public static DataType text() {
         return primitiveTypeMap.get(Name.TEXT);
     }
@@ -311,6 +324,7 @@ public abstract class DataType {
      *
      * @return The TIMESTAMP type.
      */
+
     public static DataType timestamp() {
         return primitiveTypeMap.get(Name.TIMESTAMP);
     }
@@ -320,6 +334,7 @@ public abstract class DataType {
      *
      * @return The UUID type.
      */
+
     public static DataType uuid() {
         return primitiveTypeMap.get(Name.UUID);
     }
@@ -329,6 +344,7 @@ public abstract class DataType {
      *
      * @return The VARCHAR type.
      */
+
     public static DataType varchar() {
         return primitiveTypeMap.get(Name.VARCHAR);
     }
@@ -338,6 +354,7 @@ public abstract class DataType {
      *
      * @return The VARINT type.
      */
+
     public static DataType varint() {
         return primitiveTypeMap.get(Name.VARINT);
     }
@@ -347,6 +364,7 @@ public abstract class DataType {
      *
      * @return The TIMEUUID type.
      */
+
     public static DataType timeuuid() {
         return primitiveTypeMap.get(Name.TIMEUUID);
     }
@@ -358,6 +376,7 @@ public abstract class DataType {
      * @param frozen whether the list is frozen.
      * @return the type of lists of {@code elementType} elements.
      */
+
     public static DataType list(DataType elementType, boolean frozen) {
         return new DataType.Collection(Name.LIST, ImmutableList.of(elementType), frozen);
     }
@@ -370,6 +389,7 @@ public abstract class DataType {
      * @param elementType the type of the list elements.
      * @return the type of lists of "not frozen" {@code elementType} elements.
      */
+
     public static DataType list(DataType elementType) {
         return list(elementType, false);
     }
@@ -382,6 +402,7 @@ public abstract class DataType {
      * @param elementType the type of the list elements.
      * @return the type of lists of frozen {@code elementType} elements.
      */
+
     public static DataType frozenList(DataType elementType) {
         return list(elementType, true);
     }
@@ -393,6 +414,7 @@ public abstract class DataType {
      * @param frozen whether the set is frozen.
      * @return the type of sets of {@code elementType} elements.
      */
+
     public static DataType set(DataType elementType, boolean frozen) {
         return new DataType.Collection(Name.SET, ImmutableList.of(elementType), frozen);
     }
@@ -405,6 +427,7 @@ public abstract class DataType {
      * @param elementType the type of the set elements.
      * @return the type of sets of "not frozen" {@code elementType} elements.
      */
+
     public static DataType set(DataType elementType) {
         return set(elementType, false);
     }
@@ -417,6 +440,7 @@ public abstract class DataType {
      * @param elementType the type of the set elements.
      * @return the type of frozen sets of {@code elementType} elements.
      */
+
     public static DataType frozenSet(DataType elementType) {
         return set(elementType, true);
     }
@@ -429,6 +453,7 @@ public abstract class DataType {
      * @param frozen whether the map is frozen.
      * @return the type of maps of {@code keyType} to {@code valueType} elements.
      */
+
     public static DataType map(DataType keyType, DataType valueType, boolean frozen) {
         return new DataType.Collection(Name.MAP, ImmutableList.of(keyType, valueType), frozen);
     }
@@ -442,6 +467,7 @@ public abstract class DataType {
      * @param valueType the type of the map values.
      * @return the type of "not frozen" maps of {@code keyType} to {@code valueType} elements.
      */
+
     public static DataType map(DataType keyType, DataType valueType) {
         return map(keyType, valueType, false);
     }
@@ -455,6 +481,7 @@ public abstract class DataType {
      * @param valueType the type of the map values.
      * @return the type of frozen maps of {@code keyType} to {@code valueType} elements.
      */
+
     public static DataType frozenMap(DataType keyType, DataType valueType) {
         return map(keyType, valueType, true);
     }
@@ -473,6 +500,7 @@ public abstract class DataType {
      * @param typeClassName the server-side fully qualified class name for the type.
      * @return the custom type for {@code typeClassName}.
      */
+
     public static DataType custom(String typeClassName) {
         if (typeClassName == null)
             throw new NullPointerException();
@@ -484,6 +512,7 @@ public abstract class DataType {
      *
      * @return the name of that type.
      */
+
     public Name getName() {
         return name;
     }
@@ -496,6 +525,7 @@ public abstract class DataType {
      *
      * @return whether this data type is frozen.
      */
+
     public abstract boolean isFrozen();
 
     /**
@@ -515,6 +545,7 @@ public abstract class DataType {
      *
      * @return an immutable list containing the type arguments of this type.
      */
+
     public List<DataType> getTypeArguments() {
         return Collections.<DataType>emptyList();
     }
@@ -527,6 +558,7 @@ public abstract class DataType {
      * @return the server-side fully qualified class name for a custom type or
      * {@code null} for any other type.
      */
+
     public String getCustomTypeClassName() {
         return null;
     }
@@ -543,6 +575,7 @@ public abstract class DataType {
      * representation for this type. Please note that values for custom types
      * can never be parsed and will always return this exception.
      */
+
     public Object parse(String value) {
         // We don't care about the protocol version for parsing
         return value == null ? null : codec(ProtocolVersion.NEWEST_SUPPORTED).parse(value);
@@ -558,16 +591,25 @@ public abstract class DataType {
      * a CQL value (known by the driver). Please note that for custom types this
      * method will always return this exception.
      */
+
+<<<<<<< /usr/src/app/output/datastax/java-driver/4106cdc51127c8d742ef83d3ba8b0d14d648d0d3/driver-core/src/main/java/com/datastax/driver/core/DataType.java/left.java
     public String format(Object value) {
         // We don't care about the protocol version for formatting
         return value == null ? null : codec(ProtocolVersion.NEWEST_SUPPORTED).format(value);
     }
+||||||| /usr/src/app/output/datastax/java-driver/4106cdc51127c8d742ef83d3ba8b0d14d648d0d3/driver-core/src/main/java/com/datastax/driver/core/DataType.java/base.java
+=======
+    public String format(Object value) {
+        return value == null ? null : codec().format(value);
+    }
+>>>>>>> /usr/src/app/output/datastax/java-driver/4106cdc51127c8d742ef83d3ba8b0d14d648d0d3/driver-core/src/main/java/com/datastax/driver/core/DataType.java/right.java
 
     /**
      * Returns whether this type is a collection one, i.e. a list, set or map type.
      *
      * @return whether this type is a collection one.
      */
+
     public boolean isCollection() {
         return name.isCollection();
     }
@@ -581,6 +623,7 @@ public abstract class DataType {
      *
      * @see Name#asJavaClass
      */
+
     public Class<?> asJavaClass() {
         return getName().asJavaClass();
     }
@@ -592,6 +635,7 @@ public abstract class DataType {
      *
      * @return returns a set of all the primitive types.
      */
+
     public static Set<DataType> allPrimitiveTypes() {
         return primitiveTypeSet;
     }
@@ -612,6 +656,7 @@ public abstract class DataType {
      * @throws InvalidTypeException if {@code value} is not a valid object
      * for this {@code DataType}.
      */
+
     public ByteBuffer serialize(Object value, ProtocolVersion protocolVersion) {
         Class<?> providedClass = value.getClass();
         Class<?> expectedClass = asJavaClass();
@@ -634,6 +679,7 @@ public abstract class DataType {
      * @deprecated This method is provided for backward compatibility. Use
      * {@link #serialize(Object, ProtocolVersion)} instead.
      */
+
     @Deprecated
     public ByteBuffer serialize(Object value, int protocolVersion) {
         return serialize(value, ProtocolVersion.fromInt(protocolVersion));
@@ -643,6 +689,7 @@ public abstract class DataType {
      * @deprecated This method is provided for binary compatibility only. It is no longer supported, will be removed,
      * and simply throws {@link UnsupportedOperationException}. Use {@link #serialize(Object, ProtocolVersion)} instead.
      */
+
     @Deprecated
     public ByteBuffer serialize(Object value) {
         throw new UnsupportedOperationException("Method no longer supported; use serialize(Object,ProtocolVersion)");
@@ -669,6 +716,7 @@ public abstract class DataType {
      * @throws InvalidTypeException if {@code bytes} is not a valid
      * encoding of an object of this {@code DataType}.
      */
+
     public Object deserialize(ByteBuffer bytes, ProtocolVersion protocolVersion) {
         return codec(protocolVersion).deserialize(bytes);
     }
@@ -681,6 +729,7 @@ public abstract class DataType {
      * @deprecated This method is provided for backward compatibility. Use
      * {@link #deserialize(ByteBuffer,ProtocolVersion)} instead.
      */
+
     public Object deserialize(ByteBuffer bytes, int protocolVersion) {
         return deserialize(bytes, ProtocolVersion.fromInt(protocolVersion));
     }
@@ -689,6 +738,7 @@ public abstract class DataType {
      * @deprecated This method is provided for binary compatibility only. It is no longer supported, will be removed,
      * and simply throws {@link UnsupportedOperationException}. Use {@link #deserialize(ByteBuffer, ProtocolVersion)} instead.
      */
+
     @Deprecated
     public Object deserialize(ByteBuffer bytes) {
         throw new UnsupportedOperationException("Method no longer supported; use deserialize(ByteBuffer,ProtocolVersion)");
@@ -715,6 +765,7 @@ public abstract class DataType {
      * corresponding to a CQL3 type, i.e. is not a Class that could be returned
      * by {@link DataType#asJavaClass}.
      */
+
     public static ByteBuffer serializeValue(Object value, ProtocolVersion protocolVersion) {
         if (value == null)
             return null;
@@ -741,6 +792,7 @@ public abstract class DataType {
      * @deprecated This method is provided for backward compatibility. Use
      * {@link #serializeValue(Object, ProtocolVersion)} instead.
      */
+
     @Deprecated
     public static ByteBuffer serializeValue(Object value, int protocolVersion) {
         return serializeValue(value, ProtocolVersion.fromInt(protocolVersion));
@@ -750,6 +802,7 @@ public abstract class DataType {
      * @deprecated This method is provided for binary compatibility only. It is no longer supported, will be removed,
      * and simply throws {@link UnsupportedOperationException}. Use {@link #serializeValue(Object, ProtocolVersion)} instead.
      */
+
     @Deprecated
     public static ByteBuffer serializeValue(Object value) {
         throw new UnsupportedOperationException("Method no longer supported; use serializeValue(Object,ProtocolVersion)");
@@ -936,4 +989,15 @@ public abstract class DataType {
             return String.format("'%s'", customClassName);
         }
     }
+
+    /**
+     * Format a Java object as an equivalent CQL value.
+     *
+     * @param value the value to format.
+     * @return a string corresponding to the CQL representation of {@code value}.
+     *
+     * @throws InvalidTypeException if {@code value} does not correspond to
+     * a CQL value (known by the driver). Please note that for custom types this
+     * method will always return this exception.
+     */
 }

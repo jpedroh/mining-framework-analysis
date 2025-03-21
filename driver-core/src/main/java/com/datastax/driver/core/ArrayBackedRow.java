@@ -16,7 +16,7 @@
 package com.datastax.driver.core;
 
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.List;
 
 import com.datastax.driver.core.exceptions.DriverInternalError;
 
@@ -25,13 +25,18 @@ import com.datastax.driver.core.exceptions.DriverInternalError;
  */
 class ArrayBackedRow extends AbstractGettableData implements Row {
 
-    private final ColumnDefinitions metadata;
     private final Token.Factory tokenFactory;
     private final List<ByteBuffer> data;
 
     private ArrayBackedRow(ColumnDefinitions metadata, Token.Factory tokenFactory, ProtocolVersion protocolVersion, List<ByteBuffer> data) {
+<<<<<<< /usr/src/app/output/datastax/java-driver/4106cdc51127c8d742ef83d3ba8b0d14d648d0d3/driver-core/src/main/java/com/datastax/driver/core/ArrayBackedRow.java/left.java
         super(protocolVersion);
         this.metadata = metadata;
+||||||| /usr/src/app/output/datastax/java-driver/4106cdc51127c8d742ef83d3ba8b0d14d648d0d3/driver-core/src/main/java/com/datastax/driver/core/ArrayBackedRow.java/base.java
+        this.metadata = metadata;
+=======
+        super(metadata);
+>>>>>>> /usr/src/app/output/datastax/java-driver/4106cdc51127c8d742ef83d3ba8b0d14d648d0d3/driver-core/src/main/java/com/datastax/driver/core/ArrayBackedRow.java/right.java
         this.tokenFactory = tokenFactory;
         this.data = data;
     }
@@ -104,7 +109,7 @@ class ArrayBackedRow extends AbstractGettableData implements Row {
         for (int i = 0; i < metadata.size(); i++) {
             if (i != 0)
                 sb.append(", ");
-            ByteBuffer bb = data.get(i);
+            ByteBuffer bb = getValue(i);
             if (bb == null)
                 sb.append("NULL");
             else

@@ -401,6 +401,43 @@ abstract class TypeCodec<T> {
         }
 
         @Override
+        public String format(String value) {
+            return '\'' + replace(value, '\'', "''") + '\'';
+        }
+
+        // Simple method to replace a single character. String.replace is a bit too
+        // inefficient (see JAVA-67)
+        static String replace(String text, char search, String replacement) {
+            if (text == null || text.isEmpty())
+                return text;
+
+            int nbMatch = 0;
+            int start = -1;
+            do {
+                start = text.indexOf(search, start+1);
+                if (start != -1)
+                    ++nbMatch;
+            } while (start != -1);
+
+            if (nbMatch == 0)
+                return text;
+
+            int newLength = text.length() + nbMatch * (replacement.length() - 1);
+            char[] result = new char[newLength];
+            int newIdx = 0;
+            for (int i = 0; i < text.length(); i++) {
+                char c = text.charAt(i);
+                if (c == search) {
+                    for (int r = 0; r < replacement.length(); r++)
+                        result[newIdx++] = replacement.charAt(r);
+                } else {
+                    result[newIdx++] = c;
+                }
+            }
+            return new String(result);
+        }
+
+        @Override
         public ByteBuffer serialize(String value) {
             return ByteBuffer.wrap(value.getBytes(charset));
         }
@@ -640,6 +677,11 @@ abstract class TypeCodec<T> {
         }
 
         @Override
+        public String format(Float value) {
+            return Float.toString(value);
+        }
+
+        @Override
         public ByteBuffer serialize(Float value) {
             return serializeNoBoxing(value);
         }
@@ -679,6 +721,11 @@ abstract class TypeCodec<T> {
             } catch (Exception e) {
                 throw new InvalidTypeException(String.format("Cannot parse inet value from \"%s\"", value));
             }
+        }
+
+        @Override
+        public String format(InetAddress value) {
+            return "'" + value.getHostAddress() + "'";
         }
 
         @Override
@@ -1040,6 +1087,20 @@ abstract class TypeCodec<T> {
                 idx = ParseUtils.skipSpaces(value, idx);
             }
             throw new InvalidTypeException(String.format("Malformed set value \"%s\", missing closing '}'", value));
+        }
+
+        @Override
+        public String format(Set<T> value) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("{");
+            int i = 0;
+            for (T v : value) {
+                if (i++ != 0)
+                    sb.append(", ");
+                sb.append(eltCodec.format(v));
+            }
+            sb.append("}");
+            return sb.toString();
         }
 
         @Override
