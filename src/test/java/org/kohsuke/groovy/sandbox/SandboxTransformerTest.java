@@ -516,20 +516,20 @@ public class SandboxTransformerTest {
     }
 
     @Test public void closureVariables() throws Exception {
-        assertIntercept(
+        isolate(() -> assertIntercept(
                 "while ([false].stream().noneMatch({s -> s})) {\n" +
                 "    return true\n" +
                 "}\n" +
                 "return false\n",
                 true,
-                "ArrayList.stream()", "ReferencePipeline$Head.noneMatch(Script1$_run_closure1)");
-        assertIntercept(
+                "ArrayList.stream()", "ReferencePipeline$Head.noneMatch(Script1$_run_closure1)"));
+        isolate(() -> assertIntercept(
                 "while ([false].stream().noneMatch({it})) {\n" +
                 "    return true\n" +
                 "}\n" +
                 "return false\n",
                 true,
-                "ArrayList.stream()", "ReferencePipeline$Head.noneMatch(Script2$_run_closure1)");
+                "ArrayList.stream()", "ReferencePipeline$Head.noneMatch(Script2$_run_closure1)"));
     }
 
 }
