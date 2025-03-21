@@ -33,7 +33,9 @@ import static org.junit.Assert.assertEquals;
 import org.openx.data.jsonserde.objectinspector.primitive.JavaStringTimestampObjectInspector;
 import org.openx.data.jsonserde.objectinspector.primitive.ParsePrimitiveUtils;
 
-
+/**
+ * User: guyrt
+ */
 public class JsonSerDeTimeStampTest {
 
   static JsonSerDe instance;
@@ -150,7 +152,7 @@ public class JsonSerDeTimeStampTest {
       return ts;
       
   }
-  
+
   @Test
   public void testformatDateFromUTC() throws ParseException {
     String string1 = "2001-07-04T12:08:56Z";

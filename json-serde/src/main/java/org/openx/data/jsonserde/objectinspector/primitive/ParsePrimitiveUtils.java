@@ -19,7 +19,6 @@ public final class ParsePrimitiveUtils {
     private ParsePrimitiveUtils() {
         throw new InstantiationError("This class must not be instantiated.");
     }
-
     private static DateFormat UTC_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     private static DateFormat NON_UTC_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
