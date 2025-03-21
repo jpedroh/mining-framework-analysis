@@ -1,26 +1,11 @@
-/*
- *      Copyright (C) 2012 DataStax Inc.
- *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- */
 package com.datastax.driver.core;
-
 import java.util.concurrent.TimeUnit;
-
 import com.datastax.driver.core.exceptions.NoHostAvailableException;
 import com.datastax.driver.core.exceptions.QueryExecutionException;
 import com.datastax.driver.core.exceptions.QueryValidationException;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.datastax.cassandra.transport.Message;
+import com.datastax.cassandra.transport.messages.*;
 
 /**
  * A session holds connections to a Cassandra cluster, allowing it to be queried.
@@ -35,8 +20,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * at a time, so one instance per keyspace is necessary.
  */
 public interface Session {
-
-    /**
+  /**
      * The keyspace to which this Session is currently logged in, if any.
      * <p>
      * This correspond to the name passed to {@link Cluster#connect(String)}, or to the
@@ -45,9 +29,9 @@ public interface Session {
      * @return the name of the keyspace to which this Session is currently
      * logged in, or {@code null} if the session is logged to no keyspace.
      */
-    public String getLoggedKeyspace();
+  public String getLoggedKeyspace();
 
-    /**
+  /**
      * Executes the provided query.
      *
      * This is a convenience method for {@code execute(new SimpleStatement(query))}.
@@ -64,9 +48,9 @@ public interface Session {
      * @throws QueryValidationException if the query if invalid (syntax error,
      * unauthorized or any other validation problem).
      */
-    public ResultSet execute(String query);
+  public ResultSet execute(String query);
 
-    /**
+  /**
      * Executes the provided query.
      *
      * This method blocks until at least some result has been received from the
@@ -93,9 +77,9 @@ public interface Session {
      * @throws IllegalStateException if {@code query} is a {@code BoundStatement}
      * but {@code !query.isReady()}.
      */
-    public ResultSet execute(Query query);
+  public ResultSet execute(Query query);
 
-    /**
+  /**
      * Executes the provided query asynchronously.
      * <p>
      * This is a convenience method for {@code executeAsync(new SimpleStatement(query))}.
@@ -103,9 +87,9 @@ public interface Session {
      * @param query the CQL query to execute.
      * @return a future on the result of the query.
      */
-    public ResultSetFuture executeAsync(String query);
+  public ResultSetFuture executeAsync(String query);
 
-    /**
+  /**
      * Executes the provided query asynchronously.
      *
      * This method does not block. It returns as soon as the query has been
@@ -127,9 +111,9 @@ public interface Session {
      * @throws IllegalStateException if {@code query} is a {@code BoundStatement}
      * but {@code !query.isReady()}.
      */
-    public ResultSetFuture executeAsync(Query query);
+  public ResultSetFuture executeAsync(Query query);
 
-    /**
+  /**
      * Prepares the provided query string.
      *
      * @param query the CQL query string to prepare
@@ -138,9 +122,9 @@ public interface Session {
      * @throws NoHostAvailableException if no host in the cluster can be
      * contacted successfully to prepare this query.
      */
-    public PreparedStatement prepare(String query);
+  public PreparedStatement prepare(String query);
 
-    /**
+  /**
      * Prepares the provided query.
      * <p>
      * This method is essentially a shortcut for {@code prepare(statement.getQueryString())},
@@ -164,9 +148,9 @@ public interface Session {
      * @throws NoHostAvailableException if no host in the cluster can be
      * contacted successfully to prepare this statement.
      */
-    public PreparedStatement prepare(Statement statement);
+  public PreparedStatement prepare(Statement statement);
 
-    /**
+  /**
      * Prepares the provided query string asynchronously.
      * <p>
      * This method is equilavent to {@link #prepare(String)} except that it
@@ -176,9 +160,9 @@ public interface Session {
      * @param query the CQL query string to prepare
      * @return a future on the prepared statement corresponding to {@code query}.
      */
-    public ListenableFuture<PreparedStatement> prepareAsync(String query);
+  public ListenableFuture<PreparedStatement> prepareAsync(String query);
 
-    /**
+  /**
      * Prepares the provided query asynchronously.
      * <p>
      * This method is essentially a shortcut for {@code prepareAsync(statement.getQueryString())},
@@ -195,9 +179,9 @@ public interface Session {
      *
      * @see Session#prepare(Statement)
      */
-    public ListenableFuture<PreparedStatement> prepareAsync(Statement statement);
+  public ListenableFuture<PreparedStatement> prepareAsync(Statement statement);
 
-    /**
+  /**
      * Shuts down this session instance.
      * <p>
      * This closes all connections used by this sessions. Note that if you want
@@ -207,9 +191,9 @@ public interface Session {
      * <p>
      * This method has no effect if the session was already shutdown.
      */
-    public void shutdown();
+  public void shutdown();
 
-    /**
+  /**
      * Shutdown this session instance, only waiting a definite amount of time.
      * <p>
      * This closes all connections used by this sessions. Note that if you want
@@ -226,12 +210,12 @@ public interface Session {
      * @return {@code true} if the session has been properly shutdown within
      * the {@code timeout}, {@code false} otherwise.
      */
-    public boolean shutdown(long timeout, TimeUnit unit);
+  public boolean shutdown(long timeout, TimeUnit unit);
 
-    /**
+  /**
      * Returns the {@code Cluster} object this session is part of.
      *
      * @return the {@code Cluster} object this session is part of.
      */
-    public Cluster getCluster();
+  public Cluster getCluster();
 }

@@ -1,27 +1,12 @@
-/*
- *      Copyright (C) 2012 DataStax Inc.
- *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- */
 package com.datastax.driver.core;
-
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
+import java.util.concurrent.TimeUnit;
 import com.google.common.util.concurrent.ListenableFuture;
-
+import com.datastax.cassandra.transport.Message;
 import com.datastax.driver.core.exceptions.NoHostAvailableException;
+import com.datastax.cassandra.transport.messages.ErrorMessage;
 import com.datastax.driver.core.exceptions.QueryExecutionException;
+import com.datastax.cassandra.transport.messages.ResultMessage;
 import com.datastax.driver.core.exceptions.QueryValidationException;
 
 /**
@@ -31,8 +16,7 @@ import com.datastax.driver.core.exceptions.QueryValidationException;
  * ListenableFuture} and can so be used with Guava's future utilities.
  */
 public interface ResultSetFuture extends ListenableFuture<ResultSet> {
-
-    /**
+  /**
      * Waits for the query to return and return its result.
      *
      * This method is usually more convenient than {@link #get} because it:
@@ -52,9 +36,9 @@ public interface ResultSetFuture extends ListenableFuture<ResultSet> {
      * @throws QueryValidationException if the query is invalid (syntax error,
      * unauthorized or any other validation problem).
      */
-    public ResultSet getUninterruptibly();
+  public ResultSet getUninterruptibly();
 
-    /**
+  /**
      * Waits for the provided time for the query to return and return its
      * result if available.
      *
@@ -78,9 +62,9 @@ public interface ResultSetFuture extends ListenableFuture<ResultSet> {
      * different from a Cassandra timeout, which is a {@code
      * QueryExecutionException}).
      */
-    public ResultSet getUninterruptibly(long timeout, TimeUnit unit) throws TimeoutException;
+  public ResultSet getUninterruptibly(long timeout, TimeUnit unit) throws TimeoutException;
 
-    /**
+  /**
      * Attempts to cancel the execution of the request corresponding to this
      * future. This attempt will fail if the request has already returned.
      * <p>
@@ -112,6 +96,5 @@ public interface ResultSetFuture extends ListenableFuture<ResultSet> {
      * @return {@code false} if the future could not be cancelled (it has already
      * completed normally); {@code true} otherwise.
      */
-    @Override
-    public boolean cancel(boolean mayInterruptIfRunning);
+  @Override public boolean cancel(boolean mayInterruptIfRunning);
 }
