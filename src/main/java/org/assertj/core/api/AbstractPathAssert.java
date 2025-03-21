@@ -1,22 +1,8 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2021 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static java.lang.String.format;
 import static java.nio.file.Files.readAllBytes;
 import static java.util.Objects.requireNonNull;
 import static org.assertj.core.util.Preconditions.checkArgument;
-
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
@@ -29,7 +15,6 @@ import java.nio.file.ProviderMismatchException;
 import java.nio.file.spi.FileSystemProvider;
 import java.security.MessageDigest;
 import java.util.function.Predicate;
-
 import org.assertj.core.api.exception.PathsException;
 import org.assertj.core.internal.Paths;
 import org.assertj.core.util.CheckReturnValue;
@@ -86,12 +71,9 @@ import org.assertj.core.util.VisibleForTesting;
  * @author Valeriy Vyrva
  */
 public abstract class AbstractPathAssert<SELF extends AbstractPathAssert<SELF>> extends AbstractComparableAssert<SELF, Path> {
+  @VisibleForTesting protected Paths paths = Paths.instance();
 
-  @VisibleForTesting
-  protected Paths paths = Paths.instance();
-
-  @VisibleForTesting
-  Charset charset = Charset.defaultCharset();
+  @VisibleForTesting Charset charset = Charset.defaultCharset();
 
   protected AbstractPathAssert(final Path actual, final Class<?> selfType) {
     super(actual, selfType);
@@ -129,8 +111,7 @@ public abstract class AbstractPathAssert<SELF extends AbstractPathAssert<SELF>> 
    * @throws AssertionError if the content of the actual {@code Path} is not equal to the content of the given one.
    * @throws PathsException if an I/O error occurs.
    */
-  @Deprecated
-  public SELF hasSameContentAs(Path expected) {
+  @Deprecated public SELF hasSameContentAs(Path expected) {
     return hasSameTextualContentAs(expected);
   }
 
@@ -230,8 +211,7 @@ public abstract class AbstractPathAssert<SELF extends AbstractPathAssert<SELF>> 
    * @throws AssertionError if the content of the actual {@code Path} is not equal to the content of the given one.
    * @throws PathsException if an I/O error occurs.
    */
-  @Deprecated
-  public SELF hasSameContentAs(Path expected, Charset expectedCharset) {
+  @Deprecated public SELF hasSameContentAs(Path expected, Charset expectedCharset) {
     return hasSameTextualContentAs(expected, expectedCharset);
   }
 
@@ -314,9 +294,8 @@ public abstract class AbstractPathAssert<SELF extends AbstractPathAssert<SELF>> 
    * @return {@code this} assertion object.
    * @throws IllegalArgumentException if the given encoding is not supported on this platform.
    */
-  @CheckReturnValue
-  public SELF usingCharset(String charsetName) {
-    checkArgument(Charset.isSupported(charsetName), "Charset:<'%s'> is not supported on this system", charsetName);
+  @CheckReturnValue public SELF usingCharset(String charsetName) {
+    checkArgument(Charset.isSupported(charsetName), "Charset:<\'%s\'> is not supported on this system", charsetName);
     return usingCharset(Charset.forName(charsetName));
   }
 
@@ -334,8 +313,7 @@ public abstract class AbstractPathAssert<SELF extends AbstractPathAssert<SELF>> 
    * @return {@code this} assertion object.
    * @throws NullPointerException if the given charset is {@code null}.
    */
-  @CheckReturnValue
-  public SELF usingCharset(Charset charset) {
+  @CheckReturnValue public SELF usingCharset(Charset charset) {
     this.charset = requireNonNull(charset, "The charset should not be null");
     return myself;
   }
@@ -1868,7 +1846,6 @@ public abstract class AbstractPathAssert<SELF extends AbstractPathAssert<SELF>> 
    * @since 3.21.0
    */
   public AbstractStringAssert<?> content() {
-    // does not call content(Charset.defaultCharset()) to avoid double proxying in soft assertions.
     return internalContent(Charset.defaultCharset());
   }
 
@@ -1894,7 +1871,6 @@ public abstract class AbstractPathAssert<SELF extends AbstractPathAssert<SELF>> 
     return internalContent(charset);
   }
 
-  // this method was introduced to avoid to avoid double proxying in soft assertions for content()
   private AbstractStringAssert<?> internalContent(Charset charset) {
     paths.assertIsReadable(info, actual);
     String pathContent = readPath(charset);
