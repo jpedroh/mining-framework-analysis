@@ -1,21 +1,21 @@
 package com.github.javafaker;
 
-import static com.github.javafaker.matchers.IsStringWithContents.isStringWithContents;
 import static com.github.javafaker.matchers.IsANumber.isANumber;
 import static com.github.javafaker.matchers.MatchesRegularExpression.matchesRegularExpression;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertThat;
 
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 import java.util.Random;
 
 import org.junit.Test;
+import static com.github.javafaker.matchers.IsStringWithContents.isStringWithContents;
 
 public class AddressTest extends AbstractFakerTest {
 
@@ -123,5 +123,4 @@ public class AddressTest extends AbstractFakerTest {
     public void testStreetPrefix() {
         assertThat(faker.address().streetPrefix(), isStringWithContents());
     }
-    
 }

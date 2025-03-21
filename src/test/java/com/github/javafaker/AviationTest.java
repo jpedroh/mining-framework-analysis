@@ -2,9 +2,11 @@ package com.github.javafaker;
 
 import static com.github.javafaker.matchers.IsStringWithContents.isStringWithContents;
 import static com.github.javafaker.matchers.MatchesRegularExpression.matchesRegularExpression;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
+
+import com.github.javafaker.repeating.Repeat;
 
 public class AviationTest extends AbstractFakerTest {
 
@@ -22,5 +24,4 @@ public class AviationTest extends AbstractFakerTest {
     public void metar() {
         assertThat(faker.aviation().METAR(), isStringWithContents());
     }
-    
 }

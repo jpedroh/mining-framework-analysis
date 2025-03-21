@@ -3,7 +3,6 @@ package com.github.javafaker;
 import static com.github.javafaker.matchers.CountOfCharactersMatcher.countOf;
 import static com.github.javafaker.matchers.MatchesRegularExpression.matchesRegularExpression;
 import static java.lang.Integer.parseInt;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.greaterThan;
@@ -14,6 +13,7 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
+import static org.junit.Assert.assertThat;
 
 import java.util.List;
 import java.util.Locale;
@@ -302,5 +302,4 @@ public class InternetTest extends AbstractFakerTest {
         //Test faker.internet().userAgentAny() for random user_agent retrieval.
         assertThat(faker.internet().userAgentAny(), not(isEmptyOrNullString()));
     }
-    
 }

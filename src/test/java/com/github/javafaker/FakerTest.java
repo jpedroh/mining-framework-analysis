@@ -1,19 +1,18 @@
 package com.github.javafaker;
 
 import static com.github.javafaker.matchers.MatchesRegularExpression.matchesRegularExpression;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
+import com.github.javafaker.repeating.Repeat;
 
 import java.util.Locale;
 import java.util.Random;
 
 import org.junit.Test;
-
-import com.github.javafaker.repeating.Repeat;
 
 public class FakerTest extends AbstractFakerTest {
 
