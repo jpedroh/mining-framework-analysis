@@ -1,5 +1,4 @@
 package javax.security.jacc;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -8,7 +7,6 @@ import java.io.Serializable;
 import java.security.Permission;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
-
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -30,43 +28,40 @@ import javax.servlet.http.HttpServletRequest;
  * @author <a href="mailto:sguilhen@redhat.com">Stefan Guilhen</a>
  * @see {@link Permission}
  */
-@SuppressWarnings({"unchecked", "unused"})
-public final class WebResourcePermission extends Permission implements Serializable
-{
-   /** @since 4.0.2 */
-   private static final long serialVersionUID = 1;
+@SuppressWarnings(value = { "unchecked", "unused" }) public final class WebResourcePermission extends Permission implements Serializable {
+  /** @since 4.0.2 */
+  private static final long serialVersionUID = 1;
 
-   private static TreeSet<String> ALL_HTTP_METHODS = new TreeSet<String>();
+  private static TreeSet<String> ALL_HTTP_METHODS = new TreeSet<String>();
 
-   static final String ENCODED_COLON = "%3A";
-   
-   /**
+  static final String ENCODED_COLON = "%3A";
+
+  /**
     * @serialField actions String the actions string.
     */
-   private static final ObjectStreamField[] serialPersistentFields = {new ObjectStreamField("actions", String.class)};
+  private static final ObjectStreamField[] serialPersistentFields = { new ObjectStreamField("actions", String.class) };
 
-   static
-   {
-      ALL_HTTP_METHODS.add("GET");
-      ALL_HTTP_METHODS.add("POST");
-      ALL_HTTP_METHODS.add("PUT");
-      ALL_HTTP_METHODS.add("DELETE");
-      ALL_HTTP_METHODS.add("HEAD");
-      ALL_HTTP_METHODS.add("OPTIONS");
-      ALL_HTTP_METHODS.add("TRACE");
-   }
+  static {
+    ALL_HTTP_METHODS.add("GET");
+    ALL_HTTP_METHODS.add("POST");
+    ALL_HTTP_METHODS.add("PUT");
+    ALL_HTTP_METHODS.add("DELETE");
+    ALL_HTTP_METHODS.add("HEAD");
+    ALL_HTTP_METHODS.add("OPTIONS");
+    ALL_HTTP_METHODS.add("TRACE");
+  }
 
-   private transient URLPatternSpec urlSpec;
+  private transient URLPatternSpec urlSpec;
 
-   private transient TreeSet<String> httpMethods;
+  private transient TreeSet<String> httpMethods;
 
-   private transient String httpMethodsString;
+  private transient String httpMethodsString;
 
-   private transient TreeSet<String> httpExceptionList;
+  private transient TreeSet<String> httpExceptionList;
 
-   private transient String httpExceptionString;
+  private transient String httpExceptionString;
 
-   /**
+  /**
     * <p>
     * Creates a new WebResourcePermission from the HttpServletRequest object.
     * </p>
@@ -80,12 +75,11 @@ public final class WebResourcePermission extends Permission implements Serializa
     *           from {@code HttpServletRequest.getMethod()}. The constructor must transform all colon characters
     *           occurring in the name to escaped encoding as defined in RFC 2396.
     */
-   public WebResourcePermission(HttpServletRequest request)
-   {
-      this(requestURI(request), request.getMethod());
-   }
+  public WebResourcePermission(HttpServletRequest request) {
+    this(requestURI(request), request.getMethod());
+  }
 
-   /**
+  /**
     * <p>
     * Creates a new WebResourcePermission with the specified name and actions.
     * </p>
@@ -164,16 +158,16 @@ public final class WebResourcePermission extends Permission implements Serializa
     *           parameter is null or the empty string, then the permission is constructed with actions corresponding to
     *           all the possible HTTP methods.
     */
-   public WebResourcePermission(String name, String actions)
-   {
-      super(name == null ? "/" : name);
-      if (name == null)
-         name = "/";
-      this.urlSpec = new URLPatternSpec(name);
-      parseActions(actions);
-   }
+  public WebResourcePermission(String name, String actions) {
+    super(name == null ? "/" : name);
+    if (name == null) {
+      name = "/";
+    }
+    this.urlSpec = new URLPatternSpec(name);
+    parseActions(actions);
+  }
 
-   /**
+  /**
     * <p>
     * Creates a new WebResourcePermission with name corresponding to the URLPatternSpec, and actions composed from the
     * array of HTTP methods.
@@ -191,16 +185,15 @@ public final class WebResourcePermission extends Permission implements Serializa
     *           through this parameter is null or is an array with no elements, then the permission is constructed with
     *           actions corresponding to all the possible HTTP methods.
     */
-   public WebResourcePermission(String urlPatternSpec, String[] httpMethods)
-   {
-      super(urlPatternSpec);
-      this.urlSpec = new URLPatternSpec(urlPatternSpec);
-      Object[] methodInfo = canonicalMethods(httpMethods);
-      this.httpMethods = (TreeSet<String>) methodInfo[0];
-      this.httpMethodsString = (String) methodInfo[1];
-   }
+  public WebResourcePermission(String urlPatternSpec, String[] httpMethods) {
+    super(urlPatternSpec);
+    this.urlSpec = new URLPatternSpec(urlPatternSpec);
+    Object[] methodInfo = canonicalMethods(httpMethods);
+    this.httpMethods = (TreeSet<String>) methodInfo[0];
+    this.httpMethodsString = (String) methodInfo[1];
+  }
 
-   /**
+  /**
     * <p>
     * Checks two WebResourcePermission objects for equality. WebResourcePermission objects are equivalent if their
     * URLPatternSpec and (canonicalized) actions values are equivalent. The URLPatternSpec of a refer- ence permission
@@ -217,18 +210,15 @@ public final class WebResourcePermission extends Permission implements Serializa
     *           - the WebResourcePermission object being tested for equality with this WebResourcePermission.
     * @return true if the argument WebResourcePermission object is equivalent to this WebResourcePermission.
     */
-   @Override
-   public boolean equals(Object p)
-   {
-      if (p instanceof WebResourcePermission == false)
-         return false;
-      WebResourcePermission perm = (WebResourcePermission) p;
+  @Override public boolean equals(Object p) {
+    if (p instanceof WebResourcePermission == false) {
+      return false;
+    }
+    WebResourcePermission perm = (WebResourcePermission) p;
+    return this.implies(perm) && perm.implies(this);
+  }
 
-      // Two permissions p1 and p2 are equivalent if and only if p1.implies(p2) and p2.implies(p1)
-      return this.implies(perm) && perm.implies(this);
-   }
-
-   /**
+  /**
     * <p>
     * Returns a canonical String representation of the actions of this WebResourcePermission. WebResourcePermission
     * actions are canonicalized by sorting the HTTP methods into ascending lexical order. There may be no duplicate HTTP
@@ -237,17 +227,18 @@ public final class WebResourcePermission extends Permission implements Serializa
     * 
     * @return a String containing the canonicalized actions of this WebResourcePermission (or the null value).
     */
-   @Override
-   public String getActions()
-   {
-      if (this.httpMethodsString != null)
-        return this.httpMethodsString;
-      else if (this.httpExceptionString != null)
+  @Override public String getActions() {
+    if (this.httpMethodsString != null) {
+      return this.httpMethodsString;
+    } else {
+      if (this.httpExceptionString != null) {
         return "!" + this.httpExceptionString;
-      return null;
-   }
+      }
+    }
+    return null;
+  }
 
-   /**
+  /**
     * <p>
     * Returns the hash code value for this WebResourcePermission. The properties of the returned hash code must be as
     * follows:
@@ -262,17 +253,16 @@ public final class WebResourcePermission extends Permission implements Serializa
     * 
     * @return the integer hash code value for this object.
     */
-   @Override
-   public int hashCode()
-   {
-      int hashCode = 17;
-      hashCode = 37 * hashCode + this.urlSpec.hashCode();
-      if (this.httpMethods != null)
-         hashCode = 37 * hashCode + this.httpMethods.hashCode();
-      return hashCode;
-   }
+  @Override public int hashCode() {
+    int hashCode = 17;
+    hashCode = 37 * hashCode + this.urlSpec.hashCode();
+    if (this.httpMethods != null) {
+      hashCode = 37 * hashCode + this.httpMethods.hashCode();
+    }
+    return hashCode;
+  }
 
-   /**
+  /**
     * <p>
     * Determines if the argument Permission is "implied by" this WebResourcePermission. For this to be the case, all of
     * the following must be true:
@@ -312,26 +302,24 @@ public final class WebResourcePermission extends Permission implements Serializa
     *           - “this” WebResourcePermission is checked to see if it implies the argument permission.
     * @return true if the specified permission is implied by this object, false if not.
     */
-   @Override
-   public boolean implies(Permission permission)
-   {
-      if (permission instanceof WebResourcePermission == false)
-         return false;
-      WebResourcePermission perm = (WebResourcePermission) permission;
-      // Check the URL patterns
-      boolean implies = this.urlSpec.implies(perm.urlSpec);
-      if (implies == true)
-      {
-         if (this.httpExceptionList != null)
-            implies = matchExceptionList(this.httpExceptionList, perm.httpExceptionList);
-         // Check the http methods
-         if (this.httpMethods != null && perm.httpMethods != null)
-            implies = this.httpMethods.containsAll(perm.httpMethods);
+  @Override public boolean implies(Permission permission) {
+    if (permission instanceof WebResourcePermission == false) {
+      return false;
+    }
+    WebResourcePermission perm = (WebResourcePermission) permission;
+    boolean implies = this.urlSpec.implies(perm.urlSpec);
+    if (implies == true) {
+      if (this.httpExceptionList != null) {
+        implies = matchExceptionList(this.httpExceptionList, perm.httpExceptionList);
       }
-      return implies;
-   }
+      if (this.httpMethods != null && perm.httpMethods != null) {
+        implies = this.httpMethods.containsAll(perm.httpMethods);
+      }
+    }
+    return implies;
+  }
 
-   /**
+  /**
     * <p>
     * Build a permission name from the substring of the {@code HttpServletRequest.getRequestURI()}) that begins after
     * the contextPath ({@code HttpServletRequest.getContextPath()}). When the substring operation yields the string "/",
@@ -342,124 +330,103 @@ public final class WebResourcePermission extends Permission implements Serializa
     *           - the Servlet request object.
     * @return the resource permission name.
     */
-   static String requestURI(HttpServletRequest request)
-   {
-      String uri = request.getRequestURI();
-      if (uri != null)
-      {
-         String contextPath = request.getContextPath();
-         int length = contextPath == null ? 0 : contextPath.length();
-         if (length > 0)
-         {
-            uri = uri.substring(length);
-         }
-         if (uri.equals("/"))
-         {
-            uri = "";
-         }
+  static String requestURI(HttpServletRequest request) {
+    String uri = request.getRequestURI();
+    if (uri != null) {
+      String contextPath = request.getContextPath();
+      int length = contextPath == null ? 0 : contextPath.length();
+      if (length > 0) {
+        uri = uri.substring(length);
       }
-      else
-      {
-         uri = "";
+      if (uri.equals("/")) {
+        uri = "";
       }
-      
-      // according to the JACC specification, all colons within the request URI must be escaped.
-      if (uri.indexOf(':') > 0)
-         uri = uri.replaceAll(":", ENCODED_COLON);
-      return uri;
-   }
+    } else {
+      uri = "";
+    }
+    if (uri.indexOf(':') > 0) {
+      uri = uri.replaceAll(":", ENCODED_COLON);
+    }
+    return uri;
+  }
 
-   static Object[] canonicalMethods(String methods)
-   {
-      String[] methodsArray = null;
-      if (methods != null && methods.length() > 0)
-         methodsArray = methods.split(",");
+  static Object[] canonicalMethods(String methods) {
+    String[] methodsArray = null;
+    if (methods != null && methods.length() > 0) {
+      methodsArray = methods.split(",");
+    }
+    return canonicalMethods(methodsArray);
+  }
 
-      return canonicalMethods(methodsArray);
-   }
-
-   static Object[] canonicalMethods(String[] methods)
-   {
-      // add the HTTP methods to a set to remove duplicates.
-      TreeSet<String> actions = new TreeSet<String>();
-      if (methods != null)
-      {
-         for (String method : methods)
-            actions.add(method);
+  static Object[] canonicalMethods(String[] methods) {
+    TreeSet<String> actions = new TreeSet<String>();
+    if (methods != null) {
+      for (String method : methods) {
+        actions.add(method);
       }
-      return canonicalMethods(actions);
-   }
+    }
+    return canonicalMethods(actions);
+  }
 
-   static Object[] canonicalMethods(TreeSet<String> actions)
-   {
-      Object[] info = {ALL_HTTP_METHODS, null};
-      if (actions.equals(ALL_HTTP_METHODS) || actions.size() == 0)
-         return info;
-
-      info[0] = actions;
-      StringBuffer tmp = new StringBuffer();
-      for (String action : actions)
-      {
-         tmp.append(action);
-         tmp.append(',');
-      }
-      if (tmp.length() > 0)
-         tmp.setLength(tmp.length() - 1);
-      info[1] = tmp.toString();
+  static Object[] canonicalMethods(TreeSet<String> actions) {
+    Object[] info = { ALL_HTTP_METHODS, null };
+    if (actions.equals(ALL_HTTP_METHODS) || actions.size() == 0) {
       return info;
-   }
+    }
+    info[0] = actions;
+    StringBuffer tmp = new StringBuffer();
+    for (String action : actions) {
+      tmp.append(action);
+      tmp.append(',');
+    }
+    if (tmp.length() > 0) {
+      tmp.setLength(tmp.length() - 1);
+    }
+    info[1] = tmp.toString();
+    return info;
+  }
 
-   // Private -------------------------------------------------------
-   private void parseActions(String actions)
-   {
-      boolean exclusionListNeeded = actions != null && actions.startsWith("!");
-      if (exclusionListNeeded)
-         actions = actions.substring(1);
+  private void parseActions(String actions) {
+    boolean exclusionListNeeded = actions != null && actions.startsWith("!");
+    if (exclusionListNeeded) {
+      actions = actions.substring(1);
+    }
+    Object[] methodInfo = canonicalMethods(actions);
+    if (exclusionListNeeded) {
+      this.httpExceptionList = (TreeSet<String>) methodInfo[0];
+      this.httpExceptionString = (String) methodInfo[1];
+    } else {
+      this.httpMethods = (TreeSet<String>) methodInfo[0];
+      this.httpMethodsString = (String) methodInfo[1];
+    }
+  }
 
-      Object[] methodInfo = canonicalMethods(actions);
-      if (exclusionListNeeded)
-      {
-         this.httpExceptionList = (TreeSet<String>) methodInfo[0];
-         this.httpExceptionString = (String) methodInfo[1];
-      }
-      else
-      {
-         this.httpMethods = (TreeSet<String>) methodInfo[0];
-         this.httpMethodsString = (String) methodInfo[1];
-      }
-   }
-
-   static boolean matchExceptionList(TreeSet<String> myExceptionList, TreeSet<String> matchingExceptionList)
-   {
-      boolean bothnull = (myExceptionList == null && matchingExceptionList == null);
-      boolean onenull = (myExceptionList == null && matchingExceptionList != null)
-            || (myExceptionList != null && matchingExceptionList == null);
-
-      if (bothnull)
-         return true;
-      if (onenull)
-         return false;
-
-      // matchingExceptionList must be a superset of myExceptionList
-      for (String httpMethod : myExceptionList)
-      {
-         if (!matchingExceptionList.contains(httpMethod))
-            return false;
-      }
+  static boolean matchExceptionList(TreeSet<String> myExceptionList, TreeSet<String> matchingExceptionList) {
+    boolean bothnull = (myExceptionList == null && matchingExceptionList == null);
+    boolean onenull = (myExceptionList == null && matchingExceptionList != null) || (myExceptionList != null && matchingExceptionList == null);
+    if (bothnull) {
       return true;
-   }
+    }
+    if (onenull) {
+      return false;
+    }
+    for (String httpMethod : myExceptionList) {
+      if (!matchingExceptionList.contains(httpMethod)) {
+        return false;
+      }
+    }
+    return true;
+  }
 
-   private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException
-   {
-      ObjectInputStream.GetField fields = ois.readFields();
-      String actions = (String) fields.get("actions", null);
-      parseActions(actions);
-   }
+  private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+    ObjectInputStream.GetField fields = ois.readFields();
+    String actions = (String) fields.get("actions", null);
+    parseActions(actions);
+  }
 
-   private void writeObject(ObjectOutputStream oos) throws IOException
-   {
-      ObjectOutputStream.PutField fields = oos.putFields();
-      fields.put("actions", this.getActions());
-      oos.writeFields();
-   }
+  private void writeObject(ObjectOutputStream oos) throws IOException {
+    ObjectOutputStream.PutField fields = oos.putFields();
+    fields.put("actions", this.getActions());
+    oos.writeFields();
+  }
 }
