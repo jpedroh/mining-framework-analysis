@@ -145,6 +145,7 @@ public final class ArtNetPacketEncoder {
 		byteArrayOutputStream.write(ByteUtilsArt.in16toByte(20480));
 
 		// Version
+		byteArrayOutputStream.write(MagicNumbers.MAGIC_NUMBER_ZERO);
 		byteArrayOutputStream.write(ByteUtilsArt.in16toBit(Constants.ART_NET_VERSION));
 
 		// Sequence
