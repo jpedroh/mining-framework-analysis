@@ -493,7 +493,6 @@ public class ItemServiceImpl extends DSpaceObjectServiceImpl<Item> implements It
         }
     }
 
-
     @Override
     public void removeLicenses(Context context, Item item) throws SQLException, AuthorizeException, IOException {
         // Find the License format
@@ -1043,6 +1042,7 @@ public class ItemServiceImpl extends DSpaceObjectServiceImpl<Item> implements It
      * @return <code>true</code> if the item is an inprogress submission, i.e. a WorkspaceItem or WorkflowItem
      * @throws SQLException An exception that provides information on a database access error or other errors.
      */
+
     public boolean isInProgressSubmission(Context context, Item item) throws SQLException {
         return workspaceItemService.findByItem(context, item) != null
             || workflowItemService.findByItem(context, item) != null;
@@ -1065,6 +1065,7 @@ prevent the generation of resource policy entry values with null dspace_object a
      * @throws AuthorizeException Exception indicating the current user of the context does not have permission
      *                            to perform a particular action.
      */
+
     protected void addDefaultPoliciesNotInPlace(Context context, DSpaceObject dso,
         List<ResourcePolicy> defaultCollectionPolicies) throws SQLException, AuthorizeException {
         boolean appendMode = configurationService
@@ -1102,6 +1103,7 @@ prevent the generation of resource policy entry values with null dspace_object a
      * @return True if there is no RP on the item with custom read RP, otherwise false
      * @throws SQLException If something goes wrong retrieving the RP on the DSO
      */
+
     private boolean isNotAlreadyACustomRPOfThisTypeOnDSO(Context context, DSpaceObject dso) throws SQLException {
         List<ResourcePolicy> readRPs = resourcePolicyService.find(context, dso, Constants.READ);
         for (ResourcePolicy readRP : readRPs) {
@@ -1123,6 +1125,7 @@ prevent the generation of resource policy entry values with null dspace_object a
      * @return
      * @throws SQLException If something goes wrong retrieving the RP on the DSO
      */
+
     private boolean shouldBeAppended(Context context, DSpaceObject dso, ResourcePolicy defaultPolicy)
             throws SQLException {
         boolean hasCustomPolicy = resourcePolicyService.find(context, dso, Constants.READ)
@@ -1157,6 +1160,7 @@ prevent the generation of resource policy entry values with null dspace_object a
      *                            Exception indicating the current user of the context does not have permission
      *                            to perform a particular action.
      */
+
     @Override
     public Iterator<Item> findArchivedByMetadataField(Context context,
                                                       String schema, String element, String qualifier, String value)
@@ -1203,6 +1207,7 @@ prevent the generation of resource policy entry values with null dspace_object a
      * @throws IOException        if IO error
      *                            A general class of exceptions produced by failed or interrupted I/O operations.
      */
+
     @Override
     public Iterator<Item> findByMetadataField(Context context,
                                               String schema, String element, String qualifier, String value)
@@ -1484,6 +1489,7 @@ prevent the generation of resource policy entry values with null dspace_object a
      *                     no country code are returned.
      * @return
      */
+
     @Override
     public List<MetadataValue> getMetadata(Item item, String schema, String element, String qualifier, String lang) {
         return this.getMetadata(item, schema, element, qualifier, lang, true);
@@ -1524,6 +1530,7 @@ prevent the generation of resource policy entry values with null dspace_object a
     /**
      * Supports moving metadata by adding the metadata value or updating the place of the relationship
      */
+
     @Override
     protected void moveSingleMetadataValue(Context context, Item dso, int place, MetadataValue rr) {
         if (rr instanceof RelationshipMetadataValue) {
@@ -1553,6 +1560,7 @@ prevent the generation of resource policy entry values with null dspace_object a
      * @param listToReturn  The list to be sorted
      * @return The list sorted on those criteria
      */
+
     private List<MetadataValue> sortMetadataValueList(List<MetadataValue> listToReturn) {
         Comparator<MetadataValue> comparator = Comparator.comparing(
             metadataValue -> metadataValue.getMetadataField().getMetadataSchema().getName(),
@@ -1593,5 +1601,23 @@ prevent the generation of resource policy entry values with null dspace_object a
     public String getEntityType(Item item) {
         return getMetadataFirstValue(item, new MetadataFieldName("dspace.entity.type"), Item.ANY);
     }
+
+    /**
+     * Returns an iterator of Items possessing the passed metadata field, or only
+     * those matching the passed value, if value is not Item.ANY
+     *
+     * @param context   DSpace context object
+     * @param schema    metadata field schema
+     * @param element   metadata field element
+     * @param qualifier metadata field qualifier
+     * @param value     field value or Item.ANY to match any value
+     * @return an iterator over the items matching that authority value
+     * @throws SQLException       if database error
+     *                            An exception that provides information on a database access error or other errors.
+     * @throws AuthorizeException if authorization error
+     *                            Exception indicating the current user of the context does not have permission
+     *                            to perform a particular action.
+     */
+
 
 }
