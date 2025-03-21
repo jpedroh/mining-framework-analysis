@@ -124,4 +124,15 @@ public class DateAndTimeTest extends AbstractFakerTest {
             assertEquals("Invalid date range, the upper bound date is before the lower bound.", e.getMessage());
         }
     }
+
+    @Test
+    public void testBetweenThenLargerThanNow(){
+        try{
+            Date now = new Date();
+            Date then = new Date(now.getTime() + 1000);
+            Date date =faker.date().between(then,now);
+            fail("Should be exception");}catch (IllegalArgumentException e){
+            assertEquals("Invalid date range, the upper bound date is before the lower bound.", e.getMessage());
+        }
+    }
 }
