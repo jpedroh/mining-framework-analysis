@@ -1,163 +1,96 @@
 package net.masterthought.cucumber.json.support;
-
 import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
 import net.masterthought.cucumber.ValidationException;
 
 /**
  * @author Sam Park (midopa@github)
  */
 public class StepObjectTest {
+  @Rule public ExpectedException thrown = ExpectedException.none();
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+  private StepObject stepObject;
 
-    private StepObject stepObject;
+  @Before public void setUp() {
+    stepObject = new StepObject("Test step location");
+    stepObject.addDuration(1000000000L, Status.PASSED);
+    stepObject.addDuration(2200000000L, Status.FAILED);
+    stepObject.addDuration(303000000L, Status.UNDEFINED);
+  }
 
-    @Before
-    public void setUp() {
-        stepObject = new StepObject("Test step location");
-        stepObject.addDuration(1000000000L, Status.PASSED);
-        stepObject.addDuration(2200000000L, Status.FAILED);
-        stepObject.addDuration( 303000000L, Status.UNDEFINED);
-    }
+  @Test public void StepObject_OnNullLocation_ThrowsException() {
+    thrown.expect(ValidationException.class);
+    new StepObject(null);
+  }
 
-    @Test
-    public void StepObject_OnNullLocation_ThrowsException() {
+  @Test public void getLocation_ReturnsLocation() {
+    String location = stepObject.getLocation();
+    assertThat(location).isEqualTo("Test step location");
+  }
 
-        // given
-        // nothing
 
-        // then
-        thrown.expect(ValidationException.class);
-        new StepObject(null);
-    }
+<<<<<<< /usr/src/app/output/masterthought/cucumber-reporting/c502aa0ba26acc0f5ba914f6a8c9eb3b9de6a189/src/test/java/net/masterthought/cucumber/json/support/StepObjectTest.java/left.java
+  @Test public void addDurationSumsDurations() {
+    StepObject step = new StepObject("ble bla ble");
+    step.addDuration(20L, Status.PASSED);
+    step.addDuration(5L, Status.PASSED);
+    step.addDuration(700L, Status.UNDEFINED);
+    assertThat(step.getDurations()).isEqualTo(725L);
+    assertThat(step.getTotalOccurrences()).isEqualTo(3);
+    assertThat(step.getStatus()).isEqualTo(Status.UNDEFINED);
+  }
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
 
-    @Test
-    public void getLocation_ReturnsLocation() {
 
-        // given
-        // from @Before
+  @Test public void addDuration_ReturnsSumsDurations() {
+    StepObject step = new StepObject("ble bla ble");
+    step.addDuration(20L, Status.PASSED);
+    step.addDuration(5L, Status.PASSED);
+    step.addDuration(700L, Status.UNDEFINED);
+    assertThat(step.getDuration()).isEqualTo(725L);
+    assertThat(step.getTotalOccurrences()).isEqualTo(3);
+    assertThat(step.getStatus()).isEqualTo(Status.FAILED);
+  }
 
-        // when
-        String location = stepObject.getLocation();
+  @Test public void getFormattedTotalDuration_ReturnsFormattedSumDurations() {
+    String duration = stepObject.getFormattedTotalDuration();
+    assertThat(duration).isEqualTo("3.503");
+  }
 
-        // then
-        assertThat(location).isEqualTo("Test step location");
-    }
+  @Test public void getFormattedMaxDuration_ReturnsFormattedMaxDurations() {
+    String duration = stepObject.getFormattedTotalDuration();
+    assertThat(duration).isEqualTo("3.503");
+  }
 
-    @Test
-    public void addDuration_ReturnsSumsDurations() {
+  @Test public void getFormattedMaxDuration_ReturnsdMaxDurations() {
+    long maxDuration = stepObject.getMaxDuration();
+    assertThat(maxDuration).isEqualTo(2200000000L);
+  }
 
-        // give
-        StepObject step = new StepObject("ble bla ble");
+  @Test public void getAverageDurations_ReturnsTime() {
+    long avgDuration = stepObject.getAverageDuration();
+    assertThat(avgDuration).isEqualTo(3503000000L / 3);
+  }
 
-        // when
-        step.addDuration(20L, Status.PASSED);
-        step.addDuration(5L, Status.PASSED);
-        step.addDuration(700L, Status.UNDEFINED);
+  @Test public void getFormattedAverageDuration_ReturnsFormattedSumDurations() {
+    String duration = stepObject.getFormattedAverageDuration();
+    assertThat(duration).isEqualTo("1.167");
+  }
 
-        // then
-        assertThat(step.getDuration()).isEqualTo(725L);
-        assertThat(step.getTotalOccurrences()).isEqualTo(3);
-        assertThat(step.getStatus()).isEqualTo(Status.UNDEFINED);
-    }
+  @Test public void getPercentageResult_Returns0Percent() {
+    String percentage = stepObject.getPercentageResult();
+    assertThat(percentage).isEqualTo("33.33%");
+  }
 
-    @Test
-    public void getFormattedTotalDuration_ReturnsFormattedSumDurations() {
-
-        // give
-        // from @Before
-
-        // when
-        String duration = stepObject.getFormattedTotalDuration();
-
-        // then
-        assertThat(duration).isEqualTo("3.503");
-    }
-
-    @Test
-    public void getFormattedMaxDuration_ReturnsFormattedMaxDurations() {
-
-        // give
-        // from @Before
-
-        // when
-        String duration = stepObject.getFormattedTotalDuration();
-
-        // then
-        assertThat(duration).isEqualTo("3.503");
-    }
-
-    @Test
-    public void getFormattedMaxDuration_ReturnsdMaxDurations() {
-
-        // give
-        // from @Before
-
-        // when
-        long maxDuration = stepObject.getMaxDuration();
-
-        // then
-        assertThat(maxDuration).isEqualTo(2200000000L);
-    }
-
-    @Test
-    public void getAverageDurations_ReturnsTime() {
-
-        // given
-        // from @Before
-
-        // when
-        long avgDuration = stepObject.getAverageDuration();
-
-        // then
-        assertThat(avgDuration).isEqualTo(3503000000L / 3);
-    }
-
-    @Test
-    public void getFormattedAverageDuration_ReturnsFormattedSumDurations() {
-
-        // given
-        // from @Before
-
-        // when
-        String duration = stepObject.getFormattedAverageDuration();
-
-        // then
-        assertThat(duration).isEqualTo("1.167");
-    }
-
-    @Test
-    public void getPercentageResult_Returns0Percent() {
-
-        // given
-        // from @Before
-
-        // when
-        String percentage = stepObject.getPercentageResult();
-
-        // then
-        assertThat(percentage).isEqualTo("33.33%");
-    }
-
-    @Test
-    public void getPercentageResult_OnOnlyFailures_Returns0Percent() {
-
-        // given
-        StepObject step = new StepObject("Test step location");
-        step.addDuration(2200000000L, Status.FAILED);
-        step.addDuration(303000000L, Status.UNDEFINED);
-
-        // when
-        String percentage = step.getPercentageResult();
-
-        // then
-        assertThat(percentage).isEqualTo("0.00%");
-    }
+  @Test public void getPercentageResult_OnOnlyFailures_Returns0Percent() {
+    StepObject step = new StepObject("Test step location");
+    step.addDuration(2200000000L, Status.FAILED);
+    step.addDuration(303000000L, Status.UNDEFINED);
+    String percentage = step.getPercentageResult();
+    assertThat(percentage).isEqualTo("0.00%");
+  }
 }
