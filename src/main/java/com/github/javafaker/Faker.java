@@ -189,8 +189,12 @@ public class Faker {
         this.relationships = new Relationships(this);
         this.nation = new Nation(this);
         this.dune = new Dune(this);
+<<<<<<< /usr/src/app/output/dius/java-faker/9f4a220590b2d5231b6e7b32f5d46e1e8c45ca8f/src/main/java/com/github/javafaker/Faker.java/left.java
         this.military = new Military(this);
+||||||| /usr/src/app/output/dius/java-faker/9f4a220590b2d5231b6e7b32f5d46e1e8c45ca8f/src/main/java/com/github/javafaker/Faker.java/base.java
+=======
         this.aquaTeenHungerForce = new AquaTeenHungerForce(this);
+>>>>>>> /usr/src/app/output/dius/java-faker/9f4a220590b2d5231b6e7b32f5d46e1e8c45ca8f/src/main/java/com/github/javafaker/Faker.java/right.java
     }
 
     /**
@@ -613,14 +617,14 @@ public class Faker {
         return dune;
     }
 
+    public AquaTeenHungerForce aquaTeenHungerForce() {
+        return aquaTeenHungerForce;
+    }
+
     public Military military() {
         return military;
     }
 
-    public AquaTeenHungerForce aquaTeenHungerForce() {
-        return aquaTeenHungerForce;
-    }
-    
     public String resolve(String key) {
         return this.fakeValuesService.resolve(key, this, this);
     }

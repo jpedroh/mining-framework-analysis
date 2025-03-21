@@ -159,8 +159,12 @@ public class FakerIT {
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.relationships());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.nation());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.dune());
+<<<<<<< /usr/src/app/output/dius/java-faker/9f4a220590b2d5231b6e7b32f5d46e1e8c45ca8f/src/test/java/com/github/javafaker/integration/FakerIT.java/left.java
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.military());
+||||||| /usr/src/app/output/dius/java-faker/9f4a220590b2d5231b6e7b32f5d46e1e8c45ca8f/src/test/java/com/github/javafaker/integration/FakerIT.java/base.java
+=======
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.aquaTeenHungerForce());
+>>>>>>> /usr/src/app/output/dius/java-faker/9f4a220590b2d5231b6e7b32f5d46e1e8c45ca8f/src/test/java/com/github/javafaker/integration/FakerIT.java/right.java
     }
 
     private void testAllMethodsThatReturnStringsActuallyReturnStrings(Object object) throws Exception {
