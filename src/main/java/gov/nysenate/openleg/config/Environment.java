@@ -98,6 +98,7 @@ public class Environment
     @Value ("${spotcheck.openleg_ref.api.key}") private String openlegRefApiKey;
 
     @Value ("${spotcheck.openleg_ref.url}") private String openlegRefUrl;
+
     
     /** Sets queue sizes for nysenate.gov bill report */
     @Value("${spotcheck.website.bill.ref_queue_size:500}")
