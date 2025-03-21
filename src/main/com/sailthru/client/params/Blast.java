@@ -39,11 +39,7 @@ public class Blast extends AbstractApiParams implements ApiParams {
     protected Integer test_percent;
     protected String data_feed_url;
     protected String setup;
-<<<<<<< HEAD
     protected Map<String, Object> vars;
-=======
->>>>>>> b52c11f90ce0732b17d63f3f682450ef27851bdd
-
     public Blast(String name, String list, String scheduleTime, String fromName, String fromEmail, String subject, String contentHtml, String contentText) {
         this.name = name;
         this.list = list;
@@ -54,150 +50,118 @@ public class Blast extends AbstractApiParams implements ApiParams {
         this.content_html = contentHtml;
         this.content_text = contentText;
     }
-
     public Blast() {
         
     }
-
     public Blast setName(String name) {
         this.name = name;
         return this;
     }
-
     public Blast setList(String list) {
         this.list = list;
         return this;
     }
-
     public Blast setScheduleTime(Date schedule_time) {
         this.schedule_time = schedule_time.toString();
         return this;
     }
-
     public Blast setScheduleTime(String schedule_time) {
         this.schedule_time = schedule_time;
         return this;
     }
-
     public Blast setFromName(String fromName) {
         this.from_name = fromName;
         return this;
     }
-
     public Blast setFromEmail(String fromEmail) {
         this.from_email = fromEmail;
         return this;
     }
-
     public Blast setSubject(String subject) {
         this.subject = subject;
         return this;
     }
-
     public Blast setContentHtml(String contentHtml) {
         this.content_html = contentHtml;
         return this;
     }
-
     public Blast setContentText(String contentText) {
         this.content_text = contentText;
         return this;
     }
-
-    
     public Blast setBlastId(Integer blastId) {
         this.blast_id = blastId;
         return this;
     }
-
     public Blast setCopyBlast(Integer copyBlastId) {
         this.copy_blast = copyBlastId;
         return this;
     }
-
     public Blast setCopyTemplate(String copyTemplate) {
         this.copy_template = copyTemplate;
         return this;
     }
-
     public Blast setEvalTemplate(String evalTemplate) {
         this.eval_template = evalTemplate;
         return this;
     }
-
     public Blast setReplyTo(String replyTo) {
         this.replyto = replyTo;
         return this;
     }
-
     public Blast setReportEmail(String reportEmail) {
         this.report_email = reportEmail;
         return this;
     }
-
     public Blast enableLinkTracking() {
         this.is_link_tracking = 1;
         return this;
     }
-
     public Blast enableGoogleAnalytics() {
         this.is_google_tracking = 1;
         return this;
     }
-
     public Blast setAsPublic() {
         this.is_public = 1;
         return this;
     }
-
     public Blast setSupressList(String supressList) {
         this.suppress_list = supressList;
         return this;
     }
-
     public Blast setTestVars(Map<String, Object> testVars) {
         this.test_vars = testVars;
         return this;
     }
-
     public Blast setEmailHourRange(Integer hours) {
         this.email_hour_range = hours;
         return this;
     }
-
     public Blast enableABTest() {
         this.abtest = 1;
         return this;
     }
-
     public Blast setTestPercent(Integer percentage) {
         this.test_percent = percentage;
         return this;
     }
-
     public Blast setDataFeedUrl(String dataFeedUrl) {
         this.data_feed_url = dataFeedUrl;
         return this;
     }
-
     public Blast setDataFeedUrl(URI dataFeedUrl) {
         this.data_feed_url = dataFeedUrl.toString();
         return this;
     }
-
     public Blast setSetup(String setup) {
         this.setup = setup;
         return this;
     }
-
-<<<<<<< HEAD
     public Blast setVars(Map<String, Object> vars){
         this.vars = vars;
         return this;
     }
 
-=======
->>>>>>> b52c11f90ce0732b17d63f3f682450ef27851bdd
     public Type getType() {
         Type type = new TypeToken<Blast>() {}.getType();
         return type;
