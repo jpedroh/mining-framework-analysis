@@ -27,11 +27,8 @@ import org.onebusaway.gtfs.model.ServiceCalendar;
 import org.onebusaway.gtfs.model.ServiceCalendarDate;
 import org.onebusaway.gtfs.model.StopTime;
 import org.onebusaway.gtfs.model.Trip;
+import org.onebusaway.gtfs.model.calendar.*;
 import org.onebusaway.gtfs.model.calendar.CalendarServiceData;
-import org.onebusaway.gtfs.model.calendar.LocalizedServiceId;
-import org.onebusaway.gtfs.model.calendar.ServiceDate;
-import org.onebusaway.gtfs.model.calendar.ServiceIdIntervals;
-import org.onebusaway.gtfs.model.calendar.ServiceInterval;
 
 /**
  * While the set of {@link ServiceCalendar} and {@link ServiceCalendarDate}
@@ -322,9 +319,14 @@ public interface CalendarService {
   public Map<LocalizedServiceId, List<Date>> getPreviousArrivalServiceDates(
       ServiceIdIntervals serviceIdIntervals, long targetTime);
 
-  /**
+<<<<<<< /usr/src/app/output/onebusaway/onebusaway-gtfs-modules/0dfc36d5c8bb5baea8656f9c4ea68983a8e0070d/onebusaway-gtfs/src/main/java/org/onebusaway/gtfs/services/calendar/CalendarService.java/left.java
+    void setData(CalendarServiceData data);
+||||||| /usr/src/app/output/onebusaway/onebusaway-gtfs-modules/0dfc36d5c8bb5baea8656f9c4ea68983a8e0070d/onebusaway-gtfs/src/main/java/org/onebusaway/gtfs/services/calendar/CalendarService.java/base.java
+=======
+    /**
    * Update the underlying data structures.
    * @param data
    */
   public void setData(CalendarServiceData data);
+>>>>>>> /usr/src/app/output/onebusaway/onebusaway-gtfs-modules/0dfc36d5c8bb5baea8656f9c4ea68983a8e0070d/onebusaway-gtfs/src/main/java/org/onebusaway/gtfs/services/calendar/CalendarService.java/right.java
 }

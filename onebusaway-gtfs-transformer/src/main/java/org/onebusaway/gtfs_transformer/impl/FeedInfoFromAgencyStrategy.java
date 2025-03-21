@@ -24,8 +24,6 @@ import org.onebusaway.gtfs.model.FeedInfo;
 import org.onebusaway.gtfs.services.GtfsMutableRelationalDao;
 import org.onebusaway.gtfs_transformer.services.GtfsTransformStrategy;
 import org.onebusaway.gtfs_transformer.services.TransformContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -53,6 +51,7 @@ public class FeedInfoFromAgencyStrategy implements GtfsTransformStrategy {
     for (Agency agency : dao.getAllAgencies()) {
       _log.info("comparing agency " + agency.getId() + " to " + agencyId);
       if (agency.getId().equals(agencyId)) {
+<<<<<<< /usr/src/app/output/onebusaway/onebusaway-gtfs-modules/0dfc36d5c8bb5baea8656f9c4ea68983a8e0070d/onebusaway-gtfs-transformer/src/main/java/org/onebusaway/gtfs_transformer/impl/FeedInfoFromAgencyStrategy.java/left.java
         foundAgency = true;
         _log.info("creating feed info from matched agency " + agencyId);
         FeedInfo info = getFeedInfoFromAgency(dao, agency);
@@ -60,6 +59,27 @@ public class FeedInfoFromAgencyStrategy implements GtfsTransformStrategy {
         if (info.getVersion() == null) {
           addCreationTime(info, context);
           dao.saveOrUpdateEntity(info);
+||||||| /usr/src/app/output/onebusaway/onebusaway-gtfs-modules/0dfc36d5c8bb5baea8656f9c4ea68983a8e0070d/onebusaway-gtfs-transformer/src/main/java/org/onebusaway/gtfs_transformer/impl/FeedInfoFromAgencyStrategy.java/base.java
+        FeedInfo info = new FeedInfo();
+        info.setId(agencyId);
+        info.setPublisherName(agency.getName());
+        info.setPublisherUrl(agency.getUrl());
+        if (agency.getLang() == null || agency.getLang().isEmpty()) {
+          info.setLang(defaultLang);
+=======
+        foundAgency = true;
+        _log.info("creating feed info from matched agency " + agencyId);
+        FeedInfo info = getFeedInfoFromAgency(dao, agency);
+
+        // if version already present leave it alone
+        if (info.getVersion() == null) {
+          if(feedVersion!=null){
+            info.setVersion(feedVersion);
+          } else {
+            addCreationTime(info, context);
+          }
+          dao.saveOrUpdateEntity(info);
+>>>>>>> /usr/src/app/output/onebusaway/onebusaway-gtfs-modules/0dfc36d5c8bb5baea8656f9c4ea68983a8e0070d/onebusaway-gtfs-transformer/src/main/java/org/onebusaway/gtfs_transformer/impl/FeedInfoFromAgencyStrategy.java/right.java
         } else {
           _log.info("found feedVersion " + info.getVersion() + ", abandoning");
         }
@@ -75,10 +95,35 @@ public class FeedInfoFromAgencyStrategy implements GtfsTransformStrategy {
     }
   }
 
+<<<<<<< /usr/src/app/output/onebusaway/onebusaway-gtfs-modules/0dfc36d5c8bb5baea8656f9c4ea68983a8e0070d/onebusaway-gtfs-transformer/src/main/java/org/onebusaway/gtfs_transformer/impl/FeedInfoFromAgencyStrategy.java/left.java
   private FeedInfo getFeedInfoFromAgency(GtfsMutableRelationalDao dao, Agency agency) {
     FeedInfo info = dao.getFeedInfoForId(agencyId);
     if (info == null) {
        info = new FeedInfo();
+||||||| /usr/src/app/output/onebusaway/onebusaway-gtfs-modules/0dfc36d5c8bb5baea8656f9c4ea68983a8e0070d/onebusaway-gtfs-transformer/src/main/java/org/onebusaway/gtfs_transformer/impl/FeedInfoFromAgencyStrategy.java/base.java
+  @Override
+  public void run(TransformContext context, GtfsMutableRelationalDao dao) {
+
+    boolean foundAgency = false;
+    for (Agency agency : dao.getAllAgencies()) {
+      _log.info("comparing agency " + agency.getId() + " to " + agencyId);
+      if (agency.getId().equals(agencyId)) {
+        FeedInfo info = new FeedInfo();
+        info.setId(agencyId);
+        info.setPublisherName(agency.getName());
+        info.setPublisherUrl(agency.getUrl());
+        if (agency.getLang() == null || agency.getLang().isEmpty()) {
+          info.setLang(defaultLang);
+        } else {
+          _log.info("found feedVersion " + info.getVersion() + ", abandoning");
+        }
+      }
+=======
+  private FeedInfo getFeedInfoFromAgency(GtfsMutableRelationalDao dao, Agency agency) {
+    FeedInfo info = dao.getFeedInfoForId(agencyId);
+    if (info == null) {
+      info = new FeedInfo();
+>>>>>>> /usr/src/app/output/onebusaway/onebusaway-gtfs-modules/0dfc36d5c8bb5baea8656f9c4ea68983a8e0070d/onebusaway-gtfs-transformer/src/main/java/org/onebusaway/gtfs_transformer/impl/FeedInfoFromAgencyStrategy.java/right.java
     }
     info.setId(agencyId);
     info.setPublisherName(agency.getName());
