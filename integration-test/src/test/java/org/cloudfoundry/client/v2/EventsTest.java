@@ -91,7 +91,7 @@ public final class EventsTest extends AbstractIntegrationTest {
     @Test
     public void listFilterByOrganizationId() {
         getFirstEvent(this.cloudFoundryClient)
-            .flatMap(resource -> Mono.zip(
+            .then(resource -> Mono.when(
                 Mono.just(resource),
                 this.cloudFoundryClient.events()
                     .list(ListEventsRequest.builder()
@@ -109,7 +109,7 @@ public final class EventsTest extends AbstractIntegrationTest {
     @Test
     public void listFilterBySpaceId() {
         getFirstEvent(this.cloudFoundryClient)
-            .flatMap(resource -> Mono.zip(
+            .then(resource -> Mono.when(
                 Mono.just(resource),
                 this.cloudFoundryClient.events()
                     .list(ListEventsRequest.builder()
