@@ -2,6 +2,7 @@ package bibliothek.gui.dock;
 
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -34,22 +35,25 @@ import bibliothek.gui.dock.station.DisplayerCollection;
 import bibliothek.gui.dock.station.DisplayerFactory;
 import bibliothek.gui.dock.station.DockableDisplayer;
 import bibliothek.gui.dock.station.DockableDisplayerListener;
+import bibliothek.gui.dock.station.OrientedDockStation;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationChildHandle;
 import bibliothek.gui.dock.station.StationDropOperation;
+import bibliothek.gui.dock.station.layer.DefaultDropLayer;
 import bibliothek.gui.dock.station.layer.DockStationDropLayer;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.PlaceholderList.Level;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+import bibliothek.gui.dock.station.toolbar.ToolbarGroupDropInfo;
 import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarGroupDockStationFactory;
-import bibliothek.gui.dock.station.toolbar.ToolbarGroupDropInfo;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarColumn;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarColumnModel;
 import bibliothek.gui.dock.station.toolbar.group.ToolbarGroupProperty;
 import bibliothek.gui.dock.station.toolbar.layer.DefaultDropLayerComplex;
+import bibliothek.gui.dock.station.toolbar.layer.SideSnapDropLayer;
 import bibliothek.gui.dock.station.toolbar.layer.SideSnapDropLayerComplex;
 import bibliothek.gui.dock.station.toolbar.layout.DockablePlaceholderToolbarGrid;
 import bibliothek.gui.dock.station.toolbar.layout.PlaceholderToolbarGridConverter;
@@ -88,10 +92,8 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	 * {@link DisplayerFactory}s
 	 */
 	public static final String DISPLAYER_ID = "toolbar.group";
-
 	/** A list of all children organized in columns and lines */
 	private final DockablePlaceholderToolbarGrid<StationChildHandle> dockables = new DockablePlaceholderToolbarGrid<StationChildHandle>();
-
 	/** The {@link PlaceholderStrategy} that is used by {@link #dockables} */
 	private final PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>( PlaceholderStrategy.PLACEHOLDER_STRATEGY ){
 		@Override
@@ -99,36 +101,37 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			dockables.setStrategy( newValue );
 		}
 	};
-
 	/**
 	 * The graphical representation of this station: the pane which contains
 	 * component
 	 */
 	private OverpaintablePanelBase mainPanel;
-
 	/**
 	 * Size of the border outside this station where a {@link Dockable} will
 	 * still be considered to be dropped onto this station. Measured in pixel.
 	 */
+<<<<<<< /usr/src/app/output/benoker/dockingframes/a387d1255a8262baa3efed62334290a6be21e96e/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarGroupDockStation.java/left.java
+	private int borderSideSnapSize = 5;
+||||||| /usr/src/app/output/benoker/dockingframes/a387d1255a8262baa3efed62334290a6be21e96e/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarGroupDockStation.java/base.java
+	private int borderSideSnapSize = 5;
+=======
 	private int borderSideSnapSize = 10;
+>>>>>>> /usr/src/app/output/benoker/dockingframes/a387d1255a8262baa3efed62334290a6be21e96e/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarGroupDockStation.java/right.java
 	/**
 	 * Whether the bounds of this station are slightly bigger than the station
 	 * itself. Used together with {@link #borderSideSnapSize} to grab Dockables
 	 * "out of the sky". The default is <code>true</code>.
 	 */
 	private boolean allowSideSnap = true;
-
 	// ########################################################
 	// ############ Initialization Managing ###################
 	// ########################################################
-
 	/**
 	 * Creates a new {@link ToolbarGroupDockStation}.
 	 */
 	public ToolbarGroupDockStation(){
 		init();
 	}
-
 	@Override
 	protected void init(){
 		mainPanel = new OverpaintablePanelBase();
@@ -145,11 +148,9 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 
 		setTitleIcon( null );
 	}
-
 	// ########################################################
 	// ################### Class Utilities ####################
 	// ########################################################
-
 	/**
 	 * Gets access to a simplified view of the contents of this station.
 	 * @return a model describing all the columns that are shown on this station
@@ -157,7 +158,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	public ToolbarColumnModel getColumnModel(){
 		return dockables.getModel();
 	}
-
 	/**
 	 * Gets the column location of the <code>dockable</code>.
 	 * 
@@ -168,7 +168,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	public int column( Dockable dockable ){
 		return dockables.getColumn( dockable );
 	}
-
 	/**
 	 * Gets the line location of the <code>dockable</code>.
 	 * 
@@ -179,7 +178,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	public int line( Dockable dockable ){
 		return dockables.getLine( dockable );
 	}
-
 	/**
 	 * Gets the number of column of <code>this</code>.
 	 * 
@@ -189,7 +187,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		return dockables.getColumnCount(); // column(getDockable(getDockableCount()
 											// - 1)) + 1;
 	}
-
 	/**
 	 * Gets the number of lines in <code>column</code>.
 	 * 
@@ -200,7 +197,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	public int lineCount( int column ){
 		return dockables.getLineCount( column );
 	}
-
 	/**
 	 * Gets the dockable at the specified <code>column</code> and
 	 * <code>line</code>.
@@ -223,7 +219,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		}
 		return column.getDockable( line );
 	}
-
 	/**
 	 * Tells if <code>dockable</code> is the last dockable in its column.
 	 * 
@@ -245,11 +240,9 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			return false;
 		}
 	}
-
 	// ########################################################
 	// ############ General DockStation Managing ##############
 	// ########################################################
-
 	/**
 	 * Gets the {@link ToolbarStrategy} that is currently used by this station.
 	 * 
@@ -262,32 +255,26 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		value.setProperties( (DockController) null );
 		return result;
 	}
-
 	@Override
 	public Component getComponent(){
 		return mainPanel;
 	}
-
 	@Override
 	public int getDockableCount(){
 		return dockables.size();
 	}
-
 	@Override
 	public Dockable getDockable( int index ){
 		return dockables.get( index ).asDockable();
 	}
-
 	@Override
 	public String getFactoryID(){
 		return ToolbarDockStationFactory.ID;
 	}
-
 	@Override
 	protected String getDisplayerId(){
 		return DISPLAYER_ID;
 	}
-
 	/**
 	 * Sets whether {@link Dockable Dockables} which are dragged near the
 	 * station are captured and added to this station.
@@ -300,7 +287,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	public void setAllowSideSnap( boolean allowSideSnap ){
 		this.allowSideSnap = allowSideSnap;
 	}
-
 	/**
 	 * Tells whether the station can grab Dockables which are dragged near the
 	 * station.
@@ -311,7 +297,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	public boolean isAllowSideSnap(){
 		return allowSideSnap;
 	}
-
 	/**
 	 * There is an invisible border around the station. If a {@link Dockable} is
 	 * dragged inside this border, its considered to be on the station and will
@@ -329,7 +314,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 
 		this.borderSideSnapSize = borderSideSnapSize;
 	}
-
 	/**
 	 * Gets the size of the invisible border around the station where a dockable
 	 * can be dropped.
@@ -340,7 +324,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	public int getBorderSideSnapSize(){
 		return borderSideSnapSize;
 	}
-
 	@Override
 	public void setController( DockController controller ){
 		if( getController() != controller ) {
@@ -378,11 +361,9 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			}
 		}
 	}
-
 	// ########################################################
 	// ############ Orientation Managing ######################
 	// ########################################################
-
 	@Override
 	public void setOrientation( Orientation orientation ){
 		// it's very important to change position and orientation of inside
@@ -392,11 +373,21 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		mainPanel.updateAlignment();
 		mainPanel.revalidate();
 	}
-
 	// ########################################################
 	// ############### Drop/Move Managing #####################
 	// ########################################################
-
+<<<<<<< /usr/src/app/output/benoker/dockingframes/a387d1255a8262baa3efed62334290a6be21e96e/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarGroupDockStation.java/left.java
+	@Override
+	public DockStationDropLayer[] getLayers(){
+		return new DockStationDropLayer[]{ new DefaultDropLayer( this ), new SideSnapDropLayer( this ), };
+	}
+||||||| /usr/src/app/output/benoker/dockingframes/a387d1255a8262baa3efed62334290a6be21e96e/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarGroupDockStation.java/base.java
+	@Override
+	public DockStationDropLayer[] getLayers(){
+		return new DockStationDropLayer[] { new DefaultDropLayer(this),
+				new SideSnapDropLayer(this), };
+	}
+=======
 	@Override
 	public DockStationDropLayer[] getLayers(){
 		return new DockStationDropLayer[] { new DefaultDropLayerComplex(this),
@@ -404,21 +395,18 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		// return new DockStationDropLayer[] { new DefaultDropLayer(this),
 		// new SideSnapDropLayer(this) };
 	}
-
+>>>>>>> /usr/src/app/output/benoker/dockingframes/a387d1255a8262baa3efed62334290a6be21e96e/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarGroupDockStation.java/right.java
 	@Override
 	public boolean accept( Dockable child ){
 		return getToolbarStrategy().isToolbarGroupPart( child );
 	}
-
 	@Override
 	public boolean accept( DockStation station ){
 		return getToolbarStrategy().isToolbarGroupPartParent( station, this, false );
 	}
-
 	public boolean accept( DockStation base, Dockable neighbor ){
 		return false;
 	}
-
 	@Override
 	public StationDropOperation prepareDrop( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ){
 		// System.out.println(this.toString() + "## prepareDrop(...) ##");
@@ -437,7 +425,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 					return null;
 				}
 			}
-			return new ToolbarGroupDropInfo(dockable, this, mouseX, mouseY){
+			return new ToolbarGroupDropInfo( dockable, this, mouseX, mouseY ){
 				@Override
 				public void execute(){
 					drop( this );
@@ -473,7 +461,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			return null;
 		}
 	}
-
 	/**
 	 * Drops thanks to information collect by dropInfo.
 	 * 
@@ -482,9 +469,8 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	@Override
 	protected void drop( StationDropOperation dropInfo ){
 		final ToolbarGroupDropInfo dropInfoGroup = (ToolbarGroupDropInfo) dropInfo;
-		System.out
-				.println("Summarize Info: " + dropInfoGroup.toSummaryString());
-		if (dropInfoGroup.getItemPositionVSBeneathDockable() != Position.CENTER){
+		System.out.println( "Summarize Info: " + dropInfoGroup.toSummaryString() );
+		if( dropInfoGroup.getItemPositionVSBeneathDockable() != Position.CENTER ) {
 			// Note: Computation of index to insert drag dockable is not the
 			// same between a move() and a drop(), because with a move() it is
 			// as if the drag dockable were remove first then added again in the
@@ -623,12 +609,10 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			}
 		}
 	}
-
 	@Override
 	public void drop( Dockable dockable ){
 		drop( dockable, 0, 0 );
 	}
-
 	/**
 	 * Drops the <code>dockable</code> at the specified line and column.
 	 * 
@@ -643,7 +627,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	public boolean drop( Dockable dockable, int column, int line ){
 		return drop( dockable, column, line, false );
 	}
-
 	public boolean drop( Dockable dockable, int column, int line, boolean force ){
 		if( force || this.accept( dockable ) ) {
 			if( !force ) {
@@ -657,7 +640,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		}
 		return false;
 	}
-
 	private void add( Dockable dockable, int column, int line ){
 		DockUtilities.ensureTreeValidity( this, dockable );
 		DockUtilities.checkLayoutLocked();
@@ -680,7 +662,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			token.release();
 		}
 	}
-
 	/**
 	 * Creates a new {@link StationChildHandle} that wrapps around
 	 * <code>dockable</code>. This method does not add the handle to any list or
@@ -696,7 +677,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		handle.updateDisplayer();
 		return handle;
 	}
-
 	/**
 	 * Adds <code>handle</code> to the {@link #mainPanel} of this station. Note
 	 * that this method only cares about the {@link Component}-{@link Container}
@@ -710,7 +690,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		mainPanel.getContentPane().add( handle.getDisplayer().getComponent() );
 		mainPanel.getContentPane().revalidate();
 	}
-
 	/**
 	 * Removes <code>handle</code> of the {@link #mainPanel} of this station.
 	 * Note that this method only cares about the {@link Component}-
@@ -724,7 +703,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		mainPanel.getContentPane().remove( handle.getDisplayer().getComponent() );
 		mainPanel.getContentPane().revalidate();
 	}
-
 	/**
 	 * Drops the <code>dockable</code> in a new column.
 	 * 
@@ -737,7 +715,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	public boolean drop( Dockable dockable, int column ){
 		return drop( dockable, column, false );
 	}
-
 	public boolean drop( Dockable dockable, int column, boolean force ){
 		if( force || this.accept( dockable ) ) {
 			if( !force ) {
@@ -751,7 +728,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		}
 		return false;
 	}
-
 	private void add( Dockable dockable, int column ){
 		DockUtilities.ensureTreeValidity( this, dockable );
 		DockUtilities.checkLayoutLocked();
@@ -773,7 +749,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			token.release();
 		}
 	}
-
 	@Override
 	public void drag( Dockable dockable ){
 		if( dockable.getDockParent() != this ) {
@@ -781,7 +756,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		}
 		remove( dockable );
 	}
-
 	@Override
 	protected void remove( Dockable dockable ){
 		DockUtilities.checkLayoutLocked();
@@ -808,7 +782,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			token.release();
 		}
 	}
-
 	@Override
 	public void replace( Dockable old, Dockable next ){
 		// TODO Auto-generated method stub
@@ -830,12 +803,10 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		}
 		controller.meltLayout();
 	}
-
 	@Override
 	public boolean canReplace( Dockable old, Dockable next ){
 		return acceptable( next ) && getToolbarStrategy().isToolbarGroupPartParent( this, next, true );
 	}
-
 	/**
 	 * Fires
 	 * {@link DockStationListener#dockablesRepositioned(DockStation, Dockable[])}
@@ -851,7 +822,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	protected void fireDockablesRepositioned( Dockable dockable ){
 		fireDockablesRepositioned( dockable, false );
 	}
-
 	/**
 	 * Fires
 	 * {@link DockStationListener#dockablesRepositioned(DockStation, Dockable[])}
@@ -867,7 +837,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 	protected void fireDockablesRepositioned( Dockable dockable, boolean all ){
 		fireColumnRepositioned( column( dockable ), all );
 	}
-
 	/**
 	 * Fires
 	 * {@link DockStationListener#dockablesRepositioned(DockStation, Dockable[])}
@@ -894,26 +863,21 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 			listeners.fireDockablesRepositioned( list.toArray( new Dockable[list.size()] ) );
 		}
 	}
-
 	// ########################################################
 	// ###################### UI Managing #####################
 	// ########################################################
-
 	@Override
 	protected void callDockUiUpdateTheme() throws IOException{
 		DockUI.updateTheme( this, new ToolbarGroupDockStationFactory() );
 	}
-
 	@Override
 	protected DefaultDisplayerFactoryValue createDisplayerFactory(){
 		return new DefaultDisplayerFactoryValue( ThemeManager.DISPLAYER_FACTORY + ".toolbar.group", this );
 	}
-
 	@Override
 	protected DockTitleVersion registerTitle( DockController controller ){
 		return controller.getDockTitleManager().getVersion( TITLE_ID, BasicDockTitleFactory.FACTORY );
 	}
-
 	/**
 	 * Replaces <code>displayer</code> with a new {@link DockableDisplayer}.
 	 * 
@@ -935,7 +899,6 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		handle.updateDisplayer();
 		addComponent( handle );
 	}
-
 	/**
 	 * This panel is used as base of the station. All children of the station
 	 * have this panel as parent too. It allows to draw arbitrary figures over
@@ -1039,16 +1002,15 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		@Override
 		protected void paintOverlay( Graphics g ){
 			final Graphics2D g2D = (Graphics2D) g;
-			g2D.setStroke(new BasicStroke(2));
+			g2D.setStroke( new BasicStroke( 2 ) );
 			final int localIndexBeneathMouse = indexBeneathMouse;
 			final Position localSideBeneathMouse = sideBeneathMouse;
 			final DefaultStationPaintValue paint = getPaint();
-			if (prepareDropDraw){
-				if (localIndexBeneathMouse != -1){
+			if( prepareDropDraw ) {
+				if( localIndexBeneathMouse != -1 ) {
 					final Dockable dockableBeneathMouse = getDockable(localIndexBeneathMouse);
-					final Component componentBeneathMouse = dockableBeneathMouse
-							.getComponent();
-					if (componentBeneathMouse != null){
+					final Component componentBeneathMouse = dockableBeneathMouse.getComponent();
+					if( componentBeneathMouse != null ) {
 						final Rectangle rectToolbar = basePane.getBounds();
 						final Rectangle rectBeneathMouse = componentBeneathMouse.getBounds();
 						final Point pBeneath = rectBeneathMouse.getLocation();
@@ -1056,142 +1018,124 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 						SwingUtilities.convertPointFromScreen( pBeneath, getBasePane() );
 						final Rectangle rectangleBeneathMouseTranslated = new Rectangle( pBeneath.x, pBeneath.y, rectBeneathMouse.width, rectBeneathMouse.height );
 						int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+						switch( getOrientation() ){
+							case VERTICAL:
+								switch(localSideBeneathMouse){
+									case NORTH:
+										x1 = rectangleBeneathMouseTranslated.x;
+										x2 = rectangleBeneathMouseTranslated.x + rectangleBeneathMouseTranslated.width;
+										y1 = y2 = rectangleBeneathMouseTranslated.y;
+										// the y value is slightly modified to allow to
+										// draw the insertion lines with a proper larger
+										// (otherwise, part of the insertion line falls
+										// outside of the overlay pane and can't be
+										// drawn)
+										if( line( dockableBeneathMouse ) == 0 ) {
+											y1 = y2 = y1 + 1;
+										}
+										break;
+									case SOUTH:
+										x1 = rectangleBeneathMouseTranslated.x;
+										x2 = rectangleBeneathMouseTranslated.x + rectangleBeneathMouseTranslated.width;
+										y1 = y2 = rectangleBeneathMouseTranslated.y + rectangleBeneathMouseTranslated.height;
+										// the y value is slightly modified to allow to
+										// draw the insertion lines with a proper larger
+										// (otherwise, part of the insertion line falls
+										// outside of the overlay pane and can't be
+										// drawn)
+										if( isLastOfColumn( dockableBeneathMouse ) ) {
+											y1 = y2 = y1 - 2;
+										}
+										break;
+									case EAST:
+										x1 = x2 = rectangleBeneathMouseTranslated.x
+												+ rectangleBeneathMouseTranslated.width;
+										// the x value is slightly modified to allow to
+										// draw the insertion lines with a proper larger
+										// (otherwise, part of the insertion line falls
+										// outside of the overlay pane and can't be
+										// drawn)
+										System.out
+												.println("EAST: "
+														+ "indexBeneathMouse :"
+														+ localIndexBeneathMouse
+														+ "Column :"
+														+ column(getDockable(localIndexBeneathMouse)));
+										if( column( dockableBeneathMouse ) == (columnCount() - 1) ) {
+											x1 = x2 = x1 - 2;
+										}
 
-						switch (getOrientation()) {
-						case VERTICAL:
-							switch (localSideBeneathMouse) {
-							case NORTH:
-								x1 = rectangleBeneathMouseTranslated.x;
-								x2 = rectangleBeneathMouseTranslated.x
-										+ rectangleBeneathMouseTranslated.width;
-								y1 = y2 = rectangleBeneathMouseTranslated.y;
-								// the y value is slightly modified to allow to
-								// draw the insertion lines with a proper larger
-								// (otherwise, part of the insertion line falls
-								// outside of the overlay pane and can't be
-								// drawn)
-								if (line(dockableBeneathMouse) == 0){
-									y1 = y2 = y1 + 1;
-								}
-								break;
-							case SOUTH:
-								x1 = rectangleBeneathMouseTranslated.x;
-								x2 = rectangleBeneathMouseTranslated.x
-										+ rectangleBeneathMouseTranslated.width;
-								y1 = y2 = rectangleBeneathMouseTranslated.y
-										+ rectangleBeneathMouseTranslated.height;
-								// the y value is slightly modified to allow to
-								// draw the insertion lines with a proper larger
-								// (otherwise, part of the insertion line falls
-								// outside of the overlay pane and can't be
-								// drawn)
-								if (isLastOfColumn(dockableBeneathMouse)){
-									y1 = y2 = y1 - 2;
-								}
-								break;
-							case EAST:
-								x1 = x2 = rectangleBeneathMouseTranslated.x
-										+ rectangleBeneathMouseTranslated.width;
-								// the x value is slightly modified to allow to
-								// draw the insertion lines with a proper larger
-								// (otherwise, part of the insertion line falls
-								// outside of the overlay pane and can't be
-								// drawn)
-								System.out
-										.println("EAST: "
-												+ "indexBeneathMouse :"
-												+ localIndexBeneathMouse
-												+ "Column :"
-												+ column(getDockable(localIndexBeneathMouse)));
-								if (column(dockableBeneathMouse) == (columnCount() - 1)){
-									x1 = x2 = x1 - 2;
-								}
+										// we look at the longest column near the
+										// insertion lines to decide what length the
+										// lines should have
+										y1 = rectToolbar.y;
+										int column = column( dockableBeneathMouse );
+										if( column == (columnCount() - 1) ) {
+											// if column is the last, we take into
+											// account the last dockable
+											Rectangle lastComponentBounds = getDockable( getDockableCount() - 1 ).getComponent().getBounds();
+											y2 = (int) lastComponentBounds.getMaxY();
+										}
+										else {
+											Rectangle lastComponentBoundsLeft = getDockable( column, lineCount( column ) - 1 ).getComponent().getBounds();
+											int yLeft = (int) lastComponentBoundsLeft.getMaxY();
+											Rectangle lastComponentBoundsRight = getDockable( column + 1, lineCount( column + 1 ) - 1 ).getComponent().getBounds();
+											int yRight = (int) lastComponentBoundsRight.getMaxY();
+											if( yLeft > yRight ) {
+												y2 = yLeft;
+											}
+											else {
+												y2 = yRight;
+											}
+										}
+										break;
+									case WEST:
+										x1 = x2 = rectangleBeneathMouseTranslated.x;
+										// the x value is slightly modified to allow to
+										// draw the insertion lines with a proper larger
+										// (otherwise, part of the insertion line falls
+										// outside of the overlay pane and can't be
+										// drawn)
+										System.out
+												.println("WEST: "
+														+ "indexBeneathMouse :"
+														+ localIndexBeneathMouse
+														+ "Column :"
+														+ column(getDockable(localIndexBeneathMouse)));
+										if (column(dockableBeneathMouse) == 0){
+											x1 = x2 = x1 + 2;
+										}
 
-								// we look at the longest column near the
-								// insertion lines to decide what length the
-								// lines should have
-								y1 = rectToolbar.y;
-								int column = column(dockableBeneathMouse);
-								if (column == (columnCount() - 1)){
-									// if column is the last, we take into
-									// account the last dockable
-									Rectangle lastComponentBounds = getDockable(
-											getDockableCount() - 1)
-											.getComponent().getBounds();
-									y2 = (int) lastComponentBounds.getMaxY();
-								} else{
-									Rectangle lastComponentBoundsLeft = getDockable(
-											column, lineCount(column) - 1)
-											.getComponent().getBounds();
-									int yLeft = (int) lastComponentBoundsLeft
-											.getMaxY();
-									Rectangle lastComponentBoundsRight = getDockable(
-											column + 1,
-											lineCount(column + 1) - 1)
-											.getComponent().getBounds();
-									int yRight = (int) lastComponentBoundsRight
-											.getMaxY();
-									if (yLeft > yRight){
-										y2 = yLeft;
-									} else{
-										y2 = yRight;
-									}
+										// we look at the longest column near the
+										// insertion lines to decide what length the
+										// lines should have
+										y1 = rectToolbar.y;
+										column = column(dockableBeneathMouse);
+										if( column == 0 ) {
+											// if column is the first, we take into
+											// account the last dockable of the first
+											// column
+											Rectangle lastComponentBounds = getDockable( 0, lineCount( 0 ) - 1 ).getComponent().getBounds();
+											y2 = (int) lastComponentBounds.getMaxY();
+										}
+										else {
+											Rectangle lastComponentBoundsLeft = getDockable( column, lineCount( column ) - 1 ).getComponent().getBounds();
+											int yLeft = (int) lastComponentBoundsLeft.getMaxY();
+											Rectangle lastComponentBoundsRight = getDockable( column + 1, lineCount( column + 1 ) - 1 ).getComponent().getBounds();
+											int yRight = (int) lastComponentBoundsRight.getMaxY();
+											if( yLeft > yRight ) {
+												y2 = yLeft;
+											}
+											else {
+												y2 = yRight;
+											}
+										}
+										break;
+									default:
+										x1 = x2 = y1 = y2 = 0;
+										break;
 								}
 								break;
-							case WEST:
-								x1 = x2 = rectangleBeneathMouseTranslated.x;
-								// the x value is slightly modified to allow to
-								// draw the insertion lines with a proper larger
-								// (otherwise, part of the insertion line falls
-								// outside of the overlay pane and can't be
-								// drawn)
-								System.out
-										.println("WEST: "
-												+ "indexBeneathMouse :"
-												+ localIndexBeneathMouse
-												+ "Column :"
-												+ column(getDockable(localIndexBeneathMouse)));
-								if (column(dockableBeneathMouse) == 0){
-									x1 = x2 = x1 + 2;
-								}
-
-								// we look at the longest column near the
-								// insertion lines to decide what length the
-								// lines should have
-								y1 = rectToolbar.y;
-								column = column(dockableBeneathMouse);
-								if (column == 0){
-									// if column is the first, we take into
-									// account the last dockable of the first
-									// column
-									Rectangle lastComponentBounds = getDockable(
-											0, lineCount(0) - 1).getComponent()
-											.getBounds();
-									y2 = (int) lastComponentBounds.getMaxY();
-								} else{
-									Rectangle lastComponentBoundsLeft = getDockable(
-											column, lineCount(column) - 1)
-											.getComponent().getBounds();
-									int yLeft = (int) lastComponentBoundsLeft
-											.getMaxY();
-									Rectangle lastComponentBoundsRight = getDockable(
-											column + 1,
-											lineCount(column + 1) - 1)
-											.getComponent().getBounds();
-									int yRight = (int) lastComponentBoundsRight
-											.getMaxY();
-									if (yLeft > yRight){
-										y2 = yLeft;
-									} else{
-										y2 = yRight;
-									}
-								}
-								break;
-							default:
-								x1 = x2 = y1 = y2 = 0;
-								break;
-							}
-							break;
 						case HORIZONTAL:
 							System.out.println("HORIZONTAL");
 							switch (localSideBeneathMouse) {
@@ -1261,8 +1205,7 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 								break;
 							case SOUTH:
 								System.out.println("SOUTH");
-								y1 = y2 = rectangleBeneathMouseTranslated.y
-										+ rectangleBeneathMouseTranslated.height;
+								y1 = y2 = rectangleBeneathMouseTranslated.y + rectangleBeneathMouseTranslated.height;
 								// the y value is slightly modified to allow to
 								// draw the insertion lines with a proper larger
 								// (otherwise, part of the insertion line falls
@@ -1355,7 +1298,30 @@ public class ToolbarGroupDockStation extends AbstractToolbarDockStation {
 		}
 
 	}
-
+	// ########################################################
+	// ############### PlaceHolder Managing ###################
+	// ########################################################
+	/** the id of the {@link DockTitleFactory} which is used by this station */
+	/** A list of all children organized in columns and lines */
+	/** The {@link PlaceholderStrategy} that is used by {@link #dockables} */
+	// ########################################################
+	// ############ Initialization Managing ###################
+	// ########################################################
+	// ########################################################
+	// ################### Class Utilities ####################
+	// ########################################################
+	// ########################################################
+	// ############ General DockStation Managing ##############
+	// ########################################################
+	// ########################################################
+	// ############ Orientation Managing ######################
+	// ########################################################
+	// ########################################################
+	// ############### Drop/Move Managing #####################
+	// ########################################################
+	// ########################################################
+	// ###################### UI Managing #####################
+	// ########################################################
 	// ########################################################
 	// ############### PlaceHolder Managing ###################
 	// ########################################################
