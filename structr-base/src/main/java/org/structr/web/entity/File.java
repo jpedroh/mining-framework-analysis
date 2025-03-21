@@ -261,6 +261,41 @@ public interface File extends AbstractFile, Indexable, Linkable, JavaScriptSourc
 	static <T> void OnSetProperty(final File thisFile, final PropertyKey<T> key, T value) {
 		OnSetProperty(thisFile, key, value, false);
 	}
+<<<<<<< /usr/src/app/output/structr/structr/1698e632fbdce60cf4e5bb0ae384b01fcc5c9a34/structr-base/src/main/java/org/structr/web/entity/File.java/left.java
+	static <T> void OnSetProperty(final File thisFile, final PropertyKey<T> key, T value, final boolean isCreation) {
+
+		if (value == null || isCreation) {
+			return;
+		}
+
+		PropertyKey<StorageConfiguration> storageConfigurationKey   = StructrApp.key(File.class, "storageConfiguration");
+		PropertyKey<Folder> parentKey                               = StructrApp.key(File.class, "parent");
+		PropertyKey<String> parentIdKey                             = StructrApp.key(File.class, "parentId");
+
+		if (key.equals(storageConfigurationKey)) {
+
+			checkMoveBinaryContents(thisFile, (StorageConfiguration)value);
+
+		} else if (key.equals(parentKey)) {
+
+			checkMoveBinaryContents(thisFile, thisFile.getProperty(parentKey), (Folder)value);
+		} else if (key.equals(parentIdKey)) {
+
+			Folder parentFolder = null;
+			try {
+
+				parentFolder = StructrApp.getInstance().nodeQuery(Folder.class).uuid((String) value).getFirst();
+			} catch (FrameworkException ex) {
+
+				LoggerFactory.getLogger(File.class).warn("Exception while trying to lookup parent folder.", ex);
+			}
+
+			checkMoveBinaryContents(thisFile, thisFile.getProperty(parentKey), parentFolder);
+		}
+	}
+||||||| /usr/src/app/output/structr/structr/1698e632fbdce60cf4e5bb0ae384b01fcc5c9a34/structr-base/src/main/java/org/structr/web/entity/File.java/base.java
+	static <T> void OnSetProperty(final File thisFile, final PropertyKey<T> key, T value, final boolean isCreation) 
+=======
 	static <T> void OnSetProperty(final File thisFile, final PropertyKey<T> key, T value, final boolean isCreation) {
 
 		if (isCreation) {
@@ -292,6 +327,7 @@ public interface File extends AbstractFile, Indexable, Linkable, JavaScriptSourc
 			checkMoveBinaryContents(thisFile, thisFile.getProperty(parentKey), parentFolder);
 		}
 	}
+>>>>>>> /usr/src/app/output/structr/structr/1698e632fbdce60cf4e5bb0ae384b01fcc5c9a34/structr-base/src/main/java/org/structr/web/entity/File.java/right.java
 
 	static void OnSetProperties(final File thisFile, final SecurityContext securityContext, final PropertyMap properties, final boolean isCreation) throws FrameworkException {
 		if (isCreation) {
