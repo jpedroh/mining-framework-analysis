@@ -32,11 +32,12 @@ public class MusicOnHoldEvent extends ManagerEvent
     public static final String STATE_STOP = "Stop";
 
     private String channel;
-    private String className;
+    private String clazz;
     private String uniqueId;
     private String state;
-    
-	public MusicOnHoldEvent(Object source)
+    private String className;
+
+    public MusicOnHoldEvent(Object source)
     {
         super(source);
     }
@@ -61,14 +62,14 @@ public class MusicOnHoldEvent extends ManagerEvent
         this.channel = channel;
     }
 
-    public String getClassName()
+    public String getClazz()
     {
-    	return this.className;
+    	return this.clazz;
     }
     
-    public void setClazz(String className)
+    public void setClazz(String clazz)
     {
-    	this.className = className;
+    	this.clazz = clazz;
     }
 
     /**
@@ -129,5 +130,19 @@ public class MusicOnHoldEvent extends ManagerEvent
     public boolean isStop()
     {
         return STATE_STOP.equals(state);
+    }
+
+    /**
+     * @return The music on hold class name.
+     * @since 1.0.0
+     */
+    public String getClassName()
+    {
+        return className;
+    }
+
+    public void setClassName(String className)
+    {
+        this.className = className;
     }
 }
