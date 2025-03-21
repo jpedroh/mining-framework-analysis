@@ -61,14 +61,28 @@ public class HystrixPrometheusMetricsPublisherThreadPool implements HystrixMetri
         addGauge("queue_size", currentStateDoc, metrics::getCurrentQueueSize);
 
         String rollDoc = "Rolling count partitioned by pool_name.";
+<<<<<<< /usr/src/app/output/soundcloud/prometheus-hystrix/fd664ae55bf754fbd5764a2c19019e1ed8d5ba14/src/main/java/com/soundcloud/prometheus/hystrix/HystrixPrometheusMetricsPublisherThreadPool.java/left.java
         addGauge("rolling_max_active_threads", "DEPRECATED: " + rollDoc, metrics::getRollingMaxActiveThreads);
         addGauge("rolling_active_threads_max", rollDoc, metrics::getRollingMaxActiveThreads);
         addGauge("rolling_count_threads_executed", "DEPRECATED: " + rollDoc, metrics::getRollingCountThreadsExecuted);
         addGauge("rolling_threads_executed_count", rollDoc, metrics::getRollingCountThreadsExecuted);
+||||||| /usr/src/app/output/soundcloud/prometheus-hystrix/fd664ae55bf754fbd5764a2c19019e1ed8d5ba14/src/main/java/com/soundcloud/prometheus/hystrix/HystrixPrometheusMetricsPublisherThreadPool.java/base.java
+        addGauge("rolling_max_active_threads", rollDoc, metrics::getRollingMaxActiveThreads);
+        addGauge("rolling_count_threads_executed", rollDoc, metrics::getRollingCountThreadsExecuted);
+=======
+        addGauge("rolling_active_threads_max", rollDoc, metrics::getRollingMaxActiveThreads);
+        addGauge("rolling_threads_executed_count", rollDoc, metrics::getRollingCountThreadsExecuted);
+>>>>>>> /usr/src/app/output/soundcloud/prometheus-hystrix/fd664ae55bf754fbd5764a2c19019e1ed8d5ba14/src/main/java/com/soundcloud/prometheus/hystrix/HystrixPrometheusMetricsPublisherThreadPool.java/right.java
 
         String totalDoc = "Cumulative count partitioned by pool_name.";
+<<<<<<< /usr/src/app/output/soundcloud/prometheus-hystrix/fd664ae55bf754fbd5764a2c19019e1ed8d5ba14/src/main/java/com/soundcloud/prometheus/hystrix/HystrixPrometheusMetricsPublisherThreadPool.java/left.java
         addGauge("count_threads_executed", "DEPRECATED: " + totalDoc, metrics::getCumulativeCountThreadsExecuted);
         addGauge("threads_executed_count", totalDoc, metrics::getCumulativeCountThreadsExecuted);
+||||||| /usr/src/app/output/soundcloud/prometheus-hystrix/fd664ae55bf754fbd5764a2c19019e1ed8d5ba14/src/main/java/com/soundcloud/prometheus/hystrix/HystrixPrometheusMetricsPublisherThreadPool.java/base.java
+        addGauge("count_threads_executed", totalDoc, metrics::getCumulativeCountThreadsExecuted);
+=======
+        addGauge("threads_executed_count", totalDoc, metrics::getCumulativeCountThreadsExecuted);
+>>>>>>> /usr/src/app/output/soundcloud/prometheus-hystrix/fd664ae55bf754fbd5764a2c19019e1ed8d5ba14/src/main/java/com/soundcloud/prometheus/hystrix/HystrixPrometheusMetricsPublisherThreadPool.java/right.java
 
         if (exportProperties) {
             String doc = "Configuration property partitioned by pool_name.";
