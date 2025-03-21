@@ -56,9 +56,25 @@ class StreamsTest {
     @Test
     void testSimpleStreamMapFailing() {
         final List<String> input = Arrays.asList("1", "2", "3", "4 ", "5", "6");
+<<<<<<< /usr/src/app/output/apache/commons-lang/653a5d0bd07ec07748aaf63a32acf1588bfc3d03/src/test/java/org/apache/commons/lang3/StreamsTest.java/left.java
+        try {
+            Functions.stream(input).map(Integer::valueOf).collect(Collectors.toList());
+            fail("Expected Exception");
+        } catch (final NumberFormatException nfe) {
+            assertEquals("For input string: \"4 \"", nfe.getMessage());
+        }
+||||||| /usr/src/app/output/apache/commons-lang/653a5d0bd07ec07748aaf63a32acf1588bfc3d03/src/test/java/org/apache/commons/lang3/StreamsTest.java/base.java
+        try {
+            Functions.stream(input).map(s -> Integer.valueOf(s)).collect(Collectors.toList());
+            fail("Expected Exception");
+        } catch (final NumberFormatException nfe) {
+            assertEquals("For input string: \"4 \"", nfe.getMessage());
+        }
+=======
         final Executable testMethod = () -> Functions.stream(input).map(Integer::valueOf).collect(Collectors.toList());
         final NumberFormatException thrown = assertThrows(NumberFormatException.class, testMethod);
         assertEquals("For input string: \"4 \"", thrown.getMessage());
+>>>>>>> /usr/src/app/output/apache/commons-lang/653a5d0bd07ec07748aaf63a32acf1588bfc3d03/src/test/java/org/apache/commons/lang3/StreamsTest.java/right.java
     }
 
     @Test
@@ -130,8 +146,20 @@ class StreamsTest {
     void testSimpleStreamFilter() {
         final List<String> input = Arrays.asList("1", "2", "3", "4", "5", "6");
         final List<Integer> output = Functions.stream(input)
+<<<<<<< /usr/src/app/output/apache/commons-lang/653a5d0bd07ec07748aaf63a32acf1588bfc3d03/src/test/java/org/apache/commons/lang3/StreamsTest.java/left.java
+                .map(Integer::valueOf)
+                .filter(i -> {
+                    return i.intValue() %2 == 0;
+                })
+||||||| /usr/src/app/output/apache/commons-lang/653a5d0bd07ec07748aaf63a32acf1588bfc3d03/src/test/java/org/apache/commons/lang3/StreamsTest.java/base.java
+                .map(s -> Integer.valueOf(s))
+                .filter(i -> {
+                    return i.intValue() %2 == 0;
+                })
+=======
                 .map(Integer::valueOf)
                 .filter(i -> (i.intValue() %2 == 0))
+>>>>>>> /usr/src/app/output/apache/commons-lang/653a5d0bd07ec07748aaf63a32acf1588bfc3d03/src/test/java/org/apache/commons/lang3/StreamsTest.java/right.java
                 .collect(Collectors.toList());
         assertEvenNumbers(output);
     }
@@ -163,8 +191,59 @@ class StreamsTest {
                 .collect(Collectors.toList());
         assertEvenNumbers(output);
 
+<<<<<<< /usr/src/app/output/apache/commons-lang/653a5d0bd07ec07748aaf63a32acf1588bfc3d03/src/test/java/org/apache/commons/lang3/StreamsTest.java/left.java
+        output.clear();
+        final IllegalArgumentException iae = new IllegalArgumentException("Invalid argument: " + 5);
+        try {
+            Functions.stream(input)
+                    .map(Integer::valueOf)
+                    .filter(asIntPredicate(iae))
+                    .collect(Collectors.toList());
+            fail("Expected Exception");
+        } catch (final IllegalArgumentException e) {
+            assertSame(iae, e);
+        }
+||||||| /usr/src/app/output/apache/commons-lang/653a5d0bd07ec07748aaf63a32acf1588bfc3d03/src/test/java/org/apache/commons/lang3/StreamsTest.java/base.java
+        output.clear();
+        final IllegalArgumentException iae = new IllegalArgumentException("Invalid argument: " + 5);
+        try {
+            Functions.stream(input)
+                    .map(s -> Integer.valueOf(s))
+                    .filter(asIntPredicate(iae))
+                    .collect(Collectors.toList());
+            fail("Expected Exception");
+        } catch (final IllegalArgumentException e) {
+            assertSame(iae, e);
+        }
+=======
         return Stream.of(
+>>>>>>> /usr/src/app/output/apache/commons-lang/653a5d0bd07ec07748aaf63a32acf1588bfc3d03/src/test/java/org/apache/commons/lang3/StreamsTest.java/right.java
 
+<<<<<<< /usr/src/app/output/apache/commons-lang/653a5d0bd07ec07748aaf63a32acf1588bfc3d03/src/test/java/org/apache/commons/lang3/StreamsTest.java/left.java
+        output.clear();
+        final OutOfMemoryError oome = new OutOfMemoryError();
+        try {
+            Functions.stream(input)
+                    .map(Integer::valueOf)
+                    .filter(asIntPredicate(oome))
+                    .collect(Collectors.toList());
+            fail("Expected Exception");
+        } catch (final Throwable t) {
+            assertSame(oome, t);
+        }
+||||||| /usr/src/app/output/apache/commons-lang/653a5d0bd07ec07748aaf63a32acf1588bfc3d03/src/test/java/org/apache/commons/lang3/StreamsTest.java/base.java
+        output.clear();
+        final OutOfMemoryError oome = new OutOfMemoryError();
+        try {
+            Functions.stream(input)
+                    .map(s -> Integer.valueOf(s))
+                    .filter(asIntPredicate(oome))
+                    .collect(Collectors.toList());
+            fail("Expected Exception");
+        } catch (final Throwable t) {
+            assertSame(oome, t);
+        }
+=======
                 dynamicTest("IllegalArgumentException", () -> {
                     final IllegalArgumentException iae = new IllegalArgumentException("Invalid argument: " + 5);
                     final Executable testMethod = () -> Functions.stream(input)
@@ -174,7 +253,33 @@ class StreamsTest {
                     final IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, testMethod);
                     assertThat(thrown.getMessage(), is(equalTo("Invalid argument: " + 5)));
                 }),
+>>>>>>> /usr/src/app/output/apache/commons-lang/653a5d0bd07ec07748aaf63a32acf1588bfc3d03/src/test/java/org/apache/commons/lang3/StreamsTest.java/right.java
 
+<<<<<<< /usr/src/app/output/apache/commons-lang/653a5d0bd07ec07748aaf63a32acf1588bfc3d03/src/test/java/org/apache/commons/lang3/StreamsTest.java/left.java
+        output.clear();
+        final SAXException se = new SAXException();
+        try {
+            Functions.stream(input)
+                    .map(Integer::valueOf)
+                    .filter(asIntPredicate(se))
+                    .collect(Collectors.toList());
+            fail("Expected Exception");
+        } catch (final UndeclaredThrowableException t) {
+            assertSame(se, t.getCause());
+        }
+||||||| /usr/src/app/output/apache/commons-lang/653a5d0bd07ec07748aaf63a32acf1588bfc3d03/src/test/java/org/apache/commons/lang3/StreamsTest.java/base.java
+        output.clear();
+        final SAXException se = new SAXException();
+        try {
+            Functions.stream(input)
+                    .map(s -> Integer.valueOf(s))
+                    .filter(asIntPredicate(se))
+                    .collect(Collectors.toList());
+            fail("Expected Exception");
+        } catch (final UndeclaredThrowableException t) {
+            assertSame(se, t.getCause());
+        }
+=======
                 dynamicTest("OutOfMemoryError", () -> {
                     final OutOfMemoryError oome = new OutOfMemoryError();
                     final Executable testMethod = () -> Functions.stream(input)
@@ -198,6 +303,7 @@ class StreamsTest {
                     );
                 })
         );
+>>>>>>> /usr/src/app/output/apache/commons-lang/653a5d0bd07ec07748aaf63a32acf1588bfc3d03/src/test/java/org/apache/commons/lang3/StreamsTest.java/right.java
     }
 
 }
