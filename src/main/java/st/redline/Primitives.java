@@ -327,16 +327,21 @@ public class Primitives {
 		ProtoObject cls = new ProtoObject(classClass);
 		cls.name(name);
 		cls.superclass(superclass);
+
 		addToClassInitialisationRegistry(cls);
+
 		return cls;
 	}
 
 	protected static void addToClassInitialisationRegistry(ProtoObject cls) {
 		Stack<ProtoObject> classRegistry = classInitialisationRegistry.get();
+
 		if(classRegistry == null) {
 			classRegistry = new Stack<ProtoObject>();
+
 			classInitialisationRegistry.set(classRegistry);
 		}
+
 		classRegistry.push(cls);
 	}
 
@@ -767,7 +772,13 @@ public class Primitives {
 
 	public static void initialiseNewClasses() {
 		Stack<ProtoObject> classRegistry = classInitialisationRegistry.get();
-		while(classRegistry != null && !classRegistry.empty())
-            send(classRegistry.pop(), "initialize", null);
+
+		if(classRegistry != null) {
+			while(!classRegistry.empty()) {
+				ProtoObject cls = classRegistry.pop();
+
+                send(cls, "initialize", null);
+			}
+		}
 	}
 }
