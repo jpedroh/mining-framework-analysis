@@ -71,6 +71,34 @@ public class SFTPFileSystem extends FileSystem {
 	private Configuration conf;
 	private URI uri;
 	private SFTPv3ClientWrapper client;
+<<<<<<< /usr/src/app/output/wnagele/hadoop-filesystem-sftp/dce4039d7a7b792e1fca28d344a305891a078538/src/main/java/org/apache/hadoop/fs/sftp/SFTPFileSystem.java/left.java
+	private Connection connection;	
+||||||| /usr/src/app/output/wnagele/hadoop-filesystem-sftp/dce4039d7a7b792e1fca28d344a305891a078538/src/main/java/org/apache/hadoop/fs/sftp/SFTPFileSystem.java/base.java
+	private Connection connection;
+
+	
+	public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException {
+		String url = "sftp://mtnsasftp:Tue2015sa@203.199.178.218:22/Processed/20151121-Downloads.csv";
+		URI uri = new URI(url);
+		SFTPFileSystem fs = new SFTPFileSystem();
+		fs.initialize(uri, new Configuration());
+		FSDataInputStream in = fs.open(new Path(url));
+		byte[] buffer = new byte[32768];
+		System.out.println(in.read(0, buffer, 0, 32768));
+		System.out.println(in.read(32768, buffer, 0, 32768));
+		//IOUtils.copy(in,out);
+		in.close();
+		url = "sftp://mtnsasftp:Tue2015sa@203.199.178.218:22/Processed/20151121-Downloads.csv";
+		fs.getFileStatus(new Path(url));
+		in = fs.open(new Path(url));
+		buffer = new byte[32768];
+		System.out.println(in.read(0, buffer, 0, 32768));
+		System.out.println(in.read(32768, buffer, 0, 32768));
+		//IOUtils.copy(in,out);
+		in.close();
+	}
+	
+=======
 	private Connection connection;
 
 	
@@ -94,6 +122,8 @@ public class SFTPFileSystem extends FileSystem {
 		//IOUtils.copy(in,out);
 		in.close();
 	}
+	
+>>>>>>> /usr/src/app/output/wnagele/hadoop-filesystem-sftp/dce4039d7a7b792e1fca28d344a305891a078538/src/main/java/org/apache/hadoop/fs/sftp/SFTPFileSystem.java/right.java
 	
 	@Override
 	public void initialize(URI uri, Configuration conf) throws IOException {
