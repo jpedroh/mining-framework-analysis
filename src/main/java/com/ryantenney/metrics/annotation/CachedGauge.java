@@ -33,8 +33,16 @@ import java.util.concurrent.TimeUnit;
  *     }
  *
  * </code></pre>
+<<<<<<< /usr/src/app/output/ryantenney/metrics-spring/5244ad0b109cc2814221012c959aee61705efe5b/src/main/java/com/ryantenney/metrics/annotation/CachedGauge.java/left.java
+ * <p/>
+ *
+||||||| /usr/src/app/output/ryantenney/metrics-spring/5244ad0b109cc2814221012c959aee61705efe5b/src/main/java/com/ryantenney/metrics/annotation/CachedGauge.java/base.java
+ * <p/>
+ * 
+=======
  * <p></p>
  * 
+>>>>>>> /usr/src/app/output/ryantenney/metrics-spring/5244ad0b109cc2814221012c959aee61705efe5b/src/main/java/com/ryantenney/metrics/annotation/CachedGauge.java/right.java
  * A gauge for the defining class with the name queueSize will be created which uses the annotated method's
  * return value as its value, and which caches the result for 30 seconds.
  */
