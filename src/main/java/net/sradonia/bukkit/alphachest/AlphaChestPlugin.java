@@ -24,9 +24,17 @@ public class AlphaChestPlugin extends JavaPlugin {
 		// Save a copy of the default config.yml if one doesn't already exist
 		saveDefaultConfig();
 
-        // Initialize some classes and objects
-        logger = getLogger();
+<<<<<<< /usr/src/app/output/kroimon/bukkit-alphachest/1c06bbbbf3fc168448554fcc274249946e51fd94/src/main/java/net/sradonia/bukkit/alphachest/AlphaChestPlugin.java/left.java
+	        // Initialize some classes and objects
+	        logger = getLogger();
 
+||||||| /usr/src/app/output/kroimon/bukkit-alphachest/1c06bbbbf3fc168448554fcc274249946e51fd94/src/main/java/net/sradonia/bukkit/alphachest/AlphaChestPlugin.java/base.java
+		// Initialize
+=======
+	        // Initialize some classes & objects
+	        logger = getLogger();
+
+>>>>>>> /usr/src/app/output/kroimon/bukkit-alphachest/1c06bbbbf3fc168448554fcc274249946e51fd94/src/main/java/net/sradonia/bukkit/alphachest/AlphaChestPlugin.java/right.java
 		File chestFolder = new File(getDataFolder(), "chests");
 		chestManager = new VirtualChestManager(chestFolder, logger);
 		
@@ -50,8 +58,8 @@ public class AlphaChestPlugin extends JavaPlugin {
 					int savedChests = chestManager.save();
 
 					if (savedChests > 0 && !getConfig().getBoolean("silentAutosave")) {
-                        logger.info("Auto-saved " + savedChests + " chests");
-                    }
+	                        logger.info("Auto-saved " + savedChests + " chests");
+	                    }
 				}
 			}, autosaveInterval, autosaveInterval);
 		}
