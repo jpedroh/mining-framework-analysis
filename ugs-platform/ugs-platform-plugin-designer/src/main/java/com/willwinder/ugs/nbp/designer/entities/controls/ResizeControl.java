@@ -26,7 +26,6 @@ import com.willwinder.ugs.nbp.designer.entities.selection.SelectionManager;
 import com.willwinder.ugs.nbp.designer.gui.Colors;
 import com.willwinder.ugs.nbp.designer.gui.MouseEntityEvent;
 import com.willwinder.ugs.nbp.designer.model.Size;
-
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -110,6 +109,7 @@ public class ResizeControl extends AbstractControl {
         } else if (location == Location.TOP_LEFT) {
             t.translate(-MARGIN, bounds.getHeight() + MARGIN);
         } else if (location == Location.TOP_RIGHT) {
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/ResizeControl.java/left.java
             t.translate(bounds.getWidth() + MARGIN, bounds.getHeight() + MARGIN);
         } else if (location == Location.BOTTOM_LEFT) {
             t.translate(-MARGIN, -MARGIN);
@@ -121,6 +121,21 @@ public class ResizeControl extends AbstractControl {
             t.translate(-MARGIN, bounds.getHeight() / 2d);
         } else if (location == Location.RIGHT) {
             t.translate(bounds.getWidth() + MARGIN, bounds.getHeight() / 2d);
+||||||| /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/ResizeControl.java/base.java
+            transform.translate(bounds.getWidth(), bounds.getHeight());
+=======
+            t.translate(bounds.getWidth() + MARGIN, bounds.getHeight() + MARGIN);
+        } else if (location == Location.BOTTOM_LEFT) {
+            t.translate(- MARGIN, - MARGIN);
+        } else if (location == Location.TOP) {
+            t.translate(bounds.getWidth() / 2d, bounds.getHeight() + MARGIN);
+        } else if (location == Location.BOTTOM) {
+            t.translate(bounds.getWidth() / 2d,  - MARGIN);
+        } else if (location == Location.LEFT) {
+            t.translate(-MARGIN, bounds.getHeight() / 2d);
+        } else if (location == Location.RIGHT) {
+            t.translate(bounds.getWidth() + MARGIN, bounds.getHeight() / 2d);
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/ResizeControl.java/right.java
         }
 
         // Transform the position from relative space to real space
@@ -134,8 +149,25 @@ public class ResizeControl extends AbstractControl {
     private void performScaling(Point2D mousePosition) {
         int decimals = 1;
         Size size = getSelectionManager().getSize();
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/ResizeControl.java/left.java
         Entity target = getSelectionManager();
+||||||| /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/ResizeControl.java/base.java
+        double sx = deltaMovement.getX() / size.getWidth();
+        double sy = deltaMovement.getY() / size.getHeight();
+=======
+        double deltaX = deltaMovement.getX() / size.getWidth();
+        double deltaY = deltaMovement.getY() / size.getHeight();
 
+        double scale = deltaX;
+        double scaleSizeX = scale * size.getWidth();
+        double scaleSizeY = scale * size.getHeight();
+
+        if (size.getWidth() - Math.abs(scaleSizeX) < 1 || size.getHeight() - Math.abs(scaleSizeY) < 1) {
+            return;
+        }
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/ResizeControl.java/right.java
+
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/ResizeControl.java/left.java
         Point2D deltaMovement = new Point2D.Double(mousePosition.getX() - getPosition().getX() - startOffset.getX(), mousePosition.getY() - getPosition().getY() - startOffset.getY());
         Point2D scaleFactor = getScaleFactor(deltaMovement.getX() / size.getWidth(), deltaMovement.getY() / size.getHeight());
         Size newSize = new Size(Utils.roundToDecimals(target.getSize().getWidth() * scaleFactor.getX(), decimals), Utils.roundToDecimals(target.getSize().getHeight() * scaleFactor.getY(), decimals));
@@ -143,6 +175,41 @@ public class ResizeControl extends AbstractControl {
         // Do not scale if the entity will become too small after operation
         if (newSize.getWidth() < 1 || newSize.getHeight() < 1) {
             return;
+||||||| /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/ResizeControl.java/base.java
+        if (location == Location.BOTTOM_LEFT) {
+            target.move(deltaMovement);
+            target.scale(1d - sx, 1d - sy);
+        } else if (location == Location.TOP_RIGHT) {
+            target.scale(1d + sx, 1d + sy);
+        } else if (location == Location.BOTTOM_RIGHT) {
+            target.move(new Point2D.Double(0, deltaMovement.getY()));
+            target.scale(1d + sx, 1d - sy);
+        } else if (location == Location.TOP_LEFT) {
+            target.move(new Point2D.Double(deltaMovement.getX(), 0));
+            target.scale(1d - sx, 1d + sy);
+=======
+        if (location == Location.BOTTOM_LEFT) {
+            target.move(new Point2D.Double(scaleSizeX, scaleSizeY));
+            target.scale(1d - scale, 1d - scale);
+        } else if (location == Location.TOP_RIGHT) {
+            target.scale(1d + scale, 1d + scale);
+        } else if (location == Location.BOTTOM_RIGHT) {
+            target.move(new Point2D.Double(0, -scaleSizeY));
+            target.scale(1d + scale, 1d + scale);
+        } else if (location == Location.TOP_LEFT) {
+            target.move(new Point2D.Double(scaleSizeX, 0));
+            target.scale(1d - scale, 1d - scale);
+        } else if (location == Location.LEFT) {
+            target.move(new Point2D.Double(deltaX * size.getWidth(), 0));
+            target.scale(1d - deltaX, 1d);
+        } else if (location == Location.BOTTOM) {
+            target.move(new Point2D.Double(0, deltaY * size.getHeight()));
+            target.scale(1d, 1d - deltaY);
+        } else if (location == Location.TOP) {
+            target.scale(1d, 1d + deltaY);
+        } else if (location == Location.RIGHT) {
+            target.scale(1d + deltaX, 1d);
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/ResizeControl.java/right.java
         }
 
         target.move(getDeltaMovement(size, newSize));
@@ -178,13 +245,40 @@ public class ResizeControl extends AbstractControl {
         } else if (location == Location.TOP_LEFT) {
             scaleFactor.setLocation(1d - scale, 1d - scale);
         } else if (location == Location.LEFT) {
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/ResizeControl.java/left.java
             scaleFactor.setLocation(1d - deltaX, 1d);
+||||||| /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/ResizeControl.java/base.java
+            ;
+=======
+            target.scale(1d - deltaX, 1d);
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/ResizeControl.java/right.java
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/ResizeControl.java/left.java
         } else if (location == Location.BOTTOM) {
             scaleFactor.setLocation(1d, 1d - deltaY);
         } else if (location == Location.TOP) {
+||||||| /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/ResizeControl.java/base.java
+        } else if (location == Location.BOTTOM)  else if (location == Location.TOP) {
+=======
+        } else if (location == Location.BOTTOM) {
+            target.move(new Point2D.Double(0, deltaY * size.getHeight()));
+            target.scale(1d, 1d - deltaY);
+        } else if (location == Location.TOP) {
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/ResizeControl.java/right.java
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/ResizeControl.java/left.java
             scaleFactor.setLocation(1d, 1d + deltaY);
+||||||| /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/ResizeControl.java/base.java
+            ;
+=======
+            target.scale(1d, 1d + deltaY);
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/ResizeControl.java/right.java
         } else if (location == Location.RIGHT) {
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/ResizeControl.java/left.java
             scaleFactor.setLocation(1d + deltaX, 1d);
+||||||| /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/ResizeControl.java/base.java
+            ;
+=======
+            target.scale(1d + deltaX, 1d);
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/ResizeControl.java/right.java
         }
         return scaleFactor;
     }

@@ -40,18 +40,15 @@ import java.util.List;
 public class RotationControl extends AbstractControl {
     public static final int SIZE = 6;
     public static final int MARGIN = 12;
-
     private final Shape shape;
     private Point2D startPosition = new Point2D.Double();
     private double startRotation = 0d;
     private Point2D center;
     private boolean isHovered;
-
     public RotationControl(SelectionManager selectionManager) {
         super(selectionManager);
         shape = new Ellipse2D.Double(0, 0, SIZE, SIZE);
     }
-
     private void updatePosition() {
         // Create transformation for where to position the controller in relative space
         AffineTransform transform = getSelectionManager().getTransform();
@@ -69,17 +66,15 @@ public class RotationControl extends AbstractControl {
         transform.translate(result.getX(), result.getY());
         setTransform(transform);
     }
-
     @Override
     public Shape getShape() {
         return getTransform().createTransformedShape(shape);
     }
-
     @Override
     public Shape getRelativeShape() {
         return shape;
     }
-
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/RotationControl.java/left.java
     @Override
     public void render(Graphics2D graphics) {
         updatePosition();
@@ -98,6 +93,24 @@ public class RotationControl extends AbstractControl {
             graphics.draw(new Line2D.Double(centerX, centerY - (SIZE / 2d), centerX, centerY + (SIZE / 2d)));
         }
     }
+||||||| /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/RotationControl.java/base.java
+=======
+    @Override
+    public void render(Graphics2D graphics) {
+        updatePosition();
+        graphics.setStroke(new BasicStroke(0));
+        graphics.setColor(Colors.CONTROL_HANDLE);
+        Shape shape = getShape();
+        graphics.fill(shape);
+
+        double centerX = getSelectionManager().getCenter().getX();
+        double centerY = getSelectionManager().getCenter().getY();
+        graphics.setStroke(new BasicStroke(0.8f));
+
+        graphics.draw(new Line2D.Double(centerX - (SIZE / 2d), centerY, centerX + (SIZE / 2d), centerY));
+        graphics.draw(new Line2D.Double(centerX, centerY - (SIZE / 2d), centerX, centerY + (SIZE / 2d)));
+    }
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/RotationControl.java/right.java
 
     @Override
     public void onEvent(EntityEvent entityEvent) {

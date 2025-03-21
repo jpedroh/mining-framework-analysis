@@ -50,9 +50,16 @@ public class MoveControl extends AbstractControl {
     }
 
     @Override
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/MoveControl.java/left.java
     public void render(Graphics2D graphics) {
         // There is nothing to render
     }
+||||||| /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/MoveControl.java/base.java
+    public void render(Graphics2D graphics) 
+=======
+    public void render(Graphics2D graphics) {
+    }
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/059969c5f7faecead3cb81b38f7bd055a9162b0b/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/controls/MoveControl.java/right.java
 
     @Override
     public void onEvent(EntityEvent entityEvent) {
