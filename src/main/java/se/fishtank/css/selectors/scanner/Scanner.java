@@ -1,4 +1,3 @@
-
 // line 1 "Scanner.java.rl"
 /**
  * Copyright (c) 2009-2014, Christer Sandberg
@@ -1681,13 +1680,13 @@ static final int Scanner_en_main = 1;
 
 // line 187 "Scanner.java.rl"
 
-
-    /**
-     * Scan the {@link #input}.
-     *
-     * @return A list of selector groups that contain a list of {@link Selector}s scanned.
-     * @throws ScannerException If the input is invalid.
-     */
+	
+	/**
+	 * Scan the {@link #input}.
+	 *
+	 * @return A list of selector groups that contain a list of {@link Selector}s scanned.
+	 * @throws ScannerException If the input is invalid.
+	 */
     public List<List<Selector>> scan() throws ScannerException {
         char[] data = input.toCharArray();
         int cs;
@@ -1719,95 +1718,95 @@ static final int Scanner_en_main = 1;
         
 // line 1721 "../java/se/fishtank/css/selectors/scanner/Scanner.java"
 	{
-	cs = Scanner_start;
-	top = 0;
-	}
+    cs = Scanner_start;
+    top = 0;
+    }
 
 // line 224 "Scanner.java.rl"
-        
+    	
 // line 1729 "../java/se/fishtank/css/selectors/scanner/Scanner.java"
 	{
-	int _klen;
-	int _trans = 0;
-	int _acts;
-	int _nacts;
-	int _keys;
-	int _goto_targ = 0;
+    int _klen;
+    int _trans = 0;
+    int _acts;
+    int _nacts;
+    int _keys;
+    int _goto_targ = 0;
 
-	_goto: while (true) {
-	switch ( _goto_targ ) {
-	case 0:
-	if ( p == pe ) {
-		_goto_targ = 4;
-		continue _goto;
-	}
-	if ( cs == 0 ) {
-		_goto_targ = 5;
-		continue _goto;
-	}
+    _goto: while (true) {
+    switch ( _goto_targ ) {
+    case 0:
+    if ( p == pe ) {
+    	_goto_targ = 4;
+    	continue _goto;
+    }
+    if ( cs == 0 ) {
+    	_goto_targ = 5;
+    	continue _goto;
+    }
 case 1:
-	_match: do {
-	_keys = _Scanner_key_offsets[cs];
-	_trans = _Scanner_index_offsets[cs];
-	_klen = _Scanner_single_lengths[cs];
-	if ( _klen > 0 ) {
-		int _lower = _keys;
-		int _mid;
-		int _upper = _keys + _klen - 1;
-		while (true) {
-			if ( _upper < _lower )
-				break;
+    	_match: do {
+    	_keys = _Scanner_key_offsets[cs];
+    	_trans = _Scanner_index_offsets[cs];
+    	_klen = _Scanner_single_lengths[cs];
+    	if ( _klen > 0 ) {
+    		int _lower = _keys;
+    		int _mid;
+    		int _upper = _keys + _klen - 1;
+    		while (true) {
+    			if ( _upper < _lower )
+    				break;
 
-			_mid = _lower + ((_upper-_lower) >> 1);
-			if ( data[p] < _Scanner_trans_keys[_mid] )
-				_upper = _mid - 1;
-			else if ( data[p] > _Scanner_trans_keys[_mid] )
-				_lower = _mid + 1;
-			else {
-				_trans += (_mid - _keys);
-				break _match;
-			}
-		}
-		_keys += _klen;
-		_trans += _klen;
-	}
+    			_mid = _lower + ((_upper-_lower) >> 1);
+    			if ( data[p] < _Scanner_trans_keys[_mid] )
+    				_upper = _mid - 1;
+    			else if ( data[p] > _Scanner_trans_keys[_mid] )
+    				_lower = _mid + 1;
+    			else {
+    				_trans += (_mid - _keys);
+    				break _match;
+    			}
+    		}
+    		_keys += _klen;
+    		_trans += _klen;
+    	}
 
-	_klen = _Scanner_range_lengths[cs];
-	if ( _klen > 0 ) {
-		int _lower = _keys;
-		int _mid;
-		int _upper = _keys + (_klen<<1) - 2;
-		while (true) {
-			if ( _upper < _lower )
-				break;
+    	_klen = _Scanner_range_lengths[cs];
+    	if ( _klen > 0 ) {
+    		int _lower = _keys;
+    		int _mid;
+    		int _upper = _keys + (_klen<<1) - 2;
+    		while (true) {
+    			if ( _upper < _lower )
+    				break;
 
-			_mid = _lower + (((_upper-_lower) >> 1) & ~1);
-			if ( data[p] < _Scanner_trans_keys[_mid] )
-				_upper = _mid - 2;
-			else if ( data[p] > _Scanner_trans_keys[_mid+1] )
-				_lower = _mid + 2;
-			else {
-				_trans += ((_mid - _keys)>>1);
-				break _match;
-			}
-		}
-		_trans += _klen;
-	}
-	} while (false);
-
-	_trans = _Scanner_indicies[_trans];
-	cs = _Scanner_trans_targs[_trans];
-
-	if ( _Scanner_trans_actions[_trans] != 0 ) {
-		_acts = _Scanner_trans_actions[_trans];
-		_nacts = (int) _Scanner_actions[_acts++];
-		while ( _nacts-- > 0 )
+    			_mid = _lower + (((_upper-_lower) >> 1) & ~1);
+    			if ( data[p] < _Scanner_trans_keys[_mid] )
+    				_upper = _mid - 2;
+    			else if ( data[p] > _Scanner_trans_keys[_mid+1] )
+    				_lower = _mid + 2;
+    			else {
+    				_trans += ((_mid - _keys)>>1);
+    				break _match;
+    			}
+    		}
+    		_trans += _klen;
+    	}
+    	} while (false);
+    
+    	_trans = _Scanner_indicies[_trans];
+    	cs = _Scanner_trans_targs[_trans];
+    
+    	if ( _Scanner_trans_actions[_trans] != 0 ) {
+    		_acts = _Scanner_trans_actions[_trans];
+    		_nacts = (int) _Scanner_actions[_acts++];
+    		while ( _nacts-- > 0 )
 	{
-			switch ( _Scanner_actions[_acts++] )
-			{
+    				switch ( _Scanner_actions[_acts++] )
+    				{
 	case 0:
 // line 48 "Scanner.java.rl"
-	{
+    				{
         AttributeSpecifier specifier;
         if (attributeValue != null) {
             specifier = new AttributeSpecifier(attributeName, attributeValue, attributeMatch);
@@ -1817,16 +1816,16 @@ case 1:
 
         specifiers.add(specifier);
     }
-	break;
+    				break;
 	case 1:
 // line 59 "Scanner.java.rl"
-	{
+    				{
         attributeName = getSlice(mark, p);
     }
-	break;
+    				break;
 	case 2:
 // line 63 "Scanner.java.rl"
-	{
+    				{
         String m = getSlice(mark, p);
         if ("=".equals(m)) {
             attributeMatch = AttributeSpecifier.Match.EXACT;
@@ -1842,10 +1841,10 @@ case 1:
             attributeMatch = AttributeSpecifier.Match.CONTAINS;
         }
     }
-	break;
+    				break;
 	case 3:
 // line 80 "Scanner.java.rl"
-	{
+    				{
         String value = getSlice(mark, p);
         if (value.charAt(0) == '"' || value.charAt(0) == '\'') {
             value = value.substring(1, value.length() - 1);
@@ -1853,17 +1852,17 @@ case 1:
 
         attributeValue = value;
     }
-	break;
+    				break;
 	case 4:
 // line 89 "Scanner.java.rl"
-	{
-        specifiers.add(new AttributeSpecifier("class",
-            getSlice(mark, p), AttributeSpecifier.Match.LIST));
-    }
-	break;
+    				{
+    				    specifiers.add(new AttributeSpecifier("class",
+    				        getSlice(mark, p), AttributeSpecifier.Match.LIST));
+    				}
+    				break;
 	case 5:
 // line 94 "Scanner.java.rl"
-	{
+    				{
         switch (data[p]) {
         case ' ':
             combinator = Selector.Combinator.DESCENDANT;
@@ -1879,206 +1878,206 @@ case 1:
             break;
         }
     }
-	break;
+    				break;
 	case 6:
 // line 111 "Scanner.java.rl"
-	{
+    				{
         parts = new LinkedList<Selector>();
     }
-	break;
+    				break;
 	case 7:
 // line 115 "Scanner.java.rl"
-	{
-        selectors.add(parts);
-    }
-	break;
+    				{
+    				    selectors.add(parts);
+    				}
+    				break;
 	case 8:
 // line 119 "Scanner.java.rl"
-	{
-        specifiers.add(new AttributeSpecifier("id",
-            getSlice(mark, p), AttributeSpecifier.Match.EXACT));
-    }
-	break;
+    				{
+    				    specifiers.add(new AttributeSpecifier("id",
+    				        getSlice(mark, p), AttributeSpecifier.Match.EXACT));
+    				}
+    				break;
 	case 9:
 // line 124 "Scanner.java.rl"
-	{
+    				{
         mark = p;
     }
-	break;
+    				break;
 	case 10:
 // line 128 "Scanner.java.rl"
-	{
+    				{
         isNegation = true;
     }
-	break;
+    				break;
 	case 11:
 // line 132 "Scanner.java.rl"
-	{
+    				{
         specifiers.add(new NegationSpecifier(negationSelector));
         isNegation = false;
     }
-	break;
+    				break;
 	case 12:
 // line 137 "Scanner.java.rl"
-	{
-        specifiers.add(new PseudoClassSpecifier(getSlice(mark, p)));
-    }
-	break;
+    				{
+        specifiers.add(new PseudoClassSpecifier(getSlice(mark, p)));	  
+    				}
+    				break;
 	case 13:
 // line 141 "Scanner.java.rl"
-	{
+    				{
         specifiers.add(new PseudoNthSpecifier(pseudoNthClass, getSlice(mark, p)));
     }
-	break;
+    				break;
 	case 14:
 // line 145 "Scanner.java.rl"
-	{
+    				{
         specifiers.add(new PseudoContainsSpecifier(getSlice(mark, p)));
     }
-	break;
+    				break;
 	case 15:
 // line 149 "Scanner.java.rl"
-	{
+    				{
         pseudoNthClass = getSlice(mark, p);
     }
-	break;
+    				break;
 	case 16:
 // line 153 "Scanner.java.rl"
-	{
-        Selector selector;
-        List<Specifier> list = specifiers.isEmpty() ? null : specifiers;
-        if (isNegation) {
-            negationSelector = new Selector(negationTagName, list);
-        } else {
-            selector = new Selector(tagName, combinator, list);
-        
-            parts.add(selector);
-            tagName = Selector.UNIVERSAL_TAG;
-            combinator = Selector.Combinator.DESCENDANT;
-        }
-
-        negationTagName = Selector.UNIVERSAL_TAG;
-        attributeName = null;
-        attributeValue = null;
-        attributeMatch = null;
-        pseudoNthClass = null;
-        specifiers = new LinkedList<Specifier>();
-    }
-	break;
+    				{
+    				    Selector selector;
+    				    List<Specifier> list = specifiers.isEmpty() ? null : specifiers;
+    				    if (isNegation) {
+    				        negationSelector = new Selector(negationTagName, list);
+    				    } else {
+    				        selector = new Selector(tagName, combinator, list);
+    				        
+    				        parts.add(selector);
+    				        tagName = Selector.UNIVERSAL_TAG;
+    				        combinator = Selector.Combinator.DESCENDANT;
+    				    }
+    				    
+    				    negationTagName = Selector.UNIVERSAL_TAG;
+    				    attributeName = null;
+    				    attributeValue = null;
+    				    attributeMatch = null;
+    				    pseudoNthClass = null;
+    				    specifiers = new LinkedList<Specifier>();
+    				}
+    				break;
 	case 17:
 // line 174 "Scanner.java.rl"
-	{
-        if (isNegation) {
-            negationTagName = getSlice(mark, p);
-        } else {
-            tagName = getSlice(mark, p);
-        }
-    }
-	break;
+    				{
+    				    if (isNegation) {
+    				        negationTagName = getSlice(mark, p);
+    				    } else {
+    				        tagName = getSlice(mark, p);
+    				    }
+    				}
+    				break;
 	case 18:
 // line 30 "ScannerCommon.rl"
-	{ {stack[top++] = cs; cs = 190; _goto_targ = 2; if (true) continue _goto;} }
-	break;
+    				{ {stack[top++] = cs; cs = 190; _goto_targ = 2; if (true) continue _goto;} }
+    				break;
 	case 19:
 // line 44 "ScannerCommon.rl"
-	{ {cs = stack[--top];_goto_targ = 2; if (true) continue _goto;} }
-	break;
+    				{ {cs = stack[--top];_goto_targ = 2; if (true) continue _goto;} }
+    				break;
 // line 1987 "../java/se/fishtank/css/selectors/scanner/Scanner.java"
-			}
-		}
-	}
+    				}
+    			}
+    	}
 
 case 2:
-	if ( cs == 0 ) {
-		_goto_targ = 5;
-		continue _goto;
-	}
-	if ( ++p != pe ) {
-		_goto_targ = 1;
-		continue _goto;
-	}
+    	if ( cs == 0 ) {
+    		_goto_targ = 5;
+    		continue _goto;
+    	}
+    	if ( ++p != pe ) {
+    		_goto_targ = 1;
+    		continue _goto;
+    	}
 case 4:
-	if ( p == eof )
-	{
-	int __acts = _Scanner_eof_actions[cs];
-	int __nacts = (int) _Scanner_actions[__acts++];
-	while ( __nacts-- > 0 ) {
-		switch ( _Scanner_actions[__acts++] ) {
-	case 4:
-// line 89 "Scanner.java.rl"
-	{
-        specifiers.add(new AttributeSpecifier("class",
-            getSlice(mark, p), AttributeSpecifier.Match.LIST));
-    }
-	break;
-	case 7:
-// line 115 "Scanner.java.rl"
-	{
-        selectors.add(parts);
-    }
-	break;
-	case 8:
-// line 119 "Scanner.java.rl"
-	{
-        specifiers.add(new AttributeSpecifier("id",
-            getSlice(mark, p), AttributeSpecifier.Match.EXACT));
-    }
-	break;
-	case 12:
-// line 137 "Scanner.java.rl"
-	{
-        specifiers.add(new PseudoClassSpecifier(getSlice(mark, p)));
-    }
-	break;
-	case 16:
-// line 153 "Scanner.java.rl"
-	{
-        Selector selector;
-        List<Specifier> list = specifiers.isEmpty() ? null : specifiers;
-        if (isNegation) {
-            negationSelector = new Selector(negationTagName, list);
-        } else {
-            selector = new Selector(tagName, combinator, list);
-        
-            parts.add(selector);
-            tagName = Selector.UNIVERSAL_TAG;
-            combinator = Selector.Combinator.DESCENDANT;
-        }
-
-        negationTagName = Selector.UNIVERSAL_TAG;
-        attributeName = null;
-        attributeValue = null;
-        attributeMatch = null;
-        pseudoNthClass = null;
-        specifiers = new LinkedList<Specifier>();
-    }
-	break;
-	case 17:
-// line 174 "Scanner.java.rl"
-	{
-        if (isNegation) {
-            negationTagName = getSlice(mark, p);
-        } else {
-            tagName = getSlice(mark, p);
-        }
-    }
-	break;
-// line 2067 "../java/se/fishtank/css/selectors/scanner/Scanner.java"
-		}
-	}
-	}
+    	if ( p == eof )
+    	{
+    	int __acts = _Scanner_eof_actions[cs];
+    	int __nacts = (int) _Scanner_actions[__acts++];
+    	while ( __nacts-- > 0 ) {
+    		switch ( _Scanner_actions[__acts++] ) {
+    	case 4:
+    // line 89 "Scanner.java.rl"
+    	{
+    	    specifiers.add(new AttributeSpecifier("class",
+    	        getSlice(mark, p), AttributeSpecifier.Match.LIST));
+    	}
+    	break;
+    	case 7:
+    // line 115 "Scanner.java.rl"
+    	{
+    	    selectors.add(parts);
+    	}
+    	break;
+    	case 8:
+    // line 119 "Scanner.java.rl"
+    	{
+    	    specifiers.add(new AttributeSpecifier("id",
+    	        getSlice(mark, p), AttributeSpecifier.Match.EXACT));
+    	}
+    	break;
+    	case 12:
+    // line 137 "Scanner.java.rl"
+    	{
+            specifiers.add(new PseudoClassSpecifier(getSlice(mark, p)));	  
+    	}
+    	break;
+    	case 16:
+    // line 153 "Scanner.java.rl"
+    	{
+    	    Selector selector;
+    	    List<Specifier> list = specifiers.isEmpty() ? null : specifiers;
+    	    if (isNegation) {
+    	        negationSelector = new Selector(negationTagName, list);
+    	    } else {
+    	        selector = new Selector(tagName, combinator, list);
+    	        
+    	        parts.add(selector);
+    	        tagName = Selector.UNIVERSAL_TAG;
+    	        combinator = Selector.Combinator.DESCENDANT;
+    	    }
+    	    
+    	    negationTagName = Selector.UNIVERSAL_TAG;
+    	    attributeName = null;
+    	    attributeValue = null;
+    	    attributeMatch = null;
+    	    pseudoNthClass = null;
+    	    specifiers = new LinkedList<Specifier>();
+    	}
+    	break;
+    	case 17:
+    // line 174 "Scanner.java.rl"
+    	{
+    	    if (isNegation) {
+    	        negationTagName = getSlice(mark, p);
+    	    } else {
+    	        tagName = getSlice(mark, p);
+    	    }
+    	}
+    	break;
+    // line 2067 "../java/se/fishtank/css/selectors/scanner/Scanner.java"
+    		}
+    	}
+    	}
 
 case 5:
-	}
-	break; }
-	}
+    }
+    break; }
+    }
 
 // line 225 "Scanner.java.rl"
-
-        if (cs < Scanner_first_final && p != pe) {
-            // TODO: Better error reporting ;)
-            throw new ScannerException("Bad input!");
-        }
+    	
+    	if (cs < Scanner_first_final && p != pe) {
+    	    // TODO: Better error reporting ;)
+    	    throw new ScannerException("Bad input!");
+    	}
 
         return selectors;
     }
