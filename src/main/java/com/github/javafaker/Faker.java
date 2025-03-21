@@ -181,8 +181,12 @@ public class Faker {
         this.animal = new Animal(this);
         this.backToTheFuture = new BackToTheFuture(this);
         this.princessBride = new PrincessBride(this);
+<<<<<<< /usr/src/app/output/dius/java-faker/c07275e4fbf98d920cb95f4382c9384338206539/src/main/java/com/github/javafaker/Faker.java/left.java
         this.buffy = new Buffy(this);
+||||||| /usr/src/app/output/dius/java-faker/c07275e4fbf98d920cb95f4382c9384338206539/src/main/java/com/github/javafaker/Faker.java/base.java
+=======
         this.relationships = new Relationships(this);
+>>>>>>> /usr/src/app/output/dius/java-faker/c07275e4fbf98d920cb95f4382c9384338206539/src/main/java/com/github/javafaker/Faker.java/right.java
     }
 
     /**
