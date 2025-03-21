@@ -8,8 +8,8 @@
 package com.github.koraktor.steamcondenser.steam.community;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
