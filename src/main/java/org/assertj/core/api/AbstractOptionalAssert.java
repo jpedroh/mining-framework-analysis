@@ -1,23 +1,9 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2015 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.error.OptionalShouldBeEmpty.shouldBeEmpty;
 import static org.assertj.core.error.OptionalShouldBePresent.shouldBePresent;
 import static org.assertj.core.error.OptionalShouldContain.shouldContain;
 import static org.assertj.core.error.OptionalShouldContain.shouldContainSame;
 import static org.assertj.core.error.OptionalShouldContainInstanceOf.shouldContainInstanceOf;
-
 import java.util.Optional;
 
 /**
@@ -27,9 +13,7 @@ import java.util.Optional;
  * @author Jean-Christophe Gay
  * @author Nicolai Parlog
  */
-public abstract class AbstractOptionalAssert<S extends AbstractOptionalAssert<S, T>, T> extends
-    AbstractAssert<S, Optional<T>> {
-
+public abstract class AbstractOptionalAssert<S extends AbstractOptionalAssert<S, T>, T extends java.lang.Object> extends AbstractAssert<S, Optional<T>> {
   protected AbstractOptionalAssert(Optional<T> actual, Class<?> selfType) {
     super(actual, selfType);
   }
@@ -53,7 +37,9 @@ public abstract class AbstractOptionalAssert<S extends AbstractOptionalAssert<S,
    */
   public S isPresent() {
     isNotNull();
-    if (!actual.isPresent()) throw failure(shouldBePresent(actual));
+    if (!actual.isPresent()) {
+      throw failure(shouldBePresent(actual));
+    }
     return myself;
   }
 
@@ -76,7 +62,9 @@ public abstract class AbstractOptionalAssert<S extends AbstractOptionalAssert<S,
    */
   public S isEmpty() {
     isNotNull();
-    if (actual.isPresent()) throw failure(shouldBeEmpty(actual));
+    if (actual.isPresent()) {
+      throw failure(shouldBeEmpty(actual));
+    }
     return myself;
   }
 
@@ -103,9 +91,15 @@ public abstract class AbstractOptionalAssert<S extends AbstractOptionalAssert<S,
    */
   public S contains(T expectedValue) {
     isNotNull();
-    if (expectedValue == null) throw new IllegalArgumentException("The expected value should not be <null>.");
-    if (!actual.isPresent()) throw failure(shouldContain(expectedValue));
-    if (!actual.get().equals(expectedValue)) throw failure(shouldContain(actual, expectedValue));
+    if (expectedValue == null) {
+      throw new IllegalArgumentException("The expected value should not be <null>.");
+    }
+    if (!actual.isPresent()) {
+      throw failure(shouldContain(expectedValue));
+    }
+    if (!actual.get().equals(expectedValue)) {
+      throw failure(shouldContain(actual, expectedValue));
+    }
     return myself;
   }
 
@@ -140,9 +134,15 @@ public abstract class AbstractOptionalAssert<S extends AbstractOptionalAssert<S,
    */
   public S containsSame(T expectedValue) {
     isNotNull();
-    if (expectedValue == null) throw new IllegalArgumentException("The expected value should not be <null>.");
-    if (!actual.isPresent()) throw failure(shouldContain(expectedValue));
-    if (actual.get() != expectedValue) throw failure(shouldContainSame(actual, expectedValue));
+    if (expectedValue == null) {
+      throw new IllegalArgumentException("The expected value should not be <null>.");
+    }
+    if (!actual.isPresent()) {
+      throw failure(shouldContain(expectedValue));
+    }
+    if (actual.get() != expectedValue) {
+      throw failure(shouldContainSame(actual, expectedValue));
+    }
     return myself;
   }
 
@@ -169,9 +169,12 @@ public abstract class AbstractOptionalAssert<S extends AbstractOptionalAssert<S,
    */
   public S containsInstanceOf(Class<?> clazz) {
     isNotNull();
-    if (!actual.isPresent()) throw failure(shouldBePresent(actual));
-    if (!clazz.isInstance(actual.get())) throw failure(shouldContainInstanceOf(actual, clazz));
+    if (!actual.isPresent()) {
+      throw failure(shouldBePresent(actual));
+    }
+    if (!clazz.isInstance(actual.get())) {
+      throw failure(shouldContainInstanceOf(actual, clazz));
+    }
     return myself;
   }
-
 }
