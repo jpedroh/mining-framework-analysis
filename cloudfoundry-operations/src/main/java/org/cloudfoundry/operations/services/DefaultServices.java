@@ -385,11 +385,13 @@ public final class DefaultServices implements Services {
                 Mono.just(ResourceUtils.getId(serviceInstance)),
                 getOptionalValidatedServicePlanId(cloudFoundryClient, request.getPlanName(), serviceInstance, organizationId)
             )))
-            .flatMap(function((cloudFoundryClient, serviceInstanceId, servicePlanId) -> Mono.zip(
-                Mono.just(cloudFoundryClient),
-                Mono.just(request.getCompletionTimeout()),
-                requestUpdateServiceInstance(cloudFoundryClient, request, serviceInstanceId, servicePlanId.orElse(null)))))
-            .flatMap(function(DefaultServices::waitForInstanceAction))
+            .flatMap(function((cloudFoundryClient, serviceInstanceId, servicePlanId) -> Mono
+                .when(
+                    Mono.just(cloudFoundryClient),
+                    Mono.just(request.getCompletionTimeout()),
+                    requestUpdateServiceInstance(cloudFoundryClient, request, serviceInstanceId, servicePlanId.orElse(null))))
+            )
+            .then(function(DefaultServices::waitForInstanceAction))
             .then()
             .transform(OperationsLogging.log("Update Service Instance"))
             .checkpoint();
