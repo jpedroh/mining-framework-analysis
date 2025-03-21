@@ -326,7 +326,13 @@ public class CCMBridge {
                 String[] contactPoints = new String[totalNodes];
                 for (int i = 0; i < totalNodes; i++)
                     contactPoints[i] = IP_PREFIX + (i+1);
+<<<<<<< /usr/src/app/output/datastax/java-driver/5c8faf0ec42af40df22319239d1bccf098648a77/driver-core/src/test/java/com/datastax/driver/core/CCMBridge.java/left.java
+                this.cluster = builder.addContactPoints(IP_PREFIX + '1').build();
+||||||| /usr/src/app/output/datastax/java-driver/5c8faf0ec42af40df22319239d1bccf098648a77/driver-core/src/test/java/com/datastax/driver/core/CCMBridge.java/base.java
+                this.cluster = builder.addContactPoints(IP_PREFIX + "1").build();
+=======
                 this.cluster = builder.addContactPoints(contactPoints).build();
+>>>>>>> /usr/src/app/output/datastax/java-driver/5c8faf0ec42af40df22319239d1bccf098648a77/driver-core/src/test/java/com/datastax/driver/core/CCMBridge.java/right.java
                 this.session = cluster.connect();
             } catch (NoHostAvailableException e) {
                 for (Map.Entry<InetAddress, Throwable> entry : e.getErrors().entrySet())
