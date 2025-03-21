@@ -1,5 +1,4 @@
 package com.monitorjbl.xlsx.sst;
-
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.RichTextString;
@@ -8,7 +7,6 @@ import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
-
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
@@ -20,8 +18,7 @@ import java.util.List;
 public class BufferedStringsTable extends SharedStringsTable implements AutoCloseable {
   private final FileBackedList list;
 
-  public static BufferedStringsTable getSharedStringsTable(File tmp, int cacheSize, OPCPackage pkg)
-      throws IOException {
+  public static BufferedStringsTable getSharedStringsTable(File tmp, int cacheSize, OPCPackage pkg) throws IOException {
     List<PackagePart> parts = pkg.getPartsByContentType(XSSFRelation.SHARED_STRINGS.getContentType());
     return parts.size() == 0 ? null : new BufferedStringsTable(parts.get(0), tmp, cacheSize);
   }
@@ -31,19 +28,16 @@ public class BufferedStringsTable extends SharedStringsTable implements AutoClos
     readFrom(part.getInputStream());
   }
 
-  @Override
-  public void readFrom(InputStream is) throws IOException {
+  @Override public void readFrom(InputStream is) throws IOException {
     try {
       XMLEventReader xmlEventReader = StaxHelper.newXMLInputFactory().createXMLEventReader(is);
-
-      while(xmlEventReader.hasNext()) {
+      while (xmlEventReader.hasNext()) {
         XMLEvent xmlEvent = xmlEventReader.nextEvent();
-
-        if(xmlEvent.isStartElement() && xmlEvent.asStartElement().getName().getLocalPart().equals("si")) {
+        if (xmlEvent.isStartElement() && xmlEvent.asStartElement().getName().getLocalPart().equals("si")) {
           list.add(parseCT_Rst(xmlEventReader));
         }
       }
-    } catch(XMLStreamException e) {
+    } catch (XMLStreamException e) {
       throw new IOException(e);
     }
   }
@@ -54,23 +48,22 @@ public class BufferedStringsTable extends SharedStringsTable implements AutoClos
    * type {@code CT_Rst}</a>.
    */
   private String parseCT_Rst(XMLEventReader xmlEventReader) throws XMLStreamException {
-    // Precondition: pointing to <si>;  Post condition: pointing to </si>
     StringBuilder buf = new StringBuilder();
     XMLEvent xmlEvent;
-    while((xmlEvent = xmlEventReader.nextTag()).isStartElement()) {
-      switch(xmlEvent.asStartElement().getName().getLocalPart()) {
-        case "t": // Text
-          buf.append(xmlEventReader.getElementText());
-          break;
-        case "r": // Rich Text Run
-          parseCT_RElt(xmlEventReader, buf);
-          break;
-        case "rPh": // Phonetic Run
-        case "phoneticPr": // Phonetic Properties
-          skipElement(xmlEventReader);
-          break;
+    while ((xmlEvent = xmlEventReader.nextTag()).isStartElement()) {
+      switch (xmlEvent.asStartElement().getName().getLocalPart()) {
+        case "t":
+        buf.append(xmlEventReader.getElementText());
+        break;
+        case "r":
+        parseCT_RElt(xmlEventReader, buf);
+        break;
+        case "rPh":
+        case "phoneticPr":
+        skipElement(xmlEventReader);
+        break;
         default:
-          throw new IllegalArgumentException(xmlEvent.asStartElement().getName().getLocalPart());
+        throw new IllegalArgumentException(xmlEvent.asStartElement().getName().getLocalPart());
       }
     }
     return buf.length() > 0 ? buf.toString() : null;
@@ -82,41 +75,48 @@ public class BufferedStringsTable extends SharedStringsTable implements AutoClos
    * type {@code CT_RElt}</a>.
    */
   private void parseCT_RElt(XMLEventReader xmlEventReader, StringBuilder buf) throws XMLStreamException {
-    // Precondition: pointing to <r>;  Post condition: pointing to </r>
     XMLEvent xmlEvent;
-    while((xmlEvent = xmlEventReader.nextTag()).isStartElement()) {
-      switch(xmlEvent.asStartElement().getName().getLocalPart()) {
-        case "t": // Text
-          buf.append(xmlEventReader.getElementText());
-          break;
-        case "rPr": // Run Properties
-          skipElement(xmlEventReader);
-          break;
+    while ((xmlEvent = xmlEventReader.nextTag()).isStartElement()) {
+      switch (xmlEvent.asStartElement().getName().getLocalPart()) {
+        case "t":
+        buf.append(xmlEventReader.getElementText());
+        break;
+        case "rPr":
+        skipElement(xmlEventReader);
+        break;
         default:
-          throw new IllegalArgumentException(xmlEvent.asStartElement().getName().getLocalPart());
+        throw new IllegalArgumentException(xmlEvent.asStartElement().getName().getLocalPart());
       }
     }
   }
 
   private void skipElement(XMLEventReader xmlEventReader) throws XMLStreamException {
-    // Precondition: pointing to start element;  Post condition: pointing to end element
-    while(xmlEventReader.nextTag().isStartElement()) {
-      skipElement(xmlEventReader); // recursively skip over child
+    while (xmlEventReader.nextTag().isStartElement()) {
+      skipElement(xmlEventReader);
     }
   }
 
-  @Override
-  public RichTextString getItemAt(int idx) {
+  @Override public RichTextString getItemAt(int idx) {
     return new XSSFRichTextString(list.getAt(idx));
   }
 
-  @Override
-  public CTRst getEntryAt(int idx) {
-    return ((XSSFRichTextString)getItemAt(idx)).getCTRst();
+  @Override public CTRst getEntryAt(int idx) {
+
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+    String result = list.getAt(idx);
+>>>>>>> /usr/src/app/output/monitorjbl/excel-streaming-reader/7c5cf8a3f6b0090293b32a9f83e3577fcc307931/src/main/java/com/monitorjbl/xlsx/sst/BufferedStringsTable.java/right.java
+
+    return 
+<<<<<<< /usr/src/app/output/monitorjbl/excel-streaming-reader/7c5cf8a3f6b0090293b32a9f83e3577fcc307931/src/main/java/com/monitorjbl/xlsx/sst/BufferedStringsTable.java/left.java
+    ((XSSFRichTextString) getItemAt(idx)).getCTRst()
+=======
+    result != null ? new CTRstImpl(result) : CTRstImpl.EMPTY
+>>>>>>> /usr/src/app/output/monitorjbl/excel-streaming-reader/7c5cf8a3f6b0090293b32a9f83e3577fcc307931/src/main/java/com/monitorjbl/xlsx/sst/BufferedStringsTable.java/right.java
+    ;
   }
 
-  @Override
-  public void close() throws IOException {
+  @Override public void close() throws IOException {
     super.close();
     list.close();
   }
