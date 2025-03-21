@@ -1,38 +1,10 @@
-/*
- The MIT License
-
- Copyright (c) 2004-2016 Paul R. Holser, Jr.
-
- Permission is hereby granted, free of charge, to any person obtaining
- a copy of this software and associated documentation files (the
- "Software"), to deal in the Software without restriction, including
- without limitation the rights to use, copy, modify, merge, publish,
- distribute, sublicense, and/or sell copies of the Software, and to
- permit persons to whom the Software is furnished to do so, subject to
- the following conditions:
-
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
 package joptsimple;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.StringTokenizer;
-
 import static java.util.Collections.*;
 import static java.util.Objects.*;
-
 import static joptsimple.internal.Reflection.*;
 import static joptsimple.internal.Strings.*;
 
@@ -55,30 +27,32 @@ import static joptsimple.internal.Strings.*;
  * @param <V> represents the type of the arguments this option accepts
  * @author <a href="mailto:pholser@alumni.rice.edu">Paul Holser</a>
  */
-public abstract class ArgumentAcceptingOptionSpec<V> extends AbstractOptionSpec<V> {
-    private static final char NIL_VALUE_SEPARATOR = '\u0000';
+public abstract class ArgumentAcceptingOptionSpec<V extends java.lang.Object> extends AbstractOptionSpec<V> {
+  private static final char NIL_VALUE_SEPARATOR = '\u0000';
 
-    private final boolean argumentRequired;
-    private final List<V> defaultValues = new ArrayList<>();
+  private final boolean argumentRequired;
 
-    private boolean optionRequired;
-    private ValueConverter<V> converter;
-    private String argumentDescription = "";
-    private String valueSeparator = String.valueOf( NIL_VALUE_SEPARATOR );
+  private final List<V> defaultValues = new ArrayList<>();
 
-    ArgumentAcceptingOptionSpec( String option, boolean argumentRequired ) {
-        super( option );
+  private boolean optionRequired;
 
-        this.argumentRequired = argumentRequired;
-    }
+  private ValueConverter<V> converter;
 
-    ArgumentAcceptingOptionSpec( List<String> options, boolean argumentRequired, String description ) {
-        super( options, description );
+  private String argumentDescription = "";
 
-        this.argumentRequired = argumentRequired;
-    }
+  private String valueSeparator = String.valueOf(NIL_VALUE_SEPARATOR);
 
-    /**
+  ArgumentAcceptingOptionSpec(String option, boolean argumentRequired) {
+    super(option);
+    this.argumentRequired = argumentRequired;
+  }
+
+  ArgumentAcceptingOptionSpec(List<String> options, boolean argumentRequired, String description) {
+    super(options, description);
+    this.argumentRequired = argumentRequired;
+  }
+
+  /**
      * <p>Specifies a type to which arguments of this spec's option are to be converted.</p>
      *
      * <p>JOpt Simple accepts types that have either:</p>
@@ -103,11 +77,11 @@ public abstract class ArgumentAcceptingOptionSpec<V> extends AbstractOptionSpec<
      * @throws NullPointerException if the type is {@code null}
      * @throws IllegalArgumentException if the type does not have the standard conversion methods
      */
-    public final <T> ArgumentAcceptingOptionSpec<T> ofType( Class<T> argumentType ) {
-        return withValuesConvertedBy( findConverter( argumentType ) );
-    }
+  public final <T extends java.lang.Object> ArgumentAcceptingOptionSpec<T> ofType(Class<T> argumentType) {
+    return withValuesConvertedBy(findConverter(argumentType));
+  }
 
-    /**
+  /**
      * <p>Specifies a converter to use to translate arguments of this spec's option into Java objects.  This is useful
      * when converting to types that do not have the requisite factory method or constructor for
      * {@link #ofType(Class)}.</p>
@@ -119,28 +93,27 @@ public abstract class ArgumentAcceptingOptionSpec<V> extends AbstractOptionSpec<
      * @return self, so that the caller can add clauses to the fluent interface sentence
      * @throws NullPointerException if the converter is {@code null}
      */
-    @SuppressWarnings( "unchecked" )
-    public final <T> ArgumentAcceptingOptionSpec<T> withValuesConvertedBy( ValueConverter<T> aConverter ) {
-        if ( aConverter == null )
-            throw new NullPointerException( "illegal null converter" );
-
-        converter = (ValueConverter<V>) aConverter;
-        return (ArgumentAcceptingOptionSpec<T>) this;
+  @SuppressWarnings(value = { "unchecked" }) public final <T extends java.lang.Object> ArgumentAcceptingOptionSpec<T> withValuesConvertedBy(ValueConverter<T> aConverter) {
+    if (aConverter == null) {
+      throw new NullPointerException("illegal null converter");
     }
+    converter = (ValueConverter<V>) aConverter;
+    return (ArgumentAcceptingOptionSpec<T>) this;
+  }
 
-    /**
+  /**
      * <p>Specifies a description for the argument of the option that this spec represents.  This description is used
      * when generating help information about the parser.</p>
      *
      * @param description describes the nature of the argument of this spec's option
      * @return self, so that the caller can add clauses to the fluent interface sentence
      */
-    public final ArgumentAcceptingOptionSpec<V> describedAs( String description ) {
-        argumentDescription = description;
-        return this;
-    }
+  public final ArgumentAcceptingOptionSpec<V> describedAs(String description) {
+    argumentDescription = description;
+    return this;
+  }
 
-    /**
+  /**
      * <p>Specifies a value separator for the argument of the option that this spec represents.  This allows a single
      * option argument to represent multiple values for the option.  For example:</p>
      *
@@ -161,15 +134,15 @@ public abstract class ArgumentAcceptingOptionSpec<V> extends AbstractOptionSpec<
      * @return self, so that the caller can add clauses to the fluent interface sentence
      * @throws IllegalArgumentException if the separator is Unicode U+0000
      */
-    public final ArgumentAcceptingOptionSpec<V> withValuesSeparatedBy( char separator ) {
-        if ( separator == NIL_VALUE_SEPARATOR )
-            throw new IllegalArgumentException( "cannot use U+0000 as separator" );
-
-        valueSeparator = String.valueOf( separator );
-        return this;
+  public final ArgumentAcceptingOptionSpec<V> withValuesSeparatedBy(char separator) {
+    if (separator == NIL_VALUE_SEPARATOR) {
+      throw new IllegalArgumentException("cannot use U+0000 as separator");
     }
+    valueSeparator = String.valueOf(separator);
+    return this;
+  }
 
-    /**
+  /**
      * <p>Specifies a value separator for the argument of the option that this spec represents.  This allows a single
      * option argument to represent multiple values for the option.  For example:</p>
      *
@@ -190,15 +163,15 @@ public abstract class ArgumentAcceptingOptionSpec<V> extends AbstractOptionSpec<
      * @return self, so that the caller can add clauses to the fluent interface sentence
      * @throws IllegalArgumentException if the separator contains Unicode U+0000
      */
-    public final ArgumentAcceptingOptionSpec<V> withValuesSeparatedBy( String separator ) {
-        if ( separator.indexOf( NIL_VALUE_SEPARATOR ) != -1 )
-            throw new IllegalArgumentException( "cannot use U+0000 in separator" );
-
-        valueSeparator = separator;
-        return this;
+  public final ArgumentAcceptingOptionSpec<V> withValuesSeparatedBy(String separator) {
+    if (separator.indexOf(NIL_VALUE_SEPARATOR) != -1) {
+      throw new IllegalArgumentException("cannot use U+0000 in separator");
     }
+    valueSeparator = separator;
+    return this;
+  }
 
-    /**
+  /**
      * Specifies a set of default values for the argument of the option that this spec represents.
      *
      * @param value the first in the set of default argument values for this spec's option
@@ -207,135 +180,121 @@ public abstract class ArgumentAcceptingOptionSpec<V> extends AbstractOptionSpec<
      * @throws NullPointerException if {@code value}, {@code values}, or any elements of {@code values} are
      * {@code null}
      */
-    @SafeVarargs
-    public final ArgumentAcceptingOptionSpec<V> defaultsTo( V value, V... values ) {
-        addDefaultValue( value );
-        defaultsTo( values );
+  @SafeVarargs public final ArgumentAcceptingOptionSpec<V> defaultsTo(V value, V... values) {
+    addDefaultValue(value);
+    defaultsTo(values);
+    return this;
+  }
 
-        return this;
-    }
-
-    /**
+  /**
      * Specifies a set of default values for the argument of the option that this spec represents.
      *
      * @param values the set of default argument values for this spec's option
      * @return self, so that the caller can add clauses to the fluent interface sentence
      * @throws NullPointerException if {@code values} or any elements of {@code values} are {@code null}
      */
-    public ArgumentAcceptingOptionSpec<V> defaultsTo( V[] values ) {
-        for ( V each : values )
-            addDefaultValue( each );
-
-        return this;
+  public ArgumentAcceptingOptionSpec<V> defaultsTo(V[] values) {
+    for (V each : values) {
+      addDefaultValue(each);
     }
+    return this;
+  }
 
-    /**
+  /**
      * Marks this option as required. An {@link OptionException} will be thrown when
      * {@link OptionParser#parse(java.lang.String...)} is called, if an option is marked as required and not specified
      * on the command line.
      *
      * @return self, so that the caller can add clauses to the fluent interface sentence
      */
-    public ArgumentAcceptingOptionSpec<V> required() {
-        optionRequired = true;
-        return this;
+  public ArgumentAcceptingOptionSpec<V> required() {
+    optionRequired = true;
+    return this;
+  }
+
+  @Override public boolean isRequired() {
+    return optionRequired;
+  }
+
+  private void addDefaultValue(V value) {
+    requireNonNull(value);
+    defaultValues.add(value);
+  }
+
+  @Override final void handleOption(OptionParser parser, ArgumentList arguments, OptionSet detectedOptions, String detectedArgument) {
+    if (detectedArgument == null) {
+      detectOptionArgument(parser, arguments, detectedOptions);
+    } else {
+      addArguments(detectedOptions, detectedArgument);
     }
+  }
 
-    @Override
-    public boolean isRequired() {
-        return optionRequired;
+  protected void addArguments(OptionSet detectedOptions, String detectedArgument) {
+    StringTokenizer lexer = new StringTokenizer(detectedArgument, valueSeparator);
+    if (!lexer.hasMoreTokens()) {
+      detectedOptions.addWithArgument(this, detectedArgument);
+    } else {
+      while (lexer.hasMoreTokens()) {
+        detectedOptions.addWithArgument(this, lexer.nextToken());
+      }
     }
+  }
 
-    private void addDefaultValue( V value ) {
-        requireNonNull( value );
-        defaultValues.add( value );
+  protected abstract void detectOptionArgument(OptionParser parser, ArgumentList arguments, OptionSet detectedOptions);
+
+  @Override protected final V convert(String argument) {
+    return convertWith(converter, argument);
+  }
+
+  protected boolean canConvertArgument(String argument) {
+    StringTokenizer lexer = new StringTokenizer(argument, valueSeparator);
+    try {
+      while (lexer.hasMoreTokens()) {
+        convert(lexer.nextToken());
+      }
+      return true;
+    } catch (OptionException ignored) {
+      return false;
     }
+  }
 
-    @Override
-    final void handleOption( OptionParser parser, ArgumentList arguments, OptionSet detectedOptions,
-        String detectedArgument ) {
+  protected boolean isArgumentOfNumberType() {
+    return converter != null && Number.class.isAssignableFrom(converter.valueType());
+  }
 
-        if ( detectedArgument == null )
-            detectOptionArgument( parser, arguments, detectedOptions );
-        else
-            addArguments( detectedOptions, detectedArgument );
+  @Override public boolean acceptsArguments() {
+    return true;
+  }
+
+  @Override public boolean requiresArgument() {
+    return argumentRequired;
+  }
+
+  @Override public String argumentDescription() {
+    return argumentDescription;
+  }
+
+  @Override public String argumentTypeIndicator() {
+    return argumentTypeIndicatorFrom(converter);
+  }
+
+  @Override public List<V> defaultValues() {
+    return unmodifiableList(defaultValues);
+  }
+
+  @Override public Optional<ValueConverter<?>> argumentConverter() {
+    return Optional.ofNullable(converter);
+  }
+
+  @Override public boolean equals(Object that) {
+    if (!super.equals(that)) {
+      return false;
     }
+    ArgumentAcceptingOptionSpec<?> other = (ArgumentAcceptingOptionSpec<?>) that;
+    return requiresArgument() == other.requiresArgument();
+  }
 
-    protected void addArguments( OptionSet detectedOptions, String detectedArgument ) {
-        StringTokenizer lexer = new StringTokenizer( detectedArgument, valueSeparator );
-        if ( !lexer.hasMoreTokens() )
-            detectedOptions.addWithArgument( this, detectedArgument );
-        else {
-            while ( lexer.hasMoreTokens() )
-                detectedOptions.addWithArgument( this, lexer.nextToken() );
-        }
-    }
-
-    protected abstract void detectOptionArgument( OptionParser parser, ArgumentList arguments,
-        OptionSet detectedOptions );
-
-    @Override
-    protected final V convert( String argument ) {
-        return convertWith( converter, argument );
-    }
-
-    protected boolean canConvertArgument( String argument ) {
-        StringTokenizer lexer = new StringTokenizer( argument, valueSeparator );
-
-        try {
-            while ( lexer.hasMoreTokens() )
-                convert( lexer.nextToken() );
-            return true;
-        } catch ( OptionException ignored ) {
-            return false;
-        }
-    }
-
-    protected boolean isArgumentOfNumberType() {
-        return converter != null && Number.class.isAssignableFrom( converter.valueType() );
-    }
-
-    @Override
-    public boolean acceptsArguments() {
-        return true;
-    }
-
-    @Override
-    public boolean requiresArgument() {
-        return argumentRequired;
-    }
-
-    @Override
-    public String argumentDescription() {
-        return argumentDescription;
-    }
-
-    @Override
-    public String argumentTypeIndicator() {
-        return argumentTypeIndicatorFrom( converter );
-    }
-
-    @Override
-    public List<V> defaultValues() {
-        return unmodifiableList( defaultValues );
-    }
-
-    @Override
-    public Optional<ValueConverter<?>> argumentConverter() {
-        return Optional.ofNullable( converter );
-    }
-
-    @Override
-    public boolean equals( Object that ) {
-        if ( !super.equals( that ) )
-            return false;
-
-        ArgumentAcceptingOptionSpec<?> other = (ArgumentAcceptingOptionSpec<?>) that;
-        return requiresArgument() == other.requiresArgument();
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode() ^ ( argumentRequired ? 0 : 1 );
-    }
+  @Override public int hashCode() {
+    return super.hashCode() ^ (argumentRequired ? 0 : 1);
+  }
 }
