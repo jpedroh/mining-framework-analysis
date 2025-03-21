@@ -53,6 +53,115 @@ public class Assertions extends Java6Assertions {
   }
 
   /**
+   * Creates a new instance of <code>{@link FloatAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link FloatAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link IntegerAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link IntegerAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link LongAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link LongAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link ShortAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Creates a new instance of <code>{@link ShortAssert}</code>.
+   *
+   * @param actual the actual value.
+   * @return the created assertion object.
+   */
+  /**
+   * Allows to capture and then assert on a {@link Throwable} more easily when used with Java 8 lambdas.
+   * 
+   * <p>
+   * Java 8 example :
+   * <pre><code class='java'>  {@literal @}Test
+   *  public void testException() {
+   *    assertThatThrownBy(() -> { throw new Exception("boom!") }).isInstanceOf(Exception.class)
+   *                                                              .hasMessageContaining("boom");
+   *  }</code></pre>
+   * 
+   * <p>
+   * Java 7 example :
+   * <pre><code class='java'> assertThatThrownBy(new ThrowingCallable() {
+   * 
+   *   {@literal @}Override
+   *   public void call() throws Exception {
+   *     throw new Exception("boom!");
+   *   }
+   *   
+   * }).isInstanceOf(Exception.class)
+   *   .hasMessageContaining("boom");</code></pre>
+   * 
+   * If the provided {@link ThrowingCallable} does not raise an exception, an error is immediately raised, 
+   * in that case the test description provided with {@link AbstractAssert#as(String, Object...) as(String, Object...)} is not honored. 
+   * To use a test description, use {@link #catchThrowable(ThrowingCallable) catchThrowable} as shown below.  
+   * <pre><code class='java'> // assertion will fail but "display me" won't appear in the error 
+   * assertThatThrownBy(() -> { // do nothing }).as("display me").isInstanceOf(Exception.class);
+   * 
+   * // assertion will fail AND "display me" will appear in the error
+   * Throwable thrown = catchThrowable(() -> { // do nothing });
+   * assertThat(thrown).as("display me").isInstanceOf(Exception.class); </code></pre>
+   *
+   * @param shouldRaiseThrowable The {@link ThrowingCallable} or lambda with the code that should raise the throwable.
+   * @return The captured exception or <code>null</code> if none was raised by the callable.
+   */
+  // -------------------------------------------------------------------------------------------------
+  // fail methods : not assertions but here to have a single entry point to all AssertJ features.
+  // -------------------------------------------------------------------------------------------------
+  // ------------------------------------------------------------------------------------------------------
+  // properties methods : not assertions but here to have a single entry point to all AssertJ features.
+  // ------------------------------------------------------------------------------------------------------
+  // ------------------------------------------------------------------------------------------------------
+  // Data utility methods : not assertions but here to have a single entry point to all AssertJ features.
+  // ------------------------------------------------------------------------------------------------------
+  // ------------------------------------------------------------------------------------------------------
+  // Condition methods : not assertions but here to have a single entry point to all AssertJ features.
+  // ------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------------------------
+  // Filter methods : not assertions but here to have a single entry point to all AssertJ features.
+  // --------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------------------------
+  // File methods : not assertions but here to have a single entry point to all AssertJ features.
+  // --------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------------------------
+  // URL/Resource methods : not assertions but here to have a single entry point to all AssertJ features.
+  // --------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------------------------
+  // Date formatting methods : not assertions but here to have a single entry point to all AssertJ features.
+  // --------------------------------------------------------------------------------------------------
+
+  /**
    * Creates a new </code>{@link Assertions}</code>.
    */
   protected Assertions() {}
