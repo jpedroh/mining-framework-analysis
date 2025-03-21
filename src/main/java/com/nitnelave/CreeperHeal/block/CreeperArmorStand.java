@@ -18,14 +18,20 @@ import java.util.Arrays;
 public class CreeperArmorStand implements Replaceable
 {
     private final ArmorStand stand;
+<<<<<<< /usr/src/app/output/nitnelave/creeperheal/bec4cb33c4fdb28d6ec8d49ce51adfa1fa094b50/src/main/java/com/nitnelave/CreeperHeal/block/CreeperArmorStand.java/left.java
+    private final ItemStack[] contents = new ArrayList<>();
+||||||| /usr/src/app/output/nitnelave/creeperheal/bec4cb33c4fdb28d6ec8d49ce51adfa1fa094b50/src/main/java/com/nitnelave/CreeperHeal/block/CreeperArmorStand.java/base.java
+    private final ItemStack[] contents = new ArrayList<ItemStack>();
+=======
     private final ItemStack[] contents;
+>>>>>>> /usr/src/app/output/nitnelave/creeperheal/bec4cb33c4fdb28d6ec8d49ce51adfa1fa094b50/src/main/java/com/nitnelave/CreeperHeal/block/CreeperArmorStand.java/right.java
     private boolean wasRemoved = false;
 
     public CreeperArmorStand(ArmorStand stand)
     {
         this.stand = stand;
         this.contents = new ItemStack[]
-                {
+                { 
                         stand.getHelmet(), stand.getChestplate(), stand.getLeggings(), stand.getBoots(),
                         stand.getItemInHand()
                 };
