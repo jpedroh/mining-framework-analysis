@@ -1,5 +1,4 @@
 package edu.mit.blocks.workspace;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
@@ -13,17 +12,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.BoundedRangeModel;
 import javax.swing.JComponent;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import edu.mit.blocks.codeblockutil.CGraphite;
 import edu.mit.blocks.codeblockutil.CHoverScrollPane;
 import edu.mit.blocks.codeblockutil.CScrollPane;
@@ -46,206 +42,193 @@ import edu.mit.blocks.renderable.RenderableBlock;
  * when its viewable JComponent becomes visible).
  */
 public class BlockCanvas implements PageChangeListener, ISupportMemento {
+  /** serial version ID */
+  private static final long serialVersionUID = 7458721329L;
 
-    /** serial version ID */
-    private static final long serialVersionUID = 7458721329L;
-    /** the collection of pages that this BlockCanvas stores */
-    private List<Page> pages = new ArrayList<Page>();
-    /** the collection of PageDivideres that this BlockCanvas stores */
-    private List<PageDivider> dividers = new ArrayList<PageDivider>();
-    /** The Swing representation of the page container */
-    private JComponent canvas;
-    /** The scrollable JComponent representing the graphical part of this BlockCanvas */
-    private CScrollPane scrollPane;
-    /** The workspace in use */
-    private final Workspace workspace;
-    
-    private boolean collapsible = false;
+  /** the collection of pages that this BlockCanvas stores */
+  private List<Page> pages = new ArrayList<Page>();
 
-    //////////////////////////////
-    //Constructor/Destructor	//
-    //////////////////////////////
-    /**
+  /** the collection of PageDivideres that this BlockCanvas stores */
+  private List<PageDivider> dividers = new ArrayList<PageDivider>();
+
+  /** The Swing representation of the page container */
+  private JComponent canvas;
+
+  /** The scrollable JComponent representing the graphical part of this BlockCanvas */
+  private CScrollPane scrollPane;
+
+  /** The workspace in use */
+  private final Workspace workspace;
+
+  private boolean collapsible = false;
+
+  /**
      * Constructs BlockCanvas and subscribes
      * this BlockCanvas to PageChange events
      */
-    public BlockCanvas(Workspace workspace) {
-        this.workspace = workspace;
-        this.canvas = new Canvas();
-        this.scrollPane = new CHoverScrollPane(canvas,
-                ScrollPolicy.VERTICAL_BAR_ALWAYS,
-                ScrollPolicy.HORIZONTAL_BAR_ALWAYS,
-                18, CGraphite.blue, null);
-        scrollPane.setScrollingUnit(5);
-        canvas.setLayout(null);
-        canvas.setBackground(Color.gray);
-        canvas.setOpaque(true);
-        PageChangeEventManager.addPageChangeListener(this);
-    }
+  public BlockCanvas(Workspace workspace) {
+    this.workspace = workspace;
+    this.canvas = new Canvas();
+    this.scrollPane = new CHoverScrollPane(canvas, ScrollPolicy.VERTICAL_BAR_ALWAYS, ScrollPolicy.HORIZONTAL_BAR_ALWAYS, 18, CGraphite.blue, null);
+    scrollPane.setScrollingUnit(5);
+    canvas.setLayout(null);
+    canvas.setBackground(Color.gray);
+    canvas.setOpaque(true);
+    PageChangeEventManager.addPageChangeListener(this);
+  }
 
-    /**
+  /**
      * @effects resets BlockCanvas by removing all pages, dividers, and blocks.
      */
-    public void reset() {
-        pages.clear();
-        canvas.removeAll();
-        dividers.clear();
-        scrollPane.revalidate();
-    }
+  public void reset() {
+    pages.clear();
+    canvas.removeAll();
+    dividers.clear();
+    scrollPane.revalidate();
+  }
 
-    //////////////////////////////
-    //Rendering View Accessor	//
-    //////////////////////////////
-    /** @return X Coordinate of BlockCanvas graphical representation */
-    public int getX() {
-        return scrollPane.getX();
-    }
+  /** @returns X Coordinate of BlockCanvas graphical representation */
+  public int getX() {
+    return scrollPane.getX();
+  }
 
-    /** @return Y coordinate of BlockCanvas graphical representation */
-    public int getY() {
-        return scrollPane.getY();
-    }
+  /** @returns Y coordinate of BlockCanvas graphical representation */
+  public int getY() {
+    return scrollPane.getY();
+  }
 
-    /** @return width of BlockCanvas graphical representation */
-    public int getWidth() {
-        return scrollPane.getWidth();
-    }
+  /** @returns width of BlockCanvas graphical representation */
+  public int getWidth() {
+    return scrollPane.getWidth();
+  }
 
-    /** @return height of BlockCanvas graphical representation */
-    public int getHeight() {
-        return scrollPane.getHeight();
-    }
+  /** @returns height of BlockCanvas graphical representation */
+  public int getHeight() {
+    return scrollPane.getHeight();
+  }
 
-    /** @return vertical scroll bar bounding range model.  MAY BE NULL */
-    public BoundedRangeModel getVerticalModel() {
-        return scrollPane.getVerticalModel();
-    }
+  /** @returns vertical scroll bar bounding range model.  MAY BE NULL */
+  public BoundedRangeModel getVerticalModel() {
+    return scrollPane.getVerticalModel();
+  }
 
-    /** @return horizontal scroll bar bounding range model.  MAY BE NULL */
-    public BoundedRangeModel getHorizontalModel() {
-        return scrollPane.getHorizontalModel();
-    }
+  /** @returns horizontal scroll bar bounding range model.  MAY BE NULL */
+  public BoundedRangeModel getHorizontalModel() {
+    return scrollPane.getHorizontalModel();
+  }
 
-    /**
-     * @return the Swing Container that holds all the graphical panels of
+  /**
+     * @returns the Swing Container that holds all the graphical panels of
      * 			all the pages in this Blockcanvas
      */
-    public JComponent getCanvas() {
-        return this.canvas;
-    }
+  public JComponent getCanvas() {
+    return this.canvas;
+  }
 
-    /**
-     * Warning: Please take special care in useing this method, as it exposes
+  /**
+     * @returns JComponent representation of this
+     * @warning Please take special care in useing this method, as it exposes
      * 			implementation details.
-     * @return JComponent representation of this
      */
-    public JComponent getJComponent() {
-        return scrollPane;
-    }
+  public JComponent getJComponent() {
+    return scrollPane;
+  }
 
-    /** @return string representation of this */
-    public String toString() {
-        return "BlockCanvas " + pages.size() + " pages.";
-    }
+  /** @returns string representation of this */
+  public String toString() {
+    return "BlockCanvas " + pages.size() + " pages.";
+  }
 
-    public List<Page> getLeftmostPages(int left) {
-        List<Page> leftmostPages = new ArrayList<Page>();
-        int scrollPosition = this.scrollPane.getHorizontalModel().getValue();
-        int pagePosition = 0;
-        for (Page p : this.pages) {
-            pagePosition += p.getJComponent().getWidth();
-            if (pagePosition >= scrollPosition) {
-                if (pagePosition - p.getJComponent().getWidth() - scrollPosition <= left - 10) {
-                    leftmostPages.add(p);
-                }
-            }
+  public List<Page> getLeftmostPages(int left) {
+    List<Page> leftmostPages = new ArrayList<Page>();
+    int scrollPosition = this.scrollPane.getHorizontalModel().getValue();
+    int pagePosition = 0;
+    for (Page p : this.pages) {
+      pagePosition += p.getJComponent().getWidth();
+      if (pagePosition >= scrollPosition) {
+        if (pagePosition - p.getJComponent().getWidth() - scrollPosition <= left - 10) {
+          leftmostPages.add(p);
         }
-        return leftmostPages;
+      }
     }
+    return leftmostPages;
+  }
 
-    //////////////////////////////
-    //Block Mutators/Accessors	//
-    //////////////////////////////
-    /**
+  /**
      * @return the RendearbleBlocks that are contained within this widget
      * 			or an empty Iterable if no blocks exists
      */
-    public Iterable<RenderableBlock> getBlocks() {
-        ArrayList<RenderableBlock> allPageBlocks = new ArrayList<RenderableBlock>();
-        for (Page p : pages) {
-            allPageBlocks.addAll(p.getBlocks());
-        }
-        return allPageBlocks;
+  public Iterable<RenderableBlock> getBlocks() {
+    ArrayList<RenderableBlock> allPageBlocks = new ArrayList<RenderableBlock>();
+    for (Page p : pages) {
+      allPageBlocks.addAll(p.getBlocks());
     }
+    return allPageBlocks;
+  }
 
-    /**
+  /**
      * @effects Automatically arranges all the blocks within this.
      */
-    public void arrangeAllBlocks() {
-        for (Page page : pages) {
-            page.reformBlockOrdering();
-        }
+  public void arrangeAllBlocks() {
+    for (Page page : pages) {
+      page.reformBlockOrdering();
     }
+  }
 
-    /**
+  /**
      * @return a collection of top level blocks within this page (blocks with no
      * 			parents that and are the first block of each stack) or an empty
      * 			collection if no blocks are found on this page.
      */
-    public Iterable<RenderableBlock> getTopLevelBlocks() {
-        return null;
-    }
+  public Iterable<RenderableBlock> getTopLevelBlocks() {
+    return null;
+  }
 
-    /**
+  /**
      * @param block - the RenderableBlock to make sure is shown in the viewport
      * @requires block ! null
      * @modifies the vertical and horizontal scrollbal boundedRangeModel
      * @effects This method causes the workspace to scroll if needed
      * 			to complete show the given RenderableBlock.
      */
-    public void scrollToShowBlock(RenderableBlock block) {
-        //not yet implemented
-    }
+  public void scrollToShowBlock(RenderableBlock block) {
+  }
 
-    public void scrollToComponent(JComponent c) {
-        //not yet implemented
-    }
+  public void scrollToComponent(JComponent c) {
+  }
 
-    //////////////////////////////
-    //Page Mutators/Accessors	//
-    //////////////////////////////
-    /**
-     * @return the number of Pages.
+  /**
+     * @returns the number of Pages.
      */
-    public int numOfPages() {
-        return pages.size();
-    }
+  public int numOfPages() {
+    return pages.size();
+  }
 
-    /**
+  /**
      * @param position - 0 is the left most position
      * 
      * @requires none
      * @return true if there exists a page at the specified position
      */
-    public boolean hasPageAt(int position) {
-        return (position >= 0 && position < pages.size());
-    }
+  public boolean hasPageAt(int position) {
+    return (position >= 0 && position < pages.size());
+  }
 
-    /**
+  /**
      * @param position - 0 is the left most position
      * 
      * @requires none
      * @return page at position or null if non exists at position
      */
-    protected Page getPageAt(int position) {
-        if (hasPageAt(position)) {
-            return pages.get(position);
-        } else {
-            return null;
-        }
+  protected Page getPageAt(int position) {
+    if (hasPageAt(position)) {
+      return pages.get(position);
+    } else {
+      return null;
     }
+  }
 
-    /**
+  /**
      * @param name - name of page
      * 
      * @requires none
@@ -253,34 +236,34 @@ public class BlockCanvas implements PageChangeListener, ISupportMemento {
      * 			one page has matching name, it returns the first) or null
      * 			if no matching name exists.
      */
-    public Page getPageNamed(String name) {
-        for (Page p : pages) {
-            if (p.getPageName().equals(name)) {
-                return p;
-            }
-        }
-        return null;
+  public Page getPageNamed(String name) {
+    for (Page p : pages) {
+      if (p.getPageName().equals(name)) {
+        return p;
+      }
     }
+    return null;
+  }
 
-    /**
+  /**
      * @return List of pages or an empty list if no pages exists
      */
-    public List<Page> getPages() {
-        return new ArrayList<Page>(pages);
-    }
+  public List<Page> getPages() {
+    return new ArrayList<Page>(pages);
+  }
 
-    /**
+  /**
      * @param page the page to add to the BlockCanvas
      * 
      * @requires page != null
      * @modifies this.pages
      * @effects Adds the given page to the rightmost side of the BlockCanvas
      */
-    public void addPage(Page page) {
-        this.addPage(page, pages.size());
-    }
+  public void addPage(Page page) {
+    this.addPage(page, pages.size());
+  }
 
-    /**
+  /**
      * @param page - page to be added
      * @param position - the index at which to add the page where 0 is rightmost
      * 
@@ -292,22 +275,24 @@ public class BlockCanvas implements PageChangeListener, ISupportMemento {
      * 			their current position).
      * @throws RuntimeException if (position < 0 || position > pages.size() || page == null) 
      */
-    public void addPage(Page page, int position) {
-        if (page == null) {
-            throw new RuntimeException("Invariant Violated: May not add null Pages");
-        } else if (position < 0 || position > pages.size()) {
-            System.out.println(position + ", " + pages.size());
-            throw new RuntimeException("Invariant Violated: Specified position out of bounds");
-        }
-        pages.add(position, page);
-        canvas.add(page.getJComponent(), 0);
-        PageDivider pd = new PageDivider(workspace, page);
-        dividers.add(pd);
-        canvas.add(pd, 0);
-        PageChangeEventManager.notifyListeners();
+  public void addPage(Page page, int position) {
+    if (page == null) {
+      throw new RuntimeException("Invariant Violated: May not add null Pages");
+    } else {
+      if (position < 0 || position > pages.size()) {
+        System.out.println(position + ", " + pages.size());
+        throw new RuntimeException("Invariant Violated: Specified position out of bounds");
+      }
     }
+    pages.add(position, page);
+    canvas.add(page.getJComponent(), 0);
+    PageDivider pd = new PageDivider(workspace, page);
+    dividers.add(pd);
+    canvas.add(pd, 0);
+    PageChangeEventManager.notifyListeners();
+  }
 
-    /**
+  /**
      * @param page - the page to be removed
      * 
      * @requires page != null
@@ -317,60 +302,55 @@ public class BlockCanvas implements PageChangeListener, ISupportMemento {
      * 			if more than one page equals the specified page, then remove
      * 			the first equal() instance.
      */
-    public Page removePage(Page page) {
-        if (page != null) {
-            // clear the blocks from the page and remove it internally
-            page.clearPage();
-            pages.remove(page);
-
-            // remove the pageDivider for this page too
-            for (PageDivider div : dividers) {
-                if (div.getLeftPage() == page) {
-                    dividers.remove(div);
-                    canvas.remove(div);
-                    break;
-                }
-            }
-
-            // remove the page from the canvas and revalidate so it looks okay
-            canvas.remove(page.getJComponent());
-            canvas.revalidate();
-            canvas.repaint();
-            PageChangeEventManager.notifyListeners();
+  public Page removePage(Page page) {
+    if (page != null) {
+      page.clearPage();
+      pages.remove(page);
+      for (PageDivider div : dividers) {
+        if (div.getLeftPage() == page) {
+          dividers.remove(div);
+          canvas.remove(div);
+          break;
         }
-        return page;
+      }
+      canvas.remove(page.getJComponent());
+      canvas.revalidate();
+      canvas.repaint();
+      PageChangeEventManager.notifyListeners();
     }
+    return page;
+  }
 
-    /**
+  /**
      * @param position - 0 is the left most page
      * 
      * @requires none
-     * @return the page that was removed or null if non was removed.
+     * @returns the page that was removed or null if non was removed.
      * @modifies this.pages
      * @effects If the position is within bounds, then remove
      * 			the page located at the specified position.
      * 			Do nothing if the position is out of bounds.
      */
-    public Page removePage(int position) {
-        if (this.hasPageAt(position)) {
-            return removePage(pages.get(position));
-        } else {
-            return null;
-        }
+  public Page removePage(int position) {
+    if (this.hasPageAt(position)) {
+      return removePage(pages.get(position));
+    } else {
+      return null;
     }
+  }
 
-    /**
+  /**
      * @param page the desired page to switch view to
      * 
-     * @requires page != null
+     * @requries page != null
      * @modifies the ghorizontal boundedrangemodel of this blockcanvas
      * @effects Switches the canvas view to the specified page.
      */
-    public void switchViewToPage(Page page) {
-        scrollPane.getHorizontalModel().setValue(page.getJComponent().getX());
-    }
+  public void switchViewToPage(Page page) {
+    scrollPane.getHorizontalModel().setValue(page.getJComponent().getX());
+  }
 
-    /**
+  /**
      * @param oldName - the original name of the page
      * @param newName - the String name to rename the page to
      * 
@@ -380,87 +360,74 @@ public class BlockCanvas implements PageChangeListener, ISupportMemento {
      * @modifies the page with the matching oldName
      * @effects Renames the page with the specified oldName to the newName.
      */
-    public Page renamePage(String oldName, String newName) {
-        for (Page page : pages) {
-            if (page.getPageName().equals(oldName)) {
-                page.setPageName(newName);
-                update();
-                return page;
-            }
-        }
-        return null;
+  public Page renamePage(String oldName, String newName) {
+    for (Page page : pages) {
+      if (page.getPageName().equals(oldName)) {
+        page.setPageName(newName);
+        update();
+        return page;
+      }
     }
+    return null;
+  }
 
-    ////////////////////////////////
-    //PageChangeListener Interface//
-    ////////////////////////////////
-    /** @overrides PageChangeListener.update() */
-    public void update() {
-        this.reformBlockCanvas(); // just repaint and it'll all look right again
-    }
+  /** @override PageChangeListener.update() */
+  public void update() {
+    this.reformBlockCanvas();
+  }
 
-    /**
+  /**
      * @modifies every page in this blockcanvas as well as the canvas
      * @effects resynchronize model and view, resize, reposition, and set color
      * 			of EVERY page in the BlockCanvas.  Then move very divider to
      * 			the far right side of it's corresponding page.  Note that
      * 			reforming must perform ALL FIVE ACTIONS when invoked.
      */
-    public void reformBlockCanvas() {
-        int widthCounter = 0;
-        for (int i = 0; i < pages.size(); i++) {
-            Page p = pages.get(i);
-            if (p.getDefaultPageColor() == null) {
-                if (i % 2 == 1) {
-                    p.setPageColor(new Color(30, 30, 30));
-                } else {
-                    p.setPageColor(new Color(40, 40, 40));
-                }
-            } else {
-                p.setPageColor(p.getDefaultPageColor());
-            }
-            widthCounter = widthCounter + p.reformBounds(widthCounter);
+  public void reformBlockCanvas() {
+    int widthCounter = 0;
+    for (int i = 0; i < pages.size(); i++) {
+      Page p = pages.get(i);
+      if (p.getDefaultPageColor() == null) {
+        if (i % 2 == 1) {
+          p.setPageColor(new Color(30, 30, 30));
+        } else {
+          p.setPageColor(new Color(40, 40, 40));
         }
-        for (PageDivider d : dividers) {
-            d.setBounds(
-                    d.getLeftPage().getJComponent().getX() + d.getLeftPage().getJComponent().getWidth() - 3,
-                    0,
-                    5,
-                    d.getLeftPage().getJComponent().getHeight());
-        }
-        canvas.setPreferredSize(new Dimension(widthCounter, (int) (Page.DEFAULT_ABSTRACT_HEIGHT * Page.getZoomLevel())));
-        scrollPane.revalidate();
-        scrollPane.repaint();
+      } else {
+        p.setPageColor(p.getDefaultPageColor());
+      }
+      widthCounter = widthCounter + p.reformBounds(widthCounter);
     }
+    for (PageDivider d : dividers) {
+      d.setBounds(d.getLeftPage().getJComponent().getX() + d.getLeftPage().getJComponent().getWidth() - 3, 0, 5, d.getLeftPage().getJComponent().getHeight());
+    }
+    canvas.setPreferredSize(new Dimension(widthCounter, (int) (Page.DEFAULT_ABSTRACT_HEIGHT * Page.getZoomLevel())));
+    scrollPane.revalidate();
+    scrollPane.repaint();
+  }
 
-    //////////////////////////////
-    //Saving and Loading		//
-    //////////////////////////////
-    /**
+  /**
      * Returns an XML node describing all the blocks and pages within 
      * the BlockCanvas
      * @return Node or {@code null} if there are no pages
      */
-    public Node getSaveNode(Document document) {
-    	if (pages.size() > 0) {
-    		// TODO ria just do BLOCKS, CHECK OUT HOW SAVING WILL BE LIKE WITH REFACTORING
-    		Element pageElement = document.createElement("Pages");
-    		if (Workspace.everyPageHasDrawer) {
-    			pageElement.setAttribute("drawer-with-page", "yes");
-    		}
-    		pageElement.setAttribute("collapsible-pages", collapsible?"yes":"no");
-    		for (Page page: pages) {
-    			Node pageNode = page.getSaveNode(document);
-    			pageElement.appendChild(pageNode);
-    		}
-    		
-    		return pageElement;
-    	}
-    	
-    	return null;
+  public Node getSaveNode(Document document) {
+    if (pages.size() > 0) {
+      Element pageElement = document.createElement("Pages");
+      if (Workspace.everyPageHasDrawer) {
+        pageElement.setAttribute("drawer-with-page", "yes");
+      }
+      pageElement.setAttribute("collapsible-pages", collapsible ? "yes" : "no");
+      for (Page page : pages) {
+        Node pageNode = page.getSaveNode(document);
+        pageElement.appendChild(pageNode);
+      }
+      return pageElement;
     }
+    return null;
+  }
 
-    /**
+  /**
      * Loads all the RenderableBlocks and their associated Blocks that 
      * reside within the block canvas.  All blocks will have their nessary
      * data populated including connection information, stubs, etc.
@@ -469,141 +436,112 @@ public class BlockCanvas implements PageChangeListener, ISupportMemento {
      * are loaded from Pages.
      * @param root the Document Element containing the desired information
      */
-    protected void loadSaveString(Element root) {
-        //Extract canvas blocks and load
+  protected void loadSaveString(Element root) {
+    PageDrawerLoadingUtils.loadPagesAndDrawers(workspace, root, workspace.getFactoryManager());
+    NodeList pagesRoot = root.getElementsByTagName("Pages");
+    if (pagesRoot != null && pagesRoot.getLength() > 0) {
+      Node pagesNode = pagesRoot.item(0);
+      if (pagesNode != null) {
+        collapsible = PageDrawerLoadingUtils.getBooleanValue(pagesNode, "collapsible-pages");
+      }
+    }
+    if (!GraphicsEnvironment.isHeadless()) {
+      int screenWidth = java.awt.Toolkit.getDefaultToolkit().getScreenSize().width;
+      int canvasWidth = canvas.getPreferredSize().width;
+      if (canvasWidth < screenWidth) {
+        Page p = pages.get(pages.size() - 1);
+        p.addPixelWidth(screenWidth - canvasWidth);
+        PageChangeEventManager.notifyListeners();
+      }
+    }
+  }
 
-        //load pages, page drawers, and their blocks from save file
-        //PageDrawerManager.loadPagesAndDrawers(root);
-        PageDrawerLoadingUtils.loadPagesAndDrawers(workspace, root, workspace.getFactoryManager());
-        
-        NodeList pagesRoot = root.getElementsByTagName("Pages");
-        if(pagesRoot != null && pagesRoot.getLength()>0) {
-            Node pagesNode = pagesRoot.item(0);
-            if(pagesNode != null) {
-                collapsible = PageDrawerLoadingUtils.getBooleanValue(pagesNode, "collapsible-pages");
-            }
+  /** @override ISupportMomento.getState */
+  public Object getState() {
+    Map<String, Object> pageStates = new HashMap<String, Object>();
+    for (Page page : pages) {
+      pageStates.put(page.getPageName(), page.getState());
+    }
+    return pageStates;
+  }
+
+  /** @override ISupportMomento.loadState() */
+  @SuppressWarnings(value = { "unchecked" }) public void loadState(Object memento) {
+    assert (memento instanceof HashMap) : "ISupportMemento contract violated in BlockCanvas";
+    if (memento instanceof HashMap) {
+      Map<String, Object> pageStates = (HashMap<String, Object>) memento;
+      List<String> unloadedPages = new LinkedList<String>();
+      List<String> loadedPages = new LinkedList<String>();
+      for (String name : pageStates.keySet()) {
+        unloadedPages.add(name);
+      }
+      for (Page existingPage : this.pages) {
+        String existingPageName = existingPage.getPageName();
+        if (pageStates.containsKey(existingPageName)) {
+          existingPage.loadState(pageStates.get(existingPageName));
+          unloadedPages.remove(existingPageName);
+          loadedPages.add(existingPageName);
         }
-        
-        // FIXME: this UI code should not be here, fails unit tests that run in headless mode
-        // As a workaround, only execute if we have a UI
-        if (!GraphicsEnvironment.isHeadless()) {
-        	int screenWidth = java.awt.Toolkit.getDefaultToolkit().getScreenSize().width;
-        	int canvasWidth = canvas.getPreferredSize().width;
-        	if (canvasWidth < screenWidth) {
-        		Page p = pages.get(pages.size() - 1);
-        		p.addPixelWidth(screenWidth - canvasWidth);
-        		PageChangeEventManager.notifyListeners();
-        	}
+      }
+      for (Page existingPage : this.pages) {
+        String existingPageName = existingPage.getPageName();
+        if (!loadedPages.contains(existingPageName)) {
+          this.pages.remove(existingPage);
         }
+      }
+      for (String newPageName : unloadedPages) {
+        Page newPage = new Page(workspace, newPageName);
+        newPage.loadState(pageStates.get(newPageName));
+        pages.add(newPage);
+      }
+    }
+  }
+
+  public class Canvas extends JLayeredPane implements MouseListener, MouseMotionListener {
+    private static final long serialVersionUID = 438974092314L;
+
+    private Point p;
+
+    public Canvas() {
+      super();
+      this.p = null;
+      this.addMouseListener(this);
+      this.addMouseMotionListener(this);
     }
 
-    //////////////////////////////
-    //REDO/UNOD					//
-    //////////////////////////////
-    /** @overrides ISupportMomento.getState */
-    public Object getState() {
-        Map<String, Object> pageStates = new HashMap<String, Object>();
-        for (Page page : pages) {
-            pageStates.put(page.getPageName(), page.getState());
-        }
-        return pageStates;
+    public void mousePressed(MouseEvent e) {
+      p = e.getPoint();
     }
 
-    /** @overrides ISupportMomento.loadState() */
-    @SuppressWarnings("unchecked")
-    public void loadState(Object memento) {
-        assert (memento instanceof HashMap) : "ISupportMemento contract violated in BlockCanvas";
-        if (memento instanceof HashMap) {
-            Map<String, Object> pageStates = (HashMap<String, Object>) memento;
-            List<String> unloadedPages = new LinkedList<String>();
-            List<String> loadedPages = new LinkedList<String>();
-
-            for (String name : pageStates.keySet()) {
-                unloadedPages.add(name);
-            }
-
-            //First, load all the pages that are in the state to be loaded
-            //against all the pages that already exist.
-            for (Page existingPage : this.pages) {
-                String existingPageName = existingPage.getPageName();
-
-                if (pageStates.containsKey(existingPageName)) {
-                    existingPage.loadState(pageStates.get(existingPageName));
-                    unloadedPages.remove(existingPageName);
-                    loadedPages.add(existingPageName);
-                }
-            }
-
-            //Now, remove all the pages that don't exist in the save state
-            for (Page existingPage : this.pages) {
-                String existingPageName = existingPage.getPageName();
-
-                if (!loadedPages.contains(existingPageName)) {
-                    this.pages.remove(existingPage);
-                }
-            }
-
-            //Finally, add all the remaining pages that weren't there before
-            for (String newPageName : unloadedPages) {
-                Page newPage = new Page(workspace, newPageName);
-                newPage.loadState(pageStates.get(newPageName));
-                pages.add(newPage);
-            }
-        }
+    public void mouseClicked(MouseEvent e) {
+      if (SwingUtilities.isRightMouseButton(e) || e.isControlDown()) {
+        PopupMenu popup = ContextMenu.getContextMenuFor(BlockCanvas.this);
+        this.add(popup);
+        popup.show(this, e.getX(), e.getY());
+      }
     }
 
-    /**
-     * The graphical representation of the block canvas's Swng Container of pages.
-     * Note that this is not the graphical scrollable JComponent that represents
-     * the BlockCanvas.
-     */
-    public class Canvas extends JLayeredPane implements MouseListener, MouseMotionListener {
-
-        private static final long serialVersionUID = 438974092314L;
-        private Point p;
-
-        public Canvas() {
-            super();
-            this.p = null;
-            this.addMouseListener(this);
-            this.addMouseMotionListener(this);
-        }
-
-        public void mousePressed(MouseEvent e) {
-            p = e.getPoint();
-        }
-
-        public void mouseClicked(MouseEvent e) {
-            if (SwingUtilities.isRightMouseButton(e) || e.isControlDown()) {
-                //pop up context menu
-                PopupMenu popup = ContextMenu.getContextMenuFor(BlockCanvas.this);
-                this.add(popup);
-                popup.show(this, e.getX(), e.getY());
-            }
-        }
-
-        public void mouseDragged(MouseEvent e) {
-            if (p == null) {
-                //do nothing
-            } else {
-                BoundedRangeModel hModel = scrollPane.getHorizontalModel();
-                BoundedRangeModel vModel = scrollPane.getVerticalModel();
-                hModel.setValue(hModel.getValue() + (p.x - e.getX()));
-                vModel.setValue(vModel.getValue() + (p.y - e.getY()));
-            }
-        }
-
-        public void mouseReleased(MouseEvent e) {
-            this.p = null;
-        }
-
-        public void mouseMoved(MouseEvent e) {
-        }
-
-        public void mouseEntered(MouseEvent e) {
-        }
-
-        public void mouseExited(MouseEvent e) {
-        }
+    public void mouseDragged(MouseEvent e) {
+      if (p == null) {
+      } else {
+        BoundedRangeModel hModel = scrollPane.getHorizontalModel();
+        BoundedRangeModel vModel = scrollPane.getVerticalModel();
+        hModel.setValue(hModel.getValue() + (p.x - e.getX()));
+        vModel.setValue(vModel.getValue() + (p.y - e.getY()));
+      }
     }
+
+    public void mouseReleased(MouseEvent e) {
+      this.p = null;
+    }
+
+    public void mouseMoved(MouseEvent e) {
+    }
+
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    public void mouseExited(MouseEvent e) {
+    }
+  }
 }

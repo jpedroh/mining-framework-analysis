@@ -1,5 +1,4 @@
 package edu.mit.blocks.workspace.typeblocking;
-
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -7,7 +6,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
-
 import edu.mit.blocks.codeblocks.Block;
 import edu.mit.blocks.codeblocks.BlockConnector;
 import edu.mit.blocks.renderable.RenderableBlock;
@@ -71,224 +69,137 @@ import edu.mit.blocks.workspace.WorkspaceListener;
  *
  */
 public class FocusTraversalManager implements MouseListener, KeyListener, WorkspaceListener {
+  /** this.focuspoint: the point on the block with focus */
+  private Point blockFocusPoint = null;
 
-    /** this.focuspoint: the point on the block with focus */
-    private Point blockFocusPoint = null;
-    /** this.focuspoint: the point on the block canvas's last mosue click */
-    private Point canvasFocusPoint = new Point(0, 0);
-    /** this.focusblock: the Block ID that currently has focus */
-    private Long focusBlock = Block.NULL;
-    private final Workspace workspace;
+  /** this.focuspoint: the point on the block canvas's last mosue click */
+  private Point canvasFocusPoint = new Point(0, 0);
 
-    /////////////////
-    // Constructor //
-    /////////////////
-    public FocusTraversalManager(Workspace workspace) {
-        this.workspace = workspace;
-    }
+  /** this.focusblock: the Block ID that currently has focus */
+  private Long focusBlock = Block.NULL;
 
-    ///////////////
-    // Observers //
-    ///////////////
-    /**
+  private final Workspace workspace;
+
+  public FocusTraversalManager(Workspace workspace) {
+    this.workspace = workspace;
+  }
+
+  /**
      * @return the block that has focus, if any.
      *
      * TODO: finish method documentation
      */
-    public Long getFocusBlockID() {
-        //DO NOT REMOVE CHECK REP BELOW!!!
-        //Many client classes depend on this invariant
-
-        if (invalidBlock(focusBlock)) {
-            //If block is null then, focus should be on block on canvas.
-            //To test this, we must recall that when focus is on block,
-            //the canvas focus point is set to null.
-            if (canvasFocusPoint == null) {
-                throw new RuntimeException(
-                        "Focus has not yet been set to block");
-            }
-            if (blockFocusPoint != null) {
-                throw new RuntimeException(
-                        "Focus should be set to block");
-            }
-
-        } else {
-            //if block is not null, then we need to make sure the
-            //focus is on the block.  To test this, we recall
-            //that when the focus is on the block, the
-            //canvas focus point is set to null
-            if (canvasFocusPoint != null) {
-                throw new RuntimeException(
-                        "Focus has not yet been set to canvas");
-            }
-            if (blockFocusPoint == null) {
-                throw new RuntimeException(
-                        "Focus has not been removed from block");
-            }
-        }
-        return focusBlock;
+  public Long getFocusBlockID() {
+    if (invalidBlock(focusBlock)) {
+      if (canvasFocusPoint == null) {
+        throw new RuntimeException("Focus has not yet been set to block");
+      }
+      if (blockFocusPoint != null) {
+        throw new RuntimeException("Focus should be set to block");
+      }
+    } else {
+      if (canvasFocusPoint != null) {
+        throw new RuntimeException("Focus has not yet been set to canvas");
+      }
+      if (blockFocusPoint == null) {
+        throw new RuntimeException("Focus has not been removed from block");
+      }
     }
+    return focusBlock;
+  }
 
-    /**
+  /**
      * @return point of focus on canvas
      *
      * TODO: finish method documentation
      */
-    public Point getCanvasPoint() {
-        //DO NOT REMOVE CHECK REP BELOW!!!
-        //Many client classes depend on this invariant
-
-        //If focus block is not null, then the focus is
-        //currently set on that instance of the block.
-        //As a result, you may not request the canvas's
-        //focus point because it DOES NOT have focus
-        if (!invalidBlock(focusBlock)) {
-            throw new RuntimeException(
-                    "May not request canvas's focus point if "
-                    + "canvas does not have focus. Focus at: " + focusBlock);
-        }
-        if (blockFocusPoint != null) {
-            throw new RuntimeException(
-                    "May not request canvas's focus point if "
-                    + "canvas does not have focus. Focus at: " + blockFocusPoint);
-        }
-        if (canvasFocusPoint == null) {
-            throw new RuntimeException(
-                    "May not request canvas's focus point if "
-                    + "canvas does not have focus. Canvas focus is null.");
-        }
-        //Okay, invariant holds.  So return point of focus on canvas.
-        return canvasFocusPoint;
+  public Point getCanvasPoint() {
+    if (!invalidBlock(focusBlock)) {
+      throw new RuntimeException("May not request canvas\'s focus point if " + "canvas does not have focus. Focus at: " + focusBlock);
     }
+    if (blockFocusPoint != null) {
+      throw new RuntimeException("May not request canvas\'s focus point if " + "canvas does not have focus. Focus at: " + blockFocusPoint);
+    }
+    if (canvasFocusPoint == null) {
+      throw new RuntimeException("May not request canvas\'s focus point if " + "canvas does not have focus. Canvas focus is null.");
+    }
+    return canvasFocusPoint;
+  }
 
-    /**
+  /**
      * @return point of focus on block
      *
      * TODO: finish method documentation
      */
-    public Point getBlockPoint() {
-        //DO NOT REMOVE CHECK REP BELOW!!!
-        //Many client classes depend on this invariant
-
-        //If focus block is null, then the focus is
-        //currently set on canvas.  You may not request
-        //the block's focus point because it DOES NOT have focus
-        if (invalidBlock(focusBlock)) {
-            throw new RuntimeException(
-                    "May not request block's focus point if "
-                    + "block does not have focus. Focus at: " + focusBlock);
-        }
-        if (blockFocusPoint == null) {
-            throw new RuntimeException(
-                    "May not request block's focus point if "
-                    + "block does not have focus. Focus at: " + blockFocusPoint);
-        }
-        if (canvasFocusPoint != null) {
-            throw new RuntimeException(
-                    "Canvas focus is still valid. May not request"
-                    + "block's focus point if block does not have focus.");
-        }
-        //Okay, invariant holds.  So return point of focus on canvas.
-        return blockFocusPoint;
+  public Point getBlockPoint() {
+    if (invalidBlock(focusBlock)) {
+      throw new RuntimeException("May not request block\'s focus point if " + "block does not have focus. Focus at: " + focusBlock);
     }
+    if (blockFocusPoint == null) {
+      throw new RuntimeException("May not request block\'s focus point if " + "block does not have focus. Focus at: " + blockFocusPoint);
+    }
+    if (canvasFocusPoint != null) {
+      throw new RuntimeException("Canvas focus is still valid. May not request" + "block\'s focus point if block does not have focus.");
+    }
+    return blockFocusPoint;
+  }
 
-    //////////////////
-    // Focus Set Up //
-    //////////////////
-    /**
+  /**
      * Sets focus to block
-     * @param block
+     * @parem block
      *
      * TODO: finish method documentation
      */
-    public void setFocus(Block block) {
-        if (block == null) {
-            throw new RuntimeException("Invariant Violated:"
-                    + "may not set focus to a null Block instance");
-            //Please do not remove exception above.  This class
-            //and many other classes within the typeblocking
-            //package requires that the following invariant(s) must hold:
-            //		MAY NOT SET FOCUS TO NULL BLOCK INSTANCES
-        } else {
-            setFocus(block.getBlockID());
-        }
+  public void setFocus(Block block) {
+    if (block == null) {
+      throw new RuntimeException("Invariant Violated:" + "may not set focus to a null Block instance");
+    } else {
+      setFocus(block.getBlockID());
     }
+  }
 
-    public void setFocus(Long blockID) {
-        if (blockID == null || blockID == Block.NULL || blockID == -1 || workspace.getEnv().getBlock(blockID) == null) {
-            throw new RuntimeException("Invariant Violated:"
-                    + "may not set focus to a null Block instance");
-            //Please do not remove exception above.  This class
-            //and many other classes within the typeblocking
-            //package requires that the following invariant(s) must hold:
-            //		MAY NOT SET FOCUS TO NULL BLOCK INSTANCES
-        }
-        //remove focus from old block if one existed
-        if (!invalidBlock(this.focusBlock)) {
-            getBlock(this.focusBlock).setFocus(false);
-            workspace.getEnv().getRenderableBlock(this.focusBlock).repaintBlock();
-        }
-        //set focus block to blockID
-        getBlock(blockID).setFocus(true);
-        workspace.getEnv().getRenderableBlock(blockID).requestFocus();
-        workspace.getEnv().getRenderableBlock(blockID).repaintBlock();
-        //set canvas focus point to be null; canvas no longer has focus
-        this.canvasFocusPoint = null;
-        //set blockfocus point to new value
-        this.blockFocusPoint = new Point(0, 0);
-        //set focusblock
-        this.focusBlock = blockID;
-
-        //System.out.println("FocusManager: Setting focus to block: " + this.focusBlock+", "+this.blockFocusPoint+", "+this.canvasFocusPoint);
+  public void setFocus(Long blockID) {
+    if (blockID == null || blockID == Block.NULL || blockID == -1 || workspace.getEnv().getBlock(blockID) == null) {
+      throw new RuntimeException("Invariant Violated:" + "may not set focus to a null Block instance");
     }
+    if (!invalidBlock(this.focusBlock)) {
+      getBlock(this.focusBlock).setFocus(false);
+      workspace.getEnv().getRenderableBlock(this.focusBlock).repaintBlock();
+    }
+    getBlock(blockID).setFocus(true);
+    workspace.getEnv().getRenderableBlock(blockID).requestFocus();
+    workspace.getEnv().getRenderableBlock(blockID).repaintBlock();
+    this.canvasFocusPoint = null;
+    this.blockFocusPoint = new Point(0, 0);
+    this.focusBlock = blockID;
+  }
 
-    /**
+  /**
      * Set Focus to canvas at canvasPoint.  THE BLOCKID MUST BE BLOCK.NULL!!!
      * @param canvasPoint
      * @param blockID
      *
      * TODO: finish method documentation
      */
-    public void setFocus(Point canvasPoint, Long blockID) {
-        if (blockID == null || blockID == Block.NULL || blockID == -1 || workspace.getEnv().getBlock(blockID) == null) {
-            //remove focus form old block if one existed
-            if (!invalidBlock(this.focusBlock)) {
-                getBlock(this.focusBlock).setFocus(false);
-                workspace.getEnv().getRenderableBlock(this.focusBlock).repaintBlock();
-            }
-            //set block ID to null
-            this.focusBlock = Block.NULL;
-            //set canvas focus point to canvasPoint
-            this.canvasFocusPoint = canvasPoint;
-            //set block focus point to null
-            this.blockFocusPoint = null;
-
-            //System.out.println("FocusManager: Setting focus to canvas: " + this.focusBlock+", "+this.blockFocusPoint+", "+this.canvasFocusPoint);
-        } else {
-            throw new RuntimeException("Invariant Violated:"
-                    + "may not set new focus point if focus is on a block");
-            //Please do not remove exception above.  This class
-            //and many other classes within the typeblocking
-            //package requires that the following invariant(s) must hold:
-            //		CANVAS POINT MAY NOT BE SET UNLESS BLOCK IS NULL
-            //		CANVAS POINT MAY NOT BE SET IF FOCUS IS ON BLOCK
-        }
+  public void setFocus(Point canvasPoint, Long blockID) {
+    if (blockID == null || blockID == Block.NULL || blockID == -1 || workspace.getEnv().getBlock(blockID) == null) {
+      if (!invalidBlock(this.focusBlock)) {
+        getBlock(this.focusBlock).setFocus(false);
+        workspace.getEnv().getRenderableBlock(this.focusBlock).repaintBlock();
+      }
+      this.focusBlock = Block.NULL;
+      this.canvasFocusPoint = canvasPoint;
+      this.blockFocusPoint = null;
+    } else {
+      throw new RuntimeException("Invariant Violated:" + "may not set new focus point if focus is on a block");
     }
+  }
 
-    void setFocus(Point location) {
-        //please do not remove this method or try to
-        //create a method this takes only a point as an argument.
-        //The thing is, it's too tricky to create such a method
-        //and I want to let users who use this method know that
-        //this is a fundalmentally wrong method to invoke.
-        //may not use this method as it does not ensure class invariant will hold
-        throw new RuntimeException("The use of this method is FORBIDDEN");
-    }
+  void setFocus(Point location) {
+    throw new RuntimeException("The use of this method is FORBIDDEN");
+  }
 
-    //////////////////////////////////////
-    // Focus Traversal Handling Methods //
-    //////////////////////////////////////
-    /**
+  /**
      * Reassigns the focus to the "next block" of the current focusBlock.
      * If the current focusblock is at location n of the flatten linear vector
      * of the block tree structure, then the "next block" is located at n+1.
@@ -301,41 +212,34 @@ public class FocusTraversalManager implements MouseListener, KeyListener, Worksp
      * @modifies this.focusblock
      * @effects this.focusblock now points to the "next block"
      * 			as described in method overview;
-     * @return true if the new focus is on a block that isn't null
+     * @returns true if the new focus is on a block that isn't null
      */
-    public boolean focusNextBlock() {
-        //return focus to canvas if no focusblock does not exist
-        if (invalidBlock(focusBlock) || !workspace.getEnv().getRenderableBlock(focusBlock).isVisible()) {
-            setFocus(canvasFocusPoint, Block.NULL);
-            return false;
-        }
-        //give focus to any preceeding socket of current block
-        Block currentBlock = getBlock(focusBlock);
-        for (BlockConnector socket : currentBlock.getSockets()) {
-            if (socket != null && !invalidBlock(socket.getBlockID())) {
-                //give focus to socket block
-                setFocus(socket.getBlockID());
-                return true;
-            }
-        }
-        //give focus to after block of current block
-        Long afterBlock = currentBlock.getAfterBlockID();
-        if (!invalidBlock(afterBlock)) {
-            setFocus(afterBlock);
-            return true;
-        }
-        //current block != null.....invariant checke in getNextNode()
-        Block nextBlock = this.getNextNode(currentBlock);
-        //check invariant
-        if (nextBlock == null) {
-            throw new RuntimeException("Invariant Violated: return value of getNextNode() may not be null");
-        }
-        //set focus
-        setFocus(nextBlock.getBlockID());
-        return true;
+  public boolean focusNextBlock() {
+    if (invalidBlock(focusBlock) || !workspace.getEnv().getRenderableBlock(focusBlock).isVisible()) {
+      setFocus(canvasFocusPoint, Block.NULL);
+      return false;
     }
+    Block currentBlock = getBlock(focusBlock);
+    for (BlockConnector socket : currentBlock.getSockets()) {
+      if (socket != null && !invalidBlock(socket.getBlockID())) {
+        setFocus(socket.getBlockID());
+        return true;
+      }
+    }
+    Long afterBlock = currentBlock.getAfterBlockID();
+    if (!invalidBlock(afterBlock)) {
+      setFocus(afterBlock);
+      return true;
+    }
+    Block nextBlock = this.getNextNode(currentBlock);
+    if (nextBlock == null) {
+      throw new RuntimeException("Invariant Violated: return value of getNextNode() may not be null");
+    }
+    setFocus(nextBlock.getBlockID());
+    return true;
+  }
 
-    /**
+  /**
      * Reassigns the focus to the "previous block" of the current focusBlock.
      * If the current focusblock is at location n of the flatten linear vector
      * of the block tree structure, then the "previous block" is located at n-1.
@@ -348,75 +252,52 @@ public class FocusTraversalManager implements MouseListener, KeyListener, Worksp
      * @modifies this.focusblock
      * @effects this.focusblock now points to the "previous block"
      * 			as described in method overview;
-     * @return true if the new focus is on a block that isn't null
+     * @returns true if the new focus is on a block that isn't null
      */
-    public boolean focusPrevBlock() {
-        //return focus to canvas if no focusblock does not exist
-        if (invalidBlock(focusBlock) || !workspace.getEnv().getRenderableBlock(focusBlock).isVisible()) {
-            setFocus(canvasFocusPoint, Block.NULL);
-            return false;
-        }
-
-        Block currentBlock = getBlock(focusBlock);
-        //set plug to be previous block
-        Block previousBlock = getPlugBlock(currentBlock);
-        //if plug is null, set before to be previous block
-        if (previousBlock == null) {
-            previousBlock = getBeforeBlock(currentBlock);
-        }
-        //If before is ALSO null, jump to bottom of the stack;
-        if (previousBlock == null) {
-            previousBlock = getBottomRightBlock(currentBlock);
-        } else {
-            //If at least a plug block OR (but not both) before block exist,
-            //then get innermost block of the previous socket of the previous block
-            //assumes previousBlock.getSockets is not empty, not null
-            Block beforeBlock = previousBlock;
-            //ASSUMPTION BEING MADE: assume that the list below is constructed to
-            //have all the sockets FOLLOWED by FOLLOWED by the after connector
-            //THE ORDER MUST BE KEPT TO WORK CORRECTLY!  We cannot use
-            //BlockLinkChecker.getSocketEquivalents because the specification does
-            //not guarantee this precise ordering.  Futhermore, an interable
-            //has no defined order.  However, as of this writing, the current implementation
-            //of that method does seem to produce this ordering.  But we're still not using it.
-            List<BlockConnector> connections = new ArrayList<BlockConnector>();
-            for (BlockConnector socket : previousBlock.getSockets()) {
-                connections.add(socket); //add sockets
-            }
-            connections.add(previousBlock.getAfterConnector()); //add after connector
-            //now traverse the connections
-            for (BlockConnector connector : connections) {
-                if (connector == null || connector.getBlockID() == Block.NULL || getBlock(connector.getBlockID()) == null) {
-                    continue; //if null socket, move on to next socket
-                }
-                if (connector.getBlockID().equals(currentBlock.getBlockID())) { //reached back to current block
-                    if (!beforeBlock.getBlockID().equals(previousBlock.getBlockID())) {
-                        //if previous block was never updated, go to bottom of stack
-                        previousBlock = getBottomRightBlock(previousBlock);
-                    }
-                    setFocus(previousBlock.getBlockID());
-                    return true;
-                }
-                //update previous block
-                previousBlock = getBlock(connector.getBlockID());
-            }
-            //so it seems liek all sockets are null (or sockets exist),
-            //so just get the bottom of the stack
-            previousBlock = getBottomRightBlock(previousBlock);
-        }
-        setFocus(previousBlock.getBlockID());
-        return true;
+  public boolean focusPrevBlock() {
+    if (invalidBlock(focusBlock) || !workspace.getEnv().getRenderableBlock(focusBlock).isVisible()) {
+      setFocus(canvasFocusPoint, Block.NULL);
+      return false;
     }
+    Block currentBlock = getBlock(focusBlock);
+    Block previousBlock = getPlugBlock(currentBlock);
+    if (previousBlock == null) {
+      previousBlock = getBeforeBlock(currentBlock);
+    }
+    if (previousBlock == null) {
+      previousBlock = getBottomRightBlock(currentBlock);
+    } else {
+      Block beforeBlock = previousBlock;
+      List<BlockConnector> connections = new ArrayList<BlockConnector>();
+      for (BlockConnector socket : previousBlock.getSockets()) {
+        connections.add(socket);
+      }
+      connections.add(previousBlock.getAfterConnector());
+      for (BlockConnector connector : connections) {
+        if (connector == null || connector.getBlockID() == Block.NULL || getBlock(connector.getBlockID()) == null) {
+          continue;
+        }
+        if (connector.getBlockID().equals(currentBlock.getBlockID())) {
+          if (!beforeBlock.getBlockID().equals(previousBlock.getBlockID())) {
+            previousBlock = getBottomRightBlock(previousBlock);
+          }
+          setFocus(previousBlock.getBlockID());
+          return true;
+        }
+        previousBlock = getBlock(connector.getBlockID());
+      }
+      previousBlock = getBottomRightBlock(previousBlock);
+    }
+    setFocus(previousBlock.getBlockID());
+    return true;
+  }
 
-    /**
+  /**
      * Gives focus to the first after block down the tree,
      * that is, the next control block in the stack.
      * If next control block does not exist, then give
      * focus to current focusblock.  Otherwise, give
      * focus to block canvas.
-     *
-     * Expects no wrapping to TopOfStack block, do not use this method for infix blocks
-     *
      * @requires focusblock.isMinimized() == false
      * @modifies this.focusblock
      * @effects sets this.focusblock to be the first
@@ -424,40 +305,35 @@ public class FocusTraversalManager implements MouseListener, KeyListener, Worksp
      * 			the focus on the current focusblock.
      * 			If focus block is an invalid block,
      * 			return focus to the default (block canvas)
-     * @return true if and only if focus was set to new after block
+     * @returns true if and only if focus was set to new after block
+     * @expects no wrapping to TopOfStack block, do not use this method for infix blocks
      */
-    public boolean focusAfterBlock() {
-        if (invalidBlock(focusBlock) || !workspace.getEnv().getRenderableBlock(focusBlock).isVisible()) {
-            //return focus to canvas if no focusblock does not exist
-            setFocus(canvasFocusPoint, Block.NULL);
-            return false;
-        }
-        Block currentBlock = getBlock(focusBlock);
-        while (currentBlock != null) {
-            if (getAfterBlock(currentBlock) != null) {
-                //return focus to before block
-                setFocus(getAfterBlock(currentBlock));
-                return true;
-            }
-            currentBlock = getPlugBlock(currentBlock);
-            if (currentBlock == null) {
-                //return focus to old block
-                setFocus(focusBlock);
-                return true;
-            }
-        }
-        return true;
+  public boolean focusAfterBlock() {
+    if (invalidBlock(focusBlock) || !workspace.getEnv().getRenderableBlock(focusBlock).isVisible()) {
+      setFocus(canvasFocusPoint, Block.NULL);
+      return false;
     }
+    Block currentBlock = getBlock(focusBlock);
+    while (currentBlock != null) {
+      if (getAfterBlock(currentBlock) != null) {
+        setFocus(getAfterBlock(currentBlock));
+        return true;
+      }
+      currentBlock = getPlugBlock(currentBlock);
+      if (currentBlock == null) {
+        setFocus(focusBlock);
+        return true;
+      }
+    }
+    return true;
+  }
 
-    /**
+  /**
      * Gives focus to the first beforeblock up the tree,
      * that is, the previous control block in the stack.
      * If no previous control block exists, then give
      * focus to current focusblock.  Otherwise, give
      * focus to block canvas.
-     *
-     * Expects no wrapping to bottom block, do not use this method for infix blocks
-     *
      * @requires focusblock.isMinimized() == false
      * @modifies this.focusblock
      * @effects sets this.focusblock to be the first
@@ -465,79 +341,65 @@ public class FocusTraversalManager implements MouseListener, KeyListener, Worksp
      * 			the focus on the current focusblock.
      * 			If focus block is an invalid block,
      * 			return focus to the default (block canvas)
-     * @return true if and only if focus was set to new before block
+     * @returns true if and only if focus was set to new before block
+     * @expects no wrapping to bottom block, do not use this method for infix blocks
      */
-    public boolean focusBeforeBlock() {
-        if (invalidBlock(focusBlock) || !workspace.getEnv().getRenderableBlock(focusBlock).isVisible()) {
-            //return focus to canvas if no focusblock does not exist
-            setFocus(canvasFocusPoint, Block.NULL);
-            return false;
-        }
-        Block currentBlock = getBlock(focusBlock);
-        while (currentBlock != null) {
-            if (getBeforeBlock(currentBlock) != null) {
-                //return focus to before block
-                setFocus(getBeforeBlock(currentBlock));
-                return true;
-            }
-            currentBlock = getPlugBlock(currentBlock);
-            if (currentBlock == null) {
-                //return focus to old block
-                setFocus(focusBlock);
-                return false;
-            }
-        }
-        return false;
+  public boolean focusBeforeBlock() {
+    if (invalidBlock(focusBlock) || !workspace.getEnv().getRenderableBlock(focusBlock).isVisible()) {
+      setFocus(canvasFocusPoint, Block.NULL);
+      return false;
     }
+    Block currentBlock = getBlock(focusBlock);
+    while (currentBlock != null) {
+      if (getBeforeBlock(currentBlock) != null) {
+        setFocus(getBeforeBlock(currentBlock));
+        return true;
+      }
+      currentBlock = getPlugBlock(currentBlock);
+      if (currentBlock == null) {
+        setFocus(focusBlock);
+        return false;
+      }
+    }
+    return false;
+  }
 
-    ///////////////////////
-    // TRAVERSING STACKS //
-    ///////////////////////
-    /**
+  /**
      * @requires currentBlock != null
      * @param currentBlock
      * @return currentBlock or NON-NULL block that is the next node of currentBlock
      */
-    private Block getNextNode(Block currentBlock) {
-        //check invarient
-        if (invalidBlock(currentBlock)) {
-            throw new RuntimeException("Invariant Violated: may not resurve over a null instance of currentBlock");
-        }
-        //if plug not null, then let plug be parent of current block
-        Block parentBlock = getBlock(currentBlock.getPlugBlockID());
-        //otherwise if after not null, then let after be parent of current block
-        if (invalidBlock(parentBlock)) {
-            parentBlock = getBlock(currentBlock.getBeforeBlockID());
-        }
-        //if plug and after are both null, then return currentBlock
-        if (invalidBlock(parentBlock)) {
-            return currentBlock;
-        }
-        //socket index of current block with respect to its parent
-        int i = parentBlock.getSocketIndex(parentBlock.getConnectorTo(currentBlock.getBlockID()));
-        //return socket block of parent if one exist
-        //int i == 0 if not current block not a socket of parent
-        if (i != -1 && i >= 0) {
-            for (BlockConnector parentSocket : parentBlock.getSockets()) {
-                if (parentSocket == null || invalidBlock(parentSocket.getBlockID()) || parentBlock.getSocketIndex(parentSocket) <= i) {
-                    continue;
-                } else {
-                    return getBlock(parentSocket.getBlockID());
-                }
-            }
-        }
-        //return afterblock of parent
-        if (invalidBlock(parentBlock.getAfterBlockID())) {
-            return getNextNode(parentBlock);
-        }
-        if (parentBlock.getAfterBlockID().equals(currentBlock.getBlockID())) {
-            return getNextNode(parentBlock);
-        }
-        //This is top of the block, so return currentBlock
-        return getBlock(parentBlock.getAfterBlockID());
+  private Block getNextNode(Block currentBlock) {
+    if (invalidBlock(currentBlock)) {
+      throw new RuntimeException("Invariant Violated: may not resurve over a null instance of currentBlock");
     }
+    Block parentBlock = getBlock(currentBlock.getPlugBlockID());
+    if (invalidBlock(parentBlock)) {
+      parentBlock = getBlock(currentBlock.getBeforeBlockID());
+    }
+    if (invalidBlock(parentBlock)) {
+      return currentBlock;
+    }
+    int i = parentBlock.getSocketIndex(parentBlock.getConnectorTo(currentBlock.getBlockID()));
+    if (i != -1 && i >= 0) {
+      for (BlockConnector parentSocket : parentBlock.getSockets()) {
+        if (parentSocket == null || invalidBlock(parentSocket.getBlockID()) || parentBlock.getSocketIndex(parentSocket) <= i) {
+          continue;
+        } else {
+          return getBlock(parentSocket.getBlockID());
+        }
+      }
+    }
+    if (invalidBlock(parentBlock.getAfterBlockID())) {
+      return getNextNode(parentBlock);
+    }
+    if (parentBlock.getAfterBlockID().equals(currentBlock.getBlockID())) {
+      return getNextNode(parentBlock);
+    }
+    return getBlock(parentBlock.getAfterBlockID());
+  }
 
-    /**
+  /**
      * For a given block, returns the outermost (top-leftmost)
      * block in the stack.
      * @requires block represented by blockID != null
@@ -545,34 +407,26 @@ public class FocusTraversalManager implements MouseListener, KeyListener, Worksp
      * @return  the outermost block (or Top-of-Stack)
      * 			such that the outermost  block != null
      */
-    Long getTopOfStack(Long blockID) {
-        //check invariant
-        if (blockID == null || blockID == Block.NULL || workspace.getEnv().getBlock(blockID) == null) {
-            throw new RuntimeException("Invariant Violated: may not"
-                    + "iterate for outermost block over a null instance of Block");
-        }
-        //parentBlock is the topmost block in stack
-        Block parentBlock = null;
-        //go the top most block
-        parentBlock = getBeforeBlock(blockID);
-        if (parentBlock != null) {
-            return getTopOfStack(parentBlock.getBlockID());
-        }
-        //go to the left most block
-        parentBlock = getPlugBlock(blockID);
-        if (parentBlock != null) {
-            return getTopOfStack(parentBlock.getBlockID());
-        }
-        //check invariant
-        if (parentBlock != null) {
-            throw new RuntimeException("Invariant Violated: may not "
-                    + "return a null instance of block as the outermost block");
-        }
-        //If we can't traverse any deeper, then this is innermost Block.
-        return blockID;
+  Long getTopOfStack(Long blockID) {
+    if (blockID == null || blockID == Block.NULL || workspace.getEnv().getBlock(blockID) == null) {
+      throw new RuntimeException("Invariant Violated: may not" + "iterate for outermost block over a null instance of Block");
     }
+    Block parentBlock = null;
+    parentBlock = getBeforeBlock(blockID);
+    if (parentBlock != null) {
+      return getTopOfStack(parentBlock.getBlockID());
+    }
+    parentBlock = getPlugBlock(blockID);
+    if (parentBlock != null) {
+      return getTopOfStack(parentBlock.getBlockID());
+    }
+    if (parentBlock != null) {
+      throw new RuntimeException("Invariant Violated: may not " + "return a null instance of block as the outermost block");
+    }
+    return blockID;
+  }
 
-    /**
+  /**
      * For a given block, returns the innermost (bottom-rightmost)
      * block in the substack.
      * @requires block !=null block.getBlockID != Block.NULL
@@ -580,74 +434,63 @@ public class FocusTraversalManager implements MouseListener, KeyListener, Worksp
      * @return the innermost block in the substack.
      * 		   such that the innermost block != null
      */
-    private Block getBottomRightBlock(Block block) {
-        //check invariant
-        if (block == null || block.getBlockID() == Block.NULL) {
-            throw new RuntimeException("Invariant Violated: may not"
-                    + "iterate for innermost block over a null instance of Block");
-        }
-        //returnblock = next deepest node on far right
-        Block returnBlock = null;
-        // find deepest node, that is, bottom most block in stack.
-        returnBlock = getAfterBlock(block);
-        if (returnBlock != null) {
-            return getBottomRightBlock(returnBlock);
-        }
-        // move to the next socket in line:
-        for (BlockConnector socket : block.getSockets()) {//assumes socket!=null
-            Block socketBlock = getBlock(socket.getBlockID());
-            if (socketBlock != null) {
-                returnBlock = socketBlock;
-            }
-        }
-        if (returnBlock != null) {
-            return getBottomRightBlock(returnBlock);
-        }
-        //check invariant
-        if (returnBlock != null) {
-            throw new RuntimeException("Invariant Violated: may not "
-                    + "return a null instance of block as the innermost block");
-        }
-        //If we can't traverse any deeper, then this is innermost Block.
-        return block;
+  private Block getBottomRightBlock(Block block) {
+    if (block == null || block.getBlockID() == Block.NULL) {
+      throw new RuntimeException("Invariant Violated: may not" + "iterate for innermost block over a null instance of Block");
     }
+    Block returnBlock = null;
+    returnBlock = getAfterBlock(block);
+    if (returnBlock != null) {
+      return getBottomRightBlock(returnBlock);
+    }
+    for (BlockConnector socket : block.getSockets()) {
+      Block socketBlock = getBlock(socket.getBlockID());
+      if (socketBlock != null) {
+        returnBlock = socketBlock;
+      }
+    }
+    if (returnBlock != null) {
+      return getBottomRightBlock(returnBlock);
+    }
+    if (returnBlock != null) {
+      throw new RuntimeException("Invariant Violated: may not " + "return a null instance of block as the innermost block");
+    }
+    return block;
+  }
 
-    //////////////////////
-    //Convienence Method//
-    //////////////////////
-    /**
+  /**
      * @param block
      * @return 	true if and only if block ==null ||
      * 			block.getBlockID == null &&
      * 			block.getBLockID == Block.NULL
      */
-    private boolean invalidBlock(Block block) {
-        if (block == null) {
-            return true;
-        }
-        if (block.getBlockID() == null) {
-            return true;
-        }
-        if (block.getBlockID() == Block.NULL) {
-            return true;
-        }
-        return false;
+  private boolean invalidBlock(Block block) {
+    if (block == null) {
+      return true;
     }
-
-    private boolean invalidBlock(Long blockID) {
-        if (blockID == null) {
-            return true;
-        }
-        if (blockID == Block.NULL) {
-            return true;
-        }
-        if (getBlock(blockID) == null) {
-            return true;
-        }
-        return false;
+    if (block.getBlockID() == null) {
+      return true;
     }
+    if (block.getBlockID() == Block.NULL) {
+      return true;
+    }
+    return false;
+  }
 
-    /**
+  private boolean invalidBlock(Long blockID) {
+    if (blockID == null) {
+      return true;
+    }
+    if (blockID == Block.NULL) {
+      return true;
+    }
+    if (getBlock(blockID) == null) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
      * All the private methods below follow a similar
      * specification. They all require that the block
      * referanced by blockID (or block.getBlockID) is
@@ -658,37 +501,34 @@ public class FocusTraversalManager implements MouseListener, KeyListener, Worksp
      * of the obserser method.
      *
      * @requires blockID != Block.Null && block !=null
-     * @return Block instance located at corresponding
+     * @returns Block instance located at corresponding
      * 			connection or null if non exists
      */
-    private Block getBlock(Long blockID) {
-        return workspace.getEnv().getBlock(blockID);
-    }
+  private Block getBlock(Long blockID) {
+    return workspace.getEnv().getBlock(blockID);
+  }
 
-    private Block getBeforeBlock(Long blockID) {
-        return getBeforeBlock(getBlock(blockID));
-    }
+  private Block getBeforeBlock(Long blockID) {
+    return getBeforeBlock(getBlock(blockID));
+  }
 
-    private Block getBeforeBlock(Block block) {
-        return getBlock(block.getBeforeBlockID());
-    }
+  private Block getBeforeBlock(Block block) {
+    return getBlock(block.getBeforeBlockID());
+  }
 
-    private Block getAfterBlock(Block block) {
-        return getBlock(block.getAfterBlockID());
-    }
+  private Block getAfterBlock(Block block) {
+    return getBlock(block.getAfterBlockID());
+  }
 
-    private Block getPlugBlock(Long blockID) {
-        return getPlugBlock(getBlock(blockID));
-    }
+  private Block getPlugBlock(Long blockID) {
+    return getPlugBlock(getBlock(blockID));
+  }
 
-    private Block getPlugBlock(Block block) {
-        return getBlock(block.getPlugBlockID());
-    }
+  private Block getPlugBlock(Block block) {
+    return getBlock(block.getPlugBlockID());
+  }
 
-    ///////////////////
-    // MOUSE METHODS //
-    ///////////////////
-    /**
+  /**
      * Action: removes the focus current focused block
      * 		   and places new focus on e.getSource
      * @requires e != null
@@ -697,57 +537,47 @@ public class FocusTraversalManager implements MouseListener, KeyListener, Worksp
      * 			adds focus to e.getSource iff e.getSource
      * 			is instance of BlockCanvas and RenderableBlock
      */
-    private void grabFocus(MouseEvent e) {
-        //System.out.println("FocusManager: Mouse Event at ("+ e.getX()+", "+e.getY()+") on "+e.getSource());
-        if (e.getSource() instanceof Canvas) {
-            //get canvas point
-            Point canvasPoint = e.getPoint();
-            /*        	SwingUtilities.convertPoint(
-            (BlockCanvas)e.getSource(),
-            e.getPoint(),
-            ((BlockCanvas)e.getSource()).getCanvas());*/
-            setFocus(canvasPoint, Block.NULL);
-            ((Canvas) e.getSource()).grabFocus();
-        } else if (e.getSource() instanceof RenderableBlock) {
-            setFocus(((RenderableBlock) e.getSource()).getBlockID());
-            ((RenderableBlock) e.getSource()).grabFocus();
-        }
+  private void grabFocus(MouseEvent e) {
+    if (e.getSource() instanceof Canvas) {
+      Point canvasPoint = e.getPoint();
+      setFocus(canvasPoint, Block.NULL);
+      ((Canvas) e.getSource()).grabFocus();
+    } else {
+      if (e.getSource() instanceof RenderableBlock) {
+        setFocus(((RenderableBlock) e.getSource()).getBlockID());
+        ((RenderableBlock) e.getSource()).grabFocus();
+      }
     }
+  }
 
-    public void mousePressed(MouseEvent e) {
-        grabFocus(e);
-    }
+  public void mousePressed(MouseEvent e) {
+    grabFocus(e);
+  }
 
-    public void mouseReleased(MouseEvent e) {
-        grabFocus(e);
-    }
+  public void mouseReleased(MouseEvent e) {
+    grabFocus(e);
+  }
 
-    public void mouseEntered(MouseEvent e) {
-    }
+  public void mouseEntered(MouseEvent e) {
+  }
 
-    public void mouseExited(MouseEvent e) {
-    }
+  public void mouseExited(MouseEvent e) {
+  }
 
-    public void mouseClicked(MouseEvent e) {
-    }
+  public void mouseClicked(MouseEvent e) {
+  }
 
-    ///////////////////////////////
-    // Key Listeners Method      //
-    ///////////////////////////////
-	public void keyPressed(KeyEvent e) {
-        KeyInputMap.processKeyChar(workspace, e);
-    }
+  public void keyPressed(KeyEvent e) {
+    KeyInputMap.processKeyChar(workspace, e);
+  }
 
-    public void keyReleased(KeyEvent e) {
-    }
+  public void keyReleased(KeyEvent e) {
+  }
 
-    public void keyTyped(KeyEvent e) {
-    }
+  public void keyTyped(KeyEvent e) {
+  }
 
-    /////////////////////////////// 
-    // WORKSPACE LISTENER METHOD //
-    ///////////////////////////////
-    /**
+  /**
      * Subscription: BLOCK_ADDED events.
      * Action: add this.mouselistener to the block referanced by event
      * @requires block reference in event is not null
@@ -757,36 +587,30 @@ public class FocusTraversalManager implements MouseListener, KeyListener, Worksp
      * 			adds focus to e.getSource iff e.getSource
      * 			is instance of BlockCanvas and RenderableBlock
      */
-    public void workspaceEventOccurred(WorkspaceEvent event) {
-        switch (event.getEventType()) {
-            case WorkspaceEvent.BLOCK_ADDED:
-                //System.out.println("FocusManager: Block_Added Event at of "+event.getSourceBlockID()+" on "+event.getSourceWidget());
-                //only add focus manager as listener to blocks added to pages
-                if (!(event.getSourceWidget() instanceof Page)) {
-                    break;
-                }
-                RenderableBlock rb = workspace.getEnv().getRenderableBlock(event.getSourceBlockID());
-                if (rb == null) {
-                    break;
-                }
-
-                //only add once
-                for (MouseListener l : rb.getMouseListeners()) {
-                    if (l.equals(this)) {
-                        return;
-                        //TODO: this shouldn't return, it should break
-                        //but you can't double break in java
-                    }
-                }
-                rb.addMouseListener(this);
-                rb.addKeyListener(this);
-                setFocus(event.getSourceBlockID());
-                rb.grabFocus();
-                break;
+  public void workspaceEventOccurred(WorkspaceEvent event) {
+    switch (event.getEventType()) {
+      case WorkspaceEvent.BLOCK_ADDED:
+      if (!(event.getSourceWidget() instanceof Page)) {
+        break;
+      }
+      RenderableBlock rb = workspace.getEnv().getRenderableBlock(event.getSourceBlockID());
+      if (rb == null) {
+        break;
+      }
+      for (MouseListener l : rb.getMouseListeners()) {
+        if (l.equals(this)) {
+          return;
         }
+      }
+      rb.addMouseListener(this);
+      rb.addKeyListener(this);
+      setFocus(event.getSourceBlockID());
+      rb.grabFocus();
+      break;
     }
+  }
 
-	public String toString() {
-        return "FocusManager: " + blockFocusPoint + " of " + workspace.getEnv().getBlock(focusBlock);
-    }
+  public String toString() {
+    return "FocusManager: " + blockFocusPoint + " of " + workspace.getEnv().getBlock(focusBlock);
+  }
 }
