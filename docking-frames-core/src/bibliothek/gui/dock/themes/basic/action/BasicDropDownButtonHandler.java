@@ -407,9 +407,9 @@ public class BasicDropDownButtonHandler extends AbstractBasicHandler<DropDownAct
     protected class ButtonView implements DropDownView{
     	private String text;
     	
-    	public void setIcon( ActionContentModifier modifier, Icon icon ){
-    		getModel().setIcon( modifier, icon );
-    	}
+        public void setIcon( ActionContentModifier modifier, Icon icon ){
+        	getModel().setIcon( modifier, icon );
+        }
     	
     	public ActionContentModifier[] getIconContexts(){
     		return getModel().getIconContexts();

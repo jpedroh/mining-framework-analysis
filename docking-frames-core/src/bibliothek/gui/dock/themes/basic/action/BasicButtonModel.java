@@ -357,6 +357,27 @@ public class BasicButtonModel {
     }
     
     /**
+     * Sets the text of this button, some button implementations may ignore the text.
+     * @param text the new text, can be <code>null</code>
+     */
+    public void setText( String text ){
+		String oldText = this.text;
+		this.text = text;
+		for( BasicButtonModelListener listener : listeners() ){
+			listener.textChanged( this, oldText, text );
+		}
+		changed();
+	}
+    
+    /**
+     * 
+     * @return
+     */
+    public String getText(){
+		return text;
+	}
+    
+    /**
      * Removes any icon that was ever set by {@link #setIcon(ActionContentModifier, Icon)} or
      * {@link #setSelectedIcon(ActionContentModifier, Icon)}
      */
@@ -373,27 +394,6 @@ public class BasicButtonModel {
     public ActionContentModifier[] getIconContexts(){
     	return icons.keySet().toArray( new ActionContentModifier[ icons.size() ] );
     }
-
-    /**
-     * Sets the text of this button, some button implementations may ignore the text.
-     * @param text the new text, can be <code>null</code>
-     */
-    public void setText( String text ){
-		String oldText = this.text;
-		this.text = text;
-		for( BasicButtonModelListener listener : listeners() ){
-			listener.textChanged( this, oldText, text );
-		}
-		changed();
-	}
-    
-    /**
-     * Gets the text of this button.
-     * @return the text, which may be <code>null</code>
-     */
-    public String getText(){
-		return text;
-	}
     
     /**
      * Sets the icon which is normally shown on the view.

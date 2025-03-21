@@ -103,13 +103,13 @@ public abstract class AbstractMenuHandler<I extends JMenuItem, D extends Standar
                 
                 listener = new Listener();
                 action.addDockActionListener( listener );
-
+                
                 if( item != null ){
-                	item.setEnabled( action.isEnabled( dockable ));
-                    item.setIcon( action.getIcon( dockable, ActionContentModifier.NONE_HORIZONTAL ));
-                    item.setDisabledIcon( action.getIcon( dockable, ActionContentModifier.DISABLED ) );
-                    item.setText( action.getText( dockable ));
-                    item.setToolTipText( action.getTooltipText( dockable ));
+	                item.setEnabled( action.isEnabled( dockable ));
+	                item.setIcon( action.getIcon( dockable, ActionContentModifier.NONE_HORIZONTAL ));
+	                item.setDisabledIcon( action.getIcon( dockable, ActionContentModifier.DISABLED ) );
+	                item.setText( action.getText( dockable ));
+	                item.setToolTipText( action.getTooltipText( dockable ));
                 }
             }
             else
@@ -143,19 +143,41 @@ public abstract class AbstractMenuHandler<I extends JMenuItem, D extends Standar
         		item.setEnabled( action.isEnabled( dockable ));
         	}
         }
-
-        public void actionIconChanged( StandardDockAction action, ActionContentModifier modifier, Set<Dockable> dockables ){
+<<<<<<< /usr/src/app/output/benoker/dockingframes/4a829b05935f1ed1955f3ecefa55d0bcedfbd809/docking-frames-core/src/bibliothek/gui/dock/themes/basic/action/menu/AbstractMenuHandler.java/left.java
+||||||| /usr/src/app/output/benoker/dockingframes/4a829b05935f1ed1955f3ecefa55d0bcedfbd809/docking-frames-core/src/bibliothek/gui/dock/themes/basic/action/menu/AbstractMenuHandler.java/base.java
+    
+        public void actionIconChanged( StandardDockAction action, Set<Dockable> dockables ) {
+            item.setIcon( action.getIcon( dockable ));
+        }
+=======
+    
+        public void actionIconChanged( StandardDockAction action, Set<Dockable> dockables ) {
         	if( item != null ){
-	        	if( modifier == null || modifier == ActionContentModifier.NONE_HORIZONTAL ){
-	        		item.setIcon( action.getIcon( dockable, ActionContentModifier.NONE_HORIZONTAL ) );
-	        	}
-	        	else if( modifier == null || modifier == ActionContentModifier.NONE ){
-	        		item.setIcon( action.getIcon( dockable, ActionContentModifier.NONE ) );
-	        	}
-	        	if( modifier == null || modifier == ActionContentModifier.DISABLED ){
-	        		item.setDisabledIcon( action.getIcon( dockable, ActionContentModifier.DISABLED ) );
-	        	}
+        		item.setIcon( action.getIcon( dockable ));
         	}
+        }
+>>>>>>> /usr/src/app/output/benoker/dockingframes/4a829b05935f1ed1955f3ecefa55d0bcedfbd809/docking-frames-core/src/bibliothek/gui/dock/themes/basic/action/menu/AbstractMenuHandler.java/right.java
+        
+<<<<<<< /usr/src/app/output/benoker/dockingframes/4a829b05935f1ed1955f3ecefa55d0bcedfbd809/docking-frames-core/src/bibliothek/gui/dock/themes/basic/action/menu/AbstractMenuHandler.java/left.java
+        public void actionIconChanged( StandardDockAction action, ActionContentModifier modifier, Set<Dockable> dockables ){
+        	if( modifier == null || modifier == ActionContentModifier.NONE_HORIZONTAL ){
+        		item.setIcon( action.getIcon( dockable, ActionContentModifier.NONE_HORIZONTAL ) );
+        	}
+        	else if( modifier == null || modifier == ActionContentModifier.NONE ){
+        		item.setIcon( action.getIcon( dockable, ActionContentModifier.NONE ) );
+        	}
+        	if( modifier == null || modifier == ActionContentModifier.DISABLED ){
+        		item.setDisabledIcon( action.getIcon( dockable, ActionContentModifier.DISABLED ) );
+        	}
+||||||| /usr/src/app/output/benoker/dockingframes/4a829b05935f1ed1955f3ecefa55d0bcedfbd809/docking-frames-core/src/bibliothek/gui/dock/themes/basic/action/menu/AbstractMenuHandler.java/base.java
+        public void actionDisabledIconChanged( StandardDockAction action, Set<Dockable> dockables ){
+        	item.setDisabledIcon( action.getDisabledIcon( dockable ));
+=======
+        public void actionDisabledIconChanged( StandardDockAction action, Set<Dockable> dockables ){
+        	if( item != null ){
+        		item.setDisabledIcon( action.getDisabledIcon( dockable ));
+        	}
+>>>>>>> /usr/src/app/output/benoker/dockingframes/4a829b05935f1ed1955f3ecefa55d0bcedfbd809/docking-frames-core/src/bibliothek/gui/dock/themes/basic/action/menu/AbstractMenuHandler.java/right.java
         }
 
         public void actionTextChanged( StandardDockAction action, Set<Dockable> dockables ) {
@@ -171,7 +193,7 @@ public abstract class AbstractMenuHandler<I extends JMenuItem, D extends Standar
         }
         
         public void actionRepresentativeChanged( StandardDockAction action, Set<Dockable> dockables ){
-	        // ignore	
+    	        // ignore	
         }
     }
 }

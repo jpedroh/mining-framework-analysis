@@ -43,10 +43,6 @@ public class BasicButtonModelAdapter implements BasicButtonModelListener{
 	public void textChanged( BasicButtonModel model, String oldText, String text ){
 		changed();	
 	}
-	
-	public void disabledIconChanged( BasicButtonModel model, Icon oldIcon, Icon icon ){
-		changed();
-	}
 
 	public void enabledStateChanged( BasicButtonModel model, boolean enabled ){
 		changed();

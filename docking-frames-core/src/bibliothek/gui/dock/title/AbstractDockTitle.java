@@ -39,7 +39,9 @@ import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionPopup;
 import bibliothek.gui.dock.action.DockAction;
 import bibliothek.gui.dock.action.DockActionSource;
+import bibliothek.gui.dock.station.stack.tab.DefaultTabContentFilter.Behavior;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
+import bibliothek.gui.dock.themes.basic.action.buttons.ButtonContentValue;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 import bibliothek.gui.dock.util.swing.OrientedLabel;
 
@@ -149,6 +151,14 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
     		}
     	}
     }
+    protected void paintForeground( Graphics g, JComponent component ){
+       paintIcon(g, component);
+    }
+    /**
+     * Paints the icon.
+     * @param g
+     * @param component
+     */
     
     /**
      * Sets the tooltip that will be shown on this title.

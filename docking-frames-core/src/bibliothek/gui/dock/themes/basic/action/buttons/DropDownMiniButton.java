@@ -106,6 +106,7 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 			
 			int height = dropIcon.getIconHeight();
 			height = Math.max( height, icon.height );
+			
 			height += insets.top + insets.bottom;
 			return new Dimension( width, height );
 		}
@@ -115,6 +116,7 @@ public class DropDownMiniButton extends MiniButton<BasicDropDownButtonModel> {
 			
 			int width = dropIcon.getIconWidth();
 			width = Math.max( width, icon.width );
+			
 			width += insets.left + insets.right;			
 			return new Dimension( width, height );
 		}

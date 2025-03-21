@@ -130,11 +130,19 @@ public abstract class BasicHandler<D extends StandardDockAction> extends Abstrac
     	StandardDockAction action = getAction();
     	Dockable dockable = getDockable();
     	
+<<<<<<< /usr/src/app/output/benoker/dockingframes/4a829b05935f1ed1955f3ecefa55d0bcedfbd809/docking-frames-core/src/bibliothek/gui/dock/themes/basic/action/BasicHandler.java/left.java
     	for( ActionContentModifier modifier : action.getIconContexts( dockable )){
     		model.setIcon( modifier, action.getIcon( dockable, modifier ) );
     	}
     	
+||||||| /usr/src/app/output/benoker/dockingframes/4a829b05935f1ed1955f3ecefa55d0bcedfbd809/docking-frames-core/src/bibliothek/gui/dock/themes/basic/action/BasicHandler.java/base.java
+    	model.setIcon( action.getIcon( dockable ) );
+    	model.setDisabledIcon( action.getDisabledIcon( dockable ) );
+=======
     	updateText();
+    	model.setIcon( action.getIcon( dockable ) );
+    	model.setDisabledIcon( action.getDisabledIcon( dockable ) );
+>>>>>>> /usr/src/app/output/benoker/dockingframes/4a829b05935f1ed1955f3ecefa55d0bcedfbd809/docking-frames-core/src/bibliothek/gui/dock/themes/basic/action/BasicHandler.java/right.java
     	model.setEnabled( action.isEnabled( dockable ) );
     	model.setDockableRepresentative( action.getDockableRepresentation( dockable ) );
     	
