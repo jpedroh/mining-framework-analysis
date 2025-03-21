@@ -210,15 +210,6 @@ public class Robot {
 
                 @Override
                 public void operationComplete(ChannelFuture future) throws Exception {
-
-                    for (AutoCloseable resource : configuration.getResources()) {
-                        try {
-                            resource.close();
-                        }
-                        catch (Exception e) {
-                            // ignore
-                        }
-                    }
                     // close server and client channels
                     // final ChannelGroupFuture closeFuture =
                     serverChannels.close().addListener(new ChannelGroupFutureListener() {
@@ -377,6 +368,37 @@ public class Robot {
             for (ChannelFuture connectFuture : connectFutures) {
                 connectFuture.cancel();
             }
+<<<<<<< /usr/src/app/output/k3po/k3po/808d53cfd9e2f32e8383d4fe75f1d318792e8946/driver/src/main/java/org/kaazing/k3po/driver/internal/Robot.java/left.java
+||||||| /usr/src/app/output/k3po/k3po/808d53cfd9e2f32e8383d4fe75f1d318792e8946/driver/src/main/java/org/kaazing/k3po/driver/internal/Robot.java/base.java
+        
+            // close server and client channels
+            final ChannelGroupFuture closeFuture = serverChannels.close();
+            closeFuture.addListener(new ChannelGroupFutureListener() {
+                @Override
+                public void operationComplete(final ChannelGroupFuture future) {
+                    clientChannels.close();
+                }
+            });
+=======
+        
+            // close server and client channels
+            final ChannelGroupFuture closeFuture = serverChannels.close();
+            closeFuture.addListener(new ChannelGroupFutureListener() {
+                @Override
+                public void operationComplete(final ChannelGroupFuture future) {
+                    clientChannels.close();
+                }
+            });
+
+            for (AutoCloseable resource : configuration.getResources()) {
+                try {
+                    resource.close();
+                }
+                catch (Exception e) {
+                    // ignore
+                }
+            }
+>>>>>>> /usr/src/app/output/k3po/k3po/808d53cfd9e2f32e8383d4fe75f1d318792e8946/driver/src/main/java/org/kaazing/k3po/driver/internal/Robot.java/right.java
         }
     }
 
@@ -428,7 +450,9 @@ public class Robot {
                         ChannelFuture barrierFuture = notifyBarrier.getFuture();
                         barrierFuture.setSuccess();
                     }
-                } else {
+                }
+                else {
+                    LOGGER.error("Failed to bind to " + localAddress);
                     Throwable cause = bindFuture.getCause();
                     String message = format("accept failed: %s", cause.getMessage());
                     progress.addScriptFailure(regionInfo, message);
