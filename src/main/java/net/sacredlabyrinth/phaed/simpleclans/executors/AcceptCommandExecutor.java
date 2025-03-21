@@ -42,9 +42,8 @@ public class AcceptCommandExecutor implements CommandExecutor {
                 ChatBlock.sendMessage(player, ChatColor.RED + plugin.getLang("you.have.already.voted"));
                 return false;
             }
-            
             clan.leaderAnnounce(ChatColor.GREEN + MessageFormat.format(plugin.getLang("voted.to.accept"), player.getName()));
-			plugin.getRequestManager().accept(cp);
+            plugin.getRequestManager().accept(cp);
         } else {
             if (!plugin.getRequestManager().hasRequest(player.getName().toLowerCase())) {
                 ChatBlock.sendMessage(player, ChatColor.RED + plugin.getLang("nothing.to.accept"));
