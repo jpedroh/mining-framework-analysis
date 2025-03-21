@@ -131,7 +131,7 @@ public class RouterHandlerMapping extends AbstractHandlerMapping {
         List<Resource> fileResources = new ArrayList<Resource>();
 
         try {
-            for(String fileName : this.routeFiles) {
+            for (String fileName : this.routeFiles) {
                 fileResources.addAll(Arrays.asList(getApplicationContext().getResources(fileName)));
             }
             Router.load(fileResources, this.servletPrefix);
