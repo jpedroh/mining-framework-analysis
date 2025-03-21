@@ -25,7 +25,7 @@ public class StepOverviewPage extends AbstractPage {
     public void generatePage() throws IOException {
         super.generatePage();
 
-        contextMap.put("all_steps", sortStepsByDuration());
+        contextMap.put("steps", sortStepsByDate());
 
         int allOccurrences = 0;
         long allDurations = 0;
@@ -40,10 +40,22 @@ public class StepOverviewPage extends AbstractPage {
         super.generateReport("step-overview.html");
     }
 
-    private StepObject[] sortStepsByDuration() {
-        Map<String, StepObject> steps = reportInformation.getAllSteps();
+    private StepObject[] sortStepsByDate() {
+        Map<String, StepObject> steps = reportInformation.getStepObject();
+<<<<<<< /usr/src/app/output/masterthought/cucumber-reporting/9fa019efbb3e9219643a69303c549bdb7b6515a2/src/main/java/net/masterthought/cucumber/generators/StepOverviewPage.java/left.java
         StepObject[] array = new StepObject[steps.size()];
+||||||| /usr/src/app/output/masterthought/cucumber-reporting/9fa019efbb3e9219643a69303c549bdb7b6515a2/src/main/java/net/masterthought/cucumber/generators/StepOverviewPage.java/base.java
+        StepObject[] array = new StepObject[reportInformation.getStepObject().size()];
+=======
+        StepObject[] array = new StepObject[reportInformation.getAllSteps().size()];
+>>>>>>> /usr/src/app/output/masterthought/cucumber-reporting/9fa019efbb3e9219643a69303c549bdb7b6515a2/src/main/java/net/masterthought/cucumber/generators/StepOverviewPage.java/right.java
+<<<<<<< /usr/src/app/output/masterthought/cucumber-reporting/9fa019efbb3e9219643a69303c549bdb7b6515a2/src/main/java/net/masterthought/cucumber/generators/StepOverviewPage.java/left.java
         Arrays.sort(steps.values().toArray(array), new DurationCompator());
+||||||| /usr/src/app/output/masterthought/cucumber-reporting/9fa019efbb3e9219643a69303c549bdb7b6515a2/src/main/java/net/masterthought/cucumber/generators/StepOverviewPage.java/base.java
+        Arrays.sort(reportInformation.getStepObject().values().toArray(array), new DurationCompator());
+=======
+        Arrays.sort(reportInformation.getAllSteps().values().toArray(array), new DurationCompator());
+>>>>>>> /usr/src/app/output/masterthought/cucumber-reporting/9fa019efbb3e9219643a69303c549bdb7b6515a2/src/main/java/net/masterthought/cucumber/generators/StepOverviewPage.java/right.java
 
         return array;
     }

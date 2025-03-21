@@ -27,6 +27,7 @@ public class ReportInformation {
 
     private long totalDuration;
     private long totalTagDuration;
+
     private int totalTagSteps;
 
     private final Map<String, TagObject> allTags = new TreeMap<>();
@@ -61,8 +62,8 @@ public class ReportInformation {
         return scenarioCounter.size();
     }
 
-    public StatusCounter getStepsCounter() {
-        return stepStatusCounter;
+    public int getTotalSteps() {
+        return stepStatusCounter.size();
     }
 
     public int getTotalStepsPassed() {
@@ -146,15 +147,22 @@ public class ReportInformation {
     }
 
     public int getTotalScenariosPassed() {
-        return scenarioCounter.getValueFor(Status.PASSED);
+        return this.scenarioCounter.getValueFor(Status.PASSED);
     }
 
     public int getTotalScenariosFailed() {
-        return scenarioCounter.getValueFor(Status.FAILED);
+        return this.scenarioCounter.getValueFor(Status.FAILED);
     }
 
-    public Background getBackgroundInfo() {
-        return backgroundInfo;
+    private void processTag(TagObject tag, Scenario scenario) {
+        tag.addScenarios(scenario);
+        tagStatusCounter.incrementFor(tag.getStatus());
+
+        Step[] steps = scenario.getSteps();
+        for (Step step : steps) {
+            totalTagDuration += step.getDuration();
+        }
+        totalTagSteps += steps.length;
     }
 
     private void processFeatures() {
@@ -185,17 +193,6 @@ public class ReportInformation {
                 countSteps(scenario.getAfter());
             }
         }
-    }
-
-    private void processTag(TagObject tag, Scenario scenario) {
-        tag.addScenarios(scenario);
-        tagStatusCounter.incrementFor(tag.getStatus());
-
-        Step[] steps = scenario.getSteps();
-        for (Step step : steps) {
-            totalTagDuration += step.getDuration();
-        }
-        totalTagSteps += steps.length;
     }
 
     private void countSteps(ResultsWithMatch[] steps) {
@@ -247,5 +244,9 @@ public class ReportInformation {
             allTags.put(tagObject.getTagName(), tagObject);
         }
         return tagObject;
+    }
+
+    public Background getBackgroundInfo() {
+        return backgroundInfo;
     }
 }
