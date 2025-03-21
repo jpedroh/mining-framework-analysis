@@ -53,10 +53,6 @@ import bibliothek.util.Todo.Version;
 import bibliothek.gui.dock.util.PropertyKey;
 import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
-import bibliothek.util.Todo;
-import bibliothek.util.Todo.Compatibility;
-import bibliothek.util.Todo.Priority;
-import bibliothek.util.Todo.Version;
 import bibliothek.util.Workarounds;
 
 /**

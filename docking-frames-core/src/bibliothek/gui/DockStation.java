@@ -370,7 +370,14 @@ public interface DockStation extends DockElement{
      * Gets a description of all the areas of the screen where this {@link DockStation} can handle a drop event.<br>
      * Everytime the mouse is moved or released during a drag &amp; drop operation, this method is called for
      * all {@link DockStation}s. The returned {@link DockStationDropLayer}s are then filtered and ordered, the resulting
-     * order defines the order in which the method {@link #prepareDrop(StationDropItem)} is called.
+<<<<<<< /usr/src/app/output/benoker/dockingframes/795fe702b9add018ed1fe28e02f2220e5cf3068a/docking-frames-core/src/bibliothek/gui/DockStation.java/left.java
+     * order defines the order in which the method {@link #prepareDrop(int, int, int, int, Dockable)} is
+||||||| /usr/src/app/output/benoker/dockingframes/795fe702b9add018ed1fe28e02f2220e5cf3068a/docking-frames-core/src/bibliothek/gui/DockStation.java/base.java
+     * order defines the order in which the method {@link #prepareDrop(int, int, int, int, boolean, Dockable)} is
+=======
+     * order defines the order in which the method {@link #prepareDrop(StationDropItem)} is
+>>>>>>> /usr/src/app/output/benoker/dockingframes/795fe702b9add018ed1fe28e02f2220e5cf3068a/docking-frames-core/src/bibliothek/gui/DockStation.java/right.java
+     * called.
      * @return all the layers of this station, must not be <code>null</code>, must not contain <code>null</code>,
      * must not contain the same entry twice. The array or the {@link DockStationDropLayer}s may be modified,
      * hence this method should always create new objects.
