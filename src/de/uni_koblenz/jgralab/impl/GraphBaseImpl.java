@@ -86,17 +86,20 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	/**
 	 * the unique id of the graph in the schema
 	 */
+
 	private String id;
 
 	/**
 	 * The schema this graph belongs to
 	 */
+
 	private final Schema schema;
 
 	/**
 	 * The GraphFactory that was used to create this graph. This factory wil lbe
 	 * used to create vertices and edges in this graph.
 	 */
+
 	protected GraphFactory graphFactory;
 
 	/**
@@ -105,22 +108,27 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * attribute value), this version number is increased by 1, It is saved in
 	 * the tg-file.
 	 */
+
 	private long graphVersion;
 
 	/**
 	 * Indicates if this graph is currently loading.
 	 */
+
 	private boolean loading;
 
 	// ------------- VERTEX LIST VARIABLES -------------
+
 	/**
 	 * maximum number of vertices
 	 */
+
 	protected int vMax;
 
 	/**
 	 * free index list for vertices
 	 */
+
 	protected FreeIndexList freeVertexList;
 
 	// ------------- EDGE LIST VARIABLES -------------
@@ -128,11 +136,13 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	/**
 	 * maximum number of edges
 	 */
+
 	protected int eMax;
 
 	/**
 	 * free index list for edges
 	 */
+
 	protected FreeIndexList freeEdgeList;
 
 	/**
@@ -143,6 +153,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * @param cls
 	 *            the GraphClass of this Graph
 	 */
+
 	protected GraphBaseImpl(String id, GraphClass cls) {
 		this(id, cls, 1000, 1000);
 	}
@@ -176,6 +187,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * @param eMax
 	 *            initial maximum number of edges
 	 */
+
 	protected GraphBaseImpl(String id, GraphClass cls, int vMax, int eMax) {
 		if (vMax < 1) {
 			throw new GraphException("vMax must not be less than 1", null);
@@ -349,6 +361,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getExpandedVertexCount()
 	 */
+
 	@Override
 	public int getExpandedVertexCount() {
 		return computeNewSize(vMax);
@@ -363,6 +376,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 *            current size
 	 * @return new size
 	 */
+
 	private int computeNewSize(int n) {
 		return n >= 1048576 ? n + 131072 : n >= 262144 ? n + 262144 : n + n;
 	}
@@ -372,6 +386,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getExpandedEdgeCount()
 	 */
+
 	@Override
 	public int getExpandedEdgeCount() {
 		return computeNewSize(eMax);
@@ -382,6 +397,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+
 	@Override
 	public int compareTo(AttributedElement<GraphClass, Graph> a) {
 		if (a instanceof Graph) {
@@ -397,6 +413,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * @see
 	 * de.uni_koblenz.jgralab.Graph#containsEdge(de.uni_koblenz.jgralab.Edge)
 	 */
+
 	@Override
 	public boolean containsEdge(Edge e) {
 		return getTraversalContext() == null ? eSeqContainsEdge(e)
@@ -420,6 +437,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 *            an edge id
 	 * @return true if this graph contains an edge with id eId
 	 */
+
 	private final boolean containsEdgeId(int eId) {
 		if (eId < 0) {
 			eId = -eId;
@@ -434,6 +452,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * @see
 	 * de.uni_koblenz.jgralab.Graph#containsVertex(de.uni_koblenz.jgralab.Vertex
 	 */
+
 	@Override
 	public boolean containsVertex(Vertex v) {
 		return getTraversalContext() == null ? vSeqContainsVertex(v)
@@ -456,6 +475,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 *            a vertex id
 	 * @return true if this graph contains a vertex with id vId
 	 */
+
 	private final boolean containsVertexId(int vId) {
 		return (vId > 0) && (vId <= vMax) && (getVertex()[vId] != null);
 	}
@@ -463,6 +483,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	/**
 	 * Creates an edge of the given {@link EdgeClass} and adds it to the graph.
 	 */
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha,
@@ -483,6 +504,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * Creates a vertex of the given {@link VertexClass} and adds it to the
 	 * graph.
 	 */
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Vertex> T createVertex(VertexClass vc) {
@@ -502,6 +524,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#deleteEdge(de.uni_koblenz.jgralab.Edge)
 	 */
+
 	@Override
 	public void deleteEdge(Edge e) {
 		assert (e != null) && e.isValid() && eSeqContainsEdge(e);
@@ -515,6 +538,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * @see
 	 * de.uni_koblenz.jgralab.Graph#deleteVertex(de.uni_koblenz.jgralab.Vertex)
 	 */
+
 	@Override
 	public void deleteVertex(Vertex v) {
 		assert (v != null) && v.isValid() && vSeqContainsVertex(v);
@@ -538,6 +562,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#edges()
 	 */
+
 	@Override
 	public Iterable<Edge> edges() {
 		return new EdgeIterable<Edge>(this);
@@ -548,6 +573,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#edges(java.lang.Class)
 	 */
+
 	@Override
 	public Iterable<Edge> edges(Class<? extends Edge> edgeClass) {
 		return new EdgeIterable<Edge>(this, edgeClass);
@@ -560,6 +586,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * de.uni_koblenz.jgralab.Graph#edges(de.uni_koblenz.jgralab.schema.EdgeClass
 	 * )
 	 */
+
 	@Override
 	public Iterable<Edge> edges(EdgeClass edgeClass) {
 		return new EdgeIterable<Edge>(this, edgeClass.getSchemaClass());
@@ -571,6 +598,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * @param newSize
 	 *            the new size of the edge array
 	 */
+
 	@Override
 	public void expandEdgeArray(int newSize) {
 		if (newSize <= eMax) {
@@ -607,6 +635,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * @param newSize
 	 *            the new size of the vertex array
 	 */
+
 	@Override
 	public void expandVertexArray(int newSize) {
 		if (newSize <= vMax) {
@@ -633,6 +662,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getECount()
 	 */
+
 	@Override
 	public int getECount() {
 		TraversalContext tc = getTraversalContext();
@@ -659,6 +689,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getEdge(int)
 	 */
+
 	@Override
 	public Edge getEdge(int eId) {
 		assert eId != 0 : "The edge id must be != 0, given was " + eId;
@@ -674,6 +705,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getFirstEdgeInGraph()
 	 */
+
 	@Override
 	public Edge getFirstEdge() {
 		TraversalContext tc = getTraversalContext();
@@ -689,6 +721,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getLastEdgeInGraph()
 	 */
+
 	@Override
 	public Edge getLastEdge() {
 		TraversalContext tc = getTraversalContext();
@@ -705,6 +738,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * @see
 	 * de.uni_koblenz.jgralab.Graph#getFirstEdgeOfClassInGraph(java.lang.Class)
 	 */
+
 	@Override
 	public Edge getFirstEdge(Class<? extends Edge> edgeClass) {
 		assert edgeClass != null;
@@ -725,6 +759,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * de.uni_koblenz.jgralab.Graph#getFirstEdgeOfClassInGraph(de.uni_koblenz
 	 * .jgralab.schema.EdgeClass)
 	 */
+
 	@Override
 	public Edge getFirstEdge(EdgeClass edgeClass) {
 		assert edgeClass != null;
@@ -736,6 +771,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getFirstVertex()
 	 */
+
 	@Override
 	public Vertex getFirstVertex() {
 		TraversalContext tc = getTraversalContext();
@@ -752,6 +788,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getLastVertex()
 	 */
+
 	@Override
 	public Vertex getLastVertex() {
 		TraversalContext tc = getTraversalContext();
@@ -768,6 +805,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getFirstVertexOfClass(java.lang.Class)
 	 */
+
 	@Override
 	public Vertex getFirstVertex(Class<? extends Vertex> vertexClass) {
 		assert vertexClass != null;
@@ -788,6 +826,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * de.uni_koblenz.jgralab.Graph#getFirstVertexOfClass(de.uni_koblenz.jgralab
 	 * .schema.VertexClass)
 	 */
+
 	@Override
 	public Vertex getFirstVertex(VertexClass vertexClass) {
 		assert vertexClass != null;
@@ -799,6 +838,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.AttributedElement#getGraphClass()
 	 */
+
 	@Override
 	public GraphClass getGraphClass() {
 		return getAttributedElementClass();
@@ -809,6 +849,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getGraphVersion()
 	 */
+
 	@Override
 	public long getGraphVersion() {
 		return graphVersion;
@@ -819,6 +860,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getId()
 	 */
+
 	@Override
 	public String getId() {
 		return id;
@@ -829,6 +871,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getMaxECount()
 	 */
+
 	@Override
 	public int getMaxECount() {
 		return eMax;
@@ -839,6 +882,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getMaxVCount()
 	 */
+
 	@Override
 	public int getMaxVCount() {
 		return vMax;
@@ -849,6 +893,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.AttributedElement#getSchema()
 	 */
+
 	@Override
 	public Schema getSchema() {
 		return schema;
@@ -859,6 +904,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getVCount()
 	 */
+
 	@Override
 	public int getVCount() {
 		TraversalContext tc = getTraversalContext();
@@ -884,6 +930,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#getVertex(int)
 	 */
+
 	@Override
 	public Vertex getVertex(int vId) {
 		assert (vId > 0) : "The vertex id must be > 0, given was " + vId;
@@ -899,6 +946,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.impl.InternalGraph#graphModified()
 	 */
+
 	@Override
 	public void graphModified() {
 		setGraphVersion(getGraphVersion() + 1);
@@ -910,6 +958,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * @param name
 	 *            of the changing Attribute
 	 */
+
 	@Override
 	public void ecaAttributeChanging(String name, Object oldValue,
 			Object newValue) {
@@ -925,6 +974,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * @param name
 	 *            of the changed Attribute
 	 */
+
 	@Override
 	public void ecaAttributeChanged(String name, Object oldValue,
 			Object newValue) {
@@ -940,6 +990,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * @param edge
 	 *            an edge
 	 */
+
 	private void internalDeleteEdge(Edge edge) {
 		assert (edge != null) && edge.isValid() && eSeqContainsEdge(edge);
 
@@ -985,6 +1036,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * this graph. Possibly, cascading deletes of child vertices occur when
 	 * parent vertices of Composition classes are deleted.
 	 */
+
 	private void internalDeleteVertex() {
 		while (!getDeleteVertexList().isEmpty()) {
 			InternalVertex v = getDeleteVertexList().remove(0);
@@ -1105,6 +1157,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#isEdgeListModified(long)
 	 */
+
 	@Override
 	public boolean isEdgeListModified(long edgeListVersion) {
 		return getEdgeListVersion() != edgeListVersion;
@@ -1115,6 +1168,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#isGraphModified(long)
 	 */
+
 	@Override
 	public boolean isGraphModified(long previousVersion) {
 		return getGraphVersion() != previousVersion;
@@ -1125,6 +1179,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#isLoading()
 	 */
+
 	@Override
 	public boolean isLoading() {
 		return loading;
@@ -1135,6 +1190,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#isVertexListModified(long)
 	 */
+
 	@Override
 	public boolean isVertexListModified(long previousVersion) {
 		return getVertexListVersion() != previousVersion;
@@ -1145,6 +1201,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#loadingCompleted()
 	 */
+
 	@Override
 	public void loadingCompleted() {
 	}
@@ -1156,6 +1213,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * de.uni_koblenz.jgralab.impl.InternalGraph#internalLoadingCompleted(int[],
 	 * int[])
 	 */
+
 	@Override
 	public void internalLoadingCompleted(int[] firstIncidence,
 			int[] nextIncidence) {
@@ -1278,6 +1336,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * @param movedEdge
 	 *            the edge to be moved
 	 */
+
 	@Override
 	public void putEdgeBeforeInGraph(InternalEdge targetEdge,
 			InternalEdge movedEdge) {
@@ -1365,6 +1424,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.impl.InternalGraph#setGraphVersion(long)
 	 */
+
 	@Override
 	public void setGraphVersion(long graphVersion) {
 		this.graphVersion = graphVersion;
@@ -1375,6 +1435,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#setId(java.lang.String)
 	 */
+
 	@Override
 	public void setId(String id) {
 		this.id = id;
@@ -1385,6 +1446,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.impl.InternalGraph#setLoading(boolean)
 	 */
+
 	@Override
 	public void setLoading(boolean isLoading) {
 		loading = isLoading;
@@ -1401,33 +1463,29 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#vertices()
 	 */
+
+<<<<<<< /usr/src/app/output/jgralab/jgralab/f5920c83c7ddd5e030eb07bc810646be1169cc2f/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/left.java
+	@Override
+	public Iterable<Vertex> vertices() {
+		return new VertexIterable<Vertex>(this);
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/f5920c83c7ddd5e030eb07bc810646be1169cc2f/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/base.java
+	@Override
+	public Iterable<Vertex> vertices() {
+		return new VertexIterable<Vertex>(this);
+	}
+=======
 	@Override
 	public Iterable<Vertex> vertices() {
 		return new VertexIterable<Vertex>(this, null, null);
 	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/f5920c83c7ddd5e030eb07bc810646be1169cc2f/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/right.java
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uni_koblenz.jgralab.Graph#vertices(de.uni_koblenz.jgralab.VertexFilter
-	 * )
+	 * @see de.uni_koblenz.jgralab.Graph#vertices(java.lang.Class)
 	 */
-	@Override
-	public Iterable<Vertex> vertices(VertexFilter<Vertex> filter) {
-		return new VertexIterable<Vertex>(this, null, filter);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.Graph#vertices(de.uni_koblenz.jgralab.schema.
-	 * VertexClass)
-	 */
-	@Override
-	public Iterable<Vertex> vertices(VertexClass vertexClass) {
-		return new VertexIterable<Vertex>(this, vertexClass, null);
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -1435,17 +1493,30 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	 * @seede.uni_koblenz.jgralab.Graph#vertices(de.uni_koblenz.jgralab.schema.
 	 * VertexClass)
 	 */
+
+<<<<<<< /usr/src/app/output/jgralab/jgralab/f5920c83c7ddd5e030eb07bc810646be1169cc2f/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/left.java
 	@Override
-	public Iterable<Vertex> vertices(VertexClass vertexClass,
-			VertexFilter<Vertex> filter) {
-		return new VertexIterable<Vertex>(this, vertexClass, filter);
+	public Iterable<Vertex> vertices(VertexClass vertexClass) {
+		return new VertexIterable<Vertex>(this, vertexClass.getSchemaClass());
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/f5920c83c7ddd5e030eb07bc810646be1169cc2f/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/base.java
+	@Override
+	public Iterable<Vertex> vertices(VertexClass vertexClass) {
+		return new VertexIterable<Vertex>(this, vertexClass.getSchemaClass());
+	}
+=======
+	@Override
+	public Iterable<Vertex> vertices(VertexClass vertexClass) {
+		return new VertexIterable<Vertex>(this, vertexClass, null);
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/f5920c83c7ddd5e030eb07bc810646be1169cc2f/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/right.java
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see de.uni_koblenz.jgralab.Graph#defragment()
 	 */
+
 	@Override
 	public void defragment() {
 		// TODO is tc really required to be removed for defragmentation?
@@ -1520,7 +1591,9 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	}
 
 	// access to <code>FreeIndexList</code>s with these functions
+
 	// abstract protected void freeIndex(FreeIndexList freeIndexList, int
+
 	// index);
 
 	@Override
@@ -1534,6 +1607,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	}
 
 	// sort vertices
+
 	@Override
 	public void sortVertices(Comparator<Vertex> comp) {
 
@@ -1837,6 +1911,7 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	}
 
 	// ECA Rules
+
 	private ECARuleManagerInterface ecaRuleManager;
 
 	@Override
@@ -1861,6 +1936,393 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	public final boolean hasECARuleManager() {
 		return ecaRuleManager != null;
 	}
+
+	// handle GraphStructureChangedListener
+
+	// ------------- GRAPH VARIABLES -------------
+
+	// ------------- VERTEX LIST VARIABLES -------------
+
+	// ------------- EDGE LIST VARIABLES -------------
+
+	/**
+	 * Creates a graph of the given GraphClass with the given id
+	 * 
+	 * @param id
+	 *            this Graph's id
+	 * @param cls
+	 *            the GraphClass of this Graph
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getExpandedVertexCount()
+	 */
+
+	/**
+	 * Computes new size of vertex and edge array depending on the current size.
+	 * Up to 256k elements, the size is doubled. Between 256k and 1M elements,
+	 * 256k elements are added. Beyond 1M, increase is 128k elements.
+	 * 
+	 * @param n
+	 *            current size
+	 * @return new size
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getExpandedEdgeCount()
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.Graph#containsEdge(de.uni_koblenz.jgralab.Edge)
+	 */
+
+	/**
+	 * Checks if the edge id eId is valid and if there is an such an edge in
+	 * this graph.
+	 * 
+	 * @param eId
+	 *            an edge id
+	 * @return true if this graph contains an edge with id eId
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.Graph#containsVertex(de.uni_koblenz.jgralab.Vertex
+	 */
+
+	/**
+	 * Checks if the vertex id evd is valid and if there is an such a vertex in
+	 * this graph.
+	 * 
+	 * @param vId
+	 *            a vertex id
+	 * @return true if this graph contains a vertex with id vId
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#deleteEdge(de.uni_koblenz.jgralab.Edge)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.Graph#deleteVertex(de.uni_koblenz.jgralab.Vertex)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#edges()
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#edges(java.lang.Class)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.Graph#edges(de.uni_koblenz.jgralab.schema.EdgeClass
+	 * )
+	 */
+
+	/**
+	 * Changes the size of the edge array of this graph to newSize.
+	 * 
+	 * @param newSize
+	 *            the new size of the edge array
+	 */
+
+	/**
+	 * Changes the size of the vertex array of this graph to newSize.
+	 * 
+	 * @param newSize
+	 *            the new size of the vertex array
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getECount()
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getEdge(int)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getFirstEdgeInGraph()
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getLastEdgeInGraph()
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.Graph#getFirstEdgeOfClassInGraph(java.lang.Class)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.Graph#getFirstEdgeOfClassInGraph(de.uni_koblenz
+	 * .jgralab.schema.EdgeClass)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getFirstVertex()
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getLastVertex()
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getFirstVertexOfClass(java.lang.Class)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.Graph#getFirstVertexOfClass(de.uni_koblenz.jgralab
+	 * .schema.VertexClass)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.AttributedElement#getGraphClass()
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getGraphVersion()
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getId()
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getMaxECount()
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getMaxVCount()
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.AttributedElement#getSchema()
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getVCount()
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#getVertex(int)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.impl.InternalGraph#graphModified()
+	 */
+
+	/**
+	 * Triggers ECA-rules before an Attribute is changed
+	 * 
+	 * @param name
+	 *            of the changing Attribute
+	 */
+
+	/**
+	 * Triggers ECA-rule after an Attribute is changed
+	 * 
+	 * @param name
+	 *            of the changed Attribute
+	 */
+
+	/**
+	 * Deletes the edge from the internal structures of this graph.
+	 * 
+	 * @param edge
+	 *            an edge
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#isEdgeListModified(long)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#isGraphModified(long)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#isLoading()
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#isVertexListModified(long)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#loadingCompleted()
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.impl.InternalGraph#internalLoadingCompleted(int[],
+	 * int[])
+	 */
+
+	/**
+	 * Modifies eSeq such that the movedEdge is immediately before the
+	 * targetEdge.
+	 * 
+	 * @param targetEdge
+	 *            an edge
+	 * @param movedEdge
+	 *            the edge to be moved
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.impl.InternalGraph#setGraphVersion(long)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#setId(java.lang.String)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.impl.InternalGraph#setLoading(boolean)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#vertices()
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.uni_koblenz.jgralab.Graph#vertices(de.uni_koblenz.jgralab.VertexFilter
+	 * )
+	 */
+
+	@Override
+	public Iterable<Vertex> vertices(VertexFilter<Vertex> filter) {
+		return new VertexIterable<Vertex>(this, null, filter);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#vertices(de.uni_koblenz.jgralab.schema.
+	 * VertexClass)
+	 */
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seede.uni_koblenz.jgralab.Graph#vertices(de.uni_koblenz.jgralab.schema.
+	 * VertexClass)
+	 */
+
+	@Override
+	public Iterable<Vertex> vertices(VertexClass vertexClass,
+			VertexFilter<Vertex> filter) {
+		return new VertexIterable<Vertex>(this, vertexClass, filter);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see de.uni_koblenz.jgralab.Graph#defragment()
+	 */
+
+	// access to <code>FreeIndexList</code>s with these functions
+
+	// abstract protected void freeIndex(FreeIndexList freeIndexList, int
+
+	// index);
+
+	// sort vertices
+
+	// sort edges
+
+	// ECA Rules
 
 	// handle GraphStructureChangedListener
 

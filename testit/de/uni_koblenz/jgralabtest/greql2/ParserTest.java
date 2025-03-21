@@ -308,7 +308,13 @@ public class ParserTest {
 
 	@Test
 	public void testLessThanExpression() throws Exception {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/f5920c83c7ddd5e030eb07bc810646be1169cc2f/testit/de/uni_koblenz/jgralabtest/greql2/ParserTest.java/left.java
+		Greql2Graph graph = parseQuery("5 < 6");
+||||||| /usr/src/app/output/jgralab/jgralab/f5920c83c7ddd5e030eb07bc810646be1169cc2f/testit/de/uni_koblenz/jgralabtest/greql2/ParserTest.java/base.java
+		Greql2 graph = parseQuery("5 < 6");
+=======
 		Greql2 graph = parseQuery("5456 < 4");
+>>>>>>> /usr/src/app/output/jgralab/jgralab/f5920c83c7ddd5e030eb07bc810646be1169cc2f/testit/de/uni_koblenz/jgralabtest/greql2/ParserTest.java/right.java
 		FunctionApplication funAp = graph.getFirstFunctionApplication();
 		assertNotNull(funAp);
 		IsFunctionIdOf isIdOf = funAp.getFirstIsFunctionIdOfIncidence();
