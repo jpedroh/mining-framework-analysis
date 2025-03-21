@@ -312,6 +312,9 @@ public class Settings {
     public void clearMacro(Integer index) {
         macros.remove(index);
     }
+    public Map<Integer, Macro> getMacros() {
+        return macros;
+    }
 
     public void updateMacro(Integer index, String name, String description, String gcode) {
         if (gcode == null || gcode.trim().isEmpty()) {

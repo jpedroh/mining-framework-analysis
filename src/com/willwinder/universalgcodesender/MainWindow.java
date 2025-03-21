@@ -129,11 +129,25 @@ implements KeyListener, ControllerListener, ControlStateListener {
         checkScrollWindow();
         showVerboseOutputCheckBox.setSelected(settings.isVerboseOutputEnabled());
         firmwareComboBox.setSelectedItem(settings.getFirmwareVersion());
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/ec4cd17651ac657e20cdd967337ad04ca8330509/src/com/willwinder/universalgcodesender/MainWindow.java/left.java
+        customGcodeText1.setText(settings.getMacro(1).getGcode());
+        customGcodeText2.setText(settings.getMacro(2).getGcode());
+        customGcodeText3.setText(settings.getMacro(3).getGcode());
+        customGcodeText4.setText(settings.getMacro(4).getGcode());
+        customGcodeText5.setText(settings.getMacro(5).getGcode());
+||||||| /usr/src/app/output/winder/universal-g-code-sender/ec4cd17651ac657e20cdd967337ad04ca8330509/src/com/willwinder/universalgcodesender/MainWindow.java/base.java
+        customGcodeText1.setText(settings.getCustomGcode1());
+        customGcodeText2.setText(settings.getCustomGcode2());
+        customGcodeText3.setText(settings.getCustomGcode3());
+        customGcodeText4.setText(settings.getCustomGcode4());
+        customGcodeText5.setText(settings.getCustomGcode5());
+=======
         initMacroButtons(settings);
 
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/ec4cd17651ac657e20cdd967337ad04ca8330509/src/com/willwinder/universalgcodesender/MainWindow.java/right.java
         setSize(settings.getMainWindowSettings().width, settings.getMainWindowSettings().height);
         setLocation(settings.getMainWindowSettings().xLocation, settings.getMainWindowSettings().yLocation);
-//        mw.setSize(java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().width, java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().width);
+    //        mw.setSize(java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().width, java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().width);
 
         
         initFileChooser();
@@ -154,25 +168,67 @@ implements KeyListener, ControllerListener, ControlStateListener {
                 settings.setVerboseOutputEnabled(showVerboseOutputCheckBox.isSelected());
                 settings.setFirmwareVersion(firmwareComboBox.getSelectedItem().toString());
 
-//                if (!customGcodeText1.getText().equals(settings.getCustomGcode1())) {
-//                    settings.setCustomGcode1(customGcodeText1.getText());
-//                }
-//
-//                if (!customGcodeText2.getText().equals(settings.getCustomGcode2())) {
-//                    settings.setCustomGcode2(customGcodeText2.getText());
-//                }
-//
-//                if (!customGcodeText3.getText().equals(settings.getCustomGcode3())) {
-//                    settings.setCustomGcode3(customGcodeText3.getText());
-//                }
-//
-//                if (!customGcodeText4.getText().equals(settings.getCustomGcode4())) {
-//                    settings.setCustomGcode4(customGcodeText4.getText());
-//                }
-//
-//                if (!customGcodeText5.getText().equals(settings.getCustomGcode5())) {
-//                    settings.setCustomGcode5(customGcodeText5.getText());
-//                }
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/ec4cd17651ac657e20cdd967337ad04ca8330509/src/com/willwinder/universalgcodesender/MainWindow.java/left.java
+                if (!customGcodeText1.getText().equals(settings.getMacro(1).getGcode())) {
+                    settings.updateMacro(1, null, null, customGcodeText1.getText());
+                }
+
+                if (!customGcodeText2.getText().equals(settings.getMacro(2).getGcode())) {
+                    settings.updateMacro(2, null, null, customGcodeText2.getText());
+                }
+
+                if (!customGcodeText3.getText().equals(settings.getMacro(3))) {
+                    settings.updateMacro(3, null, null, customGcodeText3.getText());
+                }
+
+                if (!customGcodeText4.getText().equals(settings.getMacro(4))) {
+                    settings.updateMacro(4, null, null, customGcodeText4.getText());
+                }
+
+                if (!customGcodeText5.getText().equals(settings.getMacro(5))) {
+                    settings.updateMacro(5, null, null, customGcodeText5.getText());
+                }
+||||||| /usr/src/app/output/winder/universal-g-code-sender/ec4cd17651ac657e20cdd967337ad04ca8330509/src/com/willwinder/universalgcodesender/MainWindow.java/base.java
+                if (!customGcodeText1.getText().equals(settings.getCustomGcode1())) {
+                    settings.setCustomGcode1(customGcodeText1.getText());
+                }
+
+                if (!customGcodeText2.getText().equals(settings.getCustomGcode2())) {
+                    settings.setCustomGcode2(customGcodeText2.getText());
+                }
+
+                if (!customGcodeText3.getText().equals(settings.getCustomGcode3())) {
+                    settings.setCustomGcode3(customGcodeText3.getText());
+                }
+
+                if (!customGcodeText4.getText().equals(settings.getCustomGcode4())) {
+                    settings.setCustomGcode4(customGcodeText4.getText());
+                }
+
+                if (!customGcodeText5.getText().equals(settings.getCustomGcode5())) {
+                    settings.setCustomGcode5(customGcodeText5.getText());
+                }
+=======
+    //                if (!customGcodeText1.getText().equals(settings.getCustomGcode1())) {
+    //                    settings.setCustomGcode1(customGcodeText1.getText());
+    //                }
+    //
+    //                if (!customGcodeText2.getText().equals(settings.getCustomGcode2())) {
+    //                    settings.setCustomGcode2(customGcodeText2.getText());
+    //                }
+    //
+    //                if (!customGcodeText3.getText().equals(settings.getCustomGcode3())) {
+    //                    settings.setCustomGcode3(customGcodeText3.getText());
+    //                }
+    //
+    //                if (!customGcodeText4.getText().equals(settings.getCustomGcode4())) {
+    //                    settings.setCustomGcode4(customGcodeText4.getText());
+    //                }
+    //
+    //                if (!customGcodeText5.getText().equals(settings.getCustomGcode5())) {
+    //                    settings.setCustomGcode5(customGcodeText5.getText());
+    //                }
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/ec4cd17651ac657e20cdd967337ad04ca8330509/src/com/willwinder/universalgcodesender/MainWindow.java/right.java
 
                 SettingsFactory.saveSettings(settings);
                 
@@ -1801,29 +1857,21 @@ implements KeyListener, ControllerListener, ControlStateListener {
 	    this.stopPendantServerButton.setEnabled(false);
         }//GEN-LAST:event_stopPendantServerButtonActionPerformed
 
-//    private void customGcodeText1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customGcodeText1ActionPerformed
-//        this.settings.setCustomGcode1(this.customGcodeText1.getText());
-//    }//GEN-LAST:event_customGcodeText1ActionPerformed
-//
-//    private void customGcodeButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customGcodeButton5ActionPerformed
-//        executeCustomGcode(this.customGcodeText5.getText());
-//    }//GEN-LAST:event_customGcodeButton5ActionPerformed
-//
-//    private void customGcodeButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customGcodeButton1ActionPerformed
-//        executeCustomGcode(this.customGcodeText1.getText());
-//    }//GEN-LAST:event_customGcodeButton1ActionPerformed
-//
-//    private void customGcodeButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customGcodeButton2ActionPerformed
-//        executeCustomGcode(this.customGcodeText2.getText());
-//    }//GEN-LAST:event_customGcodeButton2ActionPerformed
-//
-//    private void customGcodeButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customGcodeButton3ActionPerformed
-//        executeCustomGcode(this.customGcodeText3.getText());
-//    }//GEN-LAST:event_customGcodeButton3ActionPerformed
-//
-//    private void customGcodeButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customGcodeButton4ActionPerformed
-//        executeCustomGcode(this.customGcodeText4.getText());
-//    }//GEN-LAST:event_customGcodeButton4ActionPerformed
+    private void customGcodeText1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customGcodeText1ActionPerformed
+        this.settings.updateMacro(1, null, null, this.customGcodeText1.getText());
+    }
+
+//GEN-LAST:event_customGcodeText1ActionPerformed
+
+//GEN-LAST:event_customGcodeButton5ActionPerformed
+
+//GEN-LAST:event_customGcodeButton1ActionPerformed
+
+//GEN-LAST:event_customGcodeButton2ActionPerformed
+
+//GEN-LAST:event_customGcodeButton3ActionPerformed
+
+//GEN-LAST:event_customGcodeButton4ActionPerformed
 
     private void resetZCoordinateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetZCoordinateButtonActionPerformed
         try {
@@ -1831,7 +1879,9 @@ implements KeyListener, ControllerListener, ControlStateListener {
         } catch (Exception ex) {
             MainWindow.displayErrorDialog(ex.getMessage());
         }
-    }//GEN-LAST:event_resetZCoordinateButtonActionPerformed
+    }
+
+//GEN-LAST:event_resetZCoordinateButtonActionPerformed
 
     private void resetYCoordinateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetYCoordinateButtonActionPerformed
         try {
@@ -1839,7 +1889,9 @@ implements KeyListener, ControllerListener, ControlStateListener {
         } catch (Exception ex) {
             MainWindow.displayErrorDialog(ex.getMessage());
         }
-    }//GEN-LAST:event_resetYCoordinateButtonActionPerformed
+    }
+
+//GEN-LAST:event_resetYCoordinateButtonActionPerformed
 
     private void resetXCoordinateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetXCoordinateButtonActionPerformed
         try {
@@ -1847,7 +1899,9 @@ implements KeyListener, ControllerListener, ControlStateListener {
         } catch (Exception ex) {
             MainWindow.displayErrorDialog(ex.getMessage());
         }
-    }//GEN-LAST:event_resetXCoordinateButtonActionPerformed
+    }
+
+//GEN-LAST:event_resetXCoordinateButtonActionPerformed
 
     private void requestStateInformationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_requestStateInformationActionPerformed
         try {
@@ -1855,7 +1909,9 @@ implements KeyListener, ControllerListener, ControlStateListener {
         } catch (Exception ex) {
             MainWindow.displayErrorDialog(ex.getMessage());
         }
-    }//GEN-LAST:event_requestStateInformationActionPerformed
+    }
+
+//GEN-LAST:event_requestStateInformationActionPerformed
 
     private void softResetMachineControlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_softResetMachineControlActionPerformed
         try {
@@ -1863,7 +1919,9 @@ implements KeyListener, ControllerListener, ControlStateListener {
         } catch (Exception ex) {
             MainWindow.displayErrorDialog(ex.getMessage());
         }
-    }//GEN-LAST:event_softResetMachineControlActionPerformed
+    }
+
+//GEN-LAST:event_softResetMachineControlActionPerformed
 
     private void helpButtonMachineControlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpButtonMachineControlActionPerformed
         StringBuilder message = new StringBuilder()
@@ -1887,7 +1945,9 @@ implements KeyListener, ControllerListener, ControlStateListener {
             message,
             Localization.getString("mainWindow.helpDialog"),
             JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_helpButtonMachineControlActionPerformed
+    }
+
+//GEN-LAST:event_helpButtonMachineControlActionPerformed
 
     private void toggleCheckModeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toggleCheckModeActionPerformed
         try {
@@ -1895,7 +1955,9 @@ implements KeyListener, ControllerListener, ControlStateListener {
         } catch (Exception ex) {
             MainWindow.displayErrorDialog(ex.getMessage());
         }
-    }//GEN-LAST:event_toggleCheckModeActionPerformed
+    }
+
+//GEN-LAST:event_toggleCheckModeActionPerformed
 
     private void killAlarmLockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_killAlarmLockActionPerformed
         try {
@@ -1903,7 +1965,9 @@ implements KeyListener, ControllerListener, ControlStateListener {
         } catch (Exception ex) {
             MainWindow.displayErrorDialog(ex.getMessage());
         }
-    }//GEN-LAST:event_killAlarmLockActionPerformed
+    }
+
+//GEN-LAST:event_killAlarmLockActionPerformed
 
     private void performHomingCycleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_performHomingCycleButtonActionPerformed
         try {
@@ -1911,7 +1975,9 @@ implements KeyListener, ControllerListener, ControlStateListener {
         } catch (Exception ex) {
             MainWindow.displayErrorDialog(ex.getMessage());
         }
-    }//GEN-LAST:event_performHomingCycleButtonActionPerformed
+    }
+
+//GEN-LAST:event_performHomingCycleButtonActionPerformed
 
     private Units getSelectedUnits() {
         if (this.inchRadioButton.isSelected()) {
@@ -1922,7 +1988,7 @@ implements KeyListener, ControllerListener, ControlStateListener {
             return Units.UNKNOWN;
         }
     }
-    
+
     private void adjustManualLocation(int x, int y, int z) {
         try {
             this.backend.adjustManualLocation(x, y, z, this.getStepSize(), getSelectedUnits());
@@ -1930,33 +1996,48 @@ implements KeyListener, ControllerListener, ControlStateListener {
             MainWindow.displayErrorDialog(e.getMessage());
         }
     }
+
     private void yPlusButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yPlusButtonActionPerformed
         this.adjustManualLocation(0, 1, 0);
-    }//GEN-LAST:event_yPlusButtonActionPerformed
+    }
+
+//GEN-LAST:event_yPlusButtonActionPerformed
 
     private void zPlusButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zPlusButtonActionPerformed
         this.adjustManualLocation(0, 0, 1);
-    }//GEN-LAST:event_zPlusButtonActionPerformed
+    }
+
+//GEN-LAST:event_zPlusButtonActionPerformed
 
     private void xMinusButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xMinusButtonActionPerformed
         this.adjustManualLocation(-1, 0, 0);
-    }//GEN-LAST:event_xMinusButtonActionPerformed
+    }
+
+//GEN-LAST:event_xMinusButtonActionPerformed
 
     private void xPlusButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xPlusButtonActionPerformed
         this.adjustManualLocation(1, 0, 0);
-    }//GEN-LAST:event_xPlusButtonActionPerformed
+    }
+
+//GEN-LAST:event_xPlusButtonActionPerformed
 
     private void yMinusButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yMinusButtonActionPerformed
         this.adjustManualLocation(0, -1, 0);
-    }//GEN-LAST:event_yMinusButtonActionPerformed
+    }
+
+//GEN-LAST:event_yMinusButtonActionPerformed
 
     private void zMinusButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zMinusButtonActionPerformed
         this.adjustManualLocation(0, 0, -1);
-    }//GEN-LAST:event_zMinusButtonActionPerformed
+    }
+
+//GEN-LAST:event_zMinusButtonActionPerformed
 
     private void stepSizeSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_stepSizeSpinnerStateChanged
 
-    }//GEN-LAST:event_stepSizeSpinnerStateChanged
+    }
+
+//GEN-LAST:event_stepSizeSpinnerStateChanged
 
     private void returnToZeroButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_returnToZeroButtonActionPerformed
         try {
@@ -1965,7 +2046,9 @@ implements KeyListener, ControllerListener, ControlStateListener {
             MainWindow.displayErrorDialog(ex.getMessage());
         }
 
-    }//GEN-LAST:event_returnToZeroButtonActionPerformed
+    }
+
+//GEN-LAST:event_returnToZeroButtonActionPerformed
 
     private void resetCoordinatesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetCoordinatesButtonActionPerformed
         try {
@@ -1973,7 +2056,79 @@ implements KeyListener, ControllerListener, ControlStateListener {
         } catch (Exception ex) {
             MainWindow.displayErrorDialog(ex.getMessage());
         }
-    }//GEN-LAST:event_resetCoordinatesButtonActionPerformed
+    }
+
+//GEN-LAST:event_resetCoordinatesButtonActionPerformed
+
+    private void customGcodeText2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customGcodeText2ActionPerformed
+        this.settings.updateMacro(2, null, null, this.customGcodeText2.getText());
+    }
+
+//GEN-LAST:event_customGcodeText2ActionPerformed
+
+    private void customGcodeText3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customGcodeText3ActionPerformed
+        this.settings.updateMacro(3, null, null, this.customGcodeText3.getText());
+    }
+
+//GEN-LAST:event_customGcodeText3ActionPerformed
+
+    private void customGcodeText4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customGcodeText4ActionPerformed
+        this.settings.updateMacro(4, null, null, this.customGcodeText4.getText());
+    }
+
+//GEN-LAST:event_customGcodeText4ActionPerformed
+
+    private void customGcodeText5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customGcodeText5ActionPerformed
+        this.settings.updateMacro(5, null, null, this.customGcodeText5.getText());
+    }
+
+//GEN-LAST:event_customGcodeText5ActionPerformed
+
+//    private void customGcodeText1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customGcodeText1ActionPerformed
+
+//        this.settings.setCustomGcode1(this.customGcodeText1.getText());
+
+//    }//GEN-LAST:event_customGcodeText1ActionPerformed
+
+//
+
+//    private void customGcodeButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customGcodeButton5ActionPerformed
+
+//        executeCustomGcode(this.customGcodeText5.getText());
+
+//    }//GEN-LAST:event_customGcodeButton5ActionPerformed
+
+//
+
+//    private void customGcodeButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customGcodeButton1ActionPerformed
+
+//        executeCustomGcode(this.customGcodeText1.getText());
+
+//    }//GEN-LAST:event_customGcodeButton1ActionPerformed
+
+//
+
+//    private void customGcodeButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customGcodeButton2ActionPerformed
+
+//        executeCustomGcode(this.customGcodeText2.getText());
+
+//    }//GEN-LAST:event_customGcodeButton2ActionPerformed
+
+//
+
+//    private void customGcodeButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customGcodeButton3ActionPerformed
+
+//        executeCustomGcode(this.customGcodeText3.getText());
+
+//    }//GEN-LAST:event_customGcodeButton3ActionPerformed
+
+//
+
+//    private void customGcodeButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customGcodeButton4ActionPerformed
+
+//        executeCustomGcode(this.customGcodeText4.getText());
+
+//    }//GEN-LAST:event_customGcodeButton4ActionPerformed
 
     private void inchRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inchRadioButtonActionPerformed
     }//GEN-LAST:event_inchRadioButtonActionPerformed
