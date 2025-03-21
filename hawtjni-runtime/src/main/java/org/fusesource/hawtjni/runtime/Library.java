@@ -297,8 +297,15 @@ public class Library {
         return new String[] {
                 getPlatform() + "/" + System.getProperty("os.arch"),
                 getPlatform(),
+<<<<<<< /usr/src/app/output/fusesource/hawtjni/c0cfb2558b8e11edd224f08fd7da6daa84876b34/hawtjni-runtime/src/main/java/org/fusesource/hawtjni/runtime/Library.java/left.java
                 getOperatingSystem(),
                 "."
+||||||| /usr/src/app/output/fusesource/hawtjni/c0cfb2558b8e11edd224f08fd7da6daa84876b34/hawtjni-runtime/src/main/java/org/fusesource/hawtjni/runtime/Library.java/base.java
+                getOperatingSystem()
+=======
+                getOperatingSystem(),
+                null
+>>>>>>> /usr/src/app/output/fusesource/hawtjni/c0cfb2558b8e11edd224f08fd7da6daa84876b34/hawtjni-runtime/src/main/java/org/fusesource/hawtjni/runtime/Library.java/right.java
         };
     }
 
