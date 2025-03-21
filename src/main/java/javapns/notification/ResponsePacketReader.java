@@ -1,5 +1,4 @@
 package javapns.notification;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
@@ -14,10 +13,10 @@ import java.util.Vector;
  * @author Sylvain Pedneault
  */
 class ResponsePacketReader {
-  /* The number of seconds to wait for a response */
   private static final int TIMEOUT = 5 * 1000;
 
-  private ResponsePacketReader() {}
+  private ResponsePacketReader() {
+  }
 
   /**
    * Read response packets from the current APNS connection and process them.
@@ -44,12 +43,10 @@ class ResponsePacketReader {
     final List<ResponsePacket> responses = new Vector<>();
     int previousTimeout = 0;
     try {
-      /* Set socket timeout to avoid getting stuck on read() */
       try {
         previousTimeout = socket.getSoTimeout();
         socket.setSoTimeout(TIMEOUT);
       } catch (final Exception e) {
-        // empty
       }
       final InputStream input = socket.getInputStream();
       while (true) {
@@ -60,15 +57,11 @@ class ResponsePacketReader {
           break;
         }
       }
-
     } catch (final Exception e) {
-      /* Ignore exception, as we are expecting timeout exceptions because Apple might not reply anything */
     }
-    /* Reset socket timeout, just in case */
     try {
       socket.setSoTimeout(previousTimeout);
     } catch (final Exception e) {
-      // empty
     }
     return responses;
   }
@@ -89,7 +82,6 @@ class ResponsePacketReader {
     if (status < 0) {
       return null;
     }
-
     final int identifier_byte1 = input.read();
     if (identifier_byte1 < 0) {
       return null;
