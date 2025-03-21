@@ -1,27 +1,4 @@
-/*
- * Copyright (c) 2009, Dennis M. Sosnoski. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification, are permitted
- * provided that the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list of conditions
- * and the following disclaimer. Redistributions in binary form must reproduce the above copyright
- * notice, this list of conditions and the following disclaimer in the documentation and/or other
- * materials provided with the distribution. Neither the name of JiBX nor the names of its
- * contributors may be used to endorse or promote products derived from this software without
- * specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
- * WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 package com.googlecode.aviator.utils;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -68,8 +45,7 @@ public class Env implements Map<String, Object>, Serializable {
 
   private List<String> importedPackages;
 
-  // Caching resolved classes
-  private transient Map<String/* class name */, Class<?>> resolvedClasses;
+  private transient Map<String, Class<?>> resolvedClasses;
 
   public static final Map<String, Object> EMPTY_ENV = Collections.emptyMap();
 
@@ -169,9 +145,7 @@ public class Env implements Map<String, Object>, Serializable {
     return this.resolveClassSymbol(name, true);
   }
 
-  public Class<?> resolveClassSymbol(final String name, final boolean checkIfAllow)
-      throws ClassNotFoundException {
-    // from cache
+  public Class<?> resolveClassSymbol(final String name, final boolean checkIfAllow) throws ClassNotFoundException {
     Class<?> clazz = retrieveFromCache(name);
     if (clazz == NullClass.class) {
       throw new ClassNotFoundException(name);
@@ -180,23 +154,18 @@ public class Env implements Map<String, Object>, Serializable {
       if (name.contains(".")) {
         clazz = classForName(name);
       } else {
-        // java.lang.XXX
         clazz = classForName("java.lang." + name);
-        // from imported packages
         if (clazz == null) {
           clazz = resolveFromImportedPackages(name);
         }
-        // from imported classes
         if (clazz == null) {
           clazz = resolveFromImportedSymbols(name, clazz);
         }
-        // try to find from parent env.
         if (clazz == null && this.mDefaults instanceof Env) {
           clazz = ((Env) this.mDefaults).resolveClassSymbol(name, checkIfAllow);
         }
       }
     }
-
     if (clazz == null) {
       put2cache(name, NullClass.class);
       throw new ClassNotFoundException(name);
@@ -218,8 +187,7 @@ public class Env implements Map<String, Object>, Serializable {
     return clazz;
   }
 
-  private Class<?> resolveFromImportedSymbols(final String name, Class<?> clazz)
-      throws ClassNotFoundException {
+  private Class<?> resolveFromImportedSymbols(final String name, Class<?> clazz) throws ClassNotFoundException {
     final String classSym = findSymbol(name);
     if (classSym != null) {
       clazz = classForName(classSym);
@@ -249,8 +217,7 @@ public class Env implements Map<String, Object>, Serializable {
   /**
    * Clear all override key-value pairs. This only effects the overrides, not the defaults.
    */
-  @Override
-  public void clear() {
+  @Override public void clear() {
     if (this.mDefaults != EMPTY_ENV) {
       this.mDefaults.clear();
     }
@@ -266,11 +233,9 @@ public class Env implements Map<String, Object>, Serializable {
    * @param key
    * @return <code>true</code> if key defined, <code>false</code> if not
    */
-  @Override
-  public boolean containsKey(final Object key) {
+  @Override public boolean containsKey(final Object key) {
     Map<String, Object> overrides = getmOverrides(true);
-    return overrides.containsKey(key)
-        || (this.mDefaults != overrides ? this.mDefaults.containsKey(key) : false);
+    return overrides.containsKey(key) || (this.mDefaults != overrides ? this.mDefaults.containsKey(key) : false);
   }
 
   /**
@@ -279,8 +244,7 @@ public class Env implements Map<String, Object>, Serializable {
    * @param value
    * @return <code>true</code> if value present as an override, <code>false</code> if not
    */
-  @Override
-  public boolean containsValue(final Object value) {
+  @Override public boolean containsValue(final Object value) {
     return getmOverrides(true).containsValue(value) || this.mDefaults.containsValue(value);
   }
 
@@ -289,8 +253,7 @@ public class Env implements Map<String, Object>, Serializable {
    *
    * @return override entries
    */
-  @Override
-  public Set<Entry<String, Object>> entrySet() {
+  @Override public Set<Entry<String, Object>> entrySet() {
     Set<Entry<String, Object>> ret = new HashSet<Entry<String, Object>>(this.mDefaults.entrySet());
     ret.addAll(getmOverrides(true).entrySet());
     return ret;
@@ -303,17 +266,13 @@ public class Env implements Map<String, Object>, Serializable {
    * @param key
    * @return value (<code>null</code> if key not present)
    */
-  @Override
-  public Object get(final Object key) {
-    // Should check ENV_VAR at first
-    // TODO: performance tweak
+  @Override public Object get(final Object key) {
     if (Constants.REDUCER_LOOP_VAR.equals(key)) {
       return Range.LOOP;
     }
     if (Constants.REDUCER_EMPTY_VAR.equals(key)) {
       return ReducerResult.withEmpty(AviatorNil.NIL);
     }
-
     if (Constants.ENV_VAR.equals(key)) {
       this.instance.ensureFeatureEnabled(Feature.InternalVars);
       return this;
@@ -330,7 +289,6 @@ public class Env implements Map<String, Object>, Serializable {
       this.instance.ensureFeatureEnabled(Feature.InternalVars);
       return this.expression;
     }
-
     Map<String, Object> overrides = getmOverrides(true);
     Object ret = null;
     if (overrides.containsKey(key)) {
@@ -346,8 +304,7 @@ public class Env implements Map<String, Object>, Serializable {
    *
    * @return <code>true</code> if no overrides, <code>false</code> if any present
    */
-  @Override
-  public boolean isEmpty() {
+  @Override public boolean isEmpty() {
     return getmOverrides(true).isEmpty() && this.mDefaults.isEmpty();
   }
 
@@ -356,8 +313,7 @@ public class Env implements Map<String, Object>, Serializable {
    *
    * @return keys
    */
-  @Override
-  public Set<String> keySet() {
+  @Override public Set<String> keySet() {
     Set<String> ret = new HashSet<String>(this.mDefaults.keySet());
     ret.addAll(getmOverrides(true).keySet());
     return ret;
@@ -390,8 +346,7 @@ public class Env implements Map<String, Object>, Serializable {
    * @param value
    * @return previous value for key (from default map, if not present in overrides)
    */
-  @Override
-  public Object put(final String key, final Object value) {
+  @Override public Object put(final String key, final Object value) {
     Object prior = null;
     Map<String, Object> overrides = getmOverrides(false);
     if (overrides.containsKey(key)) {
@@ -411,8 +366,7 @@ public class Env implements Map<String, Object>, Serializable {
    *
    * @param map
    */
-  @Override
-  public void putAll(final Map map) {
+  @Override public void putAll(final Map map) {
     getmOverrides(false).putAll(map);
   }
 
@@ -424,8 +378,7 @@ public class Env implements Map<String, Object>, Serializable {
    * @param key
    * @return previous value for key
    */
-  @Override
-  public Object remove(final Object key) {
+  @Override public Object remove(final Object key) {
     if (getmOverrides(true).containsKey(key)) {
       return getmOverrides(false).remove(key);
     } else {
@@ -453,8 +406,7 @@ public class Env implements Map<String, Object>, Serializable {
    *
    * @return entry count
    */
-  @Override
-  public int size() {
+  @Override public int size() {
     return keySet().size();
   }
 
@@ -463,8 +415,7 @@ public class Env implements Map<String, Object>, Serializable {
    *
    * @return values
    */
-  @Override
-  public Collection<Object> values() {
+  @Override public Collection<Object> values() {
     Collection<Object> vals = new ArrayList<Object>();
     for (String key : keySet()) {
       vals.add(get(key));
@@ -477,14 +428,9 @@ public class Env implements Map<String, Object>, Serializable {
    *
    * @return a string version of the map
    */
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder buf = new StringBuilder(32 * size());
-    buf.append(super.toString()).append("{"). //
-        append(Constants.INSTANCE_VAR).append("=").append(this.instance).append(", ").//
-        append(Constants.EXP_VAR).append("=").append(this.expression).append(", ").//
-        append(Constants.ENV_VAR).append("=").append("<this>");
-
+    buf.append(super.toString()).append("{").append(Constants.INSTANCE_VAR).append("=").append(this.instance).append(", ").append(Constants.EXP_VAR).append("=").append(this.expression).append(", ").append(Constants.ENV_VAR).append("=").append("<this>");
     Iterator<String> it = keySet().iterator();
     boolean hasNext = it.hasNext();
     if (hasNext) {
@@ -494,13 +440,11 @@ public class Env implements Map<String, Object>, Serializable {
       String key = it.next();
       Object value = get(key);
       buf.append(key).append('=').append(value == this ? "<this>" : value);
-
       hasNext = it.hasNext();
       if (hasNext) {
         buf.append(',').append(' ');
       }
     }
-
     buf.append('}');
     return buf.toString();
   }
@@ -511,14 +455,10 @@ public class Env implements Map<String, Object>, Serializable {
         return EMPTY_ENV;
       }
       this.mOverrides = new ArrayHashMap<>();
-      // this.mOverrides = new HashMap<>();
     }
     return this.mOverrides;
   }
 
-  /**
-   * Default Value when cannot resolve class symbol.
-   */
   static class NullClass {
   }
 }

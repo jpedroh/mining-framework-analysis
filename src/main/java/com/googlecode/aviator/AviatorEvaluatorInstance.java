@@ -1,21 +1,4 @@
-
-/**
- * Copyright (C) 2010 dennis zhuang (killme2008@gmail.com)
- *
- * This library is free software; you can redistribute it and/or modify it under the terms of the
- * GNU Lesser General Public License as published by the Free Software Foundation; either version
- * 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License along with this program;
- * if not, write to the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- **/
 package com.googlecode.aviator;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -184,7 +167,6 @@ import com.googlecode.aviator.utils.Utils;
  *
  */
 public final class AviatorEvaluatorInstance {
-
   private volatile AviatorClassLoader aviatorClassLoader = initAviatorClassLoader();
 
   private OutputStream traceOutputStream = System.out;
@@ -207,7 +189,7 @@ public final class AviatorEvaluatorInstance {
   private List<FunctionLoader> functionLoaders;
 
   /** internal libs in main resources */
-  private static final String[] libs = new String[] {"aviator.av"};
+  private static final String[] libs = new String[] { "aviator.av" };
 
   /** cached compiled internal ASM lib functions */
   private static volatile Map<String, AviatorFunction> internalASMLibFunctions;
@@ -229,9 +211,7 @@ public final class AviatorEvaluatorInstance {
    * @since 5.3.1
    */
   public void aliasOperator(final OperatorType type, final String token) {
-    // TODO more constraints on token
-    if ((type != OperatorType.AND && type != OperatorType.OR) || token == null
-        || !ExpressionParser.isJavaIdentifier(token)) {
+    if ((type != OperatorType.AND && type != OperatorType.OR) || token == null || !ExpressionParser.isJavaIdentifier(token)) {
       throw new IllegalArgumentException();
     }
     this.aliasOperatorTokens.put(type, token);
@@ -330,28 +310,22 @@ public final class AviatorEvaluatorInstance {
    * @since 5.0.0
    * @throws IOException
    */
-  public Expression compileScript(final String cacheKey, final File file, final boolean cached)
-      throws IOException {
-    try (InputStream in = new FileInputStream(file);
-        Reader reader = new InputStreamReader(in, Charset.forName("utf-8"));) {
-
+  public Expression compileScript(final String cacheKey, final File file, final boolean cached) throws IOException {
+    try (InputStream in = new FileInputStream(file); Reader reader = new InputStreamReader(in, Charset.forName("utf-8"))) {
       return compile(cacheKey, Utils.readFully(reader), file.getName(), cached);
     }
   }
 
   public File tryFindScriptFile(final String path) throws IOException {
-    // 1. absolute path
     File file = new File(path);
     if (file.exists()) {
       return file;
     }
-    // 2. from context classloader
     ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
     file = tryFindFileFromClassLoader(path, contextLoader);
     if (file != null) {
       return file;
     }
-    // 3. from current class loader
     contextLoader = getClass().getClassLoader();
     file = tryFindFileFromClassLoader(path, contextLoader);
     if (file != null) {
@@ -401,8 +375,7 @@ public final class AviatorEvaluatorInstance {
     return executeModule(exp, abPath);
   }
 
-  @SuppressWarnings("unchecked")
-  private Map<String, Object> executeModule(final Expression exp, final String abPath) {
+  @SuppressWarnings(value = { "unchecked" }) private Map<String, Object> executeModule(final Expression exp, final String abPath) {
     final Env exports = new Env();
     final Map<String, Object> module = exp.newEnv("exports", exports, "path", abPath);
     Map<String, Object> env = exp.newEnv("__MODULE__", module, "exports", exports);
@@ -422,7 +395,6 @@ public final class AviatorEvaluatorInstance {
   public Map<String, Object> requireScript(final String path) throws IOException {
     ensureFeatureEnabled(Feature.Module);
     if (!path.endsWith(".av")) {
-      // internal modules
       Map<String, Object> exports = (Env) this.moduleCache.get(path);
       if (exports != null) {
         return exports;
@@ -434,7 +406,6 @@ public final class AviatorEvaluatorInstance {
     if (exports != null) {
       return exports;
     } else {
-      // TODO better lock
       synchronized (abPath.intern()) {
         exports = (Env) this.moduleCache.get(abPath);
         if (exports != null) {
@@ -455,20 +426,15 @@ public final class AviatorEvaluatorInstance {
    * @return the exports map
    * @since 5.0.0
    */
-  public Env addModule(final Class<?> moduleClazz)
-      throws NoSuchMethodException, IllegalAccessException {
+  public Env addModule(final Class<?> moduleClazz) throws NoSuchMethodException, IllegalAccessException {
     String namespace = moduleClazz.getSimpleName();
-
     Import importAnt = moduleClazz.getAnnotation(Import.class);
-
     if (importAnt != null) {
       namespace = importAnt.ns();
-      if (namespace == null || namespace.isEmpty()
-          || !ExpressionParser.isJavaIdentifier(namespace)) {
+      if (namespace == null || namespace.isEmpty() || !ExpressionParser.isJavaIdentifier(namespace)) {
         throw new IllegalArgumentException("Invalid namespace in Import annotation: " + namespace);
       }
     }
-
     Env exports = null;
     synchronized (namespace.intern()) {
       exports = (Env) this.moduleCache.get(namespace);
@@ -491,19 +457,14 @@ public final class AviatorEvaluatorInstance {
     this.moduleCache.remove(ns);
   }
 
-  private Env loadModule(final Class<?> moduleClazz)
-      throws IllegalAccessException, NoSuchMethodException {
+  private Env loadModule(final Class<?> moduleClazz) throws IllegalAccessException, NoSuchMethodException {
     Map<String, List<Method>> methodMap = Reflector.findMethodsFromClass(moduleClazz, true);
-
     if (methodMap == null || methodMap.isEmpty()) {
       throw new IllegalArgumentException("Empty module");
     }
-
     Env exports = new Env();
-
     for (Map.Entry<String, List<Method>> entry : methodMap.entrySet()) {
-      exports.put(entry.getKey(), new ClassMethodFunction(moduleClazz, true, entry.getKey(),
-          entry.getKey(), entry.getValue()));
+      exports.put(entry.getKey(), new ClassMethodFunction(moduleClazz, true, entry.getKey(), entry.getKey(), entry.getValue()));
     }
     exports.setInstance(this);
     return exports;
@@ -557,21 +518,17 @@ public final class AviatorEvaluatorInstance {
    * @param clazz the class
    * @return the added function list.
    */
-  public List<String> addInstanceFunctions(final String namespace, final Class<?> clazz)
-      throws IllegalAccessException, NoSuchMethodException {
+  public List<String> addInstanceFunctions(final String namespace, final Class<?> clazz) throws IllegalAccessException, NoSuchMethodException {
     return addMethodFunctions(namespace, false, clazz);
   }
 
-  private List<String> addMethodFunctions(final String namespace, final boolean isStatic,
-      final Class<?> clazz) throws IllegalAccessException, NoSuchMethodException {
+  private List<String> addMethodFunctions(final String namespace, final boolean isStatic, final Class<?> clazz) throws IllegalAccessException, NoSuchMethodException {
     Map<String, List<Method>> methodMap = Reflector.findMethodsFromClass(clazz, isStatic);
     List<String> added = new ArrayList<>();
-
     for (Map.Entry<String, List<Method>> entry : methodMap.entrySet()) {
       String methodName = entry.getKey();
       String name = namespace + "." + methodName;
-      this.addFunction(
-          new ClassMethodFunction(clazz, isStatic, name, methodName, entry.getValue()));
+      this.addFunction(new ClassMethodFunction(clazz, isStatic, name, methodName, entry.getValue()));
       added.add(name);
     }
     return added;
@@ -589,9 +546,7 @@ public final class AviatorEvaluatorInstance {
    * @param clazz the class
    * @return the added function list.
    */
-  public List<String> addStaticFunctions(final String namespace, final Class<?> clazz)
-      throws IllegalAccessException, NoSuchMethodException {
-
+  public List<String> addStaticFunctions(final String namespace, final Class<?> clazz) throws IllegalAccessException, NoSuchMethodException {
     return addMethodFunctions(namespace, true, clazz);
   }
 
@@ -607,18 +562,13 @@ public final class AviatorEvaluatorInstance {
    * @throws NoSuchMethodException
    * @throws IllegalAccessException
    */
-  public List<String> importFunctions(final Class<?> clazz)
-      throws IllegalAccessException, NoSuchMethodException {
-
+  public List<String> importFunctions(final Class<?> clazz) throws IllegalAccessException, NoSuchMethodException {
     String namespace = clazz.getSimpleName();
-    ImportScope[] scopes = {ImportScope.Static, ImportScope.Instance};
-
+    ImportScope[] scopes = { ImportScope.Static, ImportScope.Instance };
     Import importAnt = clazz.getAnnotation(Import.class);
-
     if (importAnt != null) {
       namespace = importAnt.ns();
-      if (namespace == null || namespace.isEmpty()
-          || !ExpressionParser.isJavaIdentifier(namespace)) {
+      if (namespace == null || namespace.isEmpty() || !ExpressionParser.isJavaIdentifier(namespace)) {
         throw new IllegalArgumentException("Invalid namespace in Import annotation: " + namespace);
       }
       scopes = importAnt.scopes();
@@ -626,18 +576,17 @@ public final class AviatorEvaluatorInstance {
         throw new IllegalArgumentException("Empty scopes in Import annotation");
       }
     }
-
     List<String> result = new ArrayList<>();
     for (ImportScope scope : scopes) {
       switch (scope) {
         case Static:
-          result.addAll(addStaticFunctions(namespace, clazz));
-          break;
+        result.addAll(addStaticFunctions(namespace, clazz));
+        break;
         case Instance:
-          result.addAll(addInstanceFunctions(namespace, clazz));
-          break;
+        result.addAll(addInstanceFunctions(namespace, clazz));
+        break;
         default:
-          throw new IllegalStateException("Invalid import scope: " + scope);
+        throw new IllegalStateException("Invalid import scope: " + scope);
       }
     }
     return result;
@@ -675,10 +624,8 @@ public final class AviatorEvaluatorInstance {
     newOpts.put(opt, opt.intoValue(val));
     if (opt == Options.FEATURE_SET) {
       Set<Feature> oldSet = new HashSet<>(getFeatures());
-      @SuppressWarnings("unchecked")
-      Set<Feature> newSet = (Set<Feature>) val;
+      @SuppressWarnings(value = { "unchecked" }) Set<Feature> newSet = (Set<Feature>) val;
       if (oldSet.removeAll(newSet)) {
-        // removed functions that feature is disabled.
         for (Feature feat : oldSet) {
           for (AviatorFunction fn : feat.getFunctions()) {
             this.removeFunction(fn);
@@ -745,14 +692,11 @@ public final class AviatorEvaluatorInstance {
    * @param opt
    * @return
    */
-  @Deprecated
-  @SuppressWarnings("unchecked")
-  public <T> T getOption(final Options opt) {
+  @Deprecated @SuppressWarnings(value = { "unchecked" }) public <T extends java.lang.Object> T getOption(final Options opt) {
     Value val = this.options.get(opt);
     if (val == null) {
       val = opt.getDefaultValueObject();
     }
-
     return (T) opt.intoObject(val);
   }
 
@@ -838,22 +782,17 @@ public final class AviatorEvaluatorInstance {
 
   private AviatorClassLoader initAviatorClassLoader() {
     return AccessController.doPrivileged(new PrivilegedAction<AviatorClassLoader>() {
-
-      @Override
-      public AviatorClassLoader run() {
+      @Override public AviatorClassLoader run() {
         return new AviatorClassLoader(AviatorEvaluatorInstance.class.getClassLoader());
       }
-
     });
   }
 
   private final Map<String, Object> funcMap = new HashMap<String, Object>();
 
-  private final ConcurrentHashMap<String/* namespace */, Object /* exports */> moduleCache =
-      new ConcurrentHashMap<>();
+  private final ConcurrentHashMap<String, Object> moduleCache = new ConcurrentHashMap<>();
 
-  private final Map<OperatorType, AviatorFunction> opsMap =
-      new IdentityHashMap<OperatorType, AviatorFunction>();
+  private final Map<OperatorType, AviatorFunction> opsMap = new IdentityHashMap<OperatorType, AviatorFunction>();
 
   private void loadModule() {
     try {
@@ -876,23 +815,12 @@ public final class AviatorEvaluatorInstance {
   }
 
   private void loadLib() {
-    // Load internal functions
-    // load sys lib
     loadSystemFunctions();
-
-    // load string lib
     loadStringFunctions();
-
-    // load math lib
     loadMathFunctions();
-
-    // seq lib
     loadSeqFunctions();
-
-    // alias
     aliasFunction("println", "p");
     aliasFunction("pst", "printStackTrace");
-
     loadInternalLibs();
   }
 
@@ -936,8 +864,7 @@ public final class AviatorEvaluatorInstance {
     addFunction(new SeqCompsitePredFunFunction("seq.and", LogicOp.AND));
     addFunction(new SeqCompsitePredFunFunction("seq.or", LogicOp.OR));
     addFunction(new SeqMakePredicateFunFunction("seq.true", OperatorType.EQ, AviatorBoolean.TRUE));
-    addFunction(
-        new SeqMakePredicateFunFunction("seq.false", OperatorType.EQ, AviatorBoolean.FALSE));
+    addFunction(new SeqMakePredicateFunFunction("seq.false", OperatorType.EQ, AviatorBoolean.FALSE));
     addFunction(new SeqMakePredicateFunFunction("seq.nil", OperatorType.EQ, AviatorNil.NIL));
     addFunction(new SeqMakePredicateFunFunction("seq.exists", OperatorType.NEQ, AviatorNil.NIL));
   }
@@ -1021,7 +948,7 @@ public final class AviatorEvaluatorInstance {
   private void loadInternalLibs() {
     if (getEvalMode() == EvalMode.ASM) {
       if (internalASMLibFunctions == null) {
-        internalASMLibFunctions = loadInternalFunctions(); // cache it
+        internalASMLibFunctions = loadInternalFunctions();
       } else {
         for (Map.Entry<String, AviatorFunction> entry : internalASMLibFunctions.entrySet()) {
           addFunction(entry.getKey(), entry.getValue());
@@ -1029,10 +956,9 @@ public final class AviatorEvaluatorInstance {
       }
     } else {
       if (internalInterpretedLibFunctions == null) {
-        internalInterpretedLibFunctions = loadInternalFunctions(); // cache it
+        internalInterpretedLibFunctions = loadInternalFunctions();
       } else {
-        for (Map.Entry<String, AviatorFunction> entry : internalInterpretedLibFunctions
-            .entrySet()) {
+        for (Map.Entry<String, AviatorFunction> entry : internalInterpretedLibFunctions.entrySet()) {
           addFunction(entry.getKey(), entry.getValue());
         }
       }
@@ -1042,9 +968,7 @@ public final class AviatorEvaluatorInstance {
   private Map<String, AviatorFunction> loadInternalFunctions() {
     Map<String, AviatorFunction> funcs = new HashMap<>();
     for (String lib : libs) {
-      try (final InputStream in = this.getClass().getResourceAsStream("/" + lib);
-          final BufferedInputStream bis = new BufferedInputStream(in);
-          final Reader reader = new InputStreamReader(bis)) {
+      try (InputStream in = this.getClass().getResourceAsStream("/" + lib); BufferedInputStream bis = new BufferedInputStream(in); Reader reader = new InputStreamReader(bis)) {
         Expression exp = this.compile(lib, Utils.readFully(reader), false);
         Map<String, Object> exports = executeModule(exp, lib);
         for (Map.Entry<String, Object> entry : exports.entrySet()) {
@@ -1064,12 +988,7 @@ public final class AviatorEvaluatorInstance {
   /**
    * Compiled Expression cache
    */
-  private final ConcurrentHashMap<String/* text expression */, FutureTask<Expression>/*
-                                                                                      * Compiled
-                                                                                      * expression
-                                                                                      * task
-                                                                                      */> expressionCache =
-      new ConcurrentHashMap<String, FutureTask<Expression>>();
+  private final ConcurrentHashMap<String, FutureTask<Expression>> expressionCache = new ConcurrentHashMap<String, FutureTask<Expression>>();
 
   private LRUMap<String, FutureTask<Expression>> expressionLRUCache;
 
@@ -1207,8 +1126,7 @@ public final class AviatorEvaluatorInstance {
       throw new IllegalArgumentException("Invalid function name, lambda is a keyword.");
     }
     if (this.funcMap.containsKey(name)) {
-      System.out.println("[Aviator WARN] The function '" + name
-          + "' is already exists, but is replaced with new one.");
+      System.out.println("[Aviator WARN] The function \'" + name + "\' is already exists, but is replaced with new one.");
     }
     this.funcMap.put(name, function);
   }
@@ -1232,8 +1150,7 @@ public final class AviatorEvaluatorInstance {
    * @param env the expression execution env
    * @since 4.0.0
    */
-  public void defineFunction(final String name, final String expression,
-      final Map<String, Object> env) {
+  public void defineFunction(final String name, final String expression, final Map<String, Object> env) {
     AviatorFunction function = (AviatorFunction) this.execute(expression, env);
     this.addFunction(name, function);
   }
@@ -1277,8 +1194,6 @@ public final class AviatorEvaluatorInstance {
       }
     }
     if (function == null) {
-      // Returns a delegate function that will try to find the function from runtime
-      // env.
       function = new RuntimeFunctionDelegator(name, symbolTable, this.functionMissing);
     }
     return function;
@@ -1417,15 +1332,13 @@ public final class AviatorEvaluatorInstance {
     return this.compile(cacheKey, expression, null, cached);
   }
 
-  private Expression compile(final String cacheKey, final String expression,
-      final String sourceFile, final boolean cached) {
+  private Expression compile(final String cacheKey, final String expression, final String sourceFile, final boolean cached) {
     if (expression == null || expression.trim().length() == 0) {
       throw new CompileExpressionErrorException("Blank expression");
     }
     if (cacheKey == null || cacheKey.trim().length() == 0) {
       throw new CompileExpressionErrorException("Blank cacheKey");
     }
-
     if (cached) {
       FutureTask<Expression> existedTask = null;
       if (this.expressionLRUCache != null) {
@@ -1454,42 +1367,33 @@ public final class AviatorEvaluatorInstance {
         }
       }
       return getCompiledExpression(cacheKey, existedTask);
-
     } else {
       return innerCompile(expression, sourceFile, cached);
     }
-
   }
 
-  private FutureTask<Expression> newCompileTask(final String expression, final String sourceFile,
-      final boolean cached) {
+  private FutureTask<Expression> newCompileTask(final String expression, final String sourceFile, final boolean cached) {
     return new FutureTask<>(new Callable<Expression>() {
-      @Override
-      public Expression call() throws Exception {
+      @Override public Expression call() throws Exception {
         return innerCompile(expression, sourceFile, cached);
       }
-
     });
   }
 
-  private Expression getCompiledExpression(final String cacheKey,
-      final FutureTask<Expression> task) {
+  private Expression getCompiledExpression(final String cacheKey, final FutureTask<Expression> task) {
     try {
       return task.get();
     } catch (Throwable t) {
       invalidateCacheByKey(cacheKey);
       final Throwable cause = t.getCause();
-      if (cause instanceof ExpressionSyntaxErrorException
-          || cause instanceof CompileExpressionErrorException) {
+      if (cause instanceof ExpressionSyntaxErrorException || cause instanceof CompileExpressionErrorException) {
         throw Reflector.sneakyThrow(cause);
       }
-      throw new CompileExpressionErrorException("Compile expression failure, cacheKey=" + cacheKey,
-          t);
+      throw new CompileExpressionErrorException("Compile expression failure, cacheKey=" + cacheKey, t);
     }
   }
 
-  private Expression innerCompile(final String expression, final String sourceFile,
-      final boolean cached) {
+  private Expression innerCompile(final String expression, final String sourceFile, final boolean cached) {
     ExpressionLexer lexer = new ExpressionLexer(this, expression);
     CodeGenerator codeGenerator = newCodeGenerator(sourceFile, cached);
     ExpressionParser parser = new ExpressionParser(this, lexer, codeGenerator);
@@ -1511,33 +1415,29 @@ public final class AviatorEvaluatorInstance {
   public CodeGenerator newCodeGenerator(final String sourceFile, final boolean cached) {
     AviatorClassLoader classLoader = getAviatorClassLoader(cached);
     return newCodeGenerator(classLoader, sourceFile);
-
   }
 
-  public EvalCodeGenerator newEvalCodeGenerator(final AviatorClassLoader classLoader,
-      final String sourceFile) {
+  public EvalCodeGenerator newEvalCodeGenerator(final AviatorClassLoader classLoader, final String sourceFile) {
     switch (getEvalMode()) {
       case ASM:
-        return new ASMCodeGenerator(this, sourceFile, classLoader, this.traceOutputStream);
+      return new ASMCodeGenerator(this, sourceFile, classLoader, this.traceOutputStream);
       case INTERPRETER:
-        return new InterpretCodeGenerator(this, sourceFile, classLoader);
+      return new InterpretCodeGenerator(this, sourceFile, classLoader);
       default:
-        throw new IllegalArgumentException("Unknown eval mode: " + getEvalMode());
-
+      throw new IllegalArgumentException("Unknown eval mode: " + getEvalMode());
     }
   }
 
-  public CodeGenerator newCodeGenerator(final AviatorClassLoader classLoader,
-      final String sourceFile) {
+  public CodeGenerator newCodeGenerator(final AviatorClassLoader classLoader, final String sourceFile) {
     switch (getOptimizeLevel()) {
       case AviatorEvaluator.COMPILE:
-        final EvalCodeGenerator codeGen = newEvalCodeGenerator(classLoader, sourceFile);
-        codeGen.start();
-        return codeGen;
+      final EvalCodeGenerator codeGen = newEvalCodeGenerator(classLoader, sourceFile);
+      codeGen.start();
+      return codeGen;
       case AviatorEvaluator.EVAL:
-        return new OptimizeCodeGenerator(this, sourceFile, classLoader, this.traceOutputStream);
+      return new OptimizeCodeGenerator(this, sourceFile, classLoader, this.traceOutputStream);
       default:
-        throw new IllegalArgumentException("Unknow option " + getOptimizeLevel());
+      throw new IllegalArgumentException("Unknow option " + getOptimizeLevel());
     }
   }
 
@@ -1576,8 +1476,7 @@ public final class AviatorEvaluatorInstance {
    * @param values
    * @return
    */
-  @Deprecated
-  public Object exec(final String expression, final Object... values) {
+  @Deprecated public Object exec(final String expression, final Object... values) {
     if (getOptimizeLevel() != AviatorEvaluator.EVAL) {
       throw new IllegalStateException("Aviator evaluator is not in EVAL mode.");
     }
@@ -1611,8 +1510,7 @@ public final class AviatorEvaluatorInstance {
    * @param env Binding variable environment
    * @param cached Whether to cache the compiled result,make true to cache it.
    */
-  public Object execute(final String cacheKey, final String expression,
-      final Map<String, Object> env, final boolean cached) {
+  public Object execute(final String cacheKey, final String expression, final Map<String, Object> env, final boolean cached) {
     Expression compiledExpression = compile(cacheKey, expression, cached);
     if (compiledExpression != null) {
       return compiledExpression.execute(env);
@@ -1628,8 +1526,7 @@ public final class AviatorEvaluatorInstance {
    * @param env Binding variable environment
    * @param cached Whether to cache the compiled result,make true to cache it.
    */
-  public Object execute(final String expression, final Map<String, Object> env,
-      final boolean cached) {
+  public Object execute(final String expression, final Map<String, Object> env, final boolean cached) {
     return execute(expression, expression, env, cached);
   }
 
@@ -1686,6 +1583,7 @@ public final class AviatorEvaluatorInstance {
 
   public static class StringSegments {
     public final List<StringSegment> segs;
+
     public int hintLength;
 
     public StringSegments(final List<StringSegment> segs, final int hintLength) {
@@ -1709,7 +1607,6 @@ public final class AviatorEvaluatorInstance {
       }
       final String result = sb.toString();
       final int newLen = result.length();
-      // Prevent hintLength too large.
       if (newLen > this.hintLength && newLen < 10 * this.hintLength) {
         this.hintLength = newLen;
       }
@@ -1737,45 +1634,37 @@ public final class AviatorEvaluatorInstance {
    * @param lineNo;
    * @return
    */
-  public StringSegments compileStringSegments(final String lexeme, final String sourceFile,
-      final int lineNo) {
+  public StringSegments compileStringSegments(final String lexeme, final String sourceFile, final int lineNo) {
     List<StringSegment> segs = new ArrayList<StringSegment>();
     boolean hasInterpolationOrEscaped = false;
     StringCharacterIterator it = new StringCharacterIterator(lexeme);
     char ch = it.current(), prev = StringCharacterIterator.DONE;
     int lastInterPos = 0;
     int i = 1;
-    for (;;) {
+    for ( ; ; ) {
       if (ch == '#') {
         if (prev == '\\') {
-          // # is escaped, skip the backslash.
           final String segStr = lexeme.substring(lastInterPos, i - 2);
           segs.add(new LiteralSegment(segStr));
           lastInterPos = i - 1;
           hasInterpolationOrEscaped = true;
         } else {
-          // # is not escaped.
           prev = ch;
           ch = it.next();
           i++;
           if (ch == '{') {
-            // Find a interpolation position.
             if (i - 2 > lastInterPos) {
               final String segStr = lexeme.substring(lastInterPos, i - 2);
               segs.add(new LiteralSegment(segStr));
             }
-
             try {
               ExpressionLexer lexer = new ExpressionLexer(this, lexeme.substring(i));
               lexer.setLineNo(lineNo);
-              ExpressionParser parser =
-                  new ExpressionParser(this, lexer, newCodeGenerator(sourceFile, false));
-
+              ExpressionParser parser = new ExpressionParser(this, lexer, newCodeGenerator(sourceFile, false));
               Expression exp = parser.parse(false);
               final Token<?> lookhead = parser.getLookhead();
-              if (lookhead == null || (lookhead.getType() != TokenType.Char
-                  || ((CharToken) lookhead).getCh() != '}')) {
-                parser.reportSyntaxError("expect '}' to complete string interpolation");
+              if (lookhead == null || (lookhead.getType() != TokenType.Char || ((CharToken) lookhead).getCh() != '}')) {
+                parser.reportSyntaxError("expect \'}\' to complete string interpolation");
               }
               int expStrLen = lookhead.getStartIndex() + 1;
               while (expStrLen-- > 0) {
@@ -1784,19 +1673,19 @@ public final class AviatorEvaluatorInstance {
                 i++;
               }
               Token<?> previousToken = null;
-
-              if (parser.getParsedTokens() == 2 && (previousToken = parser.getPrevToken()) != null
-                  && previousToken.getType() == TokenType.Variable) {
-                // special case for inline variable.
+              if (parser.getParsedTokens() == 2 && (previousToken = parser.getPrevToken()) != null && previousToken.getType() == TokenType.Variable) {
                 if (previousToken == Variable.TRUE) {
                   segs.add(new LiteralSegment("true"));
-                } else if (previousToken == Variable.FALSE) {
-                  segs.add(new LiteralSegment("false"));
-                } else if (previousToken == Variable.NIL) {
-                  segs.add(new LiteralSegment("null"));
                 } else {
-                  segs.add(new VarSegment(
-                      parser.getSymbolTable().reserve(previousToken.getLexeme()).getLexeme()));
+                  if (previousToken == Variable.FALSE) {
+                    segs.add(new LiteralSegment("false"));
+                  } else {
+                    if (previousToken == Variable.NIL) {
+                      segs.add(new LiteralSegment("null"));
+                    } else {
+                      segs.add(new VarSegment(parser.getSymbolTable().reserve(previousToken.getLexeme()).getLexeme()));
+                    }
+                  }
                 }
               } else {
                 segs.add(new ExpressionSegment(exp));
@@ -1804,15 +1693,11 @@ public final class AviatorEvaluatorInstance {
               hasInterpolationOrEscaped = true;
               lastInterPos = i;
             } catch (Throwable t) {
-              throw new CompileExpressionErrorException(
-                  "Fail to compile string interpolation: " + lexeme, t);
+              throw new CompileExpressionErrorException("Fail to compile string interpolation: " + lexeme, t);
             }
-            // End of interpolation
           }
-          // End of # is not escaped.
         }
       }
-
       if (ch == StringCharacterIterator.DONE) {
         if (i - 1 > lastInterPos) {
           final String segStr = lexeme.substring(lastInterPos, i - 1);
@@ -1820,7 +1705,6 @@ public final class AviatorEvaluatorInstance {
         }
         break;
       }
-
       prev = ch;
       ch = it.next();
       i++;
@@ -1831,7 +1715,6 @@ public final class AviatorEvaluatorInstance {
       return new StringSegments(Collections.<StringSegment>emptyList(), 0);
     }
   }
-
 
   /**
    * check if class is in Options.ALLOWED_CLASS_SET
@@ -1844,22 +1727,18 @@ public final class AviatorEvaluatorInstance {
     if (checkIfAllow) {
       Set<Class<?>> allowedList = this.getOptionValue(Options.ALLOWED_CLASS_SET).classes;
       if (allowedList != null) {
-        // Null list means allowing all classes
         if (!allowedList.contains(clazz)) {
-          throw new ExpressionRuntimeException(
-                  "`" + clazz + "` is not in allowed class set, check Options.ALLOWED_CLASS_SET");
+          throw new ExpressionRuntimeException("`" + clazz + "` is not in allowed class set, check Options.ALLOWED_CLASS_SET");
         }
       }
-      Set<Class<?>> assignableList =
-              this.getOptionValue(Options.ASSIGNABLE_ALLOWED_CLASS_SET).classes;
+      Set<Class<?>> assignableList = this.getOptionValue(Options.ASSIGNABLE_ALLOWED_CLASS_SET).classes;
       if (assignableList != null) {
         for (Class<?> aClass : assignableList) {
           if (aClass.isAssignableFrom(clazz)) {
             return clazz;
           }
         }
-        throw new ExpressionRuntimeException(
-                "`" + clazz + "` is not in allowed class set, check Options.ALLOWED_CLASS_SET");
+        throw new ExpressionRuntimeException("`" + clazz + "` is not in allowed class set, check Options.ALLOWED_CLASS_SET");
       }
     }
     return clazz;
