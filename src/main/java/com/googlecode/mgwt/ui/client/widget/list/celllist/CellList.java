@@ -1,21 +1,6 @@
-/*
- * Copyright 2010 Daniel Kurka
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
- */
 package com.googlecode.mgwt.ui.client.widget.list.celllist;
-
-import java.util.List;
-
 import com.google.gwt.core.client.GWT;
+import java.util.List;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.Node;
@@ -45,49 +30,43 @@ import com.googlecode.mgwt.ui.client.widget.touch.TouchWidgetImpl;
  * any kind of arbitrary markup
  * @param <T> the type of the model to render
  */
-public class CellList<T> extends Widget implements HasCellSelectedHandler {
-
-
+public class CellList<T extends java.lang.Object> extends Widget implements HasCellSelectedHandler {
   public interface EntryTemplate {
     SafeHtml li(int idx, String classes, SafeHtml cellContents);
   }
 
   protected static final EventPropagator EVENT_PROPAGATOR = GWT.create(EventPropagator.class);
 
-
   private class InternalTouchHandler implements TouchHandler {
-
     private boolean moved;
+
     private int index;
+
     private Element node;
+
     private int x;
+
     private int y;
+
     private boolean started;
+
     private Element originalElement;
 
-    @Override
-    public void onTouchCancel(TouchCancelEvent event) {
-
+    @Override public void onTouchCancel(TouchCancelEvent event) {
     }
 
-    @Override
-    public void onTouchMove(TouchMoveEvent event) {
+    @Override public void onTouchMove(TouchMoveEvent event) {
       Touch touch = event.getTouches().get(0);
-      if (Math.abs(touch.getPageX() - x) > Tap.RADIUS
-          || Math.abs(touch.getPageY() - y) > Tap.RADIUS) {
+      if (Math.abs(touch.getPageX() - x) > Tap.RADIUS || Math.abs(touch.getPageY() - y) > Tap.RADIUS) {
         moved = true;
-        // deselect
         if (node != null) {
           node.removeClassName(CellList.this.appearance.css().selected());
           stopTimer();
         }
-
       }
-
     }
 
-    @Override
-    public void onTouchEnd(TouchEndEvent event) {
+    @Override public void onTouchEnd(TouchEndEvent event) {
       if (node != null) {
         node.removeClassName(CellList.this.appearance.css().selected());
         stopTimer();
@@ -97,57 +76,38 @@ public class CellList<T> extends Widget implements HasCellSelectedHandler {
       }
       node = null;
       started = false;
-
     }
 
-    @Override
-    public void onTouchStart(TouchStartEvent event) {
+    @Override public void onTouchStart(TouchStartEvent event) {
       started = true;
-
       x = event.getTouches().get(0).getPageX();
       y = event.getTouches().get(0).getPageY();
-
       if (node != null) {
         node.removeClassName(CellList.this.appearance.css().selected());
       }
       moved = false;
       index = -1;
-      // Get the event target.
       EventTarget eventTarget = event.getNativeEvent().getEventTarget();
       if (eventTarget == null) {
         return;
       }
-
-      // no textnode or element node
       if (!Node.is(eventTarget) && !Element.is(eventTarget)) {
         return;
       }
-
-      // if windows phone then do not prevent default, causes scrolling issues when
-      // in scroll panel (not sure why), ie10 desktop is fine
-      if (!MGWT.getOsDetection().isWindowsPhone())
-      {
+      if (!MGWT.getOsDetection().isWindowsPhone()) {
         event.preventDefault();
       }
-
-      // text node use the parent..
       if (Node.is(eventTarget) && !Element.is(eventTarget)) {
         Node target = Node.as(eventTarget);
         eventTarget = target.getParentElement().cast();
       }
-
-      // no element
       if (!Element.is(eventTarget)) {
         return;
       }
       Element target = eventTarget.cast();
-
       originalElement = target;
-
-      // Find cell
       String idxString = "";
       while ((target != null) && ((idxString = target.getAttribute("__idx")).length() == 0)) {
-
         target = target.getParentElement();
       }
       if (idxString.length() > 0) {
@@ -158,7 +118,6 @@ public class CellList<T> extends Widget implements HasCellSelectedHandler {
         } catch (Exception e) {
         }
       }
-
     }
   }
 
@@ -170,8 +129,8 @@ public class CellList<T> extends Widget implements HasCellSelectedHandler {
 
   protected Timer timer;
 
-  @UiField
-  public Element container;
+  @UiField public Element container;
+
   private CellListAppearance appearance;
 
   protected EntryTemplate entryTemplate;
@@ -192,13 +151,10 @@ public class CellList<T> extends Widget implements HasCellSelectedHandler {
    * @param css the css to use
    */
   public CellList(Cell<T> cell, CellListAppearance appearance) {
-
     this.cell = cell;
     this.appearance = appearance;
-
     setElement(this.appearance.uiBinder().createAndBindUi(this));
     entryTemplate = this.appearance.getEntryTemplate();
-
     InternalTouchHandler touchHandler = new InternalTouchHandler();
     impl.addTouchHandler(this, touchHandler);
   }
@@ -213,44 +169,31 @@ public class CellList<T> extends Widget implements HasCellSelectedHandler {
    * @param models the list of models to render
    */
   public void render(List<T> models) {
-
     SafeHtmlBuilder sb = new SafeHtmlBuilder();
-
     for (int i = 0; i < models.size(); i++) {
-
       T model = models.get(i);
-
       SafeHtmlBuilder cellBuilder = new SafeHtmlBuilder();
-
       String clazz = this.appearance.css().entry() + " ";
       if (cell.canBeSelected(model)) {
         clazz += this.appearance.css().canbeSelected() + " ";
       }
-
       if (i == 0) {
         clazz += this.appearance.css().first() + " ";
       }
-
       if (models.size() - 1 == i) {
         clazz += this.appearance.css().last() + " ";
       }
-
       cell.render(cellBuilder, model);
-
       sb.append(entryTemplate.li(i, clazz, cellBuilder.toSafeHtml()));
     }
-
     final String html = sb.toSafeHtml().asString();
-
     getElement().setInnerHTML(html);
-
     if (models.size() > 0) {
       String innerHTML = getElement().getInnerHTML();
       if ("".equals(innerHTML.trim())) {
         fixBug(html);
       }
     }
-
   }
 
   /**
@@ -271,16 +214,12 @@ public class CellList<T> extends Widget implements HasCellSelectedHandler {
 
   protected void fixBug(final String html) {
     new Timer() {
-
-      @Override
-      public void run() {
+      @Override public void run() {
         getElement().setInnerHTML(html);
         String innerHTML = getElement().getInnerHTML();
         if ("".equals(innerHTML.trim())) {
           fixBug(html);
-
         }
-
       }
     }.schedule(100);
   }
@@ -289,9 +228,8 @@ public class CellList<T> extends Widget implements HasCellSelectedHandler {
     EVENT_PROPAGATOR.fireEvent(this, new CellSelectedEvent(index, element));
   }
 
-  @UiFactory
-  public CellListAppearance getAppearance() {
-	  return appearance;
+  @UiFactory public CellListAppearance getAppearance() {
+    return appearance;
   }
 
   protected void startTimer(final Element node) {
@@ -299,11 +237,8 @@ public class CellList<T> extends Widget implements HasCellSelectedHandler {
       timer.cancel();
       timer = null;
     }
-
     timer = new Timer() {
-
-      @Override
-      public void run() {
+      @Override public void run() {
         node.addClassName(CellList.this.appearance.css().selected());
       }
     };
@@ -322,9 +257,11 @@ public class CellList<T> extends Widget implements HasCellSelectedHandler {
    * @param index index of the item to update
    * @param model data to use for rendering
    */
-  public void updateItem(int index, T model){
+  public void updateItem(int index, T model) {
     Node child = container.getChild(index);
-    if(child == null) return;
+    if (child == null) {
+      return;
+    }
     SafeHtmlBuilder cellBuilder = new SafeHtmlBuilder();
     cell.render(cellBuilder, model);
     Element.as(child).setInnerHTML(cellBuilder.toSafeHtml().asString());
