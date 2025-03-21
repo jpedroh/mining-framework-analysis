@@ -126,7 +126,13 @@ public class GcodeViewParse {
         GcodeParser gp = getParser(arcSegmentLength);
 
         // Save the state
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/cd6db300cec1859541cb3529678fefda18701dd2/ugs-core/src/com/willwinder/universalgcodesender/visualizer/GcodeViewParse.java/left.java
+        Position start = new Position(0, 0, 0, UnitUtils.Units.getUnits(gp.getCurrentState().units));
+||||||| /usr/src/app/output/winder/universal-g-code-sender/cd6db300cec1859541cb3529678fefda18701dd2/ugs-core/src/com/willwinder/universalgcodesender/visualizer/GcodeViewParse.java/base.java
+        Position start = new Position();
+=======
         Position start = new Position(gp.getCurrentState().getUnits());
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/cd6db300cec1859541cb3529678fefda18701dd2/ugs-core/src/com/willwinder/universalgcodesender/visualizer/GcodeViewParse.java/right.java
 
         while (reader.getNumRowsRemaining() > 0) {
             GcodeCommand commandObject = reader.getNextCommand();
@@ -157,7 +163,13 @@ public class GcodeViewParse {
         lines.clear();
 
         // Save the state
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/cd6db300cec1859541cb3529678fefda18701dd2/ugs-core/src/com/willwinder/universalgcodesender/visualizer/GcodeViewParse.java/left.java
+        Position start = new Position(0,0,0, UnitUtils.Units.getUnits(gp.getCurrentState().units));
+||||||| /usr/src/app/output/winder/universal-g-code-sender/cd6db300cec1859541cb3529678fefda18701dd2/ugs-core/src/com/willwinder/universalgcodesender/visualizer/GcodeViewParse.java/base.java
+        Position start = new Position();
+=======
         Position start = new Position(gp.getCurrentState().getUnits());
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/cd6db300cec1859541cb3529678fefda18701dd2/ugs-core/src/com/willwinder/universalgcodesender/visualizer/GcodeViewParse.java/right.java
 
         for (String s : gcode) {
             List<String> commands = gp.preprocessCommand(s, gp.getCurrentState());
