@@ -1,12 +1,10 @@
 package javapns.notification;
-
 import javapns.notification.exceptions.PayloadMaxSizeExceededException;
 import javapns.notification.exceptions.PayloadMaxSizeProbablyExceededException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.List;
 
 /**
@@ -22,20 +20,19 @@ import java.util.List;
 public abstract class Payload {
   static final Logger logger = LoggerFactory.getLogger(Payload.class);
 
-  /* Character encoding specified by Apple documentation */
   private static final String DEFAULT_CHARACTER_ENCODING = "UTF-8";
+
   private static final String ADDING_CUSTOM_DICTIONARY = "Adding custom Dictionary [";
+
   private static final String DELIMITER_START = "] = [";
+
   private static final String DELIMITED_END = "]";
-  /* The root Payload */
+
   private final JSONObject payload;
 
-  /* Character encoding to use for streaming the payload (should be UTF-8) */
   private String characterEncoding = DEFAULT_CHARACTER_ENCODING;
 
-  /* Number of seconds after which this payload should expire */
-  @SuppressWarnings("PointlessArithmeticExpression")
-  private int expiry = 1 * 24 * 60 * 60;
+  @SuppressWarnings(value = { "PointlessArithmeticExpression" }) private int expiry = 1 * 24 * 60 * 60;
 
   private boolean payloadSizeEstimatedWhenAdding = false;
 
@@ -183,7 +180,6 @@ public abstract class Payload {
         return true;
       }
     } catch (final Exception e) {
-      // empty
     }
     return false;
   }
@@ -203,14 +199,12 @@ public abstract class Payload {
     try {
       int estimatedSize = getPayloadAsBytesUnchecked().length;
       if (propertyName != null && propertyValue != null) {
-        estimatedSize += 6; // ,"":""
+        estimatedSize += 6;
         estimatedSize += propertyName.getBytes(getCharacterEncoding()).length;
         int estimatedValueSize = 0;
-
         if (propertyValue instanceof String || propertyValue instanceof Number) {
           estimatedValueSize = propertyValue.toString().getBytes(getCharacterEncoding()).length;
         }
-
         estimatedSize += estimatedValueSize;
       }
       return estimatedSize;
@@ -274,7 +268,6 @@ public abstract class Payload {
     } catch (final PayloadMaxSizeProbablyExceededException e) {
       throw e;
     } catch (final Exception e) {
-      // empty
     }
     if (opt) {
       object.putOpt(propertyName, propertyValue);
@@ -375,5 +368,4 @@ public abstract class Payload {
   void setPreSendConfiguration(final int preSendConfiguration) {
     this.preSendConfiguration = preSendConfiguration;
   }
-
 }

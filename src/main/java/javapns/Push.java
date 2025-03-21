@@ -1,5 +1,4 @@
 package javapns;
-
 import javapns.communication.exceptions.CommunicationException;
 import javapns.communication.exceptions.KeystoreException;
 import javapns.devices.Device;
@@ -15,7 +14,6 @@ import javapns.notification.transmission.NotificationThreads;
 import javapns.notification.transmission.PushQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,11 +32,9 @@ import java.util.List;
  * @see NotificationThreads
  */
 public class Push {
-
   private static final Logger logger = LoggerFactory.getLogger(Push.class);
 
   private Push() {
-    // empty
   }
 
   /**
@@ -185,7 +181,7 @@ public class Push {
           notifications.add(new PushedNotification(device, payload, e));
         }
       }
-    } finally {
+    }  finally {
       try {
         pushManager.stopConnection();
       } catch (final Exception e) {
@@ -315,7 +311,7 @@ public class Push {
           notifications.add(new PushedNotification(device, payload, e));
         }
       }
-    } finally {
+    }  finally {
       try {
         pushManager.stopConnection();
       } catch (final Exception e) {

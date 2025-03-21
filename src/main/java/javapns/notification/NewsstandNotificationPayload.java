@@ -1,5 +1,4 @@
 package javapns.notification;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -11,10 +10,8 @@ import org.slf4j.LoggerFactory;
  * @author Sylvain Pedneault
  */
 public class NewsstandNotificationPayload extends Payload {
-
   static final Logger logger = LoggerFactory.getLogger(NewsstandNotificationPayload.class);
 
-  /* The application Dictionnary */
   private final JSONObject apsDictionary;
 
   /**
@@ -41,7 +38,6 @@ public class NewsstandNotificationPayload extends Payload {
     try {
       payload.addContentAvailable();
     } catch (final JSONException e) {
-      // empty
     }
     return payload;
   }
@@ -66,5 +62,4 @@ public class NewsstandNotificationPayload extends Payload {
     logger.debug("Adding ContentAvailable [" + contentAvailable + "]");
     this.apsDictionary.put("content-available", contentAvailable);
   }
-
 }

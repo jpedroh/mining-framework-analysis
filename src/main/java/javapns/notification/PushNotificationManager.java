@@ -1,5 +1,4 @@
 package javapns.notification;
-
 import javapns.communication.ConnectionToAppleServer;
 import javapns.communication.exceptions.CommunicationException;
 import javapns.communication.exceptions.InvalidCertificateChainException;
@@ -12,7 +11,6 @@ import javapns.devices.implementations.basic.BasicDeviceFactory;
 import javapns.notification.exceptions.PayloadIsEmptyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import javax.security.cert.X509Certificate;
@@ -37,50 +35,36 @@ import java.util.Map;
 public class PushNotificationManager {
   private static final Logger logger = LoggerFactory.getLogger(PushNotificationManager.class);
 
-  /* Default retries for a connection */
   private static final int DEFAULT_RETRIES = 3;
 
-  /* Special identifier that tells the manager to generate a sequential identifier for each payload pushed */
   private static final int SEQUENTIAL_IDENTIFIER = -1;
 
   private static int testsSerialNumber = 1;
 
   private static boolean useEnhancedNotificationFormat = true;
+
   private static boolean heavyDebugMode = false;
-  /*
-   * Number of milliseconds to use as socket timeout.
-   * Set to -1 to leave the timeout to its default setting.
-   */
+
   private int sslSocketTimeout = 30 * 1000;
-  /* Connection helper */
+
   private ConnectionToAppleServer connectionToAppleServer;
 
-  /* The always connected SSLSocket */
   private SSLSocket socket;
 
-  /* Default retry attempts */
   private int retryAttempts = DEFAULT_RETRIES;
 
   private int nextMessageIdentifier = 1;
 
-  /*
-   * To circumvent an issue with invalid server certificates,
-   * set to true to use a trust manager that will always accept
-   * server certificates, regardless of their validity.
-   */
   private boolean trustAllServerCertificates = true;
 
-  /* The DeviceFactory to use with this PushNotificationManager */
-  @Deprecated
-  private DeviceFactory deviceFactory;
+  @Deprecated private DeviceFactory deviceFactory;
 
   private final LinkedHashMap<Integer, PushedNotification> pushedNotifications = new LinkedHashMap<>();
 
   /**
    * Constructs a PushNotificationManager
    */
-  @SuppressWarnings("deprecation")
-  public PushNotificationManager() {
+  @SuppressWarnings(value = { "deprecation" }) public PushNotificationManager() {
     deviceFactory = new BasicDeviceFactory();
   }
 
@@ -90,8 +74,7 @@ public class PushNotificationManager {
    * @param deviceManager
    * @deprecated The DeviceFactory-based architecture is deprecated.
    */
-  @Deprecated
-  private PushNotificationManager(final DeviceFactory deviceManager) {
+  @Deprecated private PushNotificationManager(final DeviceFactory deviceManager) {
     this.deviceFactory = deviceManager;
   }
 
@@ -102,7 +85,7 @@ public class PushNotificationManager {
   private static byte[] intTo2ByteArray(final int value) {
     final int s1 = (value & 0xFF00) >> 8;
     final int s2 = value & 0xFF;
-    return new byte[]{(byte) s1, (byte) s2};
+    return new byte[] { (byte) s1, (byte) s2 };
   }
 
   /**
@@ -145,7 +128,6 @@ public class PushNotificationManager {
     try {
       this.connectionToAppleServer = new ConnectionToNotificationServer(server);
       this.socket = connectionToAppleServer.getSSLSocket();
-
       if (heavyDebugMode) {
         dumpCertificateChainDescription();
       }
@@ -165,7 +147,6 @@ public class PushNotificationManager {
       outd.writeBytes(getCertificateChainDescription());
       outd.close();
     } catch (final Exception e) {
-      // empty
     }
   }
 
@@ -173,17 +154,13 @@ public class PushNotificationManager {
     final StringBuilder buf = new StringBuilder();
     try {
       final SSLSession session = socket.getSession();
-
       for (final Certificate certificate : session.getLocalCertificates()) {
         buf.append(certificate.toString());
       }
-
       buf.append("\n--------------------------------------------------------------------------\n");
-
       for (final X509Certificate certificate : session.getPeerCertificateChain()) {
         buf.append(certificate.toString());
       }
-
     } catch (final Exception e) {
       buf.append(e);
     }
@@ -223,7 +200,6 @@ public class PushNotificationManager {
       logger.debug("Closing connection to restart previous one");
       this.socket.close();
     } catch (final Exception e) {
-      /* Do not complain if connection is already closed... */
     }
     initializePreviousConnection();
   }
@@ -240,7 +216,6 @@ public class PushNotificationManager {
       logger.debug("Closing connection");
       this.socket.close();
     } catch (final Exception e) {
-      /* Do not complain if connection is already closed... */
     }
   }
 
@@ -401,9 +376,7 @@ public class PushNotificationManager {
       } catch (final IllegalArgumentException e) {
         throw new PayloadIsEmptyException();
       } catch (final Exception e) {
-        // empty
       }
-
       if (notification.getIdentifier() <= 0) {
         notification.setIdentifier(newMessageIdentifier());
       }
@@ -411,23 +384,16 @@ public class PushNotificationManager {
         pushedNotifications.put(notification.getIdentifier(), notification);
       }
       final int identifier = notification.getIdentifier();
-
       final String token = device.getToken();
-      // even though the BasicDevice constructor validates the token, we revalidate it in case we were passed another implementation of Device
       BasicDevice.validateTokenFormat(token);
       final byte[] bytes = getMessage(token, payload, identifier, notification);
-
-      /* Special simulation mode to skip actual streaming of message */
       final boolean simulationMode = payload.getExpiry() == 919191;
-
       boolean success = false;
-
       final int socketTimeout = getSslSocketTimeout();
       if (socketTimeout > 0) {
         this.socket.setSoTimeout(socketTimeout);
       }
       notification.setTransmissionAttempts(0);
-      // Keep trying until we have a success
       while (!success) {
         try {
           logger.debug("Attempting to send notification: " + payload.toString() + "");
@@ -452,27 +418,21 @@ public class PushNotificationManager {
           if (streamConfirmed) {
             logger.debug("At this point, the entire " + bytes.length + "-bytes message has been streamed out successfully through the SSL connection");
           }
-
           success = true;
           logger.debug("Notification sent on " + notification.getLatestTransmissionAttempt());
           notification.setTransmissionCompleted(true);
-
         } catch (final IOException e) {
-          // throw exception if we surpassed the valid number of retry attempts
           if (notification.getTransmissionAttempts() >= retryAttempts) {
             logger.error("Attempt to send Notification failed and beyond the maximum number of attempts permitted");
             notification.setTransmissionCompleted(false);
             notification.setException(e);
             logger.error("Delivery error", e);
             throw e;
-
           } else {
             logger.info("Attempt failed (" + e.getMessage() + ")... trying again");
-            //Try again
             try {
               this.socket.close();
             } catch (final Exception e2) {
-              // do nothing
             }
             this.socket = connectionToAppleServer.getSSLSocket();
             if (socketTimeout > 0) {
@@ -484,7 +444,6 @@ public class PushNotificationManager {
     } catch (final CommunicationException e) {
       throw e;
     } catch (final Exception ex) {
-
       notification.setException(ex);
       logger.error("Delivery error: " + ex);
       try {
@@ -493,7 +452,6 @@ public class PushNotificationManager {
           stopConnection();
         }
       } catch (final Exception e) {
-        // empty
       }
     }
   }
@@ -508,8 +466,7 @@ public class PushNotificationManager {
    * @throws NullIdException
    * @deprecated The DeviceFactory-based architecture is deprecated.
    */
-  @Deprecated
-  public void addDevice(final String id, final String token) throws Exception {
+  @Deprecated public void addDevice(final String id, final String token) throws Exception {
     logger.debug("Adding Token [" + token + "] to Device [" + id + "]");
     deviceFactory.addDevice(id, token);
   }
@@ -523,8 +480,7 @@ public class PushNotificationManager {
    * @throws NullIdException
    * @deprecated The DeviceFactory-based architecture is deprecated.
    */
-  @Deprecated
-  public Device getDevice(final String id) throws UnknownDeviceException, NullIdException {
+  @Deprecated public Device getDevice(final String id) throws UnknownDeviceException, NullIdException {
     logger.debug("Getting Token from Device [" + id + "]");
     return deviceFactory.getDevice(id);
   }
@@ -537,8 +493,7 @@ public class PushNotificationManager {
    * @throws NullIdException
    * @deprecated The DeviceFactory-based architecture is deprecated.
    */
-  @Deprecated
-  public void removeDevice(final String id) throws UnknownDeviceException, NullIdException {
+  @Deprecated public void removeDevice(final String id) throws UnknownDeviceException, NullIdException {
     logger.debug("Removing Token from Device [" + id + "]");
     deviceFactory.removeDevice(id);
   }
@@ -559,10 +514,6 @@ public class PushNotificationManager {
    */
   private byte[] getMessage(String deviceToken, final Payload payload, final int identifier, final PushedNotification message) throws IOException, Exception {
     logger.debug("Building Raw message from deviceToken and payload");
-
-    /* To test with a corrupted or invalid token, uncomment following line*/
-
-    // First convert the deviceToken (in hexa form) to a binary format
     final byte[] deviceTokenAsBytes = new byte[deviceToken.length() / 2];
     deviceToken = deviceToken.toUpperCase();
     int j = 0;
@@ -576,14 +527,9 @@ public class PushNotificationManager {
       throw new InvalidDeviceTokenFormatException(deviceToken, e1.getMessage());
     }
     preconfigurePayload(payload, identifier, deviceToken);
-    // Create the ByteArrayOutputStream which will contain the raw interface
     final byte[] payloadAsBytes = payload.getPayloadAsBytes();
     final int size = (Byte.SIZE / Byte.SIZE) + (Character.SIZE / Byte.SIZE) + deviceTokenAsBytes.length + (Character.SIZE / Byte.SIZE) + payloadAsBytes.length;
     final ByteArrayOutputStream bao = new ByteArrayOutputStream(size);
-
-    // Write command to ByteArrayOutputStream
-    // 0 = simple
-    // 1 = enhanced
     if (useEnhancedNotificationFormat) {
       final byte b = 1;
       bao.write(b);
@@ -591,52 +537,37 @@ public class PushNotificationManager {
       final byte b = 0;
       bao.write(b);
     }
-
     if (useEnhancedNotificationFormat) {
-      // 4 bytes identifier (which will match any error packet received later on)
       bao.write(intTo4ByteArray(identifier));
       message.setIdentifier(identifier);
-
-      // 4 bytes
       final int requestedExpiry = payload.getExpiry();
       if (requestedExpiry <= 0) {
         bao.write(intTo4ByteArray(requestedExpiry));
         message.setExpiry(0);
       } else {
         final long ctime = System.currentTimeMillis();
-        final long ttl = requestedExpiry * 1000; // time-to-live in milliseconds
+        final long ttl = requestedExpiry * 1000;
         final Long expiryDateInSeconds = (ctime + ttl) / 1000L;
         bao.write(intTo4ByteArray(expiryDateInSeconds.intValue()));
         message.setExpiry(ctime + ttl);
       }
     }
-    // Write the TokenLength as a 16bits unsigned int, in big endian
     final int tl = deviceTokenAsBytes.length;
     bao.write(intTo2ByteArray(tl));
-
-    // Write the Token in bytes
     bao.write(deviceTokenAsBytes);
-
-    // Write the PayloadLength as a 16bits unsigned int, in big endian
     final int pl = payloadAsBytes.length;
     bao.write(intTo2ByteArray(pl));
-
-    // Finally write the Payload
     bao.write(payloadAsBytes);
     bao.flush();
-
     final byte[] bytes = bao.toByteArray();
-
     if (heavyDebugMode) {
       try {
         final FileOutputStream outf = new FileOutputStream("apns-message.bytes");
         outf.write(bytes);
         outf.close();
       } catch (final Exception e) {
-        // empty
       }
     }
-
     logger.debug("Built raw message ID " + identifier + " of total length " + bytes.length);
     return bytes;
   }
@@ -665,8 +596,7 @@ public class PushNotificationManager {
    * @return the DeviceFactory in use
    * @deprecated The DeviceFactory-based architecture is deprecated.
    */
-  @Deprecated
-  public DeviceFactory getDeviceFactory() {
+  @Deprecated public DeviceFactory getDeviceFactory() {
     return deviceFactory;
   }
 
@@ -677,8 +607,7 @@ public class PushNotificationManager {
    * @param deviceFactory an object implementing DeviceFactory
    * @deprecated The DeviceFactory-based architecture is deprecated.
    */
-  @Deprecated
-  public void setDeviceFactory(final DeviceFactory deviceFactory) {
+  @Deprecated public void setDeviceFactory(final DeviceFactory deviceFactory) {
     this.deviceFactory = deviceFactory;
   }
 
@@ -753,27 +682,17 @@ public class PushNotificationManager {
         }
       }
     } catch (final Exception e) {
-      // empty
     }
   }
 
   private String buildDebugAlert(final Payload payload, final int identifier, final String deviceToken) {
     final StringBuilder alert = new StringBuilder();
     alert.append("JAVAPNS DEBUG ALERT ").append(testsSerialNumber++).append("\n");
-
-    /* Current date & time */
     alert.append(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(System.currentTimeMillis())).append("\n");
-
-    /* Selected Apple server */
     alert.append(this.connectionToAppleServer.getServerHost()).append("\n");
-
-    /* Device token (shortened), Identifier and expiry */
     final int l = useEnhancedNotificationFormat ? 4 : 8;
-    alert.append("").append(deviceToken.substring(0, l)).append("�").append(deviceToken.substring(64 - l, 64)).append(useEnhancedNotificationFormat ? " [Id:" + identifier + "] " + (payload.getExpiry() <= 0 ? "No-store" : "Exp:T+" + payload.getExpiry()) : "").append("\n");
-
-    /* Format & encoding */
+    alert.append("").append(deviceToken.substring(0, l)).append("\ufffd").append(deviceToken.substring(64 - l, 64)).append(useEnhancedNotificationFormat ? " [Id:" + identifier + "] " + (payload.getExpiry() <= 0 ? "No-store" : "Exp:T+" + payload.getExpiry()) : "").append("\n");
     alert.append(useEnhancedNotificationFormat ? "Enhanced" : "Simple").append(" format / ").append(payload.getCharacterEncoding()).append("").append("");
-
     return alert.toString();
   }
 }
