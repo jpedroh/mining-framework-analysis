@@ -1,24 +1,9 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2022 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.error.ShouldHaveSameSizeAs.shouldHaveSameSizeAs;
 import static org.assertj.core.error.ShouldNotBeNull.shouldNotBeNull;
 import static org.assertj.core.error.SubarraysShouldHaveSameSize.subarraysShouldHaveSameSize;
 import static org.assertj.core.error.array2d.Array2dElementShouldBeDeepEqual.elementShouldBeEqual;
-
 import java.util.Comparator;
-
 import org.assertj.core.data.Index;
 import org.assertj.core.internal.Char2DArrays;
 import org.assertj.core.internal.Failures;
@@ -35,11 +20,9 @@ import org.assertj.core.util.VisibleForTesting;
  * @since 3.17.0
  */
 public class Char2DArrayAssert extends Abstract2DArrayAssert<Char2DArrayAssert, char[][], Character> {
-
   private final Failures failures = Failures.instance();
 
-  @VisibleForTesting
-  protected Char2DArrays char2dArrays = Char2DArrays.instance();
+  @VisibleForTesting protected Char2DArrays char2dArrays = Char2DArrays.instance();
 
   public Char2DArrayAssert(char[][] actual) {
     super(actual, Char2DArrayAssert.class);
@@ -65,29 +48,29 @@ public class Char2DArrayAssert extends Abstract2DArrayAssert<Char2DArrayAssert, 
    * @return {@code this} assertion object.
    * @throws AssertionError if the actual value is not deeply equal to the given one.
    */
-  @Override
-  public Char2DArrayAssert isDeepEqualTo(char[][] expected) {
-    if (actual == expected) return myself;
+  @Override public Char2DArrayAssert isDeepEqualTo(char[][] expected) {
+    if (actual == expected) {
+      return myself;
+    }
     isNotNull();
     if (expected.length != actual.length) {
       throw failures.failure(info, shouldHaveSameSizeAs(actual, expected, actual.length, expected.length));
     }
-
     for (int i = 0; i < actual.length; i++) {
       char[] actualSubArray = actual[i];
       char[] expectedSubArray = expected[i];
-
-      if (actualSubArray == expectedSubArray) continue;
-      if (actualSubArray == null) throw failures.failure(info, shouldNotBeNull("actual[" + i + "]"));
+      if (actualSubArray == expectedSubArray) {
+        continue;
+      }
+      if (actualSubArray == null) {
+        throw failures.failure(info, shouldNotBeNull("actual[" + i + "]"));
+      }
       if (expectedSubArray.length != actualSubArray.length) {
-        throw failures.failure(info, subarraysShouldHaveSameSize(actual, expected, actualSubArray, actualSubArray.length,
-                                                                 expectedSubArray, expectedSubArray.length, i),
-                               info.representation().toStringOf(actual), info.representation().toStringOf(expected));
+        throw failures.failure(info, subarraysShouldHaveSameSize(actual, expected, actualSubArray, actualSubArray.length, expectedSubArray, expectedSubArray.length, i), info.representation().toStringOf(actual), info.representation().toStringOf(expected));
       }
       for (int j = 0; j < actualSubArray.length; j++) {
         if (actualSubArray[j] != expectedSubArray[j]) {
-          throw failures.failure(info, elementShouldBeEqual(actualSubArray[j], expectedSubArray[j], i, j),
-                                 info.representation().toStringOf(actual), info.representation().toStringOf(expected));
+          throw failures.failure(info, elementShouldBeEqual(actualSubArray[j], expectedSubArray[j], i, j), info.representation().toStringOf(actual), info.representation().toStringOf(expected));
         }
       }
     }
@@ -114,8 +97,7 @@ public class Char2DArrayAssert extends Abstract2DArrayAssert<Char2DArrayAssert, 
    * @return {@code this} assertion object.
    * @throws AssertionError if the actual {@code char[][]} is not equal to the given one.
    */
-  @Override
-  public Char2DArrayAssert isEqualTo(Object expected) {
+  @Override public Char2DArrayAssert isEqualTo(Object expected) {
     return super.isEqualTo(expected);
   }
 
@@ -137,8 +119,7 @@ public class Char2DArrayAssert extends Abstract2DArrayAssert<Char2DArrayAssert, 
    *
    * @throws AssertionError if the actual {@code char[][]} is not {@code null} or not empty.
    */
-  @Override
-  public void isNullOrEmpty() {
+  @Override public void isNullOrEmpty() {
     char2dArrays.assertNullOrEmpty(info, actual);
   }
 
@@ -159,8 +140,7 @@ public class Char2DArrayAssert extends Abstract2DArrayAssert<Char2DArrayAssert, 
    *
    * @throws AssertionError if the actual {@code char[][]} is not empty.
    */
-  @Override
-  public void isEmpty() {
+  @Override public void isEmpty() {
     char2dArrays.assertEmpty(info, actual);
   }
 
@@ -183,8 +163,7 @@ public class Char2DArrayAssert extends Abstract2DArrayAssert<Char2DArrayAssert, 
    * @return {@code this} assertion object.
    * @throws AssertionError if the actual {@code char[][]} is empty or null.
    */
-  @Override
-  public Char2DArrayAssert isNotEmpty() {
+  @Override public Char2DArrayAssert isNotEmpty() {
     char2dArrays.assertNotEmpty(info, actual);
     return myself;
   }
@@ -206,8 +185,7 @@ public class Char2DArrayAssert extends Abstract2DArrayAssert<Char2DArrayAssert, 
    * @return {@code this} assertion object.
    * @throws AssertionError if the number of values of the actual {@code char[][]} is not equal to the given one.
    */
-  @Override
-  public Char2DArrayAssert hasDimensions(int expectedFirstDimension, int expectedSecondDimension) {
+  @Override public Char2DArrayAssert hasDimensions(int expectedFirstDimension, int expectedSecondDimension) {
     char2dArrays.assertHasDimensions(info, actual, expectedFirstDimension, expectedSecondDimension);
     return myself;
   }
@@ -228,8 +206,7 @@ public class Char2DArrayAssert extends Abstract2DArrayAssert<Char2DArrayAssert, 
    * @return {@code this} assertion object.
    * @throws AssertionError if the actual number of rows are not equal to the given one.
    */
-  @Override
-  public Char2DArrayAssert hasNumberOfRows(int expectedNumberOfRows) {
+  @Override public Char2DArrayAssert hasNumberOfRows(int expectedNumberOfRows) {
     char2dArrays.assertNumberOfRows(info, actual, expectedNumberOfRows);
     return myself;
   }
@@ -257,8 +234,7 @@ public class Char2DArrayAssert extends Abstract2DArrayAssert<Char2DArrayAssert, 
    * @throws AssertionError if the array parameter is {@code null} or is not a true array.
    * @throws AssertionError if actual {@code char[][]} and given array don't have the same dimensions.
    */
-  @Override
-  public Char2DArrayAssert hasSameDimensionsAs(Object array) {
+  @Override public Char2DArrayAssert hasSameDimensionsAs(Object array) {
     char2dArrays.assertHasSameDimensionsAs(info, actual, array);
     return myself;
   }
@@ -328,14 +304,12 @@ public class Char2DArrayAssert extends Abstract2DArrayAssert<Char2DArrayAssert, 
    * Expecting actual[1][0] value to be equal to:
    *  &lt;c&gt;
    * but was
-   *  &lt;\u0107&gt;</code></pre>
+   *  &lt;ć&gt;</code></pre>
    *
    * @return {@code this} assertion object.
    */
-  @CheckReturnValue
-  public Char2DArrayAssert inUnicode() {
+  @CheckReturnValue public Char2DArrayAssert inUnicode() {
     info.useUnicodeRepresentation();
     return myself;
   }
-
 }

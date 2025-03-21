@@ -1,24 +1,9 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2022 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.error.ShouldHaveSameSizeAs.shouldHaveSameSizeAs;
 import static org.assertj.core.error.ShouldNotBeNull.shouldNotBeNull;
 import static org.assertj.core.error.SubarraysShouldHaveSameSize.subarraysShouldHaveSameSize;
 import static org.assertj.core.error.array2d.Array2dElementShouldBeDeepEqual.elementShouldBeEqual;
-
 import java.util.Comparator;
-
 import org.assertj.core.data.Index;
 import org.assertj.core.internal.Failures;
 import org.assertj.core.internal.Float2DArrays;
@@ -31,9 +16,7 @@ import org.assertj.core.util.VisibleForTesting;
  * @since 3.17.0
  */
 public class Float2DArrayAssert extends Abstract2DArrayAssert<Float2DArrayAssert, float[][], Float> {
-
-  @VisibleForTesting
-  protected Float2DArrays float2dArrays = Float2DArrays.instance();
+  @VisibleForTesting protected Float2DArrays float2dArrays = Float2DArrays.instance();
 
   private final Failures failures = Failures.instance();
 
@@ -60,29 +43,29 @@ public class Float2DArrayAssert extends Abstract2DArrayAssert<Float2DArrayAssert
    * @return {@code this} assertion object.
    * @throws AssertionError if the actual value is not deeply equal to the given one.
    */
-  @Override
-  public Float2DArrayAssert isDeepEqualTo(float[][] expected) {
-    if (actual == expected) return myself;
+  @Override public Float2DArrayAssert isDeepEqualTo(float[][] expected) {
+    if (actual == expected) {
+      return myself;
+    }
     isNotNull();
     if (expected.length != actual.length) {
       throw failures.failure(info, shouldHaveSameSizeAs(actual, expected, actual.length, expected.length));
     }
-
     for (int i = 0; i < actual.length; i++) {
       float[] actualSubArray = actual[i];
       float[] expectedSubArray = expected[i];
-
-      if (actualSubArray == expectedSubArray) continue;
-      if (actualSubArray == null) throw failures.failure(info, shouldNotBeNull("actual[" + i + "]"));
+      if (actualSubArray == expectedSubArray) {
+        continue;
+      }
+      if (actualSubArray == null) {
+        throw failures.failure(info, shouldNotBeNull("actual[" + i + "]"));
+      }
       if (expectedSubArray.length != actualSubArray.length) {
-        throw failures.failure(info, subarraysShouldHaveSameSize(actual, expected, actualSubArray, actualSubArray.length,
-                                                                 expectedSubArray, expectedSubArray.length, i),
-                               info.representation().toStringOf(actual), info.representation().toStringOf(expected));
+        throw failures.failure(info, subarraysShouldHaveSameSize(actual, expected, actualSubArray, actualSubArray.length, expectedSubArray, expectedSubArray.length, i), info.representation().toStringOf(actual), info.representation().toStringOf(expected));
       }
       for (int j = 0; j < actualSubArray.length; j++) {
         if (actualSubArray[j] != expectedSubArray[j]) {
-          throw failures.failure(info, elementShouldBeEqual(actualSubArray[j], expectedSubArray[j], i, j),
-                                 info.representation().toStringOf(actual), info.representation().toStringOf(expected));
+          throw failures.failure(info, elementShouldBeEqual(actualSubArray[j], expectedSubArray[j], i, j), info.representation().toStringOf(actual), info.representation().toStringOf(expected));
         }
       }
     }
@@ -109,8 +92,7 @@ public class Float2DArrayAssert extends Abstract2DArrayAssert<Float2DArrayAssert
    * @return {@code this} assertion object.
    * @throws AssertionError if the actual {@code float[][]} is not equal to the given one.
    */
-  @Override
-  public Float2DArrayAssert isEqualTo(Object expected) {
+  @Override public Float2DArrayAssert isEqualTo(Object expected) {
     return super.isEqualTo(expected);
   }
 
@@ -132,8 +114,7 @@ public class Float2DArrayAssert extends Abstract2DArrayAssert<Float2DArrayAssert
    *
    * @throws AssertionError if the actual {@code float[][]} is not {@code null} or not empty.
    */
-  @Override
-  public void isNullOrEmpty() {
+  @Override public void isNullOrEmpty() {
     float2dArrays.assertNullOrEmpty(info, actual);
   }
 
@@ -154,8 +135,7 @@ public class Float2DArrayAssert extends Abstract2DArrayAssert<Float2DArrayAssert
    *
    * @throws AssertionError if the actual {@code float[][]} is not empty.
    */
-  @Override
-  public void isEmpty() {
+  @Override public void isEmpty() {
     float2dArrays.assertEmpty(info, actual);
   }
 
@@ -178,8 +158,7 @@ public class Float2DArrayAssert extends Abstract2DArrayAssert<Float2DArrayAssert
    * @return {@code this} assertion object.
    * @throws AssertionError if the actual {@code float[][]} is empty or null.
    */
-  @Override
-  public Float2DArrayAssert isNotEmpty() {
+  @Override public Float2DArrayAssert isNotEmpty() {
     float2dArrays.assertNotEmpty(info, actual);
     return myself;
   }
@@ -201,8 +180,7 @@ public class Float2DArrayAssert extends Abstract2DArrayAssert<Float2DArrayAssert
    * @return {@code this} assertion object.
    * @throws AssertionError if the actual {@code float[][]}'s dimensions are not equal to the given ones.
    */
-  @Override
-  public Float2DArrayAssert hasDimensions(int expectedFirstDimension, int expectedSecondDimension) {
+  @Override public Float2DArrayAssert hasDimensions(int expectedFirstDimension, int expectedSecondDimension) {
     float2dArrays.assertHasDimensions(info, actual, expectedFirstDimension, expectedSecondDimension);
     return myself;
   }
@@ -223,8 +201,7 @@ public class Float2DArrayAssert extends Abstract2DArrayAssert<Float2DArrayAssert
    * @return {@code this} assertion object.
    * @throws AssertionError if the actual number of rows are not equal to the given one.
    */
-  @Override
-  public Float2DArrayAssert hasNumberOfRows(int expectedNumberOfRows) {
+  @Override public Float2DArrayAssert hasNumberOfRows(int expectedNumberOfRows) {
     float2dArrays.assertNumberOfRows(info, actual, expectedNumberOfRows);
     return myself;
   }
@@ -252,8 +229,7 @@ public class Float2DArrayAssert extends Abstract2DArrayAssert<Float2DArrayAssert
    * @throws AssertionError if the array parameter is {@code null} or is not a true array.
    * @throws AssertionError if actual {@code float[][]} and given array don't have the same dimensions.
    */
-  @Override
-  public Float2DArrayAssert hasSameDimensionsAs(Object array) {
+  @Override public Float2DArrayAssert hasSameDimensionsAs(Object array) {
     float2dArrays.assertHasSameDimensionsAs(info, actual, array);
     return myself;
   }
@@ -310,5 +286,4 @@ public class Float2DArrayAssert extends Abstract2DArrayAssert<Float2DArrayAssert
     float2dArrays.assertDoesNotContain(info, actual, value, index);
     return myself;
   }
-
 }

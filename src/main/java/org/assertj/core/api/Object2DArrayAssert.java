@@ -1,25 +1,10 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2022 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.error.ShouldHaveSameSizeAs.shouldHaveSameSizeAs;
 import static org.assertj.core.error.ShouldNotBeNull.shouldNotBeNull;
 import static org.assertj.core.error.SubarraysShouldHaveSameSize.subarraysShouldHaveSameSize;
 import static org.assertj.core.error.array2d.Array2dElementShouldBeDeepEqual.elementShouldBeEqual;
-
 import java.util.Comparator;
 import java.util.Objects;
-
 import org.assertj.core.data.Index;
 import org.assertj.core.internal.Failures;
 import org.assertj.core.internal.Object2DArrays;
@@ -35,11 +20,8 @@ import org.assertj.core.util.VisibleForTesting;
  * @author Maciej Wajcht
  * @since 3.17.0
  */
-public class Object2DArrayAssert<ELEMENT> extends
-    Abstract2DArrayAssert<Object2DArrayAssert<ELEMENT>, ELEMENT[][], ELEMENT> {
-
-  @VisibleForTesting
-  protected Object2DArrays<ELEMENT> object2dArrays = Object2DArrays.instance();
+public class Object2DArrayAssert<ELEMENT extends java.lang.Object> extends Abstract2DArrayAssert<Object2DArrayAssert<ELEMENT>, ELEMENT[][], ELEMENT> {
+  @VisibleForTesting protected Object2DArrays<ELEMENT> object2dArrays = Object2DArrays.instance();
 
   private final Failures failures = Failures.instance();
 
@@ -67,29 +49,29 @@ public class Object2DArrayAssert<ELEMENT> extends
    * @return {@code this} assertion object.
    * @throws AssertionError if the actual value is not deeply equal to the given one.
    */
-  @Override
-  public Object2DArrayAssert<ELEMENT> isDeepEqualTo(ELEMENT[][] expected) {
-    if (actual == expected) return myself;
+  @Override public Object2DArrayAssert<ELEMENT> isDeepEqualTo(ELEMENT[][] expected) {
+    if (actual == expected) {
+      return myself;
+    }
     isNotNull();
     if (expected.length != actual.length) {
       throw failures.failure(info, shouldHaveSameSizeAs(actual, expected, actual.length, expected.length));
     }
-
     for (int i = 0; i < actual.length; i++) {
       ELEMENT[] actualSubArray = actual[i];
       ELEMENT[] expectedSubArray = expected[i];
-
-      if (actualSubArray == expectedSubArray) continue;
-      if (actualSubArray == null) throw failures.failure(info, shouldNotBeNull("actual[" + i + "]"));
+      if (actualSubArray == expectedSubArray) {
+        continue;
+      }
+      if (actualSubArray == null) {
+        throw failures.failure(info, shouldNotBeNull("actual[" + i + "]"));
+      }
       if (expectedSubArray.length != actualSubArray.length) {
-        throw failures.failure(info, subarraysShouldHaveSameSize(actual, expected, actualSubArray, actualSubArray.length,
-                                                                 expectedSubArray, expectedSubArray.length, i),
-                               info.representation().toStringOf(actual), info.representation().toStringOf(expected));
+        throw failures.failure(info, subarraysShouldHaveSameSize(actual, expected, actualSubArray, actualSubArray.length, expectedSubArray, expectedSubArray.length, i), info.representation().toStringOf(actual), info.representation().toStringOf(expected));
       }
       for (int j = 0; j < actualSubArray.length; j++) {
         if (!Objects.deepEquals(actualSubArray[j], expectedSubArray[j])) {
-          throw failures.failure(info, elementShouldBeEqual(actualSubArray[j], expectedSubArray[j], i, j),
-                                 info.representation().toStringOf(actual), info.representation().toStringOf(expected));
+          throw failures.failure(info, elementShouldBeEqual(actualSubArray[j], expectedSubArray[j], i, j), info.representation().toStringOf(actual), info.representation().toStringOf(expected));
         }
       }
     }
@@ -116,8 +98,7 @@ public class Object2DArrayAssert<ELEMENT> extends
    * @return {@code this} assertion object.
    * @throws AssertionError if the actual {@code ELEMENT[][]} is not equal to the given one.
    */
-  @Override
-  public Object2DArrayAssert<ELEMENT> isEqualTo(Object expected) {
+  @Override public Object2DArrayAssert<ELEMENT> isEqualTo(Object expected) {
     return super.isEqualTo(expected);
   }
 
@@ -139,8 +120,7 @@ public class Object2DArrayAssert<ELEMENT> extends
    *
    * @throws AssertionError if the actual {@code ELEMENT[][]} is not {@code null} or not empty.
    */
-  @Override
-  public void isNullOrEmpty() {
+  @Override public void isNullOrEmpty() {
     object2dArrays.assertNullOrEmpty(info, actual);
   }
 
@@ -161,8 +141,7 @@ public class Object2DArrayAssert<ELEMENT> extends
    *
    * @throws AssertionError if the actual {@code ELEMENT[][]} is not empty.
    */
-  @Override
-  public void isEmpty() {
+  @Override public void isEmpty() {
     object2dArrays.assertEmpty(info, actual);
   }
 
@@ -185,8 +164,7 @@ public class Object2DArrayAssert<ELEMENT> extends
    * @return {@code this} assertion object.
    * @throws AssertionError if the actual {@code ELEMENT[][]} is empty or null.
    */
-  @Override
-  public Object2DArrayAssert<ELEMENT> isNotEmpty() {
+  @Override public Object2DArrayAssert<ELEMENT> isNotEmpty() {
     object2dArrays.assertNotEmpty(info, actual);
     return myself;
   }
@@ -208,8 +186,7 @@ public class Object2DArrayAssert<ELEMENT> extends
    * @return {@code this} assertion object.
    * @throws AssertionError if the number of values of the actual {@code ELEMENT[][]} is not equal to the given one.
    */
-  @Override
-  public Object2DArrayAssert<ELEMENT> hasDimensions(int expectedFirstDimension, int expectedSecondDimension) {
+  @Override public Object2DArrayAssert<ELEMENT> hasDimensions(int expectedFirstDimension, int expectedSecondDimension) {
     object2dArrays.assertHasDimensions(info, actual, expectedFirstDimension, expectedSecondDimension);
     return myself;
   }
@@ -230,8 +207,7 @@ public class Object2DArrayAssert<ELEMENT> extends
    * @return {@code this} assertion object.
    * @throws AssertionError if the actual number of rows are not equal to the given one.
    */
-  @Override
-  public Object2DArrayAssert<ELEMENT> hasNumberOfRows(int expectedNumberOfRows) {
+  @Override public Object2DArrayAssert<ELEMENT> hasNumberOfRows(int expectedNumberOfRows) {
     object2dArrays.assertNumberOfRows(info, actual, expectedNumberOfRows);
     return myself;
   }
@@ -259,8 +235,7 @@ public class Object2DArrayAssert<ELEMENT> extends
    * @throws AssertionError if the array parameter is {@code null} or is not a true array.
    * @throws AssertionError if actual {@code ELEMENT[][]} and given array don't have the same dimensions.
    */
-  @Override
-  public Object2DArrayAssert<ELEMENT> hasSameDimensionsAs(Object array) {
+  @Override public Object2DArrayAssert<ELEMENT> hasSameDimensionsAs(Object array) {
     object2dArrays.assertHasSameDimensionsAs(info, actual, array);
     return myself;
   }

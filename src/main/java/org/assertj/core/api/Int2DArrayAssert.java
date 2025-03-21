@@ -1,24 +1,9 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2022 the original author or authors.
- */
 package org.assertj.core.api;
-
 import static org.assertj.core.error.ShouldHaveSameSizeAs.shouldHaveSameSizeAs;
 import static org.assertj.core.error.ShouldNotBeNull.shouldNotBeNull;
 import static org.assertj.core.error.SubarraysShouldHaveSameSize.subarraysShouldHaveSameSize;
 import static org.assertj.core.error.array2d.Array2dElementShouldBeDeepEqual.elementShouldBeEqual;
-
 import java.util.Comparator;
-
 import org.assertj.core.data.Index;
 import org.assertj.core.internal.Failures;
 import org.assertj.core.internal.Int2DArrays;
@@ -34,9 +19,7 @@ import org.assertj.core.util.VisibleForTesting;
  * @since 3.17.0
  */
 public class Int2DArrayAssert extends Abstract2DArrayAssert<Int2DArrayAssert, int[][], Integer> {
-
-  @VisibleForTesting
-  protected Int2DArrays int2dArrays = Int2DArrays.instance();
+  @VisibleForTesting protected Int2DArrays int2dArrays = Int2DArrays.instance();
 
   private final Failures failures = Failures.instance();
 
@@ -45,29 +28,29 @@ public class Int2DArrayAssert extends Abstract2DArrayAssert<Int2DArrayAssert, in
   }
 
   /** {@inheritDoc} */
-  @Override
-  public Int2DArrayAssert isDeepEqualTo(int[][] expected) {
-    if (actual == expected) return myself;
+  @Override public Int2DArrayAssert isDeepEqualTo(int[][] expected) {
+    if (actual == expected) {
+      return myself;
+    }
     isNotNull();
     if (expected.length != actual.length) {
       throw failures.failure(info, shouldHaveSameSizeAs(actual, expected, actual.length, expected.length));
     }
-
     for (int i = 0; i < actual.length; i++) {
       int[] actualSubArray = actual[i];
       int[] expectedSubArray = expected[i];
-
-      if (actualSubArray == expectedSubArray) continue;
-      if (actualSubArray == null) throw failures.failure(info, shouldNotBeNull("actual[" + i + "]"));
+      if (actualSubArray == expectedSubArray) {
+        continue;
+      }
+      if (actualSubArray == null) {
+        throw failures.failure(info, shouldNotBeNull("actual[" + i + "]"));
+      }
       if (expectedSubArray.length != actualSubArray.length) {
-        throw failures.failure(info, subarraysShouldHaveSameSize(actual, expected, actualSubArray, actualSubArray.length,
-                                                                 expectedSubArray, expectedSubArray.length, i),
-                               info.representation().toStringOf(actual), info.representation().toStringOf(expected));
+        throw failures.failure(info, subarraysShouldHaveSameSize(actual, expected, actualSubArray, actualSubArray.length, expectedSubArray, expectedSubArray.length, i), info.representation().toStringOf(actual), info.representation().toStringOf(expected));
       }
       for (int j = 0; j < actualSubArray.length; j++) {
         if (actualSubArray[j] != expectedSubArray[j]) {
-          throw failures.failure(info, elementShouldBeEqual(actualSubArray[j], expectedSubArray[j], i, j),
-                                 info.representation().toStringOf(actual), info.representation().toStringOf(expected));
+          throw failures.failure(info, elementShouldBeEqual(actualSubArray[j], expectedSubArray[j], i, j), info.representation().toStringOf(actual), info.representation().toStringOf(expected));
         }
       }
     }
@@ -94,37 +77,31 @@ public class Int2DArrayAssert extends Abstract2DArrayAssert<Int2DArrayAssert, in
    * @return {@code this} assertion object.
    * @throws AssertionError if the actual {@code int[][]} is not equal to the given one.
    */
-  @Override
-  public Int2DArrayAssert isEqualTo(Object expected) {
+  @Override public Int2DArrayAssert isEqualTo(Object expected) {
     return super.isEqualTo(expected);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public void isNullOrEmpty() {
+  @Override public void isNullOrEmpty() {
     int2dArrays.assertNullOrEmpty(info, actual);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public void isEmpty() {
+  @Override public void isEmpty() {
     int2dArrays.assertEmpty(info, actual);
   }
 
   /** {@inheritDoc} */
-  @Override
-  public Int2DArrayAssert isNotEmpty() {
+  @Override public Int2DArrayAssert isNotEmpty() {
     int2dArrays.assertNotEmpty(info, actual);
     return myself;
   }
 
   /** {@inheritDoc} */
-  @Override
-  public Int2DArrayAssert hasDimensions(int expectedFirstDimension, int expectedSecondDimension) {
+  @Override public Int2DArrayAssert hasDimensions(int expectedFirstDimension, int expectedSecondDimension) {
     int2dArrays.assertHasDimensions(info, actual, expectedFirstDimension, expectedSecondDimension);
     return myself;
   }
-
 
   /**
    * Verifies that the first dimension of actual {@code int[][]} has the given row size.
@@ -142,8 +119,7 @@ public class Int2DArrayAssert extends Abstract2DArrayAssert<Int2DArrayAssert, in
    * @return {@code this} assertion object.
    * @throws AssertionError if the actual number of rows are not equal to the given one.
    */
-  @Override
-  public Int2DArrayAssert hasNumberOfRows(int expectedNumberOfRows) {
+  @Override public Int2DArrayAssert hasNumberOfRows(int expectedNumberOfRows) {
     int2dArrays.assertNumberOfRows(info, actual, expectedNumberOfRows);
     return myself;
   }
@@ -171,8 +147,7 @@ public class Int2DArrayAssert extends Abstract2DArrayAssert<Int2DArrayAssert, in
    * @throws AssertionError if the array parameter is {@code null} or is not a true array.
    * @throws AssertionError if actual {@code int[][]} and given array don't have the same dimensions.
    */
-  @Override
-  public Int2DArrayAssert hasSameDimensionsAs(Object array) {
+  @Override public Int2DArrayAssert hasSameDimensionsAs(Object array) {
     int2dArrays.assertHasSameDimensionsAs(info, actual, array);
     return myself;
   }
@@ -224,5 +199,4 @@ public class Int2DArrayAssert extends Abstract2DArrayAssert<Int2DArrayAssert, in
     int2dArrays.assertDoesNotContain(info, actual, value, index);
     return myself;
   }
-
 }
