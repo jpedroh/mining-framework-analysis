@@ -43,68 +43,52 @@ public class StreamingCell implements Cell {
   private Row row;
   private CellStyle cellStyle;
   private boolean formulaType;
-
   public StreamingCell(int columnIndex, int rowIndex, boolean use1904Dates) {
     this.columnIndex = columnIndex;
     this.rowIndex = rowIndex;
     this.use1904Dates = use1904Dates;
   }
-
   public void setContentSupplier(Supplier contentsSupplier) {
     this.contentsSupplier = contentsSupplier;
   }
-
   public void setRawContents(Object rawContents) {
     this.rawContents = rawContents;
   }
-
   public String getNumericFormat() {
     return numericFormat;
   }
-
   public void setNumericFormat(String numericFormat) {
     this.numericFormat = numericFormat;
   }
-
   public Short getNumericFormatIndex() {
     return numericFormatIndex;
   }
-
   public void setNumericFormatIndex(Short numericFormatIndex) {
     this.numericFormatIndex = numericFormatIndex;
   }
-
   public void setFormula(String formula) {
     this.formula = formula;
   }
-
   public String getType() {
     return type;
   }
-
   public void setType(String type) {
     this.type = type;
   }
-
   public boolean isFormulaType() {
     return formulaType;
   }
-
   public void setFormulaType(boolean formulaType) {
     this.formulaType = formulaType;
   }
-
   public void setRow(Row row) {
     this.row = row;
   }
-
   @Override
   public void setCellStyle(CellStyle cellStyle) {
     this.cellStyle = cellStyle;
   }
-
   /* Supported */
-
   /**
    * Returns column index of this cell
    *
@@ -114,7 +98,6 @@ public class StreamingCell implements Cell {
   public int getColumnIndex() {
     return columnIndex;
   }
-
   /**
    * Returns row index of a row in the sheet that contains this cell
    *
@@ -124,7 +107,6 @@ public class StreamingCell implements Cell {
   public int getRowIndex() {
     return rowIndex;
   }
-
   /**
    * Returns the Row this cell belongs to. Note that keeping references to cell
    * rows around after the iterator window has passed <b>will</b> preserve them.
@@ -135,7 +117,6 @@ public class StreamingCell implements Cell {
   public Row getRow() {
     return row;
   }
-
   /**
    * Return the cell type.
    *
@@ -144,27 +125,18 @@ public class StreamingCell implements Cell {
    *
    * @return the cell type
    */
-  @Override
-<<<<<<< HEAD
-  public int getCellType() {
-    return getCellTypeEnum().getCode();
-  }
-
   /**
    * Return the cell type.
    *
    * @return the cell type
    * Will be renamed to <code>getCellType()</code> when we make the CellType enum transition in POI 4.0. See bug 59791.
    */
+<<<<<<< /usr/src/app/output/monitorjbl/excel-streaming-reader/04ab309541f3cce3ae00d512edf23eea0077b34a/src/main/java/com/monitorjbl/xlsx/impl/StreamingCell.java/left.java
   @Override
   public CellType getCellTypeEnum() {
     if(formulaType) {
       return CellType.FORMULA;
     } else if(contentsSupplier.getContent() == null || type == null) {
-=======
-  public CellType getCellType() {
-    if(contentsSupplier.getContent() == null || type == null) {
->>>>>>> upstream-master
       return CellType.BLANK;
     } else if("n".equals(type)) {
       return CellType.NUMERIC;
@@ -178,18 +150,13 @@ public class StreamingCell implements Cell {
       throw new UnsupportedOperationException("Unsupported cell type '" + type + "'");
     }
   }
-
-  /**
-   * Return the cell type.
-   *
-   * @return the cell type
-   * Will be renamed to <code>getCellType()</code> when we make the CellType enum transition in POI 4.0. See bug 59791.
-   */
+||||||| /usr/src/app/output/monitorjbl/excel-streaming-reader/04ab309541f3cce3ae00d512edf23eea0077b34a/src/main/java/com/monitorjbl/xlsx/impl/StreamingCell.java/base.java
+=======
   @Override
   public CellType getCellTypeEnum() {
     return getCellType();
   }
-
+>>>>>>> /usr/src/app/output/monitorjbl/excel-streaming-reader/04ab309541f3cce3ae00d512edf23eea0077b34a/src/main/java/com/monitorjbl/xlsx/impl/StreamingCell.java/right.java
   /**
    * Get the value of the cell as a string. For numeric cells we throw an exception.
    * For blank cells we return an empty string.
@@ -202,7 +169,6 @@ public class StreamingCell implements Cell {
 
     return c == null ? "" : (String) c;
   }
-
   /**
    * Get the value of the cell as a number. For strings we throw an exception. For
    * blank cells we return a 0.
@@ -214,7 +180,6 @@ public class StreamingCell implements Cell {
   public double getNumericCellValue() {
     return rawContents == null ? 0.0 : Double.parseDouble((String) rawContents);
   }
-
   /**
    * Get the value of the cell as a date. For strings we throw an exception. For
    * blank cells we return a null.
@@ -230,7 +195,6 @@ public class StreamingCell implements Cell {
     }
     return rawContents == null ? null : HSSFDateUtil.getJavaDate(getNumericCellValue(), use1904Dates);
   }
-
   /**
    * Get the value of the cell as a boolean. For strings we throw an exception. For
    * blank cells we return a false.
@@ -251,14 +215,12 @@ public class StreamingCell implements Cell {
         throw typeMismatch(CellType.BOOLEAN, cellType, false);
     }
   }
-
   private static RuntimeException typeMismatch(CellType expectedType, CellType actualType, boolean isFormulaCell) {
     String msg = "Cannot get a "
             + getCellTypeName(expectedType) + " value from a "
             + getCellTypeName(actualType) + " " + (isFormulaCell ? "formula " : "") + "cell";
     return new IllegalStateException(msg);
   }
-
   /**
    * Used to help format error messages
    */
@@ -273,7 +235,6 @@ public class StreamingCell implements Cell {
     }
     return "#unknown cell type (" + cellType + ")#";
   }
-
   /**
    * @return the style of the cell
    */
@@ -281,7 +242,6 @@ public class StreamingCell implements Cell {
   public CellStyle getCellStyle() {
     return this.cellStyle;
   }
-
   /**
    * Return a formula for the cell, for example, <code>SUM(C4:E4)</code>
    *
@@ -294,31 +254,14 @@ public class StreamingCell implements Cell {
       throw new IllegalStateException("This cell does not have a formula");
     return formula;
   }
-
-  /**
-   * Only valid for formula cells
-   * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
-   *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
-   * on the cached value of the formula
-   */
-  @Override
-<<<<<<< HEAD
-  public int getCachedFormulaResultType() {
-    return getCachedFormulaResultTypeEnum().getCode();
-  }
-
   /**
    * Not supported
    */
+<<<<<<< /usr/src/app/output/monitorjbl/excel-streaming-reader/04ab309541f3cce3ae00d512edf23eea0077b34a/src/main/java/com/monitorjbl/xlsx/impl/StreamingCell.java/left.java
   @Override
   public CellType getCachedFormulaResultTypeEnum() {
     if (formulaType) {
       if(contentsSupplier.getContent() == null || type == null) {
-=======
-  public CellType getCachedFormulaResultType() {
-    if (type != null && "str".equals(type)) {
-      if(contentsSupplier.getContent() == null || cachedFormulaResultType == null) {
->>>>>>> upstream-master
         return CellType.BLANK;
       } else if("n".equals(type)) {
         return CellType.NUMERIC;
@@ -336,14 +279,17 @@ public class StreamingCell implements Cell {
       throw new IllegalStateException("Only formula cells have cached results");
     }
   }
-
+||||||| /usr/src/app/output/monitorjbl/excel-streaming-reader/04ab309541f3cce3ae00d512edf23eea0077b34a/src/main/java/com/monitorjbl/xlsx/impl/StreamingCell.java/base.java
+=======
   @Override
   public CellType getCachedFormulaResultTypeEnum() {
     return getCachedFormulaResultType();
   }
-
+>>>>>>> /usr/src/app/output/monitorjbl/excel-streaming-reader/04ab309541f3cce3ae00d512edf23eea0077b34a/src/main/java/com/monitorjbl/xlsx/impl/StreamingCell.java/right.java
   /* Not supported */
-
+  /**
+   * Not supported
+   */
   /**
    * Not supported
    */
@@ -351,7 +297,6 @@ public class StreamingCell implements Cell {
   public void setCellType(CellType cellType) {
     throw new NotSupportedException();
   }
-
   /**
    * Not supported
    */
@@ -359,7 +304,6 @@ public class StreamingCell implements Cell {
   public Sheet getSheet() {
     throw new NotSupportedException();
   }
-
   /**
    * Not supported
    */
@@ -367,7 +311,6 @@ public class StreamingCell implements Cell {
   public void setCellValue(double value) {
     throw new NotSupportedException();
   }
-
   /**
    * Not supported
    */
@@ -375,7 +318,6 @@ public class StreamingCell implements Cell {
   public void setCellValue(Date value) {
     throw new NotSupportedException();
   }
-
   /**
    * Not supported
    */
@@ -383,7 +325,6 @@ public class StreamingCell implements Cell {
   public void setCellValue(Calendar value) {
     throw new NotSupportedException();
   }
-
   /**
    * Not supported
    */
@@ -391,7 +332,6 @@ public class StreamingCell implements Cell {
   public void setCellValue(RichTextString value) {
     throw new NotSupportedException();
   }
-
   /**
    * Not supported
    */
@@ -399,7 +339,6 @@ public class StreamingCell implements Cell {
   public void setCellValue(String value) {
     throw new NotSupportedException();
   }
-
   /**
    * Not supported
    */
@@ -407,7 +346,6 @@ public class StreamingCell implements Cell {
   public void setCellFormula(String formula) throws FormulaParseException {
     throw new NotSupportedException();
   }
-
   /**
    * Get the value of the cell as a XSSFRichTextString
    * <p>
@@ -432,7 +370,6 @@ public class StreamingCell implements Cell {
     }
     return rt;
   }
-
   /**
    * Not supported
    */
@@ -440,7 +377,6 @@ public class StreamingCell implements Cell {
   public void setCellValue(boolean value) {
     throw new NotSupportedException();
   }
-
   /**
    * Not supported
    */
@@ -448,7 +384,6 @@ public class StreamingCell implements Cell {
   public void setCellErrorValue(byte value) {
     throw new NotSupportedException();
   }
-
   /**
    * Not supported
    */
@@ -456,7 +391,6 @@ public class StreamingCell implements Cell {
   public byte getErrorCellValue() {
     throw new NotSupportedException();
   }
-
   /**
    * Not supported
    */
@@ -464,7 +398,6 @@ public class StreamingCell implements Cell {
   public void setAsActiveCell() {
     throw new NotSupportedException();
   }
-
   /**
    * Not supported
    */
@@ -472,7 +405,6 @@ public class StreamingCell implements Cell {
   public CellAddress getAddress() {
     throw new NotSupportedException();
   }
-
   /**
    * Not supported
    */
@@ -480,7 +412,6 @@ public class StreamingCell implements Cell {
   public void setCellComment(Comment comment) {
     throw new NotSupportedException();
   }
-
   /**
    * Not supported
    */
@@ -488,7 +419,6 @@ public class StreamingCell implements Cell {
   public Comment getCellComment() {
     throw new NotSupportedException();
   }
-
   /**
    * Not supported
    */
@@ -496,7 +426,6 @@ public class StreamingCell implements Cell {
   public void removeCellComment() {
     throw new NotSupportedException();
   }
-
   /**
    * Not supported
    */
@@ -504,7 +433,6 @@ public class StreamingCell implements Cell {
   public Hyperlink getHyperlink() {
     throw new NotSupportedException();
   }
-
   /**
    * Not supported
    */
@@ -512,7 +440,6 @@ public class StreamingCell implements Cell {
   public void setHyperlink(Hyperlink link) {
     throw new NotSupportedException();
   }
-
   /**
    * Not supported
    */
@@ -520,7 +447,6 @@ public class StreamingCell implements Cell {
   public void removeHyperlink() {
     throw new NotSupportedException();
   }
-
   /**
    * Not supported
    */
@@ -528,7 +454,77 @@ public class StreamingCell implements Cell {
   public CellRangeAddress getArrayFormulaRange() {
     throw new NotSupportedException();
   }
-
+  /**
+   * Not supported
+   */
+  /* Supported */
+  /**
+   * Only valid for formula cells
+   * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
+   *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
+   * on the cached value of the formula
+   */
+  /* Not supported */
+  /**
+   * Not supported
+   */
+  /**
+   * Not supported
+   */
+  /**
+   * Not supported
+   */
+  /**
+   * Not supported
+   */
+  /**
+   * Not supported
+   */
+  /**
+   * Not supported
+   */
+  /**
+   * Not supported
+   */
+  /**
+   * Not supported
+   */
+  /**
+   * Not supported
+   */
+  /**
+   * Not supported
+   */
+  /**
+   * Not supported
+   */
+  /**
+   * Not supported
+   */
+  /**
+   * Not supported
+   */
+  /**
+   * Not supported
+   */
+  /**
+   * Not supported
+   */
+  /**
+   * Not supported
+   */
+  /**
+   * Not supported
+   */
+  /**
+   * Not supported
+   */
+  /**
+   * Not supported
+   */
+  /**
+   * Not supported
+   */
   /**
    * Not supported
    */
