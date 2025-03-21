@@ -1,21 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.apache.commons.lang3;
-
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,16 +14,15 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.apache.commons.lang3.Functions.FailableConsumer;
 import org.apache.commons.lang3.Functions.FailableFunction;
 import org.apache.commons.lang3.Functions.FailablePredicate;
 
 /**
- * Provides utility functions, and classes for working with the
- * {@code java.util.stream} package, or more generally, with Java 8 lambdas. More
+ * This class provides utility functions, and classes for working with the
+ * java.util.stream package, or more generally, with Java 8 lambdas. More
  * specifically, it attempts to address the fact that lambdas are supposed
- * not to throw Exceptions, at least not checked Exceptions, AKA instances
+ * not to throw Exceptions, at least not checked Exceptions, aka instances
  * of {@link Exception}. This enforces the use of constructs like
  * <pre>
  *     Consumer&lt;java.lang.reflect.Method&gt; consumer = (m) -&gt; {
@@ -58,59 +40,47 @@ import org.apache.commons.lang3.Functions.FailablePredicate;
  * </pre>
  * Obviously, the second version is much more concise and the spirit of
  * Lambda expressions is met better than in the first version.
- *
  * @see Stream
  * @see Functions
- * @since 3.10
  */
 public class Streams {
+  public static class FailableStream<O extends Object> {
+    private Stream<O> stream;
 
-   /**
-    * A reduced, and simplified version of a {@link Stream} with
-    * failable method signatures.
-    * @param <O> The streams element type.
-    */
-    public static class FailableStream<O extends Object> {
+    private boolean terminated;
 
-        private Stream<O> stream;
-        private boolean terminated;
+    public FailableStream(final Stream<O> stream) {
+      this.stream = stream;
+    }
 
-        /**
-         * Constructs a new instance with the given {@code stream}.
-         * @param stream The stream.
-         */
-        public FailableStream(final Stream<O> stream) {
-            this.stream = stream;
-        }
+    protected void assertNotTerminated() {
+      if (terminated) {
+        throw new IllegalStateException("This stream is already terminated.");
+      }
+    }
 
-        protected void assertNotTerminated() {
-            if (terminated) {
-                throw new IllegalStateException("This stream is already terminated.");
-            }
-        }
+    protected void makeTerminated() {
+      assertNotTerminated();
+      terminated = true;
+    }
 
-        protected void makeTerminated() {
-            assertNotTerminated();
-            terminated = true;
-        }
-
-        /**
+    /**
          * Returns a FailableStream consisting of the elements of this stream that match
          * the given FailablePredicate.
          *
          * <p>This is an intermediate operation.
          *
-         * @param predicate a non-interfering, stateless predicate to apply to each
+         * @param pPredicate a non-interfering, stateless predicate to apply to each
          * element to determine if it should be included.
          * @return the new stream
          */
-        public FailableStream<O> filter(final FailablePredicate<O, ?> predicate){
-            assertNotTerminated();
-            stream = stream.filter(Functions.asPredicate(predicate));
-            return this;
-        }
+    public FailableStream<O> filter(final FailablePredicate<O, ?> predicate) {
+      assertNotTerminated();
+      stream = stream.filter(Functions.asPredicate(predicate));
+      return this;
+    }
 
-        /**
+    /**
          * Performs an action for each element of this stream.
          *
          * <p>This is a terminal operation.
@@ -123,14 +93,14 @@ public class Streams {
          * library chooses.  If the action accesses shared state, it is
          * responsible for providing the required synchronization.
          *
-         * @param action a non-interfering action to perform on the elements
+         * @param pAction a non-interfering action to perform on the elements
          */
-        public void forEach(final FailableConsumer<O, ?> action) {
-            makeTerminated();
-            stream().forEach(Functions.asConsumer(action));
-        }
+    public void forEach(final FailableConsumer<O, ?> action) {
+      makeTerminated();
+      stream().forEach(Functions.asConsumer(action));
+    }
 
-        /**
+    /**
          * Performs a mutable reduction operation on the elements of this stream using a
          * {@code Collector}.  A {@code Collector}
          * encapsulates the functions used as arguments to
@@ -173,17 +143,17 @@ public class Streams {
          *
          * @param <R> the type of the result
          * @param <A> the intermediate accumulation type of the {@code Collector}
-         * @param collector the {@code Collector} describing the reduction
+         * @param pCollector the {@code Collector} describing the reduction
          * @return the result of the reduction
          * @see #collect(Supplier, BiConsumer, BiConsumer)
          * @see Collectors
          */
-        public <A, R> R collect(final Collector<? super O, A, R> collector) {
-            makeTerminated();
-            return stream().collect(collector);
-        }
+    public <A extends java.lang.Object, R extends java.lang.Object> R collect(final Collector<? super O, A, R> collector) {
+      makeTerminated();
+      return stream().collect(collector);
+    }
 
-        /**
+    /**
          * Performs a mutable reduction operation on the elements of this FailableStream.
          * A mutable reduction is one in which the reduced value is a mutable result
          * container, such as an {@code ArrayList}, and elements are incorporated by updating
@@ -218,22 +188,22 @@ public class Streams {
          *
          * @param <R> type of the result
          * @param <A> Type of the accumulator.
-         * @param pupplier a function that creates a new result container. For a
+         * @param pSupplier a function that creates a new result container. For a
          *                 parallel execution, this function may be called
          *                 multiple times and must return a fresh value each time.
-         * @param accumulator An associative, non-interfering, stateless function for
+         * @param pAccumulator An associative, non-interfering, stateless function for
          *   incorporating an additional element into a result
-         * @param combiner An associative, non-interfering, stateless
+         * @param pCombiner An associative, non-interfering, stateless
          *   function for combining two values, which must be compatible with the
          *   accumulator function
          * @return The result of the reduction
          */
-        public <A, R> R collect(final Supplier<R> pupplier, final BiConsumer<R, ? super O> accumulator, final BiConsumer<R, R> combiner) {
-            makeTerminated();
-            return stream().collect(pupplier, accumulator, combiner);
-        }
+    public <A extends java.lang.Object, R extends java.lang.Object> R collect(final Supplier<R> pupplier, final BiConsumer<R, ? super O> accumulator, final BiConsumer<R, R> combiner) {
+      makeTerminated();
+      return stream().collect(pupplier, accumulator, combiner);
+    }
 
-        /**
+    /**
          * Performs a reduction on the elements of this stream, using the provided
          * identity value and an associative accumulation function, and returns
          * the reduced value.  This is equivalent to:
@@ -271,40 +241,40 @@ public class Streams {
          * operations parallelize more gracefully, without needing additional
          * synchronization and with greatly reduced risk of data races.
          *
-         * @param identity the identity value for the accumulating function
-         * @param accumulator an associative, non-interfering, stateless
+         * @param pIdentity the identity value for the accumulating function
+         * @param pAccumulator an associative, non-interfering, stateless
          *                    function for combining two values
          * @return the result of the reduction
          */
-        public O reduce(final O identity, final BinaryOperator<O> accumulator) {
-            makeTerminated();
-            return stream().reduce(identity, accumulator);
-        }
+    public O reduce(final O identity, final BinaryOperator<O> accumulator) {
+      makeTerminated();
+      return stream().reduce(identity, accumulator);
+    }
 
-        /**
+    /**
          * Returns a stream consisting of the results of applying the given
          * function to the elements of this stream.
          *
          * <p>This is an intermediate operation.
          *
          * @param <R> The element type of the new stream
-         * @param mapper A non-interfering, stateless function to apply to each element
+         * @param pMapper A non-interfering, stateless function to apply to each element
          * @return the new stream
          */
-        public <R> FailableStream<R> map(final FailableFunction<O, R, ?> mapper) {
-            assertNotTerminated();
-            return new FailableStream<>(stream.map(Functions.asFunction(mapper)));
-        }
+    public <R extends java.lang.Object> FailableStream<R> map(final FailableFunction<O, R, ?> mapper) {
+      assertNotTerminated();
+      return new FailableStream<>(stream.map(Functions.asFunction(mapper)));
+    }
 
-        /**
+    /**
          * Converts the FailableStream into an equivalent stream.
          * @return A stream, which will return the same elements, which this FailableStream would return.
          */
-        public Stream<O> stream() {
-            return stream;
-        }
+    public Stream<O> stream() {
+      return stream;
+    }
 
-        /**
+    /**
          * Returns whether all elements of this stream match the provided predicate.
          * May not evaluate the predicate on all elements if not necessary for
          * determining the result.  If the stream is empty then {@code true} is
@@ -318,17 +288,17 @@ public class Streams {
          * stream is empty, the quantification is said to be <em>vacuously
          * satisfied</em> and is always {@code true} (regardless of P(x)).
          *
-         * @param predicate A non-interfering, stateless predicate to apply to
+         * @param pPredicate A non-interfering, stateless predicate to apply to
          * elements of this stream
          * @return {@code true} If either all elements of the stream match the
          * provided predicate or the stream is empty, otherwise {@code false}.
          */
-        public boolean allMatch(final FailablePredicate<O, ?> predicate) {
-            assertNotTerminated();
-            return stream().allMatch(Functions.asPredicate(predicate));
-        }
+    public boolean allMatch(final FailablePredicate<O, ?> predicate) {
+      assertNotTerminated();
+      return stream().allMatch(Functions.asPredicate(predicate));
+    }
 
-        /**
+    /**
          * Returns whether any elements of this stream match the provided
          * predicate.  May not evaluate the predicate on all elements if not
          * necessary for determining the result.  If the stream is empty then
@@ -340,18 +310,18 @@ public class Streams {
          * This method evaluates the <em>existential quantification</em> of the
          * predicate over the elements of the stream (for some x P(x)).
          *
-         * @param predicate A non-interfering, stateless predicate to apply to
+         * @param pPredicate A non-interfering, stateless predicate to apply to
          * elements of this stream
          * @return {@code true} if any elements of the stream match the provided
          * predicate, otherwise {@code false}
          */
-        public boolean anyMatch(final FailablePredicate<O, ?> predicate) {
-            assertNotTerminated();
-            return stream().anyMatch(Functions.asPredicate(predicate));
-        }
+    public boolean anyMatch(final FailablePredicate<O, ?> predicate) {
+      assertNotTerminated();
+      return stream().anyMatch(Functions.asPredicate(predicate));
     }
+  }
 
-    /**
+  /**
      * Converts the given {@link Stream stream} into a {@link FailableStream}.
      * This is basically a simplified, reduced version of the {@link Stream}
      * class, with the same underlying element stream, except that failable
@@ -385,15 +355,15 @@ public class Streams {
      *  concise, and readable, and meets the spirit of Lambdas better
      *  than the first version.
      * @param <O> The streams element type.
-     * @param stream The stream, which is being converted.
+     * @param pStream The stream, which is being converted.
      * @return The {@link FailableStream}, which has been created by
      *   converting the stream.
      */
-    public static <O> FailableStream<O> stream(final Stream<O> stream) {
-        return new FailableStream<>(stream);
-    }
+  public static <O extends java.lang.Object> FailableStream<O> stream(final Stream<O> stream) {
+    return new FailableStream<>(stream);
+  }
 
-    /**
+  /**
      * Converts the given {@link Collection} into a {@link FailableStream}.
      * This is basically a simplified, reduced version of the {@link Stream}
      * class, with the same underlying element stream, except that failable
@@ -427,58 +397,53 @@ public class Streams {
      *  concise, and readable, and meets the spirit of Lambdas better
      *  than the first version.
      * @param <O> The streams element type.
-     * @param stream The stream, which is being converted.
+     * @param pStream The stream, which is being converted.
      * @return The {@link FailableStream}, which has been created by
      *   converting the stream.
      */
-    public static <O> FailableStream<O> stream(final Collection<O> stream) {
-        return stream(stream.stream());
+  public static <O extends java.lang.Object> FailableStream<O> stream(final Collection<O> stream) {
+    return stream(stream.stream());
+  }
+
+  public static class ArrayCollector<O extends java.lang.Object> implements Collector<O, List<O>, O[]> {
+    private static final Set<Characteristics> characteristics = Collections.emptySet();
+
+    private final Class<O> elementType;
+
+    public ArrayCollector(Class<O> pElementType) {
+      elementType = pElementType;
     }
 
-    public static class ArrayCollector<O> implements Collector<O, List<O>, O[]> {
-        private static final Set<Characteristics> characteristics = Collections.emptySet();
-        private final Class<O> elementType;
-
-        public ArrayCollector(Class<O> pElementType) {
-            elementType = pElementType;
-        }
-
-        @Override
-        public Supplier<List<O>> supplier() {
-            return () -> new ArrayList<O>();
-        }
-
-        @Override
-        public BiConsumer<List<O>, O> accumulator() {
-            return (list, o) -> {
-                list.add(o);
-            };
-        }
-
-        @Override
-        public BinaryOperator<List<O>> combiner() {
-            return (left, right) -> {
-                left.addAll(right);
-                return left;
-            };
-        }
-
-        @Override
-        public Function<List<O>, O[]> finisher() {
-            return (list) -> {
-                @SuppressWarnings("unchecked")
-                final O[] array = (O[]) Array.newInstance(elementType, list.size());
-                return list.toArray(array);
-            };
-        }
-
-        @Override
-        public Set<Characteristics> characteristics() {
-            return characteristics;
-        }
+    @Override public Supplier<List<O>> supplier() {
+      return () -> new ArrayList<O>();
     }
 
-    /**
+    @Override public BiConsumer<List<O>, O> accumulator() {
+      return (list, o) -> {
+        list.add(o);
+      };
+    }
+
+    @Override public BinaryOperator<List<O>> combiner() {
+      return (left, right) -> {
+        left.addAll(right);
+        return left;
+      };
+    }
+
+    @Override public Function<List<O>, O[]> finisher() {
+      return (list) -> {
+        @SuppressWarnings(value = { "unchecked" }) final O[] array = (O[]) Array.newInstance(elementType, list.size());
+        return list.toArray(array);
+      };
+    }
+
+    @Override public Set<Characteristics> characteristics() {
+      return characteristics;
+    }
+  }
+
+  /**
      * Returns a {@code Collector} that accumulates the input elements into a
      * new array.
      *
@@ -487,7 +452,7 @@ public class Streams {
      * @return a {@code Collector} which collects all the input elements into an
      * array, in encounter order
      */
-    public static <O extends Object> Collector<O, ?, O[]> toArray(Class<O> pElementType) {
-        return new ArrayCollector<O>(pElementType);
-    }
+  public static <O extends Object> Collector<O, ?, O[]> toArray(Class<O> pElementType) {
+    return new ArrayCollector<O>(pElementType);
+  }
 }
