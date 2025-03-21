@@ -1,6 +1,7 @@
 package com.fasterxml.jackson.module.mrbean;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -12,8 +13,6 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
-
-import java.lang.reflect.Modifier;
 
 import static org.objectweb.asm.Opcodes.*;
 
