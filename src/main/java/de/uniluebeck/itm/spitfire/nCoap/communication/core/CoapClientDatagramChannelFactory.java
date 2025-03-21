@@ -41,13 +41,12 @@ import org.slf4j.LoggerFactory;
  * @author Oliver Kleine
  */
 public class CoapClientDatagramChannelFactory {
-
-    private static Logger log = LoggerFactory.getLogger(CoapClientDatagramChannelFactory.class.getName());
-
     public static int COAP_CLIENT_PORT = 5682;
 
     private DatagramChannel channel;
 
+    private static Logger log = LoggerFactory.getLogger(CoapClientDatagramChannelFactory.class.getName());
+    
     private static CoapClientDatagramChannelFactory instance = new CoapClientDatagramChannelFactory();
     static{
         FixedReceiveBufferSizePredictor predictor = new FixedReceiveBufferSizePredictor(34000);

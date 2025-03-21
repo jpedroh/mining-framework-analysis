@@ -17,6 +17,7 @@ import javax.annotation.Nullable;
  */
 public class InvalidOptionException extends Exception{
 
+	private static final long serialVersionUID = 1L;
     @Nullable
     private Header messageHeader;
     private OptionName optionName;
