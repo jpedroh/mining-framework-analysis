@@ -124,4 +124,27 @@ public class P2Artifact implements IP2Artifact {
         this.excludes = excludes;
     }
 
+    public String getVersion() {
+    	String[] parts = this.getId().split(":");
+    	if (parts.length < 3) {
+    		throw new RuntimeException("Artifact Id must be of the form <groupId>:<artifactId>:<version>: "+this.getId());
+    	}
+    	return parts[2];
+    }
+    
+    public String getArtifactId() {
+    	String[] parts = this.getId().split(":");
+    	if (parts.length < 3) {
+    		throw new RuntimeException("Artifact Id must be of the form <groupId>:<artifactId>:<version>: "+this.getId());
+    	}
+    	return parts[1];
+    }
+    
+    public String getGroupId() {
+    	String[] parts = this.getId().split(":");
+    	if (parts.length < 3) {
+    		throw new RuntimeException("Artifact Id must be of the form <groupId>:<artifactId>:<version>: "+this.getId());
+    	}
+    	return parts[1];
+    }
 }
