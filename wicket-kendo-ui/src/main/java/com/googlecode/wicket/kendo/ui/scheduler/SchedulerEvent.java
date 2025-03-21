@@ -396,7 +396,13 @@ public class SchedulerEvent implements Serializable
 	 * @param field - the resource field (ie: 'resourceId')
 	 * @param id - the id-value
 	 */
+<<<<<<< /usr/src/app/output/sebfz1/wicket-jquery-ui/d26c29217ed316b58ca7daf26f949caf2866b578/wicket-kendo-ui/src/main/java/com/googlecode/wicket/kendo/ui/scheduler/SchedulerEvent.java/left.java
+	public final void setResource(String field, Number id)
+||||||| /usr/src/app/output/sebfz1/wicket-jquery-ui/d26c29217ed316b58ca7daf26f949caf2866b578/wicket-kendo-ui/src/main/java/com/googlecode/wicket/kendo/ui/scheduler/SchedulerEvent.java/base.java
+	public final void setResource(String field, List<Integer> values)
+=======
 	public final void setResource(String field, Integer id)
+>>>>>>> /usr/src/app/output/sebfz1/wicket-jquery-ui/d26c29217ed316b58ca7daf26f949caf2866b578/wicket-kendo-ui/src/main/java/com/googlecode/wicket/kendo/ui/scheduler/SchedulerEvent.java/right.java
 	{
 		this.resources.put(field, Id.valueOf(id));
 	}
