@@ -45,8 +45,12 @@ public class Faker {
         this.phoneNumber = new PhoneNumber(fakeValuesService);
         this.address = new Address(name, fakeValuesService);
         this.business = new Business(fakeValuesService);
+<<<<<<< /usr/src/app/output/dius/java-faker/4af535b9e606a2f34ebe6e7f0250bc8b15ffd63d/src/main/java/com/github/javafaker/Faker.java/left.java
         this.options = new Options(randomService);
+||||||| /usr/src/app/output/dius/java-faker/4af535b9e606a2f34ebe6e7f0250bc8b15ffd63d/src/main/java/com/github/javafaker/Faker.java/base.java
+=======
         this.code = new Code(randomService);
+>>>>>>> /usr/src/app/output/dius/java-faker/4af535b9e606a2f34ebe6e7f0250bc8b15ffd63d/src/main/java/com/github/javafaker/Faker.java/right.java
     }
 
     /**
@@ -112,7 +116,6 @@ public class Faker {
     public Options options() {
         return options;
     }
-
     public Code code() {
         return code;
     }
