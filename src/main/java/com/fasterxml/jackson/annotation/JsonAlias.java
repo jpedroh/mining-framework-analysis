@@ -34,6 +34,10 @@ import java.lang.annotation.Target;
  * { "fullName": "Faster Jackson", "name": "Jackson" }
  * </pre>
  * will have value "Jackson".
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/c76c32eb444463696a0c870d3458e238043ff4de/src/main/java/com/fasterxml/jackson/annotation/JsonAlias.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/c76c32eb444463696a0c870d3458e238043ff4de/src/main/java/com/fasterxml/jackson/annotation/JsonAlias.java/base.java
+ * @since 2.9
+=======
  * <p>
  * Also, can be used with enums where incoming JSON properties may not match the defined
  * enum values. For instance, if you have an enum called {@code Size} with values
@@ -54,6 +58,8 @@ import java.lang.annotation.Target;
  * <p>
  * During deserialization, any of these JSON structures will be valid
  * and correctly mapped to the MEDIUM enum value: {"size": "m"}, {"size": "medium"}, or {"size": "M"}.
+ * @since 2.9
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/c76c32eb444463696a0c870d3458e238043ff4de/src/main/java/com/fasterxml/jackson/annotation/JsonAlias.java/right.java
  */
 @Target({ElementType.ANNOTATION_TYPE, // for combo-annotations
     ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER// for properties (field, setter, ctor param)
