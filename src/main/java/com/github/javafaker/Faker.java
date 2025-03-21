@@ -205,8 +205,12 @@ public class Faker {
         this.aquaTeenHungerForce = new AquaTeenHungerForce(this);
         this.programmingLanguage = new ProgrammingLanguage(this);
         this.kaamelott = new Kaamelott(this);
+<<<<<<< /usr/src/app/output/dius/java-faker/102807f3021ae9ba4c822796ef73f8379b6e86fb/src/main/java/com/github/javafaker/Faker.java/left.java
         this.disease = new Disease(this);
+||||||| /usr/src/app/output/dius/java-faker/102807f3021ae9ba4c822796ef73f8379b6e86fb/src/main/java/com/github/javafaker/Faker.java/base.java
+=======
         this.basketball = new Basketball(this);
+>>>>>>> /usr/src/app/output/dius/java-faker/102807f3021ae9ba4c822796ef73f8379b6e86fb/src/main/java/com/github/javafaker/Faker.java/right.java
     }
 
     /**
@@ -643,11 +647,8 @@ public class Faker {
         return kaamelott;
     }
 
-
     public Disease disease() {return disease; }
-
     public Basketball basketball() { return basketball; }
-
     public String resolve(String key) {
         return this.fakeValuesService.resolve(key, this, this);
     }
