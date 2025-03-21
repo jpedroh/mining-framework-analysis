@@ -175,7 +175,7 @@ public class LZFInputStream extends InputStream
         _bufferPosition += chunkLength;
 
         if (chunkLength == length || !_cfgFullReads) {
-            return chunkLength;
+    	        return chunkLength;
         }
         // Need more data, then
         int totalRead = chunkLength;
@@ -189,6 +189,7 @@ public class LZFInputStream extends InputStream
             _bufferPosition += chunkLength;
             totalRead += chunkLength;
         } while (totalRead < length);
+
         return totalRead;
     }
     
