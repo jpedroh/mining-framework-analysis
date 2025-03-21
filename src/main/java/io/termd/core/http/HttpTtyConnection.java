@@ -146,8 +146,6 @@ public abstract class HttpTtyConnection implements TtyConnection {
 
   @Override
   public void close() {
-    if (closeHandler != null) {
-      closeHandler.accept(null);
-    }
+    closeHandler.accept(null);
   }
 }
