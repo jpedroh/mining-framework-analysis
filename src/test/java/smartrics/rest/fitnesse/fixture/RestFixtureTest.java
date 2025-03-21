@@ -199,7 +199,14 @@ public class RestFixtureTest {
         RowWrapper<?> row = helper.createTestRow("setHeader", header);
         fixture.processRow(row);
         verify(row.getCell(1)).text();
+<<<<<<< /usr/src/app/output/smartrics/restfixture/d8c6704346b6c678edcfb02a11c914f6db985b21/src/test/java/smartrics/rest/fitnesse/fixture/RestFixtureTest.java/left.java
+    // commented this out because I commented out the matching code in the RestFixture (line 222)
+    //        verify(row.getCell(1)).body("headerWithSymbol:one");
+||||||| /usr/src/app/output/smartrics/restfixture/d8c6704346b6c678edcfb02a11c914f6db985b21/src/test/java/smartrics/rest/fitnesse/fixture/RestFixtureTest.java/base.java
+        verify(row.getCell(1)).body("headerWithSymbol:one");
+=======
         verify(row.getCell(1)).body("gray(headerWithSymbol:one)");
+>>>>>>> /usr/src/app/output/smartrics/restfixture/d8c6704346b6c678edcfb02a11c914f6db985b21/src/test/java/smartrics/rest/fitnesse/fixture/RestFixtureTest.java/right.java
         
         verifyNoMoreInteractions(row.getCell(1));
     }

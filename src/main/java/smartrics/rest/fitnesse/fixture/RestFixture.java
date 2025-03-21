@@ -491,7 +491,14 @@ public class RestFixture extends Fixture {
         requestHeaders = parseHeaders(substitutedHeaders);   
 		CellWrapper<?> cell = row.getCell(1);
         if(!substitutedHeaders.equals(headers)) {
-		cell.body(getFormatter().gray(substitutedHeaders));
+<<<<<<< /usr/src/app/output/smartrics/restfixture/d8c6704346b6c678edcfb02a11c914f6db985b21/src/main/java/smartrics/rest/fitnesse/fixture/RestFixture.java/left.java
+        // commented this out because it was causing Fitnesse to consider the cell as "wrong"            
+        //			cell.body(substitutedHeaders);
+||||||| /usr/src/app/output/smartrics/restfixture/d8c6704346b6c678edcfb02a11c914f6db985b21/src/main/java/smartrics/rest/fitnesse/fixture/RestFixture.java/base.java
+        			cell.body(substitutedHeaders);
+=======
+        			cell.body(getFormatter().gray(substitutedHeaders));
+>>>>>>> /usr/src/app/output/smartrics/restfixture/d8c6704346b6c678edcfb02a11c914f6db985b21/src/main/java/smartrics/rest/fitnesse/fixture/RestFixture.java/right.java
         }
     }
 
