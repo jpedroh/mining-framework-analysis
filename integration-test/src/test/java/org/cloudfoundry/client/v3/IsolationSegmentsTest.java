@@ -242,8 +242,7 @@ public final class IsolationSegmentsTest extends AbstractIntegrationTest {
         String organizationName = this.nameFactory.getOrganizationName();
 
         createOrganizationId(this.cloudFoundryClient, organizationName)
-            .flatMap(organizationId -> createEntitledIsolationSegmentId(this.cloudFoundryClient, isolationSegmentName, organizationId)
-                .then(Mono.just(organizationId)))
+            .delayUntil(organizationId -> createEntitledIsolationSegmentId(this.cloudFoundryClient, isolationSegmentName, organizationId))
             .flatMapMany(organizationId -> PaginationUtils
                 .requestClientV3Resources(page -> this.cloudFoundryClient.isolationSegments()
                     .list(ListIsolationSegmentsRequest.builder()
@@ -264,7 +263,13 @@ public final class IsolationSegmentsTest extends AbstractIntegrationTest {
         String spaceName = this.nameFactory.getSpaceName();
 
         createOrganizationId(this.cloudFoundryClient, organizationName)
-            .flatMap(organizationId -> Mono.zip(
+<<<<<<< /usr/src/app/output/cloudfoundry/cf-java-client/a21ed38afcebec300902d8d99b5821eacc731a1b/integration-test/src/test/java/org/cloudfoundry/client/v3/IsolationSegmentsTest.java/left.java
+            .zip(organizationId -> Mono.when(
+||||||| /usr/src/app/output/cloudfoundry/cf-java-client/a21ed38afcebec300902d8d99b5821eacc731a1b/integration-test/src/test/java/org/cloudfoundry/client/v3/IsolationSegmentsTest.java/base.java
+            .when(organizationId -> Mono.when(
+=======
+            .then(organizationId -> Mono.when(
+>>>>>>> /usr/src/app/output/cloudfoundry/cf-java-client/a21ed38afcebec300902d8d99b5821eacc731a1b/integration-test/src/test/java/org/cloudfoundry/client/v3/IsolationSegmentsTest.java/right.java
                 Mono.just(organizationId),
                 createSpaceId(this.cloudFoundryClient, organizationId, spaceName)
             ))
@@ -298,7 +303,13 @@ public final class IsolationSegmentsTest extends AbstractIntegrationTest {
         String spaceName = this.nameFactory.getSpaceName();
 
         createOrganizationId(this.cloudFoundryClient, organizationName)
-            .flatMap(organizationId -> Mono.zip(
+<<<<<<< /usr/src/app/output/cloudfoundry/cf-java-client/a21ed38afcebec300902d8d99b5821eacc731a1b/integration-test/src/test/java/org/cloudfoundry/client/v3/IsolationSegmentsTest.java/left.java
+            .zip(organizationId -> Mono.when(
+||||||| /usr/src/app/output/cloudfoundry/cf-java-client/a21ed38afcebec300902d8d99b5821eacc731a1b/integration-test/src/test/java/org/cloudfoundry/client/v3/IsolationSegmentsTest.java/base.java
+            .when(organizationId -> Mono.when(
+=======
+            .then(organizationId -> Mono.when(
+>>>>>>> /usr/src/app/output/cloudfoundry/cf-java-client/a21ed38afcebec300902d8d99b5821eacc731a1b/integration-test/src/test/java/org/cloudfoundry/client/v3/IsolationSegmentsTest.java/right.java
                 Mono.just(organizationId),
                 createSpaceId(this.cloudFoundryClient, organizationId, spaceName)
             ))
