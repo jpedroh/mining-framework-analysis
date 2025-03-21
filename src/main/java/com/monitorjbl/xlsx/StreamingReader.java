@@ -1,5 +1,4 @@
 package com.monitorjbl.xlsx;
-
 import com.monitorjbl.xlsx.exceptions.CloseException;
 import com.monitorjbl.xlsx.exceptions.MissingSheetException;
 import com.monitorjbl.xlsx.exceptions.OpenException;
@@ -25,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -46,7 +44,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-
 import static com.monitorjbl.xlsx.XmlUtils.document;
 import static com.monitorjbl.xlsx.XmlUtils.searchForNodeList;
 
@@ -59,16 +56,23 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
   private static final Logger log = LoggerFactory.getLogger(StreamingReader.class);
 
   private final SharedStringsTable sst;
+
   private final StylesTable stylesTable;
+
   private final XMLEventReader parser;
+
   private final DataFormatter dataFormatter = new DataFormatter();
 
   private int rowCacheSize;
+
   private List<Row> rowCache = new ArrayList<>();
+
   private Iterator<Row> rowCacheIterator;
 
   private String lastContents;
+
   private StreamingRow currentRow;
+
   private StreamingCell currentCell;
 
   private File tmp;
@@ -88,12 +92,12 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
   private boolean getRow() {
     try {
       rowCache.clear();
-      while(rowCache.size() < rowCacheSize && parser.hasNext()) {
+      while (rowCache.size() < rowCacheSize && parser.hasNext()) {
         handleEvent(parser.nextEvent());
       }
       rowCacheIterator = rowCache.iterator();
       return rowCacheIterator.hasNext();
-    } catch(XMLStreamException | SAXException e) {
+    } catch (XMLStreamException | SAXException e) {
       log.debug("End of stream");
     }
     return false;
@@ -106,58 +110,59 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
    * @throws SAXException
    */
   private void handleEvent(XMLEvent event) throws SAXException {
-    if(event.getEventType() == XMLStreamConstants.CHARACTERS) {
+    if (event.getEventType() == XMLStreamConstants.CHARACTERS) {
       Characters c = event.asCharacters();
       lastContents += c.getData();
-    } else if(event.getEventType() == XMLStreamConstants.START_ELEMENT) {
-      StartElement startElement = event.asStartElement();
-      String tagLocalName = startElement.getName().getLocalPart();
-
-      if("row".equals(tagLocalName)) {
-        Attribute rowIndex = startElement.getAttributeByName(new QName("r"));
-        currentRow = new StreamingRow(Integer.parseInt(rowIndex.getValue()) - 1);
-      } else if("c".equals(tagLocalName)) {
-        Attribute ref = startElement.getAttributeByName(new QName("r"));
-
-        String[] coord = ref.getValue().split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
-        currentCell = new StreamingCell(CellReference.convertColStringToIndex(coord[0]), Integer.parseInt(coord[1]) - 1);
-        setFormatString(startElement, currentCell);
-
-        Attribute type = startElement.getAttributeByName(new QName("t"));
-        if(type != null) {
-          currentCell.setType(type.getValue());
+    } else {
+      if (event.getEventType() == XMLStreamConstants.START_ELEMENT) {
+        StartElement startElement = event.asStartElement();
+        String tagLocalName = startElement.getName().getLocalPart();
+        if ("row".equals(tagLocalName)) {
+          Attribute rowIndex = startElement.getAttributeByName(new QName("r"));
+          currentRow = new StreamingRow(Integer.parseInt(rowIndex.getValue()) - 1);
         } else {
-          currentCell.setType("n");
+          if ("c".equals(tagLocalName)) {
+            Attribute ref = startElement.getAttributeByName(new QName("r"));
+            String[] coord = ref.getValue().split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
+            currentCell = new StreamingCell(CellReference.convertColStringToIndex(coord[0]), Integer.parseInt(coord[1]) - 1);
+            setFormatString(startElement, currentCell);
+            Attribute type = startElement.getAttributeByName(new QName("t"));
+            if (type != null) {
+              currentCell.setType(type.getValue());
+            } else {
+              currentCell.setType("n");
+            }
+            Attribute style = startElement.getAttributeByName(new QName("s"));
+            if (style != null) {
+              String indexStr = style.getValue();
+              try {
+                int index = Integer.parseInt(indexStr);
+                currentCell.setCellStyle(stylesTable.getStyleAt(index));
+              } catch (NumberFormatException nfe) {
+                log.warn("Ignoring invalid style index {}", indexStr);
+              }
+            }
+          }
         }
-
-        Attribute style = startElement.getAttributeByName(new QName("s"));
-
-        if(style != null){
-          String indexStr = style.getValue();
-          try{
-            int index = Integer.parseInt(indexStr);
-            currentCell.setCellStyle(stylesTable.getStyleAt(index));
-          } catch(NumberFormatException nfe) {
-            log.warn("Ignoring invalid style index {}", indexStr);
+        lastContents = "";
+      } else {
+        if (event.getEventType() == XMLStreamConstants.END_ELEMENT) {
+          EndElement endElement = event.asEndElement();
+          String tagLocalName = endElement.getName().getLocalPart();
+          if ("v".equals(tagLocalName)) {
+            currentCell.setRawContents(unformattedContents());
+            currentCell.setContents(formattedContents());
+          } else {
+            if ("row".equals(tagLocalName) && currentRow != null) {
+              rowCache.add(currentRow);
+            } else {
+              if ("c".equals(tagLocalName)) {
+                currentRow.getCellMap().put(currentCell.getColumnIndex(), currentCell);
+              }
+            }
           }
         }
       }
-
-      // Clear contents cache
-      lastContents = "";
-    } else if(event.getEventType() == XMLStreamConstants.END_ELEMENT) {
-      EndElement endElement = event.asEndElement();
-      String tagLocalName = endElement.getName().getLocalPart();
-
-      if("v".equals(tagLocalName)) {
-        currentCell.setRawContents(unformattedContents());
-        currentCell.setContents(formattedContents());
-      } else if("row".equals(tagLocalName) && currentRow != null) {
-        rowCache.add(currentRow);
-      } else if("c".equals(tagLocalName)) {
-        currentRow.getCellMap().put(currentCell.getColumnIndex(), currentCell);
-      }
-
     }
   }
 
@@ -172,18 +177,17 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
     Attribute cellStyle = startElement.getAttributeByName(new QName("s"));
     String cellStyleString = (cellStyle != null) ? cellStyle.getValue() : null;
     XSSFCellStyle style = null;
-
-    if(cellStyleString != null) {
+    if (cellStyleString != null) {
       style = stylesTable.getStyleAt(Integer.parseInt(cellStyleString));
-    } else if(stylesTable.getNumCellStyles() > 0) {
-      style = stylesTable.getStyleAt(0);
+    } else {
+      if (stylesTable.getNumCellStyles() > 0) {
+        style = stylesTable.getStyleAt(0);
+      }
     }
-
-    if(style != null) {
+    if (style != null) {
       cell.setNumericFormatIndex(style.getDataFormat());
       String formatString = style.getDataFormatString();
-
-      if(formatString != null) {
+      if (formatString != null) {
         cell.setNumericFormat(formatString);
       } else {
         cell.setNumericFormat(BuiltinFormats.getBuiltinFormat(cell.getNumericFormatIndex()));
@@ -201,27 +205,24 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
    * @return
    */
   String formattedContents() {
-    switch(currentCell.getType()) {
-      case "s":           //string stored in shared table
-        int idx = Integer.parseInt(lastContents);
-        return new XSSFRichTextString(sst.getEntryAt(idx)).toString();
-      case "inlineStr":   //inline string (not in sst)
-        return new XSSFRichTextString(lastContents).toString();
-      case "str":         //forumla type
-        return '"' + lastContents + '"';
-      case "e":           //error type
-        return "ERROR:  " + lastContents;
-      case "n":           //numeric type
-        if(currentCell.getNumericFormat() != null && lastContents.length() > 0) {
-          return dataFormatter.formatRawCellContents(
-              Double.parseDouble(lastContents),
-              currentCell.getNumericFormatIndex(),
-              currentCell.getNumericFormat());
-        } else {
-          return lastContents;
-        }
-      default:
+    switch (currentCell.getType()) {
+      case "s":
+      int idx = Integer.parseInt(lastContents);
+      return new XSSFRichTextString(sst.getEntryAt(idx)).toString();
+      case "inlineStr":
+      return new XSSFRichTextString(lastContents).toString();
+      case "str":
+      return '\"' + lastContents + '\"';
+      case "e":
+      return "ERROR:  " + lastContents;
+      case "n":
+      if (currentCell.getNumericFormat() != null && lastContents.length() > 0) {
+        return dataFormatter.formatRawCellContents(Double.parseDouble(lastContents), currentCell.getNumericFormatIndex(), currentCell.getNumericFormat());
+      } else {
         return lastContents;
+      }
+      default:
+      return lastContents;
     }
   }
 
@@ -231,14 +232,14 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
    * @return
    */
   String unformattedContents() {
-    switch(currentCell.getType()) {
-      case "s":           //string stored in shared table
-        int idx = Integer.parseInt(lastContents);
-        return new XSSFRichTextString(sst.getEntryAt(idx)).toString();
-      case "inlineStr":   //inline string (not in sst)
-        return new XSSFRichTextString(lastContents).toString();
+    switch (currentCell.getType()) {
+      case "s":
+      int idx = Integer.parseInt(lastContents);
+      return new XSSFRichTextString(sst.getEntryAt(idx)).toString();
+      case "inlineStr":
+      return new XSSFRichTextString(lastContents).toString();
       default:
-        return lastContents;
+      return lastContents;
     }
   }
 
@@ -249,8 +250,7 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
    *
    * @return the streaming iterator
    */
-  @Override
-  public Iterator<Row> iterator() {
+  @Override public Iterator<Row> iterator() {
     return new StreamingIterator();
   }
 
@@ -259,15 +259,13 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
    *
    * @throws com.monitorjbl.xlsx.exceptions.CloseException if there is an issue closing the stream
    */
-  @Override
-  public void close() {
+  @Override public void close() {
     try {
       parser.close();
-    } catch(XMLStreamException e) {
+    } catch (XMLStreamException e) {
       throw new CloseException(e);
     }
-
-    if(tmp != null) {
+    if (tmp != null) {
       log.debug("Deleting tmp file [" + tmp.getAbsolutePath() + "]");
       tmp.delete();
     }
@@ -275,10 +273,10 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
 
   static File writeInputStreamToFile(InputStream is, int bufferSize) throws IOException {
     File f = Files.createTempFile("tmp-", ".xlsx").toFile();
-    try(FileOutputStream fos = new FileOutputStream(f)) {
+    try (FileOutputStream fos = new FileOutputStream(f)) {
       int read;
       byte[] bytes = new byte[bufferSize];
-      while((read = is.read(bytes)) != -1) {
+      while ((read = is.read(bytes)) != -1) {
         fos.write(bytes, 0, read);
       }
       is.close();
@@ -293,9 +291,13 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
 
   public static class Builder {
     int rowCacheSize = 10;
+
     int bufferSize = 1024;
+
     int sheetIndex = 0;
+
     String sheetName;
+
     String password;
 
     /**
@@ -389,13 +391,12 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
       try {
         f = writeInputStreamToFile(is, bufferSize);
         log.debug("Created temp file [" + f.getAbsolutePath() + "]");
-
         StreamingReader r = read(f);
         r.tmp = f;
         return r;
-      } catch(IOException e) {
+      } catch (IOException e) {
         throw new ReadException("Unable to read input stream", e);
-      } catch(RuntimeException e) {
+      } catch (RuntimeException e) {
         f.delete();
         throw e;
       }
@@ -413,9 +414,7 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
     public StreamingReader read(File f) {
       try {
         OPCPackage pkg;
-
-        if(password != null) {
-          // Based on: https://poi.apache.org/encryption.html
+        if (password != null) {
           POIFSFileSystem poifs = new POIFSFileSystem(f);
           EncryptionInfo info = new EncryptionInfo(poifs);
           Decryptor d = Decryptor.getInstance(info);
@@ -424,49 +423,44 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
         } else {
           pkg = OPCPackage.open(f);
         }
-
         XSSFReader reader = new XSSFReader(pkg);
         SharedStringsTable sst = reader.getSharedStringsTable();
         StylesTable styles = reader.getStylesTable();
-
         InputStream sheet = findSheet(reader);
-        if(sheet == null) {
+        if (sheet == null) {
           throw new MissingSheetException("Unable to find sheet at index [" + sheetIndex + "]");
         }
-
         XMLEventReader parser = XMLInputFactory.newInstance().createXMLEventReader(sheet);
         return new StreamingReader(sst, styles, parser, rowCacheSize);
-      } catch(IOException e) {
+      } catch (IOException e) {
         throw new OpenException("Failed to open file", e);
-      } catch(OpenXML4JException | XMLStreamException e) {
+      } catch (OpenXML4JException | XMLStreamException e) {
         throw new ReadException("Unable to read workbook", e);
-      } catch(GeneralSecurityException e) {
+      } catch (GeneralSecurityException e) {
         throw new ReadException("Unable to read workbook - Decryption failed", e);
       }
     }
 
     InputStream findSheet(XSSFReader reader) throws IOException, InvalidFormatException {
       int index = sheetIndex;
-      if(sheetName != null) {
+      if (sheetName != null) {
         index = -1;
-        //This file is separate from the worksheet data, and should be fairly small
         NodeList nl = searchForNodeList(document(reader.getWorkbookData()), "/workbook/sheets/sheet");
-        for(int i = 0; i < nl.getLength(); i++) {
-          if(Objects.equals(nl.item(i).getAttributes().getNamedItem("name").getTextContent(), sheetName)) {
+        for (int i = 0; i < nl.getLength(); i++) {
+          if (Objects.equals(nl.item(i).getAttributes().getNamedItem("name").getTextContent(), sheetName)) {
             index = i;
           }
         }
-        if(index < 0) {
+        if (index < 0) {
           return null;
         }
       }
       Iterator<InputStream> iter = reader.getSheetsData();
       InputStream sheet = null;
-
       int i = 0;
-      while(iter.hasNext()) {
+      while (iter.hasNext()) {
         InputStream is = iter.next();
-        if(i++ == index) {
+        if (i++ == index) {
           sheet = is;
           log.debug("Found sheet at index [" + sheetIndex + "]");
           break;
@@ -478,25 +472,21 @@ public class StreamingReader implements Iterable<Row>, AutoCloseable {
 
   class StreamingIterator implements Iterator<Row> {
     public StreamingIterator() {
-      if(rowCacheIterator == null) {
+      if (rowCacheIterator == null) {
         hasNext();
       }
     }
 
-    @Override
-    public boolean hasNext() {
+    @Override public boolean hasNext() {
       return (rowCacheIterator != null && rowCacheIterator.hasNext()) || getRow();
     }
 
-    @Override
-    public Row next() {
+    @Override public Row next() {
       return rowCacheIterator.next();
     }
 
-    @Override
-    public void remove() {
+    @Override public void remove() {
       throw new RuntimeException("NotSupported");
     }
   }
-
 }
