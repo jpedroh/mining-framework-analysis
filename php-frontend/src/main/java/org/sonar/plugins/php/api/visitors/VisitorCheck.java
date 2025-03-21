@@ -1,24 +1,4 @@
-/*
- * SonarQube PHP Plugin
- * Copyright (C) 2010-2020 SonarSource SA
- * mailto:info AT sonarsource DOT com
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */
 package org.sonar.plugins.php.api.visitors;
-
 import com.google.common.annotations.Beta;
 import org.sonar.plugins.php.api.tree.CompilationUnitTree;
 import org.sonar.plugins.php.api.tree.ScriptTree;
@@ -109,9 +89,7 @@ import org.sonar.plugins.php.api.tree.statement.UseStatementTree;
 import org.sonar.plugins.php.api.tree.statement.UseTraitDeclarationTree;
 import org.sonar.plugins.php.api.tree.statement.WhileStatementTree;
 
-@Beta
-public interface VisitorCheck extends PHPCheck {
-
+@Beta public interface VisitorCheck extends PHPCheck {
   void visitToken(SyntaxToken token);
 
   void visitTrivia(SyntaxTrivia trivia);
@@ -119,7 +97,6 @@ public interface VisitorCheck extends PHPCheck {
   /**
    * [ START ] Declaration
    */
-
   void visitVariableDeclaration(VariableDeclarationTree tree);
 
   void visitNamespaceName(NamespaceNameTree tree);
@@ -155,14 +132,8 @@ public interface VisitorCheck extends PHPCheck {
   void visitReturnTypeClause(ReturnTypeClauseTree tree);
 
   /**
-   * [ END ] Declaration
-   */
-
-
-  /**
    * [ START ] Statement
    */
-
   void visitConstDeclaration(ConstantDeclarationTree tree);
 
   void visitStaticStatement(StaticStatementTree tree);
@@ -224,14 +195,13 @@ public interface VisitorCheck extends PHPCheck {
   void visitEchoTagStatement(EchoTagStatementTree tree);
 
   /**
-   * [ END ] Statement
-   */
-
-  /**
    * [ START ] Expression
    */
   void visitThrowExpression(ThrowExpressionTree tree);
 
+  /**
+   * [ START ] Expression
+   */
   void visitCastExpression(CastExpressionTree tree);
 
   void visitPrefixedCastExpression(PrefixedCastExpressionTree tree);
@@ -309,13 +279,7 @@ public interface VisitorCheck extends PHPCheck {
   /**
    * @deprecated since 3.1. Use {@link #visitEchoTagStatement(EchoTagStatementTree)}
    */
-  @Deprecated
-  void visitExpressionListStatement(ExpressionListStatementTree tree);
+  @Deprecated void visitExpressionListStatement(ExpressionListStatementTree tree);
 
   void visitCallArgument(CallArgumentTree tree);
-
-  /**
-   * [ END ] Expression
-   */
-
 }
