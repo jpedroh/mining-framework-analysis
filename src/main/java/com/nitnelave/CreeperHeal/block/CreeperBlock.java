@@ -25,12 +25,15 @@ import org.bukkit.block.data.type.Stairs;
 import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Attachable;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import org.bukkit.block.CreatureSpawner;
+import org.bukkit.block.NoteBlock;
+import org.bukkit.block.Sign;
+import java.util.Random;
 
 /**
  * Represents a block that can be replaced. Every special type of block derives
@@ -66,15 +69,12 @@ public class CreeperBlock implements Replaceable
     private static final Set<Material> DEPENDENT_BLOCKS =
             CreeperUtils.createFinalHashSet(Material.TORCH, Material.LADDER, Material.WALL_SIGN, Material.LEVER,
                     Material.REDSTONE_TORCH, Material.VINE, Material.COCOA, Material.TRIPWIRE_HOOK);
-
     public static final BlockFace[] CARDINALS = { BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST,
             BlockFace.NORTH, BlockFace.UP, BlockFace.DOWN };
-
     /*
      * The block represented.
      */
     BlockState blockState;
-
     /**
      * Create a new CreeperBlock of the right class. Factory method that should
      * be used as a constructor.
@@ -86,7 +86,8 @@ public class CreeperBlock implements Replaceable
     public static CreeperBlock newBlock(BlockState state)
     {
         CreeperConfig.getWorld(state.getWorld()).getReplacement(state);
-
+<<<<<<< /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperBlock.java/left.java
+    
         if (state instanceof ShulkerBox)
             return new CreeperShulkerBox((ShulkerBox) state);
         if (state instanceof Container)
@@ -95,6 +96,19 @@ public class CreeperBlock implements Replaceable
             return new CreeperBanner((Banner) state);
         if (state instanceof Jukebox)
             return new CreeperJukebox((Jukebox) state);
+||||||| /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperBlock.java/base.java
+        //if (PluginHandler.isSpoutEnabled () && SpoutBlock.isCustomBlock (blockState))
+        //    return new SpoutBlock (blockState);
+        if (state instanceof InventoryHolder)
+            return new CreeperChest(state);
+=======
+        if (state instanceof ShulkerBox)
+            return new CreeperShulkerBox((ShulkerBox) state);
+        if (state instanceof InventoryHolder)
+            return new CreeperContainer(state);
+        if (state instanceof Jukebox)
+            return new CreeperJukebox((Jukebox) state);
+>>>>>>> /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperBlock.java/right.java
         if (state.getType().hasGravity())
             return new CreeperPhysicsBlock(state);
 
@@ -109,6 +123,96 @@ public class CreeperBlock implements Replaceable
 
         switch (state.getType())
         {
+<<<<<<< /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperBlock.java/left.java
+||||||| /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperBlock.java/base.java
+        case BED_BLOCK:
+            return new CreeperBed(state);
+        case DOUBLE_PLANT:
+        	return new CreeperFlower(state);
+        case RAILS:
+        case POWERED_RAIL:
+        case DETECTOR_RAIL:
+            return new CreeperRail(state);
+        case SKULL:
+            return new CreeperHead(state);
+        case PISTON_BASE:
+        case PISTON_STICKY_BASE:
+        case PISTON_EXTENSION:
+            return new CreeperPiston(state);
+        case WOODEN_DOOR:
+        case ACACIA_DOOR:
+        case BIRCH_DOOR:
+        case DARK_OAK_DOOR:
+        case JUNGLE_DOOR:
+        case SPRUCE_DOOR:
+        case IRON_DOOR_BLOCK:
+            return new CreeperDoor(state);
+        case NOTE_BLOCK:
+            return new CreeperNoteBlock((NoteBlock) state);
+        case SIGN_POST:
+        case WALL_SIGN:
+            return new CreeperSign((Sign) state);
+        case MOB_SPAWNER:
+            return new CreeperMonsterSpawner((CreatureSpawner) state);
+        case WOOD_PLATE:
+        case GOLD_PLATE:
+        case IRON_PLATE:
+        case STONE_PLATE:
+            return new CreeperPlate(state);
+        case GRASS:
+            return new CreeperGrass(state);
+        case SMOOTH_BRICK:
+        case SMOOTH_STAIRS:
+            return new CreeperBrick(state);
+        case WOOD_BUTTON:
+        case STONE_BUTTON:
+            return new CreeperButton(state);
+        case FIRE:
+=======
+        case BED_BLOCK:
+            return new CreeperBed(state);
+        case DOUBLE_PLANT:
+            return new CreeperFlower(state);
+        case RAILS:
+        case POWERED_RAIL:
+        case DETECTOR_RAIL:
+            return new CreeperRail(state);
+        case SKULL:
+            return new CreeperHead(state);
+        case PISTON_BASE:
+        case PISTON_STICKY_BASE:
+        case PISTON_EXTENSION:
+            return new CreeperPiston(state);
+        case WOODEN_DOOR:
+        case ACACIA_DOOR:
+        case BIRCH_DOOR:
+        case DARK_OAK_DOOR:
+        case JUNGLE_DOOR:
+        case SPRUCE_DOOR:
+        case IRON_DOOR_BLOCK:
+            return new CreeperDoor(state);
+        case NOTE_BLOCK:
+            return new CreeperNoteBlock((NoteBlock) state);
+        case SIGN_POST:
+        case WALL_SIGN:
+            return new CreeperSign((Sign) state);
+        case MOB_SPAWNER:
+            return new CreeperMonsterSpawner((CreatureSpawner) state);
+        case WOOD_PLATE:
+        case GOLD_PLATE:
+        case IRON_PLATE:
+        case STONE_PLATE:
+            return new CreeperPlate(state);
+        case GRASS:
+            return new CreeperGrass(state);
+        case SMOOTH_BRICK:
+        case SMOOTH_STAIRS:
+            return new CreeperBrick(state);
+        case WOOD_BUTTON:
+        case STONE_BUTTON:
+            return new CreeperButton(state);
+        case FIRE:
+>>>>>>> /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperBlock.java/right.java
         case AIR:
         case CAVE_AIR:
         case FIRE:
@@ -124,7 +228,6 @@ public class CreeperBlock implements Replaceable
             return new CreeperBlock(state);
         }
     }
-
     /*
      * The constructor.
      */
@@ -132,7 +235,6 @@ public class CreeperBlock implements Replaceable
     {
         this.blockState = blockState;
     }
-
     /*
      * Get whether the block is empty, i.e. if a player can breathe inside it
      * and if it can be replaced by other blocks (snow, water...)
@@ -141,7 +243,6 @@ public class CreeperBlock implements Replaceable
     {
         return EMPTY_BLOCKS.contains(type);
     }
-
     /*
      * (non-Javadoc)
      *
@@ -152,7 +253,6 @@ public class CreeperBlock implements Replaceable
     {
         return blockState.getLocation();
     }
-
     /*
      * (non-Javadoc)
      *
@@ -163,7 +263,6 @@ public class CreeperBlock implements Replaceable
     {
         return blockState.getWorld();
     }
-
     /*
      * (non-Javadoc)
      *
@@ -174,7 +273,6 @@ public class CreeperBlock implements Replaceable
     {
         return blockState.getBlock();
     }
-
     /**
      * Get whether blocks of a type are dependent on the block under.
      *
@@ -192,7 +290,6 @@ public class CreeperBlock implements Replaceable
         }
         return DEPENDENT_DOWN_BLOCKS.contains(type);
     }
-
     /**
      * Get whether blocks of a type are solid.
      *
@@ -205,7 +302,6 @@ public class CreeperBlock implements Replaceable
     {
         return type.isSolid();
     }
-
     /**
      * Get whether blocks of a type are dependent on another block.
      *
@@ -218,7 +314,6 @@ public class CreeperBlock implements Replaceable
         return DEPENDENT_BLOCKS.contains(type) || Tag.BUTTONS.isTagged(type) || CreeperTag.WALL_BANNERS.isTagged(type)
                 || isDependentDown(type);
     }
-
     /**
      * Replace the block in the world.
      */
@@ -229,7 +324,6 @@ public class CreeperBlock implements Replaceable
         getWorld().playSound(getLocation(), CreeperConfig.getSound(), CreeperConfig.getInt(CfgVal.SOUND_VOLUME) / 10F,
                 ThreadLocalRandom.current().nextFloat() * 2);
     }
-
     /*
      * (non-Javadoc)
      *
@@ -240,7 +334,6 @@ public class CreeperBlock implements Replaceable
     {
         return blockState.getType();
     }
-
     /**
      * Drop the corresponding items on the ground.
      *
@@ -267,7 +360,6 @@ public class CreeperBlock implements Replaceable
         }
         return false;
     }
-
     /*
      * (non-Javadoc)
      *
@@ -288,7 +380,6 @@ public class CreeperBlock implements Replaceable
 
         return true;
     }
-
     /**
      * Get whether blocks of a type are solid.
      *
@@ -300,7 +391,6 @@ public class CreeperBlock implements Replaceable
     {
         return block.getType().isSolid();
     }
-
     boolean checkForDrop()
     {
 
@@ -324,7 +414,6 @@ public class CreeperBlock implements Replaceable
         return false;
 
     }
-
     /*
      * Test the blocks directly in contact, and if they are ascending rails, add
      * them to the updatePrevention list.
@@ -346,7 +435,6 @@ public class CreeperBlock implements Replaceable
             }
         }
     }
-
     /*
      * (non-Javadoc)
      *
@@ -363,7 +451,6 @@ public class CreeperBlock implements Replaceable
             return BlockFace.DOWN;
         return BlockFace.SELF;
     }
-
     /*
      * (non-Javadoc)
      *
@@ -374,7 +461,6 @@ public class CreeperBlock implements Replaceable
     {
         getBlock().setType(Material.AIR);
     }
-
     /*
      * (non-Javadoc)
      *
@@ -385,7 +471,6 @@ public class CreeperBlock implements Replaceable
     {
         return getAttachingFace() != BlockFace.SELF;
     }
-
     /**
      * Get the list of blocks that are possibly dependent on this block. To
      * check if they really are, simply check that neighborBlock.isNeighbor() is
@@ -401,7 +486,6 @@ public class CreeperBlock implements Replaceable
             neighbors.add(new NeighborBlock(block.getRelative(face), face));
         return neighbors;
     }
-
     void record(Collection<ShortLocation> checked)
     {
         checked.add(new ShortLocation(getLocation()));

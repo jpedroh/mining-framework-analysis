@@ -8,9 +8,17 @@ import org.bukkit.inventory.meta.BannerMeta;
 
 /**
  * Banner implementation of CreeperBlock.
+<<<<<<< /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperBanner.java/left.java
+ *
+ * @author Jikoo
+||||||| /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperBanner.java/base.java
+ * 
+ * @author drexplosionpd
+ * 
+=======
  *
  * @author drexplosionpd
- * @author Jikoo
+>>>>>>> /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperBanner.java/right.java
  */
 public class CreeperBanner extends CreeperBlock
 {

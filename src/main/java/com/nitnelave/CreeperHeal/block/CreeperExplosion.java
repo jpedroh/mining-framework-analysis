@@ -41,7 +41,6 @@ public class CreeperExplosion
     private final WorldConfig world;
     private final HashSet<ShortLocation> checked = new HashSet<>();
     private ReplacementTimer timer;
-
     /**
      * Constructor.
      * 
@@ -56,7 +55,6 @@ public class CreeperExplosion
         blockList = new LinkedList<>();
         this.loc = loc;
     }
-
     /**
      * Add blocks to an explosion, and reset the timer to the time of the last
      * explosion.
@@ -82,7 +80,6 @@ public class CreeperExplosion
         Collections.sort(blockList, new CreeperComparator(loc));
         radius = computeRadius();
     }
-
     /**
      * Get the time of the explosion.
      * 
@@ -92,7 +89,6 @@ public class CreeperExplosion
     {
         return timer.getTime();
     }
-
     /*
      * Get the distance between the explosion's location and the furthest block.
      */
@@ -106,7 +102,6 @@ public class CreeperExplosion
         }
         return r + 1;
     }
-
     /**
      * Get the location of the explosion.
      * 
@@ -116,7 +111,6 @@ public class CreeperExplosion
     {
         return loc;
     }
-
     /**
      * Get the radius of the explosion (i.e. the distance between the location
      * and the furthest block).
@@ -127,7 +121,6 @@ public class CreeperExplosion
     {
         return radius;
     }
-
     /*
      * Replace all the blocks in the list.
      */
@@ -148,7 +141,6 @@ public class CreeperExplosion
                 Suffocating.checkPlayerExplosion(loc, radius);
         }
     }
-
     /**
      * Replace the first block of the list.
      */
@@ -165,7 +157,6 @@ public class CreeperExplosion
         if (CreeperConfig.getBool(CfgVal.TELEPORT_ON_SUFFOCATE))
             Suffocating.checkPlayerOneBlock(block.getBlock().getLocation());
     }
-
     /*
      * (non-Javadoc)
      * 
@@ -183,7 +174,6 @@ public class CreeperExplosion
         }
         return false;
     }
-
     /*
      * (non-Javadoc)
      * 
@@ -194,7 +184,6 @@ public class CreeperExplosion
     {
         return (int) (timer.hashCode() + radius + loc.hashCode());
     }
-
     /*
      * Check for dependent blocks and record them first.
      */
@@ -206,16 +195,15 @@ public class CreeperExplosion
             {
                 if (CreeperBlock.isDependent(block.getType()))
                 {
-                    recordBlock(block);
+                    record(block);
                     return true;
                 }
                 return false;
             });
 
-            blocks.forEach(this::recordBlock);
+            blocks.forEach(this::record);
         }
     }
-
     /*
      * In case of possible obsidian destruction, check for obsidian around, and
      * give them a chance to be destroyed.
@@ -241,13 +229,11 @@ public class CreeperExplosion
                         recordBlock(b);
                 }
     }
-
     private boolean isObsidianLike(Material m, boolean table)
     {
         return m == Material.OBSIDIAN
                 || (table && (m == Material.ENCHANTING_TABLE || m == Material.ENDER_CHEST));
     }
-
     /**
      * Record one block and remove it. If it is protected, add to the
      * replace-immediately list. Check for dependent blocks around.
@@ -255,49 +241,138 @@ public class CreeperExplosion
      * @param block
      *            The block to record.
      */
-    public void recordBlock(Block block)
+    public void record(Block block)
     {
+<<<<<<< /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/left.java
         if (block.getType() == Material.NETHER_PORTAL || checked.contains(new ShortLocation(block)))
+||||||| /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/base.java
+        if (cBlock == null || checked.contains(new ShortLocation(block)))
+=======
+        if (checked.contains(location))
+>>>>>>> /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/right.java
             return;
 
         CreeperBlock creeperBlock = CreeperBlock.newBlock(block.getState());
 
-        if (creeperBlock == null)
+        if (cBlock == null)
             return;
 
-        ShortLocation location = new ShortLocation(creeperBlock.getLocation());
+        record(cBlock);
+    }
+    /**
+     * Add a Replaceable to the list, and remove it from the world.
+     *
+     * @param replaceable
+     *            The Replaceable to add.
+     */
+    public void record(Replaceable replaceable)
+    {
+        if (replaceable == null || replaceable.getType() == Material.NETHER_PORTAL)
+            return;
+
+        ShortLocation location = new ShortLocation(replaceable.getLocation());
 
         if (checked.contains(location))
             return;
 
-        creeperBlock.record(checked);
+        checked.add(location);
 
-        if ((CreeperConfig.getBool(CfgVal.PREVENT_CHAIN_REACTION) && creeperBlock.getType().equals(Material.TNT))
-                || world.isProtected(creeperBlock.getBlock()))
+        if (replaceable instanceof CreeperMultiblock)
         {
-            ToReplaceList.addToReplace(creeperBlock);
-            creeperBlock.remove();
+            for (BlockState dependent : ((CreeperMultiblock) replaceable).dependents)
+            {
+                checked.add(new ShortLocation(dependent.getLocation()));
+            }
+        }
+
+        if (!(replaceable instanceof CreeperBlock))
+        {
+            blockList.add(replaceable);
+            replaceable.remove();
             return;
         }
 
-        if (!world.isBlackListed(creeperBlock.getType()))
+        CreeperBlock creeperBlock = (CreeperBlock) replaceable;
+
+<<<<<<< /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/left.java
+        if ((CreeperConfig.getBool(CfgVal.PREVENT_CHAIN_REACTION) && replaceable.getType().equals(Material.TNT))
+||||||| /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/base.java
+        if ((CreeperConfig.getBool(CfgVal.PREVENT_CHAIN_REACTION) && block.getType().equals(Material.TNT))
+=======
+        if ((CreeperConfig.getBool(CfgVal.PREVENT_CHAIN_REACTION) && creeperBlock.getType().equals(Material.TNT))
+>>>>>>> /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/right.java
+<<<<<<< /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/left.java
+                || world.isProtected(replaceable.getBlock()))
+||||||| /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/base.java
+                || world.isProtected(block))
+=======
+                || world.isProtected(creeperBlock.getBlock()))
+>>>>>>> /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/right.java
+        {
+            ToReplaceList.addToReplace(creeperBlock);
+<<<<<<< /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/left.java
+            replaceable.remove();
+||||||| /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/base.java
+            cBlock.remove();
+=======
+            creeperBlock.remove();
+>>>>>>> /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/right.java
+            return;
+        }
+
+<<<<<<< /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/left.java
+        if (!world.isBlackListed(replaceable.getType()))
+||||||| /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/base.java
+        if 
+=======
+        if (!world.isBlackListed(id))
+>>>>>>> /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/right.java
+<<<<<<< /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/left.java
         {
             // The block should be replaced.
 
-            creeperBlock.getDependentNeighbors().stream().filter(NeighborBlock::isNeighbor)
-                    .forEach(neighborBlock -> recordBlock(neighborBlock.getBlock()));
+            for (NeighborBlock neighborBlock : creeperBlock.getDependentNeighbors())
+                if (neighborBlock.isNeighbor())
+                    record(neighborBlock.getBlock());
+
+            blockList.add(replaceable);
+            replaceable.remove();
+        }
+||||||| /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/base.java
+=======
+        {
+            // The block should be replaced.
+
+            for (NeighborBlock neighborBlock : creeperBlock.getDependentNeighbors())
+                if (neighborBlock.isNeighbor())
+                    recordBlock(neighborBlock.getBlock());
 
             blockList.add(creeperBlock);
             creeperBlock.remove();
         }
+>>>>>>> /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/right.java
         else if (CreeperConfig.getBool(CfgVal.DROP_DESTROYED_BLOCKS))
         {
+<<<<<<< /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/left.java
+            replaceable.drop(false);
+||||||| /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/base.java
+            cBlock.drop(false);
+=======
             creeperBlock.drop(false);
+>>>>>>> /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/right.java
+<<<<<<< /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/left.java
+            replaceable.remove();
+||||||| /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/base.java
+            cBlock.remove();
+=======
             creeperBlock.remove();
+>>>>>>> /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperExplosion.java/right.java
 
         }
     }
-
+    /**
+     * Replace the first block of the list.
+     */
     /**
      * Add a Replaceable to the list, and remove it from the world.
      *

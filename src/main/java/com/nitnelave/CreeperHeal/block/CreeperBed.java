@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * Bed implementation of CreeperMultiblock.
  *
- * @author nitnelave
  * @author Jikoo
  */
 class CreeperBed extends CreeperMultiblock
@@ -18,6 +17,7 @@ class CreeperBed extends CreeperMultiblock
 
     CreeperBed(BlockState blockState)
     {
+<<<<<<< /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperBed.java/left.java
         super(blockState);
 
         BlockData blockData = blockState.getBlockData();
@@ -52,6 +52,22 @@ class CreeperBed extends CreeperMultiblock
 
         this.blockState = head;
         this.dependents.add(foot);
+||||||| /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperBed.java/base.java
+        Bed bedData = castData(blockState, Bed.class);
+        orientation = bedData.getFacing();
+        Block block = blockState.getBlock();
+        if (!bedData.isHeadOfBed())
+            block = block.getRelative(orientation);
+        this.blockState = block.getState();
+=======
+        super(blockState);
+        Bed bedData = castData(blockState, Bed.class);
+        orientation = bedData.getFacing();
+        Block block = blockState.getBlock();
+        if (!bedData.isHeadOfBed())
+            block = block.getRelative(orientation);
+        this.blockState = block.getState();
+>>>>>>> /usr/src/app/output/nitnelave/creeperheal/a8f5cf9a61b44a1c73353cfe0ba1bc9e341fd402/src/main/java/com/nitnelave/CreeperHeal/block/CreeperBed.java/right.java
     }
 
     @Override
