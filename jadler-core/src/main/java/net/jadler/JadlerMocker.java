@@ -1,12 +1,8 @@
-/*
- * Copyright (c) 2012 - 2016 Jadler contributors
- * This program is made available under the terms of the MIT License.
- */
 package net.jadler;
-
 import net.jadler.stubbing.Stubber;
 import net.jadler.stubbing.server.StubHttpServerManager;
 import java.nio.charset.Charset;
+import java.util.*;
 import net.jadler.stubbing.RequestStubbing;
 import net.jadler.stubbing.StubbingFactory;
 import net.jadler.stubbing.Stubbing;
@@ -14,18 +10,8 @@ import net.jadler.stubbing.StubResponse;
 import net.jadler.stubbing.HttpStub;
 import net.jadler.exception.JadlerException;
 import net.jadler.stubbing.server.StubHttpServer;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
 import net.jadler.mocking.Mocker;
 import net.jadler.mocking.VerificationException;
 import net.jadler.mocking.Verifying;
@@ -37,9 +23,7 @@ import org.hamcrest.StringDescription;
 import org.hamcrest.Matcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import static org.hamcrest.Matchers.allOf;
-
 
 /**
  * <p>This class represents the very hearth of the Jadler library. It acts as a great {@link Stubber} providing
@@ -56,366 +40,323 @@ import static org.hamcrest.Matchers.allOf;
  * <p>This class is stateful and thread-safe.</p>
  */
 public class JadlerMocker implements StubHttpServerManager, Stubber, RequestManager, Mocker {
+  private final StubHttpServer server;
 
-    private final StubHttpServer server;
-    private final StubbingFactory stubbingFactory;
-    private final List<Stubbing> stubbings;
-    private Deque<HttpStub> httpStubs;
-    private final List<Request> receivedRequests;
-    private final Set<AsyncVerificator> asyncVerificators;
+  private final StubbingFactory stubbingFactory;
 
-    private MultiMap defaultHeaders;
-    private int defaultStatus;
-    private Charset defaultEncoding;
-    private boolean recordRequests = true;
-    
-    private boolean started = false;
-    private boolean configurable = true;
-    
-    private static final StubResponse NO_RULE_FOUND_RESPONSE;
-    static {
-        NO_RULE_FOUND_RESPONSE = StubResponse.builder()
-                .status(404)
-                .body("No stub response found for the incoming request", Charset.forName("UTF-8"))
-                .header("Content-Type", "text/plain; charset=utf-8")
-                .build();
+  private final List<Stubbing> stubbings;
+
+  private Deque<HttpStub> httpStubs;
+
+  private final List<Request> receivedRequests;
+
+  private final Set<AsyncVerificator> asyncVerificators;
+
+  private MultiMap defaultHeaders;
+
+  private int defaultStatus;
+
+  private Charset defaultEncoding;
+
+  private boolean recordRequests = true;
+
+  private boolean started = false;
+
+  private boolean configurable = true;
+
+  private static final StubResponse NO_RULE_FOUND_RESPONSE;
+
+  static {
+    NO_RULE_FOUND_RESPONSE = StubResponse.builder().status(404).body("No stub response found for the incoming request", Charset.forName("UTF-8")).header("Content-Type", "text/plain; charset=utf-8").build();
+  }
+
+  private static final Logger logger = LoggerFactory.getLogger(JadlerMocker.class);
+
+  private static final class AsyncVerificator {
+    private final BlockingQueue<Request> requestqueue;
+
+    public AsyncVerificator() {
+      this.requestqueue = new LinkedBlockingQueue<Request>();
     }
-    
-    private static final Logger logger = LoggerFactory.getLogger(JadlerMocker.class);
+  }
 
-    /**
-     * The meaning of this class, is to wrpap the BlockingQueue inside an object,
-     * where the equals method only equals on exactly the same objects, so that each
-     * queue can be added to a set, and later removed again.
-     */
-    private static final class AsyncVerificator {
-        private final BlockingQueue<Request> requestqueue;
-
-        public AsyncVerificator() {
-            this.requestqueue = new LinkedBlockingQueue<Request>();
-        }
-    }
-
-    
-    /**
+  /**
      * Creates new JadlerMocker instance bound to the given http stub server.
      * 
      * @param server stub http server instance this mocker should use
      */
-    public JadlerMocker(final StubHttpServer server) {
-        this(server, new StubbingFactory());
-    }
-    
-    
-    /**
+  public JadlerMocker(final StubHttpServer server) {
+    this(server, new StubbingFactory());
+  }
+
+  /**
      * Package private constructor, for testing purposes only! Allows to define a {@link StubbingFactory} instance
      * as well.
      * 
      * @param server stub http server instance this mocker should use
      * @param stubbingFactory a factory to create stubbing instances
      */
-    JadlerMocker(final StubHttpServer server, final StubbingFactory stubbingFactory) {
-        Validate.notNull(server, "server cannot be null");
-        this.server = server;
-        
-        this.stubbings = new LinkedList<Stubbing>();
-        this.defaultHeaders = new MultiValueMap();
-        this.defaultStatus = 200; //OK
-        this.defaultEncoding =  Charset.forName("UTF-8");
-        
-        Validate.notNull(stubbingFactory, "stubbingFactory cannot be null");
-        this.stubbingFactory = stubbingFactory;
-        
-        this.httpStubs = new LinkedList<HttpStub>();
-        
-        this.receivedRequests = new ArrayList<Request>();
-        this.asyncVerificators = new HashSet<AsyncVerificator>();
-    }
+  JadlerMocker(final StubHttpServer server, final StubbingFactory stubbingFactory) {
+    Validate.notNull(server, "server cannot be null");
+    this.server = server;
+    this.stubbings = new LinkedList<Stubbing>();
+    this.defaultHeaders = new MultiValueMap();
+    this.defaultStatus = 200;
+    this.defaultEncoding = Charset.forName("UTF-8");
+    Validate.notNull(stubbingFactory, "stubbingFactory cannot be null");
+    this.stubbingFactory = stubbingFactory;
+    this.httpStubs = new LinkedList<HttpStub>();
+    this.receivedRequests = new ArrayList<Request>();
+    this.asyncVerificators = new HashSet<AsyncVerificator>();
+  }
 
-    /**
+  /**
      * {@inheritDoc}
      */
-    @Override
-    public void start() {
-        if (this.started) {
-            throw new IllegalStateException("The stub server has been started already.");
-        }
-        
-        logger.debug("starting the underlying stub server...");
-        
-        this.server.registerRequestManager(this);
+  @Override public void start() {
+    if (this.started) {
+      throw new IllegalStateException("The stub server has been started already.");
+    }
+    logger.debug("starting the underlying stub server...");
+    this.server.registerRequestManager(this);
+    try {
+      server.start();
+    } catch (final Exception ex) {
+      throw new JadlerException("Stub http server start failure", ex);
+    }
+    this.started = true;
+  }
 
-        try {
-            server.start();
-        } catch (final Exception ex) {
-            throw new JadlerException("Stub http server start failure", ex);
-        }
-        this.started = true;
+  /**
+     * {@inheritDoc}
+     */
+  @Override public void close() {
+    if (!this.started) {
+      throw new IllegalStateException("The stub server hasn\'t been started yet.");
     }
-    
+    logger.debug("stopping the underlying stub server...");
+    try {
+      server.stop();
+    } catch (final Exception ex) {
+      throw new JadlerException("Stub http server shutdown failure", ex);
+    }
+    this.started = false;
+  }
 
-    /**
+  /**
      * {@inheritDoc}
      */
-    @Override
-    public void close() {
-        if (!this.started) {
-            throw new IllegalStateException("The stub server hasn't been started yet.");
-        }
-        
-        logger.debug("stopping the underlying stub server...");
-        
-        try {
-            server.stop();
-        } catch (final Exception ex) {
-            throw new JadlerException("Stub http server shutdown failure", ex);
-        }
-        this.started = false;
-    }
-    
-    
-    /**
+  @Override public boolean isStarted() {
+    return this.started;
+  }
+
+  /**
      * {@inheritDoc}
      */
-    @Override
-    public boolean isStarted() {
-        return this.started;
+  @Override public int getStubHttpServerPort() {
+    if (!this.started) {
+      throw new IllegalStateException("The stub http server hasn\'t been started yet.");
     }
-    
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getStubHttpServerPort() {
-        if (!this.started) {
-            throw new IllegalStateException("The stub http server hasn't been started yet.");
-        }
-        return server.getPort();
-    }
-    
-    
-    /**
+    return server.getPort();
+  }
+
+  /**
      * Adds a default header to be added to every stub http response.
      * @param name header name (cannot be empty)
      * @param value header value (cannot be <tt>null</tt>)
      */
-    public void addDefaultHeader(final String name, final String value) {
-        Validate.notEmpty(name, "header name cannot be empty");
-        Validate.notNull(value, "header value cannot be null, use an empty string instead");
-        this.checkConfigurable();
-        this.defaultHeaders.put(name, value);
-    }
-    
+  public void addDefaultHeader(final String name, final String value) {
+    Validate.notEmpty(name, "header name cannot be empty");
+    Validate.notNull(value, "header value cannot be null, use an empty string instead");
+    this.checkConfigurable();
+    this.defaultHeaders.put(name, value);
+  }
 
-    /**
+  /**
      * Defines a default status to be returned in every stub http response (if not redefined in the
      * particular stub rule)
      * @param defaultStatus status to be returned in every stub http response. Must be at least 0.
      */
-    public void setDefaultStatus(final int defaultStatus) {
-        Validate.isTrue(defaultStatus >= 0, "defaultStatus mustn't be negative");
-        this.checkConfigurable();
-        this.defaultStatus = defaultStatus;
-    }
-    
-    
-    /**
+  public void setDefaultStatus(final int defaultStatus) {
+    Validate.isTrue(defaultStatus >= 0, "defaultStatus mustn\'t be negative");
+    this.checkConfigurable();
+    this.defaultStatus = defaultStatus;
+  }
+
+  /**
      * Defines default charset of every stub http response (if not redefined in the particular stub)
      * @param defaultEncoding default encoding of every stub http response
      */
-    public void setDefaultEncoding(final Charset defaultEncoding) {
-        Validate.notNull(defaultEncoding, "defaultEncoding cannot be null");
-        this.checkConfigurable();
-        this.defaultEncoding = defaultEncoding;
-    }
+  public void setDefaultEncoding(final Charset defaultEncoding) {
+    Validate.notNull(defaultEncoding, "defaultEncoding cannot be null");
+    this.checkConfigurable();
+    this.defaultEncoding = defaultEncoding;
+  }
 
-
-    /**
+  /**
      * {@inheritDoc}
      */
-    @Override
-    public RequestStubbing onRequest() {
-        logger.debug("adding new stubbing...");
-        this.checkConfigurable();
-        
-        final Stubbing stubbing = this.stubbingFactory.createStubbing(defaultEncoding, defaultStatus, defaultHeaders);
-        stubbings.add(stubbing);
-        return stubbing;
-    }
-    
-    
-    /**
+  @Override public RequestStubbing onRequest() {
+    logger.debug("adding new stubbing...");
+    this.checkConfigurable();
+    final Stubbing stubbing = this.stubbingFactory.createStubbing(defaultEncoding, defaultStatus, defaultHeaders);
+    stubbings.add(stubbing);
+    return stubbing;
+  }
+
+  /**
      * {@inheritDoc} 
      */
-    @Override
-    public StubResponse provideStubResponseFor(final Request request) {
-        synchronized(this) {
-            if (this.configurable) {
-                this.configurable = false;
-                this.httpStubs = this.createHttpStubs();
-            }
-
-            if (this.recordRequests) {
-                this.receivedRequests.add(request);
-                for (AsyncVerificator asyncVerificator : this.asyncVerificators) {
-                    asyncVerificator.requestqueue.offer(request);
-                }
-            }
+  @Override public StubResponse provideStubResponseFor(final Request request) {
+    synchronized (this) {
+      if (this.configurable) {
+        this.configurable = false;
+        this.httpStubs = this.createHttpStubs();
+      }
+      if (this.recordRequests) {
+        this.receivedRequests.add(request);
+        for (AsyncVerificator asyncVerificator : this.asyncVerificators) {
+          asyncVerificator.requestqueue.offer(request);
         }
-        
-        for (final Iterator<HttpStub> it = this.httpStubs.descendingIterator(); it.hasNext(); ) {
-            final HttpStub rule = it.next();
-            if (rule.matches(request)) {
-                final StringBuilder sb = new StringBuilder();
-                sb.append("Following rule will be applied:\n");
-                sb.append(rule);
-                logger.debug(sb.toString());
-                
-                return rule.nextResponse(request);
-            }
-        }
-        
+      }
+    }
+    for (final Iterator<HttpStub> it = this.httpStubs.descendingIterator(); it.hasNext(); ) {
+      final HttpStub rule = it.next();
+      if (rule.matches(request)) {
         final StringBuilder sb = new StringBuilder();
-        sb.append("No suitable rule found. Reason:\n");
-        for (final HttpStub rule: this.httpStubs) {
-            sb.append("The rule '");
-            sb.append(rule);
-            sb.append("' cannot be applied. Mismatch:\n");
-            sb.append(rule.describeMismatch(request));
-            sb.append("\n");
-        }
-        logger.info(sb.toString());
-        
-        return NO_RULE_FOUND_RESPONSE;
+        sb.append("Following rule will be applied:\n");
+        sb.append(rule);
+        logger.debug(sb.toString());
+        return rule.nextResponse(request);
+      }
     }
-    
-    
-    /**
+    final StringBuilder sb = new StringBuilder();
+    sb.append("No suitable rule found. Reason:\n");
+    for (final HttpStub rule : this.httpStubs) {
+      sb.append("The rule \'");
+      sb.append(rule);
+      sb.append("\' cannot be applied. Mismatch:\n");
+      sb.append(rule.describeMismatch(request));
+      sb.append("\n");
+    }
+    logger.info(sb.toString());
+    return NO_RULE_FOUND_RESPONSE;
+  }
+
+  /**
      * {@inheritDoc} 
      */
-    @Override
-    public Verifying verifyThatRequest() {
-        checkRequestRecording();
-        return new Verifying(this);
-    }  
-    
-    
-    /**
+  @Override public Verifying verifyThatRequest() {
+    checkRequestRecording();
+    return new Verifying(this);
+  }
+
+  /**
      * {@inheritDoc} 
      */
-    @Deprecated
-    @Override
-    public int numberOfRequestsMatching(final Collection<Matcher<? super Request>> predicates) {
-        Validate.notNull(predicates, "predicates cannot be null");
-        checkRequestRecording();
-
-        final Matcher<Request> all = allOf(predicates);
-        
-        int cnt = 0;
-        
-        synchronized(this) {
-            for (final Request req: this.receivedRequests) {
-                if (all.matches(req)) {
-                    cnt++;
-                }
-            }
+  @Deprecated @Override public int numberOfRequestsMatching(final Collection<Matcher<? super Request>> predicates) {
+    Validate.notNull(predicates, "predicates cannot be null");
+    checkRequestRecording();
+    final Matcher<Request> all = allOf(predicates);
+    int cnt = 0;
+    synchronized (this) {
+      for (final Request req : this.receivedRequests) {
+        if (all.matches(req)) {
+          cnt++;
         }
-        
-        return cnt;
+      }
     }
+    return cnt;
+  }
 
-    
-    @Override
-    public void evaluateVerification(final Collection<Matcher<? super Request>> requestPredicates,
-            final Matcher<Integer> nrRequestsPredicate) {
-
-        validateEvaluateVerificationArgsAndState(requestPredicates, nrRequestsPredicate);
-
-        synchronized(this) {
-            final int cnt = this.numberOfRequestsMatching(requestPredicates);
-
-            if (!nrRequestsPredicate.matches(cnt)) {
-                this.logReceivedRequests(requestPredicates);
-                throw new VerificationException(this.mismatchDescription(cnt, requestPredicates, nrRequestsPredicate));
-            }
-        }
-    }
-
-    @Override
-    public void evaluateVerificationAsync(
-            final Collection<Matcher<? super Request>> requestPredicates,
-            final Matcher<Integer> nrRequestsPredicate,
-            final Duration timeOut) {
-
-        validateEvaluateVerificationArgsAndState(requestPredicates, nrRequestsPredicate);
-        Validate.notNull(timeOut, "timeUnit cannot be null");
-
-        final long startTime = System.nanoTime();
-        final AsyncVerificator myQueue = new AsyncVerificator();
-        int cnt = 0;
-
-        cnt = this.numberOfRequestsMatching(requestPredicates);
-        if (nrRequestsPredicate.matches(cnt)) {
-            return;
-        }
-        synchronized(this) { this.asyncVerificators.add(myQueue); }
-
-        Duration timeLeft = calculateTimeLeft(startTime, timeOut);
-
-        while (!timeLeft.isZero()) {
-            try {
-                myQueue.requestqueue.poll(timeLeft.getValue(), timeLeft.getTimeUnit());
-                cnt = this.numberOfRequestsMatching(requestPredicates);
-                if (nrRequestsPredicate.matches(cnt)) {
-                    return;
-                } else {
-                    timeLeft = calculateTimeLeft(startTime, timeOut);
-                }
-            } catch (InterruptedException e) {
-                timeLeft = calculateTimeLeft(startTime, timeOut);
-            }
-        }
-
-        // If it reach here, then the time is up, and we should fail.
-        failAsyncVerification(myQueue, requestPredicates, cnt, nrRequestsPredicate);
-    }
-
-    private void validateEvaluateVerificationArgsAndState(
-            final Collection<Matcher<? super Request>> requestPredicates,
-            final Matcher<Integer> nrRequestsPredicate) {
-        Validate.notNull(requestPredicates, "requestPredicates cannot be null");
-        Validate.notNull(nrRequestsPredicate, "nrRequestsPredicate cannot be null");
-        this.checkRequestRecording();
-    }
-
-    private void failAsyncVerification(
-            final AsyncVerificator a,
-            final Collection<Matcher<? super Request>> requestPredicates,
-            final int cnt,
-            final Matcher<Integer> nrRequestsPredicate) {
-        removeFromAsyncVerificators(a);
+  @Override public void evaluateVerification(final Collection<Matcher<? super Request>> requestPredicates, final Matcher<Integer> nrRequestsPredicate) {
+    validateEvaluateVerificationArgsAndState(requestPredicates, nrRequestsPredicate);
+    synchronized (this) {
+      final int cnt = this.numberOfRequestsMatching(requestPredicates);
+      if (!nrRequestsPredicate.matches(cnt)) {
         this.logReceivedRequests(requestPredicates);
         throw new VerificationException(this.mismatchDescription(cnt, requestPredicates, nrRequestsPredicate));
+      }
     }
+  }
 
-    private synchronized void removeFromAsyncVerificators(final AsyncVerificator a) {
-        this.asyncVerificators.remove(a);
+  @Override public void evaluateVerificationAsync(final Collection<Matcher<? super Request>> requestPredicates, final Matcher<Integer> nrRequestsPredicate, final Duration timeOut) {
+    validateEvaluateVerificationArgsAndState(requestPredicates, nrRequestsPredicate);
+    Validate.notNull(timeOut, "timeUnit cannot be null");
+    final long startTime = System.nanoTime();
+    final AsyncVerificator myQueue = new AsyncVerificator();
+    final Matcher<Request> allPredicates = allOf(requestPredicates);
+    int cnt = 0;
+    cnt = this.numberOfRequestsMatching(requestPredicates);
+    if (nrRequestsPredicate.matches(cnt)) {
+      return;
     }
+    synchronized (this) {
+      cnt = this.numberOfRequestsMatching(requestPredicates);
+      if (nrRequestsPredicate.matches(cnt)) {
+        return;
+      }
+      this.asyncVerificators.add(myQueue);
+    }
+    Duration timeLeft = calculateTimeLeft(startTime, timeOut);
+    while (!timeLeft.isZero()) {
+      try {
 
-    private Duration calculateTimeLeft(
-            final long startTimeInNanos,
-            final Duration dur) {
-        final long now = System.nanoTime();
-        if (startTimeInNanos + dur.toNanos() < now)
-            return Duration.zero();
-        else {
-            final long left = (startTimeInNanos + dur.toNanos()) - now;
-            return Duration.ofNanos(left);
+<<<<<<< /usr/src/app/output/jadler-mocking/jadler/dd9a8d0b6ca858a54ddc1a52627e16d0b9dba600/jadler-core/src/main/java/net/jadler/JadlerMocker.java/left.java
+        myQueue.requestqueue.poll(timeLeft.getValue(), timeLeft.getTimeUnit());
+=======
+        final Request req = myQueue.requestqueue.poll(timeLeft.getValue(), timeLeft.getTimeUnit());
+>>>>>>> /usr/src/app/output/jadler-mocking/jadler/dd9a8d0b6ca858a54ddc1a52627e16d0b9dba600/jadler-core/src/main/java/net/jadler/JadlerMocker.java/right.java
+
+
+<<<<<<< /usr/src/app/output/jadler-mocking/jadler/dd9a8d0b6ca858a54ddc1a52627e16d0b9dba600/jadler-core/src/main/java/net/jadler/JadlerMocker.java/left.java
+        cnt = this.numberOfRequestsMatching(requestPredicates);
+=======
+        if (allPredicates.matches(req)) {
+          cnt++;
         }
-    }
+>>>>>>> /usr/src/app/output/jadler-mocking/jadler/dd9a8d0b6ca858a54ddc1a52627e16d0b9dba600/jadler-core/src/main/java/net/jadler/JadlerMocker.java/right.java
 
-    /**
+        if (nrRequestsPredicate.matches(cnt)) {
+          removeFromAsyncVerificators(myQueue);
+          return;
+        } else {
+          timeLeft = calculateTimeLeft(startTime, timeOut);
+        }
+      } catch (InterruptedException e) {
+        timeLeft = calculateTimeLeft(startTime, timeOut);
+      }
+    }
+    failAsyncVerification(myQueue, requestPredicates, cnt, nrRequestsPredicate);
+  }
+
+  private void validateEvaluateVerificationArgsAndState(final Collection<Matcher<? super Request>> requestPredicates, final Matcher<Integer> nrRequestsPredicate) {
+    Validate.notNull(requestPredicates, "requestPredicates cannot be null");
+    Validate.notNull(nrRequestsPredicate, "nrRequestsPredicate cannot be null");
+    this.checkRequestRecording();
+  }
+
+  private void failAsyncVerification(final AsyncVerificator a, final Collection<Matcher<? super Request>> requestPredicates, final int cnt, final Matcher<Integer> nrRequestsPredicate) {
+    removeFromAsyncVerificators(a);
+    this.logReceivedRequests(requestPredicates);
+    throw new VerificationException(this.mismatchDescription(cnt, requestPredicates, nrRequestsPredicate));
+  }
+
+  private synchronized void removeFromAsyncVerificators(final AsyncVerificator a) {
+    this.asyncVerificators.remove(a);
+  }
+
+  private Duration calculateTimeLeft(final long startTimeInNanos, final Duration dur) {
+    final long now = System.nanoTime();
+    if (startTimeInNanos + dur.toNanos() < now) {
+      return Duration.zero();
+    } else {
+      final long left = (startTimeInNanos + dur.toNanos()) - now;
+      return Duration.ofNanos(left);
+    }
+  }
+
+  /**
      * <p>Resets this mocker instance so it can be reused. This method clears all previously created stubs as well as
      * stored received requests (for mocking purpose,
      * see {@link RequestManager#numberOfRequestsMatching(java.util.Collection)}). Once this method has been called
@@ -475,17 +416,16 @@ public class JadlerMocker implements StubHttpServerManager, Stubber, RequestMana
      * }
      * </pre>
      */
-    public void reset() {
-        synchronized(this) {
-            this.stubbings.clear();
-            this.httpStubs.clear();
-            this.receivedRequests.clear();
-            this.configurable = true;
-        }
+  public void reset() {
+    synchronized (this) {
+      this.stubbings.clear();
+      this.httpStubs.clear();
+      this.receivedRequests.clear();
+      this.configurable = true;
     }
-    
-    
-    /**
+  }
+
+  /**
      * <p>By default Jadler records all incoming requests (including their bodies) so it can provide mocking
      * (verification) features defined in {@link net.jadler.mocking.Mocker}.</p>
      * 
@@ -503,129 +443,102 @@ public class JadlerMocker implements StubHttpServerManager, Stubber, RequestMana
      * 
      * @param recordRequests {@code true} for enabling http requests recording, {@code false} for disabling it
      */
-    public void setRecordRequests(final boolean recordRequests) {
-        this.checkConfigurable();
-        this.recordRequests = recordRequests;
+  public void setRecordRequests(final boolean recordRequests) {
+    this.checkConfigurable();
+    this.recordRequests = recordRequests;
+  }
+
+  private Deque<HttpStub> createHttpStubs() {
+    final Deque<HttpStub> stubs = new LinkedList<HttpStub>();
+    for (final Stubbing stub : stubbings) {
+      stubs.add(stub.createRule());
     }
-    
-    
-    private Deque<HttpStub> createHttpStubs() {
-        final Deque<HttpStub> stubs = new LinkedList<HttpStub>();
-        for (final Stubbing stub : stubbings) {
-            stubs.add(stub.createRule());
-        }
-        return stubs;
-    }
-    
-    
-    private void logReceivedRequests(final Collection<Matcher<? super Request>> requestPredicates) {
-        final StringBuilder sb = new StringBuilder("Verification failed, here is a list of requests received so far:");
-        
-        int pos = 1;
-        synchronized (this) {
-            this.appendNoneIfEmpty(this.receivedRequests, sb);
-            for (final Request req: this.receivedRequests) {
-                sb.append("\n");
-                final Collection<Matcher<? super Request>> matching = new ArrayList<Matcher<? super Request>>();
-                final Collection<Matcher<? super Request>> clashing = new ArrayList<Matcher<? super Request>>();
+    return stubs;
+  }
 
-                for (final Matcher<? super Request> pred: requestPredicates) {
-                    if (pred.matches(req)) {
-                        matching.add(pred);
-                    }
-                    else {
-                        clashing.add(pred);
-                    }
-                }
-
-                this.appendReason(sb, req, pos, matching, clashing);
-
-                pos++;
-            }
-        }
-        logger.info(sb.toString());
-    }
-
-    
-    private void appendReason(final StringBuilder sb, final Request req, final int position,
-            final Collection<Matcher<? super Request>> matching,
-            final Collection<Matcher<? super Request>> clashing) {
-            
-        sb.append("Request #");
-        sb.append(position);
-        sb.append(": ");
-        sb.append(req);
+  private void logReceivedRequests(final Collection<Matcher<? super Request>> requestPredicates) {
+    final StringBuilder sb = new StringBuilder("Verification failed, here is a list of requests received so far:");
+    int pos = 1;
+    synchronized (this) {
+      this.appendNoneIfEmpty(this.receivedRequests, sb);
+      for (final Request req : this.receivedRequests) {
         sb.append("\n");
-        sb.append("  matching predicates:");
-        this.appendNoneIfEmpty(matching, sb);
-        sb.append('\n');
-
-        for (final Matcher<? super Request> pred: matching) {
-            sb.append("    ");
-            final Description desc = new StringDescription(sb);
-            pred.describeTo(desc);
-            sb.append('\n');
+        final Collection<Matcher<? super Request>> matching = new ArrayList<Matcher<? super Request>>();
+        final Collection<Matcher<? super Request>> clashing = new ArrayList<Matcher<? super Request>>();
+        for (final Matcher<? super Request> pred : requestPredicates) {
+          if (pred.matches(req)) {
+            matching.add(pred);
+          } else {
+            clashing.add(pred);
+          }
         }
-
-        sb.append("  clashing predicates:");
-        this.appendNoneIfEmpty(clashing, sb);
-
-        for (final Matcher<? super Request> pred: clashing) {
-            sb.append("\n    ");
-
-            final Description desc = new StringDescription(sb);
-            pred.describeMismatch(req, desc);
-        }
+        this.appendReason(sb, req, pos, matching, clashing);
+        pos++;
+      }
     }
-    
-    
-    private void appendNoneIfEmpty(final Collection<?> coll, final StringBuilder sb) {
-        if (coll.isEmpty()) {
-            sb.append(" <none>");
-        }
+    logger.info(sb.toString());
+  }
+
+  private void appendReason(final StringBuilder sb, final Request req, final int position, final Collection<Matcher<? super Request>> matching, final Collection<Matcher<? super Request>> clashing) {
+    sb.append("Request #");
+    sb.append(position);
+    sb.append(": ");
+    sb.append(req);
+    sb.append("\n");
+    sb.append("  matching predicates:");
+    this.appendNoneIfEmpty(matching, sb);
+    sb.append('\n');
+    for (final Matcher<? super Request> pred : matching) {
+      sb.append("    ");
+      final Description desc = new StringDescription(sb);
+      pred.describeTo(desc);
+      sb.append('\n');
     }
-    
-
-    private String mismatchDescription(final int cnt, final Collection<Matcher<? super Request>> predicates,
-            final Matcher<Integer> nrRequestsMatcher) {
-        final Description desc = new StringDescription();
-
-        desc.appendText("The number of http requests");
-        if (!predicates.isEmpty()) {
-            desc.appendText(" having");
-        }
-        desc.appendText(" ");
-
-        for (final Iterator<Matcher<? super Request>> it = predicates.iterator(); it.hasNext();) {
-            desc.appendDescriptionOf(it.next());
-
-            if (it.hasNext()) {
-                desc.appendText(" AND");
-            }
-
-            desc.appendText(" ");
-        }
-
-        desc.appendText("was expected to be ");
-        desc.appendDescriptionOf(nrRequestsMatcher);
-        desc.appendText(", but ");
-        nrRequestsMatcher.describeMismatch(cnt, desc);
-
-        return desc.toString();
+    sb.append("  clashing predicates:");
+    this.appendNoneIfEmpty(clashing, sb);
+    for (final Matcher<? super Request> pred : clashing) {
+      sb.append("\n    ");
+      final Description desc = new StringDescription(sb);
+      pred.describeMismatch(req, desc);
     }
-    
-    
-    private synchronized void checkConfigurable() {
-        if (!this.configurable) {
-            throw new IllegalStateException("Once first http request has been served, "
-                    + "you can't do any stubbing anymore.");
-        }
-    }
+  }
 
-    
-    private synchronized void checkRequestRecording() {
-        if (!this.recordRequests) {
-            throw new IllegalStateException("Request recording is switched off, cannot do any request verification");
-        }
+  private void appendNoneIfEmpty(final Collection<?> coll, final StringBuilder sb) {
+    if (coll.isEmpty()) {
+      sb.append(" <none>");
     }
+  }
+
+  private String mismatchDescription(final int cnt, final Collection<Matcher<? super Request>> predicates, final Matcher<Integer> nrRequestsMatcher) {
+    final Description desc = new StringDescription();
+    desc.appendText("The number of http requests");
+    if (!predicates.isEmpty()) {
+      desc.appendText(" having");
+    }
+    desc.appendText(" ");
+    for (final Iterator<Matcher<? super Request>> it = predicates.iterator(); it.hasNext(); ) {
+      desc.appendDescriptionOf(it.next());
+      if (it.hasNext()) {
+        desc.appendText(" AND");
+      }
+      desc.appendText(" ");
+    }
+    desc.appendText("was expected to be ");
+    desc.appendDescriptionOf(nrRequestsMatcher);
+    desc.appendText(", but ");
+    nrRequestsMatcher.describeMismatch(cnt, desc);
+    return desc.toString();
+  }
+
+  private synchronized void checkConfigurable() {
+    if (!this.configurable) {
+      throw new IllegalStateException("Once first http request has been served, " + "you can\'t do any stubbing anymore.");
+    }
+  }
+
+  private synchronized void checkRequestRecording() {
+    if (!this.recordRequests) {
+      throw new IllegalStateException("Request recording is switched off, cannot do any request verification");
+    }
+  }
 }
