@@ -335,7 +335,15 @@ public interface SqlFeature {
      * the filter value <code>INFORMIX</code> is used for the {@link SqlEngineLoader} instance creation.
      */
     public static final String INFORMIX_DEFAULT_IDSEL = "SELECT FIRST 1 dbinfo('bigserial') FROM systables";
-    /*
+<<<<<<< /usr/src/app/output/hudec/sql-processor/e959d1d883ca62621d769bc918107d45c7d62edc/sql-processor/src/main/java/org/sqlproc/engine/SqlFeature.java/left.java
+    /**
+     * <code>MSSQL_DEFAULT_IDSEL</code> is the default value related to the key <code>SET_IDSEL</code> in the case the
+     * filter value <code>MSSQL</code> is used for the {@link SqlEngineLoader} instance creation.
+     */
+    public static final String MSSQL_DEFAULT_IDSEL = "select cast(@@identity as bigint)";
+||||||| /usr/src/app/output/hudec/sql-processor/e959d1d883ca62621d769bc918107d45c7d62edc/sql-processor/src/main/java/org/sqlproc/engine/SqlFeature.java/base.java
+=======
+    /**
      * <code>IDSEL_JDBC</code> is the special value related to the key <code>SET_IDSEL</code> indicating that the
      * generated identity value is determined using JDBC capabilities to return generated keys for SQL statement. This
      * feature requires that both the database and the JDBC driver support it.
@@ -348,8 +356,9 @@ public interface SqlFeature {
      * The default value is {@link #IDSEL_JDBC}.
      */
     public static final String MSSQL_DEFAULT_IDSEL = IDSEL_JDBC;
+>>>>>>> /usr/src/app/output/hudec/sql-processor/e959d1d883ca62621d769bc918107d45c7d62edc/sql-processor/src/main/java/org/sqlproc/engine/SqlFeature.java/right.java
     /**
-     * <code>DEFAULT_VERSION_COLUMN</code> is the default name of the column devoted to the optimistic locking.
-     */
+ * <code>DEFAULT_VERSION_COLUMN</code> is the default name of the column devoted to the optimistic locking.
+ */
     public static final String DEFAULT_VERSION_COLUMN = "version";
 }
