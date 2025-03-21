@@ -3,7 +3,9 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copy
+import bibliothek.gui.dock.util.extension.Extension;
+right (C) 2007 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,104 +29,230 @@
 package bibliothek.gui.dock;
 
 import java.awt.Component;
+
 import java.awt.Dimension;
+
 import java.awt.Point;
+
 import java.awt.Rectangle;
+
 import java.awt.Toolkit;
+
 import java.awt.Window;
+
 import java.awt.event.ComponentAdapter;
+
 import java.awt.event.ComponentEvent;
+
 import java.awt.event.HierarchyBoundsListener;
+
 import java.awt.event.HierarchyEvent;
+
 import java.awt.event.HierarchyListener;
+
 import java.awt.event.InputEvent;
+
 import java.awt.event.MouseEvent;
+
 import java.io.IOException;
+
 import java.util.ArrayList;
+
 import java.util.List;
+
 import java.util.Map;
 
 import javax.swing.SwingUtilities;
+
 import javax.swing.event.MouseInputAdapter;
 
 import bibliothek.gui.DockController;
+
 import bibliothek.gui.DockStation;
+
 import bibliothek.gui.DockTheme;
+
 import bibliothek.gui.DockUI;
+
 import bibliothek.gui.Dockable;
+
 import bibliothek.gui.dock.accept.DockAcceptance;
+
 import bibliothek.gui.dock.action.DockAction;
+
 import bibliothek.gui.dock.action.DockActionSource;
+
 import bibliothek.gui.dock.action.ListeningDockAction;
+
 import bibliothek.gui.dock.control.focus.FocusController;
+
 import bibliothek.gui.dock.control.focus.MouseFocusObserver;
+
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
+
 import bibliothek.gui.dock.event.DockStationAdapter;
+
 import bibliothek.gui.dock.event.DockableAdapter;
+
 import bibliothek.gui.dock.event.DockableFocusEvent;
+
 import bibliothek.gui.dock.event.DockableFocusListener;
+
 import bibliothek.gui.dock.event.FlapDockListener;
+
 import bibliothek.gui.dock.event.FocusVetoListener;
+
 import bibliothek.gui.dock.layout.DockableProperty;
+
 import bibliothek.gui.dock.station.AbstractDockableStation;
+
 import bibliothek.gui.dock.station.Combiner;
+
 import bibliothek.gui.dock.station.DisplayerCollection;
+
 import bibliothek.gui.dock.station.DisplayerFactory;
+
 import bibliothek.gui.dock.station.DockableDisplayer;
+
 import bibliothek.gui.dock.station.StationBackgroundComponent;
+
 import bibliothek.gui.dock.station.StationDropOperation;
+
 import bibliothek.gui.dock.station.StationPaint;
+
 import bibliothek.gui.dock.station.flap.ButtonPane;
+
 import bibliothek.gui.dock.station.flap.DefaultFlapLayoutManager;
+
 import bibliothek.gui.dock.station.flap.DefaultFlapWindowFactory;
+
 import bibliothek.gui.dock.station.flap.FlapDockHoldToggle;
+
 import bibliothek.gui.dock.station.flap.FlapDockProperty;
+
 import bibliothek.gui.dock.station.flap.FlapDockStationFactory;
+
 import bibliothek.gui.dock.station.flap.FlapDockStationSource;
+
 import bibliothek.gui.dock.station.flap.FlapDropInfo;
+
 import bibliothek.gui.dock.station.flap.FlapLayoutManager;
+
 import bibliothek.gui.dock.station.flap.FlapLayoutManagerListener;
+
 import bibliothek.gui.dock.station.flap.FlapWindow;
+
 import bibliothek.gui.dock.station.flap.FlapWindowFactory;
+
 import bibliothek.gui.dock.station.flap.button.ButtonContent;
+
 import bibliothek.gui.dock.station.flap.button.ButtonContentFilter;
+
 import bibliothek.gui.dock.station.flap.button.DefaultButtonContentFilter;
-import bibliothek.gui.dock.station.flap.layer.FlapOverrideDropLayer;
-import bibliothek.gui.dock.station.flap.layer.WindowDropLayer;
-import bibliothek.gui.dock.station.layer.DefaultDropLayer;
-import bibliothek.gui.dock.station.layer.DockStationDropLayer;
+
 import bibliothek.gui.dock.station.support.CombinerSource;
+
 import bibliothek.gui.dock.station.support.CombinerSourceWrapper;
+
 import bibliothek.gui.dock.station.support.CombinerTarget;
+
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
+
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
+
 import bibliothek.gui.dock.station.support.DockableShowingManager;
-import bibliothek.gui.dock.station.support.Enforcement;
+
 import bibliothek.gui.dock.station.support.PlaceholderList;
-import bibliothek.gui.dock.station.support.PlaceholderList.Level;
+
 import bibliothek.gui.dock.station.support.PlaceholderListItem;
+
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
+
 import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
+
 import bibliothek.gui.dock.station.support.PlaceholderMap;
+
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+
+import bibliothek.gui.dock.station.support.PlaceholderList.Level;
+
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
+
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
+
 import bibliothek.gui.dock.themes.StationCombinerValue;
+
 import bibliothek.gui.dock.themes.ThemeManager;
+
 import bibliothek.gui.dock.themes.basic.BasicButtonTitleFactory;
+
 import bibliothek.gui.dock.title.ActivityDockTitleEvent;
+
 import bibliothek.gui.dock.title.ControllerTitleFactory;
+
 import bibliothek.gui.dock.title.DockTitle;
+
 import bibliothek.gui.dock.title.DockTitleRequest;
+
 import bibliothek.gui.dock.title.DockTitleVersion;
+
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
+
 import bibliothek.gui.dock.util.DockProperties;
+
 import bibliothek.gui.dock.util.DockUtilities;
+
 import bibliothek.gui.dock.util.PropertyKey;
+
 import bibliothek.gui.dock.util.PropertyValue;
+
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
+
 import bibliothek.gui.dock.util.property.DynamicPropertyFactory;
+
 import bibliothek.util.Path;
+
+/*
+ * Bibliothek - DockingFrames
+ * Library built on Java/Swing, allows the user to "drag and drop"
+ * panels containing any Swing-Component the developer likes to add.
+ * 
+ * Copy
+import bibliothek.gui.dock.station.flap.level.WindowDropLevel;
+
+import bibliothek.gui.dock.station.flap.level.FlapOverrideDropLevel;
+
+import bibliothek.gui.dock.station.level.DefaultDropLevel;
+right (C) 2007 Benjamin Sigg
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * Benjamin Sigg
+ * benjamin_sigg@gmx.ch
+ * CH - Switzerland
+ */
+
+import bibliothek.gui.dock.station.flap.layer.FlapOverrideDropLayer;
+
+import bibliothek.gui.dock.station.flap.layer.WindowDropLayer;
+
+import bibliothek.gui.dock.station.layer.DefaultDropLayer;
+
+import bibliothek.gui.dock.station.layer.DockStationDropLayer;
+
+import bibliothek.gui.dock.station.support.Enforcement;
 
 /**
  * This {@link DockStation} shows only a title for each of it's children.<br>
@@ -228,6 +356,7 @@ public class FlapDockStation extends AbstractDockableStation {
     };
     
     /** current {@link PlaceholderStrategy} */
+    /** current {@link PlaceholderStrategy} */
     private PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>(PlaceholderStrategy.PLACEHOLDER_STRATEGY) {
 		@Override
 		protected void valueChanged( PlaceholderStrategy oldValue, PlaceholderStrategy newValue ){
@@ -249,12 +378,14 @@ public class FlapDockStation extends AbstractDockableStation {
     };
     
     /** the minimum size this station has */
+    /** the minimum size this station has */
     private PropertyValue<Dimension> minimumSize = new PropertyValue<Dimension>( MINIMUM_SIZE ) {
     	protected void valueChanged( Dimension oldValue, Dimension newValue ){
     		buttonPane.revalidate();
     	}
 	};
 	
+	/** the factory creating {@link FlapWindow}s for this station */
 	/** the factory creating {@link FlapWindow}s for this station */
 	private PropertyValue<FlapWindowFactory> windowFactory = new PropertyValue<FlapWindowFactory>( WINDOW_FACTORY ){
 		protected void valueChanged( FlapWindowFactory oldValue, FlapWindowFactory newValue ){
@@ -271,6 +402,7 @@ public class FlapDockStation extends AbstractDockableStation {
 	};
     
     /** The direction in which the popup-window is, in respect to this station */
+    /** The direction in which the popup-window is, in respect to this station */
     private Direction direction = Direction.SOUTH;
     /** 
      * This property tells this station whether the station can change the
@@ -279,11 +411,15 @@ public class FlapDockStation extends AbstractDockableStation {
     private boolean autoDirection = true;
     
     /** The popup-window */
+    /** The popup-window */
     private FlapWindow window;
+    /** The size of the border, which can be grabbed by ther user, of the popup-window */
     /** The size of the border, which can be grabbed by ther user, of the popup-window */
     private int windowBorder = 3;
     /** The minimal size of the popup-window */
+    /** The minimal size of the popup-window */
     private int windowMinSize = 25;
+    /** The initial size of windows, can be overridden by the layout manager */
     /** The initial size of windows, can be overridden by the layout manager */
     private int defaultWindowSize = 400;
     
@@ -296,24 +432,33 @@ public class FlapDockStation extends AbstractDockableStation {
     private Dockable oldFrontDockable;
     
     /** A list of all {@link Dockable Dockables} registered on this station */
+    /** A list of all {@link Dockable Dockables} registered on this station */
     private DockablePlaceholderList<DockableHandle> handles = new DockablePlaceholderList<DockableHandle>();
+    /** a listener for all {@link Dockable}s of this station */
     /** a listener for all {@link Dockable}s of this station */
     private Listener dockableListener = new Listener();
     
     /** The component on which all "buttons" are shown (the titles created with the id {@link #BUTTON_TITLE_ID}) */
+    /** The component on which all "buttons" are shown (the titles created with the id {@link #BUTTON_TITLE_ID}) */
     private ButtonPane buttonPane;
     
     /** This version is obtained by using {@link #BUTTON_TITLE_ID} */
+    /** This version is obtained by using {@link #BUTTON_TITLE_ID} */
     private DockTitleVersion buttonVersion;
+    /** This version is obtained by using {@link #WINDOW_TITLE_ID} */
     /** This version is obtained by using {@link #WINDOW_TITLE_ID} */
     private DockTitleVersion titleVersion;
     
     /** The {@link StationPaint} used to paint on this station */
+    /** The {@link StationPaint} used to paint on this station */
     private DefaultStationPaintValue paint;
+    /** The {@link Combiner} user to combine {@link Dockable Dockables}*/
     /** The {@link Combiner} user to combine {@link Dockable Dockables}*/
     private StationCombinerValue combiner;
     /** The {@link DisplayerFactory} used to create displayers*/
+    /** The {@link DisplayerFactory} used to create displayers*/
     private DefaultDisplayerFactoryValue displayerFactory;
+    /** Collection used to handle the {@link DockableDisplayer} */
     /** Collection used to handle the {@link DockableDisplayer} */
     private DisplayerCollection displayers;
     
@@ -323,6 +468,7 @@ public class FlapDockStation extends AbstractDockableStation {
      */
     private FlapDropInfo dropInfo;
     
+    /** A listener added to the {@link MouseFocusObserver} */
     /** A listener added to the {@link MouseFocusObserver} */
     private ControllerListener controllerListener = new ControllerListener();
     
@@ -338,15 +484,20 @@ public class FlapDockStation extends AbstractDockableStation {
     private ListeningDockAction holdAction;
     
     /** A listener that is added to the parent of this dockable station. */
+    /** A listener that is added to the parent of this dockable station. */
     private VisibleListener visibleListener = new VisibleListener();
     /** the last checked state of {@link #isDockableVisible()} */
+    /** the last checked state of {@link #isDockableVisible()} */
     private boolean lastShowing = false;
+    /** A list of listeners that were added to this station */
     /** A list of listeners that were added to this station */
     private List<FlapDockListener> flapDockListeners = new ArrayList<FlapDockListener>();
     
     /** Manager for the visibility of the children of this station */
+    /** Manager for the visibility of the children of this station */
     private DockableShowingManager showingManager;
     
+    /** the background algorithm of this component */
     /** the background algorithm of this component */
     private Background background = new Background();
     

@@ -3,7 +3,9 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2008 Benjamin Sigg
+ * Copy
+import java.awt.Dimension;
+right (C) 2008 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,90 +29,200 @@
 package bibliothek.gui.dock;
 
 import java.awt.BorderLayout;
+
 import java.awt.Component;
+
 import java.awt.Dimension;
+
 import java.awt.Graphics;
+
 import java.awt.GridLayout;
+
 import java.awt.Point;
+
 import java.awt.Rectangle;
+
 import java.awt.event.HierarchyEvent;
+
 import java.awt.event.HierarchyListener;
+
 import java.io.IOException;
+
 import java.util.ArrayList;
+
 import java.util.List;
+
 import java.util.Map;
 
 import javax.swing.Icon;
+
 import javax.swing.JComponent;
+
 import javax.swing.JTabbedPane;
+
 import javax.swing.SwingUtilities;
+
 import javax.swing.event.ChangeEvent;
+
 import javax.swing.event.ChangeListener;
+
 import javax.swing.event.MouseInputListener;
 
 import bibliothek.gui.DockController;
+
 import bibliothek.gui.DockStation;
+
 import bibliothek.gui.DockTheme;
+
 import bibliothek.gui.DockUI;
+
 import bibliothek.gui.Dockable;
+
 import bibliothek.gui.dock.control.focus.FocusController;
+
 import bibliothek.gui.dock.displayer.DisplayerCombinerTarget;
+
 import bibliothek.gui.dock.displayer.DockableDisplayerHints;
+
 import bibliothek.gui.dock.event.DockStationAdapter;
+
 import bibliothek.gui.dock.event.DockStationListener;
+
 import bibliothek.gui.dock.event.DockableListener;
+
 import bibliothek.gui.dock.event.FocusVetoListener;
+
 import bibliothek.gui.dock.layout.DockableProperty;
+
 import bibliothek.gui.dock.security.SecureContainer;
+
 import bibliothek.gui.dock.station.AbstractDockableStation;
+
 import bibliothek.gui.dock.station.DisplayerCollection;
+
 import bibliothek.gui.dock.station.DisplayerFactory;
+
 import bibliothek.gui.dock.station.DockableDisplayer;
+
 import bibliothek.gui.dock.station.DockableDisplayerListener;
+
 import bibliothek.gui.dock.station.StationBackgroundComponent;
+
 import bibliothek.gui.dock.station.StationChildHandle;
+
 import bibliothek.gui.dock.station.StationDropOperation;
+
 import bibliothek.gui.dock.station.StationPaint;
-import bibliothek.gui.dock.station.layer.DefaultDropLayer;
-import bibliothek.gui.dock.station.layer.DockStationDropLayer;
+
 import bibliothek.gui.dock.station.stack.DefaultStackDockComponent;
+
 import bibliothek.gui.dock.station.stack.StackDockComponent;
+
 import bibliothek.gui.dock.station.stack.StackDockComponentFactory;
+
 import bibliothek.gui.dock.station.stack.StackDockComponentParent;
+
 import bibliothek.gui.dock.station.stack.StackDockComponentRepresentative;
+
 import bibliothek.gui.dock.station.stack.StackDockProperty;
+
 import bibliothek.gui.dock.station.stack.StackDockStationFactory;
+
 import bibliothek.gui.dock.station.stack.TabContent;
+
 import bibliothek.gui.dock.station.stack.TabContentFilterListener;
-import bibliothek.gui.dock.station.stack.TabDropLayer;
+
 import bibliothek.gui.dock.station.stack.tab.TabContentFilter;
+
 import bibliothek.gui.dock.station.stack.tab.layouting.TabPlacement;
+
 import bibliothek.gui.dock.station.support.CombinerTarget;
+
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
+
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
+
 import bibliothek.gui.dock.station.support.DockableShowingManager;
-import bibliothek.gui.dock.station.support.PlaceholderList.Filter;
-import bibliothek.gui.dock.station.support.PlaceholderList.Level;
+
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
+
 import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
+
 import bibliothek.gui.dock.station.support.PlaceholderMap;
+
 import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+
+import bibliothek.gui.dock.station.support.PlaceholderList.Filter;
+
+import bibliothek.gui.dock.station.support.PlaceholderList.Level;
+
 import bibliothek.gui.dock.themes.DefaultDisplayerFactoryValue;
+
 import bibliothek.gui.dock.themes.DefaultStationPaintValue;
+
 import bibliothek.gui.dock.themes.ThemeManager;
+
 import bibliothek.gui.dock.title.ControllerTitleFactory;
+
 import bibliothek.gui.dock.title.DockTitle;
+
 import bibliothek.gui.dock.title.DockTitleFactory;
+
 import bibliothek.gui.dock.title.DockTitleVersion;
+
 import bibliothek.gui.dock.util.BackgroundAlgorithm;
+
 import bibliothek.gui.dock.util.BackgroundPanel;
+
 import bibliothek.gui.dock.util.ConfiguredBackgroundPanel;
+
 import bibliothek.gui.dock.util.DockUtilities;
+
 import bibliothek.gui.dock.util.PropertyKey;
+
 import bibliothek.gui.dock.util.PropertyValue;
+
 import bibliothek.gui.dock.util.extension.Extension;
+
 import bibliothek.gui.dock.util.property.ConstantPropertyFactory;
+
 import bibliothek.util.Path;
+
+/*
+ * Bibliothek - DockingFrames
+ * Library built on Java/Swing, allows the user to "drag and drop"
+ * panels containing any Swing-Component the developer likes to add.
+ * 
+ * Copy
+import bibliothek.gui.dock.station.stack.TabDropLevel;
+
+import bibliothek.gui.dock.station.level.DefaultDropLevel;
+right (C) 2008 Benjamin Sigg
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * Benjamin Sigg
+ * benjamin_sigg@gmx.ch
+ * CH - Switzerland
+ */
+
+import bibliothek.gui.dock.station.layer.DefaultDropLayer;
+
+import bibliothek.gui.dock.station.layer.DockStationDropLayer;
+
+import bibliothek.gui.dock.station.stack.TabDropLayer;
 
 /**
  * On this station, only one of many children is visible. The other children
@@ -124,23 +236,18 @@ import bibliothek.util.Path;
 public class StackDockStation extends AbstractDockableStation implements StackDockComponentParent{
     /** The id of the titlefactory which is used by this station */
     public static final String TITLE_ID = "stack";
-    
     /** This id is forwarded to {@link Extension}s which load additional {@link DisplayerFactory}s */
     public static final String DISPLAYER_ID = "stack";
-    
     /** Key used to read the current {@link StackDockComponentFactory} */
     public static final PropertyKey<StackDockComponentFactory> COMPONENT_FACTORY =
         new PropertyKey<StackDockComponentFactory>( "stack dock component factory" );
-    
     /** Key for setting the side at which the tabs appear in relation to the selected dockable */
     public static final PropertyKey<TabPlacement> TAB_PLACEMENT = 
     	new PropertyKey<TabPlacement>( "stack dock station tab side",
     			new ConstantPropertyFactory<TabPlacement>( TabPlacement.TOP_OF_DOCKABLE ), true );
-
     /** Key for setting the {@link TabContentFilter} */
     public static final PropertyKey<TabContentFilter> TAB_CONTENT_FILTER =
     	new PropertyKey<TabContentFilter>( "stack dock tab content filter" );
-    
     /** 
      * If set to <code>true</code>, then dropping a {@link Dockable} onto a {@link StackDockStation} won't
      * change the currently selected item.<br>
@@ -151,61 +258,43 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     public static final PropertyKey<Boolean> IMMUTABLE_SELECTION_INDEX = 
     	new PropertyKey<Boolean>( "stack dock immutable selection index", 
     			new ConstantPropertyFactory<Boolean>( false ), true );
-    
     /** A list of all children */
     private DockablePlaceholderList<StationChildHandle> dockables = new DockablePlaceholderList<StationChildHandle>();
-    
     /**
      * A list of {@link MouseInputListener MouseInputListeners} which are
      * registered at this station.
      */
     private List<MouseInputListener> mouseInputListeners = new ArrayList<MouseInputListener>();
-    
     /** A manager for firing events if a child changes its visibility-state */
     private DockableShowingManager visibility;
-    
     /** A paint to draw lines */
     private DefaultStationPaintValue paint;
-    
     /** A factory to create {@link DockableDisplayer} */
     private DefaultDisplayerFactoryValue displayerFactory;
-    
     /** The set of displayers shown on this station */
     private DisplayerCollection displayers;
-    
     /** The preferred location where a dropping {@link Dockable} should be added */
     private Insert insert;
-    
      /** The graphical representation of this station */
     private Background background;
-    
     /** The panel where components are added */
     private JComponent panel;
-    
     /** The background of the {@link #panel} */
     private PanelBackground panelBackground = new PanelBackground();
-    
     /** A Component which shows two or more children of this station */
     private StackDockComponent stackComponent;
-    
     /** Responsible for updating a {@link DockElementRepresentative} that covers the empty areas of {@link #stackComponent} */
     private StackDockComponentRepresentative stackComponentRepresentative;
-    
     /** The current component factory */
     private PropertyValue<StackDockComponentFactory> stackComponentFactory;
-    
     /** Where to put tabs */
     private PropertyValue<TabPlacement> tabPlacement;
-    
     /** The version of titles which should be used for this station */
     private DockTitleVersion title;
-    
     /** A listener observing the children for changes of their icon or titletext */
     private Listener listener = new Listener();
-    
     /** whether the result of {@link Component#getMinimumSize()} should be a small value */
     private boolean smallMinimumSize = true;
-    
     /** strategy for selecting placeholders */
     private PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>( PlaceholderStrategy.PLACEHOLDER_STRATEGY ) {
 		@Override
@@ -213,7 +302,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
 			dockables.setStrategy( newValue );
 		}
 	};
-	
 	/** filter for setting appearance of tabs */
 	private PropertyValue<TabContentFilter> tabContentFilter = new PropertyValue<TabContentFilter>( TAB_CONTENT_FILTER ) {
 		@Override
@@ -231,7 +319,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
 			}
 		}
 	};
-    
 	/** a listener to {@link #tabContentFilter} */
 	private TabContentFilterListener tabContentFilterListener = new TabContentFilterListener() {
 		public void contentChanged(){
@@ -260,25 +347,21 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
 			}
 		}
 	};
-	
     /**
      * A listener added to the parent of this station. The listener ensures
      * that the visibility-state is always correct. 
      */
     private VisibleListener visibleListener;
-    
     /**
      * The dockable which was or is currently selected.
      */
     private Dockable lastSelectedDockable = null;
-    
     /**
      * Constructs a new StackDockStation
      */
     public StackDockStation(){
     	this( null );
     }
-    
     /**
      * Constructs a new station and sets the theme.
      * @param theme the theme of the station, may be <code>null</code>
@@ -287,7 +370,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	super( theme );
     	init();
     }
-    
     /**
      * Creates a new station.
      * @param theme the theme of this station, can be <code>null</code>
@@ -300,7 +382,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	if( init )
     		init();
     }
-    
     /**
      * Initializes the fields of this object, has to be called exactly once.
      */
@@ -367,7 +448,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
 			}
 		});
     }
-    
     /**
      * Creates the panel onto which this station will lay its children.
      * @return the new background
@@ -375,7 +455,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     protected Background createBackground(){
     	return new Background();
     }
-    
     /**
      * Creates the {@link StackDockComponent} which will be shown on
      * this station if the station has more then one child.<br>
@@ -385,11 +464,9 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     protected StackDockComponent createStackDockComponent(){
         return new DefaultStackDockComponent();
     }
-    
     public DockStation getStackDockParent(){
 	    return this;
     }
-    
     /**
      * Tells this station where to put the tabs.
      * @param placement the side or <code>null</code> to use the default value
@@ -397,7 +474,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     public void setTabPlacement( TabPlacement placement ){
     	tabPlacement.setValue( placement );
     }
-    
     /**
      * Gets the location where tabs are currently placed.
      * @return the side at which tabs are
@@ -405,7 +481,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     public TabPlacement getTabPlacement(){
     	return tabPlacement.getValue();
     }
-    
     /**
      * Sets the filter that tells this station how to set the content of the tabs. 
      * @param filter the filter, can be <code>null</code>
@@ -413,7 +488,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     public void setTabContentFilter( TabContentFilter filter ){
 		tabContentFilter.setValue( filter );
 	}
-    
     /**
      * Gets the filter that tells this station how to set the content of the tabs.
      * @return the filter, may be <code>null</code>
@@ -421,7 +495,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     public TabContentFilter getTabContentFilter(){
     	return tabContentFilter.getValue();
     }
-    
     /**
      * Tells whether this station should show its {@link StackDockComponent} even if it
      * has only one child. This property may only be changed if the {@link StackDockComponent}
@@ -435,7 +508,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	}
     	return component.isSingleTabComponent();
     }
-    
     /**
      * Sets the {@link StackDockComponent} which should be used by this 
      * station. The component is shown when this station has more then 
@@ -500,7 +572,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             updateConfigurableDisplayerHints();
         }
     }
-    
     /**
      * Gets the currently used {@link StackDockComponent}
      * @return the component
@@ -509,7 +580,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     public StackDockComponent getStackComponent() {
 		return stackComponent;
 	}
-   
     /**
      * Sets the factory which will be used to create a {@link StackDockComponent}
      * for this station.
@@ -519,7 +589,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     public void setStackComponentFactory( StackDockComponentFactory factory ){
         stackComponentFactory.setValue( factory );
     }
-    
     /**
      * Gets the factory which is used to create a {@link StackDockComponent}.
      * This method returns <code>null</code> if no factory was set through
@@ -529,12 +598,10 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     public StackDockComponentFactory getStackComponentFactory(){
         return stackComponentFactory.getOwnValue();
     }
-    
     @Override
     protected void callDockUiUpdateTheme() throws IOException {
     	DockUI.updateTheme( this, new StackDockStationFactory());
     }
-   
     @Override
     public void setDockParent( DockStation station ) {
         DockStation old = getDockParent();
@@ -548,7 +615,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         
         visibility.fire();
     }
-    
     @Override
     public void setController( DockController controller ) {
         if( this.getController() != controller ){
@@ -597,7 +663,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             visibility.fire();
         }
     }
-    
     /**
      * Gets a {@link StationPaint} which is used to paint some lines onto
      * this station. Use a {@link DefaultStationPaintValue#setDelegate(StationPaint) delegate}
@@ -607,7 +672,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     public DefaultStationPaintValue getPaint() {
         return paint;
     }
-   
     /**
      * Gets a {@link DisplayerFactory} which is used to create new
      * {@link DockableDisplayer} for this station. Use a 
@@ -618,7 +682,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     public DefaultDisplayerFactoryValue getDisplayerFactory() {
         return displayerFactory;
     }
-    
     /**
      * Gets the set of {@link DockableDisplayer displayers} used on this station.
      * @return the set of displayers
@@ -626,7 +689,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     public DisplayerCollection getDisplayers() {
         return displayers;
     }
-    
+<<<<<<< /usr/src/app/output/benoker/dockingframes/17a91f4341b551ce21e6b7775291643895b6b939/docking-frames-core/src/bibliothek/gui/dock/StackDockStation.java/left.java
     @Override
     public boolean isStationVisible() {
         DockStation parent = getDockParent();
@@ -635,20 +698,37 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         else
             return panel.isDisplayable();
     }
-    
+||||||| /usr/src/app/output/benoker/dockingframes/17a91f4341b551ce21e6b7775291643895b6b939/docking-frames-core/src/bibliothek/gui/dock/StackDockStation.java/base.java
+    @Override
+    public boolean isStationVisible() {
+        DockStation parent = getDockParent();
+        if( parent != null )
+            return parent.isVisible( this );
+        else
+            return panel.isDisplayable();
+    }
+=======
+    @Override
+    public boolean isStationVisible() {
+        DockStation parent = getDockParent();
+        if( parent != null ){
+            return parent.isChildShowing( this );
+        }
+        else{
+            return panel.isDisplayable();
+        }
+    }
+>>>>>>> /usr/src/app/output/benoker/dockingframes/17a91f4341b551ce21e6b7775291643895b6b939/docking-frames-core/src/bibliothek/gui/dock/StackDockStation.java/right.java
     @Override
     public boolean isVisible( Dockable dockable ) {
         return isStationVisible() && (dockables.dockables().size() == 1 || indexOf( dockable ) == stackComponent.getSelectedIndex() );
     }
-    
     public int getDockableCount() {
         return dockables.dockables().size();
     }
-
     public Dockable getDockable( int index ) {
         return dockables.dockables().get( index ).getDockable();
     }
-
     public DockableProperty getDockableProperty( Dockable dockable, Dockable target ) {
     	int index = indexOf( dockable );
     	PlaceholderStrategy strategy = getPlaceholderStrategy();
@@ -662,7 +742,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	
         return new StackDockProperty( index, placeholder );
     }
-    
     public Dockable getFrontDockable() {
         if( dockables.dockables().size() == 0 )
             return null;
@@ -675,14 +754,12 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         
         return null;
     }
-    
     public void setFrontDockable( Dockable dockable ) {
         if( dockables.dockables().size() > 1 && dockable != null )
             stackComponent.setSelectedIndex( indexOf( dockable ));
         
         fireDockableSelected();
     }
-    
     /**
      * Informs all {@link DockStationListener}s that the selected element of this station changed. 
      * This method only fires if there really is a change, hence it can be safely called multiple times.
@@ -693,7 +770,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     		listeners.fireDockableSelected( lastSelectedDockable, selection );
     	}
     }
-    
     /**
      * Gets the index of a child.
      * @param dockable the child which is searched
@@ -711,11 +787,9 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     	
     	return -1;
     }
-    
     public PlaceholderMap getPlaceholders(){
     	return dockables.toMap();
     }
-    
     public void setPlaceholders( PlaceholderMap placeholders ){
     	if( getDockableCount() > 0 ){
     		throw new IllegalStateException( "there are children on this station" );
@@ -737,7 +811,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     		// ignore
     	}
     }
-    
     /**
      * Gets the placeholders of this station using a {@link PlaceholderListItemConverter} to
      * encode the children of this station. To be exact, the converter puts the following
@@ -782,7 +855,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     		}
 		});
     }
-    
     /**
      * Sets all placeholders and children of this station.
      * @param placeholders the new children and placeholders
@@ -856,7 +928,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     		}
     	}
     }
-
     /**
      * Gets the {@link PlaceholderStrategy} that is currently in use.
      * @return the current strategy, may be <code>null</code>
@@ -864,7 +935,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     public PlaceholderStrategy getPlaceholderStrategy(){
     	return placeholderStrategy.getValue();
     }
-    
     /**
      * Sets the {@link PlaceholderStrategy} to use, <code>null</code> will set
      * the default strategy.
@@ -873,7 +943,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     public void setPlaceholderStrategy( PlaceholderStrategy strategy ){
     	placeholderStrategy.setValue( strategy );
     }
-    
     /**
      * Sets whether the result of {@link Component#getMinimumSize()} should be small. A small value
      * allows clients to make this {@link StackDockStation} small if it is on a {@link SplitDockStation} or another station
@@ -884,7 +953,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
 		this.smallMinimumSize = smallMinimumSize;
 		getComponent().invalidate();
 	}
-    
     /**
      * Tells whether the result of {@link Component#getMinimumSize()} should be small.
      * @return whether the minimum size is small
@@ -893,85 +961,57 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     public boolean isSmallMinimumSize(){
 		return smallMinimumSize;
 	}
-
-    @Override
-    public DockStationDropLayer[] getLayers(){
-	    return new DockStationDropLayer[]{
-	    		new DefaultDropLayer( this ),
-	    		new TabDropLayer( this )
-	    };
-    }
-    
-    /**
-     * Tells whether the point <code>x/y</code> on the screen is exactly over a tab.
-     * @param x the x-coordinate on the screen
-     * @param y the y-coordinate on the screen
-     * @return <code>true</code> if the point is directly over a tab
-     */
-    public boolean isOverTabs( int x, int y ){
-    	Point point = new Point( x, y );
-        SwingUtilities.convertPointFromScreen( point, panel );
-        
-        return exactTabIndexAt( point.x, point.y ) != null;
-    }
-
-    /**
-     * Tells whether the point <code>x/y</code> on the screen is exactly over the only
-     * {@link DockTitle} currently shown by this station. This method always returns
-     * <code>false</code> if this station has not exactly one child.
-     * @param x the x-coordinate on the screen
-     * @param y the y-coordinate on the screen
-     * @return <code>true</code> if the point is directly over the title
-     */
-    public boolean isOverTitle( int x, int y ){
-    	if( dockables.dockables().size() == 1 ){
-            DockTitle title = dockables.dockables().get( 0 ).getDisplayer().getTitle();
-            if( title != null ){
-                Component component = title.getComponent();
-                Point p = new Point( x, y );
-                SwingUtilities.convertPointFromScreen( p, component );
-
-                return component.getBounds().contains( p );
-            }
-        }
-    	return false;
-    }
-    
-    public StationDropOperation prepareMove( int x, int y, int titleX, int titleY, Dockable dockable ) {
-        Point point = new Point( x, y );
-        SwingUtilities.convertPointFromScreen( point, panel );
-        
-        Insert insert = tabIndexAt( point.x, point.y );
-        if( validate( insert, dockable )){
-        	return new StackDropOperation( dockable, insert, true );
-        }
-        return null;
-    }
-    
-    public StationDropOperation prepareDrop( int x, int y, int titleX, int titleY, Dockable dockable ){
+    public StationDropOperation prepareDrop( int x, int y, int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
     	if( dockable.getDockParent() == this ){
-    		return prepareMove( x, y, titleX, titleY, dockable );
+    		return prepareMove( x, y, titleX, titleY, checkOverrideZone, dockable );
     	}
     	
     	if( SwingUtilities.isDescendingFrom( getComponent(), dockable.getComponent() )){
     		return null;
     	}
     	
+        DockStation parent = getDockParent();
         Point point = new Point( x, y );
         SwingUtilities.convertPointFromScreen( point, panel );
         
-        Insert insert = tabIndexAt( point.x, point.y );
+        Insert insert = null;
+        
+        if( parent != null ){
+            if( checkOverrideZone && parent.isInOverrideZone( x, y, this, dockable )){
+                if( dockables.dockables().size() > 1 ){
+                	insert = exactTabIndexAt( point.x, point.y );
+                    if( validate( insert, dockable )){
+                        return new StackDropOperation( dockable, insert, false );
+                    }
+                }
+                else if( dockables.dockables().size() == 1 ){
+                    DockTitle title = dockables.dockables().get( 0 ).getDisplayer().getTitle();
+                    if( title != null ){
+                        Component component = title.getComponent();
+                        Point p = new Point( x, y );
+                        SwingUtilities.convertPointFromScreen( p, component );
 
+                        if( component.getBounds().contains( p )){
+                        	insert = new Insert( 0, true );
+                        	if( validate( insert, dockable )){
+                        		return new StackDropOperation( dockable, insert, false );
+                        	}
+                        }
+                    }
+                }
+                return null;
+            }
+        }
+        
+        insert = tabIndexAt( point.x, point.y );
         if( validate( insert, dockable )){
         	return new StackDropOperation( dockable, insert, false );
         }
         return null;
     }
-
     public void drop( Dockable dockable ) {
     	drop( dockable, true );
     }
-    
     /**
      * Adds <code>dockable</code> to this station.
      * @param dockable the element to drop
@@ -992,7 +1032,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     		add( dockable, dockables.dockables().size(), null );
     	}
     }
-    
     public boolean drop( Dockable dockable, DockableProperty property ) {
         if( property instanceof StackDockProperty ){
             return drop( dockable, (StackDockProperty)property );
@@ -1000,7 +1039,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         else
             return false;
     }
-    
     /**
      * Adds a new child to this station, and tries to match the <code>property</code>
      * as good as possible.
@@ -1065,7 +1103,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         
         return result;
     }
-    
     /**
      * Checks whether <code>child</code> can be inserted at <code>insert</code>.
      * @param insert the new location
@@ -1075,7 +1112,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     private boolean validate( Insert insert, Dockable child ){
         return insert != null && accept( child ) && child.accept( this ) && getController().getAcceptance().accept( this, child );
     }
-    
     /**
      * Gets the location where {@link StationDropOperation#execute()} will insert the next
      * {@link Dockable}.
@@ -1084,7 +1120,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     public Insert getInsert(){
 		return insert;
 	}
-
     public void move( Dockable dockable, DockableProperty property ) {
         if( property instanceof StackDockProperty ){
         	DockUtilities.checkLayoutLocked();
@@ -1099,7 +1134,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             move( index, destination );
         }
     }
-        
     private void move( int source, int destination ){
     	if( source != destination ){
     		DockUtilities.checkLayoutLocked();
@@ -1110,7 +1144,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
     		fireDockablesRepositioned( Math.min( source, destination ), Math.max( source, destination ) );
     	}
     }
-    
     /**
      * Tells which gap (between tabs) is chosen if the mouse has the coordinates x/y.
      * If there is no tab at this location, a default-tab is chosen.
@@ -1130,7 +1163,6 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         
         return insert;
     }
-    
     /**
      * Gets the gap which is selected when the mouse is at x/y.
      * @param x x-coordinate in the system of this station
@@ -1151,6 +1183,105 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
             }
         }
                
+        return null;
+    }
+    public <D extends Dockable & DockStation> boolean isInOverrideZone( int x,
+            int y, D invoker, Dockable drop ){
+        
+        DockStation parent = getDockParent();
+        if( parent != null )
+            return parent.isInOverrideZone( x, y, invoker, drop );
+        
+        return false;
+    }
+    /** The id of the titlefactory which is used by this station */
+    /** Key used to read the current {@link StackDockComponentFactory} */
+    /** Key for setting the side at which the tabs appear in relation to the selected dockable */
+    /** Key for setting the {@link TabContentFilter} */
+    /** A list of all children */
+    /** A manager for firing events if a child changes its visibility-state */
+    /** A paint to draw lines */
+    /** A factory to create {@link DockableDisplayer} */
+    /** The set of displayers shown on this station */
+    /** The preferred location where a dropping {@link Dockable} should be added */
+     /** The graphical representation of this station */
+    /** The panel where components are added */
+    /** The background of the {@link #panel} */
+    /** A Component which shows two or more children of this station */
+    /** Responsible for updating a {@link DockElementRepresentative} that covers the empty areas of {@link #stackComponent} */
+    /** The current component factory */
+    /** Where to put tabs */
+    /** The version of titles which should be used for this station */
+    /** A listener observing the children for changes of their icon or titletext */
+    /** strategy for selecting placeholders */
+	/** filter for setting appearance of tabs */
+	/** a listener to {@link #tabContentFilter} */
+    @Override
+    public DockStationDropLayer[] getLayers(){
+	    return new DockStationDropLayer[]{
+	    		new DefaultDropLayer( this ),
+	    		new TabDropLayer( this )
+	    };
+    }
+    /**
+     * Tells whether the point <code>x/y</code> on the screen is exactly over a tab.
+     * @param x the x-coordinate on the screen
+     * @param y the y-coordinate on the screen
+     * @return <code>true</code> if the point is directly over a tab
+     */
+    public boolean isOverTabs( int x, int y ){
+    	Point point = new Point( x, y );
+        SwingUtilities.convertPointFromScreen( point, panel );
+        
+        return exactTabIndexAt( point.x, point.y ) != null;
+    }
+    /**
+     * Tells whether the point <code>x/y</code> on the screen is exactly over the only
+     * {@link DockTitle} currently shown by this station. This method always returns
+     * <code>false</code> if this station has not exactly one child.
+     * @param x the x-coordinate on the screen
+     * @param y the y-coordinate on the screen
+     * @return <code>true</code> if the point is directly over the title
+     */
+    public boolean isOverTitle( int x, int y ){
+    	if( dockables.dockables().size() == 1 ){
+            DockTitle title = dockables.dockables().get( 0 ).getDisplayer().getTitle();
+            if( title != null ){
+                Component component = title.getComponent();
+                Point p = new Point( x, y );
+                SwingUtilities.convertPointFromScreen( p, component );
+
+                return component.getBounds().contains( p );
+            }
+        }
+    	return false;
+    }
+    public StationDropOperation prepareMove( int x, int y, int titleX, int titleY, Dockable dockable ) {
+        Point point = new Point( x, y );
+        SwingUtilities.convertPointFromScreen( point, panel );
+        
+        Insert insert = tabIndexAt( point.x, point.y );
+        if( validate( insert, dockable )){
+        	return new StackDropOperation( dockable, insert, true );
+        }
+        return null;
+    }
+    public StationDropOperation prepareDrop( int x, int y, int titleX, int titleY, Dockable dockable ){
+    	if( dockable.getDockParent() == this ){
+    		return prepareMove( x, y, titleX, titleY, dockable );
+    	}
+    	
+    	if( SwingUtilities.isDescendingFrom( getComponent(), dockable.getComponent() )){
+    		return null;
+    	}
+    	
+        Point point = new Point( x, y );
+        SwingUtilities.convertPointFromScreen( point, panel );
+        
+        Insert insert = tabIndexAt( point.x, point.y );
+        if( validate( insert, dockable )){
+        	return new StackDropOperation( dockable, insert, false );
+        }
         return null;
     }
 

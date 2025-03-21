@@ -3,7 +3,15 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copy
+import bibliothek.gui.dock.accept.CombinatoryAcceptance.Combination;
+
+import bibliothek.gui.dock.station.screen.level.ScreenWindowLayer;
+
+import bibliothek.gui.dock.station.screen.level.ScreenLayer;
+
+import bibliothek.gui.dock.station.level.DockStationDropLayer;
+right (C) 2007 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -78,22 +86,22 @@ import bibliothek.gui.dock.station.screen.ScreenDockWindowFactory;
 import bibliothek.gui.dock.station.screen.ScreenDockWindowHandle;
 import bibliothek.gui.dock.station.screen.ScreenDockWindowListener;
 import bibliothek.gui.dock.station.screen.ScreenFullscreenAction;
-import bibliothek.gui.dock.station.screen.layer.ScreenLayer;
-import bibliothek.gui.dock.station.screen.layer.ScreenWindowLayer;
 import bibliothek.gui.dock.station.screen.magnet.AttractorStrategy;
 import bibliothek.gui.dock.station.screen.magnet.DefaultMagnetStrategy;
 import bibliothek.gui.dock.station.screen.magnet.MagnetController;
 import bibliothek.gui.dock.station.screen.magnet.MagnetStrategy;
 import bibliothek.gui.dock.station.screen.magnet.MultiAttractorStrategy;
+import bibliothek.gui.dock.station.screen.layer.ScreenLayer;
+import bibliothek.gui.dock.station.screen.layer.ScreenWindowLayer;
 import bibliothek.gui.dock.station.support.CombinerSource;
 import bibliothek.gui.dock.station.support.CombinerSourceWrapper;
 import bibliothek.gui.dock.station.support.CombinerTarget;
 import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
 import bibliothek.gui.dock.station.support.DockablePlaceholderList;
 import bibliothek.gui.dock.station.support.DockableShowingManager;
-import bibliothek.gui.dock.station.support.Enforcement;
 import bibliothek.gui.dock.station.support.PlaceholderList.Filter;
 import bibliothek.gui.dock.station.support.PlaceholderList.Level;
+import bibliothek.gui.dock.station.support.Enforcement;
 import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
 import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;

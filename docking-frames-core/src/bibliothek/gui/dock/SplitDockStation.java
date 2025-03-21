@@ -3,7 +3,13 @@
  * Library built on Java/Swing, allows the user to "drag and drop"
  * panels containing any Swing-Component the developer likes to add.
  * 
- * Copyright (C) 2007 Benjamin Sigg
+ * Copy
+import bibliothek.gui.dock.station.split.PutInfo.Put;
+
+import bibliothek.gui.dock.station.split.level.SplitOverrideDropLevel;
+
+import bibliothek.gui.dock.station.level.DefaultDropLevel;
+right (C) 2007 Benjamin Sigg
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -692,6 +698,88 @@ public class SplitDockStation extends SecureContainer implements Dockable, DockS
 		return true;
 	}
 	
+<<<<<<< /usr/src/app/output/benoker/dockingframes/17a91f4341b551ce21e6b7775291643895b6b939/docking-frames-core/src/bibliothek/gui/dock/SplitDockStation.java/left.java
+	/**
+	 * Tells whether <code>next</code> can be dropped over <code>old</code>.
+	 * @param old some old dockable
+	 * @param next some new dockable
+	 * @return <code>true</code> if combining is allowed
+	 */
+	protected boolean acceptable( Dockable old, Dockable next ){
+		if( !old.accept( this, next )){
+			return false;
+		}
+		if( !next.accept( this, old )){
+			return false;
+		}
+		DockController controller = getController();
+		if( controller != null ){
+			return controller.getAcceptance().accept( this, old, next );
+		}
+		return true;
+	}
+	
+	/**
+	 * Tells whether <code>next</code> can be dropped on this station
+	 * @param next some new dockable
+	 * @return <code>true</code> if combining is allowed
+	 */
+	protected boolean acceptable( Dockable next ){
+		if( !accept( next )){
+			return false;
+		}
+		if( !next.accept( this )){
+			return false;
+		}
+		DockController controller = getController();
+		if( controller != null ){
+			return controller.getAcceptance().accept( this, next );
+		}
+		return true;
+	}
+	
+||||||| /usr/src/app/output/benoker/dockingframes/17a91f4341b551ce21e6b7775291643895b6b939/docking-frames-core/src/bibliothek/gui/dock/SplitDockStation.java/base.java
+	/**
+	 * Tells whether <code>next</code> can be dropped over <code>old</code>.
+	 * @param old some old dockable
+	 * @param next some new dockable
+	 * @return <code>true</code> if combining is allowed
+	 */
+	protected boolean acceptable( Dockable old, Dockable next ){
+		if( !old.accept( this, next )){
+			return false;
+		}
+		if( !next.accept( this )){
+			return false;
+		}
+		DockController controller = getController();
+		if( controller != null ){
+			return controller.getAcceptance().accept( this, old, next );
+		}
+		return true;
+	}
+	
+	/**
+	 * Tells whether <code>next</code> can be dropped on this station
+	 * @param next some new dockable
+	 * @return <code>true</code> if combining is allowed
+	 */
+	protected boolean acceptable( Dockable next ){
+		if( !accept( next )){
+			return false;
+		}
+		if( !next.accept( this )){
+			return false;
+		}
+		DockController controller = getController();
+		if( controller != null ){
+			return controller.getAcceptance().accept( this, next );
+		}
+		return true;
+	}
+	
+=======
+>>>>>>> /usr/src/app/output/benoker/dockingframes/17a91f4341b551ce21e6b7775291643895b6b939/docking-frames-core/src/bibliothek/gui/dock/SplitDockStation.java/right.java
 	public Component getComponent(){
 		return this;
 	}
