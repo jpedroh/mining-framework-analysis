@@ -155,11 +155,11 @@ public final class DefaultServiceAdmin implements ServiceAdmin {
     @Override
     public Mono<Void> update(UpdateServiceBrokerRequest request) {
         return this.cloudFoundryClient
-            .flatMap(cloudFoundryClient -> Mono.zip(
+            .then(cloudFoundryClient -> Mono.when(
                 Mono.just(cloudFoundryClient),
                 getServiceBrokerId(cloudFoundryClient, request.getName())
             ))
-            .flatMap( function((cloudFoundryClient, serviceBrokerId) -> requestUpdateServiceBroker(cloudFoundryClient, request, serviceBrokerId)))
+            .then(function((cloudFoundryClient, serviceBrokerId) -> requestUpdateServiceBroker(cloudFoundryClient, request, serviceBrokerId)))
             .then()
             .transform(OperationsLogging.log("Update Service Broker"))
             .checkpoint();
