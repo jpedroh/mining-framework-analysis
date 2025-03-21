@@ -1,18 +1,16 @@
 package com.github.javafaker.service;
 
-import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
+import java.io.File;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -64,7 +62,7 @@ public class FakeValuesService {
         locale = normalizeLocale(locale);
 
         final List<Locale> locales = localeChain(locale);
-        final List<Map<String,Object>> all = new ArrayList<Map<String, Object>>();
+        final List<Map<String,Object>> all = new ArrayList<Map<String, Object>>(locales.size());
         final Set<Locale> loadedLocales = new HashSet<Locale>();
 
         for (final Locale l : locales) {
@@ -81,7 +79,7 @@ public class FakeValuesService {
                 String fileToLoad = filename + "/"  + resourceFolderFile.getName();
                 final InputStream stream = getClass().getClassLoader().getResourceAsStream(fileToLoad);
                 if (stream != null) {
-                    Map<String, Object> map = fakerFromStream(stream, filename.toString());
+                    Map map = fakerFromStream(stream, filename.toString());
                     all.add(map);
                     loadedLocales.add(l);
                 }
