@@ -88,7 +88,7 @@ public class PrimObject {
         };
     }
 
-    public PrimObject smalltalkMethod(Object value) {
+    public PrimObject smalltalkMethod(Object value, PrimContext homeContext) {
         //System.out.println("** smalltalkMethod " + value);
         return instanceOfWith("CompiledMethod", value);
     }
