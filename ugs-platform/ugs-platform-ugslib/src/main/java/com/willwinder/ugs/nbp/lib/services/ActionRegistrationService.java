@@ -48,6 +48,7 @@ public class ActionRegistrationService {
      * Extract action ID from the instance file path. For example 'com-willwinder-ugs-nbp-editor-actions-RunFromHere' from 'Action/Machine/com-willwinder-ugs-nbp-editor-actions-RunFromHere.instance'.
      * @param path full path to the action instance file.
      */
+
     private String extractId(String path) {
         return path.substring(
                 path.lastIndexOf('/') + 1,
@@ -59,6 +60,7 @@ public class ActionRegistrationService {
      * Extract the action path from the instance file path. For example 'Machine/Jog' from 'Action/Machine/Jog/com-willwinder-ugs-nbp-editor-actions-RunFromHere.instance'.
      * @param path full path to the action instance file.
      */
+
     private String extractCategory(String path) {
         return path.substring(
                 path.indexOf('/') + 1,
@@ -77,9 +79,17 @@ public class ActionRegistrationService {
      * @param localMenu    Localized menu location starting with "Menu", like "Menu/Cabeza/Sombreros"
      * @throws IOException if the action couldn't be registered
      */
+
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/886943a19d38d8b5fa4d7c05f36c81e909ced53f/ugs-platform/ugs-platform-ugslib/src/main/java/com/willwinder/ugs/nbp/lib/services/ActionRegistrationService.java/left.java
     public void updateAction(ActionReference reference, String newName, String shortcut, String menuPath, int menuPosition, String localMenu) throws IOException {
         registerAction(extractId(reference.getId()), newName, extractCategory(reference.getId()), shortcut, menuPath, menuPosition, localMenu, reference.getAction());
     }
+||||||| /usr/src/app/output/winder/universal-g-code-sender/886943a19d38d8b5fa4d7c05f36c81e909ced53f/ugs-platform/ugs-platform-ugslib/src/main/java/com/willwinder/ugs/nbp/lib/services/ActionRegistrationService.java/base.java
+=======
+    public void updateAction(ActionReference reference, String category, String shortcut, String menuPath, int menuPosition, String localMenu) throws IOException {
+        registerAction(reference.getId(), reference.getName(), category, shortcut, menuPath, menuPosition, localMenu, reference.getAction());
+    }
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/886943a19d38d8b5fa4d7c05f36c81e909ced53f/ugs-platform/ugs-platform-ugslib/src/main/java/com/willwinder/ugs/nbp/lib/services/ActionRegistrationService.java/right.java
 
     /**
      * Update an {@link ActionReference} already registered with the platform along with optional shortcuts and
@@ -93,9 +103,6 @@ public class ActionRegistrationService {
      * @param localMenu    Localized menu location starting with "Menu", like "Menu/Cabeza/Sombreros"
      * @throws IOException if the action couldn't be registered
      */
-    public void updateAction(ActionReference reference, String category, String shortcut, String menuPath, int menuPosition, String localMenu) throws IOException {
-        registerAction(reference.getId(), reference.getName(), category, shortcut, menuPath, menuPosition, localMenu, reference.getAction());
-    }
 
     /**
      * Registers an action with the platform along with optional shortcuts and
