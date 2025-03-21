@@ -58,7 +58,6 @@ import hudson.plugins.emailext.plugins.trigger.UnstableTrigger;
 import hudson.plugins.emailext.plugins.trigger.XNthFailureTrigger;
 import hudson.security.ACL;
 import hudson.security.ACLContext;
-import hudson.util.Secret;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
