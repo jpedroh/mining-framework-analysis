@@ -1577,6 +1577,7 @@ public abstract class ScriptParseStrategy<T extends AstRegion> {
 
     }
 
+
     private static class AstAbortNodeVisitor extends AstNodeVisitor<AstAbortNode> {
 
         public AstAbortNodeVisitor(ExpressionFactory elFactory, ExpressionContext elContext) {
