@@ -15,18 +15,18 @@
  */
 package com.datastax.driver.core;
 
-import com.datastax.driver.core.exceptions.*;
+import com.datastax.driver.core.exceptions.NoHostAvailableException;
+import com.datastax.driver.core.exceptions.UnavailableException;
 import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
 import com.datastax.driver.core.policies.RoundRobinPolicy;
 import com.datastax.driver.core.policies.TokenAwarePolicy;
 import com.datastax.driver.core.policies.WhiteListPolicy;
 import org.testng.annotations.Test;
-
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.List;
-
+import com.datastax.driver.core.exceptions.*;
 import static com.datastax.driver.core.TestUtils.*;
 import static org.testng.Assert.*;
 
