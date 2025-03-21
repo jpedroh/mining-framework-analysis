@@ -1384,7 +1384,7 @@ public class ExpiringMap<K, V> implements ConcurrentMap<K, V> {
     synchronized (ExpiringMap.class) {
       if (LISTENER_SERVICE == null) {
         LISTENER_SERVICE = (ThreadPoolExecutor) Executors.newCachedThreadPool(
-                THREAD_FACTORY == null ? new NamedThreadFactory("ExpiringMap-Listener-%s") : THREAD_FACTORY);
+            THREAD_FACTORY == null ? new NamedThreadFactory("ExpiringMap-Listener-%s") : THREAD_FACTORY);
       }
     }
   }
