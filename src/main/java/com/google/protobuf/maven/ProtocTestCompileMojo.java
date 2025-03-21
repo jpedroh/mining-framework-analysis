@@ -1,8 +1,6 @@
 package com.google.protobuf.maven;
-
 import com.google.common.collect.ImmutableList;
 import org.apache.maven.artifact.Artifact;
-
 import java.io.File;
 import java.util.List;
 
@@ -19,72 +17,60 @@ import java.util.List;
  * @threadSafe
  */
 public final class ProtocTestCompileMojo extends AbstractProtocMojo {
-
-    /**
+  /**
      * The source directories containing the test {@code .proto} definitions to be compiled.
      *
      * @parameter default-value="${basedir}/src/test/proto"
      * @required
      */
-    private File protoTestSourceRoot;
+  private File protoTestSourceRoot;
 
-    /**
+  /**
      * This is the directory into which the {@code .java} test sources will be created.
      *
      * @parameter default-value="${project.build.directory}/generated-test-sources/protobuf/java"
      * @required
      */
-    private File outputDirectory;
+  private File outputDirectory;
 
-    /**
+  /**
      * This is the directory into which the (optional) descriptor set file will be created.
      *
      * @parameter default-value="${project.build.directory}/generated-test-resources/protobuf/descriptor-sets"
      * @required
      * @since 0.3.0
      */
-    private File descriptorSetOutputDirectory;
+  private File descriptorSetOutputDirectory;
 
-    @Override
-    protected void addProtocBuilderParameters(final Protoc.Builder protocBuilder) {
-        super.addProtocBuilderParameters(protocBuilder);
-        protocBuilder.setJavaOutputDirectory(getOutputDirectory());
-        // We need to add project output directory to the protobuf import paths,
-        // in case test protobuf definitions extend or depend on production ones
-        final File buildOutputDirectory = new File(project.getBuild().getOutputDirectory());
-        if (buildOutputDirectory.exists()) {
-            protocBuilder.addProtoPathElement(buildOutputDirectory);
-        }
+  @Override protected void addProtocBuilderParameters(final Protoc.Builder protocBuilder) {
+    super.addProtocBuilderParameters(protocBuilder);
+    protocBuilder.setJavaOutputDirectory(getOutputDirectory());
+    final File buildOutputDirectory = new File(project.getBuild().getOutputDirectory());
+    if (buildOutputDirectory.exists()) {
+      protocBuilder.addProtoPathElement(buildOutputDirectory);
     }
+  }
 
-    @Override
-    protected void attachFiles() {
-        project.addTestCompileSourceRoot(outputDirectory.getAbsolutePath());
-        projectHelper.addTestResource(project, protoTestSourceRoot.getAbsolutePath(),
-                ImmutableList.of("**/*.proto"), ImmutableList.of());
-        buildContext.refresh(outputDirectory);
-    }
+  @Override protected void attachFiles() {
+    project.addTestCompileSourceRoot(outputDirectory.getAbsolutePath());
+    projectHelper.addTestResource(project, protoTestSourceRoot.getAbsolutePath(), ImmutableList.of("**/*.proto"), ImmutableList.of());
+    buildContext.refresh(outputDirectory);
+  }
 
-    @Override
-    protected List<Artifact> getDependencyArtifacts() {
-        // TODO(gak): maven-project needs generics
-        @SuppressWarnings("unchecked")
-        List<Artifact> testArtifacts = project.getTestArtifacts();
-        return testArtifacts;
-    }
+  @Override protected List<Artifact> getDependencyArtifacts() {
+    @SuppressWarnings(value = { "unchecked" }) List<Artifact> testArtifacts = project.getTestArtifacts();
+    return testArtifacts;
+  }
 
-    @Override
-    protected File getOutputDirectory() {
-        return outputDirectory;
-    }
+  @Override protected File getOutputDirectory() {
+    return outputDirectory;
+  }
 
-    @Override
-    protected File getDescriptorSetOutputDirectory() {
-        return descriptorSetOutputDirectory;
-    }
+  @Override protected File getDescriptorSetOutputDirectory() {
+    return descriptorSetOutputDirectory;
+  }
 
-    @Override
-    protected File getProtoSourceRoot() {
-        return protoTestSourceRoot;
-    }
+  @Override protected File getProtoSourceRoot() {
+    return protoTestSourceRoot;
+  }
 }

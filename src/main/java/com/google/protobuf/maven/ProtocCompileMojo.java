@@ -1,8 +1,6 @@
 package com.google.protobuf.maven;
-
 import com.google.common.collect.ImmutableList;
 import org.apache.maven.artifact.Artifact;
-
 import java.io.File;
 import java.util.List;
 
@@ -18,68 +16,57 @@ import java.util.List;
  * @requiresDependencyResolution compile
  * @threadSafe
  */
-
 public final class ProtocCompileMojo extends AbstractProtocMojo {
-
-    /**
+  /**
      * The source directories containing the sources to be compiled.
      *
      * @parameter default-value="${basedir}/src/main/proto"
      * @required
      */
-    private File protoSourceRoot;
+  private File protoSourceRoot;
 
-    /**
+  /**
      * This is the directory into which the {@code .java} will be created.
      *
      * @parameter default-value="${project.build.directory}/generated-sources/protobuf/java"
      * @required
      */
-    private File outputDirectory;
+  private File outputDirectory;
 
-    /**
+  /**
      * This is the directory into which the (optional) descriptor set file will be created.
      *
      * @parameter default-value="${project.build.directory}/generated-resources/protobuf/descriptor-sets"
      * @required
      * @since 0.3.0
      */
-    private File descriptorSetOutputDirectory;
+  private File descriptorSetOutputDirectory;
 
-    @Override
-    protected void addProtocBuilderParameters(final Protoc.Builder protocBuilder) {
-        super.addProtocBuilderParameters(protocBuilder);
-        protocBuilder.setJavaOutputDirectory(getOutputDirectory());
-    }
+  @Override protected void addProtocBuilderParameters(final Protoc.Builder protocBuilder) {
+    super.addProtocBuilderParameters(protocBuilder);
+    protocBuilder.setJavaOutputDirectory(getOutputDirectory());
+  }
 
-    @Override
-    protected List<Artifact> getDependencyArtifacts() {
-        // TODO(gak): maven-project needs generics
-        @SuppressWarnings("unchecked")
-        List<Artifact> compileArtifacts = project.getCompileArtifacts();
-        return compileArtifacts;
-    }
+  @Override protected List<Artifact> getDependencyArtifacts() {
+    @SuppressWarnings(value = { "unchecked" }) List<Artifact> compileArtifacts = project.getCompileArtifacts();
+    return compileArtifacts;
+  }
 
-    @Override
-    protected File getOutputDirectory() {
-        return outputDirectory;
-    }
+  @Override protected File getOutputDirectory() {
+    return outputDirectory;
+  }
 
-    @Override
-    protected File getDescriptorSetOutputDirectory() {
-        return descriptorSetOutputDirectory;
-    }
+  @Override protected File getDescriptorSetOutputDirectory() {
+    return descriptorSetOutputDirectory;
+  }
 
-    @Override
-    protected File getProtoSourceRoot() {
-        return protoSourceRoot;
-    }
+  @Override protected File getProtoSourceRoot() {
+    return protoSourceRoot;
+  }
 
-    @Override
-    protected void attachFiles() {
-        project.addCompileSourceRoot(outputDirectory.getAbsolutePath());
-        projectHelper.addResource(project, protoSourceRoot.getAbsolutePath(),
-                ImmutableList.of("**/*.proto"), ImmutableList.of());
-        buildContext.refresh(outputDirectory);
-    }
+  @Override protected void attachFiles() {
+    project.addCompileSourceRoot(outputDirectory.getAbsolutePath());
+    projectHelper.addResource(project, protoSourceRoot.getAbsolutePath(), ImmutableList.of("**/*.proto"), ImmutableList.of());
+    buildContext.refresh(outputDirectory);
+  }
 }
