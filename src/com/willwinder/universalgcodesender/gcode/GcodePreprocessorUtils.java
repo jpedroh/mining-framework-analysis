@@ -41,13 +41,10 @@ public class GcodePreprocessorUtils {
     private static Pattern COMMENT_SEMICOLON = Pattern.compile(";.*");
     private static Pattern COMMENTPARSE = Pattern.compile("(?<=\\()[^\\(\\)]*|(?<=\\;).*|%");
     private static Pattern WHITESPACE = Pattern.compile("\\s");
-    private static Pattern M30 = Pattern.compile("[Mm]30");
     private static Pattern gPattern = Pattern.compile("[Gg]0*(\\d+)");
-
     private static int decimalLength = -1;
     private static Pattern decimalPattern;
     private static DecimalFormat decimalFormatter;
-
     /**
      * Searches the command string for an 'f' and replaces the speed value 
      * between the 'f' and the next space with a percentage of that speed.
@@ -70,7 +67,6 @@ public class GcodePreprocessorUtils {
 
         return returnString;
     }
-    
     /**
      * Removes any comments within parentheses or beginning with a semi-colon.
      */
@@ -88,7 +84,6 @@ public class GcodePreprocessorUtils {
         
         return newCommand.trim();
     }
-    
     /**
      * Searches for a comment in the input string and returns the first match.
      */
@@ -105,7 +100,6 @@ public class GcodePreprocessorUtils {
 
         return comment;
     }
-    
     static public String truncateDecimals(int length, String command) {
         if (length != decimalLength) {
             //Only build the decimal formatter if the truncation length has changed.
@@ -126,7 +120,6 @@ public class GcodePreprocessorUtils {
         // Return new command.
         return sb.toString();
     }
-
     private static void updateDecimalFormatter(int length) {
         StringBuilder df = new StringBuilder();
 
@@ -152,12 +145,10 @@ public class GcodePreprocessorUtils {
         decimalPattern = Pattern.compile(df.toString());
         decimalLength = length;
     }
-
-
     static public String removeAllWhitespace(String command) {
         return WHITESPACE.matcher(command).replaceAll(EMPTY);
     }
-
+    private static Pattern M30 = Pattern.compile("[Mm]30");
     static public String removeM30(String command) {
         return M30.matcher(command).replaceAll(EMPTY);
     }
