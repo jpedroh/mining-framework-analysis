@@ -242,8 +242,9 @@ public class CoreServiceTest extends CoreServiceTestEnvironment {
     // ---
 
     @Test
-    public void changeLabelWithSetRefSimple() throws Exception {
-        try (DeepaMehtaTransaction tx = dm4.beginTx()) {
+    public void changeLabelWithSetRefSimple() {
+        DeepaMehtaTransaction tx = dm4.beginTx();
+        try {
             // 1) define model
             // "Person Name" (simple)
             dm4.createTopicType(mf.newTopicTypeModel("dm4.test.person_name", "Person Name", "dm4.core.text"));
@@ -267,12 +268,15 @@ public class CoreServiceTest extends CoreServiceTestEnvironment {
             assertEquals("Karl Albrecht", comment.getSimpleValue().toString());
             //
             tx.success();
+        } finally {
+            tx.finish();
         }
     }
 
     @Test
-    public void changeLabelWithSetRefComposite() throws Exception {
-        try (DeepaMehtaTransaction tx = dm4.beginTx()) {
+    public void changeLabelWithSetRefComposite() {
+        DeepaMehtaTransaction tx = dm4.beginTx();
+        try {
             // 1) define model
             // "First Name", "Last Name" (simple)
             dm4.createTopicType(mf.newTopicTypeModel("dm4.test.first_name", "First Name", "dm4.core.text"));
@@ -309,12 +313,15 @@ public class CoreServiceTest extends CoreServiceTestEnvironment {
             assertEquals("Karl Albrecht", comment.getSimpleValue().toString());
             //
             tx.success();
+        } finally {
+            tx.finish();
         }
     }
 
     @Test
-    public void changeLabelWithSetComposite() throws Exception {
-        try (DeepaMehtaTransaction tx = dm4.beginTx()) {
+    public void changeLabelWithSetComposite() {
+        DeepaMehtaTransaction tx = dm4.beginTx();
+        try {
             // 1) define model
             // "First Name", "Last Name" (simple)
             dm4.createTopicType(mf.newTopicTypeModel("dm4.test.first_name", "First Name", "dm4.core.text"));
@@ -345,6 +352,8 @@ public class CoreServiceTest extends CoreServiceTestEnvironment {
             assertEquals("Karl Albrecht", comment.getSimpleValue().toString());
             //
             tx.success();
+        } finally {
+            tx.finish();
         }
     }
 
@@ -360,8 +369,9 @@ public class CoreServiceTest extends CoreServiceTestEnvironment {
     }
 
     @Test
-    public void hasIncludeInLabelForAddedAssocDef() throws Exception {
-        try (DeepaMehtaTransaction tx = dm4.beginTx()) {
+    public void hasIncludeInLabelForAddedAssocDef() {
+        DeepaMehtaTransaction tx = dm4.beginTx();
+        try {
             // add assoc def programmatically
             dm4.createTopicType(mf.newTopicTypeModel("dm4.test.date", "Date", "dm4.core.text"));
             dm4.getTopicType("dm4.core.plugin").addAssocDef(
@@ -377,14 +387,17 @@ public class CoreServiceTest extends CoreServiceTestEnvironment {
             assertEquals(false, includeInLabel.getSimpleValue().booleanValue());
             //
             tx.success();
+        } finally {
+            tx.finish();
         }
     }
 
     // ---
 
     @Test
-    public void setIncludeInLabel() throws Exception {
-        try (DeepaMehtaTransaction tx = dm4.beginTx()) {
+    public void setIncludeInLabel() {
+        DeepaMehtaTransaction tx = dm4.beginTx();
+        try {
             TopicTypeImpl tt = dm4.getTopicType("dm4.core.plugin");
             //
             // set "Include in Label" flag
@@ -398,12 +411,15 @@ public class CoreServiceTest extends CoreServiceTestEnvironment {
             assertEquals("dm4.core.plugin_name", lc.get(0));
             //
             tx.success();
+        } finally {
+            tx.finish();
         }
     }
 
     @Test
-    public void setIncludeInLabelWhenCustomAssocTypeIsSet() throws Exception {
-        try (DeepaMehtaTransaction tx = dm4.beginTx()) {
+    public void setIncludeInLabelWhenCustomAssocTypeIsSet() {
+        DeepaMehtaTransaction tx = dm4.beginTx();
+        try {
             // 1) create composite type, set a custom assoc type
             dm4.createTopicType(mf.newTopicTypeModel("dm4.test.date", "Date", "dm4.core.text"));
             dm4.createAssociationType(mf.newAssociationTypeModel("dm4.test.birthday", "Birthday", "dm4.core.text"));
@@ -428,14 +444,17 @@ public class CoreServiceTest extends CoreServiceTestEnvironment {
             assertEquals("dm4.test.date#dm4.test.birthday", lc.get(0));
             //
             tx.success();
+        } finally {
+            tx.finish();
         }
     }
 
     // ---
 
     @Test
-    public void editAssocDefViaAssoc() throws Exception {
-        try (DeepaMehtaTransaction tx = dm4.beginTx()) {
+    public void editAssocDefViaAssoc() {
+        DeepaMehtaTransaction tx = dm4.beginTx();
+        try {
             // set "Include in Label" flag
             long assocDefId = dm4.getTopicType("dm4.core.plugin").getAssocDef("dm4.core.plugin_name").getId();
             dm4.getAssociation(assocDefId).getChildTopics().set("dm4.core.include_in_label", false);
@@ -451,12 +470,15 @@ public class CoreServiceTest extends CoreServiceTestEnvironment {
             assertEquals("dm4.core.plugin_migration_nr",  i.next().getAssocDefUri());
             //
             tx.success();
+        } finally {
+            tx.finish();
         }
     }
 
     @Test
-    public void editAssocDefSetCustomAssocType() throws Exception {
-        try (DeepaMehtaTransaction tx = dm4.beginTx()) {
+    public void editAssocDefSetCustomAssocType() {
+        DeepaMehtaTransaction tx = dm4.beginTx();
+        try {
             // set Custom Association Type (via assoc def)
             dm4.getTopicType("dm4.core.plugin").getAssocDef("dm4.core.plugin_name").getChildTopics()
                 .setRef("dm4.core.assoc_type#dm4.core.custom_assoc_type", "dm4.core.association");
@@ -470,12 +492,15 @@ public class CoreServiceTest extends CoreServiceTestEnvironment {
             assertEquals("dm4.core.association", assocType.getUri());
             //
             tx.success();
+        } finally {
+            tx.finish();
         }
     }
 
     @Test
-    public void editAssocDefViaAssocSetCustomAssocType() throws Exception {
-        try (DeepaMehtaTransaction tx = dm4.beginTx()) {
+    public void editAssocDefViaAssocSetCustomAssocType() {
+        DeepaMehtaTransaction tx = dm4.beginTx();
+        try {
             // set Custom Association Type (via association)
             long assocDefId = dm4.getTopicType("dm4.core.plugin").getAssocDef("dm4.core.plugin_name").getId();
             dm4.getAssociation(assocDefId).getChildTopics()
@@ -490,6 +515,8 @@ public class CoreServiceTest extends CoreServiceTestEnvironment {
             assertEquals("dm4.core.association", assocType.getUri());
             //
             tx.success();
+        } finally {
+            tx.finish();
         }
     }
 
@@ -590,9 +617,23 @@ public class CoreServiceTest extends CoreServiceTestEnvironment {
     // ---
 
     @Test
+<<<<<<< /usr/src/app/output/jri/deepamehta/37172781f64d355147e6e77761d1423e238480c7/modules/dm4-test/src/test/java/de/deepamehta/core/impl/CoreServiceTest.java/left.java
     public void insertAssocDefAtPos0() throws Exception {
         try (DeepaMehtaTransaction tx = dm4.beginTx()) {
+            DeepaMehtaType type = dm4.getTopicType("dm4.core.plugin");
+            //
+||||||| /usr/src/app/output/jri/deepamehta/37172781f64d355147e6e77761d1423e238480c7/modules/dm4-test/src/test/java/de/deepamehta/core/impl/CoreServiceTest.java/base.java
+    public void insertAssocDefAtPos0() {
+        DeepaMehtaTransaction tx = dm4.beginTx();
+        try {
+            DeepaMehtaType type = dm4.getTopicType("dm4.core.plugin");
+            //
+=======
+    public void insertAssocDefAtPos0() {
+        DeepaMehtaTransaction tx = dm4.beginTx();
+        try {
             // create child type
+>>>>>>> /usr/src/app/output/jri/deepamehta/37172781f64d355147e6e77761d1423e238480c7/modules/dm4-test/src/test/java/de/deepamehta/core/impl/CoreServiceTest.java/right.java
             dm4.createTopicType(mf.newTopicTypeModel("dm4.test.name", "Name", "dm4.core.text"));
             // insert assoc def at pos 0
             dm4.getTopicType("dm4.core.plugin").addAssocDefBefore(mf.newAssociationDefinitionModel(
@@ -615,9 +656,23 @@ public class CoreServiceTest extends CoreServiceTestEnvironment {
     }
 
     @Test
+<<<<<<< /usr/src/app/output/jri/deepamehta/37172781f64d355147e6e77761d1423e238480c7/modules/dm4-test/src/test/java/de/deepamehta/core/impl/CoreServiceTest.java/left.java
     public void insertAssocDefAtPos1() throws Exception {
         try (DeepaMehtaTransaction tx = dm4.beginTx()) {
+            DeepaMehtaType type = dm4.getTopicType("dm4.core.plugin");
+            //
+||||||| /usr/src/app/output/jri/deepamehta/37172781f64d355147e6e77761d1423e238480c7/modules/dm4-test/src/test/java/de/deepamehta/core/impl/CoreServiceTest.java/base.java
+    public void insertAssocDefAtPos1() {
+        DeepaMehtaTransaction tx = dm4.beginTx();
+        try {
+            DeepaMehtaType type = dm4.getTopicType("dm4.core.plugin");
+            //
+=======
+    public void insertAssocDefAtPos1() {
+        DeepaMehtaTransaction tx = dm4.beginTx();
+        try {
             // create child type
+>>>>>>> /usr/src/app/output/jri/deepamehta/37172781f64d355147e6e77761d1423e238480c7/modules/dm4-test/src/test/java/de/deepamehta/core/impl/CoreServiceTest.java/right.java
             dm4.createTopicType(mf.newTopicTypeModel("dm4.test.name", "Name", "dm4.core.text"));
             // insert assoc def at pos 1
             dm4.getTopicType("dm4.core.plugin").addAssocDefBefore(mf.newAssociationDefinitionModel(
@@ -654,12 +709,13 @@ public class CoreServiceTest extends CoreServiceTestEnvironment {
     }
 
     @Test
+<<<<<<< /usr/src/app/output/jri/deepamehta/37172781f64d355147e6e77761d1423e238480c7/modules/dm4-test/src/test/java/de/deepamehta/core/impl/CoreServiceTest.java/left.java
     public void getAssociationsByType() throws Exception {
         try (DeepaMehtaTransaction tx = dm4.beginTx()) {
             List<RelatedAssociation> assocs;
             //
             assocs = getAssociationInstancesByTraversal("dm4.core.instantiation");
-            assertEquals(51, assocs.size());
+            assertEquals(49, assocs.size());
             //
             assocs = getAssociationInstancesByTraversal("dm4.core.composition_def");
             assertEquals(5, assocs.size());
@@ -667,6 +723,31 @@ public class CoreServiceTest extends CoreServiceTestEnvironment {
             assocs = getAssociationInstancesByTraversal("dm4.core.aggregation_def");
             assertEquals(2, assocs.size());
         }
+||||||| /usr/src/app/output/jri/deepamehta/37172781f64d355147e6e77761d1423e238480c7/modules/dm4-test/src/test/java/de/deepamehta/core/impl/CoreServiceTest.java/base.java
+    public void getAssociationsByType() {
+        List<RelatedAssociation> assocs;
+        //
+        assocs = getAssociationInstancesByTraversal("dm4.core.instantiation");
+        assertEquals(49, assocs.size());
+        //
+        assocs = getAssociationInstancesByTraversal("dm4.core.composition_def");
+        assertEquals(5, assocs.size());
+        //
+        assocs = getAssociationInstancesByTraversal("dm4.core.aggregation_def");
+        assertEquals(2, assocs.size());
+=======
+    public void getAssociationsByType() {
+        List<RelatedAssociation> assocs;
+        //
+        assocs = getAssociationInstancesByTraversal("dm4.core.instantiation");
+        assertEquals(51, assocs.size());
+        //
+        assocs = getAssociationInstancesByTraversal("dm4.core.composition_def");
+        assertEquals(5, assocs.size());
+        //
+        assocs = getAssociationInstancesByTraversal("dm4.core.aggregation_def");
+        assertEquals(2, assocs.size());
+>>>>>>> /usr/src/app/output/jri/deepamehta/37172781f64d355147e6e77761d1423e238480c7/modules/dm4-test/src/test/java/de/deepamehta/core/impl/CoreServiceTest.java/right.java
     }
 
     // ---
