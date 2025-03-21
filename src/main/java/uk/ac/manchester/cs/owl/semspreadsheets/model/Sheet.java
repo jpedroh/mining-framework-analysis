@@ -1,11 +1,4 @@
-/*******************************************************************************
- * Copyright (c) 2009-2012, University of Manchester
- * 
- * Licensed under the New BSD License. 
- * Please see LICENSE file that is distributed with the source code
- ******************************************************************************/
 package uk.ac.manchester.cs.owl.semspreadsheets.model;
-
 import java.util.Collection;
 
 /**
@@ -15,45 +8,43 @@ import java.util.Collection;
  * Date: 18-Sep-2009
  */
 public interface Sheet {
+  String getName();
 
-    String getName();
-    
-    int getIndex();
+  int getIndex();
 
-    void setName(String name);
+  void setName(String name);
 
-    Workbook getWorkbook();
+  Workbook getWorkbook();
 
-    boolean isHidden();
-    
-    boolean isVeryHidden();
+  boolean isHidden();
 
-    void setVeryHidden(boolean b);
+  boolean isVeryHidden();
 
-    void setHidden(boolean b);
+  void setVeryHidden(boolean b);
 
-    int getMaxRows();
+  void setHidden(boolean b);
 
-    int getMaxColumns();
+  int getMaxRows();
 
-    int getColumnWidth(int col);
+  int getMaxColumns();
 
-    void clearAllCells();    
+  int getColumnWidth(int col);
 
-    Cell getCellAt(int col, int row);
+  void clearAllCells();
 
-    Cell addCellAt(int col, int row);
+  Cell getCellAt(int col, int row);
 
-    void clearCellAt(int col, int row);
+  Cell addCellAt(int col, int row);
 
-    void addValidation(String namedRange, int firstCol, int firstRow, int lastCol, int lastRow);    
+  void clearCellAt(int col, int row);
 
-    Collection<Validation> getValidations();
+  void addValidation(String namedRange, int firstCol, int firstRow, int lastCol, int lastRow);
 
-    Collection<Validation> getIntersectingValidations(Range range);
+  Collection<Validation> getValidations();
 
-    Collection<Validation> getContainingValidations(Range range);
+  Collection<Validation> getIntersectingValidations(Range range);
 
-    void clearValidationData();
+  Collection<Validation> getContainingValidations(Range range);
 
+  void clearValidationData();
 }
