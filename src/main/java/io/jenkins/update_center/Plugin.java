@@ -57,10 +57,16 @@ public final class Plugin {
      * Adding a plugin release carefully.
      *
      * <p>
+<<<<<<< /usr/src/app/output/jenkinsci/backend-update-center2/fcda6b0f32b11055f6fe5f52f645b32c5e6f2642/src/main/java/io/jenkins/update_center/Plugin.java/left.java
      *     If another release exists with an equivalent version number (1.0 vs. 1.0.0), remove both from distribution due to nondeterminism.
      * </p>
+||||||| /usr/src/app/output/jenkinsci/backend-update-center2/fcda6b0f32b11055f6fe5f52f645b32c5e6f2642/src/main/java/io/jenkins/update_center/Plugin.java/base.java
+     * If a plugin is renamed to jenkins-ci.org, we want to stop picking up newer changes elsewhere.
+=======
+     * If a plugin is renamed to jenkins-ci.org, we want to stop picking up newer changes elsewhere.
      *
      * @param hpi the plugin HPI
+>>>>>>> /usr/src/app/output/jenkinsci/backend-update-center2/fcda6b0f32b11055f6fe5f52f645b32c5e6f2642/src/main/java/io/jenkins/update_center/Plugin.java/right.java
      */
     public void addArtifact(HPI hpi) {
         VersionNumber v;
