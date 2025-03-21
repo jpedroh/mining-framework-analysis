@@ -1,5 +1,4 @@
 package com.fasterxml.jackson.annotation;
-
 import java.lang.annotation.Annotation;
 
 /**
@@ -10,13 +9,10 @@ import java.lang.annotation.Annotation;
  * some of the annotations, as well as to allow easier injection of configuration
  * from sources other than annotations.
  */
-public interface JacksonAnnotationValue<A extends Annotation>
-{
-    /**
+public interface JacksonAnnotationValue<A extends Annotation> {
+  /**
      * Introspection method that may be used to find actual annotation that may be used
      * as the source for value instance.
-     *
-     * @return Annotation class for which instances of this value class are created
      */
-    public Class<A> valueFor();
+  public Class<A> valueFor();
 }
