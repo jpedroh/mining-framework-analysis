@@ -15,16 +15,24 @@ import javaewah.IntIterator;
  * variant of the BBC compression scheme used by Oracle for its bitmap indexes.
  * </p>
  * 
+<<<<<<< /usr/src/app/output/lemire/javaewah/7a7298c69142670c64bf5700f6f67602da2b092f/src/main/java/javaewah32/EWAHCompressedBitmap32.java/left.java
  * <p>
  * In contrast witht the 64-bit EWAH scheme (javaewah.EWAHCompressedBitmap), you
  * can expect this class to compress better, but to be slower at processing the
  * data. In effect, there is a trade-off between memory usage and performances.
  * </p>
- * 
+||||||| /usr/src/app/output/lemire/javaewah/7a7298c69142670c64bf5700f6f67602da2b092f/src/main/java/javaewah32/EWAHCompressedBitmap32.java/base.java
+ * <p>In contrast witht the 64-bit EWAH scheme (javaewah.EWAHCompressedBitmap),
+ * you can expect this class to compress better, but to be slower at 
+ * processing the data. In effect, there is a trade-off between memory
+ * usage and performances.</p>
+=======
  * <p>In contrast with the 64-bit EWAH scheme (javaewah.EWAHCompressedBitmap),
  * you can expect this class to compress better, but to be slower at 
  * processing the data. In effect, there is a trade-off between memory
  * usage and performances.</p>
+>>>>>>> /usr/src/app/output/lemire/javaewah/7a7298c69142670c64bf5700f6f67602da2b092f/src/main/java/javaewah32/EWAHCompressedBitmap32.java/right.java
+ * 
  * 
  * @see javaewah.EWAHCompressedBitmap
  * 
