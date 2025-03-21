@@ -233,7 +233,7 @@ class Connection {
     // Due to C* gossip bugs, system.peers may report nodes that are gone from the cluster.
     // If these nodes have been recommissionned to another cluster and are up, nothing prevents the driver from connecting
     // to them. So we check that the cluster the node thinks it belongs to is our cluster (JAVA-397).
-    private void checkClusterName(ProtocolVersion version, String expected) throws ClusterNameMismatchException, ConnectionException, BusyConnectionException, ExecutionException, InterruptedException {
+    private void checkClusterName(int version, String expected) throws ClusterNameMismatchException, ConnectionException, BusyConnectionException, ExecutionException, InterruptedException {
         // At initialization, the cluster is not known yet
         if (expected == null)
             return;

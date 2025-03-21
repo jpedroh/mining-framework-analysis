@@ -148,11 +148,18 @@ public class SchemaTest extends CCMBridge.PerClassSingleNodeCluster {
         TableMetadata metadata = cluster.getMetadata().getKeyspace(TestUtils.SIMPLE_KEYSPACE).getTable("with_options");
 
         String withOpts = withOptions;
+
         VersionNumber version = cluster.getMetadata()
                                        .getHost(new InetSocketAddress(CCMBridge.IP_PREFIX + "1", 9042))
                                        .getCassandraVersion();
 
+<<<<<<< /usr/src/app/output/datastax/java-driver/5902ad493e7abcc96caa58b74c3caabcc91a8dfe/driver-core/src/test/java/com/datastax/driver/core/SchemaTest.java/left.java
+        if (cluster.getConfiguration().getProtocolOptions().getProtocolVersion() != ProtocolVersion.V1) {
+||||||| /usr/src/app/output/datastax/java-driver/5902ad493e7abcc96caa58b74c3caabcc91a8dfe/driver-core/src/test/java/com/datastax/driver/core/SchemaTest.java/base.java
+        if (cluster.getConfiguration().getProtocolOptions().getProtocolVersion() > 1) {
+=======
         if (version.getMajor() == 2) {
+>>>>>>> /usr/src/app/output/datastax/java-driver/5902ad493e7abcc96caa58b74c3caabcc91a8dfe/driver-core/src/test/java/com/datastax/driver/core/SchemaTest.java/right.java
             // Strip the last ';'
             withOpts = withOpts.substring(0, withOpts.length() - 1) + '\n';
 

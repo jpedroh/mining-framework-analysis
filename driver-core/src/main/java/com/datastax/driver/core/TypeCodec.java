@@ -230,9 +230,14 @@ abstract class TypeCodec<T> {
     }
 
     private static ByteBuffer pack(List<ByteBuffer> buffers, int elements, ProtocolVersion version) {
+        if (elements > 65535)
+            throw new IllegalArgumentException("Native protocol version 2 supports up to 65535 elements in any collection - but collection contains " + elements + " elements");
+
         int size = 0;
         for (ByteBuffer bb : buffers) {
             int elemSize = sizeOfValue(bb, version);
+            if (elemSize > 65535)
+                throw new IllegalArgumentException("Native protocol version 2 supports only elements with size up to 65535 bytes - but element size is " + elemSize + " bytes");
             size += elemSize;
         }
 
@@ -247,8 +252,6 @@ abstract class TypeCodec<T> {
         switch (version) {
             case V1:
             case V2:
-                if (elements > 65535)
-                    throw new IllegalArgumentException("Native protocol version 2 supports up to 65535 elements in any collection - but collection contains " + elements + " elements");
                 output.putShort((short)elements);
                 break;
             case V3:
@@ -336,10 +339,7 @@ abstract class TypeCodec<T> {
         switch (version) {
             case V1:
             case V2:
-                int elemSize = value.remaining();
-                if (elemSize > 65535)
-                    throw new IllegalArgumentException("Native protocol version 2 supports only elements with size up to 65535 bytes - but element size is " + elemSize + " bytes");
-                return 2 + elemSize;
+                return 2 + value.remaining();
             case V3:
                 return value == null ? 4 : 4 + value.remaining();
             default:

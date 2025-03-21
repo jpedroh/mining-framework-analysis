@@ -41,9 +41,9 @@ abstract class ArrayBackedResultSet implements ResultSet {
 
     protected final ColumnDefinitions metadata;
 
-    private final boolean wasApplied;
-
     protected final ProtocolVersion protocolVersion;
+
+    private final boolean wasApplied;
 
     private ArrayBackedResultSet(ColumnDefinitions metadata, List<ByteBuffer> firstRow, ProtocolVersion protocolVersion) {
         this.metadata = metadata;
