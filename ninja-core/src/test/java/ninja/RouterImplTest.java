@@ -37,7 +37,6 @@ import ninja.validation.ValidationImpl;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * => Most tests are done via class RoutesTest in project

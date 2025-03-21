@@ -31,7 +31,6 @@ import ninja.utils.MethodReference;
 import static org.hamcrest.CoreMatchers.is;
 import org.mockito.Mockito;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class ReverseRouterTest {
 
