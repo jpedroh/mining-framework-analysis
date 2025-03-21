@@ -1,63 +1,6 @@
-package de.uni_koblenz.jgralab.eca;
-
-import de.uni_koblenz.jgralab.AttributedElement;
-import de.uni_koblenz.jgralab.eca.events.Event;
-import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
-
-public class GreqlCondition implements Condition {
-	/**
-	 * Condition as GReQuL Query
-	 */
-	private String conditionExpression;
-
-	// +++++++++++++++++++++++++++++++++++++++++++++++++
-
-	/**
-	 * Creates a Condition with the given GReQuL Query as condition Expression
-	 *
-	 * @param conditionExpression
-	 *            condition as GReQuL Query
-	 */
-	public GreqlCondition(String conditionExpression) {
-		this.conditionExpression = conditionExpression;
-	}
-
-	// +++++++++++++++++++++++++++++++++++++++++++++++++
-
-	/**
-	 * Evaluates the condition
-	 *
-	 * @param event
-	 *            an Event containing the element to check the condition for
-	 * @return if the condition is evaluated to true
-	 */
-	@Override
-	public boolean evaluate(Event event) {
-		AttributedElement element = event.getElement();
-		GreqlEvaluator greqlEvaluator = ((ECARuleManager) event.getGraph()
-				.getECARuleManager()).getGreqlEvaluator();
-		if (this.conditionExpression.contains("context")) {
-			greqlEvaluator.setQuery("using context: " + conditionExpression);
-			greqlEvaluator.setVariable("context", element);
-		} else {
-			greqlEvaluator.setQuery(this.conditionExpression);
-		}
-		greqlEvaluator.startEvaluation();
-		return (Boolean) greqlEvaluator.getResult();
-	}
-
-	// +++++++++++++++++++++++++++++++++++++++++++++++++
-
-	/**
-	 * @return the conditionExpression
-	 */
-	public String getConditionExpression() {
-		return conditionExpression;
-	}
-
-	@Override
-	public String toString() {
-		return "Condition: " + this.conditionExpression;
-	}
-
-}
+  package    de . uni_koblenz . jgralab . eca ;   import    de . uni_koblenz . jgralab . AttributedElement ;  import      de . uni_koblenz . jgralab . eca . events . Event ;  import      de . uni_koblenz . jgralab . greql2 . evaluator . GreqlEvaluator ;   public class GreqlCondition  implements  Condition  {   private String  conditionExpression ;   public GreqlCondition  (  String conditionExpression )  {    this . conditionExpression = conditionExpression ; }    @ Override public boolean evaluate  (  Event event )  {  AttributedElement  element =  event . getElement  ( ) ;  GreqlEvaluator  greqlEvaluator =   (  ( ECARuleManager )   event . getGraph  ( ) . getECARuleManager  ( ) ) . getGreqlEvaluator  ( ) ;  if  (  conditionExpression . contains  ( "context" ) )  {   greqlEvaluator . setQuery  (  "using context: " + conditionExpression ) ;   greqlEvaluator . setVariable  ( "context" , element ) ; } else  {   greqlEvaluator . setQuery  ( conditionExpression ) ; }   greqlEvaluator . startEvaluation  ( ) ;  return  ( Boolean )  greqlEvaluator . getResult  ( ) ; 
+<<<<<<<
+ if  (  result . isBoolean  ( ) )  {  return  result . toBoolean  ( ) ; } else  {    System . err . println  (  "Invalid Condition: " + conditionExpression ) ;  throw  new ECAException  (     "Invalid Condition: \"" + conditionExpression + "\" evaluates to JValueType " +  result . getType  ( ) + " but the result has to be a boolean." ) ; }
+=======
+>>>>>>>
+ }   public String getConditionExpression  ( )  {  return conditionExpression ; }    @ Override public String toString  ( )  {  return  "Condition: " + conditionExpression ; } }
