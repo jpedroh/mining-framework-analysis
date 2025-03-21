@@ -6,6 +6,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import static org.skyscreamer.jsonassert.JSONCompareMode.*;
+import static org.skyscreamer.jsonassert.JSONCompareMode.LENIENT;
+import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 
 /**
  * Unit tests for {@link JSONAssert}
@@ -244,7 +246,7 @@ public class JSONAssertTest {
     }
 
     private void testPass(String expected, String actual, JSONCompareMode compareMode)
-            throws JSONException
+        throws JSONException
     {
         String message = expected + " == " + actual + " (" + compareMode + ")";
         JSONCompareResult result = JSONCompare.compareJSON(expected, actual, compareMode);
@@ -252,7 +254,7 @@ public class JSONAssertTest {
     }
 
     private void testFail(String expected, String actual, JSONCompareMode compareMode)
-            throws JSONException
+        throws JSONException
     {
         String message = expected + " != " + actual + " (" + compareMode + ")";
         JSONCompareResult result = JSONCompare.compareJSON(expected, actual, compareMode);
