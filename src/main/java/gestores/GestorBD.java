@@ -95,7 +95,7 @@ public class GestorBD {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
             response.setMsgStatus("Error");
-            response.setMsgError("Error al establecer conexión con base de datos.");
+            response.setMsgError("Error al establecer conexiï¿½n con base de datos.");
             //error de sintaxis de sql
             ex.printStackTrace();
         }
