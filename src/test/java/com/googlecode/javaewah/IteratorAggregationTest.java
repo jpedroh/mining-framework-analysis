@@ -73,8 +73,13 @@ public class IteratorAggregationTest {
 	@Test
 	public void testOr() {
 		for (int N = 1; N < 10; ++N) {
-			System.out.println("testOr N = " + N);
-			Iterator<EWAHCompressedBitmap[]> i = getCollections(N);
+<<<<<<< /usr/src/app/output/lemire/javaewah/ec0dc227a3e12ff2c833c560024e888858c13baf/src/test/java/com/googlecode/javaewah/IteratorAggregationTest.java/left.java
+			System.out.println("testOr N = " + N);	
+||||||| /usr/src/app/output/lemire/javaewah/ec0dc227a3e12ff2c833c560024e888858c13baf/src/test/java/com/googlecode/javaewah/IteratorAggregationTest.java/base.java
+=======
+			System.out.println("[iterators] testOr");	
+>>>>>>> /usr/src/app/output/lemire/javaewah/ec0dc227a3e12ff2c833c560024e888858c13baf/src/test/java/com/googlecode/javaewah/IteratorAggregationTest.java/right.java
+		Iterator<EWAHCompressedBitmap[]> i = getCollections(N);
 			while (i.hasNext()) {
 				EWAHCompressedBitmap[] x = i.next();
 				EWAHCompressedBitmap tanswer = EWAHCompressedBitmap.or(x);
@@ -88,7 +93,8 @@ public class IteratorAggregationTest {
 				assertTrue(x1.equals(x2));
 			}
 			System.gc();
-   	       }
+		}
+
 	}
 
 }
