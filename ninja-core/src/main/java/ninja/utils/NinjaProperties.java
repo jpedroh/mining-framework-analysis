@@ -1,29 +1,9 @@
-/**
- * Copyright (C) 2012-2014 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package ninja.utils;
-
 import java.util.Properties;
-
 import com.google.inject.ImplementedBy;
 
-@ImplementedBy(NinjaPropertiesImpl.class)
-public interface NinjaProperties {
-
-    /**
+@ImplementedBy(value = NinjaPropertiesImpl.class) public interface NinjaProperties {
+  /**
      * Often you may want to use a separate configuration file. You can define
      * the file to use in addition to your default config at
      * conf/application.conf by setting NINJA_EXTERNAL_CONF as JVM system
@@ -38,30 +18,30 @@ public interface NinjaProperties {
      * into security issues easily.
      * 
      */
-    String NINJA_EXTERNAL_CONF = "ninja.external.configuration";
+  String NINJA_EXTERNAL_CONF = "ninja.external.configuration";
 
-    /**
+  /**
      * The System property used to enable hot-reloading of the external
      * configuration file at runtime.
      *
      */
-    String NINJA_EXTERNAL_RELOAD = "ninja.external.reload";
+  String NINJA_EXTERNAL_RELOAD = "ninja.external.reload";
 
-    /**
+  /**
      * The default configuration. Make sure that file exists. Otherwise the
      * application won't start up.
      */
-    String CONF_FILE_LOCATION_BY_CONVENTION = "conf/application.conf";
+  String CONF_FILE_LOCATION_BY_CONVENTION = "conf/application.conf";
 
-    /**
+  /**
      * Get a String property or null if it is not there...
      * 
      * @param key
      * @return the property of null if not there
      */
-    String get(String key);
+  String get(String key);
 
-    /**
+  /**
      * Get a String property or a default value when property cannot be found in
      * any configuration file.
      * 
@@ -72,17 +52,17 @@ public interface NinjaProperties {
      *            configuration.
      * @return the value of the key or the default value.
      */
-    String getWithDefault(String key, String defaultValue);
+  String getWithDefault(String key, String defaultValue);
 
-    /**
+  /**
      * Get a property as Integer of null if not there / or property no integer
      * 
      * @param key
      * @return the property or null if not there or property no integer
      */
-    Integer getInteger(String key);
+  Integer getInteger(String key);
 
-    /**
+  /**
      * Get a Integer property or a default value when property cannot be found
      * in any configuration file.
      * 
@@ -93,16 +73,16 @@ public interface NinjaProperties {
      *            configuration.
      * @return the value of the key or the default value.
      */
-    Integer getIntegerWithDefault(String key, Integer defaultValue);
+  Integer getIntegerWithDefault(String key, Integer defaultValue);
 
-    /**
+  /**
      * 
      * @param key
      * @return the property or null if not there or property no boolean
      */
-    Boolean getBoolean(String key);
+  Boolean getBoolean(String key);
 
-    /**
+  /**
      * Get a Boolean property or a default value when property cannot be found
      * in any configuration file.
      * 
@@ -113,66 +93,66 @@ public interface NinjaProperties {
      *            configuration.
      * @return the value of the key or the default value.
      */
-    Boolean getBooleanWithDefault(String key, Boolean defaultValue);
+  Boolean getBooleanWithDefault(String key, Boolean defaultValue);
 
-    /**
+  /**
      * The "die" method forces this key to be set. Otherwise a runtime exception
      * will be thrown.
      * 
      * @param key
      * @return the boolean or a RuntimeException will be thrown.
      */
-    Boolean getBooleanOrDie(String key);
+  Boolean getBooleanOrDie(String key);
 
-    /**
+  /**
      * The "die" method forces this key to be set. Otherwise a runtime exception
      * will be thrown.
      * 
      * @param key
      * @return the Integer or a RuntimeException will be thrown.
      */
-    Integer getIntegerOrDie(String key);
+  Integer getIntegerOrDie(String key);
 
-    /**
+  /**
      * The "die" method forces this key to be set. Otherwise a runtime exception
      * will be thrown.
      * 
      * @param key
      * @return the String or a RuntimeException will be thrown.
      */
-    String getOrDie(String key);
+  String getOrDie(String key);
 
-    /**
+  /**
      * eg. key=myval1,myval2
      * 
      * Delimiter is a comma "," as outlined in the example above.
      * 
      * @return an array containing the values of that key or null if not found.
      */
-    String[] getStringArray(String key);
+  String[] getStringArray(String key);
 
-    /**
+  /**
      * Whether we are in dev mode
      * 
      * @return True if we are in dev mode
      */
-    boolean isDev();
+  boolean isDev();
 
-    /**
+  /**
      * Whether we are in test mode
      * 
      * @return True if we are in test mode
      */
-    boolean isTest();
+  boolean isTest();
 
-    /**
+  /**
      * Whether we are in prod mode
      * 
      * @return True if we are in prod mode
      */
-    boolean isProd();
-    
-    /**
+  boolean isProd();
+
+  /**
      * Returns context under which the application is currently running.
      * For instance on Java application servers it is common to use something like
      * http://www.myserver.com/myapplication/index.html - where myapplication
@@ -182,14 +162,14 @@ public interface NinjaProperties {
      * 
      * @return The context or "" if empty.
      */
-    String getContextPath();
-    
-    void setContextPath(String contextPath);
+  String getContextPath();
 
-    /**
+  void setContextPath(String contextPath);
+
+  /**
      * 
      * @return All properties that are currently loaded from internal and
      *         external files
      */
-    Properties getAllCurrentNinjaProperties();
+  Properties getAllCurrentNinjaProperties();
 }
