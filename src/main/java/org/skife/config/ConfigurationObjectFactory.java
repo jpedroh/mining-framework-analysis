@@ -132,9 +132,15 @@ public class ConfigurationObjectFactory
 
             // First value found wins
             if (value != null) {
+<<<<<<< /usr/src/app/output/brianm/config-magic/a7953193ae2e296565ecee2809830b5abb3a3bb7/src/main/java/org/skife/config/ConfigurationObjectFactory.java/left.java
+                logger.info("Assigning value [{}] for [{}] on [{}#{}()]",
+                            new Object[] { value, propertyName, method.getDeclaringClass().getName(), method.getName() });
+||||||| /usr/src/app/output/brianm/config-magic/a7953193ae2e296565ecee2809830b5abb3a3bb7/src/main/java/org/skife/config/ConfigurationObjectFactory.java/base.java
+=======
                 assignedFrom = "property: '" + propertyName + "'";
                 logger.info("Assigning value [{}] for [{}] on [{}#{}()]",
                             new Object[] { value, propertyName, method.getDeclaringClass().getName(), method.getName() });
+>>>>>>> /usr/src/app/output/brianm/config-magic/a7953193ae2e296565ecee2809830b5abb3a3bb7/src/main/java/org/skife/config/ConfigurationObjectFactory.java/right.java
                 break;
             }
         }
@@ -159,12 +165,50 @@ public class ConfigurationObjectFactory
         //
         if (value == null) {
             if (hasDefault) {
+<<<<<<< /usr/src/app/output/brianm/config-magic/a7953193ae2e296565ecee2809830b5abb3a3bb7/src/main/java/org/skife/config/ConfigurationObjectFactory.java/left.java
+                value = method.getAnnotation(Default.class).value();
+
+                logger.info("Assigning default value [{}] for {} on [{}#{}()]",
+                            new Object[] { value, propertyNames, method.getDeclaringClass().getName(), method.getName() });
+||||||| /usr/src/app/output/brianm/config-magic/a7953193ae2e296565ecee2809830b5abb3a3bb7/src/main/java/org/skife/config/ConfigurationObjectFactory.java/base.java
+            	value = method.getAnnotation(Default.class).value();
+=======
                 value = method.getAnnotation(Default.class).value();
                 assignedFrom = "annotation: @Default";
 
                 logger.info("Assigning default value [{}] for {} on [{}#{}()]",
                             new Object[] { value, propertyNames, method.getDeclaringClass().getName(), method.getName() });
+>>>>>>> /usr/src/app/output/brianm/config-magic/a7953193ae2e296565ecee2809830b5abb3a3bb7/src/main/java/org/skife/config/ConfigurationObjectFactory.java/right.java
             }
+<<<<<<< /usr/src/app/output/brianm/config-magic/a7953193ae2e296565ecee2809830b5abb3a3bb7/src/main/java/org/skife/config/ConfigurationObjectFactory.java/left.java
+            else if (hasDefaultNull) {
+                logger.info("Assigning null default value for {} on [{}#{}()]",
+                            new Object[] { propertyNames, method.getDeclaringClass().getName(), method.getName() });
+            }
+            else {
+                // Final try: Is the method is actually callable?
+                if (!Modifier.isAbstract(method.getModifiers())) {
+                    useMethod = true;
+                    logger.info("Using method itself for {} on [{}#{}()]",
+                                new Object[] { propertyNames, method.getDeclaringClass().getName(), method.getName() });
+                }
+                else {
+                    throw new IllegalArgumentException(String.format("No value present for '%s' in [%s]",
+                            prettyPrint(propertyNames, mappedReplacements),
+                            method.toGenericString()));
+                }
+||||||| /usr/src/app/output/brianm/config-magic/a7953193ae2e296565ecee2809830b5abb3a3bb7/src/main/java/org/skife/config/ConfigurationObjectFactory.java/base.java
+            else if (!hasDefaultNull) {
+            	// Final try: Is the method is actually callable?
+            	if (!Modifier.isAbstract(method.getModifiers())) {
+            		useMethod = true;
+            	}
+            	else {
+            		throw new IllegalArgumentException(String.format("No value present for '%s' in [%s]",
+            				prettyPrint(propertyNames, mappedReplacements),
+            				method.toGenericString()));
+            	}
+=======
             else if (hasDefaultNull) {
                 logger.info("Assigning null default value for {} on [{}#{}()]",
                             new Object[] { propertyNames, method.getDeclaringClass().getName(), method.getName() });
@@ -183,6 +227,7 @@ public class ConfigurationObjectFactory
                             prettyPrint(propertyNames, mappedReplacements),
                             method.toGenericString()));
                 }
+>>>>>>> /usr/src/app/output/brianm/config-magic/a7953193ae2e296565ecee2809830b5abb3a3bb7/src/main/java/org/skife/config/ConfigurationObjectFactory.java/right.java
             }
         }
 
