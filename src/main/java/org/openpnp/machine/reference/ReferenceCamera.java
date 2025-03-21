@@ -638,7 +638,8 @@ public abstract class ReferenceCamera extends AbstractBroadcastingCamera impleme
             // We do skip the convert to and from Mat if no transforms are needed.
             // But we must enter while performing original calibration.
             else if (isDeinterlaced()
-                || isCropped() 
+                || isCropped()
+                || isWhiteBalanced() 
                 || isCalibrating()
                 || isUndistorted()
                 || isScaled()
