@@ -2939,25 +2939,6 @@ public class MorphologyTest {
     }
 
     @Test
-    public void manīm() {
-        Word w = locītājs.analyze("manīm");
-        assertTrue(w.isRecognized());
-
-        List<Wordform> formas = locītājs.generateInflections("es");
-        for (Wordform forma : formas) {
-            if (forma.getToken().equalsIgnoreCase("manīm"))
-                describe(new LinkedList<Wordform>(Arrays.asList(forma)));
-            assertNotEquals("manīm", forma.getToken()); // šo formu nedrīkst ģenerēt
-        }
-
-        formas = locītājs.generateInflections("tu");
-        for (Wordform forma : formas) {
-            if (forma.getToken().equalsIgnoreCase("tevīm"))
-                describe(new LinkedList<Wordform>(Arrays.asList(forma)));
-            assertNotEquals("tevīm", forma.getToken()); // šo formu nedrīkst ģenerēt
-        }
-    }
-
     // Aizdomas par tagset problēmām
     public void laura_20180614() {
         Word w = locītājs.analyze("ka");
@@ -2985,5 +2966,25 @@ public class MorphologyTest {
         w = locītājs.analyze("norādījuši");
         assertTrue(w.isRecognized());
         assertTrue(w.getBestWordform().getTag() + " needs to end with pn", w.getBestWordform().getTag().endsWith("pn"));
+    }
+
+    @Test
+    public void manīm() {
+        Word w = locītājs.analyze("manīm");
+        assertTrue(w.isRecognized());
+
+        List<Wordform> formas = locītājs.generateInflections("es");
+        for (Wordform forma : formas) {
+            if (forma.getToken().equalsIgnoreCase("manīm"))
+                describe(new LinkedList<Wordform>(Arrays.asList(forma)));
+            assertNotEquals("manīm", forma.getToken()); // šo formu nedrīkst ģenerēt
+        }
+
+        formas = locītājs.generateInflections("tu");
+        for (Wordform forma : formas) {
+            if (forma.getToken().equalsIgnoreCase("tevīm"))
+                describe(new LinkedList<Wordform>(Arrays.asList(forma)));
+            assertNotEquals("tevīm", forma.getToken()); // šo formu nedrīkst ģenerēt
+        }
     }
 }
