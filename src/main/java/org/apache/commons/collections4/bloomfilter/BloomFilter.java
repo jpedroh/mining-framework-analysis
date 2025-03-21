@@ -1,21 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.apache.commons.collections4.bloomfilter;
-
 import java.util.Objects;
 
 /**
@@ -28,44 +11,41 @@ import java.util.Objects;
  * @since 4.5
  */
 public interface BloomFilter extends IndexProducer, BitMapProducer {
-
-    /**
+  /**
      * The sparse characteristic used to determine the best method for matching.
      * <p>For `sparse` implementations
      * the {@code forEachIndex(IntConsumer consumer)} method is more efficient. For non `sparse` implementations
      * the {@code forEachBitMap(LongConsumer consumer)} is more efficient. Implementers should determine if it is easier
      * for the implementation to produce indexes of bit map blocks.</p>
      */
-    int SPARSE = 0x1;
+  int SPARSE = 0x1;
 
-    /**
+  /**
      * Creates a new instance of the BloomFilter with the same properties as the current one.
      * @return a copy of this BloomFilter
      */
-    BloomFilter copy();
+  BloomFilter copy();
 
-    // Query Operations
-
-    /**
+  /**
      * Returns the characteristics of the filter.
      * <p>
      * Characteristics are defined as bits within the characteristics integer.
      * @return the characteristics for this bloom filter.
      */
-    int characteristics();
+  int characteristics();
 
-    /**
+  /**
      * Gets the shape that was used when the filter was built.
      * @return The shape the filter was built with.
      */
-    Shape getShape();
+  Shape getShape();
 
-    /**
+  /**
      * Resets the filter to its initial, unpopulated state.
      */
-    void clear();
+  void clear();
 
-    /**
+  /**
      * Returns {@code true} if this filter contains the specified filter.
      *
      * <p>Specifically this
@@ -76,12 +56,12 @@ public interface BloomFilter extends IndexProducer, BitMapProducer {
      * @param other the other Bloom filter
      * @return true if all enabled bits in the other filter are enabled in this filter.
      */
-    default boolean contains(final BloomFilter other) {
-        Objects.requireNonNull(other, "other");
-        return (characteristics() & SPARSE) != 0 ? contains((IndexProducer) other) : contains((BitMapProducer) other);
-    }
+  default boolean contains(final BloomFilter other) {
+    Objects.requireNonNull(other, "other");
+    return (characteristics() & SPARSE) != 0 ? contains((IndexProducer) other) : contains((BitMapProducer) other);
+  }
 
-    /**
+  /**
      * Returns {@code true} if this filter contains the bits specified in the hasher.
      *
      * <p>Specifically this returns {@code true} if this filter is enabled for all bit indexes
@@ -91,13 +71,13 @@ public interface BloomFilter extends IndexProducer, BitMapProducer {
      * @param hasher the hasher to provide the indexes
      * @return true if this filter is enabled for all bits specified by the hasher
      */
-    default boolean contains(final Hasher hasher) {
-        Objects.requireNonNull(hasher, "Hasher");
-        final Shape shape = getShape();
-        return contains(hasher.indices(shape));
-    }
+  default boolean contains(final Hasher hasher) {
+    Objects.requireNonNull(hasher, "Hasher");
+    final Shape shape = getShape();
+    return contains(hasher.indices(shape));
+  }
 
-    /**
+  /**
      * Returns {@code true} if this filter contains the indices specified IndexProducer.
      *
      * <p>Specifically this returns {@code true} if this filter is enabled for all bit indexes
@@ -106,22 +86,20 @@ public interface BloomFilter extends IndexProducer, BitMapProducer {
      * @param indexProducer the IndexProducer to provide the indexes
      * @return {@code true} if this filter is enabled for all bits specified by the IndexProducer
      */
-    boolean contains(IndexProducer indexProducer);
+  boolean contains(IndexProducer indexProducer);
 
-    /**
+  /**
      * Returns {@code true} if this filter contains the bits specified in the bit maps produced by the
      * bitMapProducer.
      *
      * @param bitMapProducer the the {@code BitMapProducer} to provide the bit maps.
      * @return {@code true} if this filter is enabled for all bits specified by the bit maps
      */
-    default boolean contains(final BitMapProducer bitMapProducer) {
-        return forEachBitMapPair(bitMapProducer, (x, y) -> (x & y) == y);
-    }
+  default boolean contains(final BitMapProducer bitMapProducer) {
+    return forEachBitMapPair(bitMapProducer, (x, y) -> (x & y) == y);
+  }
 
-    // update operations
-
-    /**
+  /**
      * Merges the specified Bloom filter into this Bloom filter.
      *
      * <p>Specifically all
@@ -135,11 +113,11 @@ public interface BloomFilter extends IndexProducer, BitMapProducer {
      * @param other The bloom filter to merge into this one.
      * @return true if the merge was successful
      */
-    default boolean merge(final BloomFilter other) {
-        return (characteristics() & SPARSE) != 0 ? merge((IndexProducer) other) : merge((BitMapProducer) other);
-    }
+  default boolean merge(final BloomFilter other) {
+    return (characteristics() & SPARSE) != 0 ? merge((IndexProducer) other) : merge((BitMapProducer) other);
+  }
 
-    /**
+  /**
      * Merges the specified hasher into this Bloom filter. Specifically all
      * bit indexes that are identified by the {@code hasher} will be enabled in this filter.
      *
@@ -152,12 +130,12 @@ public interface BloomFilter extends IndexProducer, BitMapProducer {
      * @return true if the merge was successful
      * @throws IllegalArgumentException if hasher produces an illegal value.
      */
-    default boolean merge(final Hasher hasher) {
-        Objects.requireNonNull(hasher, "hasher");
-        return merge(hasher.indices(getShape()));
-    }
+  default boolean merge(final Hasher hasher) {
+    Objects.requireNonNull(hasher, "hasher");
+    return merge(hasher.indices(getShape()));
+  }
 
-    /**
+  /**
      * Merges the specified IndexProducer into this Bloom filter. Specifically all
      * bit indexes that are identified by the {@code producer} will be enabled in this filter.
      *
@@ -170,9 +148,9 @@ public interface BloomFilter extends IndexProducer, BitMapProducer {
      * @return true if the merge was successful
      * @throws IllegalArgumentException if producer sends illegal value.
      */
-    boolean merge(IndexProducer indexProducer);
+  boolean merge(IndexProducer indexProducer);
 
-    /**
+  /**
      * Merges the specified hasher into this Bloom filter. Specifically all
      * bit indexes that are identified by the {@code producer} will be enabled in this filter.
      *
@@ -185,31 +163,29 @@ public interface BloomFilter extends IndexProducer, BitMapProducer {
      * @return true if the merge was successful
      * @throws IllegalArgumentException if producer sends illegal value.
      */
-    boolean merge(BitMapProducer bitMapProducer);
+  boolean merge(BitMapProducer bitMapProducer);
 
-    // Counting Operations
-
-    /**
+  /**
      * Determines if the bloom filter is "full".
      *
      * <p>Full is defined as having no unset bits.</p>
      *
      * @return {@code true} if the filter is full, {@code false} otherwise.
      */
-    default boolean isFull() {
-        return cardinality() == getShape().getNumberOfBits();
-    }
+  default boolean isFull() {
+    return cardinality() == getShape().getNumberOfBits();
+  }
 
-    /**
+  /**
      * Gets the cardinality (number of enabled bits) of this Bloom filter.
      *
      * <p>This is also known as the Hamming value or Hamming number.</p>
      *
      * @return the cardinality of this filter
      */
-    int cardinality();
+  int cardinality();
 
-    /**
+  /**
      * Estimates the number of items in the Bloom filter.
      *
      * <p>By default this is the rounding of the {@code Shape.estimateN(cardinality)} calculation for the
@@ -230,19 +206,19 @@ public interface BloomFilter extends IndexProducer, BitMapProducer {
      * @see Shape#estimateN(int)
      * @see Shape
      */
-    default int estimateN() {
-        double d = getShape().estimateN(cardinality());
-        if (Double.isInfinite(d)) {
-            return Integer.MAX_VALUE;
-        }
-        if (Double.isNaN(d)) {
-            throw new IllegalArgumentException("Cardinality too large: "+cardinality());
-        }
-        long l = Math.round(d);
-        return l>Integer.MAX_VALUE?Integer.MAX_VALUE:(int) l;
+  default int estimateN() {
+    double d = getShape().estimateN(cardinality());
+    if (Double.isInfinite(d)) {
+      return Integer.MAX_VALUE;
     }
+    if (Double.isNaN(d)) {
+      throw new IllegalArgumentException("Cardinality too large: " + cardinality());
+    }
+    long l = Math.round(d);
+    return l > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) l;
+  }
 
-    /**
+  /**
      * Estimates the number of items in the union of this Bloom filter with the other bloom filter.
      *
      * <p>This produces an estimate roughly equivalent to the number of unique Hashers that have been merged into either
@@ -258,14 +234,14 @@ public interface BloomFilter extends IndexProducer, BitMapProducer {
      * @see #estimateN()
      * @see Shape
      */
-    default int estimateUnion(final BloomFilter other) {
-        Objects.requireNonNull(other, "other");
-        final BloomFilter cpy = this.copy();
-        cpy.merge(other);
-        return cpy.estimateN();
-    }
+  default int estimateUnion(final BloomFilter other) {
+    Objects.requireNonNull(other, "other");
+    final BloomFilter cpy = this.copy();
+    cpy.merge(other);
+    return cpy.estimateN();
+  }
 
-    /**
+  /**
      * Estimates the number of items in the intersection of this Bloom filter with the other bloom filter.
      *
      * <p></p>
@@ -283,30 +259,29 @@ public interface BloomFilter extends IndexProducer, BitMapProducer {
      * @see #estimateN()
      * @see Shape
      */
-    default int estimateIntersection(final BloomFilter other) {
-        Objects.requireNonNull(other, "other");
-        double eThis = getShape().estimateN(cardinality());
-        double eOther = getShape().estimateN(other.cardinality());
-        long estimate = 0L;
-        if (Double.isInfinite(eThis) && Double.isInfinite(eOther)) {
-            // if both are infinite the union is infinite and we return Integer.MAX_VALUE
-            return Integer.MAX_VALUE;
-        }
-        // if one is infinite the intersection is the other.
-        if (Double.isInfinite(eThis)) {
-            estimate = Math.round( eOther );
-        } else if (Double.isInfinite(eOther)) {
-            estimate = Math.round( eThis );
-        } else {
-            BloomFilter union = this.copy();
-            union.merge(other);
-            double eUnion = getShape().estimateN(union.cardinality());
-            if (Double.isInfinite(eUnion)) {
-                throw new IllegalArgumentException( "The estimated N for the union of the filters is infinite");
-            }
-            // all estimated values are small values greater than 0 but less that number of bits
-            estimate = Math.round( eThis + eOther - eUnion );
-        }
-        return estimate>Integer.MAX_VALUE?Integer.MAX_VALUE:(int) estimate;
+  default int estimateIntersection(final BloomFilter other) {
+    Objects.requireNonNull(other, "other");
+    double eThis = getShape().estimateN(cardinality());
+    double eOther = getShape().estimateN(other.cardinality());
+    long estimate = 0L;
+    if (Double.isInfinite(eThis) && Double.isInfinite(eOther)) {
+      return Integer.MAX_VALUE;
     }
+    if (Double.isInfinite(eThis)) {
+      estimate = Math.round(eOther);
+    } else {
+      if (Double.isInfinite(eOther)) {
+        estimate = Math.round(eThis);
+      } else {
+        BloomFilter union = this.copy();
+        union.merge(other);
+        double eUnion = getShape().estimateN(union.cardinality());
+        if (Double.isInfinite(eUnion)) {
+          throw new IllegalArgumentException("The estimated N for the union of the filters is infinite");
+        }
+        estimate = Math.round(eThis + eOther - eUnion);
+      }
+    }
+    return estimate > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) estimate;
+  }
 }
