@@ -106,8 +106,6 @@ public class ConsoleReader
 
     private boolean bellEnabled = !Configuration.getBoolean(JLINE_NOBELL, true);
 
-    private boolean handleUserInterrupt = false;
-
     private Character mask;
 
     private Character echoCharacter;
@@ -125,27 +123,42 @@ public class ConsoleReader
      * the nonBlockingInput, but we have to retain a handle to it so that
      * we can shut down its blocking read thread when we go away.
      */
+
     private NonBlockingInputStream in;
+
     private long                   escapeTimeout;
+
     private Reader                 reader;
+
     private NonBlockingReaderHelper NonBlockingReaderHelper;
 
     /*
      * TODO: Please read the comments about this in setInput(), but this needs
      * to be done away with.
      */
+
     private boolean                isUnitTestInput;
 
     /**
      * Last character searched for with a vi character search
      */
-    private char  charSearchChar = 0;           // Character to search for
-    private char  charSearchLastInvokeChar = 0; // Most recent invocation key
-    private char  charSearchFirstInvokeChar = 0;// First character that invoked
+
+    private char  charSearchChar = 0;
+
+// Character to search for
+
+    private char  charSearchLastInvokeChar = 0;
+
+// Most recent invocation key
+
+    private char  charSearchFirstInvokeChar = 0;
+
+// First character that invoked
 
     /**
      * The vi yank buffer
      */
+
     private String yankBuffer = "";
 
     private String encoding;
@@ -164,23 +177,16 @@ public class ConsoleReader
 
     private boolean skipLF = false;
 
-    /**
-     * Set to true if the reader should attempt to detect copy-n-paste. The
-     * effect of this that an attempt is made to detect if tab is quickly
-     * followed by another character, then it is assumed that the tab was
-     * a literal tab as part of a copy-and-paste operation and is inserted as
-     * such.
-     */
-    private boolean copyPasteDetection = false;
-
     /*
      * Current internal state of the line reader
      */
+
     private State   state = State.NORMAL;
 
     /**
      * Possible states in which the current readline operation may be in.
      */
+
     private static enum State {
         /**
          * The user is just typing away
@@ -296,6 +302,7 @@ public class ConsoleReader
      * have completed using the reader as it shuts down and cleans up resources
      * that would otherwise be "leaked".
      */
+
     public void shutdown() {
         if (in != null) {
             in.shutdown();
@@ -309,6 +316,7 @@ public class ConsoleReader
     /**
      * Shuts down the ConsoleReader if the JVM attempts to clean it up.
      */
+
     @Override
     protected void finalize() throws Throwable {
         try {
@@ -344,28 +352,12 @@ public class ConsoleReader
     }
 
     /**
-     * Enables or disables copy and paste detection. The effect of enabling this
-     * this setting is that when a tab is received immediately followed by another
-     * character, the tab will not be treated as a completion, but as a tab literal.
-     * @param onoff true if detection is enabled
-     */
-    public void setCopyPasteDetection(final boolean onoff) {
-        copyPasteDetection = onoff;
-    }
-
-    /**
-     * @return true if copy and paste detection is enabled.
-     */
-    public boolean isCopyPasteDetectionEnabled() {
-        return copyPasteDetection;
-    }
-
-    /**
      * Set whether the console bell is enabled.
      *
      * @param enabled true if enabled; false otherwise
      * @since 2.7
      */
+
     public void setBellEnabled(boolean enabled) {
         this.bellEnabled = enabled;
     }
@@ -376,32 +368,9 @@ public class ConsoleReader
      * @return true if enabled; false otherwise
      * @since 2.7
      */
+
     public boolean getBellEnabled() {
         return bellEnabled;
-    }
-
-    /**
-     * Set whether user interrupts (ctrl-C) are handled by having JLine
-     * throw {@link UserInterruptException} from {@link #readLine}.
-     * Otherwise, the JVM will handle {@code SIGINT} as normal, which
-     * usually causes it to exit. The default is {@code false}.
-     *
-     * @since 2.10
-     */
-    public void setHandleUserInterrupt(boolean enabled)
-    {
-        this.handleUserInterrupt = enabled;
-    }
-
-    /**
-     * Get whether user interrupt handling is enabled
-     *
-     * @return true if enabled; false otherwise
-     * @since 2.10
-     */
-    public boolean getHandleUserInterrupt()
-    {
-        return handleUserInterrupt;
     }
 
     /**
@@ -410,6 +379,7 @@ public class ConsoleReader
      * @param commentBegin The begin comment string.
      * @since 2.7
      */
+
     public void setCommentBegin(String commentBegin) {
         this.commentBegin = commentBegin;
     }
@@ -419,6 +389,7 @@ public class ConsoleReader
      * insert-comment key is struck.
      * @since 2.7
      */
+
     public String getCommentBegin() {
         String str = commentBegin;
 
@@ -463,6 +434,7 @@ public class ConsoleReader
      *
      * @param c the character to echo to the console in place of the typed character.
      */
+
     public void setEchoCharacter(final Character c) {
         this.echoCharacter = c;
     }
@@ -470,6 +442,7 @@ public class ConsoleReader
     /**
      * Returns the echo character.
      */
+
     public Character getEchoCharacter() {
         return echoCharacter;
     }
@@ -479,6 +452,7 @@ public class ConsoleReader
      *
      * @return false if we failed (e.g., the buffer was empty)
      */
+
     protected final boolean resetLine() throws IOException {
         if (buf.cursor == 0) {
             return false;
@@ -499,6 +473,7 @@ public class ConsoleReader
      * prompt is returned if no '\n' characters are present.
      * null is returned if prompt is null.
      */
+
     private String lastLine(String str) {
         if (str == null) return "";
         int last = str.lastIndexOf("\n");
@@ -526,6 +501,7 @@ public class ConsoleReader
     /**
      * Move the cursor position to the specified absolute index.
      */
+
     public final boolean setCursorPosition(final int position) throws IOException {
         if (position == buf.cursor) {
             return true;
@@ -540,6 +516,7 @@ public class ConsoleReader
      *
      * @param buffer the new contents of the buffer.
      */
+
     private void setBuffer(final String buffer) throws IOException {
         // don't bother modifying it if it is unchanged
         if (buffer.equals(buf.buffer.toString())) {
@@ -575,19 +552,10 @@ public class ConsoleReader
         setBuffer(String.valueOf(buffer));
     }
 
-    private void setBufferKeepPos(final String buffer) throws IOException {
-        int pos = buf.cursor;
-        setBuffer(buffer);
-        setCursorPosition(pos);
-    }
-
-    private void setBufferKeepPos(final CharSequence buffer) throws IOException {
-        setBufferKeepPos(String.valueOf(buffer));
-    }
-
     /**
      * Output put the prompt + the current buffer
      */
+
     public final void drawLine() throws IOException {
         String prompt = getPrompt();
         if (prompt != null) {
@@ -606,6 +574,7 @@ public class ConsoleReader
     /**
      * Clear the line and redraw it.
      */
+
     public final void redrawLine() throws IOException {
         print(RESET_LINE);
 //        flush();
@@ -617,6 +586,7 @@ public class ConsoleReader
      *
      * @return the former contents of the buffer.
      */
+
     final String finishBuffer() throws IOException { // FIXME: Package protected because used by tests
         String str = buf.buffer.toString();
         String historyLine = str;
@@ -653,6 +623,7 @@ public class ConsoleReader
      * Expand event designator such as !!, !#, !3, etc...
      * See http://www.gnu.org/software/bash/manual/html_node/Event-Designators.html
      */
+
     protected String expandEvents(String str) throws IOException {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < str.length(); i++) {
@@ -813,6 +784,7 @@ public class ConsoleReader
     /**
      * Write out the specified string to the buffer and the output stream.
      */
+
     public final void putString(final CharSequence str) throws IOException {
         buf.write(str);
         if (mask == null) {
@@ -832,6 +804,7 @@ public class ConsoleReader
      *
      * @param clear the number of characters to clear after the end of the buffer
      */
+
     private void drawBuffer(final int clear) throws IOException {
         // debug ("drawBuffer: " + clear);
         if (buf.cursor == buf.length() && clear == 0) {
@@ -882,6 +855,7 @@ public class ConsoleReader
      * Redraw the rest of the buffer from the cursor onwards. This is necessary
      * for inserting text into the buffer.
      */
+
     private void drawBuffer() throws IOException {
         drawBuffer(0);
     }
@@ -894,6 +868,7 @@ public class ConsoleReader
      * cursor - if > 0, assume some stuff was printed and weird wrap has to be
      * checked
      */
+
     private void clearAhead(final int num, int delta) throws IOException {
         if (num == 0) {
             return;
@@ -935,6 +910,7 @@ public class ConsoleReader
     /**
      * Move the visual cursor backwards without modifying the buffer cursor.
      */
+
     protected void back(final int num) throws IOException {
         if (num == 0) return;
         if (terminal.isAnsiSupported()) {
@@ -960,6 +936,7 @@ public class ConsoleReader
      * Flush the console output stream. This is important for printout out single characters (like a backspace or
      * keyboard) that we want the console to handle immediately.
      */
+
     public void flush() throws IOException {
         out.flush();
     }
@@ -973,6 +950,7 @@ public class ConsoleReader
      *
      * @return the number of characters backed up
      */
+
     private int backspace(final int num) throws IOException {
         if (buf.cursor == 0) {
             return 0;
@@ -1017,6 +995,7 @@ public class ConsoleReader
      *
      * @return true if successful
      */
+
     public boolean backspace() throws IOException {
         return backspace(1) == 1;
     }
@@ -1031,6 +1010,7 @@ public class ConsoleReader
     /**
      * Delete the character at the current position and redraw the remainder of the buffer.
      */
+
     private boolean deleteCurrentCharacter() throws IOException {
         if (buf.length() == 0 || buf.cursor == buf.length()) {
             return false;
@@ -1050,6 +1030,7 @@ public class ConsoleReader
      * @param op The incoming operation to remap
      * @return The remaped operation
      */
+
     private Operation viDeleteChangeYankToRemap (Operation op) {
         switch (op) {
             case VI_EOF_MAYBE:
@@ -1083,6 +1064,7 @@ public class ConsoleReader
      * @return true if it was done.
      * @throws IOException
      */
+
     private boolean viRubout(int count) throws IOException {
         boolean ok = true;
         for (int i = 0; ok && i < count; i++) {
@@ -1098,6 +1080,7 @@ public class ConsoleReader
      * @return true if its works, false if it didn't
      * @throws IOException
      */
+
     private boolean viDelete(int count) throws IOException {
         boolean ok = true;
         for (int i = 0; ok && i < count; i++) {
@@ -1115,6 +1098,7 @@ public class ConsoleReader
      *   case changes could be completed.
      * @throws IOException
      */
+
     private boolean viChangeCase(int count) throws IOException {
         boolean ok = true;
         for (int i = 0; ok && i < count; i++) {
@@ -1144,6 +1128,7 @@ public class ConsoleReader
      * @return Whether or not there were problems encountered
      * @throws IOException
      */
+
     private boolean viChangeChar(int count, int c) throws IOException {
         // EOF, ESC, or CTRL-C aborts.
         if (c < 0 || c == '\033' || c == '\003') {
@@ -1174,6 +1159,7 @@ public class ConsoleReader
      * @return true if the move was successful, false otherwise
      * @throws IOException
      */
+
     private boolean viPreviousWord(int count) throws IOException {
         boolean ok = true;
         if (buf.cursor == 0) {
@@ -1199,17 +1185,6 @@ public class ConsoleReader
         return ok;
     }
 
-    /**
-     * Performs the vi "delete-to" action, deleting characters between a given
-     * span of the input line.
-     * @param startPos The start position
-     * @param endPos The end position.
-     * @param isChange If true, then the delete is part of a change operationg
-     *    (e.g. "c$" is change-to-end-of line, so we first must delete to end 
-     *    of line to start the change
-     * @return true if it succeeded, false otherwise
-     * @throws IOException
-     */
     private boolean viDeleteTo(int startPos, int endPos, boolean isChange) throws IOException {
         if (startPos == endPos) {
             return true;
@@ -1247,6 +1222,7 @@ public class ConsoleReader
      * @return true if the yank succeeded
      * @throws IOException
      */
+
     private boolean viYankTo(int startPos, int endPos) throws IOException {
         int cursorPos = startPos;
 
@@ -1279,6 +1255,7 @@ public class ConsoleReader
      * @return true if it worked, false otherwise
      * @throws IOException
      */
+
     private boolean viPut(int count) throws IOException {
         if (yankBuffer.length () == 0) {
             return true;
@@ -1301,6 +1278,7 @@ public class ConsoleReader
      * @return true if the char was found, false otherwise
      * @throws IOException
      */
+
     private boolean viCharSearch(int count, int invokeChar, int ch) throws IOException {
         if (ch < 0 || invokeChar < 0) {
             return false;
@@ -1410,6 +1388,7 @@ public class ConsoleReader
      * @return true if line reader is in the middle of doing a change-to
      *   delete-to or yank-to.
      */
+
     private final boolean isInViMoveOperationState() {
         return state == State.VI_CHANGE_TO
             || state == State.VI_DELETE_TO
@@ -1425,6 +1404,7 @@ public class ConsoleReader
      * @return true if the move was successful, false otherwise
      * @throws IOException
      */
+
     private boolean viNextWord(int count) throws IOException {
         int pos = buf.cursor;
         int end = buf.buffer.length();
@@ -1463,6 +1443,7 @@ public class ConsoleReader
      * @return true if it worked.
      * @throws IOException
      */
+
     private boolean viEndWord(int count) throws IOException {
         int pos = buf.cursor;
         int end = buf.buffer.length();
@@ -1521,6 +1502,7 @@ public class ConsoleReader
      * @return true if it worked, false if you tried to delete too many words
      * @throws IOException
      */
+
     private boolean unixWordRubout(int count) throws IOException {
         for (; count > 0; --count) {
             if (buf.cursor == 0)
@@ -1557,6 +1539,7 @@ public class ConsoleReader
      * @return true if the operation is a success, false otherwise
      * @throws IOException
      */
+
     private boolean insert(int count, final CharSequence str) throws IOException {
         for (int i = 0; i < count; i++) {
             buf.write(str);
@@ -1577,6 +1560,7 @@ public class ConsoleReader
      * Implements vi search ("/" or "?").
      * @throws IOException
      */
+
     private int viSearch(char searchChar) throws IOException {
         boolean isForward = (searchChar == '/');
 
@@ -1771,6 +1755,7 @@ public class ConsoleReader
      *   character or if there was no matching bracket.
      * @throws IOException
      */
+
     private boolean viMatch() throws IOException {
         int pos        = buf.cursor;
 
@@ -1820,6 +1805,7 @@ public class ConsoleReader
      * @return 1 is square, 2 curly, 3 parent, or zero for none.  The value
      *   will be negated if it is the closing form of the bracket.
      */
+
     private int getBracketType (char ch) {
         switch (ch) {
             case '[': return  1;
@@ -1905,6 +1891,7 @@ public class ConsoleReader
      *   cannot happen at the beginning of the line).
      * @throws IOException
      */
+
     private boolean transposeChars(int count) throws IOException {
         for (; count > 0; --count) {
             if (buf.cursor == 0 || buf.cursor == buf.buffer.length()) {
@@ -1942,7 +1929,6 @@ public class ConsoleReader
         return map == mapByName;
     }
 
-
     /**
      * The equivalent of hitting &lt;RET&gt;.  The line is considered
      * complete and is returned.
@@ -1950,18 +1936,12 @@ public class ConsoleReader
      * @return The completed line of text.
      * @throws IOException
      */
+
     public String accept() throws IOException {
         moveToEnd();
         println(); // output newline
         flush();
         return finishBuffer();
-    }
-
-    private void abort() throws IOException {
-        beep();
-        buf.clear();
-        println();
-        redrawLine();
     }
 
     /**
@@ -1970,6 +1950,7 @@ public class ConsoleReader
      * @param num   If less than 0, move abs(<i>where</i>) to the left, otherwise move <i>where</i> to the right.
      * @return      The number of spaces we moved
      */
+
     public int moveCursor(final int num) throws IOException {
         int where = num;
 
@@ -1998,6 +1979,7 @@ public class ConsoleReader
      *
      * @param where the number of characters to move to the right or left.
      */
+
     private void moveInternal(final int where) throws IOException {
         // debug ("move cursor " + where + " ("
         // + buf.cursor + " => " + (buf.cursor + where) + ")");
@@ -2086,6 +2068,7 @@ public class ConsoleReader
      *     -1 if an EOF is received, or
      *     -2 if no character is ready (occurs only when <code>wait</code> is <code>false</code>).
      */
+
     public final int readCharacter(boolean wait) throws IOException {
         int c;
         if (!wait && NonBlockingReaderHelper == null) {
@@ -2113,13 +2096,56 @@ public class ConsoleReader
      *
      * @return the character, or -1 if an EOF is received.
      */
+
+<<<<<<< /usr/src/app/output/jline/jline2/51e90705f5b02c2030f0c2d91a446aead44c55ff/src/main/java/jline/console/ConsoleReader.java/left.java
     public final int readCharacter() throws IOException {
        return readCharacter(true);
     }
 
+    public final int readCharacter(final char... allowed) throws IOException {
+        // if we restrict to a limited set and the current character is not in the set, then try again.
+        char c;
+
+        Arrays.sort(allowed); // always need to sort before binarySearch
+
+        while (Arrays.binarySearch(allowed, c = (char) readCharacter()) < 0) {
+            // nothing
+        }
+
+        return c;
+    }
+||||||| /usr/src/app/output/jline/jline2/51e90705f5b02c2030f0c2d91a446aead44c55ff/src/main/java/jline/console/ConsoleReader.java/base.java
+    public final int readCharacter(final char... allowed) throws IOException {
+        // if we restrict to a limited set and the current character is not in the set, then try again.
+        char c;
+
+        Arrays.sort(allowed); // always need to sort before binarySearch
+
+        while (Arrays.binarySearch(allowed, c = (char) readCharacter()) < 0) {
+            // nothing
+        }
+
+        return c;
+    }
+=======
+    public final int readCharacter(final char... allowed) throws IOException {
+        // if we restrict to a limited set and the current character is not in the set, then try again.
+        char c;
+
+        Arrays.sort(allowed); // always need to sort before binarySearch
+
+        while (Arrays.binarySearch(allowed, c = (char) readCharacter()) < 0) {
+            // nothing
+        }
+
+        return c;
+    }
+>>>>>>> /usr/src/app/output/jline/jline2/51e90705f5b02c2030f0c2d91a446aead44c55ff/src/main/java/jline/console/ConsoleReader.java/right.java
+
     /**
      * Clear the echoed characters for the specified character code.
      */
+
     private int clearEcho(final int c) throws IOException {
         // if the terminal is not echoing, then ignore
         if (!terminal.isEchoEnabled()) {
@@ -2153,6 +2179,7 @@ public class ConsoleReader
      *
      * Adapted from cat by Torbjorn Granlund, as repeated in stty by David MacKenzie.
      */
+
     private StringBuilder getPrintableCharacters(final int ch) {
         StringBuilder sbuff = new StringBuilder();
 
@@ -2191,32 +2218,24 @@ public class ConsoleReader
         return sbuff;
     }
 
-    public final int readCharacter(final char... allowed) throws IOException {
-        // if we restrict to a limited set and the current character is not in the set, then try again.
-        char c;
-
-        Arrays.sort(allowed); // always need to sort before binarySearch
-
-        while (Arrays.binarySearch(allowed, c = (char) readCharacter()) < 0) {
-            // nothing
-        }
-
-        return c;
-    }
-
     //
+
     // Key Bindings
+
     //
 
     public static final String JLINE_COMPLETION_THRESHOLD = "jline.completion.threshold";
 
     //
+
     // Line Reading
+
     //
 
     /**
      * Read the next line and return the contents of the buffer.
      */
+
     public String readLine() throws IOException {
         return readLine((String) null);
     }
@@ -2225,6 +2244,7 @@ public class ConsoleReader
      * Read the next line with the specified character mask. If null, then
      * characters will be echoed. If 0, then no characters will be echoed.
      */
+
     public String readLine(final Character mask) throws IOException {
         return readLine(null, mask);
     }
@@ -2240,6 +2260,7 @@ public class ConsoleReader
      * @return true if the keymap was set, or false if the keymap is
      *    not recognized.
      */
+
     public boolean setKeyMap(String name) {
         return consoleKeys.setKeyMap(name);
     }
@@ -2250,6 +2271,7 @@ public class ConsoleReader
      *   of the current mode of the key map and may not reflect the name that
      *   was used with {@link #setKeyMap(String)}.
      */
+
     public String getKeyMap() {
         return consoleKeys.getKeys().getName();
     }
@@ -2262,6 +2284,7 @@ public class ConsoleReader
      * @return          A line that is read from the terminal, or null if there was null input (e.g., <i>CTRL-D</i>
      *                  was pressed).
      */
+
     public String readLine(String prompt, final Character mask) throws IOException {
         // prompt may be null
         // mask may be null
@@ -3096,6 +3119,7 @@ public class ConsoleReader
     /**
      * Read a line for unsupported terminals.
      */
+
     private String readLineSimple() throws IOException {
         StringBuilder buff = new StringBuilder();
 
@@ -3132,7 +3156,9 @@ public class ConsoleReader
     }
 
     //
+
     // Completion
+
     //
 
     private final List<Completer> completers = new LinkedList<Completer>();
@@ -3145,6 +3171,7 @@ public class ConsoleReader
      * @param completer the {@link jline.console.completer.Completer} to add
      * @return true if it was successfully added
      */
+
     public boolean addCompleter(final Completer completer) {
         return completers.add(completer);
     }
@@ -3155,6 +3182,7 @@ public class ConsoleReader
      * @param completer     The {@link Completer} to remove
      * @return              True if it was successfully removed
      */
+
     public boolean removeCompleter(final Completer completer) {
         return completers.remove(completer);
     }
@@ -3162,6 +3190,7 @@ public class ConsoleReader
     /**
      * Returns an unmodifiable list of all the completers.
      */
+
     public Collection<Completer> getCompleters() {
         return Collections.unmodifiableList(completers);
     }
@@ -3179,6 +3208,7 @@ public class ConsoleReader
      *
      * @return true if successful
      */
+
     protected boolean complete() throws IOException {
         // debug ("tab for (" + buf + ")");
         if (completers.size() == 0) {
@@ -3223,11 +3253,15 @@ public class ConsoleReader
      * The number of tab-completion candidates above which a warning will be
      * prompted before showing all the candidates.
      */
-    private int autoprintThreshold = Configuration.getInteger(JLINE_COMPLETION_THRESHOLD, 100); // same default as bash
+
+    private int autoprintThreshold = Configuration.getInteger(JLINE_COMPLETION_THRESHOLD, 100);
+
+// same default as bash
 
     /**
      * @param threshold the number of candidates to print without issuing a warning.
      */
+
     public void setAutoprintThreshold(final int threshold) {
         this.autoprintThreshold = threshold;
     }
@@ -3235,6 +3269,7 @@ public class ConsoleReader
     /**
      * @return the number of candidates to print without issuing a warning.
      */
+
     public int getAutoprintThreshold() {
         return autoprintThreshold;
     }
@@ -3244,6 +3279,7 @@ public class ConsoleReader
     /**
      * Whether to use pagination when the number of rows of candidates exceeds the height of the terminal.
      */
+
     public void setPaginationEnabled(final boolean enabled) {
         this.paginationEnabled = enabled;
     }
@@ -3251,12 +3287,15 @@ public class ConsoleReader
     /**
      * Whether to use pagination when the number of rows of candidates exceeds the height of the terminal.
      */
+
     public boolean isPaginationEnabled() {
         return paginationEnabled;
     }
 
     //
+
     // History
+
     //
 
     private History history = new MemoryHistory();
@@ -3274,6 +3313,7 @@ public class ConsoleReader
     /**
      * Whether or not to add new commands to the history buffer.
      */
+
     public void setHistoryEnabled(final boolean enabled) {
         this.historyEnabled = enabled;
     }
@@ -3281,6 +3321,7 @@ public class ConsoleReader
     /**
      * Whether or not to add new commands to the history buffer.
      */
+
     public boolean isHistoryEnabled() {
         return historyEnabled;
     }
@@ -3294,6 +3335,7 @@ public class ConsoleReader
      * @return true if the move was successful
      * @throws IOException
      */
+
     private boolean moveHistory(final boolean next, int count) throws IOException {
         boolean ok = true;
         for (int i = 0; i < count && (ok = moveHistory(next)); i++) {
@@ -3305,6 +3347,7 @@ public class ConsoleReader
     /**
      * Move up or down the history tree.
      */
+
     private boolean moveHistory(final boolean next) throws IOException {
         if (next && !history.next()) {
             return false;
@@ -3319,7 +3362,9 @@ public class ConsoleReader
     }
 
     //
+
     // Printing
+
     //
 
     public static final String CR = Configuration.getLineSeparator();
@@ -3327,6 +3372,7 @@ public class ConsoleReader
     /**
      * Output the specified character to the output stream without manipulating the current buffer.
      */
+
     private void print(final int c) throws IOException {
         if (c == '\t') {
             char chars[] = new char[TAB_WIDTH];
@@ -3341,6 +3387,7 @@ public class ConsoleReader
     /**
      * Output the specified characters to the output stream without manipulating the current buffer.
      */
+
     private void print(final char... buff) throws IOException {
         int len = 0;
         for (char c : buff) {
@@ -3388,6 +3435,7 @@ public class ConsoleReader
     /**
      * Output the specified string to the output stream (but not the buffer).
      */
+
     public final void print(final CharSequence s) throws IOException {
         print(checkNotNull(s).toString().toCharArray());
     }
@@ -3400,13 +3448,16 @@ public class ConsoleReader
     /**
      * Output a platform-dependant newline.
      */
+
     public final void println() throws IOException {
         print(CR);
 //        flush();
     }
 
     //
+
     // Actions
+
     //
 
     /**
@@ -3414,6 +3465,44 @@ public class ConsoleReader
      *
      * @return true if successful
      */
+
+<<<<<<< /usr/src/app/output/jline/jline2/51e90705f5b02c2030f0c2d91a446aead44c55ff/src/main/java/jline/console/ConsoleReader.java/left.java
+    public final boolean delete() throws IOException {
+        return delete(1) == 1;
+    }
+    private int delete(final int num) throws IOException {
+        // TODO: Try to use jansi for this
+
+        /* Commented out because of DWA-2949:
+        if (buf.cursor == 0) {
+            return 0;
+        }
+        */
+
+        buf.buffer.delete(buf.cursor, buf.cursor + 1);
+        drawBuffer(1);
+
+        return 1;
+    }
+||||||| /usr/src/app/output/jline/jline2/51e90705f5b02c2030f0c2d91a446aead44c55ff/src/main/java/jline/console/ConsoleReader.java/base.java
+    public final boolean delete() throws IOException {
+        return delete(1) == 1;
+    }
+    private int delete(final int num) throws IOException {
+        // TODO: Try to use jansi for this
+
+        /* Commented out because of DWA-2949:
+        if (buf.cursor == 0) {
+            return 0;
+        }
+        */
+
+        buf.buffer.delete(buf.cursor, buf.cursor + 1);
+        drawBuffer(1);
+
+        return 1;
+    }
+=======
     public final boolean delete() throws IOException {
         if (buf.cursor == buf.buffer.length()) {
           return false;
@@ -3424,12 +3513,16 @@ public class ConsoleReader
 
         return true;
     }
+>>>>>>> /usr/src/app/output/jline/jline2/51e90705f5b02c2030f0c2d91a446aead44c55ff/src/main/java/jline/console/ConsoleReader.java/right.java
+
+    // FIXME: delete(int) only used by above + the return is always 1 and num is ignored
 
     /**
      * Kill the buffer ahead of the current cursor position.
      *
      * @return true if successful
      */
+
     public boolean killLine() throws IOException {
         int cp = buf.cursor;
         int len = buf.buffer.length();
@@ -3451,6 +3544,7 @@ public class ConsoleReader
     /**
      * Clear the screen by issuing the ANSI "clear screen" code.
      */
+
     public boolean clearScreen() throws IOException {
         if (!terminal.isAnsiSupported()) {
             return false;
@@ -3470,6 +3564,7 @@ public class ConsoleReader
     /**
      * Issue an audible keyboard bell.
      */
+
     public void beep() throws IOException {
         if (bellEnabled) {
             print(KEYBOARD_BELL);
@@ -3483,6 +3578,7 @@ public class ConsoleReader
      *
      * @return true if clipboard contents pasted
      */
+
     public boolean paste() throws IOException {
         Clipboard clipboard;
         try { // May throw ugly exception on system without X
@@ -3560,7 +3656,9 @@ public class ConsoleReader
     }
 
     //
+
     // Triggered Actions
+
     //
 
     private final Map<Character, ActionListener> triggeredActions = new HashMap<Character, ActionListener>();
@@ -3571,17 +3669,21 @@ public class ConsoleReader
      * Say you want to close the application if the user enter q.
      * addTriggerAction('q', new ActionListener(){ System.exit(0); }); would do the trick.
      */
+
     public void addTriggeredAction(final char c, final ActionListener listener) {
         triggeredActions.put(c, listener);
     }
 
     //
+
     // Formatted Output
+
     //
 
     /**
      * Output the specified {@link Collection} in proper columns.
      */
+
     public void printColumns(final Collection<? extends CharSequence> items) throws IOException {
         if (items == null || items.isEmpty()) {
             return;
@@ -3646,7 +3748,9 @@ public class ConsoleReader
     }
 
     //
+
     // Non-supported Terminal Support
+
     //
 
     private Thread maskThread;
@@ -3704,6 +3808,7 @@ public class ConsoleReader
      *            where you want the cursor set when the line has been drawn.
      *            -1 for end of line.
      * */
+
     public void resetPromptLine(String prompt, String buffer, int cursorDest) throws IOException {
         // move cursor to end of line
         moveToEnd();
@@ -3730,19 +3835,25 @@ public class ConsoleReader
         flush();
     }
 
+<<<<<<< /usr/src/app/output/jline/jline2/51e90705f5b02c2030f0c2d91a446aead44c55ff/src/main/java/jline/console/ConsoleReader.java/left.java
+    public void printSearchStatus(String searchTerm, String match) throws IOException {
+        String prompt = "(reverse-i-search)`" + searchTerm + "': ";
+        String buffer = match;
+        int cursorDest = match.indexOf(searchTerm);
+        resetPromptLine(prompt, buffer, cursorDest);
+    }
+||||||| /usr/src/app/output/jline/jline2/51e90705f5b02c2030f0c2d91a446aead44c55ff/src/main/java/jline/console/ConsoleReader.java/base.java
+    public void printSearchStatus(String searchTerm, String match) throws IOException {
+        String prompt = "(reverse-i-search)`" + searchTerm + "': ";
+        String buffer = match;
+        int cursorDest = match.indexOf(searchTerm);
+        resetPromptLine(prompt, buffer, cursorDest);
+    }
+=======
     public void printSearchStatus(String searchTerm, String match) throws IOException {
         printSearchStatus(searchTerm, match, "(reverse-i-search)`");
     }
-
-    public void printForwardSearchStatus(String searchTerm, String match) throws IOException {
-        printSearchStatus(searchTerm, match, "(i-search)`");
-    }
-
-    private void printSearchStatus(String searchTerm, String match, String searchLabel) throws IOException {
-        String prompt = searchLabel + searchTerm + "': ";
-        int cursorDest = match.indexOf(searchTerm);
-        resetPromptLine(prompt, match, cursorDest);
-    }
+>>>>>>> /usr/src/app/output/jline/jline2/51e90705f5b02c2030f0c2d91a446aead44c55ff/src/main/java/jline/console/ConsoleReader.java/right.java
 
     public void restoreLine(String originalPrompt, int cursorDest) throws IOException {
         // TODO move cursor to matched string
@@ -3752,8 +3863,11 @@ public class ConsoleReader
     }
 
     //
+
     // History search
+
     //
+
     /**
      * Search backward in history from a given position.
      *
@@ -3761,6 +3875,7 @@ public class ConsoleReader
      * @param startIndex the index from which on to search
      * @return index where this substring has been found, or -1 else.
      */
+
     public int searchBackwards(String searchTerm, int startIndex) {
         return searchBackwards(searchTerm, startIndex, false);
     }
@@ -3771,10 +3886,10 @@ public class ConsoleReader
      * @param searchTerm substring to search for.
      * @return index where the substring has been found, or -1 else.
      */
+
     public int searchBackwards(String searchTerm) {
         return searchBackwards(searchTerm, history.index());
     }
-
 
     public int searchBackwards(String searchTerm, int startIndex, boolean startsWith) {
         ListIterator<History.Entry> it = history.entries(startIndex);
@@ -3793,6 +3908,194 @@ public class ConsoleReader
         return -1;
     }
 
+    //
+
+    // Helpers
+
+    //
+
+    private boolean handleUserInterrupt = false;
+
+// Character to search for
+
+// Most recent invocation key
+
+// First character that invoked
+
+    /**
+     * Set to true if the reader should attempt to detect copy-n-paste. The
+     * effect of this that an attempt is made to detect if tab is quickly
+     * followed by another character, then it is assumed that the tab was
+     * a literal tab as part of a copy-and-paste operation and is inserted as
+     * such.
+     */
+
+    private boolean copyPasteDetection = false;
+
+    /**
+     * Enables or disables copy and paste detection. The effect of enabling this
+     * this setting is that when a tab is received immediately followed by another
+     * character, the tab will not be treated as a completion, but as a tab literal.
+     * @param onoff true if detection is enabled
+     */
+
+    public void setCopyPasteDetection(final boolean onoff) {
+        copyPasteDetection = onoff;
+    }
+
+    /**
+     * @return true if copy and paste detection is enabled.
+     */
+
+    public boolean isCopyPasteDetectionEnabled() {
+        return copyPasteDetection;
+    }
+
+    /**
+     * Set whether user interrupts (ctrl-C) are handled by having JLine
+     * throw {@link UserInterruptException} from {@link #readLine}.
+     * Otherwise, the JVM will handle {@code SIGINT} as normal, which
+     * usually causes it to exit. The default is {@code false}.
+     *
+     * @since 2.10
+     */
+
+    public void setHandleUserInterrupt(boolean enabled)
+    {
+        this.handleUserInterrupt = enabled;
+    }
+
+    /**
+     * Get whether user interrupt handling is enabled
+     *
+     * @return true if enabled; false otherwise
+     * @since 2.10
+     */
+
+    public boolean getHandleUserInterrupt()
+    {
+        return handleUserInterrupt;
+    }
+
+    private void setBufferKeepPos(final String buffer) throws IOException {
+        int pos = buf.cursor;
+        setBuffer(buffer);
+        setCursorPosition(pos);
+    }
+
+    private void setBufferKeepPos(final CharSequence buffer) throws IOException {
+        setBufferKeepPos(String.valueOf(buffer));
+    }
+
+    /**
+     * Performs the vi "delete-to" action, deleting characters between a given
+     * span of the input line.
+     * @param startPos The start position
+     * @param endPos The end position.
+     * @param isChange If true, then the delete is part of a change operationg
+     *    (e.g. "c$" is change-to-end-of line, so we first must delete to end 
+     *    of line to start the change
+     * @return true if it succeeded, false otherwise
+     * @throws IOException
+     */
+
+    private void abort() throws IOException {
+        beep();
+        buf.clear();
+        println();
+        redrawLine();
+    }
+
+    // FIXME: replace() is not used
+
+    //
+
+    // Key Bindings
+
+    //
+
+    //
+
+    // Line Reading
+
+    //
+
+    //
+
+    // Completion
+
+    //
+
+// same default as bash
+
+    /**
+     * Whether to use pagination when the number of rows of candidates exceeds the height of the terminal.
+     */
+
+    /**
+     * Whether to use pagination when the number of rows of candidates exceeds the height of the terminal.
+     */
+
+    //
+
+    // History
+
+    //
+
+    /**
+     * Whether or not to add new commands to the history buffer.
+     */
+
+    /**
+     * Whether or not to add new commands to the history buffer.
+     */
+
+    //
+
+    // Printing
+
+    //
+
+    //
+
+    // Actions
+
+    //
+
+    //
+
+    // Triggered Actions
+
+    //
+
+    //
+
+    // Formatted Output
+
+    //
+
+    //
+
+    // Non-supported Terminal Support
+
+    //
+
+    public void printForwardSearchStatus(String searchTerm, String match) throws IOException {
+        printSearchStatus(searchTerm, match, "(i-search)`");
+    }
+
+    private void printSearchStatus(String searchTerm, String match, String searchLabel) throws IOException {
+        String prompt = searchLabel + searchTerm + "': ";
+        int cursorDest = match.indexOf(searchTerm);
+        resetPromptLine(prompt, match, cursorDest);
+    }
+
+    //
+
+    // History search
+
+    //
+
     /**
      * Search forward in history from a given position.
      *
@@ -3800,15 +4103,18 @@ public class ConsoleReader
      * @param startIndex the index from which on to search
      * @return index where this substring has been found, or -1 else.
      */
+
     public int searchForwards(String searchTerm, int startIndex) {
         return searchForwards(searchTerm, startIndex, false);
     }
+
     /**
      * Search forwards in history from the current position.
      *
      * @param searchTerm substring to search for.
      * @return index where the substring has been found, or -1 else.
      */
+
     public int searchForwards(String searchTerm) {
         return searchForwards(searchTerm, history.index());
     }
@@ -3840,7 +4146,9 @@ public class ConsoleReader
     }
 
     //
+
     // Helpers
+
     //
 
     /**
