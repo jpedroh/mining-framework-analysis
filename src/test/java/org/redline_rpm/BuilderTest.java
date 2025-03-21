@@ -12,7 +12,6 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertArrayEquals;
 import static org.redline_rpm.ScannerTest.channelWrapper;
 import static org.redline_rpm.header.Architecture.NOARCH;
 import static org.redline_rpm.header.Flags.EQUAL;
