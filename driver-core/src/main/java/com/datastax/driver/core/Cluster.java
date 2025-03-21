@@ -72,25 +72,11 @@ public class Cluster {
 
     final Manager manager;
 
-    /**
-     * Constructs a new Cluster instance.
-     * <p>
-     * This constructor is mainly exposed so Cluster can be sub-classed as a mean to make testing/mocking
-     * easier or to "intecept" it's method call. Most users shouldn't extend this class however and
-     * should prefer either using the {@link #builder} or calling {@link #buildFrom} with a custom
-     * Initializer.
-     *
-     * @param contactPoints the list of contact points to use for the new cluster.
-     * @param configuration the configuration for the new cluster.
-     * @param init whether or not initialization should be perform by this constructor. Passing
-     * {@code false} is equivalent to using {@link Builder#withDeferredInitialization} on a
-     * {@code Cluster.Builder}.
-     */
-    protected Cluster(String name, List<InetAddress> contactPoints, Configuration configuration) {
-        this(name, contactPoints, configuration, Collections.<Host.StateListener>emptySet());
-    }
-
-    private Cluster(String name, List<InetAddress> contactPoints, Configuration configuration, Collection<Host.StateListener> listeners) {
+    protected Cluster(String name, List<InetAddress> contactPoints, Configuration configuration, Collection<Host.StateListener> listeners) {
+        // Note: we don't want to make init part of Configuration. In 2.0, the default is not init
+        // so there is not point in breaking Configuration API for that. However, as a workaround
+        // until upgrade, we still want to allow optional lazy initialization of the control
+        // connection (see #JAVA-161)
         this.manager = new Manager(name, contactPoints, configuration, listeners);
     }
 
@@ -122,10 +108,26 @@ public class Cluster {
      * @throws AuthenticationException if an authentication error occurs
      * while contacting the initial contact points.
      */
+
     public Cluster init() {
         this.manager.init();
         return this;
     }
+
+    /**
+     * Constructs a new Cluster instance.
+     * <p>
+     * This constructor is mainly exposed so Cluster can be sub-classed as a mean to make testing/mocking
+     * easier or to "intecept" it's method call. Most users shouldn't extend this class however and
+     * should prefer either using the {@link #builder} or calling {@link #buildFrom} with a custom
+     * Initializer.
+     *
+     * @param contactPoints the list of contact points to use for the new cluster.
+     * @param configuration the configuration for the new cluster.
+     * @param init whether or not initialization should be perform by this constructor. Passing
+     * {@code false} is equivalent to using {@link Builder#withDeferredInitialization} on a
+     * {@code Cluster.Builder}.
+     */
 
     /**
      * Build a new cluster based on the provided initializer.
@@ -1301,7 +1303,7 @@ public class Cluster {
         }
 
         // refresh the schema using the provided connection, and notice the future with the provided resultset once done
-        public void refreshSchema(final Connection connection, final DefaultResultSetFuture future, final ResultSet rs, final String keyspace, final String table) {
+        public void refreshSchema(final Connection connection, final ResultSetFuture future, final ResultSet rs, final String keyspace, final String table) {
             if (logger.isDebugEnabled())
                 logger.debug("Refreshing schema for {}{}", keyspace == null ? "" : keyspace, table == null ? "" : "." + table);
 

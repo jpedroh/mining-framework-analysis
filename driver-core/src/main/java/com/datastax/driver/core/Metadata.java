@@ -37,6 +37,12 @@ public class Metadata {
     volatile String clusterName;
     private final ConcurrentMap<InetAddress, Host> hosts = new ConcurrentHashMap<InetAddress, Host>();
     private final ConcurrentMap<String, KeyspaceMetadata> keyspaces = new ConcurrentHashMap<String, KeyspaceMetadata>();
+<<<<<<< /usr/src/app/output/datastax/java-driver/aede0e8d32b985ff839f607714f128c528a91e2f/driver-core/src/main/java/com/datastax/driver/core/Metadata.java/left.java
+||||||| /usr/src/app/output/datastax/java-driver/aede0e8d32b985ff839f607714f128c528a91e2f/driver-core/src/main/java/com/datastax/driver/core/Metadata.java/base.java
+    @SuppressWarnings("unchecked")
+=======
+    @SuppressWarnings({"unchecked", "rawtypes"})
+>>>>>>> /usr/src/app/output/datastax/java-driver/aede0e8d32b985ff839f607714f128c528a91e2f/driver-core/src/main/java/com/datastax/driver/core/Metadata.java/right.java
     private volatile TokenMap tokenMap;
 
     Metadata(Cluster.Manager cluster) {
@@ -175,6 +181,12 @@ public class Metadata {
      * this information. It is also not guarantee that the returned set won't
      * be empty (which is then some form of staleness).
      */
+<<<<<<< /usr/src/app/output/datastax/java-driver/aede0e8d32b985ff839f607714f128c528a91e2f/driver-core/src/main/java/com/datastax/driver/core/Metadata.java/left.java
+||||||| /usr/src/app/output/datastax/java-driver/aede0e8d32b985ff839f607714f128c528a91e2f/driver-core/src/main/java/com/datastax/driver/core/Metadata.java/base.java
+    @SuppressWarnings("unchecked")
+=======
+    @SuppressWarnings({"unchecked", "rawtypes"})
+>>>>>>> /usr/src/app/output/datastax/java-driver/aede0e8d32b985ff839f607714f128c528a91e2f/driver-core/src/main/java/com/datastax/driver/core/Metadata.java/right.java
     public Set<Host> getReplicas(String keyspace, ByteBuffer partitionKey) {
         TokenMap current = tokenMap;
         if (current == null) {
