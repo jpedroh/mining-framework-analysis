@@ -18,6 +18,7 @@ package com.bsb.common.vaadin.embed.component;
 import com.bsb.common.vaadin.embed.AbstractEmbedVaadinTomcat;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Layout;
@@ -58,7 +59,7 @@ public class ComponentWrapperTest {
         final ComponentWrapper wrapper = createWrapper(config);
 
         final HorizontalLayout layout = new HorizontalLayout();
-        final Application app = instance.wrap(layout);
+        final UI app = wrapper.wrap(layout);
 
         final Layout l = assertWrappingLayout(app);
 
@@ -69,7 +70,7 @@ public class ComponentWrapperTest {
     public void wrapLayoutWithoutDevelopmentHeader() {
         final HorizontalLayout layout = new HorizontalLayout();
         // Wrap without development header should just set the layout as the main content of the window
-        final Application app = wrapper.wrap(layout);
+        final UI app = instance.wrap(layout);
 
         assertNotNull("Main content must not be null", app.getContent());
         assertEquals("Layout should be set as the main layout since no header was expected", layout,
@@ -81,7 +82,13 @@ public class ComponentWrapperTest {
         final Button component = new Button("Hello");
         final UI app = instance.wrap(component);
 
-        final Layout l = assertWrappingLayout(app);
+<<<<<<< /usr/src/app/output/bsblabs/embed-for-vaadin/e1324f33636a9746384d621cddcea8cedd241318/com.bsb.common.vaadin.embed/src/test/java/com/bsb/common/vaadin/embed/component/ComponentWrapperTest.java/left.java
+        final ComponentContainer content = app.getMainWindow().getContent();
+||||||| /usr/src/app/output/bsblabs/embed-for-vaadin/e1324f33636a9746384d621cddcea8cedd241318/com.bsb.common.vaadin.embed/src/test/java/com/bsb/common/vaadin/embed/component/ComponentWrapperTest.java/base.java
+        final Layout content = assertWrappingLayout();
+=======
+        final Component content = app.getUI().getContent();
+>>>>>>> /usr/src/app/output/bsblabs/embed-for-vaadin/e1324f33636a9746384d621cddcea8cedd241318/com.bsb.common.vaadin.embed/src/test/java/com/bsb/common/vaadin/embed/component/ComponentWrapperTest.java/right.java
         assertEquals("Main content must be vertical layout", VerticalLayout.class,
                 content.getClass());
         final VerticalLayout layout = (VerticalLayout) content;
