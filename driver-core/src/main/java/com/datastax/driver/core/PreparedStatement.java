@@ -1,22 +1,5 @@
-/*
- *      Copyright (C) 2012-2014 DataStax Inc.
- *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- */
 package com.datastax.driver.core;
-
 import java.nio.ByteBuffer;
-
 import com.datastax.driver.core.exceptions.InvalidTypeException;
 import com.datastax.driver.core.policies.RetryPolicy;
 
@@ -39,15 +22,14 @@ import com.datastax.driver.core.policies.RetryPolicy;
  * {@link Session#prepare(RegularStatement)} is used.
  */
 public interface PreparedStatement {
-
-    /**
+  /**
      * Returns metadata on the bounded variables of this prepared statement.
      *
      * @return the variables bounded in this prepared statement.
      */
-    public ColumnDefinitions getVariables();
+  public ColumnDefinitions getVariables();
 
-    /**
+  /**
      * Creates a new BoundStatement object and bind its variables to the
      * provided values.
      * <p>
@@ -74,9 +56,9 @@ public interface PreparedStatement {
      *
      * @see BoundStatement#bind
      */
-    public BoundStatement bind(Object... values);
+  public BoundStatement bind(Object... values);
 
-    /**
+  /**
      * Creates a new BoundStatement object for this prepared statement.
      * <p>
      * This method do not bind any values to any of the prepared variables. Said
@@ -85,9 +67,9 @@ public interface PreparedStatement {
      *
      * @return the newly created {@code BoundStatement}.
      */
-    public BoundStatement bind();
+  public BoundStatement bind();
 
-    /**
+  /**
      * Sets the routing key for this prepared statement.
      * <p>
      * While you can provide a fixed routing key for all executions of this prepared
@@ -104,9 +86,9 @@ public interface PreparedStatement {
      *
      * @see Statement#getRoutingKey
      */
-    public PreparedStatement setRoutingKey(ByteBuffer routingKey);
+  public PreparedStatement setRoutingKey(ByteBuffer routingKey);
 
-    /**
+  /**
      * Sets the routing key for this query.
      * <p>
      * See {@link #setRoutingKey(ByteBuffer)} for more information. This
@@ -119,17 +101,17 @@ public interface PreparedStatement {
      *
      * @see Statement#getRoutingKey
      */
-    public PreparedStatement setRoutingKey(ByteBuffer... routingKeyComponents);
+  public PreparedStatement setRoutingKey(ByteBuffer... routingKeyComponents);
 
-    /**
+  /**
      * Returns the routing key set for this query.
      *
      * @return the routing key for this query or {@code null} if none has been
      * explicitly set on this PreparedStatement.
      */
-    public ByteBuffer getRoutingKey();
+  public ByteBuffer getRoutingKey();
 
-    /**
+  /**
      * Sets a default consistency level for all bound statements
      * created from this prepared statement.
      * <p>
@@ -142,18 +124,18 @@ public interface PreparedStatement {
      * @param consistency the default consistency level to set.
      * @return this {@code PreparedStatement} object.
      */
-    public PreparedStatement setConsistencyLevel(ConsistencyLevel consistency);
+  public PreparedStatement setConsistencyLevel(ConsistencyLevel consistency);
 
-    /**
+  /**
      * Returns the default consistency level set through {@link #setConsistencyLevel}.
      *
      * @return the default consistency level. Returns {@code null} if no
      * consistency level has been set through this object {@code setConsistencyLevel}
      * method.
      */
-    public ConsistencyLevel getConsistencyLevel();
+  public ConsistencyLevel getConsistencyLevel();
 
-    /**
+  /**
      * Sets a default serial consistency level for all bound statements
      * created from this prepared statement.
      * <p>
@@ -169,18 +151,18 @@ public interface PreparedStatement {
      * @throws IllegalArgumentException if {@code serialConsistency} is not one of
      * {@code ConsistencyLevel.SERIAL} or {@code ConsistencyLevel.LOCAL_SERIAL}.
      */
-    public PreparedStatement setSerialConsistencyLevel(ConsistencyLevel serialConsistency);
+  public PreparedStatement setSerialConsistencyLevel(ConsistencyLevel serialConsistency);
 
-    /**
+  /**
      * Returns the default serial consistency level set through {@link #setSerialConsistencyLevel}.
      *
      * @return the default serial consistency level. Returns {@code null} if no
      * consistency level has been set through this object {@code setSerialConsistencyLevel}
      * method.
      */
-    public ConsistencyLevel getSerialConsistencyLevel();
+  public ConsistencyLevel getSerialConsistencyLevel();
 
-    /**
+  /**
      * Returns the string of the query that was prepared to yield this {@code
      * PreparedStatement}.
      * <p>
@@ -194,9 +176,9 @@ public interface PreparedStatement {
      * @return the query that was prepared to yield this
      * {@code PreparedStatement}.
      */
-    public String getQueryString();
+  public String getQueryString();
 
-    /**
+  /**
      * Returns the keyspace at the time that this prepared statement was prepared,
      * (that is the one on which this statement applies unless it specified a
      * keyspace explicitly).
@@ -206,34 +188,34 @@ public interface PreparedStatement {
      * is possible since keyspaces can be explicitly qualified in queries and
      * so may not require a current keyspace to be set).
      */
-    public String getQueryKeyspace();
+  public String getQueryKeyspace();
 
-    /**
+  /**
      * Convenience method to enables tracing for all bound statements created
      * from this prepared statement.
      *
      * @return this {@code Query} object.
      */
-    public PreparedStatement enableTracing();
+  public PreparedStatement enableTracing();
 
-    /**
+  /**
      * Convenience method to disable tracing for all bound statements created
      * from this prepared statement.
      *
      * @return this {@code PreparedStatement} object.
      */
-    public PreparedStatement disableTracing();
+  public PreparedStatement disableTracing();
 
-    /**
+  /**
      * Returns whether tracing is enabled for this prepared statement, i.e. if
      * BoundStatement created from it will use tracing by default.
      *
      * @return {@code true} if this prepared statement has tracing enabled,
      * {@code false} otherwise.
      */
-    public boolean isTracing();
+  public boolean isTracing();
 
-    /**
+  /**
      * Convenience method to set a default retry policy for the {@code BoundStatement}
      * created from this prepared statement.
      * <p>
@@ -247,20 +229,20 @@ public interface PreparedStatement {
      * @param policy the retry policy to use for this prepared statement.
      * @return this {@code PreparedStatement} object.
      */
-    public PreparedStatement setRetryPolicy(RetryPolicy policy);
+  public PreparedStatement setRetryPolicy(RetryPolicy policy);
 
-    /**
+  /**
      * Returns the retry policy sets for this prepared statement, if any.
      *
      * @return the retry policy sets specifically for this prepared statement or
      * {@code null} if none have been set.
      */
-    public RetryPolicy getRetryPolicy();
+  public RetryPolicy getRetryPolicy();
 
-    /**
+  /**
      * Returns the prepared Id for this statement.
      *
      * @return the PreparedId corresponding to this statement.
      */
-    public PreparedId getPreparedId();
+  public PreparedId getPreparedId();
 }
