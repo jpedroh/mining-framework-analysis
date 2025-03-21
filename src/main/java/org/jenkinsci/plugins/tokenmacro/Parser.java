@@ -495,7 +495,17 @@ public class Parser {
     boolean startToken(String tokenName) {
         this.tokenName = tokenName;
         if(args == null) {
+<<<<<<< /usr/src/app/output/jenkinsci/token-macro-plugin/b206c7045b9d38a5099933af3076b63a6c77c82b/src/main/java/org/jenkinsci/plugins/tokenmacro/Parser.java/left.java
             args = Multimaps.newListMultimap(new TreeMap<>(), () -> new ArrayList<String>());
+||||||| /usr/src/app/output/jenkinsci/token-macro-plugin/b206c7045b9d38a5099933af3076b63a6c77c82b/src/main/java/org/jenkinsci/plugins/tokenmacro/Parser.java/base.java
+            args = Multimaps.newListMultimap(new TreeMap<>(), new Supplier<List<String>>() {
+                public List<String> get() {
+                    return new ArrayList<String>();
+                }
+            });
+=======
+            args = Multimaps.newListMultimap(new TreeMap<>(), ArrayList::new);
+>>>>>>> /usr/src/app/output/jenkinsci/token-macro-plugin/b206c7045b9d38a5099933af3076b63a6c77c82b/src/main/java/org/jenkinsci/plugins/tokenmacro/Parser.java/right.java
         } else {
             args.clear();
         }
