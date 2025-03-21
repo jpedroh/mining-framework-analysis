@@ -5,24 +5,17 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
-import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.Rectangle;
 import java.io.IOException;
-import java.util.Map;
-
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.tools.Tool;
-
 import bibliothek.gui.DockController;
 import bibliothek.gui.DockStation;
 import bibliothek.gui.Dockable;
@@ -37,14 +30,7 @@ import bibliothek.gui.dock.station.AbstractDockableStation;
 import bibliothek.gui.dock.station.OverpaintablePanel;
 import bibliothek.gui.dock.station.StationDropOperation;
 import bibliothek.gui.dock.station.StationPaint;
-import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
-import bibliothek.gui.dock.station.support.DockablePlaceholderList;
-import bibliothek.gui.dock.station.support.PlaceholderList;
-import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
-import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
 import bibliothek.gui.dock.station.support.PlaceholderMap;
-import bibliothek.gui.dock.station.support.PlaceholderStrategy;
-import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
 import bibliothek.gui.dock.station.toolbar.ToolbarDropInfo;
 import bibliothek.gui.dock.station.toolbar.ToolbarProperty;
 import bibliothek.gui.dock.station.toolbar.ToolbarStrategy;
@@ -52,8 +38,16 @@ import bibliothek.gui.dock.themes.DefaultStationPaintValue;
 import bibliothek.gui.dock.themes.ThemeManager;
 import bibliothek.gui.dock.title.DockTitle;
 import bibliothek.gui.dock.util.DockUtilities;
-import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.gui.dock.util.SilentPropertyValue;
+import java.util.Map;
+import bibliothek.gui.dock.station.support.ConvertedPlaceholderListItem;
+import bibliothek.gui.dock.station.support.DockablePlaceholderList;
+import bibliothek.gui.dock.station.support.PlaceholderList;
+import bibliothek.gui.dock.station.support.PlaceholderListItemAdapter;
+import bibliothek.gui.dock.station.support.PlaceholderListItemConverter;
+import bibliothek.gui.dock.station.support.PlaceholderStrategy;
+import bibliothek.gui.dock.station.toolbar.ToolbarDockStationFactory;
+import bibliothek.gui.dock.util.PropertyValue;
 import bibliothek.util.Path;
 
 /**
@@ -78,7 +72,6 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 	 */
 	protected OverpaintablePanelBase mainPanel = new OverpaintablePanelBase();
 	/** A list of all children */
-	private DockablePlaceholderList<Dockable> dockables = new DockablePlaceholderList<Dockable>();
 	/** Graphical position of the group on components (NORTH, SOUTH, WEST, EAST) */
 	private Position position = Position.NORTH;
 	/** A paint to draw lines */
@@ -87,17 +80,6 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 	private Integer indexBeneathMouse = null;
 	/** closest side of the the closest dockable above the mouse */
 	private Position sideBeneathMouse = null;
-
-	/** current {@link PlaceholderStrategy} */
-	private PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>(
-			PlaceholderStrategy.PLACEHOLDER_STRATEGY){
-		@Override
-		protected void valueChanged( PlaceholderStrategy oldValue,
-				PlaceholderStrategy newValue ){
-			dockables.setStrategy(newValue);
-		}
-	};
-
 	/**
 	 * Constructs a new ToolbarDockStation
 	 */
@@ -111,220 +93,71 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		// EmptyBorder( new Insets( 5, 5, 5, 5 ) ) ) );
 		// basePanel.setBackground( new Color( 255, 255, 128 ) );
 	}
-
+<<<<<<< /usr/src/app/output/benoker/dockingframes/ee7fa99567bdcb72ebca8df25a6b110b5ac2b93d/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarDockStation.java/left.java
 	@Override
-	public int getDockableCount(){
-		return dockables.dockables().size();
+	public Dockable getDockable( int index ){
+		return dockables.get(index);
 	}
-
+||||||| /usr/src/app/output/benoker/dockingframes/ee7fa99567bdcb72ebca8df25a6b110b5ac2b93d/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarDockStation.java/base.java
+	@Override
+	public Dockable getDockable( int index ){
+		return dockables.get(index);
+	}
+=======
 	@Override
 	public Dockable getDockable( int index ){
 		return dockables.dockables().get(index);
 	}
-
-	/**
-	 * Grants direct access to the list of {@link Dockable}s, sublcasses should
-	 * not modify the list unless the fire the appropriate events.
-	 * 
-	 * @return the list of dockables
-	 */
-	protected PlaceholderList.Filter<Dockable> getDockables(){
-		return dockables.dockables();
-	}
-
+>>>>>>> /usr/src/app/output/benoker/dockingframes/ee7fa99567bdcb72ebca8df25a6b110b5ac2b93d/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarDockStation.java/right.java
 	@Override
 	public Dockable getFrontDockable(){
 		// there's no child which is more important than another
 		return null;
 	}
-
 	@Override
 	public void setFrontDockable( Dockable dockable ){
 		// there's no child which is more important than another
 	}
-
-	/**
-	 * Gets the placeholders of this station using a
-	 * {@link PlaceholderListItemConverter} to encode the children. The
-	 * converter puts the following parameters for each {@link Dockable} into
-	 * the map:
-	 * <ul>
-	 * <li>id: the integer from <code>children</code></li>
-	 * <li>index: the location of the element in the dockables-list</li>
-	 * <li>placeholder: the placeholder of the element, might be missing</li>
-	 * </ul>
-	 * 
-	 * @param children
-	 *            a unique identifier for each child of this station
-	 * @return the map
-	 */
-	public PlaceholderMap getPlaceholders( final Map<Dockable, Integer> children ){
-		final PlaceholderStrategy strategy = getPlaceholderStrategy();
-
-		return dockables
-				.toMap(new PlaceholderListItemAdapter<Dockable, Dockable>(){
-					@Override
-					public ConvertedPlaceholderListItem convert( int index,
-							Dockable dockable ){
-						Integer id = children.get(dockable);
-						if (id == null){
-							return null;
-						}
-
-						ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
-						item.putInt("id", id);
-						item.putInt("index", index);
-
-						if (strategy != null){
-							Path placeholder = strategy
-									.getPlaceholderFor(dockable);
-							if (placeholder != null){
-								item.putString("placeholder",
-										placeholder.toString());
-								item.setPlaceholder(placeholder);
-							}
-						}
-
-						return item;
-					}
-				});
-	}
-
-	/**
-	 * Sets a new layout on this station, this method assumes that
-	 * <code>map</code> was created by the method {@link #getPlaceholders(Map)}.
-	 * 
-	 * @param map
-	 *            the map to read
-	 * @param children
-	 *            the new children of this station
-	 * @throws IllegalStateException
-	 *             if there are children left on this station
-	 */
-	public void setPlaceholders( PlaceholderMap map,
-			final Map<Integer, Dockable> children ){
-		DockUtilities.checkLayoutLocked();
-		if (getDockableCount() > 0){
-			throw new IllegalStateException("must not have any children");
-		}
-		DockController controller = getController();
-
-		try{
-			if (controller != null){
-				controller.freezeLayout();
-			}
-
-			DockablePlaceholderList<Dockable> next = new DockablePlaceholderList<Dockable>();
-
-			if (getController() != null){
-				dockables.setStrategy(null);
-				dockables.unbind();
-				dockables = next;
-			} else{
-				dockables = next;
-			}
-
-			next.read(map,
-					new PlaceholderListItemAdapter<Dockable, Dockable>(){
-						private DockHierarchyLock.Token token;
-						private int index = 0;
-
-						@Override
-						public Dockable convert(
-								ConvertedPlaceholderListItem item ){
-							int id = item.getInt("id");
-							Dockable dockable = children.get(id);
-							if (dockable != null){
-								DockUtilities.ensureTreeValidity(
-										ToolbarDockStation.this, dockable);
-								token = DockHierarchyLock.acquireLinking(
-										ToolbarDockStation.this, dockable);
-								listeners.fireDockableAdding(dockable);
-								return dockable;
-							}
-							return null;
-						}
-
-						@Override
-						public void added( Dockable dockable ){
-							try{
-								// this would be the correct place to create
-								// DockTitle and similar stuff.
-
-								insertAt(dockable, index++);
-								listeners.fireDockableAdded(dockable);
-							} finally{
-								token.release();
-							}
-						}
-					});
-
-			if (getController() != null){
-				dockables.bind();
-				dockables.setStrategy(getPlaceholderStrategy());
-			}
-		} finally{
-			if (controller != null){
-				controller.meltLayout();
-			}
-		}
-	}
-
-	@Override
-	public PlaceholderMap getPlaceholders(){
-		return dockables.toMap();
-	}
-
+<<<<<<< /usr/src/app/output/benoker/dockingframes/ee7fa99567bdcb72ebca8df25a6b110b5ac2b93d/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarDockStation.java/left.java
 	@Override
 	public void setPlaceholders( PlaceholderMap placeholders ){
-		if (getDockableCount() > 0){
-			throw new IllegalStateException(
-					"only allowed if there are not children present");
-		}
-
-		try{
-			DockablePlaceholderList<Dockable> next = new DockablePlaceholderList<Dockable>(
-					placeholders);
-			if (getController() != null){
-				dockables.setStrategy(null);
-				dockables.unbind();
-				dockables = next;
-				dockables.bind();
-				dockables.setStrategy(getPlaceholderStrategy());
-			} else{
-				dockables = next;
-			}
-		} catch (IllegalArgumentException ex){
-			// silent
-		}
+		// Todo LATER. needed to implement persistent storage
 	}
-
-	/**
-	 * Gets the {@link PlaceholderStrategy} that is currently in use.
-	 * 
-	 * @return the current strategy, may be <code>null</code>
-	 */
-	public PlaceholderStrategy getPlaceholderStrategy(){
-		return placeholderStrategy.getValue();
+||||||| /usr/src/app/output/benoker/dockingframes/ee7fa99567bdcb72ebca8df25a6b110b5ac2b93d/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarDockStation.java/base.java
+	@Override
+	public void setPlaceholders( PlaceholderMap placeholders ){
+		// Todo LATER. needed to implement persistent storage
 	}
-
-	/**
-	 * Sets the {@link PlaceholderStrategy} to use, <code>null</code> will set
-	 * the default strategy.
-	 * 
-	 * @param strategy
-	 *            the new strategy, can be <code>null</code>
-	 */
-	public void setPlaceholderStrategy( PlaceholderStrategy strategy ){
-		placeholderStrategy.setValue(strategy);
+=======
+	@Override
+	public void setPlaceholders( PlaceholderMap placeholders ){
+    	if( getDockableCount() > 0 ){
+    		throw new IllegalStateException( "only allowed if there are not children present" );
+    	}
+    	
+    	try{
+    		DockablePlaceholderList<Dockable> next = new DockablePlaceholderList<Dockable>( placeholders );
+    		if( getController() != null ){
+    			dockables.setStrategy( null );
+    			dockables.unbind();
+    			dockables = next;
+    			dockables.bind();
+    			dockables.setStrategy( getPlaceholderStrategy() );
+    		}
+    		else{
+    			dockables = next;
+    		}
+    	}
+    	catch( IllegalArgumentException ex ){
+    		// silent
+    	}
 	}
-
+>>>>>>> /usr/src/app/output/benoker/dockingframes/ee7fa99567bdcb72ebca8df25a6b110b5ac2b93d/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarDockStation.java/right.java
 	@Override
 	public DockableProperty getDockableProperty( Dockable child, Dockable target ){
-		int index = indexOf(child);
+		int index = indexOf( child );
 		return new ToolbarProperty(index, null);
 	}
-
 	@Override
 	public StationDropOperation prepareDrop( int mouseX, int mouseY,
 			int titleX, int titleY, boolean checkOverrideZone, Dockable dockable ){
@@ -371,7 +204,7 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 				@Override
 				public void draw(){
 					// without this line, nothing is displayed
-					ToolbarDockStation.this.indexBeneathMouse = indexOf(getDockableBeneathMouse());
+					ToolbarDockStation.this.indexBeneathMouse = indexOf( getDockableBeneathMouse() );
 					ToolbarDockStation.this.sideBeneathMouse = this
 							.getSideDockableBeneathMouse();
 					// without this line, line is displayed only on the first
@@ -383,7 +216,6 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 			return null;
 		}
 	}
-
 	/**
 	 * Drop thanks to information collect by dropInfo
 	 * 
@@ -399,7 +231,7 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 			// (Note: It's wird beacause indeed drag() is called after
 			// move()...)
 			int dropIndex;
-			int indexBeneathMouse = indexOf(dropInfo.getDockableBeneathMouse());
+			int indexBeneathMouse = indexOf( dropInfo.getDockableBeneathMouse() );
 			if (dropInfo.isMove()){
 				switch (this.getOrientation()) {
 				case VERTICAL:
@@ -446,13 +278,11 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 			}
 		}
 	}
-
 	@Override
 	public void drop( Dockable dockable ){
 		System.out.println(this.toString() + "## drop(Dockable dockable)##");
 		this.drop(dockable, getDockableCount());
 	}
-
 	@Override
 	public boolean drop( Dockable dockable, DockableProperty property ){
 		if (property instanceof ToolbarProperty){
@@ -470,7 +300,6 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		}
 		return false;
 	}
-
 	/**
 	 * Dropps <code>dockable</code> at location <code>index</code>.
 	 * 
@@ -495,7 +324,6 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		}
 		return false;
 	}
-
 	private void move( Dockable dockable, int indexWhereInsert ){
 		System.out.println(this.toString() + "## move() ## ==> Index: "
 				+ indexWhereInsert);
@@ -511,25 +339,21 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 			}
 		}
 	}
-
 	@Override
 	public void move( Dockable dockable, DockableProperty property ){
 		// TODO pending
 	}
-
 	@Override
 	public <D extends Dockable & DockStation> boolean isInOverrideZone( int x,
 			int y, D invoker, Dockable drop ){
 		return false;
 	}
-
 	@Override
 	public boolean canDrag( Dockable dockable ){
 		System.out.println(this.toString()
 				+ "## canDrag(Dockable dockable) ## ");
 		return true;
 	}
-
 	@Override
 	public void drag( Dockable dockable ){
 		System.out.println(this.toString() + "## drag(Dockable dockable) ##");
@@ -541,7 +365,6 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 			this.remove(index);
 		}
 	}
-
 	@Override
 	public boolean canReplace( Dockable old, Dockable next ){
 		System.out.println(this.toString()
@@ -552,7 +375,6 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 			return false;
 		}
 	}
-
 	@Override
 	public void replace( Dockable old, Dockable next ){
 		System.out.println(this.toString()
@@ -568,29 +390,20 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		add(next, index);
 		controller.meltLayout();
 	}
-
 	@Override
 	public void replace( DockStation old, Dockable next ){
 		System.out.println(this.toString()
 				+ "## replace(DockStation old, Dockable next) ## ");
 		replace(old.asDockable(), next);
 	}
-
-	@Override
-	public String getFactoryID(){
-		return ToolbarDockStationFactory.ID;
-	}
-
 	@Override
 	public Component getComponent(){
 		return mainPanel;
 	}
-
 	@Override
 	protected void callDockUiUpdateTheme() throws IOException{
 		// Todo LATER
 	}
-
 	/**
 	 * Gets the {@link ToolbarStrategy} that is currently used by this station.
 	 * 
@@ -603,26 +416,22 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		value.setProperties((DockController) null);
 		return result;
 	}
-
 	@Override
 	public boolean accept( Dockable child ){
 		System.out.println(this.toString() + "## accept(Dockable child) ##");
 		return getToolbarStrategy().isToolbarPart(child);
 	}
-
 	@Override
 	public boolean accept( DockStation station ){
 		System.out.println(this.toString()
 				+ "## accept(DockStation station) ##");
 		return getToolbarStrategy().isToolbarGroupPartParent(station, this);
 	}
-
 	@Override
 	public String toString(){
 		return this.getClass().getSimpleName() + '@'
 				+ Integer.toHexString(this.hashCode());
 	}
-
 	/**
 	 * Gets the location of <code>dockable</code> in the component-panel.
 	 * 
@@ -640,7 +449,6 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		}
 		return -1;
 	}
-
 	/**
 	 * Insert one dockable at the index. The dockable can be a
 	 * {@link ComponentDockable}, {@link ToolbarGroupDockStation} or a
@@ -654,6 +462,7 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 	 * @param index
 	 *            Index where add dockable
 	 */
+<<<<<<< /usr/src/app/output/benoker/dockingframes/ee7fa99567bdcb72ebca8df25a6b110b5ac2b93d/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarDockStation.java/left.java
 	private void add( Dockable dockable, int index ){
 		System.out.println(this.toString()
 				+ "## add(Dockable dockable, int index)##");
@@ -668,39 +477,90 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 				dockable);
 		try{
 			listeners.fireDockableAdding(dockable);
-			insertAt(dockable, index);
-			dockables.dockables().add(index, dockable);
+			dockable.setDockParent(this);
+			if (dockable instanceof PositionedDockStation){
+				if (getPosition() != null){
+					// it would be possible that this station was not already
+					// positioned. This is the case when this station is
+					// instantiated but not drop in any station (e.g.
+					// ToolbarContainerDockStation) which could give it a
+					// position
+					((PositionedDockStation) dockable)
+							.setPosition(getPosition());
+				}
+||||||| /usr/src/app/output/benoker/dockingframes/ee7fa99567bdcb72ebca8df25a6b110b5ac2b93d/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarDockStation.java/base.java
+	private void add( Dockable dockable, int index ){
+		DockUtilities.ensureTreeValidity(this, dockable);
+		DockUtilities.checkLayoutLocked();
+		// Case where dockable is instance of ToolbarDockStation is handled by
+		// the "ToolbarDockStationMerger"
+		// Case where dockable is instance of ToolbarGroupDockStation is handled
+		// by the "ToolbarStrategy.ensureToolbarLayer" method
+		dockable = getToolbarStrategy().ensureToolbarLayer(this, dockable);
+		DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking(this,
+				dockable);
+		try{
+			listeners.fireDockableAdding(dockable);
+			dockable.setDockParent(this);
+			if (dockable instanceof OrientedDockStation){
+				if (getOrientation() != null){
+					// it would be possible that this station was not already
+					// oriented. This is the case when this station is
+					// instantiated but not drop in any station (e.g.
+					// ToolbarContainerDockStation) which could give it an
+					// orientation
+					((OrientedDockStation) dockable)
+							.setOrientation(getOrientation());
+				}
+=======
+	private void insertAt( Dockable dockable, int index ){
+		dockable.setDockParent(this);
+		if (dockable instanceof OrientedDockStation){
+			if (getOrientation() != null){
+				// it would be possible that this station was not already
+				// oriented. This is the case when this station is
+				// instantiated but not drop in any station (e.g.
+				// ToolbarContainerDockStation) which could give it an
+				// orientation
+				((OrientedDockStation) dockable)
+						.setOrientation(getOrientation());
+>>>>>>> /usr/src/app/output/benoker/dockingframes/ee7fa99567bdcb72ebca8df25a6b110b5ac2b93d/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarDockStation.java/right.java
+			}
+<<<<<<< /usr/src/app/output/benoker/dockingframes/ee7fa99567bdcb72ebca8df25a6b110b5ac2b93d/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarDockStation.java/left.java
+			getDockables().add(index, dockable);
+			mainPanel.getContentPane().add(dockable.getComponent(), index);
 			listeners.fireDockableAdded(dockable);
 			fireDockablesRepositioned(index + 1);
 		} finally{
 			token.release();
+||||||| /usr/src/app/output/benoker/dockingframes/ee7fa99567bdcb72ebca8df25a6b110b5ac2b93d/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarDockStation.java/base.java
+			dockables.add(index, dockable);
+			basePanel.getContentPane().add(dockable.getComponent(), index);
+			basePanel.getContentPane().setBounds(0, 0,
+					basePanel.getContentPane().getPreferredSize().width,
+					basePanel.getContentPane().getPreferredSize().height);
+			basePanel.setPreferredSize(new Dimension(basePanel.getContentPane()
+					.getPreferredSize().width, basePanel.getContentPane()
+					.getPreferredSize().height));
+			basePanel.getContentPane().revalidate();
+			basePanel.getContentPane().repaint();
+			listeners.fireDockableAdded(dockable);
+			fireDockablesRepositioned(index + 1);
+		} finally{
+			token.release();
+=======
+>>>>>>> /usr/src/app/output/benoker/dockingframes/ee7fa99567bdcb72ebca8df25a6b110b5ac2b93d/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarDockStation.java/right.java
 		}
-	}
-
-	private void insertAt( Dockable dockable, int index ){
-		dockable.setDockParent(this);
-		if (dockable instanceof PositionedDockStation){
-			if (getPosition() != null){
-				// it would be possible that this station was not already
-				// positioned. This is the case when this station is
-				// instantiated but not drop in any station (e.g.
-				// ToolbarContainerDockStation) which could give it a
-				// position
-				((PositionedDockStation) dockable).setPosition(getPosition());
-			}
-		}
-		mainPanel.getContentPane().add(dockable.getComponent(), index);
-		mainPanel.getContentPane().setBounds(0, 0,
-				mainPanel.getContentPane().getPreferredSize().width,
-				mainPanel.getContentPane().getPreferredSize().height);
-		mainPanel.setPreferredSize(new Dimension(mainPanel.getContentPane()
-				.getPreferredSize().width, mainPanel.getContentPane()
+		basePanel.getContentPane().add(dockable.getComponent(), index);
+		basePanel.getContentPane().setBounds(0, 0,
+				basePanel.getContentPane().getPreferredSize().width,
+				basePanel.getContentPane().getPreferredSize().height);
+		basePanel.setPreferredSize(new Dimension(basePanel.getContentPane()
+				.getPreferredSize().width, basePanel.getContentPane()
 				.getPreferredSize().height));
-		mainPanel.doLayout();
-		mainPanel.getContentPane().revalidate();
-		mainPanel.getContentPane().repaint();
+		basePanel.getContentPane().revalidate();
+		basePanel.getContentPane().repaint();
 	}
-
 	/**
 	 * Removes <code>dockable</code> from this station.<br>
 	 * Note: clients may need to invoke {@link DockController#freezeLayout()}
@@ -715,7 +575,6 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		if (index >= 0)
 			this.remove(index);
 	}
-
 	/**
 	 * Removes the child with the given <code>index</code> from this station.<br>
 	 * Note: clients may need to invoke {@link DockController#freezeLayout()}
@@ -738,16 +597,12 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 			dockable.setDockParent(null);
 			dockables.remove(index);
 			mainPanel.getContentPane().remove(dockable.getComponent());
-			mainPanel.doLayout();
-			mainPanel.getContentPane().revalidate();
-			mainPanel.getContentPane().repaint();
 			listeners.fireDockableRemoved(dockable);
 			fireDockablesRepositioned(index);
 		} finally{
 			token.release();
 		}
 	}
-
 	public Orientation getOrientation(){
 		switch (position) {
 		case NORTH:
@@ -761,12 +616,10 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		}
 		throw new IllegalStateException();
 	}
-	
 	@Override
 	public void setOrientation( Orientation orientation ){
-	// not supported: the orientation have to be dependant of the position
+		// not supported: the orientation have to be dependant of the position
 	}
-
 	@Override
 	public void setPosition( Position position ){
 		System.out.println(this.toString()
@@ -774,20 +627,18 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		this.position = position;
 		// it's very important to change position and orientation of inside
 		// dockables first, else doLayout() is done on wrong inside information
-		for (Dockable d : dockables.dockables()){
+		for (Dockable d : dockables){
 			if (d instanceof PositionedDockStation){
 				PositionedDockStation group = (PositionedDockStation) d;
 				group.setPosition(this.getPosition());
 			}
 		}
-		this.mainPanel.doLayout();
+		 this.mainPanel.doLayout();
 	}
-
 	@Override
 	public Position getPosition(){
 		return this.position;
 	}
-
 	/**
 	 * This panel is used as base of the station. All children of the station
 	 * have this panel as parent too. It allows to draw arbitrary figures over
@@ -990,7 +841,6 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 		}
 
 	}
-
 	/**
 	 * Gets a {@link StationPaint} which is used to paint some lines onto this
 	 * station. Use a {@link DefaultStationPaintValue#setDelegate(StationPaint)
@@ -1001,23 +851,260 @@ public class ToolbarDockStation extends AbstractDockableStation implements
 	public DefaultStationPaintValue getPaint(){
 		return paint;
 	}
-
+<<<<<<< /usr/src/app/output/benoker/dockingframes/ee7fa99567bdcb72ebca8df25a6b110b5ac2b93d/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarDockStation.java/left.java
 	@Override
 	public void setController( DockController controller ){
-		if (getController() != controller){
-			if (getController() != null){
+		super.setController(controller);
+		// if not set controller of the DefaultStationPaintValue, call to
+		// DefaultStationPaintValue do nothing
+		paint.setController(controller);
+	}
+||||||| /usr/src/app/output/benoker/dockingframes/ee7fa99567bdcb72ebca8df25a6b110b5ac2b93d/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarDockStation.java/base.java
+	@Override
+	public void setController( DockController controller ){
+		super.setController(controller);
+		// if not set controller of the DefaultStationPaintValue, call to
+		// DefaultStationPaintValue do nothing
+		paint.setController(controller);
+	}
+=======
+	@Override
+	public void setController( DockController controller ){
+		if( getController() != controller ){
+			if( getController() != null ){
 				dockables.unbind();
 			}
-
+			
 			super.setController(controller);
 			// if not set controller of the DefaultStationPaintValue, call to
 			// DefaultStationPaintValue do nothing
 			paint.setController(controller);
-			placeholderStrategy.setProperties(controller);
-
-			if (controller != null){
+			placeholderStrategy.setProperties( controller );
+			
+			if( controller != null ){
 				dockables.bind();
 			}
+		}
+	}
+>>>>>>> /usr/src/app/output/benoker/dockingframes/ee7fa99567bdcb72ebca8df25a6b110b5ac2b93d/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarDockStation.java/right.java
+	protected Dimension computeBaseOptimalSize(){
+		Dimension optimalSize = new Dimension();
+		Dimension currentSize;
+		if (getOrientation() != null){
+			if (getDockables().size() != 0){
+				switch (getOrientation()) {
+				case VERTICAL:
+					optimalSize.width = Integer.MIN_VALUE;
+					for (Dockable dockable : getDockables()){
+						currentSize = dockable.getComponent()
+								.getPreferredSize();
+						optimalSize.height += currentSize.height;
+						if (currentSize.width > optimalSize.width){
+							optimalSize.width = currentSize.width;
+						}
+					}
+					System.out.println("Computation... " + optimalSize.height
+							+ " / " + optimalSize.width);
+					return optimalSize;
+				case HORIZONTAL:
+					optimalSize.height = Integer.MIN_VALUE;
+					for (Dockable dockable : getDockables()){
+						currentSize = dockable.getComponent()
+								.getPreferredSize();
+						optimalSize.width += currentSize.width;
+						if (currentSize.height > optimalSize.height){
+							optimalSize.height = currentSize.height;
+						}
+					}
+					return optimalSize;
+				}
+			}
+		}
+		return this.mainPanel.getContentPane().getPreferredSize();
+	}
+	/** A list of all children */
+	private DockablePlaceholderList<Dockable> dockables = new DockablePlaceholderList<Dockable>();
+	/** A paint to draw lines */
+	/** the index of the closest dockable above the mouse */
+	/** closest side of the the closest dockable above the mouse */
+    /** current {@link PlaceholderStrategy} */
+    private PropertyValue<PlaceholderStrategy> placeholderStrategy = new PropertyValue<PlaceholderStrategy>(PlaceholderStrategy.PLACEHOLDER_STRATEGY) {
+		@Override
+		protected void valueChanged( PlaceholderStrategy oldValue, PlaceholderStrategy newValue ){
+			dockables.setStrategy( newValue );
+		}
+	};
+	@Override
+	public int getDockableCount(){
+		return dockables.dockables().size();
+	}
+	/**
+	 * Grants direct access to the list of {@link Dockable}s, sublcasses should not modify the list
+	 * unless the fire the appropriate events.
+	 * @return the list of dockables
+	 */
+	protected PlaceholderList.Filter<Dockable> getDockables(){
+		return dockables.dockables();
+	}
+	/**
+	 * Gets the placeholders of this station using a {@link PlaceholderListItemConverter} to
+	 * encode the children. The converter puts the following parameters for each {@link Dockable} 
+	 * into the map:
+	 * <ul>
+	 * 	<li>id: the integer from <code>children</code></li>
+	 *  <li>index: the location of the element in the dockables-list</li>
+	 *  <li>placeholder: the placeholder of the element, might be missing</li>
+	 * </ul>
+	 * 
+	 * @param children a unique identifier for each child of this station
+	 * @return the map
+	 */
+	public PlaceholderMap getPlaceholders( final Map<Dockable, Integer> children ){
+		final PlaceholderStrategy strategy = getPlaceholderStrategy();
+		
+		return dockables.toMap( new PlaceholderListItemAdapter<Dockable, Dockable>(){
+			@Override
+			public ConvertedPlaceholderListItem convert( int index, Dockable dockable ){
+				Integer id = children.get( dockable );
+				if( id == null ){
+					return null;
+				}
+			
+				ConvertedPlaceholderListItem item = new ConvertedPlaceholderListItem();
+				item.putInt( "id", id );
+				item.putInt( "index", index );
+				
+				if( strategy != null ){
+					Path placeholder = strategy.getPlaceholderFor( dockable );
+					if( placeholder != null ){
+						item.putString( "placeholder", placeholder.toString() );
+						item.setPlaceholder( placeholder );
+					}
+				}
+				
+				return item;
+			}
+		});
+	}
+	/**
+	 * Sets a new layout on this station, this method assumes that <code>map</code> was created
+	 * by the method {@link #getPlaceholders(Map)}.
+	 * @param map the map to read
+	 * @param children the new children of this station
+	 * @throws IllegalStateException if there are children left on this station
+	 */
+	public void setPlaceholders( PlaceholderMap map, final Map<Integer, Dockable> children ){
+    	DockUtilities.checkLayoutLocked();
+    	if( getDockableCount() > 0 ){
+    		throw new IllegalStateException( "must not have any children" );
+    	}
+    	DockController controller = getController();
+    	
+    	try{
+    		if( controller != null ){
+    			controller.freezeLayout();
+    		}
+    		
+    		DockablePlaceholderList<Dockable> next = new DockablePlaceholderList<Dockable>();
+    		    		
+			if( getController() != null ){
+				dockables.setStrategy( null );
+				dockables.unbind();
+				dockables = next;
+			}
+			else{
+				dockables = next;
+			}
+			
+			next.read( map, new PlaceholderListItemAdapter<Dockable, Dockable>(){
+    			private DockHierarchyLock.Token token;
+    			private int index = 0;
+    			
+    			@Override
+    			public Dockable convert( ConvertedPlaceholderListItem item ){
+    				int id = item.getInt( "id" );
+    				Dockable dockable = children.get( id );
+    				if( dockable != null ){
+    					DockUtilities.ensureTreeValidity( ToolbarDockStation.this, dockable );
+    					token = DockHierarchyLock.acquireLinking( ToolbarDockStation.this, dockable );
+    					listeners.fireDockableAdding( dockable );
+    					return dockable;
+    				}
+    				return null;
+    			}
+    			
+    			@Override
+    			public void added( Dockable dockable ){
+    				try{
+    					// this would be the correct place to create DockTitle and similar stuff.
+
+    					insertAt( dockable, index++ );
+	    				listeners.fireDockableAdded( dockable );
+    				}
+    				finally{
+    					token.release();
+    				}
+    			}
+    		});
+			
+			if( getController() != null ){
+				dockables.bind();
+				dockables.setStrategy( getPlaceholderStrategy() );
+			}
+    	}
+    	finally{
+    		if( controller != null ){
+    			controller.meltLayout();
+    		}
+    	}
+	}
+	@Override
+	public PlaceholderMap getPlaceholders(){
+		return dockables.toMap();
+	}
+    /**
+     * Gets the {@link PlaceholderStrategy} that is currently in use.
+     * @return the current strategy, may be <code>null</code>
+     */
+    public PlaceholderStrategy getPlaceholderStrategy(){
+    	return placeholderStrategy.getValue();
+    }
+    /**
+     * Sets the {@link PlaceholderStrategy} to use, <code>null</code> will set
+     * the default strategy.
+     * @param strategy the new strategy, can be <code>null</code>
+     */
+    public void setPlaceholderStrategy( PlaceholderStrategy strategy ){
+    	placeholderStrategy.setValue( strategy );
+    }
+	@Override
+	public String getFactoryID(){
+		return ToolbarDockStationFactory.ID;
+	}
+	private void add( Dockable dockable, int index ){
+		DockUtilities.ensureTreeValidity(this, dockable);
+		DockUtilities.checkLayoutLocked();
+		// Case where dockable is instance of ToolbarDockStation is handled by
+		// the "ToolbarDockStationMerger"
+		// Case where dockable is instance of ToolbarGroupDockStation is handled
+		// by the "ToolbarStrategy.ensureToolbarLayer" method
+		dockable = getToolbarStrategy().ensureToolbarLayer(this, dockable);
+		DockHierarchyLock.Token token = DockHierarchyLock.acquireLinking(this,
+				dockable);
+		try{
+			listeners.fireDockableAdding(dockable);
+<<<<<<< /usr/src/app/output/benoker/dockingframes/ee7fa99567bdcb72ebca8df25a6b110b5ac2b93d/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarDockStation.java/left.java
+			getDockables().add(index, dockable);
+||||||| /usr/src/app/output/benoker/dockingframes/ee7fa99567bdcb72ebca8df25a6b110b5ac2b93d/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarDockStation.java/base.java
+			dockables.add(index, dockable);
+=======
+			dockables.dockables().add(index, dockable);
+>>>>>>> /usr/src/app/output/benoker/dockingframes/ee7fa99567bdcb72ebca8df25a6b110b5ac2b93d/docking-frames-ext-toolbar/src/bibliothek/gui/dock/ToolbarDockStation.java/right.java
+			insertAt( dockable, index );
+			listeners.fireDockableAdded(dockable);
+			fireDockablesRepositioned(index + 1);
+		} finally{
+			token.release();
 		}
 	}
 
