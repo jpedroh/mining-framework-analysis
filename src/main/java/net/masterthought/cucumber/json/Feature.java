@@ -37,120 +37,143 @@ public class Feature implements Reportable, Durationable {
     private final StatusCounter stepsCounter = new StatusCounter();
 
     private Status featureStatus;
-    private long duration;
 
     @Override
     public String getDeviceName() {
         return deviceName;
     }
 
+
     public String getId() {
         return id;
     }
+
 
     public Element[] getElements() {
         return elements;
     }
 
+
     public String getReportFileName() {
         return reportFileName;
     }
 
+
     public Tag[] getTags() {
         return tags;
     }
+
 
     @Override
     public Status getStatus() {
         return featureStatus;
     }
 
+
     @Override
     public String getName() {
         return StringUtils.defaultString(name);
     }
 
+
     public String getKeyword() {
         return StringUtils.defaultString(keyword);
     }
 
+
     public String getDescription() {
         return StringUtils.defaultString(description);
     }
+
 
     @Override
     public int getFeatures() {
         return 1;
     }
 
+
     @Override
     public int getPassedFeatures() {
         return getStatus().isPassed() ? 1 : 0;
     }
+
 
     @Override
     public int getFailedFeatures() {
         return getStatus().isPassed() ? 0 : 1;
     }
 
+
     @Override
     public int getScenarios() {
         return scenarios.size();
     }
+
 
     @Override
     public int getSteps() {
         return stepsCounter.size();
     }
 
+
     @Override
     public int getPassedSteps() {
         return stepsCounter.getValueFor(Status.PASSED);
     }
+
 
     @Override
     public int getFailedSteps() {
         return stepsCounter.getValueFor(Status.FAILED);
     }
 
+
     @Override
     public int getPendingSteps() {
         return stepsCounter.getValueFor(Status.PENDING);
     }
+
 
     @Override
     public int getSkippedSteps() {
         return stepsCounter.getValueFor(Status.SKIPPED);
     }
 
+
     @Override
     public int getUndefinedSteps() {
         return stepsCounter.getValueFor(Status.UNDEFINED);
     }
+
 
     @Override
     public long getDuration() {
         return duration;
     }
 
+
     @Override
     public String getFormattedDuration() {
         return Util.formatDuration(duration);
     }
+
 
     @Override
     public int getPassedScenarios() {
         return elementsCounter.getValueFor(Status.PASSED);
     }
 
+
     @Override
     public int getFailedScenarios() {
         return elementsCounter.getValueFor(Status.FAILED);
     }
 
+
     public String getJsonFile() {
         return jsonFile;
     }
+
 
     /**
      * Sets additional information and calculates values which should be calculated during object creation.
@@ -158,6 +181,8 @@ public class Feature implements Reportable, Durationable {
      * @param jsonFileNo index of the JSON file
      * @param configuration configuration for the report
      */
+
+
     public void setMetaData(String jsonFile, int jsonFileNo, Configuration configuration) {
         this.jsonFile = jsonFile;
 
@@ -176,6 +201,7 @@ public class Feature implements Reportable, Durationable {
         calculateSteps();
     }
 
+
     private String calculateDeviceName() {
         String[] splitJsonFile = jsonFile.split("[^\\d\\w]");
         // it should have at least two parts: file name and its extension (.json)
@@ -187,6 +213,7 @@ public class Feature implements Reportable, Durationable {
             return splitJsonFile[0];
         }
     }
+
 
     private void calculateReportFileName(int jsonFileNo, Configuration configuration) {
         // remove all characters that might not be valid file name
@@ -207,6 +234,7 @@ public class Feature implements Reportable, Durationable {
         reportFileName += ".html";
     }
 
+
     private Status calculateFeatureStatus() {
         StatusCounter statusCounter = new StatusCounter();
         for (Element element : elements) {
@@ -214,6 +242,7 @@ public class Feature implements Reportable, Durationable {
         }
         return statusCounter.getFinalStatus();
     }
+
 
     private void calculateSteps() {
         for (Element element : elements) {
@@ -228,9 +257,13 @@ public class Feature implements Reportable, Durationable {
         }
     }
 
+
     @Override
     public Map<String, String[]> getFailedCause() {
         Map<String,String[]> failures = Util.getFailedCauseMap(this.elements);
         return failures;
     }
+
+
+    private long duration;
 }

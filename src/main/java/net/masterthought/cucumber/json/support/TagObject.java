@@ -166,4 +166,6 @@ public class TagObject implements Reportable {
     public String getDeviceName() {
         throw new NotImplementedException();
     }
+
+
 }
