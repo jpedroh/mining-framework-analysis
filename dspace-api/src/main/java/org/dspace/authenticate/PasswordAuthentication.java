@@ -54,10 +54,6 @@ public class PasswordAuthentication
 
     private static final String PASSWORD_AUTHENTICATED = "password.authenticated";
 
-    private EPersonService ePersonService = EPersonServiceFactory.getInstance().getEPersonService();
-
-
-
     /**
      * Look to see if this email address is allowed to register.
      * <p>
@@ -70,6 +66,7 @@ public class PasswordAuthentication
      * @param email email
      * @throws SQLException if database error
      */
+
     @Override
     public boolean canSelfRegister(Context context,
                                    HttpServletRequest request,
@@ -103,6 +100,7 @@ public class PasswordAuthentication
      *
      * @throws SQLException if database error
      */
+
     @Override
     public void initEPerson(Context context, HttpServletRequest request,
                             EPerson eperson)
@@ -114,6 +112,7 @@ public class PasswordAuthentication
      *
      * @throws SQLException if database error
      */
+
     @Override
     public boolean allowSetPassword(Context context,
                                     HttpServletRequest request,
@@ -128,6 +127,7 @@ public class PasswordAuthentication
      *
      * @return false
      */
+
     @Override
     public boolean isImplicit() {
         return false;
@@ -137,6 +137,7 @@ public class PasswordAuthentication
      * Add authenticated users to the group defined in authentication-password.cfg by
      * the login.specialgroup key.
      */
+
     @Override
     public List<Group> getSpecialGroups(Context context, HttpServletRequest request) {
         // Prevents anonymous users from being added to this group, and the second check
@@ -193,6 +194,7 @@ public class PasswordAuthentication
      * <br>BAD_ARGS        - missing username, or user matched but cannot login.
      * @throws SQLException if database error
      */
+
     @Override
     public int authenticate(Context context,
                             String username,
@@ -245,6 +247,7 @@ public class PasswordAuthentication
      * @param response The HTTP response from the servlet method.
      * @return fully-qualified URL
      */
+
     @Override
     public String loginPageURL(Context context,
                                HttpServletRequest request,
@@ -257,7 +260,6 @@ public class PasswordAuthentication
         return "password";
     }
 
-
     @Override
     public boolean isUsed(final Context context, final HttpServletRequest request) {
         if (request != null &&
@@ -267,6 +269,8 @@ public class PasswordAuthentication
         }
         return false;
     }
+
+    private EPersonService ePersonService = EPersonServiceFactory.getInstance().getEPersonService();
 
     @Override
     public boolean canChangePassword(Context context, EPerson ePerson, String currentPassword) {

@@ -388,6 +388,28 @@ public class ShibAuthentication implements AuthenticationMethod {
 
             log.info("Added current EPerson to special groups: " + groups);
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/authenticate/ShibAuthentication.java/left.java
+            List<UUID> groupIds = new ArrayList<>();
+            for (Group group : groups) {
+                groupIds.add(group.getID());
+            }
+
+            // Cache the special groups, so we don't have to recalculate them again
+            // for this session.
+            request.setAttribute("shib.specialgroup", groupIds);
+
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/authenticate/ShibAuthentication.java/base.java
+            List<UUID> groupIds = new ArrayList<>();
+            for (Group group : groups) {
+                groupIds.add(group.getID());
+            }
+
+            // Cache the special groups, so we don't have to recalculate them again
+            // for this session.
+            request.getSession().setAttribute("shib.specialgroup", groupIds);
+
+=======
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/authenticate/ShibAuthentication.java/right.java
             return new ArrayList<>(groups);
 
         } catch (Throwable t) {

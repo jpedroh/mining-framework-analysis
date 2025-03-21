@@ -60,7 +60,6 @@ public class RelationshipMetadataServiceIT extends AbstractIntegrationTestWithDa
     Collection col2;
     Relationship relationship;
     RelationshipType isAuthorOfPublicationRelationshipType;
-
     /**
      * This method will be run before every test as per @Before. It will
      * initialize resources required for the tests.
@@ -88,7 +87,6 @@ public class RelationshipMetadataServiceIT extends AbstractIntegrationTestWithDa
         rightItem = ItemBuilder.createItem(context, col2).build();
         context.restoreAuthSystemState();
     }
-
     /**
      * Common function to convert leftItem to a publication item, convert rightItem to an author item,
      * and relating them to each other stored in the relationship field
@@ -111,7 +109,6 @@ public class RelationshipMetadataServiceIT extends AbstractIntegrationTestWithDa
                 isAuthorOfPublicationRelationshipType).build();
         context.restoreAuthSystemState();
     }
-
     /**
      * Common function to convert leftItem to a publication item, convert rightItem to an author item,
      * and relating them to each other stored in the relationship field
@@ -135,7 +132,6 @@ public class RelationshipMetadataServiceIT extends AbstractIntegrationTestWithDa
             RelationshipBuilder.createRelationshipBuilder(context, leftItem, rightItem, isAuthorOfPublication).build();
         context.restoreAuthSystemState();
     }
-
     /**
      * Common function to convert leftItem to a journal issue item, convert rightItem to a journal volume item,
      * and relating them to each other stored in the relationship field
@@ -168,7 +164,6 @@ public class RelationshipMetadataServiceIT extends AbstractIntegrationTestWithDa
             RelationshipBuilder.createRelationshipBuilder(context, leftItem, rightItem, isIssueOfVolume).build();
         context.restoreAuthSystemState();
     }
-
     @Test
     public void testGetAuthorRelationshipMetadata() throws Exception {
         initPublicationAuthor();
@@ -234,7 +229,6 @@ public class RelationshipMetadataServiceIT extends AbstractIntegrationTestWithDa
         assertThat(rightList.get(1).getMetadataField().getQualifier(), nullValue());
         assertThat(rightList.get(1).getAuthority(), equalTo("virtual::" + relationship.getID()));
     }
-
     @Test
     public void testDeleteAuthorRelationshipCopyToLeftItem() throws Exception {
         initPublicationAuthor();
@@ -292,7 +286,6 @@ public class RelationshipMetadataServiceIT extends AbstractIntegrationTestWithDa
         List<RelationshipMetadataValue> list = relationshipMetadataService.getRelationshipMetadata(leftItem, true);
         assertThat(list.size(), equalTo(0));
     }
-
     @Test
     public void testAuthorDeleteRelationshipCopyToRightItem() throws Exception {
         initPublicationAuthor();
@@ -319,7 +312,6 @@ public class RelationshipMetadataServiceIT extends AbstractIntegrationTestWithDa
                 .getMetadata(rightItem, MetadataSchemaEnum.RELATION.getName(), "isPublicationOfAuthor", null, Item.ANY)
                 .size(), equalTo(1));
     }
-
     @Test
     public void testDeleteAuthorRelationshipCopyToBothItems() throws Exception {
         initPublicationAuthor();
@@ -377,7 +369,6 @@ public class RelationshipMetadataServiceIT extends AbstractIntegrationTestWithDa
                 .getMetadata(leftItem, MetadataSchemaEnum.RELATION.getName(), "isAuthorOfPublication", null, Item.ANY)
                 .size());
     }
-
     @Test
     public void testGetJournalRelationshipMetadata() throws Exception {
         initJournalVolumeIssue();
@@ -446,7 +437,6 @@ public class RelationshipMetadataServiceIT extends AbstractIntegrationTestWithDa
         assertThat(volumeRelList.get(2).getMetadataField().getQualifier(), nullValue());
         assertThat(volumeRelList.get(2).getAuthority(), equalTo("virtual::" + relationship.getID()));
     }
-
     @Test
     public void testDeleteJournalRelationshipCopyToLeftItem() throws Exception {
         initJournalVolumeIssue();
@@ -466,7 +456,6 @@ public class RelationshipMetadataServiceIT extends AbstractIntegrationTestWithDa
             itemService.getMetadata(rightItem, "publicationissue", "issueNumber", null, Item.ANY);
         assertThat(issueList.size(), equalTo(0));
     }
-
     @Test
     public void testJournalDeleteRelationshipCopyToRightItem() throws Exception {
         initJournalVolumeIssue();
@@ -486,7 +475,6 @@ public class RelationshipMetadataServiceIT extends AbstractIntegrationTestWithDa
         assertThat(issueList.size(), equalTo(1));
         assertThat(issueList.get(0).getValue(), equalTo("2"));
     }
-
     @Test
     public void testDeleteJournalRelationshipCopyToBothItems() throws Exception {
         initJournalVolumeIssue();
@@ -508,7 +496,6 @@ public class RelationshipMetadataServiceIT extends AbstractIntegrationTestWithDa
         assertThat(issueList.size(), equalTo(1));
         assertThat(issueList.get(0).getValue(), equalTo("2"));
     }
-
     @Test
     public void testDeleteAuthorRelationshipCopyToLeftItemFromDefaultInDb() throws Exception {
         initPublicationAuthorWithCopyParams(true, false);
@@ -566,7 +553,6 @@ public class RelationshipMetadataServiceIT extends AbstractIntegrationTestWithDa
         List<RelationshipMetadataValue> list = relationshipMetadataService.getRelationshipMetadata(leftItem, true);
         assertThat(list.size(), equalTo(0));
     }
-
     @Test
     public void testAuthorDeleteRelationshipCopyToRightItemFromDefaultInDb() throws Exception {
         initPublicationAuthorWithCopyParams(false, true);
@@ -593,7 +579,6 @@ public class RelationshipMetadataServiceIT extends AbstractIntegrationTestWithDa
                 .getMetadata(rightItem, MetadataSchemaEnum.RELATION.getName(), "isPublicationOfAuthor", null, Item.ANY)
                 .size(), equalTo(1));
     }
-
     @Test
     public void testDeleteAuthorRelationshipCopyToBothItemsFromDefaultsInDb() throws Exception {
         initPublicationAuthorWithCopyParams(true, true);
@@ -650,6 +635,51 @@ public class RelationshipMetadataServiceIT extends AbstractIntegrationTestWithDa
                 .getMetadata(rightItem, MetadataSchemaEnum.RELATION.getName(), "isPublicationOfAuthor", null, Item.ANY)
                 .size(), equalTo(1));
     }
+    @Test
+    public void testGetNextRightPlace() throws Exception {
+        assertThat(relationshipService.findNextRightPlaceByRightItem(context, rightItem), equalTo(0));
+        initPublicationAuthor();
+
+        assertThat(relationshipService.findNextRightPlaceByRightItem(context, rightItem), equalTo(1));
+
+        context.turnOffAuthorisationSystem();
+
+        Item secondItem = ItemBuilder.createItem(context, col).build();
+        RelationshipBuilder.createRelationshipBuilder(context, secondItem, rightItem,
+            isAuthorOfPublicationRelationshipType).build();
+        context.restoreAuthSystemState();
+
+        assertThat(relationshipService.findNextRightPlaceByRightItem(context, rightItem), equalTo(2));
+    }
+    @Test
+    public void testGetNextLeftPlace() throws Exception {
+        assertThat(relationshipService.findNextLeftPlaceByLeftItem(context, leftItem), equalTo(0));
+        initPublicationAuthor();
+
+        assertThat(relationshipService.findNextLeftPlaceByLeftItem(context, leftItem), equalTo(1));
+
+        context.turnOffAuthorisationSystem();
+
+        Item secondAuthor = ItemBuilder.createItem(context, col2)
+                                       .withPersonIdentifierFirstName("firstName")
+                                       .withPersonIdentifierLastName("familyName").build();
+
+        RelationshipBuilder.createRelationshipBuilder(context, leftItem, secondAuthor,
+            isAuthorOfPublicationRelationshipType).build();
+        context.restoreAuthSystemState();
+
+        assertThat(relationshipService.findNextLeftPlaceByLeftItem(context, leftItem), equalTo(2));
+
+
+    }
+    /**
+     * Common function to convert leftItem to a publication item, convert rightItem to an author item,
+     * and relating them to each other stored in the relationship field
+     */
+    /**
+     * Common function to convert leftItem to a publication item, convert rightItem to an author item,
+     * and relating them to each other stored in the relationship field
+     */
 
     @Test
     public void testGetVirtualMetadata() throws SQLException, AuthorizeException {

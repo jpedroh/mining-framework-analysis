@@ -446,6 +446,54 @@ public class VersionHistoryRestRepositoryIT extends AbstractControllerIntegratio
                              .andExpect(status().isNotFound());
     }
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/VersionHistoryRestRepositoryIT.java/left.java
+    @Test
+    public void findDraftOfVersionNoContentTest() throws Exception {
+        //disable file upload mandatory
+        configurationService.setProperty("webui.submit.upload.required", false);
+
+        context.turnOffAuthorisationSystem();
+
+        parentCommunity = CommunityBuilder.createCommunity(context)
+                                          .withName("Parent Community")
+                                          .build();
+
+        Collection col = CollectionBuilder.createCollection(context, parentCommunity)
+                                          .withName("Collection test")
+                                          .withSubmitterGroup(admin)
+                                          .build();
+
+        Item item = ItemBuilder.createItem(context, col)
+                               .withTitle("Public test item")
+                               .withIssueDate("2021-04-27")
+                               .withAuthor("Doe, John")
+                               .withSubject("ExtraEntry")
+                               .build();
+
+        Version version = VersionBuilder.createVersion(context, item, "test").build();
+        VersionHistory vh = versionHistoryService.findByItem(context, version.getItem());
+        context.turnOffAuthorisationSystem();
+
+        AtomicReference<Integer> idRef = new AtomicReference<Integer>();
+        String tokenAdmin = getAuthToken(admin.getEmail(), password);
+
+        // retrieve the workspace item
+        getClient(tokenAdmin).perform(get("/api/submission/workspaceitems/search/item")
+                             .param("uuid", String.valueOf(version.getItem().getID())))
+                             .andExpect(status().isOk())
+                             .andDo(result -> idRef.set(read(result.getResponse().getContentAsString(), "$.id")));
+
+        // submit the workspaceitem to complete the deposit
+        getClient(tokenAdmin).perform(post(BASE_REST_SERVER_URL + "/api/workflow/workflowitems")
+                             .content("/api/submission/workspaceitems/" + idRef.get())
+                             .contentType(textUriContentType))
+                             .andExpect(status().isCreated());
+
+        getClient(tokenAdmin).perform(get("/api/versioning/versionhistories/" + vh.getID() + "/draftVersion"))
+                             .andExpect(status().isNoContent());
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/VersionHistoryRestRepositoryIT.java/base.java
+=======
     @Test
     public void findDraftOfVersionNoContentTest() throws Exception {
         //disable file upload mandatory
@@ -492,6 +540,7 @@ public class VersionHistoryRestRepositoryIT extends AbstractControllerIntegratio
         getClient(tokenAdmin).perform(get("/api/versioning/versionhistories/" + vh.getID() + "/draftVersion"))
                              .andExpect(status().isNoContent());
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/VersionHistoryRestRepositoryIT.java/right.java
 
     @Test
     public void findWorkflowItemOfDraftVersionAdminTest() throws Exception {
@@ -586,7 +635,35 @@ public class VersionHistoryRestRepositoryIT extends AbstractControllerIntegratio
         //disable file upload mandatory
         configurationService.setProperty("webui.submit.upload.required", false);
         context.turnOffAuthorisationSystem();
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/VersionHistoryRestRepositoryIT.java/left.java
+    
+        parentCommunity = CommunityBuilder.createCommunity(context)
+                                          .withName("Parent Community")
+                                          .build();
 
+        Collection col = CollectionBuilder.createCollection(context, parentCommunity)
+                                          .withName("Collection test")
+                                          .withSubmitterGroup(admin)
+                                          .build();
+
+        Item item = ItemBuilder.createItem(context, col)
+                               .withTitle("Public test item")
+                               .withIssueDate("2021-03-20")
+                               .withAuthor("Doe, John")
+                               .withSubject("ExtraEntry")
+                               .build();
+
+        Version v2 = VersionBuilder.createVersion(context, item, "test").build();
+        VersionHistory versionHistory = versionHistoryService.findByItem(context, item);
+        Item lastVersionItem = v2.getItem();
+        Version v1 = versioningService.getVersion(context, item);
+
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/VersionHistoryRestRepositoryIT.java/base.java
+        Version version = versionHistoryService.getFirstVersion(context, versionHistory);
+        Version secondVersion = versioningService
+            .createNewVersion(context, versionHistory, item, "test", new Date(), 0);
+=======
+    
         parentCommunity = CommunityBuilder.createCommunity(context)
                                           .withName("Parent Community")
                                           .build();
@@ -609,6 +686,7 @@ public class VersionHistoryRestRepositoryIT extends AbstractControllerIntegratio
         Item lastVersionItem = v2.getItem();
         Version v1 = versioningService.getVersion(context, item);
 
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/VersionHistoryRestRepositoryIT.java/right.java
         context.restoreAuthSystemState();
         AtomicReference<Integer> idRef = new AtomicReference<Integer>();
         String adminToken = getAuthToken(admin.getEmail(), password);

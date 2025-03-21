@@ -10,8 +10,8 @@ package org.dspace.app.rest;
 import static com.jayway.jsonpath.JsonPath.read;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static org.dspace.app.rest.matcher.MetadataMatcher.matchMetadata;
-import static org.dspace.app.rest.matcher.MetadataMatcher.matchMetadataDoesNotExist;
 import static org.dspace.authorize.ResourcePolicy.TYPE_CUSTOM;
+import static org.dspace.app.rest.matcher.MetadataMatcher.matchMetadataDoesNotExist;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
@@ -6018,6 +6018,42 @@ public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegration
 
     }
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/left.java
+    @Test
+    public void invalidCollectionConfigurationPreventItemCreationTest() throws Exception {
+        context.turnOffAuthorisationSystem();
+
+        parentCommunity = CommunityBuilder.createCommunity(context)
+                                          .withName("Parent Community")
+                                          .build();
+
+        Collection col = CollectionBuilder.createCollection(context, parentCommunity)
+                                           .withName("Collection 1")
+                                           .withSubmitterGroup(eperson)
+                                           .withTemplateItem()
+                                           .withEntityType("Person")
+                                           .build();
+
+        Item templateItem = col.getTemplateItem();
+        itemService.addMetadata(context, templateItem, "dspace", "entity", "type", null, "Publication");
+
+        String authToken = getAuthToken(eperson.getEmail(), password);
+
+        InputStream pdf = getClass().getResourceAsStream("simple-article.pdf");
+        MockMultipartFile pdfFile = new MockMultipartFile("file", "/local/path/myfile.pdf", "application/pdf", pdf);
+
+        context.restoreAuthSystemState();
+
+        try {
+            getClient(authToken).perform(fileUpload("/api/submission/workspaceitems")
+                                .file(pdfFile))
+                                .andExpect(status().is(500));
+        } finally {
+            pdf.close();
+        }
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/base.java
+=======
     @Test
     public void invalidCollectionConfigurationPreventItemCreationTest() throws Exception {
         context.turnOffAuthorisationSystem();
@@ -6051,6 +6087,7 @@ public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegration
             pdf.close();
         }
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/right.java
 
     @Test
     public void patchUploadAddAdminRPInstallAndVerifyOnlyAdminCanView() throws Exception {
@@ -6058,6 +6095,17 @@ public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegration
         Community community = CommunityBuilder.createCommunity(context).withName("Com").build();
         Collection collection = CollectionBuilder.createCollection(context, community).withName("Col").build();
         InputStream pdf = getClass().getResourceAsStream("simple-article.pdf");
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/left.java
+        WorkspaceItem wItem = WorkspaceItemBuilder.createWorkspaceItem(context, collection)
+                                                  .withSubmitter(eperson)
+                                                  .withTitle(
+                                                      "Test Item patchUploadAddAdminRPInstallAndVerifyOnlyAdminCanView")
+                                                  .withIssueDate("2019-03-06")
+                                                  .withFulltext("upload2.pdf", "/local/path/simple-article.pdf", pdf)
+                                                  .build();
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/base.java
+        WorkspaceItem ;
+=======
         WorkspaceItem wItem = WorkspaceItemBuilder.createWorkspaceItem(context, collection)
                                                   .withSubmitter(eperson)
                                                   .withTitle(
@@ -6066,6 +6114,7 @@ public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegration
                                                   .withFulltext("upload2.pdf", "/local/path/simple-article.pdf", pdf)
                                                   .grantLicense()
                                                   .build();
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/right.java
         context.restoreAuthSystemState();
 
         // auth
@@ -6132,6 +6181,74 @@ public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegration
                              .andExpect(status().isOk());
     }
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/left.java
+    @Test
+    public void patchUploadAddOpenAccessRPInstallAndVerifyAnonCanView() throws Exception {
+        context.turnOffAuthorisationSystem();
+        Community community = CommunityBuilder.createCommunity(context).withName("Com").build();
+        Collection collection = CollectionBuilder.createCollection(context, community).withName("Col").build();
+        InputStream pdf = getClass().getResourceAsStream("simple-article.pdf");
+        WorkspaceItem wItem =
+            WorkspaceItemBuilder.createWorkspaceItem(context, collection).withSubmitter(eperson)
+                                .withTitle("Test Item patchUploadAddOpenAccessRPInstallAndVerifyOnlyAdminCanView")
+                                .withIssueDate("2019-03-06")
+                                .withFulltext("upload2.pdf", "/local/path/simple-article.pdf", pdf)
+                                .build();
+        context.restoreAuthSystemState();
+
+        // auth
+        String epersonToken = getAuthToken(eperson.getEmail(), password);
+        String adminToken = getAuthToken(admin.getEmail(), password);
+
+        // prepare patch body
+        Map<String, String> accessCondition = new HashMap<>();
+        accessCondition.put("name", "openaccess");
+        List<Operation> ops = new ArrayList<>();
+        ops.add(new AddOperation("/sections/upload/files/0/accessConditions/-", accessCondition));
+        String patchBody = getPatchContent(ops);
+
+        // submit patch and verify response
+        getClient(epersonToken)
+            .perform(
+                patch("/api/submission/workspaceitems/" + wItem.getID())
+                    .content(patchBody)
+                    .contentType(MediaType.APPLICATION_JSON_PATCH_JSON)
+                    )
+            .andExpect(status().isOk());
+
+        Bitstream bitstream = wItem.getItem().getBundles().get(0).getBitstreams().get(0);
+
+        // verify that bitstream of workspace item has this open access RP
+        getClient(adminToken).perform(get("/api/authz/resourcepolicies/search/resource")
+            .param("uuid", bitstream.getID().toString()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$._embedded.resourcepolicies", Matchers.hasItems(
+                                 ResourcePolicyMatcher.matchResourcePolicyProperties(anonymousGroup, null, bitstream,
+                                     ResourcePolicy.TYPE_CUSTOM, Constants.READ, "openaccess")
+                                                                                                  )));
+
+        // submit the workspaceitem to complete the deposit (as there is no workflow configured)
+        getClient(epersonToken)
+            .perform(post(BASE_REST_SERVER_URL + "/api/workflow/workflowitems")
+                .content("/api/submission/workspaceitems/" + wItem.getID())
+                .contentType(textUriContentType))
+            .andExpect(status().isCreated());
+
+        // verify that bitstream of workspace item still has this open access RP
+        getClient(adminToken).perform(get("/api/authz/resourcepolicies/search/resource")
+            .param("uuid", bitstream.getID().toString()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$._embedded.resourcepolicies", Matchers.hasItems(
+                                 ResourcePolicyMatcher.matchResourcePolicyProperties(anonymousGroup, null, bitstream,
+                                     ResourcePolicy.TYPE_CUSTOM, Constants.READ, "openaccess")
+                                                                                                  )));
+
+        // Bitstream should be accessible to anon
+        getClient().perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
+                   .andExpect(status().isOk());
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/base.java
+=======
     @Test
     public void patchUploadAddOpenAccessRPInstallAndVerifyAnonCanView() throws Exception {
         context.turnOffAuthorisationSystem();
@@ -6198,7 +6315,93 @@ public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegration
         getClient().perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
                    .andExpect(status().isOk());
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/right.java
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/left.java
+    @Test
+    public void patchUploadAddAdminThenOpenAccessRPInstallAndVerifyAnonCanView() throws Exception {
+        context.turnOffAuthorisationSystem();
+        Community community = CommunityBuilder.createCommunity(context).withName("Com").build();
+        Collection collection = CollectionBuilder.createCollection(context, community).withName("Col").build();
+        InputStream pdf = getClass().getResourceAsStream("simple-article.pdf");
+        WorkspaceItem wItem =
+            WorkspaceItemBuilder.createWorkspaceItem(context, collection).withSubmitter(eperson)
+                                .withTitle("Test Item patchUploadAddOpenAccessRPInstallAndVerifyOnlyAdminCanView")
+                                .withIssueDate("2019-03-06")
+                                .withFulltext("upload2.pdf", "/local/path/simple-article.pdf", pdf)
+                                .build();
+        context.restoreAuthSystemState();
+
+        // auth
+        String epersonToken = getAuthToken(eperson.getEmail(), password);
+        String adminToken = getAuthToken(admin.getEmail(), password);
+
+        // prepare patch body
+        Map<String, String> accessCondition = new HashMap<>();
+        accessCondition.put("name", "administrator");
+        List<Operation> ops = new ArrayList<>();
+        ops.add(new AddOperation("/sections/upload/files/0/accessConditions/-", accessCondition));
+        String patchBody = getPatchContent(ops);
+
+        // submit patch and verify response
+        getClient(epersonToken)
+            .perform(
+                patch("/api/submission/workspaceitems/" + wItem.getID())
+                    .content(patchBody)
+                    .contentType(MediaType.APPLICATION_JSON_PATCH_JSON)
+                    )
+            .andExpect(status().isOk());
+
+        Bitstream bitstream = wItem.getItem().getBundles().get(0).getBitstreams().get(0);
+        Group adminGroup = groupService.findByName(context, Group.ADMIN);
+
+        // verify that bitstream of workspace item has this admin RP
+        getClient(adminToken).perform(get("/api/authz/resourcepolicies/search/resource")
+            .param("uuid", bitstream.getID().toString()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$._embedded.resourcepolicies", Matchers.hasItems(
+                                 ResourcePolicyMatcher.matchResourcePolicyProperties(adminGroup, null, bitstream,
+                                     ResourcePolicy.TYPE_CUSTOM, Constants.READ, "administrator")
+                                                                                                  )));
+
+        // prepare patch body
+        Map<String, String> accessCondition2 = new HashMap<>();
+        accessCondition2.put("name", "openaccess");
+        List<Operation> ops2 = new ArrayList<>();
+        ops2.add(new AddOperation("/sections/upload/files/0/accessConditions/-", accessCondition2));
+        String patchBody2 = getPatchContent(ops2);
+
+        // submit patch and verify response
+        getClient(epersonToken)
+            .perform(
+                patch("/api/submission/workspaceitems/" + wItem.getID())
+                    .content(patchBody2)
+                    .contentType(MediaType.APPLICATION_JSON_PATCH_JSON)
+                    )
+            .andExpect(status().isOk());
+
+        // verify that bitstream of workspace item has this open access RP
+        getClient(adminToken).perform(get("/api/authz/resourcepolicies/search/resource")
+            .param("uuid", bitstream.getID().toString()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$._embedded.resourcepolicies", Matchers.hasItems(
+                                 ResourcePolicyMatcher.matchResourcePolicyProperties(anonymousGroup, null, bitstream,
+                                     ResourcePolicy.TYPE_CUSTOM, Constants.READ, "openaccess")
+                                                                                                  )));
+
+        // submit the workspaceitem to complete the deposit (as there is no workflow configured)
+        getClient(epersonToken)
+            .perform(post(BASE_REST_SERVER_URL + "/api/workflow/workflowitems")
+                .content("/api/submission/workspaceitems/" + wItem.getID())
+                .contentType(textUriContentType))
+            .andExpect(status().isCreated());
+
+        // Bitstream should be accessible to anon
+        getClient().perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
+                   .andExpect(status().isOk());
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/base.java
+=======
     @Test
     public void patchUploadAddAdminThenOpenAccessRPInstallAndVerifyAnonCanView() throws Exception {
         context.turnOffAuthorisationSystem();
@@ -6282,12 +6485,89 @@ public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegration
         getClient().perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
                    .andExpect(status().isOk());
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/right.java
 
     /**
      * this is the same test than
      * {@link WorkspaceItemRestRepositoryIT#patchUploadAddAdminRPInstallAndVerifyOnlyAdminCanView()}
      * except than it runs with append-mode enabled
      */
+
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/left.java
+    @Test
+    public void patchUploadAddAdminRPInstallAndVerifyOnlyAdminCanViewInAppendModeTest() throws Exception {
+        configurationService.setProperty("core.authorization.installitem.inheritance-read.append-mode", true);
+        context.turnOffAuthorisationSystem();
+        Community community = CommunityBuilder.createCommunity(context)
+                                              .withName("Community")
+                                              .build();
+        Collection collection = CollectionBuilder.createCollection(context, community)
+                                                 .withName("Col")
+                                                 .build();
+        InputStream pdf = getClass().getResourceAsStream("simple-article.pdf");
+        WorkspaceItem wItem = WorkspaceItemBuilder.createWorkspaceItem(context, collection)
+                                                  .withSubmitter(eperson)
+                                                  .withTitle("Test wsItem")
+                                                  .withIssueDate("2019-03-06")
+                                                  .withFulltext("upload2.pdf", "/local/path/simple-article.pdf", pdf)
+                                                  .build();
+        context.restoreAuthSystemState();
+
+        String epersonToken = getAuthToken(eperson.getEmail(), password);
+        String adminToken = getAuthToken(admin.getEmail(), password);
+
+        Map<String, String> accessCondition = new HashMap<>();
+        accessCondition.put("name", "administrator");
+        List<Operation> ops = new ArrayList<>();
+        ops.add(new AddOperation("/sections/upload/files/0/accessConditions/-", accessCondition));
+        String patchBody = getPatchContent(ops);
+
+        getClient(epersonToken).perform(patch("/api/submission/workspaceitems/" + wItem.getID())
+                               .content(patchBody)
+                               .contentType(MediaType.APPLICATION_JSON_PATCH_JSON))
+                               .andExpect(status().isOk());
+
+        Bitstream bitstream = wItem.getItem().getBundles().get(0).getBitstreams().get(0);
+        Group adminGroup = groupService.findByName(context, Group.ADMIN);
+
+        // verify that bitstream of workspace item has this admin RP
+        getClient(adminToken).perform(get("/api/authz/resourcepolicies/search/resource")
+                             .param("uuid", bitstream.getID().toString()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$._embedded.resourcepolicies", Matchers.hasItems(
+                                 ResourcePolicyMatcher.matchResourcePolicyProperties(adminGroup, null, bitstream,
+                                     ResourcePolicy.TYPE_CUSTOM, Constants.READ, "administrator"))));
+
+        // submit the workspaceitem to complete the deposit (as there is no workflow configured)
+        getClient(epersonToken).perform(post(BASE_REST_SERVER_URL + "/api/workflow/workflowitems")
+                               .content("/api/submission/workspaceitems/" + wItem.getID())
+                               .contentType(textUriContentType))
+                               .andExpect(status().isCreated());
+
+        Group anonGroup = groupService.findByName(context, Group.ANONYMOUS);
+
+        // verify that bitstream of workspace item still has this admin RP and no Anon READ inherited policy
+        getClient(adminToken).perform(get("/api/authz/resourcepolicies/search/resource")
+                             .param("uuid", bitstream.getID().toString()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$._embedded.resourcepolicies", Matchers.hasItems(
+                                 ResourcePolicyMatcher.matchResourcePolicyProperties(adminGroup, null, bitstream,
+                                     ResourcePolicy.TYPE_CUSTOM, Constants.READ, "administrator"))))
+                             .andExpect(jsonPath("$._embedded.resourcepolicies", Matchers.not(Matchers.hasItems(
+                                 ResourcePolicyMatcher
+                                     .matchResourcePolicyProperties(anonGroup, null, bitstream, null, Constants.READ,
+                                         null)))));
+
+        // Bitstream should NOT be accessible to anon or eperson user, only to admin
+        getClient().perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
+                   .andExpect(status().isUnauthorized());
+        getClient(epersonToken).perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
+                               .andExpect(status().isForbidden());
+        getClient(adminToken).perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
+                             .andExpect(status().isOk());
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/base.java
+=======
     @Test
     public void patchUploadAddAdminRPInstallAndVerifyOnlyAdminCanViewInAppendModeTest() throws Exception {
         configurationService.setProperty("core.authorization.installitem.inheritance-read.append-mode", true);
@@ -6361,12 +6641,74 @@ public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegration
         getClient(adminToken).perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
                              .andExpect(status().isOk());
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/right.java
 
     /**
      * this is the same test than
      * {@link WorkspaceItemRestRepositoryIT#patchUploadAddOpenAccessRPInstallAndVerifyAnonCanView()}
      * except than it runs with append-mode enabled
      */
+
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/left.java
+    @Test
+    public void patchUploadAddOpenAccessRPInstallAndVerifyAnonCanViewInAppendModeTest() throws Exception {
+        configurationService.setProperty("core.authorization.installitem.inheritance-read.append-mode", true);
+        context.turnOffAuthorisationSystem();
+        Community community = CommunityBuilder.createCommunity(context).withName("Com").build();
+        Collection collection = CollectionBuilder.createCollection(context, community).withName("Col").build();
+        InputStream pdf = getClass().getResourceAsStream("simple-article.pdf");
+        WorkspaceItem wItem = WorkspaceItemBuilder.createWorkspaceItem(context, collection).withSubmitter(eperson)
+                                                  .withTitle("Test wsItem")
+                                                  .withIssueDate("2019-03-06")
+                                                  .withFulltext("upload2.pdf", "/local/path/simple-article.pdf", pdf)
+                                                  .build();
+        context.restoreAuthSystemState();
+
+        String epersonToken = getAuthToken(eperson.getEmail(), password);
+        String adminToken = getAuthToken(admin.getEmail(), password);
+
+        Map<String, String> accessCondition = new HashMap<>();
+        accessCondition.put("name", "openaccess");
+        List<Operation> ops = new ArrayList<>();
+        ops.add(new AddOperation("/sections/upload/files/0/accessConditions/-", accessCondition));
+        String patchBody = getPatchContent(ops);
+
+        // submit patch and verify response
+        getClient(epersonToken).perform(patch("/api/submission/workspaceitems/" + wItem.getID())
+                               .content(patchBody)
+                               .contentType(MediaType.APPLICATION_JSON_PATCH_JSON))
+                               .andExpect(status().isOk());
+
+        Bitstream bitstream = wItem.getItem().getBundles().get(0).getBitstreams().get(0);
+
+        // verify that bitstream of workspace item has this open access RP
+        getClient(adminToken).perform(get("/api/authz/resourcepolicies/search/resource")
+                             .param("uuid", bitstream.getID().toString()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$._embedded.resourcepolicies", Matchers.hasItems(
+                                 ResourcePolicyMatcher.matchResourcePolicyProperties(anonymousGroup, null, bitstream,
+                                     ResourcePolicy.TYPE_CUSTOM, Constants.READ, "openaccess"))));
+
+        // submit the workspaceitem to complete the deposit (as there is no workflow configured)
+        getClient(epersonToken).perform(post(BASE_REST_SERVER_URL + "/api/workflow/workflowitems")
+                               .content("/api/submission/workspaceitems/" + wItem.getID())
+                               .contentType(textUriContentType))
+                               .andExpect(status().isCreated());
+
+        // verify that bitstream of workspace item still has this open access RP
+        getClient(adminToken).perform(get("/api/authz/resourcepolicies/search/resource")
+                             .param("uuid", bitstream.getID().toString()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$._embedded.resourcepolicies", Matchers.hasItems(
+                                 ResourcePolicyMatcher.matchResourcePolicyProperties(anonymousGroup, null, bitstream,
+                                     ResourcePolicy.TYPE_CUSTOM, Constants.READ, "openaccess"))));
+
+        // Bitstream should be accessible to anon
+        getClient().perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
+                   .andExpect(status().isOk());
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/base.java
+=======
     @Test
     public void patchUploadAddOpenAccessRPInstallAndVerifyAnonCanViewInAppendModeTest() throws Exception {
         configurationService.setProperty("core.authorization.installitem.inheritance-read.append-mode", true);
@@ -6425,12 +6767,90 @@ public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegration
         getClient().perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
                    .andExpect(status().isOk());
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/right.java
 
     /**
      * this is the same test than
      * {@link WorkspaceItemRestRepositoryIT#patchUploadAddAdminThenOpenAccessRPInstallAndVerifyAnonCanView()}
      * except than it runs with append-mode enabled
      */
+
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/left.java
+    @Test
+    public void patchUploadAddAdminThenOpenAccessRPInstallAndVerifyAnonCanViewInAppendModeTest() throws Exception {
+        configurationService.setProperty("core.authorization.installitem.inheritance-read.append-mode", true);
+        context.turnOffAuthorisationSystem();
+        Community community = CommunityBuilder.createCommunity(context).withName("Com").build();
+        Collection collection = CollectionBuilder.createCollection(context, community).withName("Col").build();
+        InputStream pdf = getClass().getResourceAsStream("simple-article.pdf");
+        WorkspaceItem wItem = WorkspaceItemBuilder.createWorkspaceItem(context, collection).withSubmitter(eperson)
+                                                  .withTitle("Test wsItem")
+                                                  .withIssueDate("2019-03-06")
+                                                  .withFulltext("upload2.pdf", "/local/path/simple-article.pdf", pdf)
+                                                  .build();
+        context.restoreAuthSystemState();
+
+        String epersonToken = getAuthToken(eperson.getEmail(), password);
+        String adminToken = getAuthToken(admin.getEmail(), password);
+
+        Map<String, String> accessCondition = new HashMap<>();
+        accessCondition.put("name", "administrator");
+        List<Operation> ops = new ArrayList<>();
+        ops.add(new AddOperation("/sections/upload/files/0/accessConditions/-", accessCondition));
+        String patchBody = getPatchContent(ops);
+
+        // submit patch and verify response
+        getClient(epersonToken).perform(patch("/api/submission/workspaceitems/" + wItem.getID())
+                               .content(patchBody)
+                               .contentType(MediaType.APPLICATION_JSON_PATCH_JSON))
+                               .andExpect(status().isOk());
+
+        Bitstream bitstream = wItem.getItem().getBundles().get(0).getBitstreams().get(0);
+        Group adminGroup = groupService.findByName(context, Group.ADMIN);
+
+        // verify that bitstream of workspace item has this admin RP
+        getClient(adminToken).perform(get("/api/authz/resourcepolicies/search/resource")
+                             .param("uuid", bitstream.getID().toString()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$._embedded.resourcepolicies", Matchers.hasItems(
+                                 ResourcePolicyMatcher.matchResourcePolicyProperties(adminGroup, null, bitstream,
+                                     ResourcePolicy.TYPE_CUSTOM, Constants.READ, "administrator")
+                                                                                                  )));
+
+        // prepare patch body
+        Map<String, String> accessCondition2 = new HashMap<>();
+        accessCondition2.put("name", "openaccess");
+        List<Operation> ops2 = new ArrayList<>();
+        ops2.add(new AddOperation("/sections/upload/files/0/accessConditions/-", accessCondition2));
+        String patchBody2 = getPatchContent(ops2);
+
+        // submit patch and verify response
+        getClient(epersonToken).perform(patch("/api/submission/workspaceitems/" + wItem.getID())
+                               .content(patchBody2)
+                               .contentType(MediaType.APPLICATION_JSON_PATCH_JSON))
+                               .andExpect(status().isOk());
+
+        // verify that bitstream of workspace item has this open access RP
+        getClient(adminToken).perform(get("/api/authz/resourcepolicies/search/resource")
+                             .param("uuid", bitstream.getID().toString()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$._embedded.resourcepolicies", Matchers.hasItems(
+                                 ResourcePolicyMatcher.matchResourcePolicyProperties(anonymousGroup, null, bitstream,
+                                     ResourcePolicy.TYPE_CUSTOM, Constants.READ, "openaccess")
+                                                                                                  )));
+
+        // submit the workspaceitem to complete the deposit (as there is no workflow configured)
+        getClient(epersonToken).perform(post(BASE_REST_SERVER_URL + "/api/workflow/workflowitems")
+                               .content("/api/submission/workspaceitems/" + wItem.getID())
+                               .contentType(textUriContentType))
+                               .andExpect(status().isCreated());
+
+        // Bitstream should be accessible to anon
+        getClient().perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
+                   .andExpect(status().isOk());
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/base.java
+=======
     @Test
     public void patchUploadAddAdminThenOpenAccessRPInstallAndVerifyAnonCanViewInAppendModeTest() throws Exception {
         configurationService.setProperty("core.authorization.installitem.inheritance-read.append-mode", true);
@@ -6505,7 +6925,75 @@ public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegration
         getClient().perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
                    .andExpect(status().isOk());
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/right.java
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/left.java
+    @Test
+    public void patchUploadAddAdminmistratorRPAndVerifyCustomGroupCanViewInAppendModeTest() throws Exception {
+        configurationService.setProperty("core.authorization.installitem.inheritance-read.append-mode", true);
+        context.turnOffAuthorisationSystem();
+        EPerson user = EPersonBuilder.createEPerson(context)
+                .withEmail("testMyUesr@userstest.net")
+                .withPassword(password)
+                .build();
+        Community community = CommunityBuilder.createCommunity(context).withName("Com").build();
+        Collection collection = CollectionBuilder.createCollection(context, community).withName("Col").build();
+
+        Group customGroup = cs.createDefaultReadGroup(context, collection,"BITSTREAM",Constants.DEFAULT_BITSTREAM_READ);
+        groupService.addMember(context, customGroup, user);
+
+        InputStream pdf = getClass().getResourceAsStream("simple-article.pdf");
+        WorkspaceItem wItem = WorkspaceItemBuilder.createWorkspaceItem(context, collection).withSubmitter(eperson)
+                                                  .withTitle("Test wsItem")
+                                                  .withIssueDate("2019-03-06")
+                                                  .withFulltext("upload2.pdf", "/local/path/simple-article.pdf", pdf)
+                                                  .build();
+        context.restoreAuthSystemState();
+
+        String userToken = getAuthToken(user.getEmail(), password);
+        String epersonToken = getAuthToken(eperson.getEmail(), password);
+        String adminToken = getAuthToken(admin.getEmail(), password);
+
+        Map<String, String> accessCondition = new HashMap<>();
+        accessCondition.put("name", "administrator");
+        List<Operation> ops = new ArrayList<>();
+        ops.add(new AddOperation("/sections/upload/files/0/accessConditions/-", accessCondition));
+        String patchBody = getPatchContent(ops);
+
+        // submit patch and verify response
+        getClient(epersonToken).perform(patch("/api/submission/workspaceitems/" + wItem.getID())
+                               .content(patchBody)
+                               .contentType(MediaType.APPLICATION_JSON_PATCH_JSON))
+                               .andExpect(status().isOk());
+
+        Bitstream bitstream = wItem.getItem().getBundles().get(0).getBitstreams().get(0);
+        Group adminGroup = groupService.findByName(context, Group.ADMIN);
+
+        // verify that bitstream of workspace item has this admin RP
+        getClient(adminToken).perform(get("/api/authz/resourcepolicies/search/resource")
+                             .param("uuid", bitstream.getID().toString()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$._embedded.resourcepolicies", Matchers.hasItems(
+                                 ResourcePolicyMatcher.matchResourcePolicyProperties(adminGroup, null, bitstream,
+                                     ResourcePolicy.TYPE_CUSTOM, Constants.READ, "administrator")
+                                                                                                  )));
+
+        // submit the workspaceitem to complete the deposit (as there is no workflow configured)
+        getClient(epersonToken).perform(post(BASE_REST_SERVER_URL + "/api/workflow/workflowitems")
+                               .content("/api/submission/workspaceitems/" + wItem.getID())
+                               .contentType(textUriContentType))
+                               .andExpect(status().isCreated());
+
+        // Bitstream should be accessible to user
+        getClient(userToken).perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
+                   .andExpect(status().isOk());
+
+        // Bitstream should be not accessible to anon
+        getClient().perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
+                   .andExpect(status().isUnauthorized());
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/base.java
+=======
     @Test
     public void patchUploadAddAdminmistratorRPAndVerifyCustomGroupCanViewInAppendModeTest() throws Exception {
         configurationService.setProperty("core.authorization.installitem.inheritance-read.append-mode", true);
@@ -6571,7 +7059,74 @@ public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegration
         getClient().perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
                    .andExpect(status().isUnauthorized());
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/right.java
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/left.java
+    @Test
+    public void patchUploadAddAdminmistratorRPAndVerifyCustomGroupCannotViewTest() throws Exception {
+        context.turnOffAuthorisationSystem();
+        EPerson user = EPersonBuilder.createEPerson(context)
+                .withEmail("testMyUesr@userstest.net")
+                .withPassword(password)
+                .build();
+        Community community = CommunityBuilder.createCommunity(context).withName("Com").build();
+        Collection collection = CollectionBuilder.createCollection(context, community).withName("Col").build();
+
+        Group customGroup = cs.createDefaultReadGroup(context, collection,"BITSTREAM",Constants.DEFAULT_BITSTREAM_READ);
+        groupService.addMember(context, customGroup, user);
+
+        InputStream pdf = getClass().getResourceAsStream("simple-article.pdf");
+        WorkspaceItem wItem = WorkspaceItemBuilder.createWorkspaceItem(context, collection).withSubmitter(eperson)
+                                                  .withTitle("Test wsItem")
+                                                  .withIssueDate("2019-03-06")
+                                                  .withFulltext("upload2.pdf", "/local/path/simple-article.pdf", pdf)
+                                                  .build();
+        context.restoreAuthSystemState();
+
+        String userToken = getAuthToken(user.getEmail(), password);
+        String epersonToken = getAuthToken(eperson.getEmail(), password);
+        String adminToken = getAuthToken(admin.getEmail(), password);
+
+        Map<String, String> accessCondition = new HashMap<>();
+        accessCondition.put("name", "administrator");
+        List<Operation> ops = new ArrayList<>();
+        ops.add(new AddOperation("/sections/upload/files/0/accessConditions/-", accessCondition));
+        String patchBody = getPatchContent(ops);
+
+        // submit patch and verify response
+        getClient(epersonToken).perform(patch("/api/submission/workspaceitems/" + wItem.getID())
+                               .content(patchBody)
+                               .contentType(MediaType.APPLICATION_JSON_PATCH_JSON))
+                               .andExpect(status().isOk());
+
+        Bitstream bitstream = wItem.getItem().getBundles().get(0).getBitstreams().get(0);
+        Group adminGroup = groupService.findByName(context, Group.ADMIN);
+
+        // verify that bitstream of workspace item has this admin RP
+        getClient(adminToken).perform(get("/api/authz/resourcepolicies/search/resource")
+                             .param("uuid", bitstream.getID().toString()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$._embedded.resourcepolicies", Matchers.hasItems(
+                                 ResourcePolicyMatcher.matchResourcePolicyProperties(adminGroup, null, bitstream,
+                                     ResourcePolicy.TYPE_CUSTOM, Constants.READ, "administrator")
+                                                                                                  )));
+
+        // submit the workspaceitem to complete the deposit (as there is no workflow configured)
+        getClient(epersonToken).perform(post(BASE_REST_SERVER_URL + "/api/workflow/workflowitems")
+                               .content("/api/submission/workspaceitems/" + wItem.getID())
+                               .contentType(textUriContentType))
+                               .andExpect(status().isCreated());
+
+        // Bitstream should be accessible to user
+        getClient(userToken).perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
+                   .andExpect(status().isForbidden());
+
+        // Bitstream should be not accessible to anon
+        getClient().perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
+                   .andExpect(status().isUnauthorized());
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/base.java
+=======
     @Test
     public void patchUploadAddAdminmistratorRPAndVerifyCustomGroupCannotViewTest() throws Exception {
         context.turnOffAuthorisationSystem();
@@ -6636,9 +7191,68 @@ public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegration
         getClient().perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
                    .andExpect(status().isUnauthorized());
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/right.java
 
     @Test
-    public void requiredQualdropTest() throws Exception {
+    public
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/left.java
+    @Test void requiredQualdropTest() throws Exception {
+        context.turnOffAuthorisationSystem();
+        Community community = CommunityBuilder.createCommunity(context).build();
+        Collection collection = CollectionBuilder.createCollection(context, community, "123456789/qualdrop-test")
+            .withName("Test name")
+            .build();
+
+        //disable file upload mandatory
+        configurationService.setProperty("webui.submit.upload.required", false);
+
+        MetadataFieldName issnFieldName = new MetadataFieldName("dc", "identifier", "issn");
+        MetadataFieldName isbnFieldName = new MetadataFieldName("dc", "identifier", "isbn");
+        MetadataFieldName citationFieldName = new MetadataFieldName("dc", "identifier", "citation");
+
+        WorkspaceItem workspaceItem1 = WorkspaceItemBuilder.createWorkspaceItem(context, collection)
+            .withTitle("test workspace item 1")
+            .build();
+        itemService.setMetadataSingleValue(context, workspaceItem1.getItem(), issnFieldName, null, "12");
+
+        WorkspaceItem workspaceItem2 = WorkspaceItemBuilder.createWorkspaceItem(context, collection)
+            .withTitle("test workspace item 2")
+            .build();
+        itemService.setMetadataSingleValue(context, workspaceItem2.getItem(), issnFieldName, null, "13");
+        itemService.setMetadataSingleValue(context, workspaceItem2.getItem(), isbnFieldName, null, "14");
+
+        WorkspaceItem workspaceItem3 = WorkspaceItemBuilder.createWorkspaceItem(context, collection)
+            .withTitle("test workspace item 3")
+            .build();
+        itemService.setMetadataSingleValue(context, workspaceItem3.getItem(),citationFieldName, null, "citation");
+
+        context.restoreAuthSystemState();
+
+        String authToken = getAuthToken(admin.getEmail(), password);
+
+
+        String workspaceItemsUri = "/api/submission/workspaceitems/";
+        String errorPath = "$.errors";
+        getClient(authToken).perform(get(workspaceItemsUri + workspaceItem1.getID()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath(errorPath).doesNotExist());
+
+        getClient(authToken).perform(get(workspaceItemsUri + workspaceItem2.getID()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath(errorPath).doesNotExist());
+
+        getClient(authToken).perform(get(workspaceItemsUri + workspaceItem3.getID()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.errors[?(@.message=='error.validation.required')]",
+                Matchers.contains(
+                    hasJsonPath("$.paths", Matchers.contains(
+                        hasJsonPath("$", Matchers.is("/sections/qualdroptest/dc.identifier"))
+                    )))));
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/base.java
+    @Test void requiredQualdropTest() throws Exception 
+=======
+    @Test void requiredQualdropTest() throws Exception {
         context.turnOffAuthorisationSystem();
         Community community = CommunityBuilder.createCommunity(context).build();
         Collection collection = CollectionBuilder.createCollection(context, community, "123456789/qualdrop-test")
@@ -6691,6 +7305,8 @@ public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegration
                         hasJsonPath("$", Matchers.is("/sections/qualdroptest/dc.identifier"))
                     )))));
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/right.java
+
     @Test
     public void patchAccesConditionDiscoverableTest() throws Exception {
         //disable file upload mandatory
@@ -7567,6 +8183,101 @@ public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegration
                              .andExpect(jsonPath("$.sections.defaultAC.accessConditions[1].name").doesNotExist());
     }
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/left.java
+    @Test
+    public void affterAddingAccessConditionBitstreamMustBeDownloadableTest() throws Exception {
+        context.turnOffAuthorisationSystem();
+
+        EPerson submitter = EPersonBuilder.createEPerson(context)
+                                          .withEmail("submitter@example.com")
+                                          .withPassword(password)
+                                          .build();
+
+        parentCommunity = CommunityBuilder.createCommunity(context)
+                                          .withName("Parent Community")
+                                          .build();
+
+        Collection collection1 = CollectionBuilder.createCollection(context, parentCommunity)
+                                                  .withName("Collection 1")
+                                                  .build();
+
+        Bitstream bitstream = null;
+        WorkspaceItem witem = null;
+
+        String bitstreamContent = "0123456789";
+
+        try (InputStream is = IOUtils.toInputStream(bitstreamContent, Charset.defaultCharset())) {
+
+            context.setCurrentUser(submitter);
+            witem = WorkspaceItemBuilder.createWorkspaceItem(context, collection1)
+                                        .withTitle("Test WorkspaceItem")
+                                        .withIssueDate("2019-10-01")
+                                        .build();
+
+            bitstream = BitstreamBuilder.createBitstream(context, witem.getItem(), is)
+                                        .withName("Test bitstream")
+                                        .withDescription("This is a bitstream to test range requests")
+                                        .withMimeType("text/plain")
+                                        .build();
+
+            context.restoreAuthSystemState();
+
+            String tokenEPerson = getAuthToken(eperson.getEmail(), password);
+            String tokenSubmitter = getAuthToken(submitter.getEmail(), password);
+
+            // submitter can download the bitstream
+            getClient(tokenSubmitter).perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
+                                     .andExpect(status().isOk())
+                                     .andExpect(header().string("Accept-Ranges", "bytes"))
+                                     .andExpect(header().string("ETag", "\"" + bitstream.getChecksum() + "\""))
+                                     .andExpect(content().contentType("text/plain"))
+                                     .andExpect(content().bytes(bitstreamContent.getBytes()));
+
+            // others can't download the bitstream
+            getClient(tokenEPerson).perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
+                                   .andExpect(status().isForbidden());
+
+            // create a list of values to use in add operation
+            List<Operation> addAccessCondition = new ArrayList<>();
+            List<Map<String, String>> accessConditions = new ArrayList<Map<String,String>>();
+
+            Map<String, String> value = new HashMap<>();
+            value.put("name", "administrator");
+            accessConditions.add(value);
+
+            addAccessCondition.add(new AddOperation("/sections/upload/files/0/accessConditions", accessConditions));
+
+            String patchBody = getPatchContent(addAccessCondition);
+            getClient(tokenSubmitter).perform(patch("/api/submission/workspaceitems/" + witem.getID())
+                                     .content(patchBody)
+                                     .contentType(MediaType.APPLICATION_JSON_PATCH_JSON))
+                                     .andExpect(status().isOk())
+                         .andExpect(jsonPath("$.sections.upload.files[0].accessConditions[0].name",is("administrator")))
+                         .andExpect(jsonPath("$.sections.upload.files[0].accessConditions[0].startDate",nullValue()))
+                         .andExpect(jsonPath("$.sections.upload.files[0].accessConditions[0].endDate", nullValue()));
+
+            // verify that the patch changes have been persisted
+            getClient(tokenSubmitter).perform(get("/api/submission/workspaceitems/" + witem.getID()))
+                                     .andExpect(status().isOk())
+                         .andExpect(jsonPath("$.sections.upload.files[0].accessConditions[0].name",is("administrator")))
+                         .andExpect(jsonPath("$.sections.upload.files[0].accessConditions[0].startDate",nullValue()))
+                         .andExpect(jsonPath("$.sections.upload.files[0].accessConditions[0].endDate", nullValue()));
+
+            // submitter can download the bitstream jet
+            getClient(tokenSubmitter).perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
+                                     .andExpect(status().isOk())
+                                     .andExpect(header().string("Accept-Ranges", "bytes"))
+                                     .andExpect(header().string("ETag", "\"" + bitstream.getChecksum() + "\""))
+                                     .andExpect(content().contentType("text/plain"))
+                                     .andExpect(content().bytes(bitstreamContent.getBytes()));
+
+            // others can't download the bitstream
+            getClient(tokenEPerson).perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
+                                   .andExpect(status().isForbidden());
+        }
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/base.java
+=======
     @Test
     public void affterAddingAccessConditionBitstreamMustBeDownloadableTest() throws Exception {
         context.turnOffAuthorisationSystem();
@@ -7659,6 +8370,7 @@ public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegration
                                    .andExpect(status().isForbidden());
         }
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/right.java
 
     @Test
     public void affterAddingAccessConditionItemMustBeAccessibleTest() throws Exception {
@@ -7739,7 +8451,171 @@ public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegration
     }
 
     @Test
-    public void verifyCorrectInheritanceOfAccessConditionTest() throws Exception {
+    public
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/left.java
+    @Test void verifyCorrectInheritanceOfAccessConditionTest() throws Exception {
+        context.turnOffAuthorisationSystem();
+
+        Group anonymousGroup = EPersonServiceFactory.getInstance().getGroupService()
+                                                    .findByName(context, Group.ANONYMOUS);
+        Group adminGroup = EPersonServiceFactory.getInstance().getGroupService()
+                                                .findByName(context, Group.ADMIN);
+
+        Community community = CommunityBuilder.createCommunity(context)
+                                              .withName("Com")
+                                              .build();
+        Collection collection = CollectionBuilder.createCollection(context, community)
+                                                 .withName("Col")
+                                                 .build();
+
+        InputStream pdf = getClass().getResourceAsStream("simple-article.pdf");
+        InputStream xml = getClass().getResourceAsStream("pubmed-test.xml");
+
+        final MockMultipartFile xmlFile = new MockMultipartFile("file", "/local/path/pubmed-test.xml",
+                                                                "application/xml", xml);
+
+        WorkspaceItem wItem = WorkspaceItemBuilder.createWorkspaceItem(context, collection)
+                             .withTitle("My Article")
+                             .withIssueDate("2019-03-16")
+                             .withFulltext("upload.pdf", "/local/path/simple-article.pdf", pdf)
+                             .build();
+
+        Bundle bundle = wItem.getItem().getBundles().get(0);
+        Bitstream bitstream = bundle.getBitstreams().get(0);
+
+        context.restoreAuthSystemState();
+
+        String tokenEPerson = getAuthToken(eperson.getEmail(), password);
+        String tokenAdmin = getAuthToken(admin.getEmail(), password);
+
+        List<Operation> addAccessCondition = new ArrayList<Operation>();
+        List<Map<String, String>> accessConditions = new ArrayList<Map<String,String>>();
+
+        Map<String, String> accessCondition1 = new HashMap<String, String>();
+        accessCondition1.put("name", "administrator");
+        accessConditions.add(accessCondition1);
+
+        Map<String, String> accessCondition2 = new HashMap<String, String>();
+        accessCondition2.put("name", "embargo");
+        accessCondition2.put("startDate", "2022-01-31T01:00:00Z");
+        accessConditions.add(accessCondition2);
+
+        addAccessCondition.add(new AddOperation("/sections/defaultAC/accessConditions",
+                               accessConditions));
+
+        String patchBody = getPatchContent(addAccessCondition);
+        // add access conditions
+        getClient(tokenEPerson).perform(patch("/api/submission/workspaceitems/" + wItem.getID())
+                               .content(patchBody)
+                               .contentType(MediaType.APPLICATION_JSON_PATCH_JSON))
+                               .andExpect(status().isOk());
+
+        getClient(tokenEPerson).perform(get("/api/submission/workspaceitems/" + wItem.getID()))
+                               .andExpect(status().isOk())
+                               .andExpect(jsonPath("$.sections.defaultAC.discoverable", is(true)))
+                               .andExpect(jsonPath("$.sections.defaultAC.accessConditions[0].name",
+                                                is("administrator")))
+                               .andExpect(jsonPath("$.sections.defaultAC.accessConditions[1].name",
+                                                is("embargo")))
+                               .andExpect(jsonPath("$.sections.defaultAC.accessConditions[2].name").doesNotExist())
+                               .andExpect(jsonPath("$.sections.upload.files[0].accessConditions", empty()))
+                               .andExpect(jsonPath("$.sections.upload.files[1]").doesNotExist());
+
+        // upload second file
+        getClient(tokenEPerson).perform(fileUpload("/api/submission/workspaceitems/" + wItem.getID())
+                               .file(xmlFile))
+                               .andExpect(status().isCreated());
+
+        // prepare patch body with accessCondition for second file
+        List<Operation> ops = new ArrayList<>();
+        Map<String, String> accessCondition = new HashMap<>();
+        accessCondition.put("name", "embargo");
+        accessCondition.put("startDate", "2022-03-22T01:00:00Z");
+        ops.add(new AddOperation("/sections/upload/files/1/accessConditions/-", accessCondition));
+        patchBody = getPatchContent(ops);
+
+        // submit patch
+        getClient(tokenEPerson).perform(patch("/api/submission/workspaceitems/" + wItem.getID())
+                               .content(patchBody)
+                               .contentType(MediaType.APPLICATION_JSON_PATCH_JSON))
+                               .andExpect(status().isOk());
+
+        // verify if the access conditions have been applied correctly
+        getClient(tokenEPerson).perform(get("/api/submission/workspaceitems/" + wItem.getID()))
+                               .andExpect(status().isOk())
+                               .andExpect(jsonPath("$.sections.defaultAC.discoverable", is(true)))
+                               .andExpect(jsonPath("$.sections.defaultAC.accessConditions[0].name",
+                                                is("administrator")))
+                               .andExpect(jsonPath("$.sections.defaultAC.accessConditions[1].name",
+                                                is("embargo")))
+                               .andExpect(jsonPath("$.sections.defaultAC.accessConditions[1].startDate",
+                                                is("2022-01-31")))
+                               .andExpect(jsonPath("$.sections.defaultAC.accessConditions[2].name").doesNotExist())
+                               .andExpect(jsonPath("$.sections.upload.files[0].accessConditions", empty()))
+                               .andExpect(jsonPath("$.sections.upload.files[1].accessConditions[0].name",
+                                                is("embargo")))
+                               .andExpect(jsonPath("$.sections.upload.files[1].accessConditions[0].startDate",
+                                                is("2022-03-22")));
+
+        // submit the workspaceitem to complete the deposit
+        getClient(tokenAdmin).perform(post("/api/workflow/workflowitems")
+                             .content("/api/submission/workspaceitems/" + wItem.getID())
+                             .contentType(textUriContentType))
+                             .andExpect(status().isCreated());
+
+        // verify bundle policies
+        getClient(tokenAdmin).perform(get("/api/authz/resourcepolicies/search/resource")
+                             .param("uuid", bundle.getID().toString()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$._embedded.resourcepolicies", Matchers.containsInAnyOrder(
+                                     ResourcePolicyMatcher.matchResourcePolicyProperties(adminGroup, null,
+                                             bundle, ResourcePolicy.TYPE_CUSTOM, Constants.READ, "administrator"),
+                                     ResourcePolicyMatcher.matchResourcePolicyProperties(anonymousGroup, null,
+                                             bundle, ResourcePolicy.TYPE_CUSTOM, Constants.READ, "embargo")
+                              )))
+                             .andExpect(jsonPath("$.page.totalElements", is(2)));
+
+        // verify bitstream policies
+        getClient(tokenAdmin).perform(get("/api/authz/resourcepolicies/search/resource")
+                             .param("uuid", bitstream.getID().toString()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$._embedded.resourcepolicies", Matchers.containsInAnyOrder(
+                                     ResourcePolicyMatcher.matchResourcePolicyProperties(adminGroup, null,
+                                             bitstream, ResourcePolicy.TYPE_CUSTOM, Constants.READ, "administrator"),
+                                     ResourcePolicyMatcher.matchResourcePolicyProperties(anonymousGroup, null,
+                                             bitstream, ResourcePolicy.TYPE_CUSTOM, Constants.READ, "embargo")
+                              )))
+                             .andExpect(jsonPath("$.page.totalElements", is(2)));
+
+        // verify item policies
+        getClient(tokenAdmin).perform(get("/api/authz/resourcepolicies/search/resource")
+                             .param("uuid", wItem.getItem().getID().toString()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$._embedded.resourcepolicies", Matchers.containsInAnyOrder(
+                                     ResourcePolicyMatcher.matchResourcePolicyProperties(adminGroup, null,
+                                          wItem.getItem(), ResourcePolicy.TYPE_CUSTOM, Constants.READ, "administrator"),
+                                     ResourcePolicyMatcher.matchResourcePolicyProperties(anonymousGroup, null,
+                                          wItem.getItem(), ResourcePolicy.TYPE_CUSTOM, Constants.READ, "embargo")
+                              )))
+                             .andExpect(jsonPath("$.page.totalElements", is(2)));
+
+        bundle = context.reloadEntity(bundle);
+        Bitstream bitstream2 =  bundle.getBitstreams().get(1);
+
+        // verify bitstream2 policies
+        getClient(tokenAdmin).perform(get("/api/authz/resourcepolicies/search/resource")
+                             .param("uuid", bitstream2.getID().toString()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$._embedded.resourcepolicies", Matchers.contains(
+                                     ResourcePolicyMatcher.matchResourcePolicyProperties(anonymousGroup, null,
+                                             bitstream2, ResourcePolicy.TYPE_CUSTOM, Constants.READ, "embargo")
+                              )))
+                             .andExpect(jsonPath("$.page.totalElements", is(1)));
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/base.java
+    @Test void verifyCorrectInheritanceOfAccessConditionTest() throws Exception 
+=======
+    @Test void verifyCorrectInheritanceOfAccessConditionTest() throws Exception {
         context.turnOffAuthorisationSystem();
 
         Group anonymousGroup = EPersonServiceFactory.getInstance().getGroupService()
@@ -7899,6 +8775,25 @@ public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegration
                               )))
                              .andExpect(jsonPath("$.page.totalElements", is(1)));
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/WorkspaceItemRestRepositoryIT.java/right.java
+
+    /**
+     * this is the same test than
+     * {@link WorkspaceItemRestRepositoryIT#patchUploadAddAdminRPInstallAndVerifyOnlyAdminCanView()}
+     * except than it runs with append-mode enabled
+     */
+
+    /**
+     * this is the same test than
+     * {@link WorkspaceItemRestRepositoryIT#patchUploadAddOpenAccessRPInstallAndVerifyAnonCanView()}
+     * except than it runs with append-mode enabled
+     */
+
+    /**
+     * this is the same test than
+     * {@link WorkspaceItemRestRepositoryIT#patchUploadAddAdminThenOpenAccessRPInstallAndVerifyAnonCanView()}
+     * except than it runs with append-mode enabled
+     */
 
     @Test
     public void createItemWithoutEntityTypeIfCollectionHasBlankEntityType() throws Exception {

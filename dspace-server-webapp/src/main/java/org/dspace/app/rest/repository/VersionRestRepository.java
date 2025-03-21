@@ -97,6 +97,62 @@ public class VersionRestRepository extends DSpaceRestRepository<VersionRest, Int
         }
     }
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/repository/VersionRestRepository.java/left.java
+    @Override
+    @PreAuthorize("@versioningSecurity.isEnableVersioning() && hasAuthority('AUTHENTICATED')")
+    protected VersionRest createAndReturn(Context context, List<String> stringList)
+        throws AuthorizeException, SQLException, RepositoryMethodNotImplementedException {
+
+        HttpServletRequest req = getRequestService().getCurrentRequest().getHttpServletRequest();
+        String summary = req.getParameter("summary");
+
+        Item item = uriListHandlerService.handle(context, req, stringList, Item.class);
+        if (Objects.isNull(item)) {
+            throw new UnprocessableEntityException("The given URI list could not be properly parsed to one result");
+        }
+
+        boolean hasEntityType = StringUtils.isNotBlank(itemService.
+                                getMetadataFirstValue(item, "dspace", "entity", "type", Item.ANY));
+        boolean isBlockEntity = configurationService.getBooleanProperty("versioning.block.entity", true);
+
+        EPerson submitter = item.getSubmitter();
+        boolean isAdmin = authorizeService.isAdmin(context);
+        boolean canCreateVersion = configurationService.getBooleanProperty("versioning.submitterCanCreateNewVersion");
+
+        if (!isAdmin && !(canCreateVersion && Objects.equals(submitter, context.getCurrentUser()))) {
+            throw new AuthorizeException("The logged user doesn't have the rights to create a new version.");
+        }
+        if (hasEntityType  && isBlockEntity) {
+            throw new AuthorizeException("You are trying to create a new version for an entity" +
+                                         " which is blocked by the configuration");
+        }
+
+        WorkflowItem workflowItem = null;
+        WorkspaceItem workspaceItem = null;
+        VersionHistory versionHistory = versionHistoryService.findByItem(context, item);
+        if (Objects.nonNull(versionHistory)) {
+            Version lastVersion = versionHistoryService.getLatestVersion(context, versionHistory);
+            if (Objects.nonNull(lastVersion)) {
+                workflowItem = workflowItemService.findByItem(context, lastVersion.getItem());
+                workspaceItem = workspaceItemService.findByItem(context, lastVersion.getItem());
+            }
+        } else {
+            workflowItem = workflowItemService.findByItem(context, item);
+            workspaceItem = workspaceItemService.findByItem(context, item);
+        }
+
+        if (Objects.nonNull(workflowItem) || Objects.nonNull(workspaceItem)) {
+            throw new UnprocessableEntityException("It is not possible to create a new version"
+                                                         + " if the latest one in submisssion!");
+        }
+
+        Version version = StringUtils.isNotBlank(summary) ?
+                          versioningService.createNewVersion(context, item, summary) :
+                          versioningService.createNewVersion(context, item);
+        return converter.toRest(version, utils.obtainProjection());
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/repository/VersionRestRepository.java/base.java
+=======
     @Override
     @PreAuthorize("@versioningSecurity.isEnableVersioning() && hasAuthority('AUTHENTICATED')")
     protected VersionRest createAndReturn(Context context, List<String> stringList)
@@ -142,6 +198,7 @@ public class VersionRestRepository extends DSpaceRestRepository<VersionRest, Int
                           versioningService.createNewVersion(context, item);
         return converter.toRest(version, utils.obtainProjection());
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/repository/VersionRestRepository.java/right.java
 
     @Override
     @PreAuthorize("@versioningSecurity.isEnableVersioning() && hasPermission(#versionId, 'version', 'ADMIN')")

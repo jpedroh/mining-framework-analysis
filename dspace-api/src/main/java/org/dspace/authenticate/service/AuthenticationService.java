@@ -168,6 +168,18 @@ public interface AuthenticationService {
      */
     public Iterator<AuthenticationMethod> authenticationMethodIterator();
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/authenticate/service/AuthenticationService.java/left.java
+    /**
+     * Retrieves the currently used authentication method name based on the context and the request
+     *
+     * @param context A valid DSpace context.
+     * @param request The request that started this operation, or null if not applicable.
+     * @return the currently used authentication method name
+     */
+    public String getAuthenticationMethod(Context context, HttpServletRequest request);
+
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/authenticate/service/AuthenticationService.java/base.java
+=======
     /**
      * Retrieves the currently used authentication method name based on the context and the request
      *
@@ -189,4 +201,5 @@ public interface AuthenticationService {
      */
     public boolean canChangePassword(Context context, EPerson ePerson, String currentPassword);
 
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/authenticate/service/AuthenticationService.java/right.java
 }

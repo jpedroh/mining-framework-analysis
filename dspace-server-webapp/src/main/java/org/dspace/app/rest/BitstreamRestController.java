@@ -131,6 +131,35 @@ public class BitstreamRestController {
         }
 
         try {
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/BitstreamRestController.java/left.java
+            long filesize;
+            if (citationDocumentService.isCitationEnabledForBitstream(bit, context)) {
+                final Pair<InputStream, Long> citedDocument = citationDocumentService.makeCitedDocument(context, bit);
+                filesize = citedDocument.getRight();
+                citedDocument.getLeft().close();
+            } else {
+                filesize = bit.getSizeBytes();
+            }
+
+            HttpHeadersInitializer httpHeadersInitializer = new HttpHeadersInitializer()
+                .withBufferSize(BUFFER_SIZE)
+                .withFileName(name)
+                .withLength(filesize)
+                .withChecksum(bit.getChecksum())
+                .withMimetype(mimetype)
+                .with(request)
+                .with(response);
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/BitstreamRestController.java/base.java
+            HttpHeadersInitializer httpHeadersInitializer = HttpHeadersInitializer
+                    .fromInputStream(is)
+                    .withBufferSize(BUFFER_SIZE)
+                    .withFileName(name)
+                    .withLength(bitstreamTuple.getRight())
+                    .withChecksum(bit.getChecksum())
+                    .withMimetype(mimetype)
+                    .with(request)
+                    .with(response);
+=======
             long filesize = bit.getSizeBytes();
             Boolean citationEnabledForBitstream = citationDocumentService.isCitationEnabledForBitstream(bit, context);
 
@@ -141,6 +170,7 @@ public class BitstreamRestController {
                 .withMimetype(mimetype)
                 .with(request)
                 .with(response);
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/BitstreamRestController.java/right.java
 
             if (lastModified != null) {
                 httpHeadersInitializer.withLastModified(lastModified);
@@ -152,10 +182,21 @@ public class BitstreamRestController {
                 httpHeadersInitializer.withDisposition(HttpHeadersInitializer.CONTENT_DISPOSITION_ATTACHMENT);
             }
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/BitstreamRestController.java/left.java
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/BitstreamRestController.java/base.java
+=======
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/BitstreamRestController.java/right.java
             org.dspace.app.rest.utils.BitstreamResource bitstreamResource =
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/BitstreamRestController.java/left.java
+                new org.dspace.app.rest.utils.BitstreamResource(
+                    bit, name, uuid, filesize, currentUser != null ? currentUser.getID() : null);
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/BitstreamRestController.java/base.java
+                new org.dspace.app.rest.utils.BitstreamResource(is, name, uuid, bit.getSizeBytes());
+=======
                 new org.dspace.app.rest.utils.BitstreamResource(name, uuid,
                     currentUser != null ? currentUser.getID() : null,
                     context.getSpecialGroupUuids(), citationEnabledForBitstream);
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/BitstreamRestController.java/right.java
 
             //We have all the data we need, close the connection to the database so that it doesn't stay open during
             //download/streaming

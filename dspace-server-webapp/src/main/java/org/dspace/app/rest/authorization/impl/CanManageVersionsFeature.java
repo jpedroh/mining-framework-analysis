@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.apache.commons.lang.StringUtils;
 import org.dspace.app.rest.authorization.AuthorizationFeature;
 import org.dspace.app.rest.authorization.AuthorizationFeatureDocumentation;
 import org.dspace.app.rest.model.BaseObjectRest;
@@ -51,9 +52,24 @@ public class CanManageVersionsFeature implements AuthorizationFeature {
             if (!isEnabled || Objects.isNull(context.getCurrentUser())) {
                 return false;
             }
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/authorization/impl/CanManageVersionsFeature.java/left.java
+            Item item = itemService.find(context, UUID.fromString(((ItemRest) object).getUuid()));
+            if (Objects.nonNull(item)) {
+                boolean isBlockEntity = configurationService.getBooleanProperty("versioning.block.entity", true);
+                boolean hasEntityType = StringUtils.isNotBlank(itemService.
+                                        getMetadataFirstValue(item, "dspace", "entity", "type", Item.ANY));
+                if (isBlockEntity && hasEntityType) {
+                    return false;
+                }
+                return authorizeService.isAdmin(context, item);
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/authorization/impl/CanManageVersionsFeature.java/base.java
+            if (authorizeService.isAdmin(context)) {
+                return true;
+=======
             Item item = itemService.find(context, UUID.fromString(((ItemRest) object).getUuid()));
             if (Objects.nonNull(item)) {
                 return authorizeService.isAdmin(context, item);
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/authorization/impl/CanManageVersionsFeature.java/right.java
             }
         }
         return false;

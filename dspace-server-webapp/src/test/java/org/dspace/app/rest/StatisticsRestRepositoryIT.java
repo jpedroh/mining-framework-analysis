@@ -418,6 +418,49 @@ public class StatisticsRestRepositoryIT extends AbstractControllerIntegrationTes
             get("/api/statistics/usagereports/" + itemNotVisitedWithBitstreams.getID() + "_" + TOTAL_VISITS_REPORT_ID))
                    // ** THEN **
                    .andExpect(status().isOk())
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/StatisticsRestRepositoryIT.java/left.java
+                   .andExpect(jsonPath("$", Matchers.is(
+                       UsageReportMatcher
+                           .matchUsageReport(itemNotVisitedWithBitstreams.getID() + "_" + TOTAL_VISITS_REPORT_ID,
+                               TOTAL_VISITS_REPORT_ID, Arrays.asList(expectedPoint))))
+                             );
+
+        // only admin access visits report
+        getClient(loggedInToken).perform(
+             get("/api/statistics/usagereports/" + itemNotVisitedWithBitstreams.getID() + "_" + TOTAL_VISITS_REPORT_ID))
+            .andExpect(status().isForbidden());
+
+        getClient().perform(
+             get("/api/statistics/usagereports/" + itemNotVisitedWithBitstreams.getID() + "_" + TOTAL_VISITS_REPORT_ID))
+            .andExpect(status().isUnauthorized());
+
+        // make statistics visible to all
+        configurationService.setProperty("usage-statistics.authorization.admin.usage", false);
+
+        getClient(loggedInToken).perform(
+                get("/api/statistics/usagereports/"
+                        + itemNotVisitedWithBitstreams.getID() + "_" + TOTAL_VISITS_REPORT_ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",
+                        Matchers.is(UsageReportMatcher.matchUsageReport(
+                                itemNotVisitedWithBitstreams.getID() + "_" + TOTAL_VISITS_REPORT_ID,
+                                TOTAL_VISITS_REPORT_ID, Arrays.asList(expectedPoint)))));
+
+           getClient().perform(
+                get("/api/statistics/usagereports/"
+                        + itemNotVisitedWithBitstreams.getID() + "_" + TOTAL_VISITS_REPORT_ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",
+                        Matchers.is(UsageReportMatcher.matchUsageReport(
+                                itemNotVisitedWithBitstreams.getID() + "_" + TOTAL_VISITS_REPORT_ID,
+                                TOTAL_VISITS_REPORT_ID, Arrays.asList(expectedPoint)))));
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/StatisticsRestRepositoryIT.java/base.java
+                   .andExpect(jsonPath("$", Matchers.is(
+                       UsageReportMatcher
+                           .matchUsageReport(itemNotVisitedWithBitstreams.getID() + "_" + TOTAL_VISITS_REPORT_ID,
+                               TOTAL_VISITS_REPORT_ID, Arrays.asList(expectedPoint))))
+                             );
+=======
                              .andExpect(jsonPath("$", Matchers.is(
                                  UsageReportMatcher.matchUsageReport(
                                      itemNotVisitedWithBitstreams.getID() + "_" + TOTAL_VISITS_REPORT_ID,
@@ -461,6 +504,7 @@ public class StatisticsRestRepositoryIT extends AbstractControllerIntegrationTes
                         expectedPoints
                     )
                 )));
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/StatisticsRestRepositoryIT.java/right.java
     }
 
     @Test
@@ -488,6 +532,45 @@ public class StatisticsRestRepositoryIT extends AbstractControllerIntegrationTes
                    // ** THEN **
                    .andExpect(status().isOk())
                    .andExpect(jsonPath("$", Matchers.is(
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/StatisticsRestRepositoryIT.java/left.java
+                       UsageReportMatcher
+                           .matchUsageReport(bitstreamVisited.getID() + "_" + TOTAL_VISITS_REPORT_ID,
+                               TOTAL_VISITS_REPORT_ID, Arrays.asList(expectedPoint))))
+                             );
+
+        // only admin access visits report
+        getClient(loggedInToken).perform(
+                  get("/api/statistics/usagereports/" + bitstreamVisited.getID() + "_" + TOTAL_VISITS_REPORT_ID))
+                 .andExpect(status().isForbidden());
+
+        getClient().perform(
+                  get("/api/statistics/usagereports/" + bitstreamVisited.getID() + "_" + TOTAL_VISITS_REPORT_ID))
+                 .andExpect(status().isUnauthorized());
+
+        // make statistics visible to all
+        configurationService.setProperty("usage-statistics.authorization.admin.usage", false);
+
+        getClient(loggedInToken).perform(
+                get("/api/statistics/usagereports/" + bitstreamVisited.getID() + "_" + TOTAL_VISITS_REPORT_ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",
+                        Matchers.is(UsageReportMatcher.matchUsageReport(
+                                bitstreamVisited.getID() + "_" + TOTAL_VISITS_REPORT_ID, TOTAL_VISITS_REPORT_ID,
+                                Arrays.asList(expectedPoint)))));
+
+        getClient().perform(
+                get("/api/statistics/usagereports/" + bitstreamVisited.getID() + "_" + TOTAL_VISITS_REPORT_ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",
+                        Matchers.is(UsageReportMatcher.matchUsageReport(
+                                bitstreamVisited.getID() + "_" + TOTAL_VISITS_REPORT_ID, TOTAL_VISITS_REPORT_ID,
+                                Arrays.asList(expectedPoint)))));
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/StatisticsRestRepositoryIT.java/base.java
+                       UsageReportMatcher
+                           .matchUsageReport(bitstreamVisited.getID() + "_" + TOTAL_VISITS_REPORT_ID,
+                               TOTAL_VISITS_REPORT_ID, Arrays.asList(expectedPoint))))
+                             );
+=======
                        UsageReportMatcher.matchUsageReport(
                            bitstreamVisited.getID() + "_" + TOTAL_VISITS_REPORT_ID,
                            TOTAL_VISITS_REPORT_ID,
@@ -528,9 +611,58 @@ public class StatisticsRestRepositoryIT extends AbstractControllerIntegrationTes
                         expectedPoints
                     )
                 )));
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/StatisticsRestRepositoryIT.java/right.java
     }
 
     @Test
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/StatisticsRestRepositoryIT.java/left.java
+    public void totalVisitsReport_Bitstream_NotVisited() throws Exception {
+        // ** WHEN **
+        // Bitstream is never visited
+
+        String authToken = getAuthToken(admin.getEmail(), password);
+        // And request that bitstream's TotalVisits stat report
+        getClient(authToken).perform(
+            get("/api/statistics/usagereports/" + bitstreamNotVisited.getID() + "_" + TOTAL_VISITS_REPORT_ID))
+                   // ** THEN **
+                   .andExpect(status().isOk())
+                   .andExpect(jsonPath("$", Matchers.is(
+                       UsageReportMatcher
+                           .matchUsageReport(bitstreamNotVisited.getID() + "_" + TOTAL_VISITS_REPORT_ID,
+                               TOTAL_VISITS_REPORT_ID, Arrays.asList(expectedPoint))))
+                             );
+
+        String tokenEPerson = getAuthToken(eperson.getEmail(), password);
+        getClient(tokenEPerson).perform(
+                  get("/api/statistics/usagereports/" + bitstreamNotVisited.getID() + "_" + TOTAL_VISITS_REPORT_ID))
+                 .andExpect(status().isForbidden());
+
+        getClient().perform(
+                    get("/api/statistics/usagereports/" + bitstreamNotVisited.getID() + "_" + TOTAL_VISITS_REPORT_ID))
+                   .andExpect(status().isUnauthorized());
+
+        // make statistics visible to all
+        configurationService.setProperty("usage-statistics.authorization.admin.usage", false);
+
+        getClient(tokenEPerson).perform(
+                get("/api/statistics/usagereports/" + bitstreamNotVisited.getID() + "_" + TOTAL_VISITS_REPORT_ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",
+                        Matchers.is(UsageReportMatcher.matchUsageReport(
+                                bitstreamNotVisited.getID() + "_" + TOTAL_VISITS_REPORT_ID, TOTAL_VISITS_REPORT_ID,
+                                Arrays.asList(expectedPoint)))));
+
+      getClient().perform(
+                get("/api/statistics/usagereports/" + bitstreamNotVisited.getID() + "_" + TOTAL_VISITS_REPORT_ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",
+                        Matchers.is(UsageReportMatcher.matchUsageReport(
+                                bitstreamNotVisited.getID() + "_" + TOTAL_VISITS_REPORT_ID, TOTAL_VISITS_REPORT_ID,
+                                Arrays.asList(expectedPoint)))));
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/StatisticsRestRepositoryIT.java/base.java
+    public void totalVisitsReport_Bitstream_NotVisited() throws Exception 
+=======
     public void totalVisitsReport_Bitstream_NotVisited() throws Exception {
         // ** WHEN **
         // Bitstream is never visited
@@ -587,6 +719,7 @@ public class StatisticsRestRepositoryIT extends AbstractControllerIntegrationTes
                     )
                 )));
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/StatisticsRestRepositoryIT.java/right.java
 
     @Test
     public void totalVisitsPerMonthReport_Item_Visited() throws Exception {
@@ -611,6 +744,43 @@ public class StatisticsRestRepositoryIT extends AbstractControllerIntegrationTes
                    // ** THEN **
                    .andExpect(status().isOk())
                    .andExpect(jsonPath("$", Matchers.is(
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/StatisticsRestRepositoryIT.java/left.java
+                       UsageReportMatcher
+                           .matchUsageReport(itemVisited.getID() + "_" + TOTAL_VISITS_PER_MONTH_REPORT_ID,
+                               TOTAL_VISITS_PER_MONTH_REPORT_ID, expectedPoints))));
+
+        // only admin has access
+        getClient(loggedInToken).perform(
+                 get("/api/statistics/usagereports/" + itemVisited.getID() + "_" + TOTAL_VISITS_PER_MONTH_REPORT_ID))
+                .andExpect(status().isForbidden());
+
+        getClient().perform(
+                 get("/api/statistics/usagereports/" + itemVisited.getID() + "_" + TOTAL_VISITS_PER_MONTH_REPORT_ID))
+                .andExpect(status().isUnauthorized());
+
+        // make statistics visible to all
+        configurationService.setProperty("usage-statistics.authorization.admin.usage", false);
+
+        getClient(loggedInToken).perform(
+                get("/api/statistics/usagereports/" + itemVisited.getID() + "_" + TOTAL_VISITS_PER_MONTH_REPORT_ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",
+                        Matchers.is(UsageReportMatcher.matchUsageReport(
+                                itemVisited.getID() + "_" + TOTAL_VISITS_PER_MONTH_REPORT_ID,
+                                TOTAL_VISITS_PER_MONTH_REPORT_ID, expectedPoints))));
+
+       getClient().perform(
+                get("/api/statistics/usagereports/" + itemVisited.getID() + "_" + TOTAL_VISITS_PER_MONTH_REPORT_ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",
+                        Matchers.is(UsageReportMatcher.matchUsageReport(
+                                itemVisited.getID() + "_" + TOTAL_VISITS_PER_MONTH_REPORT_ID,
+                                TOTAL_VISITS_PER_MONTH_REPORT_ID, expectedPoints))));
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/StatisticsRestRepositoryIT.java/base.java
+                       UsageReportMatcher
+                           .matchUsageReport(itemVisited.getID() + "_" + TOTAL_VISITS_PER_MONTH_REPORT_ID,
+                               TOTAL_VISITS_PER_MONTH_REPORT_ID, expectedPoints))));
+=======
                        UsageReportMatcher.matchUsageReport(
                            itemVisited.getID() + "_" + TOTAL_VISITS_PER_MONTH_REPORT_ID,
                            TOTAL_VISITS_PER_MONTH_REPORT_ID,
@@ -651,6 +821,7 @@ public class StatisticsRestRepositoryIT extends AbstractControllerIntegrationTes
                         expectedPoints
                     )
                 )));
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/StatisticsRestRepositoryIT.java/right.java
     }
 
     @Test
@@ -731,6 +902,43 @@ public class StatisticsRestRepositoryIT extends AbstractControllerIntegrationTes
                    // ** THEN **
                    .andExpect(status().isOk())
                    .andExpect(jsonPath("$", Matchers.is(
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/StatisticsRestRepositoryIT.java/left.java
+                       UsageReportMatcher
+                           .matchUsageReport(bitstreamVisited.getID() + "_" + TOTAL_DOWNLOADS_REPORT_ID,
+                               TOTAL_DOWNLOADS_REPORT_ID, Arrays.asList(expectedPoint)))));
+
+        // only admin has access to downloads report
+        getClient(loggedInToken).perform(
+                  get("/api/statistics/usagereports/" + bitstreamVisited.getID() + "_" + TOTAL_DOWNLOADS_REPORT_ID))
+                 .andExpect(status().isForbidden());
+
+        getClient().perform(
+                  get("/api/statistics/usagereports/" + bitstreamVisited.getID() + "_" + TOTAL_DOWNLOADS_REPORT_ID))
+                 .andExpect(status().isUnauthorized());
+
+        // make statistics visible to all
+        configurationService.setProperty("usage-statistics.authorization.admin.usage", false);
+
+        getClient(loggedInToken).perform(
+                get("/api/statistics/usagereports/" + bitstreamVisited.getID() + "_" + TOTAL_DOWNLOADS_REPORT_ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",
+                        Matchers.is(UsageReportMatcher.matchUsageReport(
+                                bitstreamVisited.getID() + "_" + TOTAL_DOWNLOADS_REPORT_ID, TOTAL_DOWNLOADS_REPORT_ID,
+                                Arrays.asList(expectedPoint)))));
+
+        getClient().perform(
+                get("/api/statistics/usagereports/" + bitstreamVisited.getID() + "_" + TOTAL_DOWNLOADS_REPORT_ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",
+                        Matchers.is(UsageReportMatcher.matchUsageReport(
+                                bitstreamVisited.getID() + "_" + TOTAL_DOWNLOADS_REPORT_ID, TOTAL_DOWNLOADS_REPORT_ID,
+                                Arrays.asList(expectedPoint)))));
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/StatisticsRestRepositoryIT.java/base.java
+                       UsageReportMatcher
+                           .matchUsageReport(bitstreamVisited.getID() + "_" + TOTAL_DOWNLOADS_REPORT_ID,
+                               TOTAL_DOWNLOADS_REPORT_ID, Arrays.asList(expectedPoint)))));
+=======
                        UsageReportMatcher.matchUsageReport(
                            bitstreamVisited.getID() + "_" + TOTAL_DOWNLOADS_REPORT_ID,
                            TOTAL_DOWNLOADS_REPORT_ID,
@@ -771,6 +979,7 @@ public class StatisticsRestRepositoryIT extends AbstractControllerIntegrationTes
                         expectedPoints
                     )
                 )));
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/StatisticsRestRepositoryIT.java/right.java
     }
 
     @Test
@@ -859,6 +1068,43 @@ public class StatisticsRestRepositoryIT extends AbstractControllerIntegrationTes
                    // ** THEN **
                    .andExpect(status().isOk())
                    .andExpect(jsonPath("$", Matchers.is(
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/StatisticsRestRepositoryIT.java/left.java
+                       UsageReportMatcher
+                           .matchUsageReport(collectionVisited.getID() + "_" + TOP_COUNTRIES_REPORT_ID,
+                               TOP_COUNTRIES_REPORT_ID, Arrays.asList(expectedPoint)))));
+
+        // only admin has access to countries report
+        getClient(loggedInToken).perform(
+                  get("/api/statistics/usagereports/" + collectionVisited.getID() + "_" + TOP_COUNTRIES_REPORT_ID))
+                 .andExpect(status().isForbidden());
+
+        getClient().perform(
+                  get("/api/statistics/usagereports/" + collectionVisited.getID() + "_" + TOP_COUNTRIES_REPORT_ID))
+                 .andExpect(status().isUnauthorized());
+
+        // make statistics visible to all
+        configurationService.setProperty("usage-statistics.authorization.admin.usage", false);
+
+        getClient(loggedInToken).perform(
+                get("/api/statistics/usagereports/" + collectionVisited.getID() + "_" + TOP_COUNTRIES_REPORT_ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",
+                        Matchers.is(UsageReportMatcher.matchUsageReport(
+                                collectionVisited.getID() + "_" + TOP_COUNTRIES_REPORT_ID, TOP_COUNTRIES_REPORT_ID,
+                                Arrays.asList(expectedPoint)))));
+
+      getClient().perform(
+                get("/api/statistics/usagereports/" + collectionVisited.getID() + "_" + TOP_COUNTRIES_REPORT_ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",
+                        Matchers.is(UsageReportMatcher.matchUsageReport(
+                                collectionVisited.getID() + "_" + TOP_COUNTRIES_REPORT_ID, TOP_COUNTRIES_REPORT_ID,
+                                Arrays.asList(expectedPoint)))));
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/StatisticsRestRepositoryIT.java/base.java
+                       UsageReportMatcher
+                           .matchUsageReport(collectionVisited.getID() + "_" + TOP_COUNTRIES_REPORT_ID,
+                               TOP_COUNTRIES_REPORT_ID, Arrays.asList(expectedPoint)))));
+=======
                        UsageReportMatcher.matchUsageReport(
                            collectionVisited.getID() + "_" + TOP_COUNTRIES_REPORT_ID,
                            TOP_COUNTRIES_REPORT_ID,
@@ -899,6 +1145,7 @@ public class StatisticsRestRepositoryIT extends AbstractControllerIntegrationTes
                         expectedPoints
                     )
                 )));
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/StatisticsRestRepositoryIT.java/right.java
     }
 
     /**
@@ -989,6 +1236,43 @@ public class StatisticsRestRepositoryIT extends AbstractControllerIntegrationTes
                    // ** THEN **
                    .andExpect(status().isOk())
                    .andExpect(jsonPath("$", Matchers.is(
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/StatisticsRestRepositoryIT.java/left.java
+                       UsageReportMatcher
+                           .matchUsageReport(itemVisited.getID() + "_" + TOP_CITIES_REPORT_ID,
+                               TOP_CITIES_REPORT_ID, Arrays.asList(expectedPoint)))));
+
+        // only admin has access to cities report
+        getClient(loggedInToken).perform(
+                  get("/api/statistics/usagereports/" + itemVisited.getID() + "_" + TOP_CITIES_REPORT_ID))
+                 .andExpect(status().isForbidden());
+
+        getClient().perform(
+                  get("/api/statistics/usagereports/" + itemVisited.getID() + "_" + TOP_CITIES_REPORT_ID))
+                 .andExpect(status().isUnauthorized());
+
+        // make statistics visible to all
+        configurationService.setProperty("usage-statistics.authorization.admin.usage", false);
+
+        getClient(loggedInToken).perform(
+                get("/api/statistics/usagereports/" + itemVisited.getID() + "_" + TOP_CITIES_REPORT_ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",
+                        Matchers.is(
+                                UsageReportMatcher.matchUsageReport(itemVisited.getID() + "_" + TOP_CITIES_REPORT_ID,
+                                        TOP_CITIES_REPORT_ID, Arrays.asList(expectedPoint)))));
+
+        getClient().perform(
+                get("/api/statistics/usagereports/" + itemVisited.getID() + "_" + TOP_CITIES_REPORT_ID))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",
+                        Matchers.is(
+                                UsageReportMatcher.matchUsageReport(itemVisited.getID() + "_" + TOP_CITIES_REPORT_ID,
+                                        TOP_CITIES_REPORT_ID, Arrays.asList(expectedPoint)))));
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/StatisticsRestRepositoryIT.java/base.java
+                       UsageReportMatcher
+                           .matchUsageReport(itemVisited.getID() + "_" + TOP_CITIES_REPORT_ID,
+                               TOP_CITIES_REPORT_ID, Arrays.asList(expectedPoint)))));
+=======
                        UsageReportMatcher.matchUsageReport(
                            itemVisited.getID() + "_" + TOP_CITIES_REPORT_ID,
                            TOP_CITIES_REPORT_ID,
@@ -1029,6 +1313,7 @@ public class StatisticsRestRepositoryIT extends AbstractControllerIntegrationTes
                         expectedPoints
                     )
                 )));
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/StatisticsRestRepositoryIT.java/right.java
     }
 
     /**

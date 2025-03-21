@@ -14,8 +14,6 @@ import java.sql.SQLException;
 import java.util.Set;
 import java.util.UUID;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.dspace.authorize.AuthorizeException;
 import org.dspace.content.Bitstream;
 import org.dspace.content.factory.ContentServiceFactory;
@@ -26,6 +24,9 @@ import org.dspace.eperson.EPerson;
 import org.dspace.eperson.factory.EPersonServiceFactory;
 import org.dspace.eperson.service.EPersonService;
 import org.dspace.utils.DSpace;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.Pair;
+
 import org.springframework.core.io.AbstractResource;
 
 /**
@@ -36,28 +37,97 @@ import org.springframework.core.io.AbstractResource;
  */
 public class BitstreamResource extends AbstractResource {
 
+    private Bitstream bitstream;
     private String name;
     private UUID uuid;
     private UUID currentUserUUID;
-    private boolean shouldGenerateCoverPage;
-    private byte[] file;
-    private Set<UUID> currentSpecialGroups;
-
     private BitstreamService bitstreamService = ContentServiceFactory.getInstance().getBitstreamService();
     private EPersonService ePersonService = EPersonServiceFactory.getInstance().getEPersonService();
     private CitationDocumentService citationDocumentService =
         new DSpace().getServiceManager()
-                    .getServicesByType(CitationDocumentService.class).get(0);
-
+            .getServicesByType(CitationDocumentService.class).get(0);
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/utils/BitstreamResource.java/left.java
+    public BitstreamResource(Bitstream bitstream, String name, UUID uuid, long sizeBytes, UUID currentUserUUID) {
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/utils/BitstreamResource.java/base.java
+    public BitstreamResource(InputStream inputStream, String name, UUID uuid, long sizeBytes) {
+=======
     public BitstreamResource(String name, UUID uuid, UUID currentUserUUID, Set<UUID> currentSpecialGroups,
         boolean shouldGenerateCoverPage) {
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/utils/BitstreamResource.java/right.java
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/utils/BitstreamResource.java/left.java
+        this.bitstream = bitstream;
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/utils/BitstreamResource.java/base.java
+        this.inputStream = inputStream;
+=======
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/utils/BitstreamResource.java/right.java
         this.name = name;
         this.uuid = uuid;
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/utils/BitstreamResource.java/left.java
+        this.sizeBytes = sizeBytes;
+        this.currentUserUUID = currentUserUUID;
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/utils/BitstreamResource.java/base.java
+        this.sizeBytes = sizeBytes;
+=======
         this.currentUserUUID = currentUserUUID;
         this.currentSpecialGroups = currentSpecialGroups;
         this.shouldGenerateCoverPage = shouldGenerateCoverPage;
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/utils/BitstreamResource.java/right.java
     }
+    @Override
+    public String getDescription() {
+        return "bitstream [" + uuid + "]";
+    }
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/utils/BitstreamResource.java/left.java
+    @Override
+    public InputStream getInputStream() throws IOException {
+        Context context = new Context();
+        try {
+            EPerson currentUser = ePersonService.find(context, currentUserUUID);
+            context.setCurrentUser(currentUser);
+            InputStream out;
 
+            if (citationDocumentService.isCitationEnabledForBitstream(bitstream, context)) {
+                out = citationDocumentService.makeCitedDocument(context, bitstream).getLeft();
+            } else {
+                out = bitstreamService.retrieve(context, bitstream);
+            }
+
+            return out;
+        } catch (SQLException | AuthorizeException e) {
+            throw new IOException(e);
+        } finally {
+            try {
+                context.complete();
+            } catch (SQLException e) {
+                throw new IOException(e);
+            }
+        }
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/utils/BitstreamResource.java/base.java
+=======
+    @Override
+    public InputStream getInputStream() throws IOException {
+        try (Context context = initializeContext()) {
+
+            Bitstream bitstream = bitstreamService.find(context, uuid);
+            InputStream out;
+
+            if (shouldGenerateCoverPage) {
+                out = new ByteArrayInputStream(getCoverpageByteArray(context, bitstream));
+            } else {
+                out = bitstreamService.retrieve(context, bitstream);
+            }
+
+            this.file = null;
+            return out;
+        } catch (SQLException | AuthorizeException e) {
+            throw new IOException(e);
+        }
+    }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/utils/BitstreamResource.java/right.java
+    private boolean shouldGenerateCoverPage;
+    private byte[] file;
+    private Set<UUID> currentSpecialGroups;
     /**
      * Get Potential cover page by array, this method should only be called when a coverpage should be generated
      * In case of failure the original file will be returned
@@ -78,31 +148,6 @@ public class BitstreamResource extends AbstractResource {
             }
         }
         return file;
-    }
-
-    @Override
-    public String getDescription() {
-        return "bitstream [" + uuid + "]";
-    }
-
-    @Override
-    public InputStream getInputStream() throws IOException {
-        try (Context context = initializeContext()) {
-
-            Bitstream bitstream = bitstreamService.find(context, uuid);
-            InputStream out;
-
-            if (shouldGenerateCoverPage) {
-                out = new ByteArrayInputStream(getCoverpageByteArray(context, bitstream));
-            } else {
-                out = bitstreamService.retrieve(context, bitstream);
-            }
-
-            this.file = null;
-            return out;
-        } catch (SQLException | AuthorizeException e) {
-            throw new IOException(e);
-        }
     }
 
     @Override

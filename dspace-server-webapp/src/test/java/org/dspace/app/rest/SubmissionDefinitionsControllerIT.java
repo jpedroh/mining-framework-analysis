@@ -205,7 +205,13 @@ public class SubmissionDefinitionsControllerIT extends AbstractControllerIntegra
                    // We expect the content type to be "application/hal+json;charset=UTF-8"
                    .andExpect(content().contentType(contentType))
                    // Match only that a section exists with a submission configuration behind
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/left.java
+                   .andExpect(jsonPath("$._embedded.submissionsections", hasSize(7)))
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/base.java
+                   .andExpect(jsonPath("$._embedded.submissionsections", hasSize(6)))
+=======
                    .andExpect(jsonPath("$._embedded.submissionsections", hasSize(8)))
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/right.java
                    .andExpect(jsonPath("$._embedded.submissionsections",
                                        Matchers.hasItem(
                                            allOf(
@@ -257,10 +263,28 @@ public class SubmissionDefinitionsControllerIT extends AbstractControllerIntegra
                         Matchers.containsString("page=1"), Matchers.containsString("size=1"))))
                 .andExpect(jsonPath("$._links.last.href", Matchers.allOf(
                         Matchers.containsString("/api/config/submissiondefinitions?"),
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/left.java
+                        Matchers.containsString("page=4"), Matchers.containsString("size=1"))))
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/base.java
+                        Matchers.containsString("page=2"), Matchers.containsString("size=1"))))
+=======
                         Matchers.containsString("page=5"), Matchers.containsString("size=1"))))
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/right.java
                 .andExpect(jsonPath("$.page.size", is(1)))
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/left.java
+                .andExpect(jsonPath("$.page.totalElements", is(5)))
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/base.java
+                .andExpect(jsonPath("$.page.totalElements", is(3)))
+=======
                 .andExpect(jsonPath("$.page.totalElements", is(6)))
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/right.java
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/left.java
+                .andExpect(jsonPath("$.page.totalPages", is(5)))
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/base.java
+                .andExpect(jsonPath("$.page.totalPages", is(3)))
+=======
                 .andExpect(jsonPath("$.page.totalPages", is(6)))
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/right.java
                 .andExpect(jsonPath("$.page.number", is(0)));
 
         getClient(tokenAdmin).perform(get("/api/config/submissiondefinitions")
@@ -283,10 +307,28 @@ public class SubmissionDefinitionsControllerIT extends AbstractControllerIntegra
                         Matchers.containsString("page=1"), Matchers.containsString("size=1"))))
                 .andExpect(jsonPath("$._links.last.href", Matchers.allOf(
                         Matchers.containsString("/api/config/submissiondefinitions?"),
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/left.java
+                        Matchers.containsString("page=4"), Matchers.containsString("size=1"))))
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/base.java
+                        Matchers.containsString("page=2"), Matchers.containsString("size=1"))))
+=======
                         Matchers.containsString("page="), Matchers.containsString("size=1"))))
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/right.java
                 .andExpect(jsonPath("$.page.size", is(1)))
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/left.java
+                .andExpect(jsonPath("$.page.totalElements", is(5)))
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/base.java
+                .andExpect(jsonPath("$.page.totalElements", is(3)))
+=======
                 .andExpect(jsonPath("$.page.totalElements", is(6)))
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/right.java
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/left.java
+                .andExpect(jsonPath("$.page.totalPages", is(5)))
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/base.java
+                .andExpect(jsonPath("$.page.totalPages", is(3)))
+=======
                 .andExpect(jsonPath("$.page.totalPages", is(6)))
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/right.java
                 .andExpect(jsonPath("$.page.number", is(1)));
 
         getClient(tokenAdmin).perform(get("/api/config/submissiondefinitions")
@@ -309,10 +351,28 @@ public class SubmissionDefinitionsControllerIT extends AbstractControllerIntegra
                         Matchers.containsString("page=2"), Matchers.containsString("size=1"))))
                 .andExpect(jsonPath("$._links.last.href", Matchers.allOf(
                         Matchers.containsString("/api/config/submissiondefinitions?"),
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/left.java
+                        Matchers.containsString("page=4"), Matchers.containsString("size=1"))))
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/base.java
+                        Matchers.containsString("page=2"), Matchers.containsString("size=1"))))
+=======
                         Matchers.containsString("page=5"), Matchers.containsString("size=1"))))
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/right.java
                 .andExpect(jsonPath("$.page.size", is(1)))
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/left.java
+                .andExpect(jsonPath("$.page.totalElements", is(5)))
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/base.java
+                .andExpect(jsonPath("$.page.totalElements", is(3)))
+=======
                 .andExpect(jsonPath("$.page.totalElements", is(6)))
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/right.java
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/left.java
+                .andExpect(jsonPath("$.page.totalPages", is(5)))
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/base.java
+                .andExpect(jsonPath("$.page.totalPages", is(3)))
+=======
                 .andExpect(jsonPath("$.page.totalPages", is(6)))
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/right.java
                 .andExpect(jsonPath("$.page.number", is(2)));
 
         getClient(tokenAdmin).perform(get("/api/config/submissiondefinitions")
@@ -333,12 +393,32 @@ public class SubmissionDefinitionsControllerIT extends AbstractControllerIntegra
             .andExpect(jsonPath("$._links.self.href", Matchers.allOf(
                 Matchers.containsString("/api/config/submissiondefinitions?"),
                 Matchers.containsString("page=3"), Matchers.containsString("size=1"))))
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/left.java
+            .andExpect(jsonPath("$._links.last.href", Matchers.allOf(
+                Matchers.containsString("/api/config/submissiondefinitions?"),
+                Matchers.containsString("page=4"), Matchers.containsString("size=1"))))
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/base.java
+            .andExpect
+=======
             .andExpect(jsonPath("$._links.last.href", Matchers.allOf(
                 Matchers.containsString("/api/config/submissiondefinitions?"),
                 Matchers.containsString("page=5"), Matchers.containsString("size=1"))))
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/right.java
             .andExpect(jsonPath("$.page.size", is(1)))
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/left.java
+            .andExpect(jsonPath("$.page.totalElements", is(5)))
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/base.java
+            .andExpect
+=======
             .andExpect(jsonPath("$.page.totalElements", is(6)))
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/right.java
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/left.java
+            .andExpect(jsonPath("$.page.totalPages", is(5)))
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/base.java
+            .andExpect
+=======
             .andExpect(jsonPath("$.page.totalPages", is(6)))
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/right.java
             .andExpect(jsonPath("$.page.number", is(3)));
 
         getClient(tokenAdmin).perform(get("/api/config/submissiondefinitions")
@@ -353,18 +433,44 @@ public class SubmissionDefinitionsControllerIT extends AbstractControllerIntegra
             .andExpect(jsonPath("$._links.prev.href", Matchers.allOf(
                 Matchers.containsString("/api/config/submissiondefinitions?"),
                 Matchers.containsString("page=3"), Matchers.containsString("size=1"))))
-                .andExpect(jsonPath("$._links.next.href", Matchers.allOf(
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/left.java
+            .andExpect(jsonPath("$._links.next").doesNotExist())
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/base.java
+            .andExpect
+=======
+            .andExpect(jsonPath("$._links.next.href", Matchers.allOf(
                         Matchers.containsString("/api/config/submissiondefinitions?"),
                         Matchers.containsString("page=5"), Matchers.containsString("size=1"))))
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/right.java
             .andExpect(jsonPath("$._links.self.href", Matchers.allOf(
                 Matchers.containsString("/api/config/submissiondefinitions?"),
                 Matchers.containsString("page=4"), Matchers.containsString("size=1"))))
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/left.java
+            .andExpect(jsonPath("$._links.last.href", Matchers.allOf(
+                Matchers.containsString("/api/config/submissiondefinitions?"),
+                Matchers.containsString("page=4"), Matchers.containsString("size=1"))))
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/base.java
+            .andExpect
+=======
             .andExpect(jsonPath("$._links.last.href", Matchers.allOf(
                 Matchers.containsString("/api/config/submissiondefinitions?"),
                 Matchers.containsString("page=5"), Matchers.containsString("size=1"))))
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/right.java
             .andExpect(jsonPath("$.page.size", is(1)))
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/left.java
+            .andExpect(jsonPath("$.page.totalElements", is(5)))
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/base.java
+            .andExpect
+=======
             .andExpect(jsonPath("$.page.totalElements", is(6)))
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/right.java
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/left.java
+            .andExpect(jsonPath("$.page.totalPages", is(5)))
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/base.java
+            .andExpect
+=======
             .andExpect(jsonPath("$.page.totalPages", is(6)))
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/SubmissionDefinitionsControllerIT.java/right.java
             .andExpect(jsonPath("$.page.number", is(4)));
     }
 

@@ -2420,6 +2420,14 @@ public class CollectionRestRepositoryIT extends AbstractControllerIntegrationTes
                                                        .withName("Mapped Collection")
                                                        .build();
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/CollectionRestRepositoryIT.java/left.java
+        List<Item> items = new ArrayList();
+        // This comparator is used to sort our test Items by java.util.UUID (which sorts them based on the RFC
+        // and not based on String comparison, see also https://stackoverflow.com/a/51031298/3750035 )
+        Comparator<Item> compareByUUID = Comparator.comparing(i -> i.getID());
+
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/CollectionRestRepositoryIT.java/base.java
+=======
         List<Item> items = new ArrayList();
         // Hibernate 5.x's org.hibernate.dialect.H2Dialect sorts UUIDs as if they are Strings.
         // So, we must compare UUIDs as if they are strings.
@@ -2427,6 +2435,7 @@ public class CollectionRestRepositoryIT extends AbstractControllerIntegrationTes
         // we'd need to update the below comparator to compare them as java.util.UUID (which sorts based on RFC 4412).
         Comparator<Item> compareByUUID = Comparator.comparing(i -> i.getID().toString());
 
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/CollectionRestRepositoryIT.java/right.java
         Item item0 = ItemBuilder.createItem(context, collection).withTitle("Item 0").build();
         items.add(item0);
         Item item1 = ItemBuilder.createItem(context, collection).withTitle("Item 1").build();

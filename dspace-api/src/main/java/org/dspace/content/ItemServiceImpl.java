@@ -17,8 +17,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -1132,6 +1132,7 @@ prevent the generation of resource policy entry values with null dspace_object a
      * @return True if there is no RP on the item with custom read RP, otherwise false
      * @throws SQLException If something goes wrong retrieving the RP on the DSO
      */
+
     private boolean isNotAlreadyACustomRPOfThisTypeOnDSO(Context context, DSpaceObject dso) throws SQLException {
         List<ResourcePolicy> readRPs = resourcePolicyService.find(context, dso, Constants.READ);
         for (ResourcePolicy readRP : readRPs) {
@@ -1153,6 +1154,7 @@ prevent the generation of resource policy entry values with null dspace_object a
      * @return
      * @throws SQLException If something goes wrong retrieving the RP on the DSO
      */
+
     private boolean shouldBeAppended(Context context, DSpaceObject dso, ResourcePolicy defaultPolicy)
             throws SQLException {
         boolean hasCustomPolicy = resourcePolicyService.find(context, dso, Constants.READ)
@@ -1172,6 +1174,28 @@ prevent the generation of resource policy entry values with null dspace_object a
     }
 
     /**
+     * Check whether or not there is already an RP on the given dso, which has actionId={@link Constants.READ} and
+     * resourceTypeId={@link ResourcePolicy.TYPE_CUSTOM}
+     *
+     * @param context DSpace context
+     * @param dso     DSpace object to check for custom read RP
+     * @return True if there is no RP on the item with custom read RP, otherwise false
+     * @throws SQLException If something goes wrong retrieving the RP on the DSO
+     */
+
+    /**
+     * Check if the provided default policy should be appended or not to the final
+     * item. If an item has at least one custom READ policy any anonymous READ
+     * policy with empty start/end date should be skipped
+     * 
+     * @param context       DSpace context
+     * @param dso           DSpace object to check for custom read RP
+     * @param defaultPolicy The policy to check
+     * @return
+     * @throws SQLException If something goes wrong retrieving the RP on the DSO
+     */
+
+    /**
      * Returns an iterator of Items possessing the passed metadata field, or only
      * those matching the passed value, if value is not Item.ANY
      *
@@ -1187,6 +1211,7 @@ prevent the generation of resource policy entry values with null dspace_object a
      *                            Exception indicating the current user of the context does not have permission
      *                            to perform a particular action.
      */
+
     @Override
     public Iterator<Item> findArchivedByMetadataField(Context context,
                                                       String schema, String element, String qualifier, String value)

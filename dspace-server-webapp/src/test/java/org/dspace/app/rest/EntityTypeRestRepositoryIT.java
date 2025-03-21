@@ -37,6 +37,11 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author Mykhaylo Boychuk - 4Science
  */
+/**
+ * Integration test class for the entity type endpoint
+ *
+ * @author Mykhaylo Boychuk - 4Science
+ */
 public class EntityTypeRestRepositoryIT extends AbstractEntityIntegrationTest {
 
     @Autowired
@@ -86,13 +91,32 @@ public class EntityTypeRestRepositoryIT extends AbstractEntityIntegrationTest {
                    .andExpect(jsonPath("$._links.self.href", containsString("api/core/entitytypes")))
                    //We have 4 facets in the default configuration, they need to all be present in the embedded section
                    .andExpect(jsonPath("$._embedded.entitytypes", containsInAnyOrder(
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/EntityTypeRestRepositoryIT.java/left.java
+                       EntityTypeMatcher.matchEntityTypeEntry(entityTypeService.findByEntityType(context,
+                             Constants.ENTITY_TYPE_NONE)),
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/EntityTypeRestRepositoryIT.java/base.java
+=======
                        EntityTypeMatcher.matchEntityTypeEntry(entityTypeService.findByEntityType(context, "Journal")),
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/EntityTypeRestRepositoryIT.java/right.java
                        EntityTypeMatcher
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/EntityTypeRestRepositoryIT.java/left.java
+                           .matchEntityTypeEntry(entityTypeService.findByEntityType(context, "Publication")),
+                       EntityTypeMatcher.matchEntityTypeEntry(entityTypeService.findByEntityType(context, "Person")),
+                       EntityTypeMatcher.matchEntityTypeEntry(entityTypeService.findByEntityType(context, "Project")),
+                       EntityTypeMatcher.matchEntityTypeEntry(entityTypeService.findByEntityType(context, "OrgUnit"))
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/EntityTypeRestRepositoryIT.java/base.java
+                           .matchEntityTypeEntry(entityTypeService.findByEntityType(context, "Publication")),
+                       EntityTypeMatcher.matchEntityTypeEntry(entityTypeService.findByEntityType(context, "Person")),
+                       EntityTypeMatcher.matchEntityTypeEntry(entityTypeService.findByEntityType(context, "Project")),
+                       EntityTypeMatcher.matchEntityTypeEntry(entityTypeService.findByEntityType(context, "OrgUnit")),
+                       EntityTypeMatcher.matchEntityTypeEntry(entityTypeService.findByEntityType(context, "Journal"))
+=======
                            .matchEntityTypeEntry(entityTypeService.findByEntityType(context, "JournalIssue")),
                        EntityTypeMatcher
                            .matchEntityTypeEntry(entityTypeService.findByEntityType(context, "JournalVolume")),
                        EntityTypeMatcher.matchEntityTypeEntry(entityTypeService.findByEntityType(context, "OrgUnit")),
                        EntityTypeMatcher.matchEntityTypeEntry(entityTypeService.findByEntityType(context, "Person"))
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/EntityTypeRestRepositoryIT.java/right.java
                    )));
 
         getClient().perform(get("/api/core/entitytypes").param("size", "5").param("page", "1"))
@@ -108,6 +132,7 @@ public class EntityTypeRestRepositoryIT extends AbstractEntityIntegrationTest {
                    .andExpect(jsonPath("$._links.self.href", containsString("api/core/entitytypes")))
                    //We have 4 facets in the default configuration, they need to all be present in the embedded section
                    .andExpect(jsonPath("$._embedded.entitytypes", containsInAnyOrder(
+                       EntityTypeMatcher.matchEntityTypeEntry(entityTypeService.findByEntityType(context, "Journal")),
                        EntityTypeMatcher.matchEntityTypeEntry(entityTypeService.findByEntityType(context, "Project")),
                        EntityTypeMatcher
                            .matchEntityTypeEntry(entityTypeService.findByEntityType(context, "Publication")),
@@ -141,8 +166,15 @@ public class EntityTypeRestRepositoryIT extends AbstractEntityIntegrationTest {
                     EntityTypeMatcher.matchEntityTypeEntry(entityTypeService.findByEntityType(context, "Journal")),
                     EntityTypeMatcher.matchEntityTypeEntry(entityTypeService.findByEntityType(context,
                                                                                               "JournalIssue")),
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/EntityTypeRestRepositoryIT.java/left.java
+                    EntityTypeMatcher.matchEntityTypeEntry(entityTypeService.findByEntityType(context,
+                    Constants.ENTITY_TYPE_NONE))
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/EntityTypeRestRepositoryIT.java/base.java
+                    EntityTypeMatcher.matchEntityTypeEntry(entityTypeService.findByEntityType(context, "Project"))
+=======
                     EntityTypeMatcher.matchEntityTypeEntry(entityTypeService.findByEntityType(context,
                                                                                               "JournalVolume"))
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/EntityTypeRestRepositoryIT.java/right.java
                     )))
                    .andExpect(jsonPath("$._links.first.href", Matchers.allOf(
                            Matchers.containsString("/api/core/entitytypes?"),

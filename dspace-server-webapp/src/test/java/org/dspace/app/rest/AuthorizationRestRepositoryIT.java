@@ -1901,205 +1901,6 @@ public class AuthorizationRestRepositoryIT extends AbstractControllerIntegration
 
     @Test
     /**
-     * Verify that the paginated search by multiple objects and features works properly in allowed scenarios:
-     * - for an administrator
-     * - for an administrator that want to inspect permission of the anonymous users or another user
-     * - for a logged-in "normal" user
-     * - for anonymous
-     *
-     * @throws Exception
-     */
-    public void findByMultipleObjectsAndFeaturesPaginationTest() throws Exception {
-        context.turnOffAuthorisationSystem();
-
-        Community com = CommunityBuilder.createCommunity(context).withName("A test community").build();
-        String comId = com.getID().toString();
-        CommunityRest comRest = communityConverter.convert(com, DefaultProjection.DEFAULT);
-        Community secondCom = CommunityBuilder.createCommunity(context).withName("Another test community").build();
-        String secondComId = secondCom.getID().toString();
-        CommunityRest secondComRest = communityConverter.convert(secondCom, DefaultProjection.DEFAULT);
-
-        context.restoreAuthSystemState();
-
-        String adminToken = getAuthToken(admin.getEmail(), password);
-
-        // verify that it works for administrators - with eperson parameter
-
-        Supplier<MockHttpServletRequestBuilder> baseFeatureRequest = () ->
-            get("/api/authz/authorizations/search/objects")
-                .param("type", "core.community")
-                .param("uuid", comId)
-                .param("uuid", secondComId)
-                .param("projection", "level")
-                .param("page", "1")
-                .param("size", "1")
-                .param("embedLevelDepth", "1")
-                .param("feature", alwaysTrue.getName())
-                .param("feature", alwaysFalse.getName())
-                .param("feature", trueForLoggedUsers.getName())
-                .param("feature", trueForAdmins.getName());
-
-        getClient(adminToken).perform(baseFeatureRequest.get()
-                                                        .param("eperson", admin.getID().toString()))
-                             .andExpect(status().isOk())
-                             .andExpect(jsonPath("$.page.size", is(1)))
-                             .andExpect(jsonPath("$.page.totalElements", is(6)))
-                             .andExpect(jsonPath("$.page.totalPages", is(6)))
-                             .andExpect(jsonPath("$.page.number", is(1)))
-                             .andExpect(jsonPath("$._links.prev.href", containsString("page=0")))
-                             .andExpect(jsonPath("$._links.next.href", containsString("page=2")))
-                             .andExpect(jsonPath("$._embedded.authorizations", contains(
-                                 allOf(
-                                     hasJsonPath("$.id",
-                                                 is(admin.getID().toString() +
-                                                        "_" + trueForLoggedUsers.getName() + "_"
-                                                        + comRest.getUniqueType() + "_" + comRest.getId())),
-                                     hasJsonPath("$.type", is("authorization")),
-                                     hasJsonPath("$._embedded.feature.id", is(trueForLoggedUsers.getName())),
-                                     hasJsonPath("$._embedded.eperson.id", is(admin.getID().toString()))
-                                 )
-                             )));
-
-        // verify that it works for administrators - without eperson parameter
-        getClient(adminToken).perform(baseFeatureRequest.get())
-                             .andExpect(status().isOk())
-                             .andExpect(jsonPath("$.page.size", is(1)))
-                             .andExpect(jsonPath("$.page.totalElements", is(6)))
-                             .andExpect(jsonPath("$.page.totalPages", is(6)))
-                             .andExpect(jsonPath("$.page.number", is(1)))
-                             .andExpect(jsonPath("$._links.prev.href", containsString("page=0")))
-                             .andExpect(jsonPath("$._links.next.href", containsString("page=2")))
-                             .andExpect(jsonPath("$._embedded.authorizations", contains(
-                                 allOf(
-                                     hasJsonPath("$.id", is(
-                                         admin.getID().toString() + "_"
-                                             + trueForLoggedUsers.getName() + "_"
-                                             + comRest.getUniqueType() + "_" + comRest.getId()
-                                     )),
-                                     hasJsonPath("$.type", is("authorization")),
-                                     hasJsonPath("$._embedded.feature.id", is(trueForLoggedUsers.getName())),
-                                     hasJsonPath("$._embedded.eperson.id", is(admin.getID().toString()))
-                                 )
-                             )));
-
-        String epersonToken = getAuthToken(eperson.getEmail(), password);
-
-        // verify that it works for normal loggedin users - with eperson parameter
-        getClient(epersonToken).perform(baseFeatureRequest.get()
-                                                          .param("eperson", eperson.getID().toString()))
-                               .andExpect(status().isOk())
-                               .andExpect(jsonPath("$.page.size", is(1)))
-                               .andExpect(jsonPath("$.page.totalElements", is(4)))
-                               .andExpect(jsonPath("$.page.totalPages", is(4)))
-                               .andExpect(jsonPath("$.page.number", is(1)))
-                               .andExpect(jsonPath("$._links.prev.href", containsString("page=0")))
-                               .andExpect(jsonPath("$._links.next.href", containsString("page=2")))
-                               .andExpect(jsonPath("$._embedded.authorizations", contains(
-                                   allOf(
-                                       hasJsonPath("$.id", is(
-                                           eperson.getID().toString() + "_"
-                                               + trueForLoggedUsers.getName() + "_"
-                                               + comRest.getUniqueType() + "_" + comRest.getId()
-                                       )),
-                                       hasJsonPath("$.type", is("authorization")),
-                                       hasJsonPath("$._embedded.feature.id", is(trueForLoggedUsers.getName())),
-                                       hasJsonPath("$._embedded.eperson.id", is(eperson.getID().toString()))
-                                   )
-                               )));
-
-        // verify that it works for normal loggedin users - without eperson parameter
-        getClient(epersonToken).perform(baseFeatureRequest.get())
-                               .andExpect(status().isOk())
-                               .andExpect(jsonPath("$.page.size", is(1)))
-                               .andExpect(jsonPath("$.page.totalElements", is(4)))
-                               .andExpect(jsonPath("$.page.totalPages", is(4)))
-                               .andExpect(jsonPath("$.page.number", is(1)))
-                               .andExpect(jsonPath("$._links.prev.href", containsString("page=0")))
-                               .andExpect(jsonPath("$._links.next.href", containsString("page=2")))
-                               .andExpect(jsonPath("$._embedded.authorizations", contains(
-                                   allOf(
-                                       hasJsonPath("$.id", is(
-                                           eperson.getID().toString() + "_"
-                                               + trueForLoggedUsers.getName() + "_"
-                                               + comRest.getUniqueType() + "_" + comRest.getId()
-                                       )),
-                                       hasJsonPath("$.type", is("authorization")),
-                                       hasJsonPath("$._embedded.feature.id", is(trueForLoggedUsers.getName())),
-                                       hasJsonPath("$._embedded.eperson.id", is(eperson.getID().toString()))
-                                   )
-                               )));
-
-        // verify that it works for administators inspecting other users - by using the eperson parameter
-        getClient(adminToken).perform(baseFeatureRequest.get()
-                                                        .param("eperson", eperson.getID().toString()))
-                             .andExpect(status().isOk())
-                             .andExpect(jsonPath("$.page.size", is(1)))
-                             .andExpect(jsonPath("$.page.totalElements", is(4)))
-                             .andExpect(jsonPath("$.page.totalPages", is(4)))
-                             .andExpect(jsonPath("$.page.number", is(1)))
-                             .andExpect(jsonPath("$._links.prev.href", containsString("page=0")))
-                             .andExpect(jsonPath("$._links.next.href", containsString("page=2")))
-                             .andExpect(jsonPath("$._embedded.authorizations", contains(
-                                 allOf(
-                                     hasJsonPath("$.id", is(
-                                         eperson.getID().toString() + "_"
-                                             + trueForLoggedUsers.getName() + "_"
-                                             + comRest.getUniqueType() + "_" + comRest.getId()
-                                     )),
-                                     hasJsonPath("$.type", is("authorization")),
-                                     hasJsonPath("$._embedded.feature.id", is(trueForLoggedUsers.getName())),
-                                     hasJsonPath("$._embedded.eperson.id", is(eperson.getID().toString()))
-                                 )
-                             )));
-
-        // verify that it works for administators inspecting other users - by assuming login
-        getClient(adminToken).perform(baseFeatureRequest.get()
-                                                        .header("X-On-Behalf-Of", eperson.getID()))
-                             .andExpect(status().isOk())
-                             .andExpect(jsonPath("$.page.size", is(1)))
-                             .andExpect(jsonPath("$.page.totalElements", is(4)))
-                             .andExpect(jsonPath("$.page.totalPages", is(4)))
-                             .andExpect(jsonPath("$.page.number", is(1)))
-                             .andExpect(jsonPath("$._links.prev.href", containsString("page=0")))
-                             .andExpect(jsonPath("$._links.next.href", containsString("page=2")))
-                             .andExpect(jsonPath("$._embedded.authorizations", contains(
-                                 allOf(
-                                     hasJsonPath("$.id", is(
-                                         eperson.getID().toString() + "_"
-                                             + trueForLoggedUsers.getName() + "_"
-                                             + comRest.getUniqueType() + "_" + comRest.getId()
-                                     )),
-                                     hasJsonPath("$.type", is("authorization")),
-                                     hasJsonPath("$._embedded.feature.id", is(trueForLoggedUsers.getName())),
-                                     hasJsonPath("$._embedded.eperson.id", is(eperson.getID().toString()))
-                                 )
-                             )));
-
-        // verify that it works for anonymous users
-        getClient().perform(baseFeatureRequest.get())
-                   .andExpect(status().isOk())
-                   .andExpect(jsonPath("$.page.size", is(1)))
-                   .andExpect(jsonPath("$.page.totalElements", is(2)))
-                   .andExpect(jsonPath("$.page.totalPages", is(2)))
-                   .andExpect(jsonPath("$._links.prev.href", containsString("page=0")))
-                   .andExpect(jsonPath("$._links.next.href").doesNotExist())
-                   .andExpect(jsonPath("$.page.number", is(1)))
-                   .andExpect(jsonPath("$._embedded.authorizations",
-                                       contains(
-                                           allOf(
-                                               hasJsonPath("$.id", is(
-                                                   alwaysTrue.getName() + "_"
-                                                       + secondComRest.getUniqueType() + "_" + secondComRest.getId()
-                                               )),
-                                               hasJsonPath("$.type", is("authorization")),
-                                               hasJsonPath("$._embedded.feature.id", is(alwaysTrue.getName())),
-                                               hasJsonPath("$._embedded.eperson", nullValue())
-                                           )
-                                       )));
-    }
-
-    @Test
-    /**
      * Verify that the search by many objects and features works return 204 No Content when no feature is granted.
      *
      * @throws Exception
@@ -2496,6 +2297,58 @@ public class AuthorizationRestRepositoryIT extends AbstractControllerIntegration
      *
      * @throws Exception
      */
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/AuthorizationRestRepositoryIT.java/left.java
+    public void findByMultipleObjectsAndFeatureForbiddenTest() throws Exception {
+        Site site = siteService.findSite(context);
+        String siteId = site.getID().toString();
+
+        context.turnOffAuthorisationSystem();
+        EPerson anotherEperson = EPersonBuilder.createEPerson(context).withEmail("another@example.com")
+            .withPassword(password).build();
+        context.restoreAuthSystemState();
+        // disarm the alwaysThrowExceptionFeature
+        configurationService.setProperty("org.dspace.app.rest.authorization.AlwaysThrowExceptionFeature.turnoff", true);
+        String anotherToken = getAuthToken(anotherEperson.getEmail(), password);
+
+        // verify that he cannot search the admin authorizations - by using the eperson parameter
+        getClient(anotherToken).perform(get("/api/authz/authorizations/search/objects")
+            .param("type", "core.site")
+            .param("uuid", siteId)
+            .param("feature", alwaysFalse.getName())
+            .param("feature", alwaysTrue.getName())
+            .param("eperson", admin.getID().toString()))
+            .andExpect(status().isForbidden());
+
+        // verify that he cannot search the admin authorizations - by assuming login
+        getClient(anotherToken).perform(get("/api/authz/authorizations/search/objects")
+            .param("type", "core.site")
+            .param("uuid", siteId)
+            .param("feature", alwaysFalse.getName())
+            .param("feature", alwaysTrue.getName())
+            .header("X-On-Behalf-Of", admin.getID()))
+            .andExpect(status().isForbidden());
+
+        // verify that he cannot search the authorizations of another "normal" eperson - by using the eperson parameter
+        getClient(anotherToken).perform(get("/api/authz/authorizations/search/objects")
+            .param("type", "core.site")
+            .param("uuid", siteId)
+            .param("feature", alwaysFalse.getName())
+            .param("feature", alwaysTrue.getName())
+            .param("eperson", eperson.getID().toString()))
+            .andExpect(status().isForbidden());
+
+        // verify that he cannot search the authorizations of another "normal" eperson - by assuming login
+        getClient(anotherToken).perform(get("/api/authz/authorizations/search/objects")
+            .param("type", "core.site")
+            .param("uuid", siteId)
+            .param("feature", alwaysFalse.getName())
+            .param("feature", alwaysTrue.getName())
+            .header("X-On-Behalf-Of", eperson.getID()))
+            .andExpect(status().isForbidden());
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/AuthorizationRestRepositoryIT.java/base.java
+    public void findByMultipleObjectsAndFeatureForbiddenTest() throws Exception 
+=======
     public void findByMultipleObjectsAndFeatureForbiddenTest() throws Exception {
         Site site = siteService.findSite(context);
         String siteId = site.getID().toString();
@@ -2544,6 +2397,7 @@ public class AuthorizationRestRepositoryIT extends AbstractControllerIntegration
             .header("X-On-Behalf-Of", eperson.getID()))
             .andExpect(status().isForbidden());
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/AuthorizationRestRepositoryIT.java/right.java
 
     @Test
     /**
@@ -2594,6 +2448,205 @@ public class AuthorizationRestRepositoryIT extends AbstractControllerIntegration
             .param("uuid", siteId)
             .param("feature", alwaysException.getName()))
             .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    /**
+     * Verify that the paginated search by multiple objects and features works properly in allowed scenarios:
+     * - for an administrator
+     * - for an administrator that want to inspect permission of the anonymous users or another user
+     * - for a logged-in "normal" user
+     * - for anonymous
+     *
+     * @throws Exception
+     */
+    public void findByMultipleObjectsAndFeaturesPaginationTest() throws Exception {
+        context.turnOffAuthorisationSystem();
+
+        Community com = CommunityBuilder.createCommunity(context).withName("A test community").build();
+        String comId = com.getID().toString();
+        CommunityRest comRest = communityConverter.convert(com, DefaultProjection.DEFAULT);
+        Community secondCom = CommunityBuilder.createCommunity(context).withName("Another test community").build();
+        String secondComId = secondCom.getID().toString();
+        CommunityRest secondComRest = communityConverter.convert(secondCom, DefaultProjection.DEFAULT);
+
+        context.restoreAuthSystemState();
+
+        String adminToken = getAuthToken(admin.getEmail(), password);
+
+        // verify that it works for administrators - with eperson parameter
+
+        Supplier<MockHttpServletRequestBuilder> baseFeatureRequest = () ->
+            get("/api/authz/authorizations/search/objects")
+                .param("type", "core.community")
+                .param("uuid", comId)
+                .param("uuid", secondComId)
+                .param("projection", "level")
+                .param("page", "1")
+                .param("size", "1")
+                .param("embedLevelDepth", "1")
+                .param("feature", alwaysTrue.getName())
+                .param("feature", alwaysFalse.getName())
+                .param("feature", trueForLoggedUsers.getName())
+                .param("feature", trueForAdmins.getName());
+
+        getClient(adminToken).perform(baseFeatureRequest.get()
+                                                        .param("eperson", admin.getID().toString()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$.page.size", is(1)))
+                             .andExpect(jsonPath("$.page.totalElements", is(6)))
+                             .andExpect(jsonPath("$.page.totalPages", is(6)))
+                             .andExpect(jsonPath("$.page.number", is(1)))
+                             .andExpect(jsonPath("$._links.prev.href", containsString("page=0")))
+                             .andExpect(jsonPath("$._links.next.href", containsString("page=2")))
+                             .andExpect(jsonPath("$._embedded.authorizations", contains(
+                                 allOf(
+                                     hasJsonPath("$.id",
+                                                 is(admin.getID().toString() +
+                                                        "_" + trueForLoggedUsers.getName() + "_"
+                                                        + comRest.getUniqueType() + "_" + comRest.getId())),
+                                     hasJsonPath("$.type", is("authorization")),
+                                     hasJsonPath("$._embedded.feature.id", is(trueForLoggedUsers.getName())),
+                                     hasJsonPath("$._embedded.eperson.id", is(admin.getID().toString()))
+                                 )
+                             )));
+
+        // verify that it works for administrators - without eperson parameter
+        getClient(adminToken).perform(baseFeatureRequest.get())
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$.page.size", is(1)))
+                             .andExpect(jsonPath("$.page.totalElements", is(6)))
+                             .andExpect(jsonPath("$.page.totalPages", is(6)))
+                             .andExpect(jsonPath("$.page.number", is(1)))
+                             .andExpect(jsonPath("$._links.prev.href", containsString("page=0")))
+                             .andExpect(jsonPath("$._links.next.href", containsString("page=2")))
+                             .andExpect(jsonPath("$._embedded.authorizations", contains(
+                                 allOf(
+                                     hasJsonPath("$.id", is(
+                                         admin.getID().toString() + "_"
+                                             + trueForLoggedUsers.getName() + "_"
+                                             + comRest.getUniqueType() + "_" + comRest.getId()
+                                     )),
+                                     hasJsonPath("$.type", is("authorization")),
+                                     hasJsonPath("$._embedded.feature.id", is(trueForLoggedUsers.getName())),
+                                     hasJsonPath("$._embedded.eperson.id", is(admin.getID().toString()))
+                                 )
+                             )));
+
+        String epersonToken = getAuthToken(eperson.getEmail(), password);
+
+        // verify that it works for normal loggedin users - with eperson parameter
+        getClient(epersonToken).perform(baseFeatureRequest.get()
+                                                          .param("eperson", eperson.getID().toString()))
+                               .andExpect(status().isOk())
+                               .andExpect(jsonPath("$.page.size", is(1)))
+                               .andExpect(jsonPath("$.page.totalElements", is(4)))
+                               .andExpect(jsonPath("$.page.totalPages", is(4)))
+                               .andExpect(jsonPath("$.page.number", is(1)))
+                               .andExpect(jsonPath("$._links.prev.href", containsString("page=0")))
+                               .andExpect(jsonPath("$._links.next.href", containsString("page=2")))
+                               .andExpect(jsonPath("$._embedded.authorizations", contains(
+                                   allOf(
+                                       hasJsonPath("$.id", is(
+                                           eperson.getID().toString() + "_"
+                                               + trueForLoggedUsers.getName() + "_"
+                                               + comRest.getUniqueType() + "_" + comRest.getId()
+                                       )),
+                                       hasJsonPath("$.type", is("authorization")),
+                                       hasJsonPath("$._embedded.feature.id", is(trueForLoggedUsers.getName())),
+                                       hasJsonPath("$._embedded.eperson.id", is(eperson.getID().toString()))
+                                   )
+                               )));
+
+        // verify that it works for normal loggedin users - without eperson parameter
+        getClient(epersonToken).perform(baseFeatureRequest.get())
+                               .andExpect(status().isOk())
+                               .andExpect(jsonPath("$.page.size", is(1)))
+                               .andExpect(jsonPath("$.page.totalElements", is(4)))
+                               .andExpect(jsonPath("$.page.totalPages", is(4)))
+                               .andExpect(jsonPath("$.page.number", is(1)))
+                               .andExpect(jsonPath("$._links.prev.href", containsString("page=0")))
+                               .andExpect(jsonPath("$._links.next.href", containsString("page=2")))
+                               .andExpect(jsonPath("$._embedded.authorizations", contains(
+                                   allOf(
+                                       hasJsonPath("$.id", is(
+                                           eperson.getID().toString() + "_"
+                                               + trueForLoggedUsers.getName() + "_"
+                                               + comRest.getUniqueType() + "_" + comRest.getId()
+                                       )),
+                                       hasJsonPath("$.type", is("authorization")),
+                                       hasJsonPath("$._embedded.feature.id", is(trueForLoggedUsers.getName())),
+                                       hasJsonPath("$._embedded.eperson.id", is(eperson.getID().toString()))
+                                   )
+                               )));
+
+        // verify that it works for administators inspecting other users - by using the eperson parameter
+        getClient(adminToken).perform(baseFeatureRequest.get()
+                                                        .param("eperson", eperson.getID().toString()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$.page.size", is(1)))
+                             .andExpect(jsonPath("$.page.totalElements", is(4)))
+                             .andExpect(jsonPath("$.page.totalPages", is(4)))
+                             .andExpect(jsonPath("$.page.number", is(1)))
+                             .andExpect(jsonPath("$._links.prev.href", containsString("page=0")))
+                             .andExpect(jsonPath("$._links.next.href", containsString("page=2")))
+                             .andExpect(jsonPath("$._embedded.authorizations", contains(
+                                 allOf(
+                                     hasJsonPath("$.id", is(
+                                         eperson.getID().toString() + "_"
+                                             + trueForLoggedUsers.getName() + "_"
+                                             + comRest.getUniqueType() + "_" + comRest.getId()
+                                     )),
+                                     hasJsonPath("$.type", is("authorization")),
+                                     hasJsonPath("$._embedded.feature.id", is(trueForLoggedUsers.getName())),
+                                     hasJsonPath("$._embedded.eperson.id", is(eperson.getID().toString()))
+                                 )
+                             )));
+
+        // verify that it works for administators inspecting other users - by assuming login
+        getClient(adminToken).perform(baseFeatureRequest.get()
+                                                        .header("X-On-Behalf-Of", eperson.getID()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$.page.size", is(1)))
+                             .andExpect(jsonPath("$.page.totalElements", is(4)))
+                             .andExpect(jsonPath("$.page.totalPages", is(4)))
+                             .andExpect(jsonPath("$.page.number", is(1)))
+                             .andExpect(jsonPath("$._links.prev.href", containsString("page=0")))
+                             .andExpect(jsonPath("$._links.next.href", containsString("page=2")))
+                             .andExpect(jsonPath("$._embedded.authorizations", contains(
+                                 allOf(
+                                     hasJsonPath("$.id", is(
+                                         eperson.getID().toString() + "_"
+                                             + trueForLoggedUsers.getName() + "_"
+                                             + comRest.getUniqueType() + "_" + comRest.getId()
+                                     )),
+                                     hasJsonPath("$.type", is("authorization")),
+                                     hasJsonPath("$._embedded.feature.id", is(trueForLoggedUsers.getName())),
+                                     hasJsonPath("$._embedded.eperson.id", is(eperson.getID().toString()))
+                                 )
+                             )));
+
+        // verify that it works for anonymous users
+        getClient().perform(baseFeatureRequest.get())
+                   .andExpect(status().isOk())
+                   .andExpect(jsonPath("$.page.size", is(1)))
+                   .andExpect(jsonPath("$.page.totalElements", is(2)))
+                   .andExpect(jsonPath("$.page.totalPages", is(2)))
+                   .andExpect(jsonPath("$._links.prev.href", containsString("page=0")))
+                   .andExpect(jsonPath("$._links.next.href").doesNotExist())
+                   .andExpect(jsonPath("$.page.number", is(1)))
+                   .andExpect(jsonPath("$._embedded.authorizations",
+                                       contains(
+                                           allOf(
+                                               hasJsonPath("$.id", is(
+                                                   alwaysTrue.getName() + "_"
+                                                       + secondComRest.getUniqueType() + "_" + secondComRest.getId()
+                                               )),
+                                               hasJsonPath("$.type", is("authorization")),
+                                               hasJsonPath("$._embedded.feature.id", is(alwaysTrue.getName())),
+                                               hasJsonPath("$._embedded.eperson", nullValue())
+                                           )
+                                       )));
     }
 
     @Test

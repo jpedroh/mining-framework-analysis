@@ -53,7 +53,13 @@ public class ExternalSourcesRestControllerIT extends AbstractControllerIntegrati
                                 ExternalSourceMatcher.matchExternalSource(
                                         "openAIREFunding", "openAIREFunding", false)
                             )))
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/ExternalSourcesRestControllerIT.java/left.java
+                            .andExpect(jsonPath("$.page.totalElements", Matchers.is(7)));
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/ExternalSourcesRestControllerIT.java/base.java
+                            .andExpect(jsonPath("$.page.totalElements", Matchers.is(6)));
+=======
                             .andExpect(jsonPath("$.page.totalElements", Matchers.is(9)));
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/ExternalSourcesRestControllerIT.java/right.java
     }
 
     @Test
@@ -143,6 +149,38 @@ public class ExternalSourcesRestControllerIT extends AbstractControllerIntegrati
                    .andExpect(status().isBadRequest());
     }
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/ExternalSourcesRestControllerIT.java/left.java
+    @Test
+    public void findExternalSourcesByEntityTypeTest() throws Exception {
+        List<ExternalDataProvider> publicationProviders =
+                externalDataService.getExternalDataProvidersForEntityType("Publication");
+        List<ExternalDataProvider> journalProviders =
+                externalDataService.getExternalDataProvidersForEntityType("Journal");
+
+        getClient().perform(get("/api/integration/externalsources/search/findByEntityType")
+                   .param("entityType", "Publication"))
+                   .andExpect(status().isOk())
+                   // Expect *at least* 3 Publication sources
+                   .andExpect(jsonPath("$._embedded.externalsources", Matchers.hasItems(
+                              ExternalSourceMatcher.matchExternalSource(publicationProviders.get(0)),
+                              ExternalSourceMatcher.matchExternalSource(publicationProviders.get(1))
+                              )))
+                   .andExpect(jsonPath("$.page.totalElements", Matchers.is(publicationProviders.size())));
+
+        getClient().perform(get("/api/integration/externalsources/search/findByEntityType")
+                   .param("entityType", "Journal"))
+                   .andExpect(status().isOk())
+                   // Expect *at least* 5 Journal sources
+                   .andExpect(jsonPath("$._embedded.externalsources", Matchers.hasItems(
+                              ExternalSourceMatcher.matchExternalSource(journalProviders.get(0)),
+                              ExternalSourceMatcher.matchExternalSource(journalProviders.get(1)),
+                              ExternalSourceMatcher.matchExternalSource(journalProviders.get(2)),
+                              ExternalSourceMatcher.matchExternalSource(journalProviders.get(3))
+                              )))
+                   .andExpect(jsonPath("$.page.totalElements", Matchers.is(journalProviders.size())));
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/ExternalSourcesRestControllerIT.java/base.java
+=======
     @Test
     public void findExternalSourcesByEntityTypeTest() throws Exception {
         List<ExternalDataProvider> publicationProviders =
@@ -168,6 +206,7 @@ public class ExternalSourcesRestControllerIT extends AbstractControllerIntegrati
                              ))
                    .andExpect(jsonPath("$.page.totalElements", Matchers.is(journalProviders.size())));
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/ExternalSourcesRestControllerIT.java/right.java
 
     @Test
     public void findExternalSourcesByEntityTypeBadRequestTest() throws Exception {
@@ -189,12 +228,33 @@ public class ExternalSourcesRestControllerIT extends AbstractControllerIntegrati
                    .param("entityType", "Journal")
                    .param("size", String.valueOf(pageSize)))
                    .andExpect(status().isOk())
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/ExternalSourcesRestControllerIT.java/left.java
+                   .andExpect(jsonPath("$._embedded.externalsources", Matchers.contains(
+                              ExternalSourceMatcher.matchExternalSource(journalProviders.get(0)),
+                              ExternalSourceMatcher.matchExternalSource(journalProviders.get(1))
+                              )))
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/ExternalSourcesRestControllerIT.java/base.java
+                   .andExpect
+=======
                    .andExpect(jsonPath("$._embedded.externalsources",
                                        ExternalSourceMatcher.matchAllExternalSources(journalProviders, pageSize)
                              ))
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/ExternalSourcesRestControllerIT.java/right.java
                    .andExpect(jsonPath("$.page.totalPages", Matchers.is(numberOfPages)))
                    .andExpect(jsonPath("$.page.totalElements", Matchers.is(numJournalProviders)));
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/ExternalSourcesRestControllerIT.java/left.java
+        getClient().perform(get("/api/integration/externalsources/search/findByEntityType")
+                   .param("entityType", "Journal")
+                   .param("page", "1")
+                   .param("size", String.valueOf(pageSize)))
+                   .andExpect(status().isOk())
+                   .andExpect(jsonPath("$._embedded.externalsources", Matchers.contains(
+                              ExternalSourceMatcher.matchExternalSource(journalProviders.get(2)),
+                              ExternalSourceMatcher.matchExternalSource(journalProviders.get(3))
+                              )))
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/ExternalSourcesRestControllerIT.java/base.java
+=======
         getClient().perform(get("/api/integration/externalsources/search/findByEntityType")
                    .param("entityType", "Journal")
                    .param("page", "1")
@@ -206,6 +266,7 @@ public class ExternalSourcesRestControllerIT extends AbstractControllerIntegrati
                                            journalProviders.subList(2, journalProviders.size()),
                                            pageSize)
                               ))
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/ExternalSourcesRestControllerIT.java/right.java
                    .andExpect(jsonPath("$.page.totalPages", Matchers.is(numberOfPages)))
                    .andExpect(jsonPath("$.page.totalElements", Matchers.is(numJournalProviders)));
     }

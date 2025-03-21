@@ -86,9 +86,17 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // Configure authentication requirements for ${dspace.server.url}/api/ URL only
         // NOTE: REST API is hardcoded to respond on /api/. Other modules (OAI, SWORD, IIIF, etc) use other root paths.
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/security/WebSecurityConfiguration.java/left.java
+        http.requestMatchers()
+            .antMatchers("/api/**", "/iiif/**")
+            .and()
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/security/WebSecurityConfiguration.java/base.java
+        http.antMatcher("/api/**")
+=======
         http.requestMatchers()
             .antMatchers("/api/**", "/iiif/**", actuatorBasePath + "/**")
             .and()
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/security/WebSecurityConfiguration.java/right.java
             // Enable Spring Security authorization on these paths
             .authorizeRequests()
                 // Allow POST by anyone on the login endpoint
@@ -141,6 +149,16 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                              LogoutFilter.class)
             // Add a filter before our shibboleth endpoints to do the authentication based on the data in the
             // HTTP request
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/security/WebSecurityConfiguration.java/left.java
+            .addFilterBefore(new ShibbolethLoginFilter("/api/authn/shibboleth", authenticationManager(),
+                                                       restAuthenticationService),
+                             LogoutFilter.class)
+            //Add a filter before our OIDC endpoints to do the authentication based on the data in the
+            // HTTP request
+            .addFilterBefore(new OidcLoginFilter("/api/authn/oidc", authenticationManager(),
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/security/WebSecurityConfiguration.java/base.java
+            .addFilterBefore(new ShibbolethAuthenticationFilter("/api/authn/shibboleth", authenticationManager(),
+=======
             .addFilterBefore(new ShibbolethLoginFilter("/api/authn/shibboleth", authenticationManager(),
                                                        restAuthenticationService),
                              LogoutFilter.class)
@@ -152,6 +170,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             //Add a filter before our OIDC endpoints to do the authentication based on the data in the
             // HTTP request
             .addFilterBefore(new OidcLoginFilter("/api/authn/oidc", authenticationManager(),
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/security/WebSecurityConfiguration.java/right.java
                                                       restAuthenticationService),
                              LogoutFilter.class)
             // Add a custom Token based authentication filter based on the token previously given to the client

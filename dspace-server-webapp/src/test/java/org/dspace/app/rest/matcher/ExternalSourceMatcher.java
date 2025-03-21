@@ -13,10 +13,10 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 
+import org.dspace.external.provider.ExternalDataProvider;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.dspace.external.provider.ExternalDataProvider;
 import org.hamcrest.Matcher;
 
 public class ExternalSourceMatcher {
@@ -24,6 +24,9 @@ public class ExternalSourceMatcher {
     private ExternalSourceMatcher() {
     }
 
+    public static Matcher<? super Object> matchExternalSource(ExternalDataProvider provider) {
+        return matchExternalSource(provider.getSourceIdentifier(), provider.getSourceIdentifier(), false);
+    }
     /**
      * Matcher which checks if all external source providers are listed (in exact order), up to the maximum number
      * @param providers List of providers to check against
@@ -44,10 +47,6 @@ public class ExternalSourceMatcher {
 
         // Make sure all providers exist in this exact order
         return contains(matchers.toArray(new Matcher[0]));
-    }
-
-    public static Matcher<? super Object> matchExternalSource(ExternalDataProvider provider) {
-        return matchExternalSource(provider.getSourceIdentifier(), provider.getSourceIdentifier(), false);
     }
 
     public static Matcher<? super Object> matchExternalSource(String id, String name, boolean hierarchical) {

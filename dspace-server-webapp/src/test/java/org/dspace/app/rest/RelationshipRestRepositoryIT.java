@@ -166,7 +166,21 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
                              .withPersonIdentifierFirstName("Donald")
                              .build();
 
-        author2 = ItemBuilder.createItem(context, col1)
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/RelationshipRestRepositoryIT.java/left.java
+        author2 =ItemBuilder.createItem(context, col1)
+                             .withTitle("Author2")
+                             .withIssueDate("2016-02-13")
+                             .withAuthor("Smith, Maria")
+                             .withEntityType("Person");
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/RelationshipRestRepositoryIT.java/base.java
+        author2 =ItemBuilder.createItem(context, col1)
+                             .withTitle("Author2")
+                             .withIssueDate("2016-02-13")
+                             .withAuthor("Smith, Maria")
+                             .withEntityType("Person")
+                             .build();
+=======
+        author2 =ItemBuilder.createItem(context, col1)
                              .withTitle("Author2")
                              .withIssueDate("2016-02-13")
                              .withAuthor("Smith, Maria")
@@ -174,6 +188,7 @@ public class RelationshipRestRepositoryIT extends AbstractEntityIntegrationTest 
                              .withPersonIdentifierFirstName("Maria")
                              .withMetadata("dspace", "entity", "type", "Person")
                              .build();
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/RelationshipRestRepositoryIT.java/right.java
 
         author3 = ItemBuilder.createItem(context, col1)
                              .withTitle("Author3")

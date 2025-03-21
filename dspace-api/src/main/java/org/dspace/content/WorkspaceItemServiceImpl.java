@@ -128,13 +128,30 @@ public class WorkspaceItemServiceImpl implements WorkspaceItemService {
         Optional<MetadataValue> colEntityType = getDSpaceEntityType(collection);
         Optional<MetadataValue> templateItemEntityType = getDSpaceEntityType(templateItem);
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/content/WorkspaceItemServiceImpl.java/left.java
+        if (colEntityType.isPresent() && templateItemEntityType.isPresent() &&
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/content/WorkspaceItemServiceImpl.java/base.java
+        if ( &&
+=======
         if (template && colEntityType.isPresent() && templateItemEntityType.isPresent() &&
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/content/WorkspaceItemServiceImpl.java/right.java
                 !StringUtils.equals(colEntityType.get().getValue(), templateItemEntityType.get().getValue())) {
             throw new IllegalStateException("The template item has entity type : (" +
                       templateItemEntityType.get().getValue() + ") different than collection entity type : " +
                       colEntityType.get().getValue());
         }
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/content/WorkspaceItemServiceImpl.java/left.java
+        if (colEntityType.isPresent() && templateItemEntityType.isEmpty()) {
+            MetadataValue original = colEntityType.get();
+            MetadataField metadataField = original.getMetadataField();
+            MetadataSchema metadataSchema = metadataField.getMetadataSchema();
+            itemService.addMetadata(context, item, metadataSchema.getName(), metadataField.getElement(),
+                                    metadataField.getQualifier(), original.getLanguage(), original.getValue());
+        }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/content/WorkspaceItemServiceImpl.java/base.java
+        if  
+=======
         if (template && colEntityType.isPresent() && templateItemEntityType.isEmpty()) {
             MetadataValue original = colEntityType.get();
             MetadataField metadataField = original.getMetadataField();
@@ -146,6 +163,7 @@ public class WorkspaceItemServiceImpl implements WorkspaceItemService {
                                         metadataField.getQualifier(), original.getLanguage(), original.getValue());
             }
         }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/content/WorkspaceItemServiceImpl.java/right.java
 
         if (template && (templateItem != null)) {
             List<MetadataValue> md = itemService.getMetadata(templateItem, Item.ANY, Item.ANY, Item.ANY, Item.ANY);

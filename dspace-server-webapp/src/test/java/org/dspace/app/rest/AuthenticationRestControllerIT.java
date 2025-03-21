@@ -52,9 +52,9 @@ import org.dspace.app.rest.matcher.AuthorizationMatcher;
 import org.dspace.app.rest.matcher.EPersonMatcher;
 import org.dspace.app.rest.matcher.GroupMatcher;
 import org.dspace.app.rest.matcher.HalMatcher;
-import org.dspace.app.rest.model.AuthnRest;
 import org.dspace.app.rest.model.EPersonRest;
 import org.dspace.app.rest.projection.DefaultProjection;
+import org.dspace.app.rest.model.AuthnRest;
 import org.dspace.app.rest.test.AbstractControllerIntegrationTest;
 import org.dspace.app.rest.utils.Utils;
 import org.dspace.authenticate.OrcidAuthenticationBean;
@@ -102,39 +102,40 @@ public class AuthenticationRestControllerIT extends AbstractControllerIntegratio
     private AuthorizationFeatureService authorizationFeatureService;
 
     @Autowired
-    private OrcidConfiguration orcidConfiguration;
-
-    @Autowired
-    private OrcidAuthenticationBean orcidAuthentication;
-
-    @Autowired
     private Utils utils;
 
     public static final String[] PASS_ONLY = {"org.dspace.authenticate.PasswordAuthentication"};
+
     public static final String[] SHIB_ONLY = {"org.dspace.authenticate.ShibAuthentication"};
+
     public static final String[] ORCID_ONLY = { "org.dspace.authenticate.OrcidAuthentication" };
+
     public static final String[] SHIB_AND_PASS = {
         "org.dspace.authenticate.ShibAuthentication",
         "org.dspace.authenticate.PasswordAuthentication"
     };
+
     public static final String[] SHIB_AND_IP = {
         "org.dspace.authenticate.IPAuthentication",
         "org.dspace.authenticate.ShibAuthentication"
     };
+
     public static final String[] PASS_AND_IP = {
             "org.dspace.authenticate.PasswordAuthentication",
             "org.dspace.authenticate.IPAuthentication"
         };
 
     // see proxies.trusted.ipranges in local.cfg
+
     public static final String TRUSTED_IP = "7.7.7.7";
+
     public static final String UNTRUSTED_IP = "8.8.8.8";
 
     private Authorization authorization;
-    private EPersonRest ePersonRest;
-    private EPersonRest adminRest;
-    private final String feature = CanChangePasswordFeature.NAME;
 
+    private EPersonRest ePersonRest;
+
+    private final String feature = CanChangePasswordFeature.NAME;
 
     @Before
     public void setup() throws Exception {
@@ -192,6 +193,7 @@ public class AuthenticationRestControllerIT extends AbstractControllerIntegratio
      * - that a not logged in user with a specific IP finds the expected specialGroupIP in _embedded.specialGroups;
      * @throws Exception
      */
+
     @Test
     public void testStatusGetSpecialGroups() throws Exception {
         context.turnOffAuthorisationSystem();
@@ -485,8 +487,11 @@ public class AuthenticationRestControllerIT extends AbstractControllerIntegratio
     }
 
     // NOTE: This test is similar to testStatusShibAuthenticatedWithCookie(), but proves the same process works
+
     // for Password Authentication in theory (NOTE: at this time, there's no way to create an auth cookie via the
+
     // Password Authentication process).
+
     @Test
     public void testStatusPasswordAuthenticatedWithCookie() throws Exception {
         // Login via password to retrieve a valid token
@@ -918,6 +923,7 @@ public class AuthenticationRestControllerIT extends AbstractControllerIntegratio
      *
      * @throws Exception
      */
+
     @Test
     public void testLoginAgainAfterLogout() throws Exception {
         String token = getAuthToken(eperson.getEmail(), password);
@@ -1469,7 +1475,6 @@ public class AuthenticationRestControllerIT extends AbstractControllerIntegratio
                 .andExpect(status().isNoContent());
     }
 
-
     @Test
     public void testShortLivedTokenNotAuthenticated() throws Exception {
         getClient().perform(post("/api/authn/shortlivedtokens"))
@@ -1570,6 +1575,7 @@ public class AuthenticationRestControllerIT extends AbstractControllerIntegratio
     }
 
     // TODO: fix the exception. For now we want to verify a short lived token can't be used to login
+
     @Test(expected = Exception.class)
     public void testLoginWithShortLivedToken() throws Exception {
         String token = getAuthToken(eperson.getEmail(), password);
@@ -1725,6 +1731,7 @@ public class AuthenticationRestControllerIT extends AbstractControllerIntegratio
     }
 
     // Get a short-lived token based on an active login token
+
     private String getShortLivedToken(String loginToken) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
@@ -1790,6 +1797,7 @@ public class AuthenticationRestControllerIT extends AbstractControllerIntegratio
      * @param token2 second token
      * @return True if tokens are identical or have the same claims (ignoring "exp"). False otherwise.
      */
+
     private boolean tokenClaimsEqual(String token1, String token2) {
         // First check for exact match tokens. These are guaranteed to have equal claims.
         if (token1.equals(token2)) {
@@ -1820,6 +1828,24 @@ public class AuthenticationRestControllerIT extends AbstractControllerIntegratio
             return false;
         }
     }
+
+    @Autowired
+    private OrcidConfiguration orcidConfiguration;
+
+    @Autowired
+    private OrcidAuthenticationBean orcidAuthentication;
+
+    private EPersonRest adminRest;
+
+    /**
+     * Check if the claims (except for expiration date) are equal between two JWTs.
+     * Expiration date (exp) claim is ignored as it includes a timestamp and therefore changes every second.
+     * So, this method checks to ensure token equality by comparing all other claims.
+     *
+     * @param token1 first token
+     * @param token2 second token
+     * @return True if tokens are identical or have the same claims (ignoring "exp"). False otherwise.
+     */
 
     private OrcidTokenResponseDTO buildOrcidTokenResponse(String orcid, String accessToken) {
         OrcidTokenResponseDTO token = new OrcidTokenResponseDTO();

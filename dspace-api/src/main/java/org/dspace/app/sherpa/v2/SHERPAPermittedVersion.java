@@ -50,6 +50,20 @@ public class SHERPAPermittedVersion implements Serializable {
     // Embargo
     private SHERPAEmbargo embargo;
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/sherpa/v2/SHERPAPermittedVersion.java/left.java
+    protected static class SHERPAEmbargo {
+        String units;
+        int amount;
+    }
+
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/sherpa/v2/SHERPAPermittedVersion.java/base.java
+    protected class SHERPAEmbargo {
+        String units;
+        int amount;
+    }
+
+=======
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/sherpa/v2/SHERPAPermittedVersion.java/right.java
     public String getArticleVersion() {
         return articleVersion;
     }

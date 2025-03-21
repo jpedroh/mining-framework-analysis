@@ -8,12 +8,13 @@
 package org.dspace.app.rest;
 import static com.jayway.jsonpath.JsonPath.read;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -60,7 +61,6 @@ import org.dspace.content.Community;
 import org.dspace.content.Item;
 import org.dspace.content.WorkspaceItem;
 import org.dspace.content.service.InstallItemService;
-import org.dspace.content.service.ItemService;
 import org.dspace.content.service.WorkspaceItemService;
 import org.dspace.eperson.EPerson;
 import org.dspace.services.ConfigurationService;
@@ -103,9 +103,6 @@ public class VersionRestRepositoryIT extends AbstractControllerIntegrationTest {
 
     @Autowired
     private AuthorizationFeatureService authorizationFeatureService;
-
-    @Autowired
-    private ItemService itemService;
 
     @Before
     public void setup() throws SQLException, AuthorizeException {
@@ -217,6 +214,7 @@ public class VersionRestRepositoryIT extends AbstractControllerIntegrationTest {
         configurationService.setProperty("versioning.item.history.include.submitter", true);
 
     }
+
     @Test
     public void findOneUnauthorizedTest() throws Exception {
 
@@ -393,6 +391,76 @@ public class VersionRestRepositoryIT extends AbstractControllerIntegrationTest {
                    .andExpect(status().isUnauthorized());
     }
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/VersionRestRepositoryIT.java/left.java
+    @Test
+    public void createVersionFromVersionedItemTest() throws Exception {
+        context.turnOffAuthorisationSystem();
+
+        parentCommunity = CommunityBuilder.createCommunity(context)
+                                          .withName("Parent Community")
+                                          .build();
+
+        Collection col = CollectionBuilder.createCollection(context, parentCommunity)
+                                          .withName("Collection test")
+                                          .withSubmitterGroup(admin)
+                                          .build();
+
+        Item item = ItemBuilder.createItem(context, col)
+                          .withTitle("Public test item")
+                          .withIssueDate("2021-04-27")
+                          .withAuthor("Doe, John")
+                          .withSubject("ExtraEntry")
+                          .build();
+
+        Version v2 = VersionBuilder.createVersion(context, item, "test").build();
+        Item lastVersionItem = v2.getItem();
+
+        context.restoreAuthSystemState();
+
+        AtomicReference<Integer> idRef = new AtomicReference<Integer>();
+        String adminToken = getAuthToken(admin.getEmail(), password);
+
+        // item that linked last version is not archived
+        getClient(adminToken).perform(get("/api/core/items/" + lastVersionItem.getID()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$.inArchive", Matchers.is(false)));
+
+        // retrieve the workspace item
+        getClient(adminToken).perform(get("/api/submission/workspaceitems/search/item")
+                             .param("uuid", String.valueOf(lastVersionItem.getID())))
+                             .andExpect(status().isOk())
+                             .andDo(result -> idRef.set(read(result.getResponse().getContentAsString(), "$.id")));
+
+        // submit the workspaceitem to complete the deposit
+        getClient(adminToken).perform(post(BASE_REST_SERVER_URL + "/api/workflow/workflowitems")
+                             .content("/api/submission/workspaceitems/" + idRef.get())
+                             .contentType(textUriContentType))
+                             .andExpect(status().isCreated());
+
+        // now the item is archived
+        getClient(adminToken).perform(get("/api/core/items/" + lastVersionItem.getID()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$.inArchive", Matchers.is(true)));
+
+        try {
+            getClient(adminToken).perform(post("/api/versioning/versions")
+                                 .param("summary", "test summary.")
+                                 .contentType(MediaType.parseMediaType(RestMediaTypes.TEXT_URI_LIST_VALUE))
+                                 .content("/api/core/items/" + v2.getItem().getID()))
+                                 .andExpect(status().isCreated())
+                                 .andExpect(jsonPath("$", Matchers.allOf(
+                                            hasJsonPath("$.version", is(3)),
+                                            hasJsonPath("$.summary", is("test summary.")),
+                                            hasJsonPath("$.submitterName", is("first (admin) last (admin)")),
+                                            hasJsonPath("$.type", is("version"))
+                                            )))
+                                 .andDo(result -> idRef.set(read(result.getResponse().getContentAsString(), "$.id")));
+        } finally {
+            VersionBuilder.delete(idRef.get());
+        }
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/VersionRestRepositoryIT.java/base.java
+=======
     @Test
     public void createVersionFromVersionedItemTest() throws Exception {
         context.turnOffAuthorisationSystem();
@@ -461,7 +529,89 @@ public class VersionRestRepositoryIT extends AbstractControllerIntegrationTest {
             VersionBuilder.delete(idRef.get());
         }
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/VersionRestRepositoryIT.java/right.java
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/VersionRestRepositoryIT.java/left.java
+    @Test
+    public void createVersionByPreviousVersionRespectCurrentVersionTest() throws Exception {
+        context.turnOffAuthorisationSystem();
+
+        parentCommunity = CommunityBuilder.createCommunity(context)
+                                          .withName("Parent Community")
+                                          .build();
+
+        Collection col = CollectionBuilder.createCollection(context, parentCommunity)
+                                          .withName("Collection test")
+                                          .build();
+
+        Item item = ItemBuilder.createItem(context, col)
+                               .withTitle("Public test item")
+                               .withIssueDate("2021-03-20")
+                               .withAuthor("Doe, John")
+                               .withSubject("ExtraEntry")
+                               .build();
+
+        Version v2 = VersionBuilder.createVersion(context, item, "test").build();
+        Item lastVersionItem = v2.getItem();
+
+        context.restoreAuthSystemState();
+
+        AtomicReference<Integer> idRef = new AtomicReference<Integer>();
+        String adminToken = getAuthToken(admin.getEmail(), password);
+
+        // the first version item is archived
+        getClient(adminToken).perform(get("/api/core/items/" + item.getID()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$.inArchive", Matchers.is(true)));
+
+        // item that linked last version is not archived
+        getClient(adminToken).perform(get("/api/core/items/" + lastVersionItem.getID()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$.inArchive", Matchers.is(false)));
+
+        // if there is item not archived, we can not create new version
+        getClient(adminToken).perform(post("/api/versioning/versions")
+                             .param("summary", "check first version")
+                             .contentType(MediaType.parseMediaType(RestMediaTypes.TEXT_URI_LIST_VALUE))
+                             .content("/api/core/items/" + item.getID()))
+                             .andExpect(status().isUnprocessableEntity());
+
+        // retrieve the workspace item
+        getClient(adminToken).perform(get("/api/submission/workspaceitems/search/item")
+                             .param("uuid", String.valueOf(lastVersionItem.getID())))
+                             .andExpect(status().isOk())
+                             .andDo(result -> idRef.set(read(result.getResponse().getContentAsString(), "$.id")));
+
+        // submit the workspaceitem to complete the deposit
+        getClient(adminToken).perform(post(BASE_REST_SERVER_URL + "/api/workflow/workflowitems")
+                             .content("/api/submission/workspaceitems/" + idRef.get())
+                             .contentType(textUriContentType))
+                             .andExpect(status().isCreated());
+
+        // now the item is archived
+        getClient(adminToken).perform(get("/api/core/items/" + lastVersionItem.getID()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$.inArchive", Matchers.is(true)));
+
+        try {
+            getClient(adminToken).perform(post("/api/versioning/versions")
+                                 .param("summary", "check first version")
+                                 .contentType(MediaType.parseMediaType(RestMediaTypes.TEXT_URI_LIST_VALUE))
+                                 .content("/api/core/items/" + item.getID()))
+                                 .andExpect(status().isCreated())
+                                 .andExpect(jsonPath("$", Matchers.allOf(
+                                            hasJsonPath("$.version", is(3)),
+                                            hasJsonPath("$.summary", is("check first version")),
+                                            hasJsonPath("$.submitterName", is("first (admin) last (admin)")),
+                                            hasJsonPath("$.type", is("version"))
+                                            )))
+                                 .andDo(result -> idRef.set(read(result.getResponse().getContentAsString(), "$.id")));
+        } finally {
+            VersionBuilder.delete(idRef.get());
+        }
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/VersionRestRepositoryIT.java/base.java
+=======
     @Test
     public void createVersionByPreviousVersionRespectCurrentVersionTest() throws Exception {
         context.turnOffAuthorisationSystem();
@@ -541,6 +691,7 @@ public class VersionRestRepositoryIT extends AbstractControllerIntegrationTest {
             VersionBuilder.delete(idRef.get());
         }
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/VersionRestRepositoryIT.java/right.java
 
     @Test
     public void createVersionWithLastVersionInSubmissionTest() throws Exception {
@@ -722,6 +873,126 @@ public class VersionRestRepositoryIT extends AbstractControllerIntegrationTest {
     }
 
     @Test
+    public void createFirstVersionItemWithentityTypeByAdminAndPropertyBlockEntityEnableTest() throws Exception {
+        configurationService.setProperty("versioning.block.entity", true);
+        context.turnOffAuthorisationSystem();
+        Community rootCommunity = CommunityBuilder.createCommunity(context)
+                                                  .withName("Parent Community")
+                                                  .build();
+
+        Collection col = CollectionBuilder.createCollection(context, rootCommunity)
+                                          .withName("Collection 1")
+                                          .withEntityType("Publication")
+                                          .build();
+
+        Item itemA = ItemBuilder.createItem(context, col)
+                               .withTitle("Public item")
+                               .withIssueDate("2021-04-19")
+                               .withAuthor("Doe, John")
+                               .withSubject("ExtraEntry")
+                               .build();
+
+        context.restoreAuthSystemState();
+
+        String adminToken = getAuthToken(admin.getEmail(), password);
+        getClient(adminToken).perform(post("/api/versioning/versions")
+                             .param("summary", "test summary!")
+                             .contentType(MediaType.parseMediaType(RestMediaTypes.TEXT_URI_LIST_VALUE))
+                             .content("/api/core/items/" + itemA.getID()))
+                             .andExpect(status().isForbidden());
+    }
+
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/VersionRestRepositoryIT.java/left.java
+    @Test
+    public void createFirstVersionItemWithEntityTypeAndPropertyBlockEntityDisabledTest() throws Exception {
+        configurationService.setProperty("versioning.block.entity", false);
+        context.turnOffAuthorisationSystem();
+        parentCommunity = CommunityBuilder.createCommunity(context)
+                                          .withName("Parent Community")
+                                          .build();
+
+        Collection col = CollectionBuilder.createCollection(context, parentCommunity)
+                                          .withName("Collection test")
+                                          .withEntityType("Publication")
+                                          .build();
+
+        Item item = ItemBuilder.createItem(context, col)
+                               .withTitle("Public test item")
+                               .withIssueDate("2021-04-27")
+                               .withAuthor("Doe, John")
+                               .withSubject("ExtraEntry")
+                               .build();
+
+        context.restoreAuthSystemState();
+
+        AtomicReference<Integer> idRef = new AtomicReference<Integer>();
+        String adminToken = getAuthToken(admin.getEmail(), password);
+
+        try {
+            getClient(adminToken).perform(post("/api/versioning/versions")
+                                 .param("summary", "test summary!")
+                                 .contentType(MediaType.parseMediaType(RestMediaTypes.TEXT_URI_LIST_VALUE))
+                                 .content("/api/core/items/" + item.getID()))
+                                 .andExpect(status().isCreated())
+                                 .andExpect(jsonPath("$", Matchers.allOf(
+                                            hasJsonPath("$.version", is(2)),
+                                            hasJsonPath("$.summary", is("test summary!")),
+                                            hasJsonPath("$.submitterName", is("first (admin) last (admin)")),
+                                            hasJsonPath("$.type", is("version"))
+                                            )))
+                                 .andDo(result -> idRef.set(read(result.getResponse().getContentAsString(), "$.id")));
+        } finally {
+            VersionBuilder.delete(idRef.get());
+        }
+    }
+
+    @Test
+    public void createFirstVersionItemWithEntityTypeBySubmitterAndPropertyBlockEntityDisabledTest() throws Exception {
+        configurationService.setProperty("versioning.submitterCanCreateNewVersion", true);
+        configurationService.setProperty("versioning.block.entity", false);
+        context.turnOffAuthorisationSystem();
+        Community rootCommunity = CommunityBuilder.createCommunity(context)
+                                                  .withName("Parent Community")
+                                                  .build();
+
+        Collection col = CollectionBuilder.createCollection(context, rootCommunity)
+                                          .withName("Collection 1")
+                                          .withEntityType("Publication")
+                                          .withSubmitterGroup(eperson)
+                                          .build();
+
+        Item itemA = ItemBuilder.createItem(context, col)
+                               .withTitle("Public item")
+                               .withIssueDate("2021-04-19")
+                               .withAuthor("Doe, John")
+                               .withSubject("ExtraEntry")
+                               .build();
+
+        itemA.setSubmitter(eperson);
+
+        context.restoreAuthSystemState();
+
+        AtomicReference<Integer> idRef = new AtomicReference<Integer>();
+        String epersonToken = getAuthToken(eperson.getEmail(), password);
+        try {
+            getClient(epersonToken).perform(post("/api/versioning/versions")
+                                   .param("summary", "test summary!")
+                                   .contentType(MediaType.parseMediaType(RestMediaTypes.TEXT_URI_LIST_VALUE))
+                                   .content("/api/core/items/" + itemA.getID()))
+                                   .andExpect(status().isCreated())
+                                   .andExpect(jsonPath("$", Matchers.allOf(
+                                              hasJsonPath("$.version", is(2)),
+                                              hasJsonPath("$.summary", is("test summary!")),
+                                              hasJsonPath("$.type", is("version"))
+                                              )))
+                                   .andDo(result -> idRef.set(read(result.getResponse().getContentAsString(), "$.id")));
+        } finally {
+            VersionBuilder.delete(idRef.get());
+        }
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/VersionRestRepositoryIT.java/base.java
+=======
+    @Test
     public void createFirstVersionItemWithEntityTypeTest() throws Exception {
         context.turnOffAuthorisationSystem();
         parentCommunity = CommunityBuilder.createCommunity(context)
@@ -806,6 +1077,7 @@ public class VersionRestRepositoryIT extends AbstractControllerIntegrationTest {
             VersionBuilder.delete(idRef.get());
         }
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/VersionRestRepositoryIT.java/right.java
 
     @Test
     public void createVersionWithVersioningDisabledTest() throws Exception {
@@ -1377,6 +1649,77 @@ public class VersionRestRepositoryIT extends AbstractControllerIntegrationTest {
                    .andExpect(status().isUnauthorized());
     }
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/VersionRestRepositoryIT.java/left.java
+    @Test
+    public void deleteVersionTest() throws Exception {
+        context.turnOffAuthorisationSystem();
+
+        parentCommunity = CommunityBuilder.createCommunity(context)
+                                          .withName("Parent Community")
+                                          .build();
+
+        Collection col = CollectionBuilder.createCollection(context, parentCommunity)
+                                          .withName("Collection test")
+                                          .withSubmitterGroup(admin)
+                                          .build();
+
+        Item item = ItemBuilder.createItem(context, col)
+                               .withTitle("Public test item")
+                               .withIssueDate("2021-03-20")
+                               .withAuthor("Doe, John")
+                               .withSubject("ExtraEntry")
+                               .build();
+
+        Version v2 = VersionBuilder.createVersion(context, item, "test").build();
+        Item lastVersionItem = v2.getItem();
+
+        context.restoreAuthSystemState();
+        AtomicReference<Integer> idRef = new AtomicReference<Integer>();
+        String adminToken = getAuthToken(admin.getEmail(), password);
+        Integer versionID = v2.getID();
+        Item versionItem = v2.getItem();
+
+        // item that linked last version is not archived
+        getClient(adminToken).perform(get("/api/core/items/" + lastVersionItem.getID()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$.inArchive", Matchers.is(false)));
+
+        // retrieve the workspace item
+        getClient(adminToken).perform(get("/api/submission/workspaceitems/search/item")
+                             .param("uuid", String.valueOf(lastVersionItem.getID())))
+                             .andExpect(status().isOk())
+                             .andDo(result -> idRef.set(read(result.getResponse().getContentAsString(), "$.id")));
+
+        // submit the workspaceitem to complete the deposit
+        getClient(adminToken).perform(post(BASE_REST_SERVER_URL + "/api/workflow/workflowitems")
+                             .content("/api/submission/workspaceitems/" + idRef.get())
+                             .contentType(textUriContentType))
+                             .andExpect(status().isCreated());
+
+        // now the item is archived
+        getClient(adminToken).perform(get("/api/core/items/" + lastVersionItem.getID()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$.inArchive", Matchers.is(true)));
+
+        getClient(adminToken).perform(get("/api/versioning/versions/" + versionID))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$", Matchers.is(VersionMatcher.matchEntry(v2))))
+                             .andExpect(jsonPath("$._links.versionhistory.href", Matchers.allOf(Matchers.containsString(
+                                                 "api/versioning/versions/" + v2.getID() + "/versionhistory"))))
+                             .andExpect(jsonPath("$._links.item.href", Matchers.allOf(Matchers.containsString(
+                                                 "api/versioning/versions/" + v2.getID() + "/item"))))
+                             .andExpect(jsonPath("$._links.self.href", Matchers.allOf(Matchers.containsString(
+                                                 "api/versioning/versions/" + v2.getID()))));
+
+        // To delete a version you need to delete the item linked to it.
+        getClient(adminToken).perform(delete("/api/core/items/" + versionItem.getID()))
+                             .andExpect(status().is(204));
+
+        getClient(adminToken).perform(get("/api/versioning/versions/" + versionID))
+                             .andExpect(status().isNotFound());
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/VersionRestRepositoryIT.java/base.java
+=======
     @Test
     public void deleteVersionTest() throws Exception {
         context.turnOffAuthorisationSystem();
@@ -1446,7 +1789,81 @@ public class VersionRestRepositoryIT extends AbstractControllerIntegrationTest {
         getClient(adminToken).perform(get("/api/versioning/versions/" + versionID))
                              .andExpect(status().isNotFound());
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/VersionRestRepositoryIT.java/right.java
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/VersionRestRepositoryIT.java/left.java
+    @Test
+    public void checkDeleteOfMultipleVersionWithAuthorizationTest() throws Exception {
+        context.turnOffAuthorisationSystem();
+
+        AuthorizationFeature canDeleteVersionFeature = authorizationFeatureService.find(CanDeleteVersionFeature.NAME);
+
+        parentCommunity = CommunityBuilder.createCommunity(context)
+                                          .withName("Parent Community")
+                                          .build();
+
+        Collection col = CollectionBuilder.createCollection(context, parentCommunity)
+                                          .withName("Collection test")
+                                          .build();
+
+        Item item = ItemBuilder.createItem(context, col)
+                               .withTitle("Public test item")
+                               .withIssueDate("2021-03-20")
+                               .withAuthor("Doe, John")
+                               .withSubject("ExtraEntry")
+                               .build();
+
+        Version v2 = VersionBuilder.createVersion(context, item, "test").build();
+        Item lastVersionItem = v2.getItem();
+        Version v1 = versioningService.getVersion(context, item);
+        VersionRest versionRest = versionConverter.convert(v1, DefaultProjection.DEFAULT);
+        Authorization admin2ItemA = new Authorization(admin, canDeleteVersionFeature, versionRest);
+
+        context.restoreAuthSystemState();
+
+        AtomicReference<Integer> idRef = new AtomicReference<Integer>();
+        String adminToken = getAuthToken(admin.getEmail(), password);
+
+        // the first version item is archived
+        getClient(adminToken).perform(get("/api/core/items/" + item.getID()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$.inArchive", Matchers.is(true)));
+
+        // item that linked last version is not archived
+        getClient(adminToken).perform(get("/api/core/items/" + lastVersionItem.getID()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$.inArchive", Matchers.is(false)));
+
+        // retrieve the workspace item
+        getClient(adminToken).perform(get("/api/submission/workspaceitems/search/item")
+                             .param("uuid", String.valueOf(lastVersionItem.getID())))
+                             .andExpect(status().isOk())
+                             .andDo(result -> idRef.set(read(result.getResponse().getContentAsString(), "$.id")));
+
+        // submit the workspaceitem to complete the deposit
+        getClient(adminToken).perform(post(BASE_REST_SERVER_URL + "/api/workflow/workflowitems")
+                             .content("/api/submission/workspaceitems/" + idRef.get())
+                             .contentType(textUriContentType))
+                             .andExpect(status().isCreated());
+
+        // now the last version item is archived
+        getClient(adminToken).perform(get("/api/core/items/" + lastVersionItem.getID()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$.inArchive", Matchers.is(true)));
+
+        // the first version item is not archived, but is not in ProgressSubmission
+        getClient(adminToken).perform(get("/api/core/items/" + item.getID()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$.inArchive", Matchers.is(false)));
+
+        // check authorization that first version is possible to delete
+        getClient(adminToken).perform(get("/api/authz/authorizations/" + admin2ItemA.getID()))
+                             .andExpect(status().isOk())
+                             .andExpect(jsonPath("$",
+                                        Matchers.is(AuthorizationMatcher.matchAuthorization(admin2ItemA))));
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/VersionRestRepositoryIT.java/base.java
+=======
     @Test
     public void checkDeleteOfMultipleVersionWithAuthorizationTest() throws Exception {
         context.turnOffAuthorisationSystem();
@@ -1518,6 +1935,7 @@ public class VersionRestRepositoryIT extends AbstractControllerIntegrationTest {
                              .andExpect(jsonPath("$",
                                         Matchers.is(AuthorizationMatcher.matchAuthorization(admin2ItemA))));
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/VersionRestRepositoryIT.java/right.java
 
     @Test
     public void createFirstVersionItemWithBitstreamBySubmitterTest() throws Exception {
@@ -1572,6 +1990,9 @@ public class VersionRestRepositoryIT extends AbstractControllerIntegrationTest {
             VersionBuilder.delete(idRef.get());
         }
     }
+
+    @Autowired
+    private ItemService itemService;
 
     @Test
     public void ignoreCollectionEntityTypeWhenCreatingNewVersionOfItem() throws Exception {

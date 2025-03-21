@@ -139,12 +139,36 @@ public class OREIngestionCrosswalk
 
             String bundleName;
             Element desc = null;
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/content/crosswalk/OREIngestionCrosswalk.java/left.java
+            try {
+                xpathDesc = XPath.newInstance(
+                    "/atom:entry/oreatom:triples/rdf:Description[@rdf:about=\"" + this.encodeForURL(href) + "\"][1]");
+                xpathDesc.addNamespace(ATOM_NS);
+                xpathDesc.addNamespace(ORE_ATOM);
+                xpathDesc.addNamespace(RDF_NS);
+                desc = (Element) xpathDesc.selectSingleNode(doc);
+            } catch (JDOMException e) {
+                log.warn("Could not find description for {}", href, e);
+            }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/content/crosswalk/OREIngestionCrosswalk.java/base.java
+            try {
+                xpathDesc = XPath.newInstance(
+                    "/atom:entry/oreatom:triples/rdf:Description[@rdf:about=\"" + this.encodeForURL(href) + "\"][1]");
+                xpathDesc.addNamespace(ATOM_NS);
+                xpathDesc.addNamespace(ORE_ATOM);
+                xpathDesc.addNamespace(RDF_NS);
+                desc = (Element) xpathDesc.selectSingleNode(doc);
+            } catch (JDOMException e) {
+                e.printStackTrace();
+            }
+=======
             XPathExpression<Element> xpathDesc =
                 XPathFactory.instance()
                     .compile("/atom:entry/oreatom:triples/rdf:Description[@rdf:about=\"" +
                                  this.encodeForURL(href) + "\"][1]",
                              Filters.element(), null, ATOM_NS, ORE_ATOM, RDF_NS);
             desc = xpathDesc.evaluateFirst(doc);
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/content/crosswalk/OREIngestionCrosswalk.java/right.java
 
             if (desc != null && desc.getChild("type", RDF_NS).getAttributeValue("resource", RDF_NS)
                                     .equals(DS_NS.getURI() + "DSpaceBitstream")) {

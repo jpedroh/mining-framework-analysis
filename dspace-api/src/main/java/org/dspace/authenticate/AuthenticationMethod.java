@@ -216,6 +216,17 @@ public interface AuthenticationMethod {
      * @return The authentication method name
      */
     public String getName();
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/authenticate/AuthenticationMethod.java/left.java
+
+    /**
+     * Get whether the authentication method is being used.
+     * @param context   The DSpace context
+     * @param request   The current request
+     * @return whether the authentication method is being used.
+     */
+    public boolean isUsed(Context context, HttpServletRequest request);
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/authenticate/AuthenticationMethod.java/base.java
+=======
 
     /**
      * Get whether the authentication method is being used.
@@ -235,4 +246,5 @@ public interface AuthenticationMethod {
      *                         password
      */
     public boolean canChangePassword(Context context, EPerson ePerson, String currentPassword);
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/authenticate/AuthenticationMethod.java/right.java
 }

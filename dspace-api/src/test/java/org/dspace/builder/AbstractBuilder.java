@@ -191,9 +191,15 @@ public abstract class AbstractBuilder<T, S> {
         relationshipTypeService = null;
         entityTypeService = null;
         processService = null;
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/test/java/org/dspace/builder/AbstractBuilder.java/left.java
+        requestItemService = null;
+        versioningService = null;
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/test/java/org/dspace/builder/AbstractBuilder.java/base.java
+=======
         requestItemService = null;
         versioningService = null;
         orcidTokenService = null;
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/test/java/org/dspace/builder/AbstractBuilder.java/right.java
 
     }
 

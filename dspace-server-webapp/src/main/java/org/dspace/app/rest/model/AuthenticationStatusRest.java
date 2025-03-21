@@ -21,11 +21,10 @@ public class AuthenticationStatusRest extends BaseObjectRest<Integer> {
     private boolean authenticated;
     private String authenticationMethod;
 
-    private EPersonRest ePersonRest;
-    private List<GroupRest> specialGroups;
-
     public static final String NAME = "status";
+
     public static final String SPECIALGROUPS = "specialGroups";
+
     public static final String CATEGORY = RestAddressableModel.AUTHENTICATION;
 
     @Override
@@ -94,6 +93,10 @@ public class AuthenticationStatusRest extends BaseObjectRest<Integer> {
     public void setAuthenticationMethod(final String authenticationMethod) {
         this.authenticationMethod = authenticationMethod;
     }
+
+    private EPersonRest ePersonRest;
+
+    private List<GroupRest> specialGroups;
 
     public void setSpecialGroups(List<GroupRest> groupList) {
         this.specialGroups = groupList;

@@ -189,6 +189,8 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
     //remember which folder item was imported from
     Map<String, Item> itemFolderMap = null;
 
+    //remember which folder item was imported from
+
     @Override
     public void afterPropertiesSet() throws Exception {
         tempWorkDir = configurationService.getProperty("org.dspace.app.batchitemimport.work.dir");
@@ -249,6 +251,8 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
 
             itemFolderMap = new HashMap<>();
 
+            itemFolderMap = new HashMap<>();
+
             logDebug("Adding items from directory: " + sourceDir);
             logDebug("Generating mapfile: " + mapFile);
 
@@ -282,6 +286,17 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
 
             for (int i = 0; i < dircontents.length; i++) {
                 if (skipItems.containsKey(dircontents[i])) {
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/left.java
+                    System.out.println("Skipping import of " + dircontents[i]);
+
+                    //we still need the item in the map for relationship linking
+                    String skippedHandle = skipItems.get(dircontents[i]);
+                    Item skippedItem = (Item) handleService.resolveToObject(c, skippedHandle);
+                    itemFolderMap.put(dircontents[i], skippedItem);
+
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/base.java
+                    System.out.println("Skipping import of " + dircontents[i]);
+=======
                     logInfo("Skipping import of " + dircontents[i]);
 
                     //we still need the item in the map for relationship linking
@@ -289,6 +304,7 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
                     Item skippedItem = (Item) handleService.resolveToObject(c, skippedHandle);
                     itemFolderMap.put(dircontents[i], skippedItem);
 
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/right.java
                 } else {
                     List<Collection> clist;
                     if (directoryFileCollections) {
@@ -355,6 +371,90 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
                     for (String itemIdentifier : identifierList) {
 
                         if (isTest) {
+                            System.out.println("\tAdding relationship (type: " + relationshipType +
+                                ") from " + folderName + " to " + itemIdentifier);
+                            continue;
+                        }
+
+                        //find referenced item
+                        Item relationItem = resolveRelatedItem(c, itemIdentifier);
+                        if (null == relationItem) {
+                            throw new Exception("Could not find item for " + itemIdentifier);
+                        }
+
+                        //get entity type of entity and item
+                        String itemEntityType = getEntityType(item);
+                        String relatedEntityType = getEntityType(relationItem);
+
+                        //find matching relationship type
+                        List<RelationshipType> relTypes = relationshipTypeService.findByLeftwardOrRightwardTypeName(
+                            c, relationshipType);
+                        RelationshipType foundRelationshipType = RelationshipUtils.matchRelationshipType(
+                            relTypes, relatedEntityType, itemEntityType, relationshipType);
+
+                        if (foundRelationshipType == null) {
+                            throw new Exception("No Relationship type found for:\n" +
+                                "Target type: " + relatedEntityType + "\n" +
+                                "Origin referer type: " + itemEntityType + "\n" +
+                                "with typeName: " + relationshipType
+                            );
+                        }
+
+                        boolean left = false;
+                        if (foundRelationshipType.getLeftwardType().equalsIgnoreCase(relationshipType)) {
+                            left = true;
+                        }
+
+                        // Placeholder items for relation placing
+                        Item leftItem = null;
+                        Item rightItem = null;
+                        if (left) {
+                            leftItem = item;
+                            rightItem = relationItem;
+                        } else {
+                            leftItem = relationItem;
+                            rightItem = item;
+                        }
+
+                        // Create the relationship
+                        int leftPlace = relationshipService.findNextLeftPlaceByLeftItem(c, leftItem);
+                        int rightPlace = relationshipService.findNextRightPlaceByRightItem(c, rightItem);
+                        Relationship persistedRelationship = relationshipService.create(
+                            c, leftItem, rightItem, foundRelationshipType, leftPlace, rightPlace);
+                        // relationshipService.update(c, persistedRelationship);
+
+                        System.out.println("\tAdded relationship (type: " + relationshipType + ") from " +
+                            leftItem.getHandle() + " to " + rightItem.getHandle());
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+    protected void addRelationships(Context c, String sourceDir) throws Exception {
+
+        for (Map.Entry<String, Item> itemEntry : itemFolderMap.entrySet()) {
+
+            String folderName = itemEntry.getKey();
+            String path = sourceDir + File.separatorChar + folderName;
+            Item item = itemEntry.getValue();
+
+            //look for a 'relationship' manifest
+            Map<String, List<String>> relationships = processRelationshipFile(path, "relationships");
+            if (!relationships.isEmpty()) {
+
+                for (Map.Entry<String, List<String>> relEntry : relationships.entrySet()) {
+
+                    String relationshipType = relEntry.getKey();
+                    List<String> identifierList = relEntry.getValue();
+
+                    for (String itemIdentifier : identifierList) {
+
+                        if (isTest) {
                             logInfo("\tAdding relationship (type: " + relationshipType +
                                 ") from " + folderName + " to " + itemIdentifier);
                             continue;
@@ -378,66 +478,14 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
     }
 
     /**
-     * Add relationship.
-     * @param c the context
-     * @param item the item
-     * @param relationItem the related item
-     * @param relationshipType the relation type name
-     * @throws SQLException
-     * @throws AuthorizeException
-     */
-    protected void addRelationship(Context c, Item item, Item relationItem, String relationshipType)
-            throws SQLException, AuthorizeException {
-        // get entity type of entity and item
-        String itemEntityType = getEntityType(item);
-        String relatedEntityType = getEntityType(relationItem);
-
-        // find matching relationship type
-        List<RelationshipType> relTypes = relationshipTypeService.findByLeftwardOrRightwardTypeName(
-            c, relationshipType);
-        RelationshipType foundRelationshipType = RelationshipUtils.matchRelationshipType(
-            relTypes, relatedEntityType, itemEntityType, relationshipType);
-
-        if (foundRelationshipType == null) {
-            throw new IllegalArgumentException("No Relationship type found for:\n" +
-                "Target type: " + relatedEntityType + "\n" +
-                "Origin referer type: " + itemEntityType + "\n" +
-                "with typeName: " + relationshipType
-            );
-        }
-
-        boolean left = false;
-        if (foundRelationshipType.getLeftwardType().equalsIgnoreCase(relationshipType)) {
-            left = true;
-        }
-
-        // placeholder items for relation placing
-        Item leftItem = null;
-        Item rightItem = null;
-        if (left) {
-            leftItem = item;
-            rightItem = relationItem;
-        } else {
-            leftItem = relationItem;
-            rightItem = item;
-        }
-
-        // Create the relationship, appending to the end
-        Relationship persistedRelationship = relationshipService.create(
-            c, leftItem, rightItem, foundRelationshipType, -1, -1
-        );
-        relationshipService.update(c, persistedRelationship);
-
-        logInfo("\tAdded relationship (type: " + relationshipType + ") from " +
-            leftItem.getHandle() + " to " + rightItem.getHandle());
-    }
-
-    /**
      * Get the item's entity type from meta.
      * 
      * @param item
      * @return
      */
+    protected String getEntityType(Item item) throws Exception {
+        return itemService.getMetadata(item, "dspace", "entity", "type", Item.ANY).get(0).getValue();
+    }
     protected String getEntityType(Item item) {
         return itemService.getMetadata(item, "dspace", "entity", "type", Item.ANY).get(0).getValue();
     }
@@ -445,21 +493,80 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
     /**
      * Read the relationship manifest file.
      * 
-     * Each line in the file contains a relationship type id and an item
-     * identifier in the following format:
-     *
-     * <p>
-     * {@code relation.<relation_key> <handle|uuid|folderName:import_item_folder|schema.element[.qualifier]:value>}
-     *
-     * <p>
-     * The {@code input_item_folder} should refer the folder name of another
-     * item in this import batch.
-     *
+     * Each line in the file contains a relationship type id and an item identifier in the following format:
+     * 
+     * relation.<relation_key> <handle|uuid|folderName:import_item_folder|schema.element[.qualifier]:value>
+     * 
+     * The input_item_folder should refer the folder name of another item in this import batch.
+     * 
      * @param path The main import folder path.
      * @param filename The name of the manifest file to check ('relationships')
      * @return Map of found relationships
      * @throws Exception
      */
+    protected Map<String, List<String>> processRelationshipFile(String path, String filename) throws Exception {
+
+        File file = new File(path + File.separatorChar + filename);
+        Map<String, List<String>> result = new HashMap<>();
+
+        if (file.exists()) {
+
+            System.out.println("\tProcessing relationships file: " + filename);
+
+            BufferedReader br = null;
+            try {
+                br = new BufferedReader(new FileReader(file));
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    line = line.trim();
+                    if ("".equals(line)) {
+                        continue;
+                    }
+
+                    String relationshipType = null;
+                    String itemIdentifier = null;
+
+                    StringTokenizer st = new StringTokenizer(line);
+
+                    if (st.hasMoreTokens()) {
+                        relationshipType = st.nextToken();
+                        if (relationshipType.split("\\.").length > 1) {
+                            relationshipType = relationshipType.split("\\.")[1];
+                        }
+                    } else {
+                        throw new Exception("Bad mapfile line:\n" + line);
+                    }
+
+                    if (st.hasMoreTokens()) {
+                        itemIdentifier = st.nextToken("").trim();
+                    } else {
+                        throw new Exception("Bad mapfile line:\n" + line);
+                    }
+
+                    if (!result.containsKey(relationshipType)) {
+                        result.put(relationshipType, new ArrayList<>());
+                    }
+
+                    result.get(relationshipType).add(itemIdentifier);
+
+                }
+
+            } catch (FileNotFoundException e) {
+                System.out.println("\tNo relationships file found.");
+            } finally {
+                if (br != null) {
+                    try {
+                        br.close();
+                    } catch (IOException e) {
+                        System.out.println("Non-critical problem releasing resources.");
+                    }
+                }
+            }
+
+        }
+
+        return result;
+    }
     protected Map<String, List<String>> processRelationshipFile(String path, String filename) throws Exception {
 
         File file = new File(path + File.separatorChar + filename);
@@ -558,6 +665,40 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
 
             }
 
+        } else if (itemIdentifier.indexOf('/') != -1) {
+            //resolve by handle
+            return (Item) handleService.resolveToObject(c, itemIdentifier);
+
+        } else {
+            //try to resolve by UUID
+            return itemService.findByIdOrLegacyId(c, itemIdentifier);
+        }
+
+        return null;
+
+    }
+    protected Item resolveRelatedItem(Context c, String itemIdentifier) throws Exception {
+
+        if (itemIdentifier.contains(":")) {
+
+            if (itemIdentifier.startsWith("folderName:") || itemIdentifier.startsWith("rowName:")) {
+                //identifier refers to a folder name in this import
+                int i = itemIdentifier.indexOf(":");
+                String folderName = itemIdentifier.substring(i + 1);
+                if (itemFolderMap.containsKey(folderName)) {
+                    return itemFolderMap.get(folderName);
+                }
+
+            } else {
+
+                //lookup by meta value
+                int i = itemIdentifier.indexOf(":");
+                String metaKey = itemIdentifier.substring(0, i);
+                String metaValue = itemIdentifier.substring(i + 1);
+                return findItemByMetaValue(c, metaKey, metaValue);
+
+            }
+
         }
 
         // resolve item by handle or UUID
@@ -566,33 +707,11 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
     }
 
     /**
-     * Resolve an item identifier.
-     * 
-     * @param c Context
-     * @param itemIdentifier The identifier string found in the import file (handle or UUID)
-     * @return Item if found, or null.
-     * @throws SQLException
-     * @throws IllegalStateException
-     * @throws Exception
-     */
-    protected Item resolveItem(Context c, String itemIdentifier)
-            throws IllegalStateException, SQLException {
-        if (itemIdentifier.indexOf('/') != -1) {
-            // resolve by handle
-            return (Item) handleService.resolveToObject(c, itemIdentifier);
-        }
-
-        // resolve by UUID
-        return itemService.findByIdOrLegacyId(c, itemIdentifier);
-    }
-
-    /**
      * Lookup an item by a (unique) meta value.
      * 
-     * @param c current DSpace session.
-     * @param metaKey name of the metadata field to match.
-     * @param metaValue value to be matched.
-     * @return the matching Item.
+     * @param metaKey
+     * @param metaValue
+     * @return Item
      * @throws Exception if single item not found.
      */
     protected Item findItemByMetaValue(Context c, String metaKey, String metaValue) throws Exception {
@@ -629,6 +748,139 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
         return item;
 
     }
+
+     /**
+      * Add relationships from a 'relationships' manifest file.
+      * 
+      * @param c Context
+      * @param sourceDir The parent import source directory
+      * @throws Exception
+      */
+
+    /**
+     * Add relationship.
+     * @param c the context
+     * @param item the item
+     * @param relationItem the related item
+     * @param relationshipType the relation type name
+     * @throws SQLException
+     * @throws AuthorizeException
+     */
+    protected void addRelationship(Context c, Item item, Item relationItem, String relationshipType)
+            throws SQLException, AuthorizeException {
+        // get entity type of entity and item
+        String itemEntityType = getEntityType(item);
+        String relatedEntityType = getEntityType(relationItem);
+
+        // find matching relationship type
+        List<RelationshipType> relTypes = relationshipTypeService.findByLeftwardOrRightwardTypeName(
+            c, relationshipType);
+        RelationshipType foundRelationshipType = RelationshipUtils.matchRelationshipType(
+            relTypes, relatedEntityType, itemEntityType, relationshipType);
+
+        if (foundRelationshipType == null) {
+            throw new IllegalArgumentException("No Relationship type found for:\n" +
+                "Target type: " + relatedEntityType + "\n" +
+                "Origin referer type: " + itemEntityType + "\n" +
+                "with typeName: " + relationshipType
+            );
+        }
+
+        boolean left = false;
+        if (foundRelationshipType.getLeftwardType().equalsIgnoreCase(relationshipType)) {
+            left = true;
+        }
+
+        // placeholder items for relation placing
+        Item leftItem = null;
+        Item rightItem = null;
+        if (left) {
+            leftItem = item;
+            rightItem = relationItem;
+        } else {
+            leftItem = relationItem;
+            rightItem = item;
+        }
+
+        // Create the relationship, appending to the end
+        Relationship persistedRelationship = relationshipService.create(
+            c, leftItem, rightItem, foundRelationshipType, -1, -1
+        );
+        relationshipService.update(c, persistedRelationship);
+
+        logInfo("\tAdded relationship (type: " + relationshipType + ") from " +
+            leftItem.getHandle() + " to " + rightItem.getHandle());
+    }
+
+    /**
+     * Get the item's entity type from meta.
+     * 
+     * @param item
+     * @return
+     */
+
+    /**
+     * Read the relationship manifest file.
+     * 
+     * Each line in the file contains a relationship type id and an item
+     * identifier in the following format:
+     *
+     * <p>
+     * {@code relation.<relation_key> <handle|uuid|folderName:import_item_folder|schema.element[.qualifier]:value>}
+     *
+     * <p>
+     * The {@code input_item_folder} should refer the folder name of another
+     * item in this import batch.
+     *
+     * @param path The main import folder path.
+     * @param filename The name of the manifest file to check ('relationships')
+     * @return Map of found relationships
+     * @throws Exception
+     */
+
+     /**
+      * Resolve an item identifier referred to in the relationships manifest file.
+      *
+      * The import item map will be checked first to see if the identifier refers to an item folder
+      * that was just imported. Next it will try to find the item by handle or UUID, or by a unique
+      * meta value.
+      * 
+      * @param c Context
+      * @param itemIdentifier The identifier string found in the import manifest (handle, uuid, or import subfolder)
+      * @return Item if found, or null.
+      * @throws Exception
+      */
+
+    /**
+     * Resolve an item identifier.
+     * 
+     * @param c Context
+     * @param itemIdentifier The identifier string found in the import file (handle or UUID)
+     * @return Item if found, or null.
+     * @throws SQLException
+     * @throws IllegalStateException
+     * @throws Exception
+     */
+    protected Item resolveItem(Context c, String itemIdentifier)
+            throws IllegalStateException, SQLException {
+        if (itemIdentifier.indexOf('/') != -1) {
+            // resolve by handle
+            return (Item) handleService.resolveToObject(c, itemIdentifier);
+        }
+
+        // resolve by UUID
+        return itemService.findByIdOrLegacyId(c, itemIdentifier);
+    }
+
+    /**
+     * Lookup an item by a (unique) meta value.
+     * 
+     * @param c current DSpace session.
+     * @param metaKey name of the metadata field to match.
+     * @param metaValue value to be matched.
+     * @return the matching Item.
+     * @throws Exception if single item not found.
+     */
 
     @Override
     public void replaceItems(Context c, List<Collection> mycollections,
@@ -1329,7 +1581,12 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
 
                         if (permissionsExist || descriptionExists || labelExists || heightExists
                             || widthExists || tocExists) {
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/left.java
+                            System.out.println("Gathering options.");
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/base.java
+=======
                             logInfo("Gathering options.");
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/right.java
                             String extraInfo = bitstreamName;
 
                             if (permissionsExist) {
@@ -1543,246 +1800,388 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
      */
     protected void processOptions(Context c, Item myItem, List<String> options)
         throws SQLException, AuthorizeException {
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/left.java
+        System.out.println("Processing options.");
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/base.java
+=======
         logInfo("Processing options.");
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/right.java
         for (String line : options) {
-            logInfo("\tprocessing " + line);
+        logInfo("\tprocessing " + line);
 
-            boolean permissionsExist = false;
-            boolean descriptionExists = false;
-            boolean labelExists = false;
-            boolean heightExists = false;
-            boolean widthExists = false;
-            boolean tocExists = false;
+        boolean permissionsExist = false;
+        boolean descriptionExists = false;
+        boolean labelExists = false;
+        boolean heightExists = false;
+        boolean widthExists = false;
+        boolean tocExists = false;
 
-            String permissionsMarker = "\tpermissions:";
-            int pMarkerIndex = line.indexOf(permissionsMarker);
-            int pEndIndex = 0;
-            if (pMarkerIndex > 0) {
-                pEndIndex = line.indexOf("\t", pMarkerIndex + 1);
-                if (pEndIndex == -1) {
-                    pEndIndex = line.length();
-                }
-                permissionsExist = true;
+        String permissionsMarker = "\tpermissions:";
+        int pMarkerIndex = line.indexOf(permissionsMarker);
+        int pEndIndex = 0;
+        if (pMarkerIndex > 0) {
+            pEndIndex = line.indexOf("\t", pMarkerIndex + 1);
+            if (pEndIndex == -1) {
+                pEndIndex = line.length();
+            }
+            permissionsExist = true;
+        }
+
+        String descriptionMarker = "\tdescription:";
+        int dMarkerIndex = line.indexOf(descriptionMarker);
+        int dEndIndex = 0;
+        if (dMarkerIndex > 0) {
+            dEndIndex = line.indexOf("\t", dMarkerIndex + 1);
+            if (dEndIndex == -1) {
+                dEndIndex = line.length();
+            }
+            descriptionExists = true;
+        }
+
+
+        // look for label
+        String labelMarker = "\tiiif-label:";
+        int lMarkerIndex = line.indexOf(labelMarker);
+        int lEndIndex = 0;
+        if (lMarkerIndex > 0) {
+            lEndIndex = line.indexOf("\t", lMarkerIndex + 1);
+            if (lEndIndex == -1) {
+                lEndIndex = line.length();
+            }
+            labelExists = true;
+        }
+
+        // look for height
+        String heightMarker = "\tiiif-height:";
+        int hMarkerIndex = line.indexOf(heightMarker);
+        int hEndIndex = 0;
+        if (hMarkerIndex > 0) {
+            hEndIndex = line.indexOf("\t", hMarkerIndex + 1);
+            if (hEndIndex == -1) {
+                hEndIndex = line.length();
+            }
+            heightExists = true;
+        }
+
+        // look for width
+        String widthMarker = "\tiiif-width:";
+        int wMarkerIndex = line.indexOf(widthMarker);
+        int wEndIndex = 0;
+        if (wMarkerIndex > 0) {
+            wEndIndex = line.indexOf("\t", wMarkerIndex + 1);
+            if (wEndIndex == -1) {
+                wEndIndex = line.length();
+            }
+            widthExists = true;
+        }
+
+        // look for toc
+        String tocMarker = "\tiiif-toc:";
+        int tMarkerIndex = line.indexOf(tocMarker);
+        int tEndIndex = 0;
+        if (tMarkerIndex > 0) {
+            tEndIndex = line.indexOf("\t", tMarkerIndex + 1);
+            if (tEndIndex == -1) {
+                tEndIndex = line.length();
+            }
+            tocExists = true;
+        }
+
+
+        int bsEndIndex = line.indexOf("\t");
+        String bitstreamName = line.substring(0, bsEndIndex);
+
+        int actionID = -1;
+        String groupName = "";
+        Group myGroup = null;
+        if (permissionsExist) {
+            String thisPermission = line.substring(pMarkerIndex
+                + permissionsMarker.length(), pEndIndex);
+
+            // get permission type ("read" or "write")
+            int pTypeIndex = thisPermission.indexOf('-');
+
+            // get permission group (should be in single quotes)
+            int groupIndex = thisPermission.indexOf('\'', pTypeIndex);
+            int groupEndIndex = thisPermission.indexOf('\'', groupIndex + 1);
+
+            // if not in single quotes, assume everything after type flag is
+            // group name
+            if (groupIndex == -1) {
+                groupIndex = thisPermission.indexOf(' ', pTypeIndex);
+                groupEndIndex = thisPermission.length();
             }
 
-            String descriptionMarker = "\tdescription:";
-            int dMarkerIndex = line.indexOf(descriptionMarker);
-            int dEndIndex = 0;
-            if (dMarkerIndex > 0) {
-                dEndIndex = line.indexOf("\t", dMarkerIndex + 1);
-                if (dEndIndex == -1) {
-                    dEndIndex = line.length();
-                }
-                descriptionExists = true;
+            groupName = thisPermission.substring(groupIndex + 1,
+                groupEndIndex);
+
+            if (thisPermission.toLowerCase().charAt(pTypeIndex + 1) == 'r') {
+                actionID = Constants.READ;
+            } else if (thisPermission.toLowerCase().charAt(pTypeIndex + 1) == 'w') {
+                actionID = Constants.WRITE;
             }
 
-
-            // look for label
-            String labelMarker = "\tiiif-label:";
-            int lMarkerIndex = line.indexOf(labelMarker);
-            int lEndIndex = 0;
-            if (lMarkerIndex > 0) {
-                lEndIndex = line.indexOf("\t", lMarkerIndex + 1);
-                if (lEndIndex == -1) {
-                    lEndIndex = line.length();
-                }
-                labelExists = true;
-            }
-
-            // look for height
-            String heightMarker = "\tiiif-height:";
-            int hMarkerIndex = line.indexOf(heightMarker);
-            int hEndIndex = 0;
-            if (hMarkerIndex > 0) {
-                hEndIndex = line.indexOf("\t", hMarkerIndex + 1);
-                if (hEndIndex == -1) {
-                    hEndIndex = line.length();
-                }
-                heightExists = true;
-            }
-
-            // look for width
-            String widthMarker = "\tiiif-width:";
-            int wMarkerIndex = line.indexOf(widthMarker);
-            int wEndIndex = 0;
-            if (wMarkerIndex > 0) {
-                wEndIndex = line.indexOf("\t", wMarkerIndex + 1);
-                if (wEndIndex == -1) {
-                    wEndIndex = line.length();
-                }
-                widthExists = true;
-            }
-
-            // look for toc
-            String tocMarker = "\tiiif-toc:";
-            int tMarkerIndex = line.indexOf(tocMarker);
-            int tEndIndex = 0;
-            if (tMarkerIndex > 0) {
-                tEndIndex = line.indexOf("\t", tMarkerIndex + 1);
-                if (tEndIndex == -1) {
-                    tEndIndex = line.length();
-                }
-                tocExists = true;
-            }
-
-
-            int bsEndIndex = line.indexOf("\t");
-            String bitstreamName = line.substring(0, bsEndIndex);
-
-            int actionID = -1;
-            String groupName = "";
-            Group myGroup = null;
-            if (permissionsExist) {
-                String thisPermission = line.substring(pMarkerIndex
-                    + permissionsMarker.length(), pEndIndex);
-
-                // get permission type ("read" or "write")
-                int pTypeIndex = thisPermission.indexOf('-');
-
-                // get permission group (should be in single quotes)
-                int groupIndex = thisPermission.indexOf('\'', pTypeIndex);
-                int groupEndIndex = thisPermission.indexOf('\'', groupIndex + 1);
-
-                // if not in single quotes, assume everything after type flag is
-                // group name
-                if (groupIndex == -1) {
-                    groupIndex = thisPermission.indexOf(' ', pTypeIndex);
-                    groupEndIndex = thisPermission.length();
-                }
-
-                groupName = thisPermission.substring(groupIndex + 1,
-                    groupEndIndex);
-
-                if (thisPermission.toLowerCase().charAt(pTypeIndex + 1) == 'r') {
-                    actionID = Constants.READ;
-                } else if (thisPermission.toLowerCase().charAt(pTypeIndex + 1) == 'w') {
-                    actionID = Constants.WRITE;
-                }
-
-                try {
-                    myGroup = groupService.findByName(c, groupName);
-                } catch (SQLException sqle) {
-                    logError("SQL Exception finding group name: "
-                        + groupName);
-                    // do nothing, will check for null group later
-                }
-            }
-
-            String thisDescription = "";
-            if (descriptionExists) {
-                thisDescription = line.substring(
-                                          dMarkerIndex + descriptionMarker.length(), dEndIndex)
-                                      .trim();
-            }
-
-            String thisLabel = "";
-            if (labelExists) {
-                thisLabel = line.substring(
-                                    lMarkerIndex + labelMarker.length(), lEndIndex)
-                                .trim();
-            }
-
-            String thisHeight = "";
-            if (heightExists) {
-                thisHeight = line.substring(
-                                     hMarkerIndex + heightMarker.length(), hEndIndex)
-                                 .trim();
-            }
-
-            String thisWidth = "";
-            if (widthExists) {
-                thisWidth = line.substring(
-                                    wMarkerIndex + widthMarker.length(), wEndIndex)
-                                .trim();
-            }
-
-            String thisToc = "";
-            if (tocExists) {
-                thisToc = line.substring(
-                                  tMarkerIndex + tocMarker.length(), tEndIndex)
-                              .trim();
-            }
-
-            if (isTest) {
-                continue;
-            }
-
-            Bitstream bs = null;
-            boolean updateRequired = false;
-
-            // find bitstream
-            List<Bitstream> bitstreams = itemService.getNonInternalBitstreams(c, myItem);
-            for (Bitstream bitstream : bitstreams) {
-                if (bitstream.getName().equals(bitstreamName)) {
-                    bs = bitstream;
-                    break;
-                }
-            }
-
-            if (null == bs) {
-                // this should never happen
-                logInfo("\tdefault permissions set for " + bitstreamName);
-            } else {
-                if (permissionsExist) {
-                    if (myGroup == null) {
-                        logInfo("\t" + groupName
-                            + " not found, permissions set to default");
-                    } else if (actionID == -1) {
-                        logInfo("\tinvalid permissions flag, permissions set to default");
-                    } else {
-                        logInfo("\tSetting special permissions for "
-                            + bitstreamName);
-                        setPermission(c, myGroup, actionID, bs);
-                    }
-                }
-
-                if (descriptionExists) {
-                    logInfo("\tSetting description for "
-                        + bitstreamName);
-                    bs.setDescription(c, thisDescription);
-                    updateRequired = true;
-                }
-
-                if (labelExists) {
-                    MetadataField metadataField = metadataFieldService
-                        .findByElement(c, METADATA_IIIF_SCHEMA, METADATA_IIIF_LABEL_ELEMENT, null);
-                    logInfo("\tSetting label to " + thisLabel + " in element "
-                        + metadataField.getElement() + " on " + bitstreamName);
-                    bitstreamService.addMetadata(c, bs, metadataField, null, thisLabel);
-                    updateRequired = true;
-                }
-
-                if (heightExists) {
-                    MetadataField metadataField = metadataFieldService
-                        .findByElement(c, METADATA_IIIF_SCHEMA, METADATA_IIIF_IMAGE_ELEMENT,
-                            METADATA_IIIF_HEIGHT_QUALIFIER);
-                    logInfo("\tSetting height to " + thisHeight + " in element "
-                        + metadataField.getElement() + " on " + bitstreamName);
-                    bitstreamService.addMetadata(c, bs, metadataField, null, thisHeight);
-                    updateRequired = true;
-                }
-                if (widthExists) {
-                    MetadataField metadataField = metadataFieldService
-                        .findByElement(c, METADATA_IIIF_SCHEMA, METADATA_IIIF_IMAGE_ELEMENT,
-                            METADATA_IIIF_WIDTH_QUALIFIER);
-                    logInfo("\tSetting width to " + thisWidth + " in element "
-                        + metadataField.getElement() + " on " + bitstreamName);
-                    bitstreamService.addMetadata(c, bs, metadataField, null, thisWidth);
-                    updateRequired = true;
-                }
-                if (tocExists) {
-                    MetadataField metadataField = metadataFieldService
-                        .findByElement(c, METADATA_IIIF_SCHEMA, METADATA_IIIF_TOC_ELEMENT, null);
-                    logInfo("\tSetting toc to " + thisToc + " in element "
-                        + metadataField.getElement() + " on " + bitstreamName);
-                    bitstreamService.addMetadata(c, bs, metadataField, null, thisToc);
-                    updateRequired = true;
-                }
-                if (updateRequired) {
-                    bitstreamService.update(c, bs);
-                }
+            try {
+                myGroup = groupService.findByName(c, groupName);
+            } catch (SQLException sqle) {
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/left.java
+                System.out.println("SQL Exception finding group name: "
+                    + groupName);
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/base.java
+                System.out.println("SQL Exception finding group name: "
+                                       + groupName);
+=======
+                logError("SQL Exception finding group name: "
+                    + groupName);
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/right.java
+                // do nothing, will check for null group later
             }
         }
+
+        String thisDescription = "";
+        if (descriptionExists) {
+            thisDescription = line.substring(
+                                      dMarkerIndex + descriptionMarker.length(), dEndIndex)
+                                  .trim();
+        }
+
+        String thisLabel = "";
+        if (labelExists) {
+            thisLabel = line.substring(
+                                lMarkerIndex + labelMarker.length(), lEndIndex)
+                            .trim();
+        }
+
+        String thisHeight = "";
+        if (heightExists) {
+            thisHeight = line.substring(
+                                 hMarkerIndex + heightMarker.length(), hEndIndex)
+                             .trim();
+        }
+
+        String thisWidth = "";
+        if (widthExists) {
+            thisWidth = line.substring(
+                                wMarkerIndex + widthMarker.length(), wEndIndex)
+                            .trim();
+        }
+
+        String thisToc = "";
+        if (tocExists) {
+            thisToc = line.substring(
+                              tMarkerIndex + tocMarker.length(), tEndIndex)
+                          .trim();
+        }
+
+        String thisLabel = "";
+        if (labelExists) {
+            thisLabel = line.substring(
+                                lMarkerIndex + labelMarker.length(), lEndIndex)
+                            .trim();
+        }
+
+        String thisHeight = "";
+        if (heightExists) {
+            thisHeight = line.substring(
+                                 hMarkerIndex + heightMarker.length(), hEndIndex)
+                             .trim();
+        }
+
+        String thisWidth = "";
+        if (widthExists) {
+            thisWidth = line.substring(
+                                wMarkerIndex + widthMarker.length(), wEndIndex)
+                            .trim();
+        }
+
+        String thisToc = "";
+        if (tocExists) {
+            thisToc = line.substring(
+                              tMarkerIndex + tocMarker.length(), tEndIndex)
+                          .trim();
+        }
+
+        if (isTest) {
+            continue;
+        }
+
+        Bitstream bs = null;
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/left.java
+        boolean notfound = true;
+        boolean updateRequired = false;
+
+        if (!isTest) {
+            // find bitstream
+            List<Bitstream> bitstreams = itemService.getNonInternalBitstreams(c, myItem);
+            for (int j = 0; j < bitstreams.size() && notfound; j++) {
+                if (bitstreams.get(j).getName().equals(bitstreamName)) {
+                    bs = bitstreams.get(j);
+                    notfound = false;
+                }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/base.java
+        boolean notfound = true;
+        if (!isTest) {
+            // find bitstream
+            List<Bitstream> bitstreams = itemService.getNonInternalBitstreams(c, myItem);
+            for (int j = 0; j < bitstreams.size() && notfound; j++) {
+                if (bitstreams.get(j).getName().equals(bitstreamName)) {
+                    bs = bitstreams.get(j);
+                    notfound = false;
+                }
+=======
+        boolean updateRequired = false;
+
+        // find bitstream
+        List<Bitstream> bitstreams = itemService.getNonInternalBitstreams(c, myItem);
+        for (Bitstream bitstream : bitstreams) {
+            if (bitstream.getName().equals(bitstreamName)) {
+                bs = bitstream;
+                break;
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/right.java
+            }
+        }
+
+        if (null == bs) {
+            // this should never happen
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/left.java
+            System.out.println("\tdefault permissions set for "
+                + bitstreamName);
+        } else if (!isTest) {
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/base.java
+            System.out.println("\tdefault permissions set for "
+                                   + bitstreamName);
+        } else if (!isTest) {
+=======
+            logInfo("\tdefault permissions set for " + bitstreamName);
+        } else {
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/right.java
+            if (permissionsExist) {
+                if (myGroup == null) {
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/left.java
+                    System.out.println("\t" + groupName
+                        + " not found, permissions set to default");
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/base.java
+                    System.out.println("\t" + groupName
+                                           + " not found, permissions set to default");
+=======
+                    logInfo("\t" + groupName
+                        + " not found, permissions set to default");
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/right.java
+                } else if (actionID == -1) {
+                    logInfo("\tinvalid permissions flag, permissions set to default");
+                } else {
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/left.java
+                    System.out.println("\tSetting special permissions for "
+                        + bitstreamName);
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/base.java
+                    System.out.println("\tSetting special permissions for "
+                                           + bitstreamName);
+=======
+                    logInfo("\tSetting special permissions for "
+                        + bitstreamName);
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/right.java
+                    setPermission(c, myGroup, actionID, bs);
+                }
+            }
+
+            if (descriptionExists) {
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/left.java
+                System.out.println("\tSetting description for "
+                    + bitstreamName);
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/base.java
+                System.out.println("\tSetting description for "
+                                       + bitstreamName);
+=======
+                logInfo("\tSetting description for "
+                    + bitstreamName);
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/right.java
+                bs.setDescription(c, thisDescription);
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/left.java
+                updateRequired = true;
+            }
+
+            if (labelExists) {
+                MetadataField metadataField = metadataFieldService
+                    .findByElement(c, METADATA_IIIF_SCHEMA, METADATA_IIIF_LABEL_ELEMENT, null);
+                System.out.println("\tSetting label to " + thisLabel + " in element "
+                    + metadataField.getElement() + " on " + bitstreamName);
+                bitstreamService.addMetadata(c, bs, metadataField, null, thisLabel);
+                updateRequired = true;
+            }
+
+            if (heightExists) {
+                MetadataField metadataField = metadataFieldService
+                    .findByElement(c, METADATA_IIIF_SCHEMA, METADATA_IIIF_IMAGE_ELEMENT,
+                        METADATA_IIIF_HEIGHT_QUALIFIER);
+                System.out.println("\tSetting height to " + thisHeight + " in element "
+                    + metadataField.getElement() + " on " + bitstreamName);
+                bitstreamService.addMetadata(c, bs, metadataField, null, thisHeight);
+                updateRequired = true;
+            }
+            if (widthExists) {
+                MetadataField metadataField = metadataFieldService
+                    .findByElement(c, METADATA_IIIF_SCHEMA, METADATA_IIIF_IMAGE_ELEMENT,
+                        METADATA_IIIF_WIDTH_QUALIFIER);
+                System.out.println("\tSetting width to " + thisWidth + " in element "
+                    + metadataField.getElement() + " on " + bitstreamName);
+                bitstreamService.addMetadata(c, bs, metadataField, null, thisWidth);
+                updateRequired = true;
+            }
+            if (tocExists) {
+                MetadataField metadataField = metadataFieldService
+                    .findByElement(c, METADATA_IIIF_SCHEMA, METADATA_IIIF_TOC_ELEMENT, null);
+                System.out.println("\tSetting toc to " + thisToc + " in element "
+                    + metadataField.getElement() + " on " + bitstreamName);
+                bitstreamService.addMetadata(c, bs, metadataField, null, thisToc);
+                updateRequired = true;
+            }
+            if (updateRequired) {
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/base.java
+=======
+                updateRequired = true;
+            }
+
+            if (labelExists) {
+                MetadataField metadataField = metadataFieldService
+                    .findByElement(c, METADATA_IIIF_SCHEMA, METADATA_IIIF_LABEL_ELEMENT, null);
+                logInfo("\tSetting label to " + thisLabel + " in element "
+                    + metadataField.getElement() + " on " + bitstreamName);
+                bitstreamService.addMetadata(c, bs, metadataField, null, thisLabel);
+                updateRequired = true;
+            }
+
+            if (heightExists) {
+                MetadataField metadataField = metadataFieldService
+                    .findByElement(c, METADATA_IIIF_SCHEMA, METADATA_IIIF_IMAGE_ELEMENT,
+                        METADATA_IIIF_HEIGHT_QUALIFIER);
+                logInfo("\tSetting height to " + thisHeight + " in element "
+                    + metadataField.getElement() + " on " + bitstreamName);
+                bitstreamService.addMetadata(c, bs, metadataField, null, thisHeight);
+                updateRequired = true;
+            }
+            if (widthExists) {
+                MetadataField metadataField = metadataFieldService
+                    .findByElement(c, METADATA_IIIF_SCHEMA, METADATA_IIIF_IMAGE_ELEMENT,
+                        METADATA_IIIF_WIDTH_QUALIFIER);
+                logInfo("\tSetting width to " + thisWidth + " in element "
+                    + metadataField.getElement() + " on " + bitstreamName);
+                bitstreamService.addMetadata(c, bs, metadataField, null, thisWidth);
+                updateRequired = true;
+            }
+            if (tocExists) {
+                MetadataField metadataField = metadataFieldService
+                    .findByElement(c, METADATA_IIIF_SCHEMA, METADATA_IIIF_TOC_ELEMENT, null);
+                logInfo("\tSetting toc to " + thisToc + " in element "
+                    + metadataField.getElement() + " on " + bitstreamName);
+                bitstreamService.addMetadata(c, bs, metadataField, null, thisToc);
+                updateRequired = true;
+            }
+            if (updateRequired) {
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/app/itemimport/ItemImportServiceImpl.java/right.java
+                bitstreamService.update(c, bs);
+            }
+        }
+    }
     }
 
     /**

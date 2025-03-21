@@ -28,7 +28,9 @@ import org.dspace.eperson.Group;
 public class BitstreamBuilder extends AbstractDSpaceObjectBuilder<Bitstream> {
 
     private Bitstream bitstream;
+
     private Item item;
+
     private Group readerGroup;
 
     protected BitstreamBuilder(Context context) {
@@ -135,7 +137,6 @@ public class BitstreamBuilder extends AbstractDSpaceObjectBuilder<Bitstream> {
         return this;
     }
 
-
     public BitstreamBuilder withIIIFLabel(String label) throws SQLException {
         bitstreamService.addMetadata(context, bitstream, "iiif", "label", null, null, label);
         return this;
@@ -156,6 +157,37 @@ public class BitstreamBuilder extends AbstractDSpaceObjectBuilder<Bitstream> {
         return this;
     }
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/test/java/org/dspace/builder/BitstreamBuilder.java/left.java
+    private Bundle getOriginalBundle(Item item) throws SQLException, AuthorizeException {
+        List<Bundle> bundles = itemService.getBundles(item, ORIGINAL);
+        Bundle targetBundle = null;
+
+        if (bundles.size() < 1) {
+            // not found, create a new one
+            targetBundle = bundleService.create(context, item, ORIGINAL);
+        } else {
+            // put bitstreams into first bundle
+            targetBundle = bundles.iterator().next();
+        }
+
+        return targetBundle;
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/test/java/org/dspace/builder/BitstreamBuilder.java/base.java
+    private Bundle getOriginalBundle(Item item) throws SQLException, AuthorizeException {
+        List<Bundle> bundles = itemService.getBundles(item, ORIGINAL);
+        Bundle targetBundle = null;
+
+        if (bundles.size() < 1) {
+            // not found, create a new one
+            targetBundle = bundleService.create(context, item, ORIGINAL);
+        } else {
+            // put bitstreams into first bundle
+            targetBundle = bundles.iterator().next();
+        }
+
+        return targetBundle;
+    }
+=======
     private Bundle getOriginalBundle(Item item) throws SQLException, AuthorizeException {
         List<Bundle> bundles = itemService.getBundles(item, Constants.CONTENT_BUNDLE_NAME);
         Bundle targetBundle = null;
@@ -170,10 +202,11 @@ public class BitstreamBuilder extends AbstractDSpaceObjectBuilder<Bitstream> {
 
         return targetBundle;
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/test/java/org/dspace/builder/BitstreamBuilder.java/right.java
 
     public BitstreamBuilder withEmbargoPeriod(String embargoPeriod) {
-        return setEmbargo(embargoPeriod, bitstream);
-    }
+    return setEmbargo(embargoPeriod, bitstream);
+}
 
     public BitstreamBuilder withReaderGroup(Group group) {
         readerGroup = group;

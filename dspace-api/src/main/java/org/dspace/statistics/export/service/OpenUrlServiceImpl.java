@@ -67,11 +67,27 @@ public class OpenUrlServiceImpl implements OpenUrlService {
      * @return response code from the url
      * @throws IOException
      */
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/statistics/export/service/OpenUrlServiceImpl.java/left.java
+    protected int getResponseCodeFromUrl(final String urlStr) throws IOException {
+        HttpGet httpGet = new HttpGet(urlStr);
+        RequestConfig requestConfig = getRequestConfigBuilder().setConnectTimeout(10 * 1000).build();
+        HttpClient httpClient = HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build();
+        HttpResponse httpResponse = httpClient.execute(httpGet);
+        return httpResponse.getStatusLine().getStatusCode();
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/statistics/export/service/OpenUrlServiceImpl.java/base.java
+    protected int getResponseCodeFromUrl(final String urlStr) throws IOException 
+=======
     protected int getResponseCodeFromUrl(final String urlStr) throws IOException {
         HttpGet httpGet = new HttpGet(urlStr);
         HttpClient httpClient = getHttpClient(getHttpClientRequestConfig());
         HttpResponse httpResponse = httpClient.execute(httpGet);
         return httpResponse.getStatusLine().getStatusCode();
+    }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/statistics/export/service/OpenUrlServiceImpl.java/right.java
+
+    protected RequestConfig.Builder getRequestConfigBuilder() {
+        return RequestConfig.custom();
     }
 
     protected HttpClient getHttpClient(RequestConfig requestConfig) {

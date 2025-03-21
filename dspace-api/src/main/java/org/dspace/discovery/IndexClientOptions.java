@@ -80,6 +80,9 @@ public enum IndexClientOptions {
                           "clean existing index removing any documents that no longer exist in the db");
         options.addOption("d", "delete", false,
                 "delete all records from existing index");
+        options.addOption("d", "delete", false,
+                "delete all records from existing index");
+        options.getOption("d").setType(boolean.class);
         options.addOption("b", "build", false, "(re)build index, wiping out current one if it exists");
         options.addOption("s", "spellchecker", false, "Rebuild the spellchecker, can be combined with -b and -f.");
         options.addOption("f", "force", false,

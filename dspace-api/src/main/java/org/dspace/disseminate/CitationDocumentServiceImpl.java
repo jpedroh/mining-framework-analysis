@@ -317,7 +317,13 @@ public class CitationDocumentServiceImpl implements CitationDocumentService, Ini
                 document.save(out);
 
                 byte[] data = out.toByteArray();
-                return Pair.of(data, Long.valueOf(data.length));
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/disseminate/CitationDocumentServiceImpl.java/left.java
+                return Pair.of( new ByteArrayInputStream(data), Long.valueOf(data.length));
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/disseminate/CitationDocumentServiceImpl.java/base.java
+                return Pair.of( (InputStream) new ByteArrayInputStream(data), Long.valueOf(data.length));
+=======
+                return Pair.of( data, Long.valueOf(data.length));
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/main/java/org/dspace/disseminate/CitationDocumentServiceImpl.java/right.java
             }
 
         } finally {

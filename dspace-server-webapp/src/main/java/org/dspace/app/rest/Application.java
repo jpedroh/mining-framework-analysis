@@ -175,6 +175,16 @@ public class Application extends SpringBootServletInitializer {
              */
             @Override
             public void addCorsMappings(@NonNull CorsRegistry registry) {
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/Application.java/left.java
+                // Get allowed origins for api and iiif endpoints.
+                String[] corsAllowedOrigins = configuration
+                    .getCorsAllowedOrigins(configuration.getCorsAllowedOriginsConfig());
+                String[] iiifAllowedOrigins = configuration
+                    .getCorsAllowedOrigins(configuration.getIiifAllowedOriginsConfig());
+
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/Application.java/base.java
+                String[] corsAllowedOrigins = configuration.getCorsAllowedOrigins();
+=======
                 // Get allowed origins for api and iiif endpoints.
                 // The actuator endpoints are configured using management.endpoints.web.cors.* properties
                 String[] corsAllowedOrigins = configuration
@@ -182,6 +192,7 @@ public class Application extends SpringBootServletInitializer {
                 String[] iiifAllowedOrigins = configuration
                     .getCorsAllowedOrigins(configuration.getIiifAllowedOriginsConfig());
 
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/Application.java/right.java
                 boolean corsAllowCredentials = configuration.getCorsAllowCredentials();
                 boolean iiifAllowCredentials = configuration.getIiifAllowCredentials();
                 if (corsAllowedOrigins != null) {
@@ -192,6 +203,22 @@ public class Application extends SpringBootServletInitializer {
                             .allowCredentials(corsAllowCredentials).allowedOrigins(corsAllowedOrigins)
                             // Allow list of request preflight headers allowed to be sent to us from the client
                             .allowedHeaders("Accept", "Authorization", "Content-Type", "Origin", "X-On-Behalf-Of",
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/Application.java/left.java
+                                "X-Requested-With", "X-XSRF-TOKEN", "X-CORRELATION-ID", "X-REFERRER")
+                            // Allow list of response headers allowed to be sent by us (the server) to the client
+                            .exposedHeaders("Authorization", "DSPACE-XSRF-TOKEN", "Location", "WWW-Authenticate");
+                }
+                if (iiifAllowedOrigins != null) {
+                    registry.addMapping("/iiif/**").allowedMethods(CorsConfiguration.ALL)
+                            // Set Access-Control-Allow-Credentials to "true" and specify which origins are valid
+                            // for our Access-Control-Allow-Origin header
+                            .allowCredentials(iiifAllowCredentials).allowedOrigins(iiifAllowedOrigins)
+                            // Allow list of request preflight headers allowed to be sent to us from the client
+                            .allowedHeaders("Accept", "Authorization", "Content-Type", "Origin", "X-On-Behalf-Of",
+                                "X-Requested-With", "X-XSRF-TOKEN", "X-CORRELATION-ID", "X-REFERRER")
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/Application.java/base.java
+                                            "X-Requested-With", "X-XSRF-TOKEN", "X-CORRELATION-ID", "X-REFERRER")
+=======
                                 "X-Requested-With", "X-XSRF-TOKEN", "X-CORRELATION-ID", "X-REFERRER",
                                 "x-recaptcha-token")
                             // Allow list of response headers allowed to be sent by us (the server) to the client
@@ -206,6 +233,7 @@ public class Application extends SpringBootServletInitializer {
                             .allowedHeaders("Accept", "Authorization", "Content-Type", "Origin", "X-On-Behalf-Of",
                                 "X-Requested-With", "X-XSRF-TOKEN", "X-CORRELATION-ID", "X-REFERRER",
                                 "x-recaptcha-token")
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/Application.java/right.java
                             // Allow list of response headers allowed to be sent by us (the server) to the client
                             .exposedHeaders("Authorization", "DSPACE-XSRF-TOKEN", "Location", "WWW-Authenticate");
                 }

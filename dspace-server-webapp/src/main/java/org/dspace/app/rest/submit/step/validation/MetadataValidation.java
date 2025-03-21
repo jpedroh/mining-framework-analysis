@@ -80,6 +80,22 @@ public class MetadataValidation extends AbstractValidation {
                 List<String> fieldsName = new ArrayList<String>();
 
                 if (input.isQualdropValue()) {
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/submit/step/validation/MetadataValidation.java/left.java
+                    boolean foundResult = false;
+                    List<Object> inputPairs = input.getPairs();
+                    //starting from the second element of the list and skipping one every time because the display
+                    // values are also in the list and before the stored values.
+                    for (int i = 1; i < inputPairs.size(); i += 2) {
+                        String fullFieldname = input.getFieldName() + "." + (String) inputPairs.get(i);
+                        List<MetadataValue> mdv = itemService.getMetadataByMetadataString(obj.getItem(), fullFieldname);
+                        validateMetadataValues(mdv, input, config, isAuthorityControlled, fieldKey);
+                        if (mdv.size() > 0 && input.isVisible(DCInput.SUBMISSION_SCOPE)) {
+                            foundResult = true;
+                        }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/submit/step/validation/MetadataValidation.java/base.java
+                    for (Object qualifier : input.getPairs()) {
+                        fieldsName.add(input.getFieldName() + "." + (String) qualifier);
+=======
                     boolean foundResult = false;
                     List<Object> inputPairs = input.getPairs();
                     //starting from the second element of the list and skipping one every time because the display
@@ -106,7 +122,15 @@ public class MetadataValidation extends AbstractValidation {
                         addError(errors, ERROR_VALIDATION_REQUIRED,
                                 "/" + WorkspaceItemRestRepository.OPERATION_PATH_SECTIONS + "/" + config.getId() + "/" +
                                         input.getFieldName());
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/submit/step/validation/MetadataValidation.java/right.java
                     }
+                    if (input.isRequired() && ! foundResult) {
+                        // for this required qualdrop no value was found, add to the list of error fields
+                        addError(ERROR_VALIDATION_REQUIRED,
+                            "/" + WorkspaceItemRestRepository.OPERATION_PATH_SECTIONS + "/" + config.getId() + "/" +
+                                input.getFieldName());
+                    }
+
                 } else {
                     fieldsName.add(input.getFieldName());
                 }
@@ -114,34 +138,13 @@ public class MetadataValidation extends AbstractValidation {
                 for (String fieldName : fieldsName) {
                     boolean valuesRemoved = false;
                     List<MetadataValue> mdv = itemService.getMetadataByMetadataString(obj.getItem(), fieldName);
-                    if (!input.isAllowedFor(documentTypeValue)) {
-                        // Check the lookup list. If no other inputs of the same field name allow this type,
-                        // then remove. Otherwise, do not
-                        if (!(allowedFieldNames.contains(fieldName))) {
-                            itemService.removeMetadataValues(ContextUtil.obtainCurrentRequestContext(),
-                                    obj.getItem(), mdv);
-                            valuesRemoved = true;
-                            log.debug("Stripping metadata values for " + input.getFieldName() + " on type "
-                                    + documentTypeValue + " as it is allowed by another input of the same field " +
-                                    "name");
-                        } else {
-                            log.debug("Not removing unallowed metadata values for " + input.getFieldName() + " on type "
-                                    + documentTypeValue + " as it is allowed by another input of the same field " +
-                                    "name");
-                        }
-                    }
-                    validateMetadataValues(mdv, input, config, isAuthorityControlled, fieldKey, errors);
-                    if ((input.isRequired() && mdv.size() == 0) && input.isVisible(DCInput.SUBMISSION_SCOPE)
-                                                                && !valuesRemoved) {
-                        // Is the input required for *this* type? In other words, are we looking at a required
-                        // input that is also allowed for this document type
-                        if (input.isAllowedFor(documentTypeValue)) {
-                            // since this field is missing add to list of error
-                            // fields
-                            addError(errors, ERROR_VALIDATION_REQUIRED, "/"
-                                    + WorkspaceItemRestRepository.OPERATION_PATH_SECTIONS + "/" + config.getId() + "/" +
-                                            input.getFieldName());
-                        }
+                    validateMetadataValues(mdv, input, config, isAuthorityControlled, fieldKey);
+                    if ((input.isRequired() && mdv.size() == 0) && input.isVisible(DCInput.SUBMISSION_SCOPE)) {
+                        // since this field is missing add to list of error
+                        // fields
+                        addError(ERROR_VALIDATION_REQUIRED,
+                            "/" + WorkspaceItemRestRepository.OPERATION_PATH_SECTIONS + "/" + config.getId() + "/" +
+                                input.getFieldName());
                     }
                 }
             }
@@ -149,6 +152,85 @@ public class MetadataValidation extends AbstractValidation {
         return errors;
     }
 
+    private void validateMetadataValues(List<MetadataValue> mdv, DCInput input, SubmissionStepConfig config,
+                                        boolean isAuthorityControlled, String fieldKey) {
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/submit/step/validation/MetadataValidation.java/left.java
+        for (MetadataValue md : mdv) {
+            if (! (input.validate(md.getValue()))) {
+                addError(ERROR_VALIDATION_REGEX,
+                    "/" + WorkspaceItemRestRepository.OPERATION_PATH_SECTIONS + "/" + config.getId() + "/" +
+                        input.getFieldName() + "/" + md.getPlace());
+            }
+            if (isAuthorityControlled) {
+                String authKey = md.getAuthority();
+                if (metadataAuthorityService.isAuthorityRequired(fieldKey) &&
+                    StringUtils.isBlank(authKey)) {
+                    addError(ERROR_VALIDATION_AUTHORITY_REQUIRED,
+                        "/" + WorkspaceItemRestRepository.OPERATION_PATH_SECTIONS + "/" + config.getId() +
+                            "/" + input.getFieldName() + "/" + md.getPlace());
+                }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/submit/step/validation/MetadataValidation.java/base.java
+        boolean valuesRemoved = false;
+        List<MetadataValue> mdv = itemService.getMetadataByMetadataString(obj.getItem(), fieldName);
+        for (MetadataValue md : mdv) {
+            if (!(input.validate(md.getValue()))) {
+                addError(ERROR_VALIDATION_REGEX,
+                    "/" + WorkspaceItemRestRepository.OPERATION_PATH_SECTIONS + "/" + config.getId() + "/" +
+                    input.getFieldName() + "/" + md.getPlace());
+            }
+            if (isAuthorityControlled) {
+                String authKey = md.getAuthority();
+                if (metadataAuthorityService.isAuthorityRequired(fieldKey) &&
+                    StringUtils.isNotBlank(authKey)) {
+                    addError(ERROR_VALIDATION_AUTHORITY_REQUIRED,
+                        "/" + WorkspaceItemRestRepository.OPERATION_PATH_SECTIONS + "/" + config.getId() +
+                        "/" + input.getFieldName() + "/" + md.getPlace());
+                }
+=======
+        boolean valuesRemoved = false;
+        List<MetadataValue> mdv = itemService.getMetadataByMetadataString(obj.getItem(), fieldName);
+        if (!input.isAllowedFor(documentTypeValue)) {
+            // Check the lookup list. If no other inputs of the same field name allow this type,
+            // then remove. Otherwise, do not
+            if (!(allowedFieldNames.contains(fieldName))) {
+                itemService.removeMetadataValues(ContextUtil.obtainCurrentRequestContext(),
+                        obj.getItem(), mdv);
+                valuesRemoved = true;
+                log.debug("Stripping metadata values for " + input.getFieldName() + " on type "
+                        + documentTypeValue + " as it is allowed by another input of the same field " +
+                        "name");
+            } else {
+                log.debug("Not removing unallowed metadata values for " + input.getFieldName() + " on type "
+                        + documentTypeValue + " as it is allowed by another input of the same field " +
+                        "name");
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/submit/step/validation/MetadataValidation.java/right.java
+            }
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/submit/step/validation/MetadataValidation.java/left.java
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/submit/step/validation/MetadataValidation.java/base.java
+        }
+        if ((input.isRequired() && mdv.size() == 0) && input.isVisible(DCInput.SUBMISSION_SCOPE)) {
+            // since this field is missing add to list of error
+            // fields
+            addError(ERROR_VALIDATION_REQUIRED,
+                "/" + WorkspaceItemRestRepository.OPERATION_PATH_SECTIONS + "/" + config.getId() + "/" +
+                input.getFieldName());
+=======
+        }
+        validateMetadataValues(mdv, input, config, isAuthorityControlled, fieldKey, errors);
+        if ((input.isRequired() && mdv.size() == 0) && input.isVisible(DCInput.SUBMISSION_SCOPE)
+                                                    && !valuesRemoved) {
+            // Is the input required for *this* type? In other words, are we looking at a required
+            // input that is also allowed for this document type
+            if (input.isAllowedFor(documentTypeValue)) {
+                // since this field is missing add to list of error
+                // fields
+                addError(errors, ERROR_VALIDATION_REQUIRED, "/"
+                        + WorkspaceItemRestRepository.OPERATION_PATH_SECTIONS + "/" + config.getId() + "/" +
+                                input.getFieldName());
+            }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/submit/step/validation/MetadataValidation.java/right.java
+        }
+    }
 
     private void validateMetadataValues(List<MetadataValue> mdv, DCInput input, SubmissionStepConfig config,
                                         boolean isAuthorityControlled, String fieldKey,

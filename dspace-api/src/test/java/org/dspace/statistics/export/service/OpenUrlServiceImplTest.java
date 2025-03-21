@@ -27,9 +27,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.dspace.core.Context;
 import org.dspace.statistics.export.OpenURLTracker;
 import org.junit.Before;
@@ -38,6 +36,9 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
 import org.mockito.junit.MockitoJUnitRunner;
 
 /**
@@ -122,6 +123,7 @@ public class OpenUrlServiceImplTest {
         openUrlService.processUrl(context, "test-url");
 
         verify(openUrlService, times(1)).logfailed(context, "test-url");
+
     }
 
     /**
@@ -183,7 +185,25 @@ public class OpenUrlServiceImplTest {
 
     /**
      * Tests whether the timeout gets set to 10 seconds when processing a url
+     * @throws SQLException
      */
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/test/java/org/dspace/statistics/export/service/OpenUrlServiceImplTest.java/left.java
+    @Test
+    public void testTimeout() throws SQLException {
+        Context context = mock(Context.class);
+        String URL = "http://bla.com";
+
+        RequestConfig.Builder requestConfig = mock(RequestConfig.Builder.class);
+        doReturn(requestConfig).when(openUrlService).getRequestConfigBuilder();
+        doReturn(requestConfig).when(requestConfig).setConnectTimeout(10 * 1000);
+        doReturn(RequestConfig.custom().build()).when(requestConfig).build();
+
+        openUrlService.processUrl(context, URL);
+
+        Mockito.verify(requestConfig).setConnectTimeout(10 * 1000);
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/test/java/org/dspace/statistics/export/service/OpenUrlServiceImplTest.java/base.java
+=======
     @Test
     public void testTimeout() throws IOException, SQLException {
         Context context = mock(Context.class);
@@ -197,4 +217,8 @@ public class OpenUrlServiceImplTest {
         // 2. verify that getHttpClientRequestConfig sets the timeout
         assertThat(openUrlService.getHttpClientRequestConfig().getConnectTimeout(), is(10 * 1000));
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-api/src/test/java/org/dspace/statistics/export/service/OpenUrlServiceImplTest.java/right.java
+    /**
+     * Tests whether the timeout gets set to 10 seconds when processing a url
+     */
 }

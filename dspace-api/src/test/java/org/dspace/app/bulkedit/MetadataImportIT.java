@@ -94,6 +94,24 @@ public class MetadataImportIT extends AbstractIntegrationTestWithDatabase {
     }
 
     @Test
+    public void metadataImportIntoCollectionWithEntityTypeTest() throws Exception {
+        String[] csv = {"id,collection,dc.title,dc.contributor.author",
+            "+," + publicationCollection.getHandle() + ",\"Test Import 1\"," + "\"Donald, SmithImported\""};
+        performImportScript(csv);
+        Item importedItem = findItemByName("Test Import 1");
+        assertTrue(StringUtils.equals(itemService.getMetadata(importedItem, "dc", "contributor", "author", Item.ANY)
+                              .get(0).getValue(), "Donald, SmithImported"));
+        assertTrue(StringUtils.equals(itemService.getMetadata(importedItem, "dspace", "entity", "type", Item.ANY)
+                              .get(0).getValue(), "Publication"));
+        eperson = ePersonService.findByEmail(context, eperson.getEmail());
+        assertEquals(importedItem.getSubmitter(), eperson);
+
+        context.turnOffAuthorisationSystem();
+        itemService.delete(context, itemService.find(context, importedItem.getID()));
+        context.restoreAuthSystemState();
+    }
+
+    @Test
     public void metadataImportIntoCollectionWithEntityTypeWithTemplateEnabledTest() throws Exception {
         String[] csv = {"id,collection,dc.title,dc.contributor.author",
             "+," + publicationCollection.getHandle() + ",\"Test Import 1\"," + "\"Donald, SmithImported\""};

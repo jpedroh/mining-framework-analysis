@@ -89,13 +89,13 @@ import org.dspace.content.service.CollectionService;
 import org.dspace.core.Constants;
 import org.dspace.eperson.EPerson;
 import org.dspace.eperson.Group;
+import org.dspace.services.ConfigurationService;
+import org.dspace.versioning.Version;
+import org.dspace.versioning.service.VersioningService;
 import org.dspace.orcid.OrcidHistory;
 import org.dspace.orcid.OrcidQueue;
 import org.dspace.orcid.service.OrcidHistoryService;
 import org.dspace.orcid.service.OrcidQueueService;
-import org.dspace.services.ConfigurationService;
-import org.dspace.versioning.Version;
-import org.dspace.versioning.service.VersioningService;
 import org.dspace.workflow.WorkflowItem;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
@@ -112,19 +112,18 @@ public class ItemRestRepositoryIT extends AbstractControllerIntegrationTest {
     private CollectionService collectionService;
 
     @Autowired
-    private OrcidQueueService orcidQueueService;
-
-    @Autowired
-    private OrcidHistoryService orcidHistoryService;
-
-    @Autowired
     private ConfigurationService configurationService;
 
     private Item publication1;
+
     private Item author1;
+
     private Item author2;
+
     RelationshipType isAuthorOfPublication;
+
     private Relationship relationship1;
+
     private Relationship relationship2;
 
     @Test
@@ -142,12 +141,20 @@ public class ItemRestRepositoryIT extends AbstractControllerIntegrationTest {
         Collection col1 = CollectionBuilder.createCollection(context, child1).withName("Collection 1").build();
         Collection col2 = CollectionBuilder.createCollection(context, child1).withName("Collection 2").build();
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/ItemRestRepositoryIT.java/left.java
+        List<Item> items = new ArrayList();
+        // This comparator is used to sort our test Items by java.util.UUID (which sorts them based on the RFC
+        // and not based on String comparison, see also https://stackoverflow.com/a/51031298/3750035 )
+        Comparator<Item> compareByUUID = Comparator.comparing(i -> i.getID());
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/ItemRestRepositoryIT.java/base.java
+=======
         List<Item> items = new ArrayList();
         // Hibernate 5.x's org.hibernate.dialect.H2Dialect sorts UUIDs as if they are Strings.
         // So, we must compare UUIDs as if they are strings.
         // In Hibernate 6, the H2Dialect has been updated with native UUID type support, at which point
         // we'd need to update the below comparator to compare them as java.util.UUID (which sorts based on RFC 4412).
         Comparator<Item> compareByUUID = Comparator.comparing(i -> i.getID().toString());
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/ItemRestRepositoryIT.java/right.java
 
         //2. Three public items that are readable by Anonymous with different subjects
         Item publicItem1 = ItemBuilder.createItem(context, col1)
@@ -225,12 +232,20 @@ public class ItemRestRepositoryIT extends AbstractControllerIntegrationTest {
                                            .withTemplateItem()
                                            .build();
 
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/ItemRestRepositoryIT.java/left.java
+        List<Item> items = new ArrayList();
+        // This comparator is used to sort our test Items by java.util.UUID (which sorts them based on the RFC
+        // and not based on String comparison, see also https://stackoverflow.com/a/51031298/3750035 )
+        Comparator<Item> compareByUUID = Comparator.comparing(i -> i.getID());
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/ItemRestRepositoryIT.java/base.java
+=======
         List<Item> items = new ArrayList();
         // Hibernate 5.x's org.hibernate.dialect.H2Dialect sorts UUIDs as if they are Strings.
         // So, we must compare UUIDs as if they are strings.
         // In Hibernate 6, the H2Dialect has been updated with native UUID type support, at which point
         // we'd need to update the below comparator to compare them as java.util.UUID (which sorts based on RFC 4412).
         Comparator<Item> compareByUUID = Comparator.comparing(i -> i.getID().toString());
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/test/java/org/dspace/app/rest/ItemRestRepositoryIT.java/right.java
 
         //2. Three public items that are readable by Anonymous with different subjects
         Item publicItem1 = ItemBuilder.createItem(context, col1)
@@ -2231,7 +2246,6 @@ public class ItemRestRepositoryIT extends AbstractControllerIntegrationTest {
         }
     }
 
-
     @Test
     public void testDeleteItem() throws Exception {
 
@@ -2447,6 +2461,7 @@ public class ItemRestRepositoryIT extends AbstractControllerIntegrationTest {
      * BadRequestException which is what we're testing for
      * @throws Exception    If something goes wrong
      */
+
     @Test
     public void testCreateItemInArchiveFalseBadRequestException() throws Exception {
 
@@ -3278,7 +3293,6 @@ public class ItemRestRepositoryIT extends AbstractControllerIntegrationTest {
         .andExpect(jsonPath("$._embedded.bundles.page.size", is(5)))
         .andExpect(jsonPath("$._embedded.bundles.page.totalElements", is(10)));
     }
-
 
     @Test
     public void findOneTestWithEmbedsWithInvalidPageSize() throws Exception {
@@ -4632,6 +4646,12 @@ public class ItemRestRepositoryIT extends AbstractControllerIntegrationTest {
         getClient().perform(get("/api/core/items/" + item.getID() + "/version"))
                    .andExpect(status().isUnauthorized());
     }
+
+    @Autowired
+    private OrcidQueueService orcidQueueService;
+
+    @Autowired
+    private OrcidHistoryService orcidHistoryService;
 
     @Test
     public void findAccessStatusForItemBadRequestTest() throws Exception {

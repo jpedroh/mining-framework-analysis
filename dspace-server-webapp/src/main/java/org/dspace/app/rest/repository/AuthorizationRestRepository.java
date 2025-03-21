@@ -179,6 +179,33 @@ public class AuthorizationRestRepository extends DSpaceRestRepository<Authorizat
     public Page<AuthorizationRest> findByObjects(@Parameter(value = "uuid", required = true) List<String> uuidList,
             @Parameter(value = "type", required = true) String type,
             @Parameter(value = "eperson") UUID epersonUuid, @Parameter(value = "feature") List<String> featureNames,
+<<<<<<< /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/repository/AuthorizationRestRepository.java/left.java
+            Pageable pageable) throws AuthorizeException, SQLException {
+
+        Context context = obtainContext();
+
+        EPerson currUser = context.getCurrentUser();
+
+        // get the user specified in the requested parameters, can be null for anonymous
+        EPerson user = getUserFromRequestParameter(context, epersonUuid);
+        if (ObjectUtils.notEqual(currUser, user)) {
+            // Temporarily change the Context's current user in order to retrieve
+            // authorizations based on that user
+            context.switchContextUser(user);
+        }
+
+        List<Authorization> authorizations =
+                findAuthorizationsByUUIDList(context, type, uuidList, user, featureNames);
+
+        if (ObjectUtils.notEqual(currUser, user)) {
+            // restore the real current user
+            context.restoreContextUser();
+        }
+        return converter.toRestPage(authorizations, null, utils.obtainProjection());
+    }
+||||||| /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/repository/AuthorizationRestRepository.java/base.java
+            Pageable pageable) throws AuthorizeException, SQLException 
+=======
             Pageable pageable) throws AuthorizeException, SQLException {
 
         Context context = obtainContext();
@@ -202,6 +229,7 @@ public class AuthorizationRestRepository extends DSpaceRestRepository<Authorizat
         }
         return converter.toRestPage(authorizations, pageable, utils.obtainProjection());
     }
+>>>>>>> /usr/src/app/output/dspace/dspace/c65314db9d4f1df5539b4785a5b234ee3ab8a2a5/dspace-server-webapp/src/main/java/org/dspace/app/rest/repository/AuthorizationRestRepository.java/right.java
 
     private List<Authorization> findAuthorizationsByUUIDList(
         Context context,
