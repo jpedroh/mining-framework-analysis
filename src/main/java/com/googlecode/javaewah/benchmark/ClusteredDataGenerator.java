@@ -1,12 +1,5 @@
 package com.googlecode.javaewah.benchmark;
 
-
-/*
- * Copyright 2009-2013, Daniel Lemire, Cliff Moon, David McIntosh, Robert Becho, Google Inc., Veronika Zenz and Owen Kaser
- * Licensed under APL 2.0.
- */
-
-
 /**
  * This class will generate lists of random integers with a "clustered" distribution.  
  * Reference:
@@ -15,22 +8,21 @@ package com.googlecode.javaewah.benchmark;
  * @author Daniel Lemire
  */
 public class ClusteredDataGenerator {
-
   /**
  * 
  */
-public ClusteredDataGenerator() {
-	  unidg = new UniformDataGenerator();
+  public ClusteredDataGenerator() {
+    unidg = new UniformDataGenerator();
   }
 
   /**
  * @param seed random seed
  */
-public ClusteredDataGenerator(final int seed) {
-	  unidg = new UniformDataGenerator(seed);
-}
+  public ClusteredDataGenerator(final int seed) {
+    unidg = new UniformDataGenerator(seed);
+  }
 
-/**
+  /**
    * generates randomly N distinct integers from 0 to Max.
    * @param N number of integers
    * @param Max maximum integer value 
@@ -48,31 +40,28 @@ public ClusteredDataGenerator(final int seed) {
       fillUniform(array, offset, length, Min, Max);
       return;
     }
-    final int cut = length / 2
-      + ((range - length - 1 > 0) ? this.unidg.rand.nextInt(range - length - 1) : 0);
+    final int cut = length / 2 + ((range - length - 1 > 0) ? this.unidg.rand.nextInt(range - length - 1) : 0);
     final double p = this.unidg.rand.nextDouble();
     if (p < 0.25) {
       fillUniform(array, offset, length / 2, Min, Min + cut);
-      fillClustered(array, offset + length / 2, length - length / 2, Min + cut,
-        Max);
-    } else if (p < 0.5) {
-      fillClustered(array, offset, length / 2, Min, Min + cut);
-      fillUniform(array, offset + length / 2, length - length / 2, Min + cut,
-        Max);
+      fillClustered(array, offset + length / 2, length - length / 2, Min + cut, Max);
     } else {
-      fillClustered(array, offset, length / 2, Min, Min + cut);
-      fillClustered(array, offset + length / 2, length - length / 2, Min + cut,
-        Max);
+      if (p < 0.5) {
+        fillClustered(array, offset, length / 2, Min, Min + cut);
+        fillUniform(array, offset + length / 2, length - length / 2, Min + cut, Max);
+      } else {
+        fillClustered(array, offset, length / 2, Min, Min + cut);
+        fillClustered(array, offset + length / 2, length - length / 2, Min + cut, Max);
+      }
     }
   }
 
   void fillUniform(int[] array, int offset, int length, int Min, int Max) {
     int[] v = this.unidg.generateUniform(length, Max - Min);
-    for (int k = 0; k < v.length; ++k)
+    for (int k = 0; k < v.length; ++k) {
       array[k + offset] = Min + v[k];
+    }
   }
 
   UniformDataGenerator unidg;
-
 }
-
