@@ -1,25 +1,7 @@
-/*
- * Copyright 2004-2006 Stefan Reuter
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *
- */
 package org.asteriskjava.live;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
 import org.asteriskjava.util.MixMonitorDirection;
 
 /**
@@ -46,57 +28,72 @@ import org.asteriskjava.util.MixMonitorDirection;
  * 
  * @author srt
  */
-public interface AsteriskChannel extends LiveObject
-{
-    String PROPERTY_ID = "id";
-    String PROPERTY_NAME = "name";
-    String PROPERTY_CALLER_ID = "callerId";
-    String PROPERTY_STATE = "state";
-    String PROPERTY_ACCOUNT = "account";
-    String PROPERTY_CURRENT_EXTENSION = "currentExtension";
-    String PROPERTY_CALL_DETAIL_RECORD = "callDetailRecord";
-    String PROPERTY_DIALED_CHANNEL = "dialedChannel";
-    String PROPERTY_DIALING_CHANNEL = "dialingChannel";
-    String PROPERTY_LINKED_CHANNEL = "linkedChannel";
-    String PROPERTY_MEET_ME_USER = "meetMeUser";
-    String PROPERTY_QUEUE_ENTRY = "queueEntry";
-    String PROPERTY_PARKED_AT = "parkedAt";
-    String PROPERTY_DTMF_RECEIVED = "dtmfReceived";
-    String PROPERTY_DTMF_SENT = "dtmfSent";
-    String PROPERTY_MONITORED = "monitored";
+public interface AsteriskChannel extends LiveObject {
+  String PROPERTY_ID = "id";
 
-    String VARIABLE_MONITOR_EXEC = "MONITOR_EXEC";
-    String VARIABLE_MONITOR_EXEC_ARGS = "MONITOR_EXEC_ARGS";
+  String PROPERTY_NAME = "name";
 
-    /**
+  String PROPERTY_CALLER_ID = "callerId";
+
+  String PROPERTY_STATE = "state";
+
+  String PROPERTY_ACCOUNT = "account";
+
+  String PROPERTY_CURRENT_EXTENSION = "currentExtension";
+
+  String PROPERTY_CALL_DETAIL_RECORD = "callDetailRecord";
+
+  String PROPERTY_DIALED_CHANNEL = "dialedChannel";
+
+  String PROPERTY_DIALING_CHANNEL = "dialingChannel";
+
+  String PROPERTY_LINKED_CHANNEL = "linkedChannel";
+
+  String PROPERTY_MEET_ME_USER = "meetMeUser";
+
+  String PROPERTY_QUEUE_ENTRY = "queueEntry";
+
+  String PROPERTY_PARKED_AT = "parkedAt";
+
+  String PROPERTY_DTMF_RECEIVED = "dtmfReceived";
+
+  String PROPERTY_DTMF_SENT = "dtmfSent";
+
+  String PROPERTY_MONITORED = "monitored";
+
+  String VARIABLE_MONITOR_EXEC = "MONITOR_EXEC";
+
+  String VARIABLE_MONITOR_EXEC_ARGS = "MONITOR_EXEC_ARGS";
+
+  /**
      * Returns the unique id of this channel, for example "1099015093.165".
      * 
      * @return the unique id of this channel.
      */
-    String getId();
+  String getId();
 
-    /**
+  /**
      * Returns the name of this channel, for example "SIP/1310-20da".
      * 
      * @return the name of this channel.
      */
-    String getName();
+  String getName();
 
-    /**
+  /**
      * Returns the caller id of this channel.
      * 
      * @return the caller id of this channel.
      */
-    CallerId getCallerId();
+  CallerId getCallerId();
 
-    /**
+  /**
      * Returns the state of this channel.
      * 
      * @return the state of this channel.
      */
-    ChannelState getState();
+  ChannelState getState();
 
-    /**
+  /**
      * Checks if this channel was at least once in the given state.
      * <p>
      * For example you can use this method the check if this channel had been
@@ -111,58 +108,58 @@ public interface AsteriskChannel extends LiveObject
      *         given state; <code>false</code> otherwise.
      * @since 0.3
      */
-    boolean wasInState(ChannelState state);
+  boolean wasInState(ChannelState state);
 
-    /**
+  /**
      * Checks if this channel was busy.
      * 
      * @return <code>true</code> if this channel was busy; <code>false</code>
      *         otherwise.
      * @since 0.3
      */
-    boolean wasBusy();
+  boolean wasBusy();
 
-    /**
+  /**
      * Returns the account code used to bill this channel.
      * 
      * @return the account code used to bill this channel.
      */
-    String getAccount();
+  String getAccount();
 
-    /**
+  /**
      * Returns the last visited dialplan entry.
      * 
      * @return the last visited dialplan entry.
      * @since 0.2
      */
-    Extension getCurrentExtension();
+  Extension getCurrentExtension();
 
-    /**
+  /**
      * Returns the first visited dialplan entry.
      * 
      * @return the first visited dialplan entry.
      * @since 0.2
      */
-    Extension getFirstExtension();
+  Extension getFirstExtension();
 
-    /**
+  /**
      * Returns a list of all visited dialplan entries.
      * 
      * @return a list of all visited dialplan entries.
      * @since 0.3
      */
-    List<ExtensionHistoryEntry> getExtensionHistory();
+  List<ExtensionHistoryEntry> getExtensionHistory();
 
-    /**
+  /**
      * Returns the date this channel has been created.
      * <p>
      * This property is immutable.
      * 
      * @return the date this channel has been created.
      */
-    Date getDateOfCreation();
+  Date getDateOfCreation();
 
-    /**
+  /**
      * Returns the date this channel has left the Asterisk server for example by
      * a hangup.
      * 
@@ -170,9 +167,9 @@ public interface AsteriskChannel extends LiveObject
      *         <code>null</code> if this channel is still active.
      * @since 0.3
      */
-    Date getDateOfRemoval();
+  Date getDateOfRemoval();
 
-    /**
+  /**
      * Returns the reason for hangup.
      * 
      * @return the reason for hangup or <code>null</code> if the channel has
@@ -180,9 +177,9 @@ public interface AsteriskChannel extends LiveObject
      *         type of channel.
      * @since 0.3
      */
-    HangupCause getHangupCause();
+  HangupCause getHangupCause();
 
-    /**
+  /**
      * Returns a textual representation of the reason for hangup.
      * 
      * @return the textual representation of the reason for hangup or
@@ -191,17 +188,17 @@ public interface AsteriskChannel extends LiveObject
      *         cause is available an empty String may be returned, too.
      * @since 0.3
      */
-    String getHangupCauseText();
+  String getHangupCauseText();
 
-    /**
+  /**
      * Returns the call detail record for this channel.
      * 
      * @return the call detail record for this channel or <code>null</code> if
      *         none has (yet) been received.
      */
-    CallDetailRecord getCallDetailRecord();
+  CallDetailRecord getCallDetailRecord();
 
-    /**
+  /**
      * Returns the channel that has been dialed by this channel most recently,
      * this is the destination channel that was created because this channel
      * dialed it.
@@ -209,49 +206,49 @@ public interface AsteriskChannel extends LiveObject
      * @return the channel that has been dialed by this channel or
      *         <code>null</code> if none has been dialed.
      */
-    AsteriskChannel getDialedChannel();
+  AsteriskChannel getDialedChannel();
 
-    /**
+  /**
      * Returns a list of all channels that have been dialed by this channel.
      * 
      * @return a list of all channels that have been dialed by this channel.
      */
-    List<DialedChannelHistoryEntry> getDialedChannelHistory();
+  List<DialedChannelHistoryEntry> getDialedChannelHistory();
 
-    /**
+  /**
      * Returns the channel that was dialing this channel, this is the source
      * channel that created this channel by dialing it.
      * 
      * @return the channel that was dialing this channel or <code>null</code>
      *         if none was dialing.
      */
-    AsteriskChannel getDialingChannel();
+  AsteriskChannel getDialingChannel();
 
-    /**
+  /**
      * Returns the channel this channel is currently bridged with, if any.
      * 
      * @return the channel this channel is bridged with, or <code>null</code>
      *         if this channel is currently not bridged to another channel.
      */
-    AsteriskChannel getLinkedChannel();
+  AsteriskChannel getLinkedChannel();
 
-    /**
+  /**
      * Returns a list of all channels this channel was briged with.
      * 
      * @return a list of all channels this channel was briged with.
      */
-    List<LinkedChannelHistoryEntry> getLinkedChannelHistory();
+  List<LinkedChannelHistoryEntry> getLinkedChannelHistory();
 
-    /**
+  /**
      * Indicates if this channel was linked to another channel at least once.
      * 
      * @return <code>true</code> if this channel was linked to another channel
      *         at least once, <code>false</code> otherwise.
      * @since 0.2
      */
-    boolean wasLinked();
+  boolean wasLinked();
 
-    /**
+  /**
      * Returns the MeetMeUser associated with this channel if this channel is
      * currently taking part in a MeetMe conference.
      * 
@@ -259,24 +256,24 @@ public interface AsteriskChannel extends LiveObject
      *         if this channel is currently not taking part in a MeetMe
      *         conference.
      */
-    MeetMeUser getMeetMeUser();
+  MeetMeUser getMeetMeUser();
 
-    /**
+  /**
      * Returns the queue entry associated with this channel.
      *
      * @return the queue entry associated with this channel if any, <code>null</code> otherwise.
      */
-    AsteriskQueueEntry getQueueEntry();
-    
-    /**
+  AsteriskQueueEntry getQueueEntry();
+
+  /**
      * Return the extension to dial to pickup he channel of the parking if the channel is
      * currently parked.
      *
      * @return the Extension to dial, <code>null</code> if not currently parked.
      */
-    Extension getParkedAt();
+  Extension getParkedAt();
 
-    /**
+  /**
      * Returns the channel variables as received by
      * {@link org.asteriskjava.manager.event.VarSetEvent VarSetEvents}.<p>
      * Available since Asterisk 1.6.
@@ -284,35 +281,33 @@ public interface AsteriskChannel extends LiveObject
      * @return the channel variables.
      * @since 1.0.0
      */
-    Map<String, String> getVariables();
+  Map<String, String> getVariables();
 
-    /**
+  /**
      * Returns the last DTMF digit received on this channels.
      *
      * @return the last DTMF digit received on this channels or <code>null</code> if none has yet been received.
      * @since 1.0.0
      */
-    Character getDtmfReceived();
+  Character getDtmfReceived();
 
-    /**
+  /**
      * Returns the last DTMF digit sent on this channels.
      *
      * @return the last DTMF digit sent on this channels or <code>null</code> if none has yet been sent.
      * @since 1.0.0
      */
-    Character getDtmfSent();
+  Character getDtmfSent();
 
-    /**
+  /**
      * Return the actual MONITOR state.
      *
      * @retrun the actual Monitor state of this channel.
      * @since 1.0.1
      */
-    boolean isMonitored();
+  boolean isMonitored();
 
-    /* Actions */
-    
-    /**
+  /**
      * Hangs up this channel.
      * 
      * @throws ManagerCommunicationException if the hangup action cannot be sent
@@ -321,9 +316,9 @@ public interface AsteriskChannel extends LiveObject
      *             before the hangup was sent.
      * @since 0.3
      */
-    void hangup() throws ManagerCommunicationException, NoSuchChannelException;
+  void hangup() throws ManagerCommunicationException, NoSuchChannelException;
 
-    /**
+  /**
      * Hangs up this channel using a given cause code. The cause code is mainly
      * used for Zap PRI channels where it makes Asterisk send a PRI DISCONNECT
      * message with the set CAUSE element to the switch.
@@ -335,9 +330,9 @@ public interface AsteriskChannel extends LiveObject
      *             before the hangup was sent.
      * @since 0.3
      */
-    void hangup(HangupCause cause) throws ManagerCommunicationException, NoSuchChannelException;
+  void hangup(HangupCause cause) throws ManagerCommunicationException, NoSuchChannelException;
 
-    /**
+  /**
      * Sets the absolute maximum amount of time permitted for a call on a given
      * channel, it hangs up the channel after this time.
      * <p>
@@ -352,11 +347,9 @@ public interface AsteriskChannel extends LiveObject
      *             before the absolute timeout was set.
      * @since 0.3
      */
-    //TODO exception when setting it to 0: NoSuchChannelException: Channel 
-    // 'SIP/248-0a02fcd0' is not available: No timeout specified
-    void setAbsoluteTimeout(int seconds) throws ManagerCommunicationException, NoSuchChannelException;
+  void setAbsoluteTimeout(int seconds) throws ManagerCommunicationException, NoSuchChannelException;
 
-    /**
+  /**
      * Redirects this channel to a new extension.
      * <p>
      * If this channel is linked to another channel, the linked channel is hung
@@ -371,9 +364,9 @@ public interface AsteriskChannel extends LiveObject
      *             the redirect was sent.
      * @since 0.3
      */
-    void redirect(String context, String exten, int priority) throws ManagerCommunicationException, NoSuchChannelException;
+  void redirect(String context, String exten, int priority) throws ManagerCommunicationException, NoSuchChannelException;
 
-    /**
+  /**
      * Redirects this channel and the channel this channel is linked to to a new
      * extension.
      * <p>
@@ -389,10 +382,9 @@ public interface AsteriskChannel extends LiveObject
      *             the redirect was sent.
      * @since 0.3
      */
-    void redirectBothLegs(String context, String exten, int priority) throws ManagerCommunicationException,
-            NoSuchChannelException;
+  void redirectBothLegs(String context, String exten, int priority) throws ManagerCommunicationException, NoSuchChannelException;
 
-    /**
+  /**
      * Returns the value of the given channel variable.
      * <p>
      * Currently Asterisk does not support the retrieval of built-in variables
@@ -408,9 +400,9 @@ public interface AsteriskChannel extends LiveObject
      *             the variable was requested.
      * @since 0.3
      */
-    String getVariable(String variable) throws ManagerCommunicationException, NoSuchChannelException;
+  String getVariable(String variable) throws ManagerCommunicationException, NoSuchChannelException;
 
-    /**
+  /**
      * Sets the value of the given channel variable.
      * 
      * @param variable the name of the channel variable to set.
@@ -421,9 +413,9 @@ public interface AsteriskChannel extends LiveObject
      *             the variable was set.
      * @since 0.3
      */
-    void setVariable(String variable, String value) throws ManagerCommunicationException, NoSuchChannelException;
+  void setVariable(String variable, String value) throws ManagerCommunicationException, NoSuchChannelException;
 
-    /**
+  /**
      * Plays the given DTMF digit on this channel.
      * <p>
      * Available since Asterisk 1.2.8
@@ -436,9 +428,9 @@ public interface AsteriskChannel extends LiveObject
      * @throws IllegalArgumentException if the digit is <code>null</code>.
      * @since 0.3
      */
-    void playDtmf(String digit) throws ManagerCommunicationException, NoSuchChannelException, IllegalArgumentException;
+  void playDtmf(String digit) throws ManagerCommunicationException, NoSuchChannelException, IllegalArgumentException;
 
-    /**
+  /**
      * Starts monitoring (recording) this channel.
      * <p>
      * The format of the files is "wav", they are not mixed.
@@ -456,9 +448,9 @@ public interface AsteriskChannel extends LiveObject
      * @see #pauseMonitoring()
      * @since 0.3
      */
-    void startMonitoring(String filename) throws ManagerCommunicationException, NoSuchChannelException;
+  void startMonitoring(String filename) throws ManagerCommunicationException, NoSuchChannelException;
 
-    /**
+  /**
      * Starts monitoring (recording) this channel using the given audio format.
      * <p>
      * The files are not mixed.
@@ -478,9 +470,9 @@ public interface AsteriskChannel extends LiveObject
      * @see #pauseMonitoring()
      * @since 0.3
      */
-    void startMonitoring(String filename, String format) throws ManagerCommunicationException, NoSuchChannelException;
+  void startMonitoring(String filename, String format) throws ManagerCommunicationException, NoSuchChannelException;
 
-    /**
+  /**
      * Starts monitoring (recording) this channel using the given audio format
      * and optionally mixing input and output data after recording is finished.
      * <p>
@@ -529,10 +521,9 @@ public interface AsteriskChannel extends LiveObject
      * @see #pauseMonitoring()
      * @since 0.3
      */
-    void startMonitoring(String filename, String format, boolean mix) throws ManagerCommunicationException,
-            NoSuchChannelException;
+  void startMonitoring(String filename, String format, boolean mix) throws ManagerCommunicationException, NoSuchChannelException;
 
-    /**
+  /**
      * Changes the filename of a previously started monitoring.
      * <p>
      * If the channel exists but is not currently monitored your request is
@@ -551,10 +542,9 @@ public interface AsteriskChannel extends LiveObject
      * @see #pauseMonitoring()
      * @since 0.3
      */
-    void changeMonitoring(String filename) throws ManagerCommunicationException, NoSuchChannelException,
-            IllegalArgumentException;
+  void changeMonitoring(String filename) throws ManagerCommunicationException, NoSuchChannelException, IllegalArgumentException;
 
-    /**
+  /**
      * Stops monitoring this channel.
      * <p>
      * If the channel exists but is not currently monitored your request is
@@ -569,9 +559,9 @@ public interface AsteriskChannel extends LiveObject
      * @see #startMonitoring(String, String, boolean)
      * @since 0.3
      */
-    void stopMonitoring() throws ManagerCommunicationException, NoSuchChannelException;
+  void stopMonitoring() throws ManagerCommunicationException, NoSuchChannelException;
 
-    /**
+  /**
      * Temporarily stops monitoring this channel.
      * <p>
      * If the channel exists but is not currently monitored your request is
@@ -586,9 +576,9 @@ public interface AsteriskChannel extends LiveObject
      * @see #unpauseMonitoring()
      * @since 0.3
      */
-    void pauseMonitoring() throws ManagerCommunicationException, NoSuchChannelException;
+  void pauseMonitoring() throws ManagerCommunicationException, NoSuchChannelException;
 
-    /**
+  /**
      * Re-enables monitoring this channel after calling
      * {@link #pauseMonitoring()}.
      * <p>
@@ -604,10 +594,9 @@ public interface AsteriskChannel extends LiveObject
      * @see #pauseMonitoring()
      * @since 0.3
      */
-    void unpauseMonitoring() throws ManagerCommunicationException, NoSuchChannelException;
-    
-    
-    /**
+  void unpauseMonitoring() throws ManagerCommunicationException, NoSuchChannelException;
+
+  /**
      * Temporarily stops monitoring this channel if this is monitored with MixMonitor.
      * <p>
      * If the channel exists but is not currently monitored your request is
@@ -621,10 +610,9 @@ public interface AsteriskChannel extends LiveObject
      * @see #unPauseMixMonitor(org.asteriskjava.util.MixMonitorDirection)
      * @since 1.0.0
      */
-    void pauseMixMonitor(MixMonitorDirection direction) throws ManagerCommunicationException, NoSuchChannelException;
-    
-    
-    /**
+  void pauseMixMonitor(MixMonitorDirection direction) throws ManagerCommunicationException, NoSuchChannelException;
+
+  /**
      * Re-enables monitoring this channel after calling
      * {@link #pauseMixMonitor(org.asteriskjava.util.MixMonitorDirection)} ()}
      * if this is monitored with MixMonitor
@@ -640,6 +628,5 @@ public interface AsteriskChannel extends LiveObject
      * @see #pauseMixMonitor(org.asteriskjava.util.MixMonitorDirection)
      * @since 1.0.0
      */
-    void unPauseMixMonitor(MixMonitorDirection direction) throws ManagerCommunicationException, NoSuchChannelException;
-    
+  void unPauseMixMonitor(MixMonitorDirection direction) throws ManagerCommunicationException, NoSuchChannelException;
 }
