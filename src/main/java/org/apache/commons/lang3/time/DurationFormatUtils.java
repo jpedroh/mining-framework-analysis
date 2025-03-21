@@ -681,9 +681,15 @@ public class DurationFormatUtils {
         /**
          * Wraps a token around a value. A value would be something like a 'Y'.
          *
-         * @param value value to wrap, non-null.
+<<<<<<< /usr/src/app/output/apache/commons-lang/dfc04a04cfa04c378d9a001354ede6e2e3e4d02b/src/main/java/org/apache/commons/lang3/time/DurationFormatUtils.java/left.java
+         * @param value value to wrap
          * @param optional whether the token is optional
          * @param optionalIndex the index of the optional token within the pattern
+||||||| /usr/src/app/output/apache/commons-lang/dfc04a04cfa04c378d9a001354ede6e2e3e4d02b/src/main/java/org/apache/commons/lang3/time/DurationFormatUtils.java/base.java
+         * @param value to wrap
+=======
+         * @param value to wrap, non-null.
+>>>>>>> /usr/src/app/output/apache/commons-lang/dfc04a04cfa04c378d9a001354ede6e2e3e4d02b/src/main/java/org/apache/commons/lang3/time/DurationFormatUtils.java/right.java
          */
         Token(final Object value, final boolean optional, final int optionalIndex) {
             this.value = value;
@@ -691,6 +697,34 @@ public class DurationFormatUtils {
             if (optional) {
                 this.optionalIndex = optionalIndex;
             }
+<<<<<<< /usr/src/app/output/apache/commons-lang/dfc04a04cfa04c378d9a001354ede6e2e3e4d02b/src/main/java/org/apache/commons/lang3/time/DurationFormatUtils.java/left.java
+||||||| /usr/src/app/output/apache/commons-lang/dfc04a04cfa04c378d9a001354ede6e2e3e4d02b/src/main/java/org/apache/commons/lang3/time/DurationFormatUtils.java/base.java
+        }
+
+        /**
+         * Wraps a token around a repeated number of a value, for example it would
+         * store 'yyyy' as a value for y and a count of 4.
+         *
+         * @param value to wrap
+         * @param count to wrap
+         */
+        Token(final Object value, final int count) {
+            this.value = value;
+            this.count = count;
+=======
+        }
+
+        /**
+         * Wraps a token around a repeated number of a value, for example it would
+         * store 'yyyy' as a value for y and a count of 4.
+         *
+         * @param value to wrap, non-null.
+         * @param count to wrap.
+         */
+        Token(final Object value, final int count) {
+            this.value = Objects.requireNonNull(value, "value");
+            this.count = count;
+>>>>>>> /usr/src/app/output/apache/commons-lang/dfc04a04cfa04c378d9a001354ede6e2e3e4d02b/src/main/java/org/apache/commons/lang3/time/DurationFormatUtils.java/right.java
         }
 
         /**
