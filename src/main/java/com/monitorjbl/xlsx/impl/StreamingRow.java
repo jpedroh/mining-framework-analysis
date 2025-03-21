@@ -181,14 +181,6 @@ public class StreamingRow implements Row {
    * Not supported
    */
   @Override
-  public Cell createCell(int column, int type) {
-    throw new NotSupportedException();
-  }
-
-  /**
-   * Not supported
-   */
-  @Override
   public Cell createCell(int i, CellType cellType) {
     throw new NotSupportedException();
   }
@@ -222,6 +214,14 @@ public class StreamingRow implements Row {
    */
   @Override
   public void setZeroHeight(boolean zHeight) {
+    throw new NotSupportedException();
+  }
+
+  /**
+   * Not supported
+   */
+  @Override
+  public void setHeightInPoints(float height) {
     throw new NotSupportedException();
   }
 

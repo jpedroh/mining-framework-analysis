@@ -60,14 +60,6 @@ public class StreamingCell implements Cell {
     this.rowIndex = rowIndex;
     this.use1904Dates = use1904Dates;
   }
-
-  String getRawCachedFormulaResultType() {
-    return cachedFormulaResultType;
-  }
-
-  boolean supportsSupplierOverride() {
-    return "n".equals(cachedFormulaResultType);
-  }
   
   public void setCommentsTableSupplier(Supplier commentsTableSupplier) {
     this.commentsTableSupplier = commentsTableSupplier;
@@ -133,6 +125,7 @@ public class StreamingCell implements Cell {
    *
    * @return zero-based column index of a column in a sheet.
    */
+
   @Override
   public int getColumnIndex() {
     return columnIndex;
@@ -143,6 +136,7 @@ public class StreamingCell implements Cell {
    *
    * @return zero-based row index of a row in the sheet that contains this cell
    */
+
   @Override
   public int getRowIndex() {
     return rowIndex;
@@ -154,6 +148,7 @@ public class StreamingCell implements Cell {
    *
    * @return the Row that owns this cell
    */
+
   @Override
   public Row getRow() {
     return row;
@@ -164,6 +159,7 @@ public class StreamingCell implements Cell {
    *
    * @return the cell type
    */
+
   @Override
   public CellType getCellType() {
     if(formulaType) {
@@ -191,6 +187,7 @@ public class StreamingCell implements Cell {
    * @return the cell type
    * Will be renamed to <code>getCellType()</code> when we make the CellType enum transition in POI 4.0. See bug 59791.
    */
+
   @Override
   @Deprecated
   public CellType getCellTypeEnum() {
@@ -203,6 +200,7 @@ public class StreamingCell implements Cell {
    *
    * @return the value of the cell as a string
    */
+
   @Override
   public String getStringCellValue() {
     Object c = contentsSupplier.getContent();
@@ -217,6 +215,7 @@ public class StreamingCell implements Cell {
    * @return the value of the cell as a number
    * @throws NumberFormatException if the cell value isn't a parsable <code>double</code>.
    */
+
   @Override
   public double getNumericCellValue() {
     return rawContents == null ? 0.0 : Double.parseDouble((String) rawContents);
@@ -230,6 +229,7 @@ public class StreamingCell implements Cell {
    * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is CELL_TYPE_STRING
    * @throws NumberFormatException if the cell value isn't a parsable <code>double</code>.
    */
+
   @Override
   public Date getDateCellValue() {
     if(getCellType() == CellType.STRING){
@@ -244,6 +244,7 @@ public class StreamingCell implements Cell {
    *
    * @return the value of the cell as a date
    */
+
   @Override
   public boolean getBooleanCellValue() {
     CellType cellType = getCellType();
@@ -269,6 +270,7 @@ public class StreamingCell implements Cell {
   /**
    * Used to help format error messages
    */
+
   private static String getCellTypeName(CellType cellType) {
     switch (cellType) {
       case BLANK:   return "blank";
@@ -284,6 +286,7 @@ public class StreamingCell implements Cell {
   /**
    * @return the style of the cell
    */
+
   @Override
   public CellStyle getCellStyle() {
     return this.cellStyle;
@@ -295,6 +298,7 @@ public class StreamingCell implements Cell {
    * @return a formula for the cell
    * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is not CELL_TYPE_FORMULA
    */
+
   @Override
   public String getCellFormula() {
     if (!formulaType)
@@ -308,6 +312,7 @@ public class StreamingCell implements Cell {
    *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
    * on the cached value of the formula
    */
+
   @Override
   public CellType getCachedFormulaResultType() {
     if (formulaType) {
@@ -334,6 +339,7 @@ public class StreamingCell implements Cell {
    *
    * @return the comment set to the current cell or null if not set or comments reading is not enabled
    */
+
   @Override
   public Comment getCellComment() {
     CellAddress ref = new CellAddress(rowIndex, columnIndex);
@@ -349,10 +355,13 @@ public class StreamingCell implements Cell {
   /**
    * {@inheritDoc}
    */
+
   @Override
   public CellAddress getAddress() {
     return new CellAddress(rowIndex, columnIndex);
   }
+
+  /* Not supported */
 
   /**
    * Not supported
