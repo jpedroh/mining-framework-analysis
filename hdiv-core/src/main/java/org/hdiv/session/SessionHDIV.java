@@ -1,25 +1,7 @@
-/**
- * Copyright 2005-2015 hdiv.org
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * 	http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.hdiv.session;
-
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hdiv.exception.HDIVException;
@@ -38,60 +20,51 @@ import org.springframework.beans.factory.BeanFactoryAware;
  * @author Roberto Velasco
  */
 public class SessionHDIV implements ISession, BeanFactoryAware {
-
-	/**
+  /**
 	 * Commons Logging instance.
 	 */
-	private static final Log log = LogFactory.getLog(SessionHDIV.class);
+  private static final Log log = LogFactory.getLog(SessionHDIV.class);
 
-	/**
+  /**
 	 * The root interface for accessing a Spring bean container.
 	 * 
 	 * @see org.springframework.beans.factory.BeanFactory
 	 */
-	private BeanFactory beanFactory;
+  private BeanFactory beanFactory;
 
-	/**
+  /**
 	 * The cacheName
 	 */
-	private String cacheName = Constants.STATE_CACHE_NAME;
+  private String cacheName = Constants.STATE_CACHE_NAME;
 
-	/**
+  /**
 	 * The pageIdGeneratorName
 	 */
-	private String pageIdGeneratorName = Constants.PAGE_ID_GENERATOR_NAME;
+  private String pageIdGeneratorName = Constants.PAGE_ID_GENERATOR_NAME;
 
-	/**
+  /**
 	 * Obtains from the user session the page identifier for the current request.
 	 * 
 	 * @return Returns the pageId.
 	 */
-	public int getPageId() {
+  public int getPageId() {
+    HttpSession session = this.getHttpSession();
+    PageIdGenerator pageIdGenerator = (PageIdGenerator) session.getAttribute(this.pageIdGeneratorName);
+    if (pageIdGenerator == null) {
+      pageIdGenerator = this.beanFactory.getBean(PageIdGenerator.class);
+    }
+    if (pageIdGenerator == null) {
+      throw new HDIVException("session.nopageidgenerator");
+    }
+    int id = pageIdGenerator.getNextPageId();
+    if (id <= 0) {
+      throw new HDIVException("Incorrect PageId generated [" + id + "]. PageId must be greater than 0.");
+    }
+    session.setAttribute(this.pageIdGeneratorName, pageIdGenerator);
+    return id;
+  }
 
-		HttpSession session = this.getHttpSession();
-
-		PageIdGenerator pageIdGenerator = (PageIdGenerator) session.getAttribute(this.pageIdGeneratorName);
-		if (pageIdGenerator == null) {
-			pageIdGenerator = this.beanFactory.getBean(PageIdGenerator.class);
-		}
-		if (pageIdGenerator == null) {
-			throw new HDIVException("session.nopageidgenerator");
-		}
-
-		int id = pageIdGenerator.getNextPageId();
-
-		// PageId must be greater than 0
-		if (id <= 0) {
-			throw new HDIVException("Incorrect PageId generated [" + id + "]. PageId must be greater than 0.");
-		}
-
-		session.setAttribute(this.pageIdGeneratorName, pageIdGenerator);
-
-		return id;
-
-	}
-
-	/**
+  /**
 	 * Returns the page with id <code>pageId</code>.
 	 * 
 	 * @param pageId
@@ -99,91 +72,64 @@ public class SessionHDIV implements ISession, BeanFactoryAware {
 	 * @return Returns the page with id <code>pageId</code>.
 	 * @since HDIV 2.0.4
 	 */
-	public IPage getPage(int pageId) {
-		try {
+  public IPage getPage(int pageId) {
+    try {
+      HttpSession session = getHttpSession();
+      return this.getPageFromSession(session, pageId);
+    } catch (IllegalStateException e) {
+      throw new HDIVException(HDIVErrorCodes.PAGE_ID_INCORRECT, e);
+    }
+  }
 
-			HttpSession session = getHttpSession();
-			return this.getPageFromSession(session, pageId);
-
-		} catch (IllegalStateException e) {
-			throw new HDIVException(HDIVErrorCodes.PAGE_ID_INCORRECT, e);
-		}
-	}
-
-	/**
+  /**
 	 * It adds a new page to the user session. To do this it adds a new page identifier to the cache and if it has
 	 * reached the maximum size allowed, the oldest page is deleted from the session and from the cache itself.
 	 * 
 	 * @param pageId
 	 *            Page identifier
-	 * @param newPage
+	 * @param newPageObject
 	 *            Page with all the information about states
 	 * @param isPartial
-	 *            If is a partial page
+	 * 			  If is a partial page
 	 */
-	protected void addPage(int pageId, IPage newPage, boolean isPartial) {
+  protected void addPage(int pageId, IPage newPage, boolean isPartial) {
+    HttpServletRequest request = this.getHttpServletRequest();
+    HttpSession session = request.getSession();
+    boolean isRefreshRequest = false;
+    boolean isAjaxRequest = false;
+    IStateCache cache = this.getStateCache(session);
+    Integer currentPage = HDIVUtil.getCurrentPageId();
+    Integer lastPageId = cache.getLastPageId();
+    IPage lastPage = lastPageId == null ? null : this.getPage(lastPageId);
+    if (newPage != null && lastPage != null && newPage.getParentStateId() != null && lastPage.getParentStateId() != null && newPage.getParentStateId().equals(lastPage.getParentStateId())) {
+      isRefreshRequest = true;
+    }
+    Object isAjaxRequestObject = request.getAttribute(Constants.AJAX_REQUEST);
+    if (isAjaxRequestObject != null) {
+      isAjaxRequest = (Boolean) isAjaxRequestObject;
+    }
+    Integer removedPageId = cache.addPage(pageId, currentPage, isRefreshRequest, isAjaxRequest);
+    if (removedPageId != null) {
+      this.removePageFromSession(session, removedPageId);
+    }
+    this.saveStateCache(session, cache);
+    this.addPageToSession(session, newPage, isPartial);
+    this.logCacheContent(cache);
+  }
 
-		HttpServletRequest request = this.getHttpServletRequest();
-		HttpSession session = request.getSession();
-
-		boolean isRefreshRequest = false;
-		boolean isAjaxRequest = false;
-
-		IStateCache cache = this.getStateCache(session);
-
-		// Get current request page identifier. Null if no state
-		Integer currentPage = HDIVUtil.getCurrentPageId();
-
-		Integer lastPageId = cache.getLastPageId();
-		IPage lastPage = lastPageId == null ? null : this.getPage(lastPageId);
-
-		// Check if is an refresh request. For example, to check if an user has performed a F5 request
-		if (newPage != null && lastPage != null && newPage.getParentStateId() != null
-				&& lastPage.getParentStateId() != null
-				&& newPage.getParentStateId().equals(lastPage.getParentStateId())) {
-			isRefreshRequest = true;
-		}
-
-		// Check if is an Ajax request.
-		Object isAjaxRequestObject = request.getAttribute(Constants.AJAX_REQUEST);
-
-		if (isAjaxRequestObject != null) {
-			isAjaxRequest = (Boolean) isAjaxRequestObject;
-		}
-
-		Integer removedPageId = cache.addPage(pageId, currentPage, isRefreshRequest, isAjaxRequest);
-
-		// if it returns a page identifier it is because the cache has reached
-		// the maximum size and therefore we must delete the page which has been
-		// stored for the longest time
-		if (removedPageId != null) {
-
-			this.removePageFromSession(session, removedPageId);
-		}
-
-		// we update page identifier cache in session
-		this.saveStateCache(session, cache);
-
-		// we add a new page in session
-		this.addPageToSession(session, newPage, isPartial);
-
-		// log cache content
-		this.logCacheContent(cache);
-	}
-
-	/**
-	 * It adds a new page to the user session.
+  /**
+	 * It adds a new page to the user session. 
 	 * 
 	 * @param pageId
 	 *            Page identifier
 	 * @param page
 	 *            Page with all the information about states
 	 */
-	public void addPage(int pageId, IPage page) {
-		this.addPage(pageId, page, false);
-	}
+  public void addPage(int pageId, IPage page) {
+    this.addPage(pageId, page, false);
+  }
 
-	/**
+  /**
 	 * It adds a partial page to the user session.
 	 * 
 	 * @param pageId
@@ -191,11 +137,11 @@ public class SessionHDIV implements ISession, BeanFactoryAware {
 	 * @param page
 	 *            Page with all the information about states
 	 */
-	public void addPartialPage(int pageId, IPage page) {
-		this.addPage(pageId, page, true);
-	}
+  public void addPartialPage(int pageId, IPage page) {
+    this.addPage(pageId, page, true);
+  }
 
-	/**
+  /**
 	 * Deletes from session the data related to the finished flows. This means a memory consumption optimization because
 	 * useless objects of type <code>IPage</code> are deleted.
 	 * 
@@ -203,57 +149,46 @@ public class SessionHDIV implements ISession, BeanFactoryAware {
 	 *            finished flow identifier
 	 * @since HDIV 2.0.3
 	 */
-	public void removeEndedPages(String conversationId) {
+  public void removeEndedPages(String conversationId) {
+    HttpSession session = this.getHttpSession();
+    IStateCache cache = this.getStateCache(session);
+    if (log.isDebugEnabled()) {
+      log.debug("Cache pages before finished pages are deleted:" + cache.toString());
+    }
+    List<Integer> pageIds = cache.getPageIds();
+    for (int i = 0; i < pageIds.size(); i++) {
+      Integer pageId = pageIds.get(i);
+      IPage currentPage = this.getPageFromSession(session, pageId);
+      if ((currentPage != null) && (currentPage.getFlowId() != null)) {
+        String pageFlowId = currentPage.getFlowId();
+        if (conversationId.equalsIgnoreCase(pageFlowId)) {
+          this.removePageFromSession(session, pageId);
+          pageIds.remove(i);
+          i--;
+        }
+      }
+    }
+    if (log.isDebugEnabled()) {
+      log.debug("Cache pages after finished pages are deleted:" + cache.toString());
+    }
+  }
 
-		HttpSession session = this.getHttpSession();
-
-		IStateCache cache = this.getStateCache(session);
-		if (log.isDebugEnabled()) {
-			log.debug("Cache pages before finished pages are deleted:" + cache.toString());
-		}
-
-		List<Integer> pageIds = cache.getPageIds();
-
-		for (int i = 0; i < pageIds.size(); i++) {
-
-			Integer pageId = pageIds.get(i);
-			IPage currentPage = this.getPageFromSession(session, pageId);
-			if ((currentPage != null) && (currentPage.getFlowId() != null)) {
-
-				String pageFlowId = currentPage.getFlowId();
-
-				if (conversationId.equalsIgnoreCase(pageFlowId)) {
-
-					this.removePageFromSession(session, pageId);
-					pageIds.remove(i);
-					i--;
-				}
-			}
-		}
-
-		if (log.isDebugEnabled()) {
-			log.debug("Cache pages after finished pages are deleted:" + cache.toString());
-		}
-	}
-
-	/**
+  /**
 	 * Obtains the state identifier <code>stateId</code> related to the page identifier <code>pageId</code>.
 	 * 
 	 * @return State identifier <code>stateId</code> throws HDIVException If the state doesn't exist a new HDIV
 	 *         exception is thrown.
 	 */
-	public IState getState(int pageId, int stateId) {
+  public IState getState(int pageId, int stateId) {
+    try {
+      IPage currentPage = this.getPage(pageId);
+      return currentPage.getState(stateId);
+    } catch (Exception e) {
+      throw new HDIVException(HDIVErrorCodes.PAGE_ID_INCORRECT, e);
+    }
+  }
 
-		try {
-			IPage currentPage = this.getPage(pageId);
-			return currentPage.getState(stateId);
-
-		} catch (Exception e) {
-			throw new HDIVException(HDIVErrorCodes.PAGE_ID_INCORRECT, e);
-		}
-	}
-
-	/**
+  /**
 	 * Internal method to retrieve a IPage instance from {@link HttpSession}
 	 * 
 	 * @param session
@@ -263,16 +198,14 @@ public class SessionHDIV implements ISession, BeanFactoryAware {
 	 * @return IPage instance
 	 * @since HDIV 2.1.5
 	 */
-	protected IPage getPageFromSession(HttpSession session, int pageId) {
+  protected IPage getPageFromSession(HttpSession session, int pageId) {
+    if (log.isDebugEnabled()) {
+      log.debug("Getting page with id:" + pageId);
+    }
+    return (IPage) session.getAttribute(pageId + "");
+  }
 
-		if (log.isDebugEnabled()) {
-			log.debug("Getting page with id:" + pageId);
-		}
-
-		return (IPage) session.getAttribute(pageId + "");
-	}
-
-	/**
+  /**
 	 * Internal method to add a new IPage instance to {@link HttpSession}
 	 * 
 	 * @param session
@@ -281,19 +214,17 @@ public class SessionHDIV implements ISession, BeanFactoryAware {
 	 *            IPage instance
 	 * @param isPartial
 	 *            If is partial page
-	 * 
+	 *            
 	 * @since HDIV 2.1.5
 	 */
-	protected void addPageToSession(HttpSession session, IPage page, boolean isPartial) {
+  protected void addPageToSession(HttpSession session, IPage page, boolean isPartial) {
+    session.setAttribute(page.getName(), page);
+    if (log.isDebugEnabled()) {
+      log.debug("Added new page with id:" + page.getId());
+    }
+  }
 
-		session.setAttribute(page.getName(), page);
-
-		if (log.isDebugEnabled()) {
-			log.debug("Added new page with id:" + page.getId());
-		}
-	}
-
-	/**
+  /**
 	 * Internal method to remove a IPage instance from {@link HttpSession}
 	 * 
 	 * @param session
@@ -302,45 +233,41 @@ public class SessionHDIV implements ISession, BeanFactoryAware {
 	 *            page id to remove from session
 	 * @since HDIV 2.1.5
 	 */
-	protected void removePageFromSession(HttpSession session, int pageId) {
+  protected void removePageFromSession(HttpSession session, int pageId) {
+    session.removeAttribute(pageId + "");
+    if (log.isDebugEnabled()) {
+      log.debug("Deleted page with id:" + pageId);
+    }
+  }
 
-		session.removeAttribute(pageId + "");
-
-		if (log.isDebugEnabled()) {
-			log.debug("Deleted page with id:" + pageId);
-		}
-	}
-
-	/**
+  /**
 	 * Callback that supplies the owning factory to a bean instance. Invoked after population of normal bean properties
 	 * but before an init callback like InitializingBean's afterPropertiesSet or a custom init-method.
 	 * 
 	 * @param beanFactory
 	 *            owning BeanFactory (may not be null). The bean can immediately call methods on the factory.
 	 */
-	public void setBeanFactory(BeanFactory beanFactory) {
-		this.beanFactory = beanFactory;
-	}
+  public void setBeanFactory(BeanFactory beanFactory) {
+    this.beanFactory = beanFactory;
+  }
 
-	/**
+  /**
 	 * Create new or obtain existing state Cache instance.
 	 * 
 	 * @param session
 	 *            {@link HttpSession} instance
 	 * @return IStateCache instance
 	 */
-	protected IStateCache getStateCache(HttpSession session) {
+  protected IStateCache getStateCache(HttpSession session) {
+    IStateCache cache = (IStateCache) session.getAttribute(this.cacheName);
+    if (cache == null) {
+      cache = this.createStateCacheInstance();
+      session.setAttribute(this.cacheName, cache);
+    }
+    return cache;
+  }
 
-		IStateCache cache = (IStateCache) session.getAttribute(this.cacheName);
-		if (cache == null) {
-			cache = this.createStateCacheInstance();
-			session.setAttribute(this.cacheName, cache);
-		}
-
-		return cache;
-	}
-
-	/**
+  /**
 	 * Save state Cache instance.
 	 * 
 	 * @param session
@@ -349,81 +276,78 @@ public class SessionHDIV implements ISession, BeanFactoryAware {
 	 *            {@link IStateCache} instance
 	 * @since HDIV 2.1.6
 	 */
-	protected void saveStateCache(HttpSession session, IStateCache stateCache) {
+  protected void saveStateCache(HttpSession session, IStateCache stateCache) {
+    session.setAttribute(this.cacheName, stateCache);
+  }
 
-		session.setAttribute(this.cacheName, stateCache);
-	}
-
-	/**
+  /**
 	 * Create new {@link IStateCache} instance.
 	 * 
 	 * @return {@link IStateCache} instance
 	 * @since HDIV 2.1.6
 	 */
-	protected IStateCache createStateCacheInstance() {
+  protected IStateCache createStateCacheInstance() {
+    IStateCache cache = this.beanFactory.getBean(IStateCache.class);
+    return cache;
+  }
 
-		IStateCache cache = this.beanFactory.getBean(IStateCache.class);
-		return cache;
-	}
-
-	/**
+  /**
 	 * Log cache content in the logger.
 	 * 
 	 * @param cache
 	 */
-	protected void logCacheContent(IStateCache cache) {
-		if (log.isTraceEnabled()) {
-			synchronized (cache) {
-				List<Integer> ids = cache.getPageIds();
-				StringBuffer sb = new StringBuffer();
-				for (Integer id : ids) {
-					IPage page = this.getPage(id);
-					String parentPage = null;
-					if (page != null) {
-						parentPage = page.getParentStateId();
-					}
-					if (parentPage != null) {
-						parentPage = parentPage.substring(0, parentPage.indexOf("-"));
-					}
-					sb.append("[").append(id).append(" (").append(parentPage).append(")] ");
-				}
-				log.trace("Cache content [" + sb.toString() + "]");
-			}
-		}
-	}
+  protected void logCacheContent(IStateCache cache) {
+    if (log.isTraceEnabled()) {
+      synchronized (cache) {
+        List<Integer> ids = cache.getPageIds();
+        StringBuffer sb = new StringBuffer();
+        for (Integer id : ids) {
+          IPage page = this.getPage(id);
+          String parentPage = null;
+          if (page != null) {
+            parentPage = page.getParentStateId();
+          }
+          if (parentPage != null) {
+            parentPage = parentPage.substring(0, parentPage.indexOf("-"));
+          }
+          sb.append("[").append(id).append(" (").append(parentPage).append(")] ");
+        }
+        log.trace("Cache content [" + sb.toString() + "]");
+      }
+    }
+  }
 
-	/**
+  /**
 	 * Obtain {@link HttpSession} instance for ThreadLocal
 	 * 
 	 * @return HttpSession instance
 	 */
-	protected HttpSession getHttpSession() {
-		return HDIVUtil.getHttpSession();
-	}
+  protected HttpSession getHttpSession() {
+    return HDIVUtil.getHttpSession();
+  }
 
-	/**
+  /**
 	 * Obtains {@link HttpServletRequest} instance from ThreadLocal
 	 * 
 	 * @return HttpServletRequest instance
 	 */
-	protected HttpServletRequest getHttpServletRequest() {
-		return HDIVUtil.getHttpServletRequest();
-	}
+  protected HttpServletRequest getHttpServletRequest() {
+    return HDIVUtil.getHttpServletRequest();
+  }
 
-	/**
+  /**
 	 * @param cacheName
 	 *            The cacheName to set.
 	 */
-	public void setCacheName(String cacheName) {
-		this.cacheName = cacheName;
-	}
+  public void setCacheName(String cacheName) {
+    this.cacheName = cacheName;
+  }
 
-	/**
+  /**
 	 * @param pageIdGeneratorName
 	 *            The pageIdGeneratorName to set.
 	 */
-	public void setPageIdGeneratorName(String pageIdGeneratorName) {
-		this.pageIdGeneratorName = pageIdGeneratorName;
-	}
-
+  public void setPageIdGeneratorName(String pageIdGeneratorName) {
+    this.pageIdGeneratorName = pageIdGeneratorName;
+  }
 }
