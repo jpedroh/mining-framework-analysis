@@ -1,22 +1,5 @@
-/*
- *      Copyright (C) 2012 DataStax Inc.
- *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- */
 package com.datastax.driver.core;
-
 import java.io.Closeable;
-
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -32,8 +15,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * at a time, so one instance per keyspace is necessary.
  */
 public interface Session extends Closeable {
-
-    /**
+  /**
      * The keyspace to which this Session is currently logged in, if any.
      * <p>
      * This correspond to the name passed to {@link Cluster#connect(String)}, or to the
@@ -42,9 +24,9 @@ public interface Session extends Closeable {
      * @return the name of the keyspace to which this Session is currently
      * logged in, or {@code null} if the session is logged to no keyspace.
      */
-    public String getLoggedKeyspace();
+  public String getLoggedKeyspace();
 
-    /**
+  /**
      * Executes the provided query.
      *
      * This is a convenience method for {@code execute(new SimpleStatement(query))}.
@@ -61,9 +43,9 @@ public interface Session extends Closeable {
      * @throws QueryValidationException if the query if invalid (syntax error,
      * unauthorized or any other validation problem).
      */
-    public ResultSet execute(String query);
+  public ResultSet execute(String query);
 
-    /**
+  /**
      * Executes the provided query using the provided value.
      *
      * This is a convenience method for {@code execute(new SimpleStatement(query, values))}.
@@ -85,9 +67,9 @@ public interface Session extends Closeable {
      * is in use (i.e. if you've force version 1 through {@link Cluster.Builder#withProtocolVersion}
      * or you use Cassandra 1.2).
      */
-    public ResultSet execute(String query, Object... values);
+  public ResultSet execute(String query, Object... values);
 
-    /**
+  /**
      * Executes the provided query.
      *
      * This method blocks until at least some result has been received from the
@@ -113,9 +95,9 @@ public interface Session extends Closeable {
      * the version protocol 1 include: BatchStatement, ResultSet paging and binary
      * values in RegularStatement.
      */
-    public ResultSet execute(Statement statement);
+  public ResultSet execute(Statement statement);
 
-    /**
+  /**
      * Executes the provided query asynchronously.
      * <p>
      * This is a convenience method for {@code executeAsync(new SimpleStatement(query))}.
@@ -123,9 +105,9 @@ public interface Session extends Closeable {
      * @param query the CQL query to execute.
      * @return a future on the result of the query.
      */
-    public ResultSetFuture executeAsync(String query);
+  public ResultSetFuture executeAsync(String query);
 
-    /**
+  /**
      * Executes the provided query asynchronously using the provided values.
      *
      * This is a convenience method for {@code executeAsync(new SimpleStatement(query, values))}.
@@ -139,9 +121,9 @@ public interface Session extends Closeable {
      * is in use (i.e. if you've force version 1 through {@link Cluster.Builder#withProtocolVersion}
      * or you use Cassandra 1.2).
      */
-    public ResultSetFuture executeAsync(String query, Object... values);
+  public ResultSetFuture executeAsync(String query, Object... values);
 
-    /**
+  /**
      * Executes the provided query asynchronously.
      *
      * This method does not block. It returns as soon as the query has been
@@ -162,9 +144,9 @@ public interface Session extends Closeable {
      * the version protocol 1 include: BatchStatement, ResultSet paging and binary
      * values in RegularStatement.
      */
-    public ResultSetFuture executeAsync(Statement statement);
+  public ResultSetFuture executeAsync(Statement statement);
 
-    /**
+  /**
      * Prepares the provided query string.
      *
      * @param query the CQL query string to prepare
@@ -173,9 +155,9 @@ public interface Session extends Closeable {
      * @throws NoHostAvailableException if no host in the cluster can be
      * contacted successfully to prepare this query.
      */
-    public PreparedStatement prepare(String query);
+  public PreparedStatement prepare(String query);
 
-    /**
+  /**
      * Prepares the provided query.
      * <p>
      * This method is essentially a shortcut for {@code prepare(statement.getQueryString())},
@@ -188,10 +170,11 @@ public interface Session extends Closeable {
      * </pre>
      * the final execution will be performed with Quorum consistency.
      * <p>
-     * Please note that if the same CQL statement is prepared more than once, all
-     * calls to this method will return the same {@code PreparedStatement} object
-     * but the method will still apply the properties of the prepared
-     * {@code Statement} to this object.
+     * Please note however that if the same CQL statement is prepared more than
+     * once, all calls to this method will return the same {@code PreparedStatement}
+     * object (which imply that this unique {@code PreparedStatement} object will
+     * inherit the query properties of the last statement for which this method
+     * has been called).
      *
      * @param statement the statement to prepare
      * @return the prepared statement corresponding to {@code statement}.
@@ -203,9 +186,9 @@ public interface Session extends Closeable {
      * though the {@link PreparedStatement#bind} method or through a corresponding
      * {@link BoundStatement}).
      */
-    public PreparedStatement prepare(RegularStatement statement);
+  public PreparedStatement prepare(RegularStatement statement);
 
-    /**
+  /**
      * Prepares the provided query string asynchronously.
      * <p>
      * This method is equivalent to {@link #prepare(String)} except that it
@@ -215,19 +198,20 @@ public interface Session extends Closeable {
      * @param query the CQL query string to prepare
      * @return a future on the prepared statement corresponding to {@code query}.
      */
-    public ListenableFuture<PreparedStatement> prepareAsync(String query);
+  public ListenableFuture<PreparedStatement> prepareAsync(String query);
 
-    /**
+  /**
      * Prepares the provided query asynchronously.
      * <p>
      * This method is essentially a shortcut for {@code prepareAsync(statement.getQueryString())},
      * but with the additional effect that the resulting {@code
      * PreparedStatement} will inherit the query properties set on {@code statement}.
      * <p>
-     * Please note that if the same CQL statement is prepared more than once, all
-     * calls to this method will return the same {@code PreparedStatement} object
-     * but the method will still apply the properties of the prepared
-     * {@code Statement} to this object.
+     * Please note however that if the same CQL statement is prepared more than
+     * once, all calls to this method will return the same {@code PreparedStatement}
+     * object (which imply that this unique {@code PreparedStatement} object will
+     * inherit the query properties of the last statement for which this method
+     * has been called).
      *
      * @param statement the statement to prepare
      * @return a future on the prepared statement corresponding to {@code statement}.
@@ -239,9 +223,9 @@ public interface Session extends Closeable {
      * though the {@link PreparedStatement#bind} method or through a corresponding
      * {@link BoundStatement}).
      */
-    public ListenableFuture<PreparedStatement> prepareAsync(RegularStatement statement);
+  public ListenableFuture<PreparedStatement> prepareAsync(RegularStatement statement);
 
-    /**
+  /**
      * Initiates a shutdown of this session instance.
      * <p>
      * This method is asynchronous and return a future on the completion
@@ -263,20 +247,20 @@ public interface Session extends Closeable {
      *
      * @return a future on the completion of the shutdown process.
      */
-    public CloseFuture closeAsync();
+  public CloseFuture closeAsync();
 
-    /**
+  /**
      * Initiates a shutdown of this session instance and blocks until
      * that shutdown completes.
      * <p>
      * This method is a shortcut for {@code closeAsync().get()}.
      */
-    public void close();
+  public void close();
 
-    /**
+  /**
      * Returns the {@code Cluster} object this session is part of.
      *
      * @return the {@code Cluster} object this session is part of.
      */
-    public Cluster getCluster();
+  public Cluster getCluster();
 }
