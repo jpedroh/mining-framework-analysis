@@ -1,11 +1,9 @@
 package com.overstock.sample.processor;
-
 import java.beans.Introspector;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -28,40 +26,34 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.tools.Diagnostic.Kind;
 
-@SupportedAnnotationTypes({"javax.persistence.Entity", "javax.persistence.OneToMany"})
-@SupportedSourceVersion(SourceVersion.RELEASE_6)
-public class JpaProcessor extends AbstractProcessor {
-
-  // various types we'll want to refer to, initialized in init method
+@SupportedAnnotationTypes(value = { "javax.persistence.Entity", "javax.persistence.OneToMany" }) @SupportedSourceVersion(value = SourceVersion.RELEASE_6) public class JpaProcessor extends AbstractProcessor {
   private ElementTypePair entityType;
+
   private ElementTypePair oneToManyType;
+
   private ElementTypePair collectionType;
+
   private ElementTypePair manyToOneType;
 
   private ExecutableElement mappedByAttribute;
 
-  // convenience delegations
   private Types typeUtils() {
     return processingEnv.getTypeUtils();
   }
 
-  // Core methods to override
-  @Override
-  public synchronized void init(ProcessingEnvironment processingEnv) {
+  @Override public synchronized void init(ProcessingEnvironment processingEnv) {
     super.init(processingEnv);
     entityType = getType("javax.persistence.Entity");
     oneToManyType = getType("javax.persistence.OneToMany");
     collectionType = getType("java.util.Collection");
     manyToOneType = getType("javax.persistence.ManyToOne");
-
     mappedByAttribute = getMethod(oneToManyType.element, "mappedBy");
   }
 
-  @Override
-  public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+  @Override public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
     checkEntityAnnotatedElements(roundEnv);
     checkOneToManyAnnotatedProperties(roundEnv);
-    return false; // let other processors work on these as well
+    return false;
   }
 
   /**
@@ -69,9 +61,7 @@ public class JpaProcessor extends AbstractProcessor {
    * @param roundEnv
    */
   private void checkEntityAnnotatedElements(RoundEnvironment roundEnv) {
-    Set<? extends Element> entityAnnotated =
-        roundEnv.getElementsAnnotatedWith(entityType.element);
-    // technically, we don't need to filter here, but it gives us a free cast
+    Set<? extends Element> entityAnnotated = roundEnv.getElementsAnnotatedWith(entityType.element);
     for (TypeElement typeElement : ElementFilter.typesIn(entityAnnotated)) {
       checkForNoArgumentConstructor(typeElement);
     }
@@ -89,11 +79,7 @@ public class JpaProcessor extends AbstractProcessor {
       }
     }
     AnnotationMirror entityAnnotation = getAnnotation(typeElement, entityType.type);
-    processingEnv.getMessager().printMessage(
-      Kind.ERROR,
-      "missing no argument constructor",
-      typeElement,
-      entityAnnotation);
+    processingEnv.getMessager().printMessage(Kind.ERROR, "missing no argument constructor", typeElement, entityAnnotation);
   }
 
   /**
@@ -102,8 +88,7 @@ public class JpaProcessor extends AbstractProcessor {
    * @param roundEnv
    */
   private void checkOneToManyAnnotatedProperties(RoundEnvironment roundEnv) {
-    Set<? extends Element> oneToManyAnnotated =
-      roundEnv.getElementsAnnotatedWith(oneToManyType.element);
+    Set<? extends Element> oneToManyAnnotated = roundEnv.getElementsAnnotatedWith(oneToManyType.element);
     for (Element element : oneToManyAnnotated) {
       checkForBiDirectionalMapping(element);
     }
@@ -119,36 +104,20 @@ public class JpaProcessor extends AbstractProcessor {
     DeclaredType childType = getCollectionType(propertyType);
     Element childElement = childType.asElement();
     TypeElement enclosingElement = (TypeElement) childProperty.getEnclosingElement();
-    DeclaredType parentType =
-        typeUtils().getDeclaredType(enclosingElement);
+    DeclaredType parentType = typeUtils().getDeclaredType(enclosingElement);
     AnnotationMirror oneToManyAnnotation = getAnnotation(childProperty, oneToManyType.type);
     Element parentPropertyInChild = findParentReferenceInChildType(parentType, childElement);
     if (parentPropertyInChild == null) {
-      processingEnv.getMessager().printMessage(
-        Kind.ERROR,
-        "No matching @ManyToOne annotation on " + childElement.getSimpleName(),
-        childProperty,
-        oneToManyAnnotation);
-    }
-    else {
+      processingEnv.getMessager().printMessage(Kind.ERROR, "No matching @ManyToOne annotation on " + childElement.getSimpleName(), childProperty, oneToManyAnnotation);
+    } else {
       AnnotationValue mappedBy = getMappedByValue(oneToManyAnnotation);
       if (mappedBy == null) {
-        processingEnv.getMessager().printMessage(
-          Kind.ERROR,
-          "Missing mappedBy attribute",
-          childProperty,
-          oneToManyAnnotation);
-      }
-      else {
+        processingEnv.getMessager().printMessage(Kind.ERROR, "Missing mappedBy attribute", childProperty, oneToManyAnnotation);
+      } else {
         String mappedByContent = (String) mappedBy.getValue();
         String expected = getPropertyName(parentPropertyInChild);
-        if (! mappedByContent.equals(expected)) {
-          processingEnv.getMessager().printMessage(
-            Kind.ERROR,
-            "mappedBy attribute should be " + expected,
-            childProperty,
-            oneToManyAnnotation,
-            mappedBy);
+        if (!mappedByContent.equals(expected)) {
+          processingEnv.getMessager().printMessage(Kind.ERROR, "mappedBy attribute should be " + expected, childProperty, oneToManyAnnotation, mappedBy);
         }
       }
     }
@@ -163,21 +132,20 @@ public class JpaProcessor extends AbstractProcessor {
    */
   private String getPropertyName(Element propertyElement) {
     switch (propertyElement.getKind()) {
-      case FIELD: return propertyElement.getSimpleName().toString();
+      case FIELD:
+      return propertyElement.getSimpleName().toString();
       case METHOD:
-        String methodName = propertyElement.getSimpleName().toString();
-        if (methodName.startsWith("get")) {
-          return Introspector.decapitalize(methodName.substring(3));
-        }
-        if (methodName.startsWith("is")) {
-          return Introspector.decapitalize(methodName.substring(2));
-        }
-        else {
-          // not actually a javaBean method; just return the method name
-          return methodName;
-        }
-      default: // should never happen
-        throw new IllegalArgumentException("property element of type " + propertyElement.getKind());
+      String methodName = propertyElement.getSimpleName().toString();
+      if (methodName.startsWith("get")) {
+        return Introspector.decapitalize(methodName.substring(3));
+      }
+      if (methodName.startsWith("is")) {
+        return Introspector.decapitalize(methodName.substring(2));
+      } else {
+        return methodName;
+      }
+      default:
+      throw new IllegalArgumentException("property element of type " + propertyElement.getKind());
     }
   }
 
@@ -187,8 +155,7 @@ public class JpaProcessor extends AbstractProcessor {
    * @return the value of {@code oneToManyAnnotation}'s {@code mappedBy} attribute
    */
   private AnnotationValue getMappedByValue(AnnotationMirror oneToManyAnnotation) {
-    Map<? extends ExecutableElement, ? extends AnnotationValue> elementValues =
-        oneToManyAnnotation.getElementValues();
+    Map<? extends ExecutableElement, ? extends AnnotationValue> elementValues = oneToManyAnnotation.getElementValues();
     return elementValues.get(mappedByAttribute);
   }
 
@@ -200,10 +167,9 @@ public class JpaProcessor extends AbstractProcessor {
    * @return The property element and it's annotation
    */
   private Element findParentReferenceInChildType(TypeMirror parentType, Element childType) {
-    for (Element element: childType.getEnclosedElements()) {
+    for (Element element : childType.getEnclosedElements()) {
       if (element.getKind() == ElementKind.FIELD || element.getKind() == ElementKind.METHOD) {
-        if (getAnnotation(element, manyToOneType.type) != null
-            && typeUtils().isSameType(parentType, getPropertyType(element))) {
+        if (getAnnotation(element, manyToOneType.type) != null && typeUtils().isSameType(parentType, getPropertyType(element))) {
           return element;
         }
       }
@@ -232,12 +198,11 @@ public class JpaProcessor extends AbstractProcessor {
   private TypeMirror getPropertyType(Element element) {
     switch (element.getKind()) {
       case FIELD:
-        return ((VariableElement) element).asType();
+      return ((VariableElement) element).asType();
       case METHOD:
-        return ((ExecutableElement) element).getReturnType();
+      return ((ExecutableElement) element).getReturnType();
       default:
-        return null;
-
+      return null;
     }
   }
 
@@ -274,12 +239,11 @@ public class JpaProcessor extends AbstractProcessor {
    * @return the method
    */
   private ExecutableElement getMethod(Element element, String methodName) {
-    for (ExecutableElement executable: ElementFilter.methodsIn(element.getEnclosedElements())) {
+    for (ExecutableElement executable : ElementFilter.methodsIn(element.getEnclosedElements())) {
       if (executable.getSimpleName().toString().equals(methodName)) {
         return executable;
       }
     }
     throw new IllegalArgumentException("no element named " + methodName + " + in element");
   }
-
 }
