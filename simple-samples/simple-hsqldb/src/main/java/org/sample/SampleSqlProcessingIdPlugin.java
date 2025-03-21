@@ -23,6 +23,7 @@ public class SampleSqlProcessingIdPlugin implements SqlProcessingIdPlugin {
 
         String processingId = sqlControl != null ? sqlControl.getProcessingId() : null;
 
+<<<<<<< /usr/src/app/output/hudec/sql-processor/4e7851a544957454ab1795647f56cee208cdabb5/simple-samples/simple-hsqldb/src/main/java/org/sample/SampleSqlProcessingIdPlugin.java/left.java
         if (processingId != null) {
             logger.info("name {}, id provided {}, input {}", name, processingId,
                     (dynamicInputValues != null ? dynamicInputValues.getClass() : null));
@@ -57,6 +58,42 @@ public class SampleSqlProcessingIdPlugin implements SqlProcessingIdPlugin {
 
             return processingId;
         }
+||||||| /usr/src/app/output/hudec/sql-processor/4e7851a544957454ab1795647f56cee208cdabb5/simple-samples/simple-hsqldb/src/main/java/org/sample/SampleSqlProcessingIdPlugin.java/base.java
+=======
+        if (processingId != null) {
+            logger.info("name {}, id provided {}, input {}", name, processingId,
+                    (dynamicInputValues != null ? dynamicInputValues.getClass() : null));
+            if (name.toUpperCase().startsWith("INSERT"))
+                return processingId;
+
+            // docasna kontrola, jestli skutecne je processingId korektne pouzit
+            Method gpiMethod = MethodUtils.getAccessibleMethod(dynamicInputValues.getClass(), "getProcessingId",
+                    new Class[] { Object[].class });
+
+            if (gpiMethod != null) {
+                Object[] firstMax = new Object[] {
+                        new Integer[] { (sqlControl != null ? sqlControl.getFirstResult() : null),
+                                (sqlControl != null ? sqlControl.getMaxResults() : null) } };
+                try {
+                    String dynProcessingId = (String) gpiMethod.invoke(dynamicInputValues, firstMax);
+                    String cachedProcessingId = processingIds.get(processingId);
+                    if (cachedProcessingId == null)
+                        cachedProcessingId = processingIds.put(processingId, dynProcessingId);
+                    if (cachedProcessingId != null) {
+                        if (!cachedProcessingId.equals(dynProcessingId))
+                            throw new RuntimeException(
+                                    "nutno prozkoumat " + cachedProcessingId + "<>" + dynProcessingId);
+                    }
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    logger.error("getProcessingId", e);
+                }
+            } else {
+                logger.warn("Neni getProcessingId pro " + dynamicInputValues);
+            }
+
+            return processingId;
+        }
+>>>>>>> /usr/src/app/output/hudec/sql-processor/4e7851a544957454ab1795647f56cee208cdabb5/simple-samples/simple-hsqldb/src/main/java/org/sample/SampleSqlProcessingIdPlugin.java/right.java
 
         Integer[] firstMax = { (sqlControl != null ? sqlControl.getFirstResult() : null),
                 (sqlControl != null ? sqlControl.getMaxResults() : null) };
