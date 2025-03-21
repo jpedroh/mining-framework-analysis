@@ -25,6 +25,7 @@ import com.google.gson.JsonSyntaxException;
 import jakarta.servlet.MultipartConfigElement;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
