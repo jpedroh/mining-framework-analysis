@@ -71,9 +71,7 @@ public class AgentMain {
                 } else
                 if(t.startsWith("error=")) {
                     Listener.ERROR = new PrintWriter(new FileOutputStream(t.substring(6)));
-                } else
-                if(t.startsWith("listener=")) {
-                    ActivityListener.LIST.add((ActivityListener) AgentMain.class.getClassLoader().loadClass(t.substring(9)).newInstance());
+<<<<<<< /usr/src/app/output/kohsuke/file-leak-detector/3c54ac7fb9ce3d24ae9bd31df57da3ffc0f67835/src/main/java/org/kohsuke/file_leak_detector/AgentMain.java/left.java
                 } else
                 if(t.equals("dumpatshutdown")) {
                 	Runtime.getRuntime().addShutdownHook(new Thread("File handles dumping shutdown hook") {
@@ -82,6 +80,12 @@ public class AgentMain {
 							Listener.dump(System.err);
 						}
                 	});
+||||||| /usr/src/app/output/kohsuke/file-leak-detector/3c54ac7fb9ce3d24ae9bd31df57da3ffc0f67835/src/main/java/org/kohsuke/file_leak_detector/AgentMain.java/base.java
+=======
+                } else
+                if(t.startsWith("listener=")) {
+                    ActivityListener.LIST.add((ActivityListener) AgentMain.class.getClassLoader().loadClass(t.substring(9)).newInstance());
+>>>>>>> /usr/src/app/output/kohsuke/file-leak-detector/3c54ac7fb9ce3d24ae9bd31df57da3ffc0f67835/src/main/java/org/kohsuke/file_leak_detector/AgentMain.java/right.java
                 } else {
                     System.err.println("Unknown option: "+t);
                     usageAndQuit();
@@ -154,6 +158,7 @@ public class AgentMain {
     }
 
     static void printOptions() {
+<<<<<<< /usr/src/app/output/kohsuke/file-leak-detector/3c54ac7fb9ce3d24ae9bd31df57da3ffc0f67835/src/main/java/org/kohsuke/file_leak_detector/AgentMain.java/left.java
         System.err.println("  help          - show the help screen.");
         System.err.println("  trace         - log every open/close operation to stderr.");
         System.err.println("  trace=FILE    - log every open/close operation to the given file.");
@@ -164,8 +169,31 @@ public class AgentMain {
         System.err.println("  http=PORT     - Run a mini HTTP server that you can access to get stats on demand");
         System.err.println("                  Specify 0 to choose random available port, -1 to disable, which is default.");
         System.err.println("  strong        - Don't let GC auto-close leaking file descriptors");
-        System.err.println("  listener=S    - Specify the fully qualified name of ActivityListener class to activate from beginning");
         System.err.println("  dumpatshutdown- Don't let GC auto-close leaking file descriptors");
+||||||| /usr/src/app/output/kohsuke/file-leak-detector/3c54ac7fb9ce3d24ae9bd31df57da3ffc0f67835/src/main/java/org/kohsuke/file_leak_detector/AgentMain.java/base.java
+        System.err.println("  help        - show the help screen.");
+        System.err.println("  trace       - log every open/close operation to stderr.");
+        System.err.println("  trace=FILE  - log every open/close operation to the given file.");
+        System.err.println("  error=FILE  - if 'too many open files' error is detected, send the dump here.");
+        System.err.println("                by default it goes to stderr.");
+        System.err.println("  threshold=N - instead of waiting until 'too many open files', dump once");
+        System.err.println("                we have N descriptors open.");
+        System.err.println("  http=PORT   - Run a mini HTTP server that you can access to get stats on demand");
+        System.err.println("                Specify 0 to choose random available port, -1 to disable, which is default.");
+        System.err.println("  strong      - Don't let GC auto-close leaking file descriptors");
+=======
+        System.err.println("  help        - show the help screen.");
+        System.err.println("  trace       - log every open/close operation to stderr.");
+        System.err.println("  trace=FILE  - log every open/close operation to the given file.");
+        System.err.println("  error=FILE  - if 'too many open files' error is detected, send the dump here.");
+        System.err.println("                by default it goes to stderr.");
+        System.err.println("  threshold=N - instead of waiting until 'too many open files', dump once");
+        System.err.println("                we have N descriptors open.");
+        System.err.println("  http=PORT   - Run a mini HTTP server that you can access to get stats on demand");
+        System.err.println("                Specify 0 to choose random available port, -1 to disable, which is default.");
+        System.err.println("  strong      - Don't let GC auto-close leaking file descriptors");
+        System.err.println("  listener=S  - Specify the fully qualified name of ActivityListener class to activate from beginning");
+>>>>>>> /usr/src/app/output/kohsuke/file-leak-detector/3c54ac7fb9ce3d24ae9bd31df57da3ffc0f67835/src/main/java/org/kohsuke/file_leak_detector/AgentMain.java/right.java
     }
 
     static List<ClassTransformSpec> createSpec() {
