@@ -3,7 +3,9 @@ package com.fasterxml.jackson.datatype.guava;
 import java.util.HashSet;
 
 import com.fasterxml.jackson.databind.ser.std.StdDelegatingSerializer;
+
 import com.fasterxml.jackson.databind.type.TypeFactory;
+
 import com.fasterxml.jackson.databind.util.ArrayBuilders;
 import com.fasterxml.jackson.databind.util.StdConverter;
 import com.google.common.base.Optional;
