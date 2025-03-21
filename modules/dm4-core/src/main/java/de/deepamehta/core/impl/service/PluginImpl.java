@@ -50,43 +50,72 @@ public class PluginImpl implements Plugin, EventHandler {
     // ------------------------------------------------------------------------------------------------------- Constants
 
     private static final String PLUGIN_DEFAULT_PACKAGE = "de.deepamehta.core.osgi";
+
     private static final String PLUGIN_CONFIG_FILE = "/plugin.properties";
-    private static final String PLUGIN_ACTIVATED = "de/deepamehta/core/plugin_activated";   // topic of the OSGi event
+
+    private static final String PLUGIN_ACTIVATED = "de/deepamehta/core/plugin_activated";
+
+// topic of the OSGi event
 
     // ---------------------------------------------------------------------------------------------- Instance Variables
 
     private PluginContext pluginContext;
+
     private BundleContext bundleContext;
 
     private Bundle      pluginBundle;
-    private String      pluginUri;          // This bundle's symbolic name, e.g. "de.deepamehta.webclient"
-    private String      pluginName;         // This bundle's name = POM project name, e.g. "DeepaMehta 4 Webclient"
+
+    private String      pluginUri;
+
+// This bundle's symbolic name, e.g. "de.deepamehta.webclient"
+
+    private String      pluginName;
+
+// This bundle's name = POM project name, e.g. "DeepaMehta 4 Webclient"
+
     private String      pluginClass;
 
-    private Properties  pluginProperties;   // Read from file "plugin.properties"
+    private Properties  pluginProperties;
+
+// Read from file "plugin.properties"
+
     private String      pluginPackage;
+
     private PluginInfo  pluginInfo;
-    private Set<String> pluginDependencies; // plugin URIs as read from "importModels" property
-    private Topic       pluginTopic;        // Represents this plugin in DB. Holds plugin migration number.
+
+    private Set<String> pluginDependencies;
+
+// plugin URIs as read from "importModels" property
+
+    private Topic       pluginTopic;
+
+// Represents this plugin in DB. Holds plugin migration number.
 
     // Consumed services
+
     private EmbeddedService dms;
+
     private WebPublishingService webPublishingService;
-    private EventAdmin eventService;        // needed to post the PLUGIN_ACTIVATED OSGi event
+
+    private EventAdmin eventService;
+
+// needed to post the PLUGIN_ACTIVATED OSGi event
 
     // Provided OSGi service
+
     private ServiceRegistration registration;
 
     // Provided resources
+
     private WebResources webResources;
+
     private RestResource restResource;
 
     private List<ServiceTracker> coreServiceTrackers = new ArrayList();
+
     private List<ServiceTracker> pluginServiceTrackers = new ArrayList();
 
     private Logger logger = Logger.getLogger(getClass().getName());
-
-
 
     // ---------------------------------------------------------------------------------------------------- Constructors
 
@@ -131,6 +160,7 @@ public class PluginImpl implements Plugin, EventHandler {
      *
      * @return  A InputStream object or null if no resource with this name is found.
      */
+
     public InputStream getResourceAsStream(String name) throws IOException {
         // We always use the plugin bundle's class loader to access the resource.
         // getClass().getResource() would fail for generic plugins (plugin bundles not containing a plugin
@@ -150,13 +180,11 @@ public class PluginImpl implements Plugin, EventHandler {
         return "plugin \"" + pluginName + "\"";
     }
 
-
-
     // ************************************
+
     // *** Event Handler Implementation ***
+
     // ************************************
-
-
 
     @Override
     public void handleEvent(Event event) {
@@ -180,8 +208,6 @@ public class PluginImpl implements Plugin, EventHandler {
         }
     }
 
-
-
     // ----------------------------------------------------------------------------------------- Package Private Methods
 
     String getUri() {
@@ -202,6 +228,7 @@ public class PluginImpl implements Plugin, EventHandler {
      * Returns a plugin configuration property (as read from file "plugin.properties")
      * or <code>null</code> if no such property exists.
      */
+
     String getConfigProperty(String key) {
         return getConfigProperty(key, null);
     }
@@ -219,6 +246,7 @@ public class PluginImpl implements Plugin, EventHandler {
      *          This is the case if the plugin bundle contains no Plugin subclass and the "pluginPackage" config
      *          property is not set.
      */
+
     String getMigrationClassName(int migrationNr) {
         if (pluginPackage.equals(PLUGIN_DEFAULT_PACKAGE)) {
             return null;    // migration package is unknown
@@ -238,6 +266,7 @@ public class PluginImpl implements Plugin, EventHandler {
      *
      * @return  the class, or <code>null</code> if the class is not found.
      */
+
     Class loadClass(String className) {
         try {
             return pluginBundle.loadClass(className);
@@ -245,8 +274,6 @@ public class PluginImpl implements Plugin, EventHandler {
             return null;
         }
     }
-
-
 
     // ------------------------------------------------------------------------------------------------- Private Methods
 
@@ -432,6 +459,7 @@ public class PluginImpl implements Plugin, EventHandler {
      *   - posts the PLUGIN_ACTIVATED OSGi event.
      *   - checks if all plugins are active, and if so, fires the {@link CoreEvent.ALL_PLUGINS_ACTIVE} event.
      */
+
     private void checkServiceAvailability() {
         // Note: The Web Publishing service is not strictly required for activation, but we must ensure
         // ALL_PLUGINS_ACTIVE is not fired before the Web Publishing service becomes available.
@@ -448,7 +476,7 @@ public class PluginImpl implements Plugin, EventHandler {
         }
     }
 
-    // === Activation ===
+    // ---
 
     /**
      * Activates this plugin. This comprises:
@@ -461,6 +489,7 @@ public class PluginImpl implements Plugin, EventHandler {
      * Acivation relies on both, the DeepaMehtaService and the EventAdmin service.
      * This method is called once both services become available. ### FIXDOC
      */
+
     private synchronized boolean activate() {
         try {
             // Note: we must not activate a plugin twice.
@@ -472,8 +501,8 @@ public class PluginImpl implements Plugin, EventHandler {
             //
             logger.info("----- Activating " + this + " -----");
             installPluginInDB();        // relies on DeepaMehtaService
-            initializePlugin();         // relies on DeepaMehtaService
             registerListeners();        // relies on DeepaMehtaService
+            initializePlugin();         // ### merge notice: must perform *before* registerListeners()
             registerPlugin();           // relies on DeepaMehtaService (and committed migrations)
             logger.info("----- Activation of " + this + " complete -----");
             return true;
@@ -491,6 +520,7 @@ public class PluginImpl implements Plugin, EventHandler {
      * - fires the {@link CoreEvent.POST_INSTALL_PLUGIN} event
      * - fires the {@link CoreEvent.INTRODUCE_TOPIC_TYPE} event (multiple times)
      */
+
     private void installPluginInDB() {
         DeepaMehtaTransaction tx = dms.beginTx();
         try {
@@ -527,6 +557,7 @@ public class PluginImpl implements Plugin, EventHandler {
      * <p>
      * A Plugin topic represents an installed plugin and is used to track its version.
      */
+
     private void createPluginTopic() {
         pluginTopic = dms.createTopic(new TopicModel(pluginUri, "dm4.core.plugin", new CompositeValue()
             .put("dm4.core.plugin_name", pluginName)
@@ -550,17 +581,12 @@ public class PluginImpl implements Plugin, EventHandler {
         }
     }
 
-    // === Initialization ===
-
-    private void initializePlugin() {
-        deliverEvent(CoreEvent.INITIALIZE_PLUGIN);
-    }
-
     // === Core Registration ===
 
     /**
      * Registers this plugin at the DeepaMehta core service.
      */
+
     private void registerPlugin() {
         logger.info("Registering " + this + " at DeepaMehta 4 core service");
         dms.pluginManager.registerPlugin(this);
@@ -576,6 +602,7 @@ public class PluginImpl implements Plugin, EventHandler {
     /**
      * Returns true if this plugin is registered at the DeepaMehta core service.
      */
+
     private boolean isRegistered() {
         return isRegistered(pluginUri);
     }
@@ -618,6 +645,7 @@ public class PluginImpl implements Plugin, EventHandler {
     /**
      * Returns the events this plugin is listening to.
      */
+
     private List<CoreEvent> getEvents() {
         List<CoreEvent> events = new ArrayList();
         for (Class interfaze : pluginContext.getClass().getInterfaces()) {
@@ -630,19 +658,6 @@ public class PluginImpl implements Plugin, EventHandler {
         return events;
     }
 
-    /**
-     * Delivers an event to this plugin, provided this plugin is a listener for that event.
-     * <p>
-     * By this method this plugin delivers an "internal" event to itself. An internal event is bound
-     * to a particular plugin, in contrast to being fired and delivered to all registered plugins.
-     * <p>
-     * There are 5 internal events:
-     *   - POST_INSTALL_PLUGIN
-     *   - INTRODUCE_TOPIC_TYPE (has a double nature)
-     *   - INITIALIZE_PLUGIN
-     *   - PLUGIN_SERVICE_ARRIVED
-     *   - PLUGIN_SERVICE_GONE
-     */
     private Object deliverEvent(CoreEvent event, Object... params) {
         if (!isListener(event)) {
             return null;
@@ -658,6 +673,7 @@ public class PluginImpl implements Plugin, EventHandler {
      * Returns true if the specified interface is a listener interface.
      * A listener interface is a sub-interface of {@link Listener}.
      */
+
     private boolean isListenerInterface(Class interfaze) {
         return Listener.class.isAssignableFrom(interfaze);
     }
@@ -665,6 +681,7 @@ public class PluginImpl implements Plugin, EventHandler {
     /**
      * Returns true if this plugin is a listener for the specified event.
      */
+
     private boolean isListener(CoreEvent event) {
         return event.listenerInterface.isAssignableFrom(pluginContext.getClass());
     }
@@ -675,6 +692,7 @@ public class PluginImpl implements Plugin, EventHandler {
      * Registers this plugin's OSGi service at the OSGi framework.
      * If the plugin doesn't provide an OSGi service nothing is performed.
      */
+
     private void registerPluginService() {
         String serviceInterface = null;
         try {
@@ -715,6 +733,7 @@ public class PluginImpl implements Plugin, EventHandler {
      * Registers this plugin's web resources at the Web Publishing service.
      * If the plugin doesn't provide web resources nothing is performed.
      */
+
     private void registerWebResources() {
         String uriNamespace = null;
         try {
@@ -751,6 +770,7 @@ public class PluginImpl implements Plugin, EventHandler {
      * Registers this plugin's REST resources at the Web Publishing service.
      * If the plugin doesn't provide REST resources nothing is performed.
      */
+
     private void registerRestResources() {
         String uriNamespace = null;
         try {
@@ -798,6 +818,116 @@ public class PluginImpl implements Plugin, EventHandler {
         }
         return providerClasses;
     }
+
+    // === Plugin Dependencies ===
+
+    // ------------------------------------------------------------------------------------------------------- Constants
+
+// topic of the OSGi event
+
+    // ---------------------------------------------------------------------------------------------- Instance Variables
+
+// This bundle's symbolic name, e.g. "de.deepamehta.webclient"
+
+// This bundle's name = POM project name, e.g. "DeepaMehta 4 Webclient"
+
+// Read from file "plugin.properties"
+
+// plugin URIs as read from "importModels" property
+
+// Represents this plugin in DB. Holds plugin migration number.
+
+    // Consumed services
+
+// needed to post the PLUGIN_ACTIVATED OSGi event
+
+    // Provided OSGi service
+
+    // Provided resources
+
+    // ---------------------------------------------------------------------------------------------------- Constructors
+
+    // -------------------------------------------------------------------------------------------------- Public Methods
+
+    // ---
+
+    // ---
+
+    // ************************************
+
+    // *** Event Handler Implementation ***
+
+    // ************************************
+
+    // ----------------------------------------------------------------------------------------- Package Private Methods
+
+    // ---
+
+    // ---
+
+    // ---
+
+    // ------------------------------------------------------------------------------------------------- Private Methods
+
+    // === Config Properties ===
+
+    // === Service Tracking ===
+
+    // ---
+
+    // ---
+
+    // ---
+
+    // ---
+
+    // ---
+
+    // ---
+
+    // === Activation ===
+
+    // === Installation ===
+
+    // === Initialization ===
+
+    private void initializePlugin() {
+        deliverEvent(CoreEvent.INITIALIZE_PLUGIN);
+    }
+
+    // === Core Registration ===
+
+    // ---
+
+    // === Plugin Listeners ===
+
+    // ---
+
+    /**
+     * Delivers an event to this plugin, provided this plugin is a listener for that event.
+     * <p>
+     * By this method this plugin delivers an "internal" event to itself. An internal event is bound
+     * to a particular plugin, in contrast to being fired and delivered to all registered plugins.
+     * <p>
+     * There are 5 internal events:
+     *   - POST_INSTALL_PLUGIN
+     *   - INTRODUCE_TOPIC_TYPE (has a double nature)
+     *   - INITIALIZE_PLUGIN
+     *   - PLUGIN_SERVICE_ARRIVED
+     *   - PLUGIN_SERVICE_GONE
+     */
+
+    // ---
+
+    // === Plugin Service ===
+
+    // === Web Resources ===
+
+    // ---
+
+    // === REST Resources ===
+
+    // ---
 
     // === Plugin Dependencies ===
 
