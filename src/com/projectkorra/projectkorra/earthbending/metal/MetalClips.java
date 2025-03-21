@@ -333,7 +333,7 @@ public class MetalClips extends MetalAbility {
 					final Item iron = (Item) entity;
 
 					if (Arrays.asList(METAL_ITEMS).contains(iron.getItemStack().getType())) {
-						iron.setVelocity(vector.normalize().multiply(this.magnetPower).add(new Vector(0, 0.2, 0)));
+						iron.setVelocity(vector.normalize().multiply(this.magnetPower).add(new Vector(0, 0.2, 0)).add(new Vector(0, 0.2, 0)));
 					}
 				}
 			}
@@ -447,19 +447,27 @@ public class MetalClips extends MetalAbility {
 		this.dropIngots(loc, this.metalClipsCount == 0 ? 1 : this.metalClipsCount);
 	}
 
+<<<<<<< /usr/src/app/output/projectkorra/projectkorra/67f85ed9148cd291557f0736d82cf4a4dde511ee/src/com/projectkorra/projectkorra/earthbending/metal/MetalClips.java/left.java
 	public void dropIngots(final Location loc, final int amount) {
 		final Item i = this.player.getWorld().dropItem(loc, new ItemStack(Material.IRON_INGOT, amount));
 		i.setPickupDelay(61);
 	}
+||||||| /usr/src/app/output/projectkorra/projectkorra/67f85ed9148cd291557f0736d82cf4a4dde511ee/src/com/projectkorra/projectkorra/earthbending/metal/MetalClips.java/base.java
+=======
+	public void dropIngots(Location loc, int amount) {
+		Item i = player.getWorld().dropItem(loc, new ItemStack(Material.IRON_INGOT, amount));
+		i.setPickupDelay(61);
+	}
+>>>>>>> /usr/src/app/output/projectkorra/projectkorra/67f85ed9148cd291557f0736d82cf4a4dde511ee/src/com/projectkorra/projectkorra/earthbending/metal/MetalClips.java/right.java
 
 	public void removeDeadIngots() {
-		for (int i = 0; i < this.trackedIngots.size(); i++) {
-			final Item ii = this.trackedIngots.get(i);
-			if (ii.isDead()) {
-				this.trackedIngots.remove(ii);
-			}
+	for (int i = 0; i < this.trackedIngots.size(); i++) {
+		final Item ii = this.trackedIngots.get(i);
+		if (ii.isDead()) {
+			this.trackedIngots.remove(ii);
 		}
 	}
+}
 
 	@Override
 	public void remove() {

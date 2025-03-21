@@ -468,7 +468,13 @@ public class PKListener implements Listener {
 			FireDamageTimer.dealFlameDamage(entity);
 		}
 
+<<<<<<< /usr/src/app/output/projectkorra/projectkorra/67f85ed9148cd291557f0736d82cf4a4dde511ee/src/com/projectkorra/projectkorra/PKListener.java/left.java
 		if (entity instanceof LivingEntity && TempArmor.hasTempArmor((LivingEntity) entity)) {
+||||||| /usr/src/app/output/projectkorra/projectkorra/67f85ed9148cd291557f0736d82cf4a4dde511ee/src/com/projectkorra/projectkorra/PKListener.java/base.java
+		if (TempArmor.hasTempArmor((LivingEntity)entity)) {
+=======
+		if (entity instanceof LivingEntity && TempArmor.hasTempArmor((LivingEntity)entity)) {
+>>>>>>> /usr/src/app/output/projectkorra/projectkorra/67f85ed9148cd291557f0736d82cf4a4dde511ee/src/com/projectkorra/projectkorra/PKListener.java/right.java
 			event.setDamage(DamageModifier.ARMOR, 0);
 		}
 
