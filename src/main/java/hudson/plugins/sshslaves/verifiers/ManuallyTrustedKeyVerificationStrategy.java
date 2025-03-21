@@ -1,28 +1,4 @@
-/*
- * The MIT License
- *
- * Copyright (c) 2016, Michael Clarke
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 package hudson.plugins.sshslaves.verifiers;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.model.TaskListener;
@@ -48,90 +24,93 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * @since 1.13
  */
 public class ManuallyTrustedKeyVerificationStrategy extends SshHostKeyVerificationStrategy {
+  private static final Logger LOGGER = Logger.getLogger(ManuallyTrustedKeyVerificationStrategy.class.getName());
 
-    private static final Logger LOGGER = Logger.getLogger(ManuallyTrustedKeyVerificationStrategy.class.getName());
+  private final boolean requireInitialManualTrust;
 
-    private final boolean requireInitialManualTrust;
+  @DataBoundConstructor public ManuallyTrustedKeyVerificationStrategy(boolean requireInitialManualTrust) {
+    super();
+    this.requireInitialManualTrust = requireInitialManualTrust;
+  }
 
-    @DataBoundConstructor
-    public ManuallyTrustedKeyVerificationStrategy(boolean requireInitialManualTrust) {
-        super();
-        this.requireInitialManualTrust = requireInitialManualTrust;
-    }
+  public boolean isRequireInitialManualTrust() {
+    return requireInitialManualTrust;
+  }
 
-    public boolean isRequireInitialManualTrust() {
-        return requireInitialManualTrust;
-    }
-
-    @Override
-    public boolean verify(final SlaveComputer computer, HostKey hostKey, TaskListener listener) throws IOException {
-        HostKeyHelper hostManager = HostKeyHelper.getInstance();
-
-        HostKey existingHostKey = hostManager.getHostKey(computer);
-        if (null == existingHostKey) {
-            if (isRequireInitialManualTrust()) {
-                listener.getLogger().println(Messages.ManualTrustingHostKeyVerifier_KeyNotTrusted(SSHLauncher.getTimestamp()));
-                if (!hasExistingTrustAction(computer, hostKey)) {
-                    computer.addAction(new TrustHostKeyAction(computer, hostKey));
-                }
-                return false;
-            }
-            else {
-                listener.getLogger().println(Messages.ManualTrustingHostKeyVerifier_KeyAutoTrusted(SSHLauncher.getTimestamp(), hostKey.getFingerprint()));
-                HostKeyHelper.getInstance().saveHostKey(computer, hostKey);
-                return true;
-            }
+  @Override public boolean verify(final SlaveComputer computer, HostKey hostKey, TaskListener listener) throws IOException {
+    HostKeyHelper hostManager = HostKeyHelper.getInstance();
+    HostKey existingHostKey = hostManager.getHostKey(computer);
+    if (null == existingHostKey) {
+      if (isRequireInitialManualTrust()) {
+        listener.getLogger().println(Messages.ManualTrustingHostKeyVerifier_KeyNotTrusted(SSHLauncher.getTimestamp()));
+        if (!hasExistingTrustAction(computer, hostKey)) {
+          computer.addAction(new TrustHostKeyAction(computer, hostKey));
         }
-        else if (!existingHostKey.equals(hostKey)) {
-            listener.getLogger().println(Messages.ManualTrustingHostKeyVerifier_KeyNotTrusted(SSHLauncher.getTimestamp()));
-            if (!hasExistingTrustAction(computer, hostKey)) {
-                computer.addAction(new TrustHostKeyAction(computer, hostKey));
-            }
-            return false;
-        }
-        else {
-            listener.getLogger().println(Messages.ManualTrustingHostKeyVerifier_KeyTrusted(SSHLauncher.getTimestamp()));
-            return true;
-        }
-    }
-
-    @Override
-    public String[] getPreferredKeyAlgorithms(SlaveComputer computer) throws IOException {
-        String[] algorithms = super.getPreferredKeyAlgorithms(computer);
-
-        HostKey hostKey = HostKeyHelper.getInstance().getHostKey(computer);
-
-        if (null != hostKey) {
-            List<String> sortedAlgorithms = new ArrayList<>(Arrays.asList(algorithms));
-
-            sortedAlgorithms.remove(hostKey.getAlgorithm());
-            sortedAlgorithms.add(0, hostKey.getAlgorithm());
-
-            algorithms = sortedAlgorithms.toArray(new String[0]);
-        }
-
-        return algorithms;
-    }
-
-    private boolean hasExistingTrustAction(SlaveComputer computer, HostKey hostKey) {
-        for (TrustHostKeyAction action : computer.getActions(TrustHostKeyAction.class)) {
-            if (!action.isComplete() && action.getHostKey().equals(hostKey)) {
-                return true;
-            }
-        }
-
         return false;
-    }
-
-    @Extension
-    public static class ManuallyTrustedKeyVerificationStrategyDescriptor extends SshHostKeyVerificationStrategyDescriptor {
-
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.ManualTrustingHostKeyVerifier_DescriptorDisplayName();
+      } else {
+        listener.getLogger().println(Messages.ManualTrustingHostKeyVerifier_KeyAutoTrusted(SSHLauncher.getTimestamp(), hostKey.getFingerprint()));
+        HostKeyHelper.getInstance().saveHostKey(computer, hostKey);
+        return true;
+      }
+    } else {
+      if (!existingHostKey.equals(hostKey)) {
+        listener.getLogger().println(Messages.ManualTrustingHostKeyVerifier_KeyNotTrusted(SSHLauncher.getTimestamp()));
+        if (!hasExistingTrustAction(computer, hostKey)) {
+          computer.addAction(new TrustHostKeyAction(computer, hostKey));
         }
-
+        return false;
+      } else {
+        listener.getLogger().println(Messages.ManualTrustingHostKeyVerifier_KeyTrusted(SSHLauncher.getTimestamp()));
+        return true;
+      }
     }
+  }
 
+  @Override public String[] getPreferredKeyAlgorithms(SlaveComputer computer) throws IOException {
+    String[] algorithms = super.getPreferredKeyAlgorithms(computer);
+    HostKey hostKey = HostKeyHelper.getInstance().getHostKey(computer);
+    if (null != hostKey) {
+      List<String> sortedAlgorithms = new ArrayList<>(Arrays.asList(algorithms));
+      sortedAlgorithms.remove(hostKey.getAlgorithm());
+      sortedAlgorithms.add(0, hostKey.getAlgorithm());
+      algorithms = sortedAlgorithms.toArray(new String[0]);
+    }
+    return algorithms;
+  }
+
+
+<<<<<<< /usr/src/app/output/jenkinsci/ssh-slaves-plugin/67b86f05f7f5d4cce393b8a6eeda9ebf5af23307/src/main/java/hudson/plugins/sshslaves/verifiers/ManuallyTrustedKeyVerificationStrategy.java/left.java
+  /** TODO replace with {@link Computer#addAction} after core baseline picks up JENKINS-42969 fix */
+  private static void addAction(@NonNull Computer c, @NonNull Action a) {
+    try {
+      c.addAction(a);
+    } catch (UnsupportedOperationException x) {
+      try {
+        Field actionsF = Actionable.class.getDeclaredField("actions");
+        actionsF.setAccessible(true);
+        @SuppressWarnings(value = { "unchecked" }) List<Action> actions = (List) actionsF.get(c);
+        actions.add(a);
+      } catch (Exception x2) {
+        LOGGER.log(Level.WARNING, null, x2);
+      }
+    }
+  }
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
+
+  private boolean hasExistingTrustAction(SlaveComputer computer, HostKey hostKey) {
+    for (TrustHostKeyAction action : computer.getActions(TrustHostKeyAction.class)) {
+      if (!action.isComplete() && action.getHostKey().equals(hostKey)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Extension public static class ManuallyTrustedKeyVerificationStrategyDescriptor extends SshHostKeyVerificationStrategyDescriptor {
+    @NonNull @Override public String getDisplayName() {
+      return Messages.ManualTrustingHostKeyVerifier_DescriptorDisplayName();
+    }
+  }
 }
