@@ -424,7 +424,23 @@ public interface Graph extends AttributedElement<GraphClass, Graph> {
 
 	public void addGraphChangeListener(GraphChangeListener l);
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/b6ce189e6c29da1ddaee21ca7a4c5e0dba98957d/src/de/uni_koblenz/jgralab/Graph.java/left.java
 	public void removeGraphChangeListener(GraphChangeListener l);
+||||||| /usr/src/app/output/jgralab/jgralab/b6ce189e6c29da1ddaee21ca7a4c5e0dba98957d/src/de/uni_koblenz/jgralab/Graph.java/base.java
+	/**
+	 * @return whether the {@link de.uni_koblenz.jgralab.eca.ECARuleManager} of
+	 *         this {@link Graph} is instantiated
+	 */
+	public boolean hasECARuleManager();
+=======
+	public void setECARuleManager(ECARuleManagerInterface manager);
+
+	/**
+	 * @return whether the {@link de.uni_koblenz.jgralab.eca.ECARuleManager} of
+	 *         this {@link Graph} is instantiated
+	 */
+	public boolean hasECARuleManager();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/b6ce189e6c29da1ddaee21ca7a4c5e0dba98957d/src/de/uni_koblenz/jgralab/Graph.java/right.java
 
 	public TraversalContext setTraversalContext(TraversalContext tc);
 

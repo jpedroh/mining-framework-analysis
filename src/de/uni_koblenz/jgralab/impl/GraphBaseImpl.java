@@ -892,7 +892,17 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 		assert (edge != null) && edge.isValid() && eSeqContainsEdge(edge);
 
 		InternalEdge e = (InternalEdge) edge.getNormalEdge();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/b6ce189e6c29da1ddaee21ca7a4c5e0dba98957d/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/left.java
 		fireBeforeDeleteEdge(e);
+||||||| /usr/src/app/output/jgralab/jgralab/b6ce189e6c29da1ddaee21ca7a4c5e0dba98957d/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/base.java
+		if (hasECARuleManager()) {
+			getECARuleManager().fireBeforeDeleteEdgeEvents(edge);
+		}
+=======
+		if (hasECARuleManager()) {
+			getECARuleManager().fireBeforeDeleteEdgeEvents(e);
+		}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/b6ce189e6c29da1ddaee21ca7a4c5e0dba98957d/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/right.java
 
 		e = (InternalEdge) edge.getNormalEdge();
 		internalEdgeDeleted(e);
@@ -1759,6 +1769,11 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	}
 
 	@Override
+	public void setECARuleManager(ECARuleManagerInterface manager) {
+		ecaRuleManager = manager;
+	}
+
+	@Override
 	public void removeGraphChangeListener(GraphChangeListener l) {
 		if (l == null) {
 			throw new IllegalArgumentException("Listener must not be null");
@@ -1771,6 +1786,22 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 			graphChangeListeners = null;
 		}
 	}
+
+	// if (ecaRuleManager == null) {
+	// Constructor<?> ruleManagerConstructor;
+	// try {
+	// ruleManagerConstructor = Class.forName(
+	// "de.uni_koblenz.jgralab.eca.ECARuleManager")
+	// .getConstructor(Graph.class);
+	// ecaRuleManager = (GraphChangeListener) ruleManagerConstructor
+	// .newInstance(this);
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// assert ecaRuleManager != null;
+	// }
+	// return ecaRuleManager;
+	// }
 
 	// handle GraphStructureChangedListener
 
