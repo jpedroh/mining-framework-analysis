@@ -692,10 +692,22 @@ class Connection {
             if (sslOptions != null) {
                 SSLEngine engine = sslOptions.context.createSSLEngine();
                 engine.setUseClientMode(true);
+<<<<<<< /usr/src/app/output/datastax/java-driver/e670818d76f0d9a6571ddfe0d8d624398449a930/driver-core/src/main/java/com/datastax/driver/core/Connection.java/left.java
                 engine.setEnabledCipherSuites(sslOptions.cipherSuites);
+                pipeline.addLast("ssl", new SslHandler(engine));
+||||||| /usr/src/app/output/datastax/java-driver/e670818d76f0d9a6571ddfe0d8d624398449a930/driver-core/src/main/java/com/datastax/driver/core/Connection.java/base.java
+                engine.setEnabledCipherSuites(options.cipherSuites);
+                ChannelPipeline pipeline = super.getPipeline();
+                pipeline.addFirst("ssl", new SslHandler(engine));
+                return pipeline;
+=======
+                engine.setEnabledCipherSuites(options.cipherSuites);
+                ChannelPipeline pipeline = super.getPipeline();
                 SslHandler handler = new SslHandler(engine);
                 handler.setCloseOnSSLException(true);
-                pipeline.addLast("ssl", handler);
+                pipeline.addFirst("ssl", handler);
+                return pipeline;
+>>>>>>> /usr/src/app/output/datastax/java-driver/e670818d76f0d9a6571ddfe0d8d624398449a930/driver-core/src/main/java/com/datastax/driver/core/Connection.java/right.java
             }
 
             //pipeline.addLast("debug", new LoggingHandler(InternalLogLevel.INFO));
