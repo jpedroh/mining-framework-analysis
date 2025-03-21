@@ -13,6 +13,33 @@ import javax.xml.xpath.XPathFactory;
 import java.util.*;
 
 public class XmlUtils {
+<<<<<<< /usr/src/app/output/monitorjbl/excel-streaming-reader/7d81ae0fed55b297e0c7ad370ce073981a6fd102/src/main/java/com/monitorjbl/xlsx/XmlUtils.java/left.java
+||||||| /usr/src/app/output/monitorjbl/excel-streaming-reader/7d81ae0fed55b297e0c7ad370ce073981a6fd102/src/main/java/com/monitorjbl/xlsx/XmlUtils.java/base.java
+  public static Document document(InputStream is) {
+    try {
+      return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
+    } catch(SAXException | IOException | ParserConfigurationException e) {
+      throw new ParseException(e);
+    }
+  }
+=======
+  public static Document document(InputStream is) {
+    try {
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+      factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+      factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+      factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+      factory.setExpandEntityReferences(false);
+      factory.setXIncludeAware(false);
+
+      return factory.newDocumentBuilder().parse(is);
+    } catch(SAXException | IOException | ParserConfigurationException e) {
+      throw new ParseException(e);
+    }
+  }
+>>>>>>> /usr/src/app/output/monitorjbl/excel-streaming-reader/7d81ae0fed55b297e0c7ad370ce073981a6fd102/src/main/java/com/monitorjbl/xlsx/XmlUtils.java/right.java
+
   public static NodeList searchForNodeList(Document document, String xpath) {
     try {
       XPath xp = XPathFactory.newInstance().newXPath();
@@ -36,7 +63,7 @@ public class XmlUtils {
       addNamespace(XMLConstants.XMLNS_ATTRIBUTE, XMLConstants.XMLNS_ATTRIBUTE_NS_URI);
     }
 
-    public void addNamespace(String prefix, String namespaceURI) {
+    public synchronized void addNamespace(String prefix, String namespaceURI) {
       urisByPrefix.put(prefix, namespaceURI);
       if (prefixesByURI.containsKey(namespaceURI)) {
         (prefixesByURI.get(namespaceURI)).add(prefix);
