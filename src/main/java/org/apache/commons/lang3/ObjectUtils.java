@@ -1,21 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.apache.commons.lang3;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -31,7 +14,6 @@ import java.util.Objects;
 import java.util.TreeSet;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-
 import org.apache.commons.lang3.exception.CloneFailedException;
 import org.apache.commons.lang3.function.Suppliers;
 import org.apache.commons.lang3.mutable.MutableInt;
@@ -48,51 +30,34 @@ import org.apache.commons.lang3.time.DurationUtils;
  * <p>#ThreadSafe#</p>
  * @since 1.0
  */
-//@Immutable
-@SuppressWarnings("deprecation") // deprecated class StrBuilder is imported
-// because it is part of the signature of deprecated methods
-public class ObjectUtils {
-
+@SuppressWarnings(value = { "deprecation" }) public class ObjectUtils {
+  public static class Null implements Serializable {
     /**
-     * <p>Class used as a null placeholder where {@code null}
-     * has another meaning.</p>
-     *
-     * <p>For example, in a {@code HashMap} the
-     * {@link java.util.HashMap#get(java.lang.Object)} method returns
-     * {@code null} if the {@code Map} contains {@code null} or if there is
-     * no matching key. The {@code Null} placeholder can be used to distinguish
-     * between these two cases.</p>
-     *
-     * <p>Another example is {@code Hashtable}, where {@code null}
-     * cannot be stored.</p>
-     */
-    public static class Null implements Serializable {
-        /**
          * Required for serialization support. Declare serialization compatibility with Commons Lang 1.0
          *
          * @see java.io.Serializable
          */
-        private static final long serialVersionUID = 7092611880189329093L;
+    private static final long serialVersionUID = 7092611880189329093L;
 
-        /**
+    /**
          * Restricted constructor - singleton.
          */
-        Null() {
-        }
+    Null() {
+    }
 
-        /**
+    /**
          * <p>Ensure singleton.</p>
          *
          * @return the singleton value
          */
-        private Object readResolve() {
-            return NULL;
-        }
+    private Object readResolve() {
+      return NULL;
     }
+  }
 
-    private static final char AT_SIGN = '@';
+  private static final char AT_SIGN = '@';
 
-    /**
+  /**
      * <p>Singleton used as a {@code null} placeholder where
      * {@code null} has another meaning.</p>
      *
@@ -107,9 +72,9 @@ public class ObjectUtils {
      *
      * <p>This instance is Serializable.</p>
      */
-    public static final Null NULL = new Null();
+  public static final Null NULL = new Null();
 
-    /**
+  /**
      * Checks if all values in the array are not {@code nulls}.
      *
      * <p>
@@ -134,21 +99,19 @@ public class ObjectUtils {
      * {@code true} if all values in the array are not {@code null}s or array contains no elements.
      * @since 3.5
      */
-    public static boolean allNotNull(final Object... values) {
-        if (values == null) {
-            return false;
-        }
-
-        for (final Object val : values) {
-            if (val == null) {
-                return false;
-            }
-        }
-
-        return true;
+  public static boolean allNotNull(final Object... values) {
+    if (values == null) {
+      return false;
     }
+    for (final Object val : values) {
+      if (val == null) {
+        return false;
+      }
+    }
+    return true;
+  }
 
-    /**
+  /**
      * Checks if all values in the given array are {@code null}.
      *
      * <p>
@@ -170,11 +133,11 @@ public class ObjectUtils {
      * {@code false} if there is at least one non-null value in the array.
      * @since 3.11
      */
-    public static boolean allNull(final Object... values) {
-        return !anyNotNull(values);
-    }
+  public static boolean allNull(final Object... values) {
+    return !anyNotNull(values);
+  }
 
-    /**
+  /**
      * Checks if any value in the given array is not {@code null}.
      *
      * <p>
@@ -197,11 +160,11 @@ public class ObjectUtils {
      * If the array is {@code null} or empty {@code false} is also returned.
      * @since 3.5
      */
-    public static boolean anyNotNull(final Object... values) {
-        return firstNonNull(values) != null;
-    }
+  public static boolean anyNotNull(final Object... values) {
+    return firstNonNull(values) != null;
+  }
 
-    /**
+  /**
      * Checks if any value in the given array is {@code null}.
      *
      * <p>
@@ -225,11 +188,11 @@ public class ObjectUtils {
      * If the array is {@code null} or empty, {@code true} is also returned.
      * @since 3.11
      */
-    public static boolean anyNull(final Object... values) {
-        return !allNotNull(values);
-    }
+  public static boolean anyNull(final Object... values) {
+    return !allNotNull(values);
+  }
 
-    /**
+  /**
      * <p>Clone an object.</p>
      *
      * @param <T> the type of the object
@@ -238,45 +201,39 @@ public class ObjectUtils {
      * @throws CloneFailedException if the object is cloneable and the clone operation fails
      * @since 3.0
      */
-    public static <T> T clone(final T obj) {
-        if (obj instanceof Cloneable) {
-            final Object result;
-            if (isArray(obj)) {
-                final Class<?> componentType = obj.getClass().getComponentType();
-                if (componentType.isPrimitive()) {
-                    int length = Array.getLength(obj);
-                    result = Array.newInstance(componentType, length);
-                    while (length-- > 0) {
-                        Array.set(result, length, Array.get(obj, length));
-                    }
-                } else {
-                    result = ((Object[]) obj).clone();
-                }
-            } else {
-                try {
-                    final Method clone = obj.getClass().getMethod("clone");
-                    result = clone.invoke(obj);
-                } catch (final NoSuchMethodException e) {
-                    throw new CloneFailedException("Cloneable type "
-                        + obj.getClass().getName()
-                        + " has no clone method", e);
-                } catch (final IllegalAccessException e) {
-                    throw new CloneFailedException("Cannot clone Cloneable type "
-                        + obj.getClass().getName(), e);
-                } catch (final InvocationTargetException e) {
-                    throw new CloneFailedException("Exception cloning Cloneable type "
-                        + obj.getClass().getName(), e.getCause());
-                }
-            }
-            @SuppressWarnings("unchecked") // OK because input is of type T
-            final T checked = (T) result;
-            return checked;
+  public static <T extends java.lang.Object> T clone(final T obj) {
+    if (obj instanceof Cloneable) {
+      final Object result;
+      if (isArray(obj)) {
+        final Class<?> componentType = obj.getClass().getComponentType();
+        if (componentType.isPrimitive()) {
+          int length = Array.getLength(obj);
+          result = Array.newInstance(componentType, length);
+          while (length-- > 0) {
+            Array.set(result, length, Array.get(obj, length));
+          }
+        } else {
+          result = ((Object[]) obj).clone();
         }
-
-        return null;
+      } else {
+        try {
+          final Method clone = obj.getClass().getMethod("clone");
+          result = clone.invoke(obj);
+        } catch (final NoSuchMethodException e) {
+          throw new CloneFailedException("Cloneable type " + obj.getClass().getName() + " has no clone method", e);
+        } catch (final IllegalAccessException e) {
+          throw new CloneFailedException("Cannot clone Cloneable type " + obj.getClass().getName(), e);
+        } catch (final InvocationTargetException e) {
+          throw new CloneFailedException("Exception cloning Cloneable type " + obj.getClass().getName(), e.getCause());
+        }
+      }
+      @SuppressWarnings(value = { "unchecked" }) final T checked = (T) result;
+      return checked;
     }
+    return null;
+  }
 
-    /**
+  /**
      * <p>Clone an object if possible.</p>
      *
      * <p>This method is similar to {@link #clone(Object)}, but will return the provided
@@ -292,15 +249,14 @@ public class ObjectUtils {
      * @throws CloneFailedException if the object is cloneable and the clone operation fails
      * @since 3.0
      */
-    public static <T> T cloneIfPossible(final T obj) {
-        final T clone = clone(obj);
-        return clone == null ? obj : clone;
-    }
+  public static <T extends java.lang.Object> T cloneIfPossible(final T obj) {
+    final T clone = clone(obj);
+    return clone == null ? obj : clone;
+  }
 
-    /**
+  /**
      * <p>Null safe comparison of Comparables.
      * {@code null} is assumed to be less than a non-{@code null} value.</p>
-     * <p>TODO Move to ComparableUtils.</p>
      *
      * @param <T> type of the values processed by this method
      * @param c1  the first comparable, may be null
@@ -308,13 +264,12 @@ public class ObjectUtils {
      * @return a negative value if c1 &lt; c2, zero if c1 = c2
      *  and a positive value if c1 &gt; c2
      */
-    public static <T extends Comparable<? super T>> int compare(final T c1, final T c2) {
-        return compare(c1, c2, false);
-    }
+  public static <T extends Comparable<? super T>> int compare(final T c1, final T c2) {
+    return compare(c1, c2, false);
+  }
 
-    /**
+  /**
      * <p>Null safe comparison of Comparables.</p>
-     * <p>TODO Move to ComparableUtils.</p>
      *
      * @param <T> type of the values processed by this method
      * @param c1  the first comparable, may be null
@@ -326,20 +281,20 @@ public class ObjectUtils {
      *  and a positive value if c1 &gt; c2
      * @see java.util.Comparator#compare(Object, Object)
      */
-    public static <T extends Comparable<? super T>> int compare(final T c1, final T c2, final boolean nullGreater) {
-        if (c1 == c2) {
-            return 0;
-        }
-        if (c1 == null) {
-            return nullGreater ? 1 : -1;
-        }
-        if (c2 == null) {
-            return nullGreater ? -1 : 1;
-        }
-        return c1.compareTo(c2);
+  public static <T extends Comparable<? super T>> int compare(final T c1, final T c2, final boolean nullGreater) {
+    if (c1 == c2) {
+      return 0;
     }
+    if (c1 == null) {
+      return nullGreater ? 1 : -1;
+    }
+    if (c2 == null) {
+      return nullGreater ? -1 : 1;
+    }
+    return c1.compareTo(c2);
+  }
 
-    /**
+  /**
      * This method returns the provided value unchanged.
      * This can prevent javac from inlining a constant
      * field, e.g.,
@@ -356,11 +311,11 @@ public class ObjectUtils {
      * @return the boolean v, unchanged
      * @since 3.2
      */
-    public static boolean CONST(final boolean v) {
-        return v;
-    }
+  public static boolean CONST(final boolean v) {
+    return v;
+  }
 
-    /**
+  /**
      * This method returns the provided value unchanged.
      * This can prevent javac from inlining a constant
      * field, e.g.,
@@ -377,11 +332,11 @@ public class ObjectUtils {
      * @return the byte v, unchanged
      * @since 3.2
      */
-    public static byte CONST(final byte v) {
-        return v;
-    }
+  public static byte CONST(final byte v) {
+    return v;
+  }
 
-    /**
+  /**
      * This method returns the provided value unchanged.
      * This can prevent javac from inlining a constant
      * field, e.g.,
@@ -398,11 +353,11 @@ public class ObjectUtils {
      * @return the char v, unchanged
      * @since 3.2
      */
-    public static char CONST(final char v) {
-        return v;
-    }
+  public static char CONST(final char v) {
+    return v;
+  }
 
-    /**
+  /**
      * This method returns the provided value unchanged.
      * This can prevent javac from inlining a constant
      * field, e.g.,
@@ -419,11 +374,11 @@ public class ObjectUtils {
      * @return the double v, unchanged
      * @since 3.2
      */
-    public static double CONST(final double v) {
-        return v;
-    }
+  public static double CONST(final double v) {
+    return v;
+  }
 
-    /**
+  /**
      * This method returns the provided value unchanged.
      * This can prevent javac from inlining a constant
      * field, e.g.,
@@ -440,11 +395,11 @@ public class ObjectUtils {
      * @return the float v, unchanged
      * @since 3.2
      */
-    public static float CONST(final float v) {
-        return v;
-    }
+  public static float CONST(final float v) {
+    return v;
+  }
 
-    /**
+  /**
      * This method returns the provided value unchanged.
      * This can prevent javac from inlining a constant
      * field, e.g.,
@@ -461,11 +416,11 @@ public class ObjectUtils {
      * @return the int v, unchanged
      * @since 3.2
      */
-    public static int CONST(final int v) {
-        return v;
-    }
+  public static int CONST(final int v) {
+    return v;
+  }
 
-    /**
+  /**
      * This method returns the provided value unchanged.
      * This can prevent javac from inlining a constant
      * field, e.g.,
@@ -482,11 +437,11 @@ public class ObjectUtils {
      * @return the long v, unchanged
      * @since 3.2
      */
-    public static long CONST(final long v) {
-        return v;
-    }
+  public static long CONST(final long v) {
+    return v;
+  }
 
-    /**
+  /**
      * This method returns the provided value unchanged.
      * This can prevent javac from inlining a constant
      * field, e.g.,
@@ -503,11 +458,11 @@ public class ObjectUtils {
      * @return the short v, unchanged
      * @since 3.2
      */
-    public static short CONST(final short v) {
-        return v;
-    }
+  public static short CONST(final short v) {
+    return v;
+  }
 
-    /**
+  /**
      * This method returns the provided value unchanged.
      * This can prevent javac from inlining a constant
      * field, e.g.,
@@ -525,11 +480,11 @@ public class ObjectUtils {
      * @return the genericized Object v, unchanged (typically a String).
      * @since 3.2
      */
-    public static <T> T CONST(final T v) {
-        return v;
-    }
+  public static <T extends java.lang.Object> T CONST(final T v) {
+    return v;
+  }
 
-    /**
+  /**
      * This method returns the provided value unchanged.
      * This can prevent javac from inlining a constant
      * field, e.g.,
@@ -549,14 +504,14 @@ public class ObjectUtils {
      * @return the byte v, unchanged
      * @since 3.2
      */
-    public static byte CONST_BYTE(final int v) {
-        if (v < Byte.MIN_VALUE || v > Byte.MAX_VALUE) {
-            throw new IllegalArgumentException("Supplied value must be a valid byte literal between -128 and 127: [" + v + "]");
-        }
-        return (byte) v;
+  public static byte CONST_BYTE(final int v) {
+    if (v < Byte.MIN_VALUE || v > Byte.MAX_VALUE) {
+      throw new IllegalArgumentException("Supplied value must be a valid byte literal between -128 and 127: [" + v + "]");
     }
+    return (byte) v;
+  }
 
-    /**
+  /**
      * This method returns the provided value unchanged.
      * This can prevent javac from inlining a constant
      * field, e.g.,
@@ -576,14 +531,14 @@ public class ObjectUtils {
      * @return the byte v, unchanged
      * @since 3.2
      */
-    public static short CONST_SHORT(final int v) {
-        if (v < Short.MIN_VALUE || v > Short.MAX_VALUE) {
-            throw new IllegalArgumentException("Supplied value must be a valid byte literal between -32768 and 32767: [" + v + "]");
-        }
-        return (short) v;
+  public static short CONST_SHORT(final int v) {
+    if (v < Short.MIN_VALUE || v > Short.MAX_VALUE) {
+      throw new IllegalArgumentException("Supplied value must be a valid byte literal between -32768 and 32767: [" + v + "]");
     }
+    return (short) v;
+  }
 
-    /**
+  /**
      * <p>Returns a default value if the object passed is {@code null}.</p>
      *
      * <pre>
@@ -600,12 +555,11 @@ public class ObjectUtils {
      * @return {@code object} if it is not {@code null}, defaultValue otherwise
      * TODO Rename to getIfNull in 4.0
      */
-    public static <T> T defaultIfNull(final T object, final T defaultValue) {
-        return object != null ? object : defaultValue;
-    }
+  public static <T extends java.lang.Object> T defaultIfNull(final T object, final T defaultValue) {
+    return object != null ? object : defaultValue;
+  }
 
-    // Null-safe equals/hashCode
-    /**
+  /**
      * <p>Compares two objects for equality, where either one or both
      * objects may be {@code null}.</p>
      *
@@ -626,12 +580,11 @@ public class ObjectUtils {
      * @deprecated this method has been replaced by {@code java.util.Objects.equals(Object, Object)} in Java 7 and will
      * be removed from future releases.
      */
-    @Deprecated
-    public static boolean equals(final Object object1, final Object object2) {
-        return Objects.equals(object1, object2);
-    }
+  @Deprecated public static boolean equals(final Object object1, final Object object2) {
+    return Objects.equals(object1, object2);
+  }
 
-    /**
+  /**
      * <p>Compares given {@code object} to a vararg of {@code searchObjects}</p>
      *
      * <pre>
@@ -648,11 +601,11 @@ public class ObjectUtils {
      * @param searchObjects a vararg of objects, may be {@code null}.
      * @return {@code true} if {@code object} is equal to any of the {@code searchObjects}.
      */
-    public static boolean equalsAny(final Object object, final Object... searchObjects) {
-        return searchObjects != null && Stream.of(searchObjects).anyMatch(e -> Objects.equals(object, e));
-    }
+  public static boolean equalsAny(final Object object, final Object... searchObjects) {
+    return searchObjects != null && Stream.of(searchObjects).anyMatch((e) -> Objects.equals(object, e));
+  }
 
-    /**
+  /**
      * <p>Returns the first value in the array which is not {@code null}.
      * If all the values are {@code null} or the array is {@code null}
      * or empty then {@code null} is returned.</p>
@@ -674,19 +627,18 @@ public class ObjectUtils {
      *  or {@code null} if there are no non-null values
      * @since 3.0
      */
-    @SafeVarargs
-    public static <T> T firstNonNull(final T... values) {
-        if (values != null) {
-            for (final T val : values) {
-                if (val != null) {
-                    return val;
-                }
-            }
+  @SafeVarargs public static <T extends java.lang.Object> T firstNonNull(final T... values) {
+    if (values != null) {
+      for (final T val : values) {
+        if (val != null) {
+          return val;
         }
-        return null;
+      }
     }
+    return null;
+  }
 
-    /**
+  /**
      * Delegates to {@link Object#getClass()} using generics.
      *
      * @param <T> The argument type or null.
@@ -694,12 +646,11 @@ public class ObjectUtils {
      * @return The argument Class or null.
      * @since 3.13.0
      */
-    @SuppressWarnings("unchecked")
-    public static <T> Class<T> getClass(final T object) {
-        return object == null ? null : (Class<T>) object.getClass();
-    }
+  @SuppressWarnings(value = { "unchecked" }) public static <T extends java.lang.Object> Class<T> getClass(final T object) {
+    return object == null ? null : (Class<T>) object.getClass();
+  }
 
-    /**
+  /**
      * <p>Executes the given suppliers in order and returns the first return
      * value where a value other than {@code null} is returned.
      * Once a non-{@code null} value is obtained, all following suppliers are
@@ -723,22 +674,21 @@ public class ObjectUtils {
      *  or {@code null} if there are no non-null values
      * @since 3.10
      */
-    @SafeVarargs
-    public static <T> T getFirstNonNull(final Supplier<T>... suppliers) {
-        if (suppliers != null) {
-            for (final Supplier<T> supplier : suppliers) {
-                if (supplier != null) {
-                    final T value = supplier.get();
-                    if (value != null) {
-                        return value;
-                    }
-                }
-            }
+  @SafeVarargs public static <T extends java.lang.Object> T getFirstNonNull(final Supplier<T>... suppliers) {
+    if (suppliers != null) {
+      for (final Supplier<T> supplier : suppliers) {
+        if (supplier != null) {
+          final T value = supplier.get();
+          if (value != null) {
+            return value;
+          }
         }
-        return null;
+      }
     }
+    return null;
+  }
 
-    /**
+  /**
      * <p>
      * Returns the given {@code object} is it is non-null, otherwise returns the Supplier's {@link Supplier#get()}
      * value.
@@ -763,11 +713,11 @@ public class ObjectUtils {
      * @return {@code object} if it is not {@code null}, {@code defaultValueSupplier.get()} otherwise
      * @since 3.10
      */
-    public static <T> T getIfNull(final T object, final Supplier<T> defaultSupplier) {
-        return object != null ? object : Suppliers.get(defaultSupplier);
-    }
+  public static <T extends java.lang.Object> T getIfNull(final T object, final Supplier<T> defaultSupplier) {
+    return object != null ? object : Suppliers.get(defaultSupplier);
+  }
 
-    /**
+  /**
      * <p>Gets the hash code of an object returning zero when the
      * object is {@code null}.</p>
      *
@@ -782,13 +732,11 @@ public class ObjectUtils {
      * @deprecated this method has been replaced by {@code java.util.Objects.hashCode(Object)} in Java 7 and will be
      * removed in future releases
      */
-    @Deprecated
-    public static int hashCode(final Object obj) {
-        // hashCode(Object) for performance vs. hashCodeMulti(Object[]), as hash code is often critical
-        return Objects.hashCode(obj);
-    }
+  @Deprecated public static int hashCode(final Object obj) {
+    return Objects.hashCode(obj);
+  }
 
-    /**
+  /**
      * Returns the hex hash code for the given object per {@link Objects#hashCode(Object)}.
      * <p>
      * Short hand for {@code Integer.toHexString(Objects.hashCode(object))}.
@@ -798,12 +746,11 @@ public class ObjectUtils {
      * @return Hash code in hexadecimal format.
      * @since 3.13.0
      */
-    public static String hashCodeHex(final Object object) {
-        return Integer.toHexString(Objects.hashCode(object));
-    }
+  public static String hashCodeHex(final Object object) {
+    return Integer.toHexString(Objects.hashCode(object));
+  }
 
-
-    /**
+  /**
      * <p>Gets the hash code for multiple objects.</p>
      *
      * <p>This allows a hash code to be rapidly calculated for a number of objects.
@@ -825,26 +772,25 @@ public class ObjectUtils {
      * @deprecated this method has been replaced by {@code java.util.Objects.hash(Object...)} in Java 7 and will be
      * removed in future releases.
      */
-    @Deprecated
-    public static int hashCodeMulti(final Object... objects) {
-        int hash = 1;
-        if (objects != null) {
-            for (final Object object : objects) {
-                final int tmpHash = Objects.hashCode(object);
-                hash = hash * 31 + tmpHash;
-            }
-        }
-        return hash;
+  @Deprecated public static int hashCodeMulti(final Object... objects) {
+    int hash = 1;
+    if (objects != null) {
+      for (final Object object : objects) {
+        final int tmpHash = Objects.hashCode(object);
+        hash = hash * 31 + tmpHash;
+      }
     }
+    return hash;
+  }
 
-    /**
+  /**
      * <p>Appends the toString that would be produced by {@code Object}
      * if a class did not override toString itself. {@code null}
      * will throw a NullPointerException for either of the two parameters. </p>
      *
      * <pre>
-     * ObjectUtils.identityToString(appendable, "")            = appendable.append("java.lang.String@1e23")
-     * ObjectUtils.identityToString(appendable, Boolean.TRUE)  = appendable.append("java.lang.Boolean@7fa")
+     * ObjectUtils.identityToString(appendable, "")            = appendable.append("java.lang.String@1e23"
+     * ObjectUtils.identityToString(appendable, Boolean.TRUE)  = appendable.append("java.lang.Boolean@7fa"
      * ObjectUtils.identityToString(appendable, Boolean.TRUE)  = appendable.append("java.lang.Boolean@7fa")
      * </pre>
      *
@@ -853,14 +799,12 @@ public class ObjectUtils {
      * @throws IOException if an I/O error occurs.
      * @since 3.2
      */
-    public static void identityToString(final Appendable appendable, final Object object) throws IOException {
-        Validate.notNull(object, "object");
-        appendable.append(object.getClass().getName())
-              .append(AT_SIGN)
-              .append(identityHashCodeHex(object));
-    }
+  public static void identityToString(final Appendable appendable, final Object object) throws IOException {
+    Validate.notNull(object, "object");
+    appendable.append(object.getClass().getName()).append(AT_SIGN).append(identityHashCodeHex(object));
+  }
 
-    /**
+  /**
      * Returns the hex hash code for the given object per {@link System#identityHashCode(Object)}.
      * <p>
      * Short hand for {@code Integer.toHexString(System.identityHashCode(object))}.
@@ -870,11 +814,11 @@ public class ObjectUtils {
      * @return Hash code in hexadecimal format.
      * @since 3.13.0
      */
-    public static String identityHashCodeHex(final Object object) {
-        return Integer.toHexString(System.identityHashCode(object));
-    }
+  public static String identityHashCodeHex(final Object object) {
+    return Integer.toHexString(System.identityHashCode(object));
+  }
 
-    /**
+  /**
      * <p>Gets the toString that would be produced by {@code Object}
      * if a class did not override toString itself. {@code null}
      * will return {@code null}.</p>
@@ -890,29 +834,25 @@ public class ObjectUtils {
      * @return the default toString text, or {@code null} if
      *  {@code null} passed in
      */
-    public static String identityToString(final Object object) {
-        if (object == null) {
-            return null;
-        }
-        final String name = object.getClass().getName();
-        final String hexString = identityHashCodeHex(object);
-        final StringBuilder builder = new StringBuilder(name.length() + 1 + hexString.length());
-        // @formatter:off
-        builder.append(name)
-              .append(AT_SIGN)
-              .append(hexString);
-        // @formatter:on
-        return builder.toString();
+  public static String identityToString(final Object object) {
+    if (object == null) {
+      return null;
     }
+    final String name = object.getClass().getName();
+    final String hexString = identityHashCodeHex(object);
+    final StringBuilder builder = new StringBuilder(name.length() + 1 + hexString.length());
+    builder.append(name).append(AT_SIGN).append(hexString);
+    return builder.toString();
+  }
 
-    /**
+  /**
      * <p>Appends the toString that would be produced by {@code Object}
      * if a class did not override toString itself. {@code null}
      * will throw a NullPointerException for either of the two parameters. </p>
      *
      * <pre>
-     * ObjectUtils.identityToString(builder, "")            = builder.append("java.lang.String@1e23")
-     * ObjectUtils.identityToString(builder, Boolean.TRUE)  = builder.append("java.lang.Boolean@7fa")
+     * ObjectUtils.identityToString(builder, "")            = builder.append("java.lang.String@1e23"
+     * ObjectUtils.identityToString(builder, Boolean.TRUE)  = builder.append("java.lang.Boolean@7fa"
      * ObjectUtils.identityToString(builder, Boolean.TRUE)  = builder.append("java.lang.Boolean@7fa")
      * </pre>
      *
@@ -922,25 +862,22 @@ public class ObjectUtils {
      * @deprecated as of 3.6, because StrBuilder was moved to commons-text,
      *  use one of the other {@code identityToString} methods instead
      */
-    @Deprecated
-    public static void identityToString(final StrBuilder builder, final Object object) {
-        Validate.notNull(object, "object");
-        final String name = object.getClass().getName();
-        final String hexString = identityHashCodeHex(object);
-        builder.ensureCapacity(builder.length() +  name.length() + 1 + hexString.length());
-        builder.append(name)
-              .append(AT_SIGN)
-              .append(hexString);
-    }
+  @Deprecated public static void identityToString(final StrBuilder builder, final Object object) {
+    Validate.notNull(object, "object");
+    final String name = object.getClass().getName();
+    final String hexString = identityHashCodeHex(object);
+    builder.ensureCapacity(builder.length() + name.length() + 1 + hexString.length());
+    builder.append(name).append(AT_SIGN).append(hexString);
+  }
 
-    /**
+  /**
      * <p>Appends the toString that would be produced by {@code Object}
      * if a class did not override toString itself. {@code null}
      * will throw a NullPointerException for either of the two parameters. </p>
      *
      * <pre>
-     * ObjectUtils.identityToString(buf, "")            = buf.append("java.lang.String@1e23")
-     * ObjectUtils.identityToString(buf, Boolean.TRUE)  = buf.append("java.lang.Boolean@7fa")
+     * ObjectUtils.identityToString(buf, "")            = buf.append("java.lang.String@1e23"
+     * ObjectUtils.identityToString(buf, Boolean.TRUE)  = buf.append("java.lang.Boolean@7fa"
      * ObjectUtils.identityToString(buf, Boolean.TRUE)  = buf.append("java.lang.Boolean@7fa")
      * </pre>
      *
@@ -948,24 +885,22 @@ public class ObjectUtils {
      * @param object  the object to create a toString for
      * @since 2.4
      */
-    public static void identityToString(final StringBuffer buffer, final Object object) {
-        Validate.notNull(object, "object");
-        final String name = object.getClass().getName();
-        final String hexString = identityHashCodeHex(object);
-        buffer.ensureCapacity(buffer.length() + name.length() + 1 + hexString.length());
-        buffer.append(name)
-              .append(AT_SIGN)
-              .append(hexString);
-    }
+  public static void identityToString(final StringBuffer buffer, final Object object) {
+    Validate.notNull(object, "object");
+    final String name = object.getClass().getName();
+    final String hexString = identityHashCodeHex(object);
+    buffer.ensureCapacity(buffer.length() + name.length() + 1 + hexString.length());
+    buffer.append(name).append(AT_SIGN).append(hexString);
+  }
 
-    /**
+  /**
      * <p>Appends the toString that would be produced by {@code Object}
      * if a class did not override toString itself. {@code null}
      * will throw a NullPointerException for either of the two parameters. </p>
      *
      * <pre>
-     * ObjectUtils.identityToString(builder, "")            = builder.append("java.lang.String@1e23")
-     * ObjectUtils.identityToString(builder, Boolean.TRUE)  = builder.append("java.lang.Boolean@7fa")
+     * ObjectUtils.identityToString(builder, "")            = builder.append("java.lang.String@1e23"
+     * ObjectUtils.identityToString(builder, Boolean.TRUE)  = builder.append("java.lang.Boolean@7fa"
      * ObjectUtils.identityToString(builder, Boolean.TRUE)  = builder.append("java.lang.Boolean@7fa")
      * </pre>
      *
@@ -973,38 +908,15 @@ public class ObjectUtils {
      * @param object  the object to create a toString for
      * @since 3.2
      */
-    public static void identityToString(final StringBuilder builder, final Object object) {
-        Validate.notNull(object, "object");
-        final String name = object.getClass().getName();
-        final String hexString = identityHashCodeHex(object);
-        builder.ensureCapacity(builder.length() +  name.length() + 1 + hexString.length());
-        builder.append(name)
-              .append(AT_SIGN)
-              .append(hexString);
-    }
+  public static void identityToString(final StringBuilder builder, final Object object) {
+    Validate.notNull(object, "object");
+    final String name = object.getClass().getName();
+    final String hexString = identityHashCodeHex(object);
+    builder.ensureCapacity(builder.length() + name.length() + 1 + hexString.length());
+    builder.append(name).append(AT_SIGN).append(hexString);
+  }
 
-
-    // Constants (LANG-816):
-    /*
-        These methods ensure constants are not inlined by javac.
-        For example, typically a developer might declare a constant like so:
-
-            public final static int MAGIC_NUMBER = 5;
-
-        Should a different jar file refer to this, and the MAGIC_NUMBER
-        is changed a later date (e.g., MAGIC_NUMBER = 6), the different jar
-        file will need to recompile itself.  This is because javac
-        typically inlines the primitive or String constant directly into
-        the bytecode, and removes the reference to the MAGIC_NUMBER field.
-
-        To help the other jar (so that it does not need to recompile
-        when constants are changed) the original developer can declare
-        their constant using one of the CONST() utility methods, instead:
-
-            public final static int MAGIC_NUMBER = CONST(5);
-     */
-
-    /**
+  /**
      * <p>
      * Checks, whether the given object is an Object array or a primitive array in a null-safe manner.
      * </p>
@@ -1026,11 +938,11 @@ public class ObjectUtils {
      * @return {@code true} if the object is an {@code array}, {@code false} otherwise
      * @since 3.13.0
      */
-    public static boolean isArray(final Object object) {
-        return object != null && object.getClass().isArray();
-    }
+  public static boolean isArray(final Object object) {
+    return object != null && object.getClass().isArray();
+  }
 
-    /**
+  /**
      * <p>Checks if an Object is empty or null.</p>
      *
      * The following types are supported:
@@ -1055,26 +967,26 @@ public class ObjectUtils {
      * {@code false} otherwise
      * @since 3.9
      */
-    public static boolean isEmpty(final Object object) {
-        if (object == null) {
-            return true;
-        }
-        if (object instanceof CharSequence) {
-            return ((CharSequence) object).length() == 0;
-        }
-        if (isArray(object)) {
-            return Array.getLength(object) == 0;
-        }
-        if (object instanceof Collection<?>) {
-            return ((Collection<?>) object).isEmpty();
-        }
-        if (object instanceof Map<?, ?>) {
-            return ((Map<?, ?>) object).isEmpty();
-        }
-        return false;
+  public static boolean isEmpty(final Object object) {
+    if (object == null) {
+      return true;
     }
+    if (object instanceof CharSequence) {
+      return ((CharSequence) object).length() == 0;
+    }
+    if (isArray(object)) {
+      return Array.getLength(object) == 0;
+    }
+    if (object instanceof Collection<?>) {
+      return ((Collection<?>) object).isEmpty();
+    }
+    if (object instanceof Map<?, ?>) {
+      return ((Map<?, ?>) object).isEmpty();
+    }
+    return false;
+  }
 
-    /**
+  /**
      * <p>Checks if an Object is not empty and not null.</p>
      *
      * The following types are supported:
@@ -1099,13 +1011,12 @@ public class ObjectUtils {
      * and not null, {@code false} otherwise
      * @since 3.9
      */
-    public static boolean isNotEmpty(final Object object) {
-        return !isEmpty(object);
-    }
+  public static boolean isNotEmpty(final Object object) {
+    return !isEmpty(object);
+  }
 
-    /**
+  /**
      * <p>Null safe comparison of Comparables.</p>
-     * <p>TODO Move to ComparableUtils.</p>
      *
      * @param <T> type of the values processed by this method
      * @param values the set of comparable values, may be null
@@ -1117,20 +1028,19 @@ public class ObjectUtils {
      *   <li>If all the comparables are null, null is returned.
      *  </ul>
      */
-    @SafeVarargs
-    public static <T extends Comparable<? super T>> T max(final T... values) {
-        T result = null;
-        if (values != null) {
-            for (final T value : values) {
-                if (compare(value, result, false) > 0) {
-                    result = value;
-                }
-            }
+  @SafeVarargs public static <T extends Comparable<? super T>> T max(final T... values) {
+    T result = null;
+    if (values != null) {
+      for (final T value : values) {
+        if (compare(value, result, false) > 0) {
+          result = value;
         }
-        return result;
+      }
     }
+    return result;
+  }
 
-    /**
+  /**
      * Find the "best guess" middle value among comparables. If there is an even
      * number of total values, the lower of the two middle values will be returned.
      * @param <T> type of values processed by this method
@@ -1141,19 +1051,17 @@ public class ObjectUtils {
      * @throws IllegalArgumentException if items is empty or contains {@code null} values
      * @since 3.0.1
      */
-    @SafeVarargs
-    public static <T> T median(final Comparator<T> comparator, final T... items) {
-        Validate.notEmpty(items, "null/empty items");
-        Validate.noNullElements(items);
-        Validate.notNull(comparator, "comparator");
-        final TreeSet<T> treeSet = new TreeSet<>(comparator);
-        Collections.addAll(treeSet, items);
-        @SuppressWarnings("unchecked") //we know all items added were T instances
-        final T result = (T) treeSet.toArray()[(treeSet.size() - 1) / 2];
-        return result;
-    }
+  @SafeVarargs public static <T extends java.lang.Object> T median(final Comparator<T> comparator, final T... items) {
+    Validate.notEmpty(items, "null/empty items");
+    Validate.noNullElements(items);
+    Validate.notNull(comparator, "comparator");
+    final TreeSet<T> treeSet = new TreeSet<>(comparator);
+    Collections.addAll(treeSet, items);
+    @SuppressWarnings(value = { "unchecked" }) final T result = (T) treeSet.toArray()[(treeSet.size() - 1) / 2];
+    return result;
+  }
 
-    /**
+  /**
      * Find the "best guess" middle value among comparables. If there is an even
      * number of total values, the lower of the two middle values will be returned.
      * @param <T> type of values processed by this method
@@ -1163,20 +1071,17 @@ public class ObjectUtils {
      * @throws IllegalArgumentException if items is empty or contains {@code null} values
      * @since 3.0.1
      */
-    @SafeVarargs
-    public static <T extends Comparable<? super T>> T median(final T... items) {
-        Validate.notEmpty(items);
-        Validate.noNullElements(items);
-        final TreeSet<T> sort = new TreeSet<>();
-        Collections.addAll(sort, items);
-        @SuppressWarnings("unchecked") //we know all items added were T instances
-        final T result = (T) sort.toArray()[(sort.size() - 1) / 2];
-        return result;
-    }
+  @SafeVarargs public static <T extends Comparable<? super T>> T median(final T... items) {
+    Validate.notEmpty(items);
+    Validate.noNullElements(items);
+    final TreeSet<T> sort = new TreeSet<>();
+    Collections.addAll(sort, items);
+    @SuppressWarnings(value = { "unchecked" }) final T result = (T) sort.toArray()[(sort.size() - 1) / 2];
+    return result;
+  }
 
-    /**
+  /**
      * <p>Null safe comparison of Comparables.</p>
-     * <p>TODO Move to ComparableUtils.</p>
      *
      * @param <T> type of the values processed by this method
      * @param values the set of comparable values, may be null
@@ -1188,21 +1093,19 @@ public class ObjectUtils {
      *   <li>If all the comparables are null, null is returned.
      *  </ul>
      */
-    @SafeVarargs
-    public static <T extends Comparable<? super T>> T min(final T... values) {
-        T result = null;
-        if (values != null) {
-            for (final T value : values) {
-                if (compare(value, result, true) < 0) {
-                    result = value;
-                }
-            }
+  @SafeVarargs public static <T extends Comparable<? super T>> T min(final T... values) {
+    T result = null;
+    if (values != null) {
+      for (final T value : values) {
+        if (compare(value, result, true) < 0) {
+          result = value;
         }
-        return result;
+      }
     }
+    return result;
+  }
 
-
-    /**
+  /**
      * Find the most frequently occurring item.
      *
      * @param <T> type of values processed by this method
@@ -1210,35 +1113,36 @@ public class ObjectUtils {
      * @return most populous T, {@code null} if non-unique or no items supplied
      * @since 3.0.1
      */
-    @SafeVarargs
-    public static <T> T mode(final T... items) {
-        if (ArrayUtils.isNotEmpty(items)) {
-            final HashMap<T, MutableInt> occurrences = new HashMap<>(items.length);
-            for (final T t : items) {
-                final MutableInt count = occurrences.get(t);
-                if (count == null) {
-                    occurrences.put(t, new MutableInt(1));
-                } else {
-                    count.increment();
-                }
-            }
-            T result = null;
-            int max = 0;
-            for (final Map.Entry<T, MutableInt> e : occurrences.entrySet()) {
-                final int cmp = e.getValue().intValue();
-                if (cmp == max) {
-                    result = null;
-                } else if (cmp > max) {
-                    max = cmp;
-                    result = e.getKey();
-                }
-            }
-            return result;
+  @SafeVarargs public static <T extends java.lang.Object> T mode(final T... items) {
+    if (ArrayUtils.isNotEmpty(items)) {
+      final HashMap<T, MutableInt> occurrences = new HashMap<>(items.length);
+      for (final T t : items) {
+        final MutableInt count = occurrences.get(t);
+        if (count == null) {
+          occurrences.put(t, new MutableInt(1));
+        } else {
+          count.increment();
         }
-        return null;
+      }
+      T result = null;
+      int max = 0;
+      for (final Map.Entry<T, MutableInt> e : occurrences.entrySet()) {
+        final int cmp = e.getValue().intValue();
+        if (cmp == max) {
+          result = null;
+        } else {
+          if (cmp > max) {
+            max = cmp;
+            result = e.getKey();
+          }
+        }
+      }
+      return result;
     }
+    return null;
+  }
 
-    /**
+  /**
      * <p>Compares two objects for inequality, where either one or both
      * objects may be {@code null}.</p>
      *
@@ -1257,11 +1161,11 @@ public class ObjectUtils {
      * @param object2  the second object, may be {@code null}
      * @return {@code false} if the values of both objects are the same
      */
-    public static boolean notEqual(final Object object1, final Object object2) {
-        return !Objects.equals(object1, object2);
-    }
+  public static boolean notEqual(final Object object1, final Object object2) {
+    return !Objects.equals(object1, object2);
+  }
 
-    /**
+  /**
      * Checks that the specified object reference is not {@code null} or empty per {@link #isEmpty(Object)}. Use this
      * method for validation, for example:
      *
@@ -1283,11 +1187,11 @@ public class ObjectUtils {
      * @see #isEmpty(Object)
      * @since 3.12.0
      */
-    public static <T> T  requireNonEmpty(final T obj) {
-        return requireNonEmpty(obj, "object");
-    }
+  public static <T extends java.lang.Object> T requireNonEmpty(final T obj) {
+    return requireNonEmpty(obj, "object");
+  }
 
-    /**
+  /**
      * Checks that the specified object reference is not {@code null} or empty per {@link #isEmpty(Object)}. Use this
      * method for validation, for example:
      *
@@ -1310,16 +1214,15 @@ public class ObjectUtils {
      * @see #isEmpty(Object)
      * @since 3.12.0
      */
-    public static <T> T requireNonEmpty(final T obj, final String message) {
-        // check for null first to give the most precise exception.
-        Objects.requireNonNull(obj, message);
-        if (isEmpty(obj)) {
-            throw new IllegalArgumentException(message);
-        }
-        return obj;
+  public static <T extends java.lang.Object> T requireNonEmpty(final T obj, final String message) {
+    Objects.requireNonNull(obj, message);
+    if (isEmpty(obj)) {
+      throw new IllegalArgumentException(message);
     }
+    return obj;
+  }
 
-    /**
+  /**
      * <p>Gets the {@code toString} of an {@code Object} returning
      * an empty string ("") if {@code null} input.</p>
      *
@@ -1339,12 +1242,11 @@ public class ObjectUtils {
      * removed in future releases. Note however that said method will return "null" for null references, while this
      * method returns an empty String. To preserve behavior use {@code java.util.Objects.toString(myObject, "")}
      */
-    @Deprecated
-    public static String toString(final Object obj) {
-        return obj == null ? StringUtils.EMPTY : obj.toString();
-    }
+  @Deprecated public static String toString(final Object obj) {
+    return obj == null ? StringUtils.EMPTY : obj.toString();
+  }
 
-    /**
+  /**
      * <p>Gets the {@code toString} of an {@code Object} returning
      * a specified text if {@code null} input.</p>
      *
@@ -1365,12 +1267,11 @@ public class ObjectUtils {
      * @deprecated this method has been replaced by {@code java.util.Objects.toString(Object, String)} in Java 7 and
      * will be removed in future releases.
      */
-    @Deprecated
-    public static String toString(final Object obj, final String nullStr) {
-        return obj == null ? nullStr : obj.toString();
-    }
+  @Deprecated public static String toString(final Object obj, final String nullStr) {
+    return obj == null ? nullStr : obj.toString();
+  }
 
-    /**
+  /**
      * <p>Gets the {@code toString} of an {@code Object} returning
      * a specified text if {@code null} input.</p>
      *
@@ -1390,11 +1291,11 @@ public class ObjectUtils {
      * @return the passed in Object's toString, or {@code nullStr} if {@code null} input
      * @since 3.11
      */
-    public static String toString(final Object obj, final Supplier<String> supplier) {
-        return obj == null ? Suppliers.get(supplier) : obj.toString();
-    }
+  public static String toString(final Object obj, final Supplier<String> supplier) {
+    return obj == null ? Suppliers.get(supplier) : obj.toString();
+  }
 
-    /**
+  /**
      * Calls {@link Object#wait(long, int)} for the given Duration.
      *
      * @param obj The receiver of the wait call.
@@ -1407,11 +1308,11 @@ public class ObjectUtils {
      * @see Object#wait(long, int)
      * @since 3.12.0
      */
-    public static void wait(final Object obj, final Duration duration) throws InterruptedException {
-        DurationUtils.accept(obj::wait, DurationUtils.zeroIfNull(duration));
-    }
+  public static void wait(final Object obj, final Duration duration) throws InterruptedException {
+    DurationUtils.accept(obj::wait, DurationUtils.zeroIfNull(duration));
+  }
 
-    /**
+  /**
      * <p>{@code ObjectUtils} instances should NOT be constructed in
      * standard programming. Instead, the static methods on the class should
      * be used, such as {@code ObjectUtils.defaultIfNull("a","b");}.</p>
@@ -1419,7 +1320,6 @@ public class ObjectUtils {
      * <p>This constructor is public to permit tools that require a JavaBean
      * instance to operate.</p>
      */
-    public ObjectUtils() {
-    }
-
+  public ObjectUtils() {
+  }
 }
