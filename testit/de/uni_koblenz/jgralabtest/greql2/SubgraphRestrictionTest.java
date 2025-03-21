@@ -13,13 +13,12 @@ import de.uni_koblenz.jgralabtest.schemas.greqltestschema.localities.County;
 import de.uni_koblenz.jgralabtest.schemas.greqltestschema.localities.HasCapital;
 import de.uni_koblenz.jgralabtest.schemas.greqltestschema.localities.Locality;
 
-
 public class SubgraphRestrictionTest extends GenericTest {
 
 	@Test
 	public void testVertexTypeRestrictedSubgraph() throws Exception {
 		String queryString = "on vertexTypeSubgraph{junctions.Crossroad}() : from v:V{} report v end";
-		PVector result = (PVector) evalTestQuery(queryString);
+		PVector<?> result = (PVector<?>) evalTestQuery(queryString);
 		int crossroads = (Integer) evalTestQuery("count(V{junctions.Crossroad})");
 		int num = 0;
 		for (Object val : result) {
@@ -30,11 +29,11 @@ public class SubgraphRestrictionTest extends GenericTest {
 		}
 		assertEquals(crossroads, num);
 	}
-	
+
 	@Test
 	public void testEdgeTypeRestrictedSubgraph() throws Exception {
 		String queryString = "on edgeTypeSubgraph{localities.HasCapital}() : from e:E{} report e end";
-		PVector result = (PVector) evalTestQuery(queryString);
+		PVector<?> result = (PVector<?>) evalTestQuery(queryString);
 		int hasCapitals = (Integer) evalTestQuery("count(E{localities.HasCapital})");
 		int num = 0;
 		for (Object val : result) {
@@ -45,7 +44,7 @@ public class SubgraphRestrictionTest extends GenericTest {
 		}
 		assertEquals(hasCapitals, num);
 		queryString = "on edgeTypeSubgraph{localities.HasCapital}() : from v:V{} report v end";
-		result = (PVector) evalTestQuery(queryString);
+		result = (PVector<?>) evalTestQuery(queryString);
 		int countiesOrCapitals = (Integer) evalTestQuery("count(from v:V{localities.County, localities.City} with degree{localities.HasCapital}(v)>0 report v end)");
 		num = 0;
 		for (Object val : result) {
@@ -58,7 +57,23 @@ public class SubgraphRestrictionTest extends GenericTest {
 	}
 	
 	
-
+	
+	
+	@Test
+	public void testExpressionCreatedSubgraph() throws Exception {
+		String queryString = "on vertexTypeSubgraph{junctions.Crossroad}() : from v:V report v end";
+		PVector result = (PVector) evalTestQuery(queryString);
+		int crossroads = (Integer) evalTestQuery("count(V{junctions.Crossroad})");
+		int num = 0;
+		for (Object val : result) {
+			assertTrue(val instanceof Vertex);
+			Vertex v = (Vertex) val;
+			assertTrue(v instanceof Crossroad);
+			num++;
+		}
+		assertEquals(crossroads, num);
+	}
+	
 	@Test
 	public void testElementSetCreatedSubgraph() throws Exception {
 		String queryString = "(on elementSetSubgraph(vSet,eSet) : from v:V report v end) where vSet := from v:V{junctions.Crossroad} report v end, eSet := from e:E{connections.Highway} report e end";
