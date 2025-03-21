@@ -40,10 +40,9 @@ import com.jgoodies.forms.layout.RowSpec;
 public class ReferenceFiducialLocatorConfigurationWizard extends AbstractConfigurationWizard {
     private final ReferenceFiducialLocator fiducialLocator;
     private static Part defaultPart = createDefaultPart();
-    
+    private JCheckBox chckbxUseAffineTransfor; 
     JCheckBox enabledAveragingCheckbox; 
     JTextField textFieldRepeatFiducialRecognition;
-    private JCheckBox chckbxUseAffineTransfor;
 
     public ReferenceFiducialLocatorConfigurationWizard(ReferenceFiducialLocator fiducialLocator) {
         this.fiducialLocator = fiducialLocator;
@@ -62,8 +61,6 @@ public class ReferenceFiducialLocatorConfigurationWizard extends AbstractConfigu
                 FormSpecs.RELATED_GAP_COLSPEC,
                 FormSpecs.DEFAULT_COLSPEC,},
             new RowSpec[] {
-                FormSpecs.RELATED_GAP_ROWSPEC,
-                FormSpecs.DEFAULT_ROWSPEC,
                 FormSpecs.RELATED_GAP_ROWSPEC,
                 FormSpecs.DEFAULT_ROWSPEC,
                 FormSpecs.RELATED_GAP_ROWSPEC,
@@ -116,6 +113,11 @@ public class ReferenceFiducialLocatorConfigurationWizard extends AbstractConfigu
         });
         panel.add(btnResetAllTo, "8, 2");
         
+<<<<<<< /usr/src/app/output/openpnp/openpnp/c6bf9e1bc3f245d13a909271b1fbae387f75165d/src/main/java/org/openpnp/machine/reference/vision/wizards/ReferenceFiducialLocatorConfigurationWizard.java/left.java
+        chckbxUseAffineTransfor = new JCheckBox("Use Affine Transform");
+        panel.add(chckbxUseAffineTransfor, "2, 4, 5, 1");
+||||||| /usr/src/app/output/openpnp/openpnp/c6bf9e1bc3f245d13a909271b1fbae387f75165d/src/main/java/org/openpnp/machine/reference/vision/wizards/ReferenceFiducialLocatorConfigurationWizard.java/base.java
+=======
         JLabel lblRepeatFiducialRecognition = new JLabel("Repeat Recognition");
         panel.add(lblRepeatFiducialRecognition, "2, 4");
         
@@ -130,9 +132,7 @@ public class ReferenceFiducialLocatorConfigurationWizard extends AbstractConfigu
 
         enabledAveragingCheckbox = new JCheckBox("");
         panel.add(enabledAveragingCheckbox, "4, 6");
-
-        chckbxUseAffineTransfor = new JCheckBox("Use Affine Transform");
-        panel.add(chckbxUseAffineTransfor, "2, 4, 5, 1");
+>>>>>>> /usr/src/app/output/openpnp/openpnp/c6bf9e1bc3f245d13a909271b1fbae387f75165d/src/main/java/org/openpnp/machine/reference/vision/wizards/ReferenceFiducialLocatorConfigurationWizard.java/right.java
     }
     
     private void editPipeline() throws Exception {
@@ -169,13 +169,17 @@ public class ReferenceFiducialLocatorConfigurationWizard extends AbstractConfigu
 
     @Override
     public void createBindings() {
-    	IntegerConverter intConverter = new IntegerConverter();
+<<<<<<< /usr/src/app/output/openpnp/openpnp/c6bf9e1bc3f245d13a909271b1fbae387f75165d/src/main/java/org/openpnp/machine/reference/vision/wizards/ReferenceFiducialLocatorConfigurationWizard.java/left.java
+        addWrappedBinding(fiducialLocator, "useAffineTransform", chckbxUseAffineTransfor, "selected");
+||||||| /usr/src/app/output/openpnp/openpnp/c6bf9e1bc3f245d13a909271b1fbae387f75165d/src/main/java/org/openpnp/machine/reference/vision/wizards/ReferenceFiducialLocatorConfigurationWizard.java/base.java
+=======
+        IntegerConverter intConverter = new IntegerConverter();
     	
     	addWrappedBinding(fiducialLocator, "enabledAveraging", enabledAveragingCheckbox, "selected");
     	addWrappedBinding(fiducialLocator, "repeatFiducialRecognition", textFieldRepeatFiducialRecognition, "text", intConverter);
     	
     	ComponentDecorators.decorateWithAutoSelect(textFieldRepeatFiducialRecognition);
-        addWrappedBinding(fiducialLocator, "useAffineTransform", chckbxUseAffineTransfor, "selected");
+>>>>>>> /usr/src/app/output/openpnp/openpnp/c6bf9e1bc3f245d13a909271b1fbae387f75165d/src/main/java/org/openpnp/machine/reference/vision/wizards/ReferenceFiducialLocatorConfigurationWizard.java/right.java
     }
     
     @Override
