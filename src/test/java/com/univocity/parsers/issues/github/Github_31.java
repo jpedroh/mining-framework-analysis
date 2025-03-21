@@ -106,6 +106,7 @@ public class Github_31 {
 
 		CsvWriterSettings writerSettings = new CsvWriterSettings();
 		writerSettings.getFormat().setLineSeparator("\n");
+		writerSettings.getFormat().setLineSeparator("\n");
 		writerSettings.setRowWriterProcessor(new BeanWriterProcessor<AB>(AB.class));
 
 		beans.get(0).c = null;
