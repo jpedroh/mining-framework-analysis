@@ -20,10 +20,12 @@
 package org.sonar.plugins.ldap;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.MoreObjects;
 
 import java.security.PrivilegedActionException;
+
 import java.security.PrivilegedExceptionAction;
+
+import com.google.common.base.MoreObjects;
 import java.util.Properties;
 import javax.annotation.Nullable;
 import javax.naming.Context;
