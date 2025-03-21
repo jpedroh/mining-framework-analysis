@@ -828,6 +828,7 @@ public class Cluster {
             if (!isInit.compareAndSet(false, true))
                 return;
 
+<<<<<<< /usr/src/app/output/datastax/java-driver/127c2a211dd58cc81b61efa85310396aedf7bcae/driver-core/src/main/java/com/datastax/driver/core/Cluster.java/left.java
             for (InetAddress address : contactPoints) {
                 // We don't want to signal -- call onAdd() -- because nothing is ready
                 // yet (loadbalancing policy, control connection, ...). All we want is
@@ -838,12 +839,21 @@ public class Cluster {
                 // (since the node status is not exposed by C* in the System tables). This
                 // may not be correct.
                 Host host = addHost(address, false);
+                host.setUp();
                 if (host != null) {
-                    host.setUp();
                     for (Host.StateListener listener : listeners)
                         listener.onAdd(host);
                 }
             }
+||||||| /usr/src/app/output/datastax/java-driver/127c2a211dd58cc81b61efa85310396aedf7bcae/driver-core/src/main/java/com/datastax/driver/core/Cluster.java/base.java
+            for (InetAddress address : contactPoints) addHost(address, false).setUp();
+=======
+            for (InetAddress address : contactPoints) {
+                Host host = addHost(address, false);
+                if (host != null)
+                    host.setUp();
+            }
+>>>>>>> /usr/src/app/output/datastax/java-driver/127c2a211dd58cc81b61efa85310396aedf7bcae/driver-core/src/main/java/com/datastax/driver/core/Cluster.java/right.java
 
             loadBalancingPolicy().init(Cluster.this, metadata.allHosts());
 
