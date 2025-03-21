@@ -194,6 +194,17 @@ public @interface JsonInclude
          * {@link JsonInclude#valueFilter} for value itself, and/or
          * {@link JsonInclude#contentFilter} for contents of structured types)
          * is to be used for determining inclusion criteria.
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/602c0138c69c26dfaadc54fee3f68905b90aaea7/src/main/java/com/fasterxml/jackson/annotation/JsonInclude.java/left.java
+         * Filter object's <code>equals()</code> method is called with value
+         * to serialize; if it returns <code>true</code> value is <b>excluded</b>
+         * (that is, filtered out); if <code>false</code> value is <b>included</b>.
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/602c0138c69c26dfaadc54fee3f68905b90aaea7/src/main/java/com/fasterxml/jackson/annotation/JsonInclude.java/base.java
+         * Filter object's <code>equals()</code> method is called with value
+         * to serialize; if it returns <code>true</code> value is <b>excluded</b>
+         * (that is, filtered out); if <code>false</code> value is <b>included</b>.
+         *
+         * @since 2.9
+=======
          * Filter object's {@code equals()} method is called with value
          * to serialize; if it returns {@code true} value is <b>excluded</b>
          * (that is, filtered out); if {@code false} value is <b>included</b>.
@@ -202,6 +213,9 @@ public @interface JsonInclude
          * it will only be called ONCE to check whether {@code null} value is to be
          * included or not, after filter construction: it will NOT be called for
          * each {@code null} value encountered.
+         *
+         * @since 2.9
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/602c0138c69c26dfaadc54fee3f68905b90aaea7/src/main/java/com/fasterxml/jackson/annotation/JsonInclude.java/right.java
          */
         CUSTOM,
 
