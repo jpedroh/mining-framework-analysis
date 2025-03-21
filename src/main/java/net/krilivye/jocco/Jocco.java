@@ -108,20 +108,37 @@ public class Jocco {
         final Template template = new Template();
         final DocumentationModel docmodel = new DocumentationModel();
         for (final File file : files) {
-            final FileModel model = new FileModel();
-            final List<Section> sections = parseFile(file);
-            markDownHiglight(sections);
-            model.setListOfSections(sections);
-            model.setName(file.getName().split("\\.")[0]); //$NON-NLS-1$
-            model.setExtension(file.getName().split("\\.")[1]); //$NON-NLS-1$
-
+            final FileModel model = generateFileModel(file);
             docmodel.add(model);
-
         }
         fileout.write(template.fillTemplate(docmodel));
         fileout.close();
 
         return true;
+    }
+
+    private FileModel generateFileModel(final File file) throws FileNotFoundException, IOException {
+        final FileModel model = new FileModel();
+        final List<Section> sections = parseFile(file);
+        markDownHiglight(sections);
+        model.setListOfSections(sections);
+<<<<<<< /usr/src/app/output/krilivye/jocco/5994a8ffa7adc1fbe2157b96436ba57f24aa2fa6/src/main/java/net/krilivye/jocco/Jocco.java/left.java
+        model.setName(file.getName().split("\\.")[0]);
+        model.setExtension(file.getName().split("\\.")[1]);
+        return model;
+||||||| /usr/src/app/output/krilivye/jocco/5994a8ffa7adc1fbe2157b96436ba57f24aa2fa6/src/main/java/net/krilivye/jocco/Jocco.java/base.java
+        model.setName(file.getName().split("\\.")[0]);
+        model.setExtension(file.getName().split("\\.")[1]);
+
+        docmodel.add(model);
+
+=======
+        model.setName(file.getName().split("\\.")[0]); //$NON-NLS-1$
+        model.setExtension(file.getName().split("\\.")[1]); //$NON-NLS-1$
+
+        docmodel.add(model);
+
+>>>>>>> /usr/src/app/output/krilivye/jocco/5994a8ffa7adc1fbe2157b96436ba57f24aa2fa6/src/main/java/net/krilivye/jocco/Jocco.java/right.java
     }
 
     private void markDownHiglight(final List<Section> sections) {
@@ -145,16 +162,15 @@ public class Jocco {
         }
     }
 
-    private List<Section> parseFile(final File file)
-            throws FileNotFoundException, IOException {
+    private List<Section> parseFile(final File file) throws FileNotFoundException, IOException {
         listOfSections = new LinkedList<Section>();
         final BufferedReader input = new BufferedReader(new FileReader(file));
 
         final StringBuilder docsText = new StringBuilder();
         final StringBuilder codeText = new StringBuilder();
 
-        String line;
-        while (null != (line = input.readLine())) {
+        String line = input.readLine();
+        while (null != line) {
             if (line.contains("*") || line.contains("////")) { //$NON-NLS-1$ //$NON-NLS-2$
                 if (codeText.length() > 0) {
                     save(docsText, codeText);
@@ -165,6 +181,7 @@ public class Jocco {
             } else {
                 codeText.append(line).append("\n"); //$NON-NLS-1$
             }
+            line = input.readLine();
         }
         save(docsText, codeText);
         return listOfSections;
