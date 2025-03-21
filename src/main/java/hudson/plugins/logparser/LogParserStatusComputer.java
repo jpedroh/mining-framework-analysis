@@ -1,7 +1,6 @@
 package hudson.plugins.logparser;
 
 import hudson.FilePath;
-import hudson.remoting.VirtualChannel;
 import hudson.remoting.RemoteInputStream;
 import jenkins.security.MasterToSlaveCallable;
 
