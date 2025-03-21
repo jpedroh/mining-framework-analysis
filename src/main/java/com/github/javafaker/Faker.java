@@ -199,6 +199,7 @@ public class Faker {
         this.lebowski = new Lebowski(this);
         this.medical = new Medical(this);
         this.country = new Country(this);
+<<<<<<< /usr/src/app/output/dius/java-faker/b51bafda5ae7a5b54379288154df0062a85640f8/src/main/java/com/github/javafaker/Faker.java/left.java
         this.animal = new Animal(this);
         this.backToTheFuture = new BackToTheFuture(this);
         this.princessBride = new PrincessBride(this);
@@ -212,7 +213,10 @@ public class Faker {
         this.bojackHorseman = new BojackHorseman(this);
         this.disease = new Disease(this);
         this.basketball = new Basketball(this);
+||||||| /usr/src/app/output/dius/java-faker/b51bafda5ae7a5b54379288154df0062a85640f8/src/main/java/com/github/javafaker/Faker.java/base.java
+=======
         this.barcode = new Barcode(this);
+>>>>>>> /usr/src/app/output/dius/java-faker/b51bafda5ae7a5b54379288154df0062a85640f8/src/main/java/com/github/javafaker/Faker.java/right.java
     }
 
     /**
@@ -665,7 +669,7 @@ public class Faker {
 
     public Basketball basketball() { return basketball; }
 
-    public Barcode barcode() { return barcode; }
+    public Barcode barcode(){ return barcode;}
 
     public String resolve(String key) {
         return this.fakeValuesService.resolve(key, this, this);
