@@ -71,15 +71,30 @@ public class Url implements Serializable {
         return expandedUrlTitle;
     }
 
+<<<<<<< /usr/src/app/output/zauberlabs/gnip4j/d35413b32de39d510c4e83135bd19d0cde193cb5/core/src/main/java/com/zaubersoftware/gnip4j/api/model/Url.java/left.java
+    public void setExpandedUrlTitle(String expandedUrlTitle) {
+        this.expandedUrlTitle = expandedUrlTitle;
+    }
+||||||| /usr/src/app/output/zauberlabs/gnip4j/d35413b32de39d510c4e83135bd19d0cde193cb5/core/src/main/java/com/zaubersoftware/gnip4j/api/model/Url.java/base.java
+=======
     public void setExpandedUrlTitle(final String expandedUrlTitle) {
         this.expandedUrlTitle = expandedUrlTitle;
     }
+>>>>>>> /usr/src/app/output/zauberlabs/gnip4j/d35413b32de39d510c4e83135bd19d0cde193cb5/core/src/main/java/com/zaubersoftware/gnip4j/api/model/Url.java/right.java
 
     public String getExpandedUrlDescription() {
         return expandedUrlDescription;
     }
 
+<<<<<<< /usr/src/app/output/zauberlabs/gnip4j/d35413b32de39d510c4e83135bd19d0cde193cb5/core/src/main/java/com/zaubersoftware/gnip4j/api/model/Url.java/left.java
+    public void setExpandedUrlDescription(String expandedUrlDescription) {
+        this.expandedUrlDescription = expandedUrlDescription;
+    }
+||||||| /usr/src/app/output/zauberlabs/gnip4j/d35413b32de39d510c4e83135bd19d0cde193cb5/core/src/main/java/com/zaubersoftware/gnip4j/api/model/Url.java/base.java
+=======
     public void setExpandedUrlDescription(final String expandedUrlDescription) {
         this.expandedUrlDescription = expandedUrlDescription;
     }
+>>>>>>> /usr/src/app/output/zauberlabs/gnip4j/d35413b32de39d510c4e83135bd19d0cde193cb5/core/src/main/java/com/zaubersoftware/gnip4j/api/model/Url.java/right.java
+
 }
