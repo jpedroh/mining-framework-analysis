@@ -1,5 +1,4 @@
 package org.buddycloud.channelserver.packetprocessor.iq.namespace.register;
-
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
@@ -7,11 +6,9 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.LinkedBlockingQueue;
-
 import org.buddycloud.channelserver.Configuration;
 import org.buddycloud.channelserver.channel.ChannelManager;
 import org.buddycloud.channelserver.channel.Conf;
@@ -32,310 +29,172 @@ import org.xmpp.packet.JID;
 import org.xmpp.packet.Packet;
 
 public class RegisterSetTest extends IQTestHandler {
+  private static final String REGISTER_REQUEST_STANZA = "/iq/pubsub/register/register.stanza";
 
-    private static final String REGISTER_REQUEST_STANZA = "/iq/pubsub/register/register.stanza";
-    private static final String REGISTER_REQUEST_CHANNELS_DOMAIN = "channels.server1";
-    private static final String REGISTER_REQUEST_DOMAIN = "server1";
-    private static final JID REGISTER_REQUEST_FROM = new JID(
-            "user1@server1/mobile");
+  private static final String REGISTER_REQUEST_CHANNELS_DOMAIN = "channels.server1";
 
-    /*
-     * Class under test
-     */
-    private RegisterSet registerSet;
+  private static final String REGISTER_REQUEST_DOMAIN = "server1";
 
-    @Mock
-    private ChannelManager channelManagerMock;
+  private static final JID REGISTER_REQUEST_FROM = new JID("user1@server1/mobile");
 
-    @Mock
-    private Configuration configuration;
+  private RegisterSet registerSet;
 
-    private LinkedBlockingQueue<Packet> queue;
+  @Mock private ChannelManager channelManagerMock;
 
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+  @Mock private Configuration configuration;
 
-        Configuration.getInstance().remove(
-                Configuration.CONFIGURATION_LOCAL_DOMAIN_CHECKER);
-        Configuration.getInstance().putProperty(
-                Configuration.CONFIGURATION_SERVER_DOMAIN, REGISTER_REQUEST_DOMAIN);
+  private LinkedBlockingQueue<Packet> queue;
 
-        queue = new LinkedBlockingQueue<Packet>();
-        registerSet = new RegisterSet(configuration, queue, channelManagerMock);
+  @Before public void setUp() throws Exception {
+    MockitoAnnotations.initMocks(this);
+    Configuration.getInstance().remove(Configuration.CONFIGURATION_LOCAL_DOMAIN_CHECKER);
+    Configuration.getInstance().putProperty(Configuration.CONFIGURATION_SERVER_DOMAIN, REGISTER_REQUEST_DOMAIN);
+    queue = new LinkedBlockingQueue<Packet>();
+    registerSet = new RegisterSet(configuration, queue, channelManagerMock);
+    when(configuration.getProperty("server.domain")).thenReturn(REGISTER_REQUEST_DOMAIN);
+    when(configuration.getServerChannelsDomain()).thenReturn(REGISTER_REQUEST_CHANNELS_DOMAIN);
+    when(configuration.getServerDomain()).thenReturn(REGISTER_REQUEST_DOMAIN);
+  }
 
-        when(configuration.getProperty("server.domain")).thenReturn(
-                REGISTER_REQUEST_DOMAIN);
+  @SuppressWarnings(value = { "serial" }) @Test public void testRegisterNewUserAutoSubscribesLocalChannels() throws Exception {
+    IQ request = readStanzaAsIq(REGISTER_REQUEST_STANZA);
+    when(channelManagerMock.nodeExists(anyString())).thenReturn(false);
+    when(configuration.getAutosubscribeChannels()).thenReturn(new ArrayList<JID>() {
+      {
+        add(new JID("channel1@server1"));
+        add(new JID("channel2@server1"));
+      }
+    });
+    registerSet.process(request);
+    ArrayList<Packet> packets = new ArrayList<Packet>();
+    queue.drainTo(packets);
+    assertPacketsContainsSubscribe(packets, request.getFrom(), "/user/channel1@server1/posts");
+    assertPacketsContainsSubscribe(packets, request.getFrom(), "/user/channel2@server1/posts");
+  }
 
-        when(configuration.getServerChannelsDomain()).thenReturn(
-                REGISTER_REQUEST_CHANNELS_DOMAIN);
-        when(configuration.getServerDomain()).thenReturn(
-                REGISTER_REQUEST_DOMAIN);
-    }
+  @SuppressWarnings(value = { "serial" }) @Test public void testRegisterNewUserAutoSubscribesRemoteChannels() throws Exception {
+    IQ request = readStanzaAsIq(REGISTER_REQUEST_STANZA);
+    when(channelManagerMock.nodeExists(anyString())).thenReturn(false);
+    when(configuration.getAutosubscribeChannels()).thenReturn(new ArrayList<JID>() {
+      {
+        add(new JID("channel1@server2"));
+        add(new JID("channel2@server2"));
+      }
+    });
+    registerSet.process(request);
+    ArrayList<Packet> packets = new ArrayList<Packet>();
+    queue.drainTo(packets);
+    assertPacketsContainsSubscribe(packets, new JID(REGISTER_REQUEST_CHANNELS_DOMAIN), "/user/channel1@server2/posts", request.getFrom().toBareJID());
+    assertPacketsContainsSubscribe(packets, new JID(REGISTER_REQUEST_CHANNELS_DOMAIN), "/user/channel2@server2/posts", request.getFrom().toBareJID());
+  }
 
-    @SuppressWarnings("serial")
-    @Test
-    public void testRegisterNewUserAutoSubscribesLocalChannels()
-            throws Exception {
-        IQ request = readStanzaAsIq(REGISTER_REQUEST_STANZA);
+  @Test public void testRegisterExistingUserDoesntAutoSubscribeChannels() throws Exception {
+    IQ request = readStanzaAsIq(REGISTER_REQUEST_STANZA);
+    when(channelManagerMock.nodeExists(anyString())).thenReturn(true);
+    when(channelManagerMock.nodeExists(Conf.getPostChannelNodename(request.getFrom()))).thenReturn(true);
+    registerSet.process(request);
+    ArrayList<Packet> packets = new ArrayList<Packet>();
+    queue.drainTo(packets);
+    assertPacketsDoesntContainSubscribe(packets, request.getFrom(), "/user/channel1@server1/posts");
+    assertPacketsDoesntContainSubscribe(packets, request.getFrom(), "/user/channel2@server1/posts");
+  }
 
-        when(channelManagerMock.nodeExists(anyString())).thenReturn(false);
+  @SuppressWarnings(value = { "serial" }) @Test public void testRegisterNewUserAutoApprovesOnlyLocalPrivateChannels() throws Exception {
+    IQ request = readStanzaAsIq(REGISTER_REQUEST_STANZA);
+    final JID localPrivateChannel = new JID("channel1@server1");
+    final String localPrivateChannelNode = "/user/channel1@server1/posts";
+    final JID localOpenChannel = new JID("channel2@server1");
+    final JID remoteChannel = new JID("channel1@server2");
+    when(channelManagerMock.nodeExists(anyString())).thenReturn(false);
+    when(configuration.getAutosubscribeChannels()).thenReturn(new ArrayList<JID>() {
+      {
+        add(localPrivateChannel);
+        add(localOpenChannel);
+        add(remoteChannel);
+      }
+    });
+    when(configuration.getBooleanProperty(eq(Configuration.CONFIGURATION_CHANNELS_AUTOSUBSCRIBE_AUTOAPPROVE), anyBoolean())).thenReturn(true);
+    when(channelManagerMock.getNodeConfValue(localPrivateChannelNode, Conf.ACCESS_MODEL)).thenReturn(AccessModels.authorize.toString());
+    when(channelManagerMock.getDefaultNodeAffiliation(localPrivateChannelNode)).thenReturn(Affiliations.moderator);
+    registerSet.process(request);
+    verify(channelManagerMock).addUserSubscription(new NodeSubscriptionImpl(localPrivateChannelNode, REGISTER_REQUEST_FROM, Subscriptions.subscribed, null));
+    verify(channelManagerMock).setUserAffiliation(localPrivateChannelNode, REGISTER_REQUEST_FROM, Affiliations.moderator);
+  }
 
-        when(configuration.getAutosubscribeChannels()).thenReturn(
-                new ArrayList<JID>() {
-                    {
-                        add(new JID("channel1@server1"));
-                        add(new JID("channel2@server1"));
-                    }
-                });
+  @SuppressWarnings(value = { "serial" }) @Test public void testRegisterNewUserDoesntAutoApprove() throws Exception {
+    IQ request = readStanzaAsIq(REGISTER_REQUEST_STANZA);
+    final JID localPrivateChannel = new JID("channel1@server1");
+    final String localPrivateChannelNode = "/user/channel1@server1/posts";
+    when(channelManagerMock.nodeExists(anyString())).thenReturn(false);
+    when(configuration.getAutosubscribeChannels()).thenReturn(new ArrayList<JID>() {
+      {
+        add(localPrivateChannel);
+      }
+    });
+    when(configuration.getBooleanProperty(eq(Configuration.CONFIGURATION_CHANNELS_AUTOSUBSCRIBE_AUTOAPPROVE), anyBoolean())).thenReturn(false);
+    when(channelManagerMock.getNodeConfValue(localPrivateChannelNode, Conf.ACCESS_MODEL)).thenReturn(AccessModels.authorize.toString());
+    registerSet.process(request);
+    verify(channelManagerMock, never()).addUserSubscription(new NodeSubscriptionImpl(localPrivateChannelNode, REGISTER_REQUEST_FROM, Subscriptions.subscribed, null));
+  }
 
-        registerSet.process(request);
+  private void assertPacketsContainsSubscribe(final Collection<Packet> packets, final JID jid, final String nodeId) {
+    assertPacketsContainsSubscribe(packets, jid, nodeId, null);
+  }
 
-        // Check that there are subscribe stanzas in the outqueue
-        ArrayList<Packet> packets = new ArrayList<Packet>();
-        queue.drainTo(packets);
-
-        assertPacketsContainsSubscribe(packets, request.getFrom(),
-                "/user/channel1@server1/posts");
-        assertPacketsContainsSubscribe(packets, request.getFrom(),
-                "/user/channel2@server1/posts");
-    }
-
-    @SuppressWarnings("serial")
-    @Test
-    public void testRegisterNewUserAutoSubscribesRemoteChannels()
-            throws Exception {
-        IQ request = readStanzaAsIq(REGISTER_REQUEST_STANZA);
-
-        when(channelManagerMock.nodeExists(anyString())).thenReturn(false);
-
-        when(configuration.getAutosubscribeChannels()).thenReturn(
-                new ArrayList<JID>() {
-                    {
-                        add(new JID("channel1@server2"));
-                        add(new JID("channel2@server2"));
-                    }
-                });
-
-        registerSet.process(request);
-
-        // Check that there are subscribe stanzas in the outqueue
-        ArrayList<Packet> packets = new ArrayList<Packet>();
-        queue.drainTo(packets);
-
-        assertPacketsContainsSubscribe(packets, new JID(
-                REGISTER_REQUEST_CHANNELS_DOMAIN),
-                "/user/channel1@server2/posts", request.getFrom().toBareJID());
-        assertPacketsContainsSubscribe(packets, new JID(
-                REGISTER_REQUEST_CHANNELS_DOMAIN),
-                "/user/channel2@server2/posts", request.getFrom().toBareJID());
-    }
-
-    @Test
-    public void testRegisterExistingUserDoesntAutoSubscribeChannels()
-            throws Exception {
-        IQ request = readStanzaAsIq(REGISTER_REQUEST_STANZA);
-
-        when(channelManagerMock.nodeExists(anyString())).thenReturn(true);
-
-        when(
-                channelManagerMock.nodeExists(Conf
-                        .getPostChannelNodename(request.getFrom())))
-                .thenReturn(true);
-
-        registerSet.process(request);
-
-        // Check that there are subscribe stanzas in the outqueue
-        ArrayList<Packet> packets = new ArrayList<Packet>();
-        queue.drainTo(packets);
-
-        assertPacketsDoesntContainSubscribe(packets, request.getFrom(),
-                "/user/channel1@server1/posts");
-        assertPacketsDoesntContainSubscribe(packets, request.getFrom(),
-                "/user/channel2@server1/posts");
-    }
-
-    @SuppressWarnings("serial")
-    @Test
-    public void testRegisterNewUserAutoApprovesOnlyLocalPrivateChannels()
-            throws Exception {
-        IQ request = readStanzaAsIq(REGISTER_REQUEST_STANZA);
-
-        final JID localPrivateChannel = new JID("channel1@server1");
-        final String localPrivateChannelNode = "/user/channel1@server1/posts";
-        
-        final JID localOpenChannel = new JID("channel2@server1");
-        final JID remoteChannel = new JID("channel1@server2");
-        
-        when(channelManagerMock.nodeExists(anyString())).thenReturn(false);
-
-        when(configuration.getAutosubscribeChannels()).thenReturn(
-                new ArrayList<JID>() {
-                    {
-                        add(localPrivateChannel);
-                        add(localOpenChannel);
-                        add(remoteChannel);
-                    }
-                });
-
-        when(
-                configuration
-                        .getBooleanProperty(
-                                eq(Configuration.CONFIGURATION_CHANNELS_AUTOSUBSCRIBE_AUTOAPPROVE),
-                                anyBoolean())).thenReturn(true);
-
-        // localPrivateChannel is private
-        when(
-                channelManagerMock.getNodeConfValue(localPrivateChannelNode,
-                        Conf.ACCESS_MODEL)).thenReturn(
-                AccessModels.authorize.toString());
-
-        when(
-                channelManagerMock
-                        .getDefaultNodeAffiliation(localPrivateChannelNode))
-                .thenReturn(Affiliations.moderator);
-
-        registerSet.process(request);
-
-        // Check that a subscription has been added, but only for localPrivateChannel.
-        verify(channelManagerMock).addUserSubscription(
-                new NodeSubscriptionImpl(localPrivateChannelNode,
-                        REGISTER_REQUEST_FROM, Subscriptions.subscribed, null));
-        verify(channelManagerMock).setUserAffiliation(localPrivateChannelNode,
-                REGISTER_REQUEST_FROM, Affiliations.moderator);
-    }
-
-    @SuppressWarnings("serial")
-    @Test
-    public void testRegisterNewUserDoesntAutoApprove() throws Exception {
-        IQ request = readStanzaAsIq(REGISTER_REQUEST_STANZA);
-
-        final JID localPrivateChannel = new JID("channel1@server1");
-        final String localPrivateChannelNode = "/user/channel1@server1/posts";
-
-        when(channelManagerMock.nodeExists(anyString())).thenReturn(false);
-
-        when(configuration.getAutosubscribeChannels()).thenReturn(
-                new ArrayList<JID>() {
-                    {
-                        add(localPrivateChannel);
-                    }
-                });
-
-        when(
-                configuration
-                        .getBooleanProperty(
-                                eq(Configuration.CONFIGURATION_CHANNELS_AUTOSUBSCRIBE_AUTOAPPROVE),
-                                anyBoolean())).thenReturn(false);
-
-        // localPrivateChannel is private
-        when(
-                channelManagerMock.getNodeConfValue(localPrivateChannelNode,
-                        Conf.ACCESS_MODEL)).thenReturn(
-                AccessModels.authorize.toString());
-
-        registerSet.process(request);
-
-        // Check that a subscription and affiliation has been added, but only
-        // for
-        // localPrivateChannel.
-        verify(channelManagerMock, never()).addUserSubscription(
-                new NodeSubscriptionImpl(localPrivateChannelNode,
-                        REGISTER_REQUEST_FROM, Subscriptions.subscribed, null));
-    }
-
-    private void assertPacketsContainsSubscribe(
-            final Collection<Packet> packets, final JID jid, final String nodeId) {
-        assertPacketsContainsSubscribe(packets, jid, nodeId, null);
-    }
-
-    private void assertPacketsContainsSubscribe(
-            final Collection<Packet> packets, final JID jid,
-            final String nodeId, String actor) {
-        for (Packet packet : packets) {
-            if (packet.getElement().getName().equals("iq")
-                    && packet.getFrom().equals(jid)) {
-                Element pubsubEl = packet.getElement().element(
-                        QName.get("pubsub", JabberPubsub.NAMESPACE_URI));
-
-                if (pubsubEl == null) {
-                    continue;
-                }
-
-                Element subscribeEl = pubsubEl.element("subscribe");
-
-                if (subscribeEl.attributeValue("node").equals(nodeId)) {
-
-                    if (actor == null) {
-                        if (subscribeEl.attributeValue("jid").equals(
-                                jid.toBareJID().toString())) {
-                            return;
-                        }
-                    } else {
-
-                        Element actorEl = pubsubEl.element("actor");
-
-                        if (actorEl.getText().equals(actor)
-                                && subscribeEl.attributeValue("jid").equals(
-                                        actor)) {
-                            return;
-                        }
-                    }
-                }
+  private void assertPacketsContainsSubscribe(final Collection<Packet> packets, final JID jid, final String nodeId, String actor) {
+    for (Packet packet : packets) {
+      if (packet.getElement().getName().equals("iq") && packet.getFrom().equals(jid)) {
+        Element pubsubEl = packet.getElement().element(QName.get("pubsub", JabberPubsub.NAMESPACE_URI));
+        if (pubsubEl == null) {
+          continue;
+        }
+        Element subscribeEl = pubsubEl.element("subscribe");
+        if (subscribeEl.attributeValue("node").equals(nodeId)) {
+          if (actor == null) {
+            if (subscribeEl.attributeValue("jid").equals(jid.toBareJID().toString())) {
+              return;
             }
-        }
-
-        if (actor == null) {
-            fail("Subscribe to node " + nodeId + " from jid " + jid
-                    + " not found");
-        } else {
-            fail("Subscribe to node " + nodeId + " from jid " + jid
-                    + " with actor " + actor + " not found");
-        }
-    }
-
-    private void assertPacketsDoesntContainSubscribe(
-            final Collection<Packet> packets, final JID jid,
-            final String nodeId, String actor) {
-        for (Packet packet : packets) {
-            if (packet.getElement().getName().equals("iq")
-                    && packet.getFrom().equals(jid)) {
-                Element pubsubEl = packet.getElement().element(
-                        QName.get("pubsub", JabberPubsub.NAMESPACE_URI));
-
-                if (pubsubEl == null) {
-                    continue;
-                }
-
-                Element subscribeEl = pubsubEl.element("subscribe");
-
-                if (subscribeEl.attributeValue("node").equals(nodeId)) {
-
-                    if (actor == null) {
-                        if (subscribeEl.attributeValue("jid").equals(
-                                jid.toBareJID().toString())) {
-                            fail("Subscribe to node " + nodeId + " from jid "
-                                    + jid + " was found but not expected");
-                        }
-                    } else {
-
-                        Element actorEl = pubsubEl.element("actor");
-
-                        if (actorEl.getText().equals(actor)
-                                && subscribeEl.attributeValue("jid").equals(
-                                        actor)) {
-                            fail("Subscribe to node " + nodeId + " from jid "
-                                    + jid + " with actor " + actor
-                                    + " was found but not expected");
-                        }
-                    }
-                }
+          } else {
+            Element actorEl = pubsubEl.element("actor");
+            if (actorEl.getText().equals(actor) && subscribeEl.attributeValue("jid").equals(actor)) {
+              return;
             }
+          }
         }
+      }
     }
+    if (actor == null) {
+      fail("Subscribe to node " + nodeId + " from jid " + jid + " not found");
+    } else {
+      fail("Subscribe to node " + nodeId + " from jid " + jid + " with actor " + actor + " not found");
+    }
+  }
 
-    private void assertPacketsDoesntContainSubscribe(
-            final Collection<Packet> packets, final JID jid, final String nodeId) {
-        assertPacketsDoesntContainSubscribe(packets, jid, nodeId, null);
+  private void assertPacketsDoesntContainSubscribe(final Collection<Packet> packets, final JID jid, final String nodeId, String actor) {
+    for (Packet packet : packets) {
+      if (packet.getElement().getName().equals("iq") && packet.getFrom().equals(jid)) {
+        Element pubsubEl = packet.getElement().element(QName.get("pubsub", JabberPubsub.NAMESPACE_URI));
+        if (pubsubEl == null) {
+          continue;
+        }
+        Element subscribeEl = pubsubEl.element("subscribe");
+        if (subscribeEl.attributeValue("node").equals(nodeId)) {
+          if (actor == null) {
+            if (subscribeEl.attributeValue("jid").equals(jid.toBareJID().toString())) {
+              fail("Subscribe to node " + nodeId + " from jid " + jid + " was found but not expected");
+            }
+          } else {
+            Element actorEl = pubsubEl.element("actor");
+            if (actorEl.getText().equals(actor) && subscribeEl.attributeValue("jid").equals(actor)) {
+              fail("Subscribe to node " + nodeId + " from jid " + jid + " with actor " + actor + " was found but not expected");
+            }
+          }
+        }
+      }
     }
+  }
+
+  private void assertPacketsDoesntContainSubscribe(final Collection<Packet> packets, final JID jid, final String nodeId) {
+    assertPacketsDoesntContainSubscribe(packets, jid, nodeId, null);
+  }
 }

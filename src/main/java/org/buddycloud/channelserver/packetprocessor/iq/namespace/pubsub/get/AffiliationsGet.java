@@ -1,7 +1,5 @@
 package org.buddycloud.channelserver.packetprocessor.iq.namespace.pubsub.get;
-
 import java.util.concurrent.BlockingQueue;
-
 import org.apache.log4j.Logger;
 import org.buddycloud.channelserver.Configuration;
 import org.buddycloud.channelserver.channel.ChannelManager;
@@ -18,135 +16,135 @@ import org.xmpp.packet.Packet;
 import org.xmpp.resultsetmanagement.ResultSet;
 
 public class AffiliationsGet extends PubSubElementProcessorAbstract {
+  private final BlockingQueue<Packet> outQueue;
 
-    private final BlockingQueue<Packet> outQueue;
-    private final ChannelManager channelManager;
+  private final ChannelManager channelManager;
 
-    private IQ requestIq;
-    private String node;
-    private JID actorJid;
-    private IQ result;
-    private String firstItem;
+  private IQ requestIq;
 
-    private static final Logger LOGGER = Logger.getLogger(AffiliationsGet.class);
+  private String node;
 
+  private JID actorJid;
 
-    public AffiliationsGet(BlockingQueue<Packet> outQueue, ChannelManager channelManager) {
-        this.outQueue = outQueue;
-        this.channelManager = channelManager;
+  private IQ result;
+
+  private String firstItem;
+
+  private static final Logger LOGGER = Logger.getLogger(AffiliationsGet.class);
+
+  public AffiliationsGet(BlockingQueue<Packet> outQueue, ChannelManager channelManager) {
+    this.outQueue = outQueue;
+    this.channelManager = channelManager;
+  }
+
+  @Override public void process(Element elm, JID actorJID, IQ reqIQ, Element rsm) throws Exception {
+    result = IQ.createResultIQ(reqIQ);
+    requestIq = reqIQ;
+    actorJid = actorJID;
+    node = elm.attributeValue(XMLConstants.NODE_ATTR);
+    if (
+<<<<<<< /usr/src/app/output/buddycloud/buddycloud-server-java/e746268967301a644cf186725205f1d823a45a83/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/pubsub/get/AffiliationsGet.java/left.java
+    !channelManager.isLocalJID(requestIq.getFrom())
+=======
+    false == Configuration.getInstance().isLocalJID(requestIq.getFrom())
+>>>>>>> /usr/src/app/output/buddycloud/buddycloud-server-java/e746268967301a644cf186725205f1d823a45a83/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/pubsub/get/AffiliationsGet.java/right.java
+    ) {
+      result.getElement().addAttribute(XMLConstants.REMOTE_SERVER_DISCOVER_ATTR, Boolean.FALSE.toString());
     }
-
-    @Override
-    public void process(Element elm, JID actorJID, IQ reqIQ, Element rsm) throws Exception {
-        result = IQ.createResultIQ(reqIQ);
-        requestIq = reqIQ;
-        actorJid = actorJID;
-
-        node = elm.attributeValue(XMLConstants.NODE_ATTR);
-        if (!Configuration.getInstance().isLocalJID(requestIq.getFrom())) {
-            result.getElement().addAttribute(XMLConstants.REMOTE_SERVER_DISCOVER_ATTR, Boolean.FALSE.toString());
-
-        }
-        String namespace = JabberPubsub.NS_PUBSUB_OWNER;
-        if (node == null) {
-            namespace = JabberPubsub.NAMESPACE_URI;
-        }
-
-
-        Element pubsub = result.setChildElement(XMLConstants.PUBSUB_ELEM, namespace);
-        Element affiliations = pubsub.addElement(XMLConstants.AFFILIATION_ELEM);
-
-        if (actorJid == null) {
-            actorJid = requestIq.getFrom();
-        }
-
-        boolean isProcessedLocally = true;
-        if (node == null) {
-            isProcessedLocally = getUserMemberships(affiliations);
-        } else {
-            isProcessedLocally = getNodeAffiliations(affiliations);
-        }
-        if (!isProcessedLocally) {
-            return;
-        }
-
-        outQueue.put(result);
+    String namespace = JabberPubsub.NS_PUBSUB_OWNER;
+    if (node == null) {
+      namespace = JabberPubsub.NAMESPACE_URI;
     }
-
-    private boolean getNodeAffiliations(Element affiliations) throws NodeStoreException, InterruptedException {
-        if (!Configuration.getInstance().isLocalNode(node) && (!channelManager.isCachedNode(node))) {
-
-            makeRemoteRequest(node.split("/")[2]);
-            return false;
-        }
-        ResultSet<NodeMembership> nodeMemberships;
-        nodeMemberships = channelManager.getNodeMemberships(node);
-
-        if ((!nodeMemberships.isEmpty()) && (!Configuration.getInstance().isLocalNode(node))) {
-            makeRemoteRequest(node.split("/")[2]);
-            return false;
-        }
-
-
-        for (NodeMembership nodeMembership : nodeMemberships) {
-
-            if (actorJid.toBareJID().equals(nodeMembership.getUser().toBareJID())) {
-                if (null == firstItem) {
-                    firstItem = nodeMembership.getUser().toString();
-                }
-
-                affiliations.addElement(XMLConstants.AFFILIATION_ELEM).addAttribute(XMLConstants.NODE_ATTR, nodeMembership.getNodeId())
-                        .addAttribute(XMLConstants.AFFILIATION_ELEM, nodeMembership.getAffiliation().toString())
-                        .addAttribute(XMLConstants.JID_ATTR, nodeMembership.getUser().toString());
-            }
-        }
-
-        return true;
+    Element pubsub = result.setChildElement(XMLConstants.PUBSUB_ELEM, namespace);
+    Element affiliations = pubsub.addElement(XMLConstants.AFFILIATION_ELEM);
+    if (actorJid == null) {
+      actorJid = requestIq.getFrom();
     }
-
-    private boolean isOwnerModerator() throws NodeStoreException {
-        return channelManager.getNodeMembership(node, actorJid).getAffiliation().canAuthorize();
+    boolean isProcessedLocally = true;
+    if (node == null) {
+      isProcessedLocally = getUserMemberships(affiliations);
+    } else {
+      isProcessedLocally = getNodeAffiliations(affiliations);
     }
+    if (!isProcessedLocally) {
+      return;
+    }
+    outQueue.put(result);
+  }
 
-    private boolean getUserMemberships(Element affiliations) throws NodeStoreException, InterruptedException {
-
-        if (!Configuration.getInstance().isLocalJID(actorJid) && (!channelManager.isCachedJID(requestIq.getFrom()))) {
-            makeRemoteRequest(actorJid.getDomain());
-            return false;
+  private boolean getNodeAffiliations(Element affiliations) throws NodeStoreException, InterruptedException {
+    if (
+<<<<<<< /usr/src/app/output/buddycloud/buddycloud-server-java/e746268967301a644cf186725205f1d823a45a83/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/pubsub/get/AffiliationsGet.java/left.java
+    !channelManager.isLocalNode(node)
+=======
+    false == Configuration.getInstance().isLocalNode(node)
+>>>>>>> /usr/src/app/output/buddycloud/buddycloud-server-java/e746268967301a644cf186725205f1d823a45a83/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/pubsub/get/AffiliationsGet.java/right.java
+     && (!channelManager.isCachedNode(node))) {
+      makeRemoteRequest(node.split("/")[2]);
+      return false;
+    }
+    ResultSet<NodeMembership> nodeMemberships;
+    nodeMemberships = channelManager.getNodeMemberships(node);
+    if ((!nodeMemberships.isEmpty()) && (
+<<<<<<< /usr/src/app/output/buddycloud/buddycloud-server-java/e746268967301a644cf186725205f1d823a45a83/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/pubsub/get/AffiliationsGet.java/left.java
+    !channelManager.isLocalNode(node)
+=======
+    false == Configuration.getInstance().isLocalNode(node)
+>>>>>>> /usr/src/app/output/buddycloud/buddycloud-server-java/e746268967301a644cf186725205f1d823a45a83/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/pubsub/get/AffiliationsGet.java/right.java
+    )) {
+      makeRemoteRequest(node.split("/")[2]);
+      return false;
+    }
+    for (NodeMembership nodeMembership : nodeMemberships) {
+      if (actorJid.toBareJID().equals(nodeMembership.getUser().toBareJID())) {
+        if (null == firstItem) {
+          firstItem = nodeMembership.getUser().toString();
         }
+        affiliations.addElement(XMLConstants.AFFILIATION_ELEM).addAttribute(XMLConstants.NODE_ATTR, nodeMembership.getNodeId()).addAttribute(XMLConstants.AFFILIATION_ELEM, nodeMembership.getAffiliation().toString()).addAttribute(XMLConstants.JID_ATTR, nodeMembership.getUser().toString());
+      }
+    }
+    return true;
+  }
 
-        ResultSet<NodeMembership> memberships = channelManager.getUserMemberships(actorJid);
+  private boolean isOwnerModerator() throws NodeStoreException {
+    return channelManager.getNodeMembership(node, actorJid).getAffiliation().canAuthorize();
+  }
 
-        for (NodeMembership membership : memberships) {
-
-            if (actorJid.toBareJID().equals(membership.getUser().toBareJID())) {
-                LOGGER.trace("Adding affiliation for " + membership.getUser() + " affiliation " + membership.getAffiliation() + " (no node provided)");
-
-                if (null == firstItem) {
-                    firstItem = membership.getNodeId();
-                }
-
-                affiliations.addElement(XMLConstants.AFFILIATION_ELEM).addAttribute(XMLConstants.NODE_ATTR, membership.getNodeId())
-                        .addAttribute(XMLConstants.AFFILIATION_ELEM, membership.getAffiliation().toString())
-                        .addAttribute(XMLConstants.JID_ATTR, membership.getUser().toBareJID());
-            }
-
+  private boolean getUserMemberships(Element affiliations) throws NodeStoreException, InterruptedException {
+    if (
+<<<<<<< /usr/src/app/output/buddycloud/buddycloud-server-java/e746268967301a644cf186725205f1d823a45a83/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/pubsub/get/AffiliationsGet.java/left.java
+    !channelManager.isLocalJID(actorJid)
+=======
+    false == Configuration.getInstance().isLocalJID(actorJid)
+>>>>>>> /usr/src/app/output/buddycloud/buddycloud-server-java/e746268967301a644cf186725205f1d823a45a83/src/main/java/org/buddycloud/channelserver/packetprocessor/iq/namespace/pubsub/get/AffiliationsGet.java/right.java
+     && (!channelManager.isCachedJID(requestIq.getFrom()))) {
+      makeRemoteRequest(actorJid.getDomain());
+      return false;
+    }
+    ResultSet<NodeMembership> memberships = channelManager.getUserMemberships(actorJid);
+    for (NodeMembership membership : memberships) {
+      if (actorJid.toBareJID().equals(membership.getUser().toBareJID())) {
+        LOGGER.trace("Adding affiliation for " + membership.getUser() + " affiliation " + membership.getAffiliation() + " (no node provided)");
+        if (null == firstItem) {
+          firstItem = membership.getNodeId();
         }
-        return true;
+        affiliations.addElement(XMLConstants.AFFILIATION_ELEM).addAttribute(XMLConstants.NODE_ATTR, membership.getNodeId()).addAttribute(XMLConstants.AFFILIATION_ELEM, membership.getAffiliation().toString()).addAttribute(XMLConstants.JID_ATTR, membership.getUser().toBareJID());
+      }
     }
+    return true;
+  }
 
-    private void makeRemoteRequest(String node) throws InterruptedException {
-        LOGGER.info("Going federated for <affiliations />");
-        requestIq.setTo(new JID(node).getDomain());
-        if (null == requestIq.getElement().element("pubsub").element("actor")) {
-            Element actor = requestIq.getElement().element("pubsub").addElement("actor", Buddycloud.NS);
-            actor.addText(requestIq.getFrom().toBareJID());
-        }
-        outQueue.put(requestIq);
+  private void makeRemoteRequest(String node) throws InterruptedException {
+    LOGGER.info("Going federated for <affiliations />");
+    requestIq.setTo(new JID(node).getDomain());
+    if (null == requestIq.getElement().element("pubsub").element("actor")) {
+      Element actor = requestIq.getElement().element("pubsub").addElement("actor", Buddycloud.NS);
+      actor.addText(requestIq.getFrom().toBareJID());
     }
+    outQueue.put(requestIq);
+  }
 
-    @Override
-    public boolean accept(Element elm) {
-        return XMLConstants.AFFILIATION_ELEM.equals(elm.getName());
-    }
+  @Override public boolean accept(Element elm) {
+    return XMLConstants.AFFILIATION_ELEM.equals(elm.getName());
+  }
 }
