@@ -1,19 +1,9 @@
-/*
- * Copyright (C) 2003-2006, C. Ramakrishnan / Illposed Software.
- * All rights reserved.
- *
- * This code is licensed under the BSD 3-Clause license.
- * See file LICENSE (or LICENSE.html) for more information.
- */
-
 package com.illposed.osc;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-
 import com.illposed.osc.utility.OSCJavaToByteArrayConverter;
 
 /**
@@ -25,107 +15,127 @@ import com.illposed.osc.utility.OSCJavaToByteArrayConverter;
  * @author Chandrasekhar Ramakrishnan
  */
 public class OSCMessage extends OSCPacket {
+  private String address;
 
-	private String address;
-	private List<Object> arguments;
+  private List<Object> arguments;
 
-	/**
-	 * Creates an empty OSC Message.
-	 * In order to send this OSC message,
-	 * you need to set the address and optionally some arguments.
+  /**
+	 * Create an empty OSC Message.
+	 * In order to send this OSC message, you need to set the address
+	 * and, perhaps, some arguments.
 	 */
-	public OSCMessage() {
-		this(null);
-	}
+  public OSCMessage(
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  String address
+>>>>>>> /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/main/java/com/illposed/osc/OSCMessage.java/right.java
+  , 
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  Object[] arguments
+>>>>>>> /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/main/java/com/illposed/osc/OSCMessage.java/right.java
+  ) {
 
-	/**
+<<<<<<< /usr/src/app/output/hoijui/javaosc/922809cde5aeaaa89a94a8aa7b4b3e03b3f993e5/modules/core/src/main/java/com/illposed/osc/OSCMessage.java/left.java
+    this(null);
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+    this.address = address;
+    if (arguments == null) {
+      this.arguments = new LinkedList();
+    } else {
+      this.arguments = new ArrayList(arguments.length);
+      this.arguments.addAll(Arrays.asList(arguments));
+    }
+    init();
+  }
+
+  /**
 	 * Creates an OSCMessage with an address already initialized.
 	 * @param address  the recipient of this OSC message
 	 */
-	public OSCMessage(String address) {
-		this(address, null);
-	}
+  public OSCMessage(String address) {
+    this(address, null);
+  }
 
-	/**
-	 * Creates an OSCMessage with an address
-	 * and arguments already initialized.
-	 * @param address  the recipient of this OSC message
+  /**
+	 * Create an OSCMessage with an address and arguments already initialized.
+	 * @param address    the recipient of this OSC message
 	 * @param arguments  the data sent to the receiver
 	 */
-	public OSCMessage(String address, Collection<Object> arguments) {
+  public OSCMessage(String address, Collection<Object> arguments) {
+    this.address = address;
+    if (arguments == null) {
+      this.arguments = new LinkedList<Object>();
+    } else {
+      this.arguments = new ArrayList<Object>(arguments);
+    }
+    init();
+  }
 
-		this.address = address;
-		if (arguments == null) {
-			this.arguments = new LinkedList<Object>();
-		} else {
-			this.arguments = new ArrayList<Object>(arguments);
-		}
-		init();
-	}
-
-	/**
+  /**
 	 * The receiver of this message.
 	 * @return the receiver of this OSC Message
 	 */
-	public String getAddress() {
-		return address;
-	}
+  public String getAddress() {
+    return address;
+  }
 
-	/**
+  /**
 	 * Set the address of this message.
 	 * @param address the receiver of the message
 	 */
-	public void setAddress(String address) {
-		this.address = address;
-	}
+  public void setAddress(String address) {
+    this.address = address;
+  }
 
-	/**
+  /**
 	 * Add an argument to the list of arguments.
-	 * @param argument a Float, String, Integer, BigInteger, Boolean
-	 *   or an array of these
+	 * @param argument a Float, String, Integer, BigInteger, Boolean or
+	 *          an array of these
 	 */
-	public void addArgument(Object argument) {
-		arguments.add(argument);
-	}
+  public void addArgument(Object argument) {
+    arguments.add(argument);
+  }
 
-	/**
+  /**
 	 * The arguments of this message.
 	 * @return the arguments to this message
 	 */
-	public List<Object> getArguments() {
-		return Collections.unmodifiableList(arguments);
-	}
+  public List<Object> getArguments() {
+    return Collections.unmodifiableList(arguments);
+  }
 
-	/**
-	 * Convert the address into a byte array.
-	 * Used internally only.
+  /**
+	 * Convert the address into a byte array. Used internally.
+	 * @param stream OscPacketByteArrayConverter
 	 */
-	protected void computeAddressByteArray(OSCJavaToByteArrayConverter stream) {
-		stream.write(address);
-	}
+  protected void computeAddressByteArray(OSCJavaToByteArrayConverter stream) {
+    stream.write(address);
+  }
 
-	/**
-	 * Convert the arguments into a byte array.
-	 * Used internally only.
+  /**
+	 * Convert the arguments into a byte array. Used internally.
+	 * @param stream OscPacketByteArrayConverter
 	 */
-	protected void computeArgumentsByteArray(OSCJavaToByteArrayConverter stream) {
-		stream.write(',');
-		if (null == arguments) {
-			return;
-		}
-		stream.writeTypes(arguments);
-		for (Object argument : arguments) {
-			stream.write(argument);
-		}
-	}
+  protected void computeArgumentsByteArray(OSCJavaToByteArrayConverter stream) {
+    stream.write(',');
+    if (null == arguments) {
+      return;
+    }
+    stream.writeTypes(arguments);
+    for (Object argument : arguments) {
+      stream.write(argument);
+    }
+  }
 
-	/**
-	 * Convert the message into a byte array.
-	 * Used internally only.
+  /**
+	 * Convert the message into a byte array. Used internally.
+	 * @param stream OscPacketByteArrayConverter
 	 */
-	protected byte[] computeByteArray(OSCJavaToByteArrayConverter stream) {
-		computeAddressByteArray(stream);
-		computeArgumentsByteArray(stream);
-		return stream.toByteArray();
-	}
+  protected byte[] computeByteArray(OSCJavaToByteArrayConverter stream) {
+    computeAddressByteArray(stream);
+    computeArgumentsByteArray(stream);
+    return stream.toByteArray();
+  }
 }
