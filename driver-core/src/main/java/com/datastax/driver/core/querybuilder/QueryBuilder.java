@@ -52,6 +52,7 @@ public final class QueryBuilder {
      * @return an in-construction SELECT query (you will need to provide at
      * least a FROM clause to complete the query).
      */
+
     public static Select.Builder select(String... columns) {
         return new Select.Builder(Arrays.asList((Object[])columns));
     }
@@ -62,6 +63,7 @@ public final class QueryBuilder {
      * @return an in-construction SELECT query (you will need to provide a
      * column selection and at least a FROM clause to complete the query).
      */
+
     public static Select.Selection select() {
         // Note: the fact we return Select.Selection as return type is on purpose.
         return new Select.SelectionOrAlias();
@@ -73,6 +75,7 @@ public final class QueryBuilder {
      * @param table the name of the table in which to insert.
      * @return an in-construction INSERT query.
      */
+
     public static Insert insertInto(String table) {
         return new Insert(null, table);
     }
@@ -84,6 +87,7 @@ public final class QueryBuilder {
      * @param table the name of the table to insert into.
      * @return an in-construction INSERT query.
      */
+
     public static Insert insertInto(String keyspace, String table) {
         return new Insert(keyspace, table);
     }
@@ -94,6 +98,7 @@ public final class QueryBuilder {
      * @param table the name of the table to insert into.
      * @return an in-construction INSERT query.
      */
+
     public static Insert insertInto(TableMetadata table) {
         return new Insert(table);
     }
@@ -105,6 +110,7 @@ public final class QueryBuilder {
      * @return an in-construction UPDATE query (at least a SET and a WHERE
      * clause needs to be provided to complete the query).
      */
+
     public static Update update(String table) {
         return new Update(null, table);
     }
@@ -117,6 +123,7 @@ public final class QueryBuilder {
      * @return an in-construction UPDATE query (at least a SET and a WHERE
      * clause needs to be provided to complete the query).
      */
+
     public static Update update(String keyspace, String table) {
         return new Update(keyspace, table);
     }
@@ -128,6 +135,7 @@ public final class QueryBuilder {
      * @return an in-construction UPDATE query (at least a SET and a WHERE
      * clause needs to be provided to complete the query).
      */
+
     public static Update update(TableMetadata table) {
         return new Update(table);
     }
@@ -139,6 +147,7 @@ public final class QueryBuilder {
      * @return an in-construction DELETE query (At least a FROM and a WHERE
      * clause needs to be provided to complete the query).
      */
+
     public static Delete.Builder delete(String... columns) {
         return new Delete.Builder(Arrays.asList((Object[])columns));
     }
@@ -150,6 +159,7 @@ public final class QueryBuilder {
      * column selection and at least a FROM and a WHERE clause to complete the
      * query).
      */
+
     public static Delete.Selection delete() {
         return new Delete.Selection();
     }
@@ -167,6 +177,7 @@ public final class QueryBuilder {
      * @param statements the statements to batch.
      * @return a new {@code RegularStatement} that batch {@code statements}.
      */
+
     public static Batch batch(RegularStatement... statements) {
         return new Batch(statements, true);
     }
@@ -188,6 +199,7 @@ public final class QueryBuilder {
      * @return a new {@code RegularStatement} that batch {@code statements} without
      * using the batch log.
      */
+
     public static Batch unloggedBatch(RegularStatement... statements) {
         return new Batch(statements, false);
     }
@@ -198,6 +210,7 @@ public final class QueryBuilder {
      * @param table the name of the table to truncate.
      * @return the truncation query.
      */
+
     public static Truncate truncate(String table) {
         return new Truncate(null, table);
     }
@@ -209,6 +222,7 @@ public final class QueryBuilder {
      * @param table the name of the table to truncate.
      * @return the truncation query.
      */
+
     public static Truncate truncate(String keyspace, String table) {
         return new Truncate(keyspace, table);
     }
@@ -219,6 +233,7 @@ public final class QueryBuilder {
      * @param table the table to truncate.
      * @return the truncation query.
      */
+
     public static Truncate truncate(TableMetadata table) {
         return new Truncate(table);
     }
@@ -229,6 +244,7 @@ public final class QueryBuilder {
      * @param columnName the column name to quote.
      * @return the quoted column name.
      */
+
     public static String quote(String columnName) {
         StringBuilder sb = new StringBuilder();
         sb.append("\"");
@@ -243,6 +259,7 @@ public final class QueryBuilder {
      * @param columnName the column name to take the token of.
      * @return {@code "token(" + columnName + ")"}.
      */
+
     public static String token(String columnName) {
         StringBuilder sb = new StringBuilder();
         sb.append("token(");
@@ -259,6 +276,7 @@ public final class QueryBuilder {
      * @param columnNames the column names to take the token of.
      * @return a string representing the token of the provided column names.
      */
+
     public static String token(String... columnNames) {
         StringBuilder sb = new StringBuilder();
         sb.append("token(");
@@ -275,6 +293,7 @@ public final class QueryBuilder {
      * @param value the value
      * @return the corresponding where clause.
      */
+
     public static Clause eq(String name, Object value) {
         return new Clause.SimpleClause(name, "=", value);
     }
@@ -287,6 +306,7 @@ public final class QueryBuilder {
      * @param values the values
      * @return the corresponding where clause.
      */
+
     public static Clause in(String name, Object... values) {
         return new Clause.InClause(name, Arrays.asList(values));
     }
@@ -299,6 +319,7 @@ public final class QueryBuilder {
      * @param value the value
      * @return the corresponding where clause.
      */
+
     public static Clause lt(String name, Object value) {
         return new Clause.SimpleClause(name, "<", value);
     }
@@ -311,6 +332,7 @@ public final class QueryBuilder {
      * @param value the value
      * @return the corresponding where clause.
      */
+
     public static Clause lte(String name, Object value) {
         return new Clause.SimpleClause(name, "<=", value);
     }
@@ -323,6 +345,7 @@ public final class QueryBuilder {
      * @param value the value
      * @return the corresponding where clause.
      */
+
     public static Clause gt(String name, Object value) {
         return new Clause.SimpleClause(name, ">", value);
     }
@@ -335,6 +358,7 @@ public final class QueryBuilder {
      * @param value the value
      * @return the corresponding where clause.
      */
+
     public static Clause gte(String name, Object value) {
         return new Clause.SimpleClause(name, ">=", value);
     }
@@ -345,6 +369,7 @@ public final class QueryBuilder {
      * @param columnName the column name
      * @return the corresponding ordering
      */
+
     public static Ordering asc(String columnName) {
         return new Ordering(columnName, false);
     }
@@ -355,6 +380,7 @@ public final class QueryBuilder {
      * @param columnName the column name
      * @return the corresponding ordering
      */
+
     public static Ordering desc(String columnName) {
         return new Ordering(columnName, true);
     }
@@ -367,6 +393,7 @@ public final class QueryBuilder {
      *
      * @throws IllegalArgumentException if {@code timestamp &gt; 0}.
      */
+
     public static Using timestamp(long timestamp) {
         if (timestamp < 0)
             throw new IllegalArgumentException("Invalid timestamp, must be positive");
@@ -380,6 +407,7 @@ public final class QueryBuilder {
      * @param marker bind marker to use for the timestamp.
      * @return the corresponding option.
      */
+
     public static Using timestamp(BindMarker marker) {
         return new Using.WithMarker("TIMESTAMP", marker);
     }
@@ -392,6 +420,7 @@ public final class QueryBuilder {
      *
      * @throws IllegalArgumentException if {@code ttl &gt; 0}.
      */
+
     public static Using ttl(int ttl) {
         if (ttl < 0)
             throw new IllegalArgumentException("Invalid ttl, must be positive");
@@ -405,6 +434,7 @@ public final class QueryBuilder {
      * @param marker bind marker to use for the ttl.
      * @return the corresponding option
      */
+
     public static Using ttl(BindMarker marker) {
         return new Using.WithMarker("TTL", marker);
     }
@@ -418,6 +448,7 @@ public final class QueryBuilder {
      * @param value the value to assign
      * @return the correspond assignment (to use in an update query)
      */
+
     public static Assignment set(String name, Object value) {
         return new Assignment.SetAssignment(name, value);
     }
@@ -430,6 +461,7 @@ public final class QueryBuilder {
      * @param name the column name to increment
      * @return the correspond assignment (to use in an update query)
      */
+
     public static Assignment incr(String name) {
         return incr(name, 1L);
     }
@@ -443,20 +475,8 @@ public final class QueryBuilder {
      * @param value the value by which to increment
      * @return the correspond assignment (to use in an update query)
      */
-    public static Assignment incr(String name, long value) {
-        return new Assignment.CounterAssignment(name, value, true);
-    }
 
-    /**
-     * Incrementation of a counter column by a provided value.
-     * <p>
-     * This will generate: {@code name = name + value}.
-     *
-     * @param name the column name to increment
-     * @param value a bind marker representing the value by which to increment
-     * @return the correspond assignment (to use in an update query)
-     */
-    public static Assignment incr(String name, BindMarker value) {
+    public static Assignment incr(String name, long value) {
         return new Assignment.CounterAssignment(name, value, true);
     }
 
@@ -468,6 +488,7 @@ public final class QueryBuilder {
      * @param name the column name to decrement
      * @return the correspond assignment (to use in an update query)
      */
+
     public static Assignment decr(String name) {
         return decr(name, 1L);
     }
@@ -481,20 +502,8 @@ public final class QueryBuilder {
      * @param value the value by which to decrement
      * @return the correspond assignment (to use in an update query)
      */
-    public static Assignment decr(String name, long value) {
-        return new Assignment.CounterAssignment(name, value, false);
-    }
 
-    /**
-     * Decrementation of a counter column by a provided value.
-     * <p>
-     * This will generate: {@code name = name - value}.
-     *
-     * @param name the column name to decrement
-     * @param value a bind marker representing the value by which to decrement
-     * @return the correspond assignment (to use in an update query)
-     */
-    public static Assignment decr(String name, BindMarker value) {
+    public static Assignment decr(String name, long value) {
         return new Assignment.CounterAssignment(name, value, false);
     }
 
@@ -507,34 +516,8 @@ public final class QueryBuilder {
      * @param value the value to prepend
      * @return the correspond assignment (to use in an update query)
      */
-    public static Assignment prepend(String name, Object value) {
-        Object v = value instanceof BindMarker ? value : Collections.singletonList(value);
-        return new Assignment.ListPrependAssignment(name, v);
-    }
 
-    /**
-     * Prepend a list of values to a list column.
-     * <p>
-     * This will generate: {@code name = list + name}.
-     *
-     * @param name the column name (must be of type list).
-     * @param list the list of values to prepend.
-     * @return the correspond assignment (to use in an update query)
-     */
     public static Assignment prependAll(String name, List<?> list) {
-        return new Assignment.ListPrependAssignment(name, list);
-    }
-
-    /**
-     * Prepend a list of values to a list column.
-     * <p>
-     * This will generate: {@code name = list + name}.
-     *
-     * @param name the column name (must be of type list).
-     * @param list a bind marker representing the list of values to prepend.
-     * @return the correspond assignment (to use in an update query)
-     */
-    public static Assignment prependAll(String name, BindMarker list) {
         return new Assignment.ListPrependAssignment(name, list);
     }
 
@@ -547,10 +530,6 @@ public final class QueryBuilder {
      * @param value the value to append
      * @return the correspond assignment (to use in an update query)
      */
-    public static Assignment append(String name, Object value) {
-        Object v = value instanceof BindMarker ? value : Collections.singletonList(value);
-        return new Assignment.CollectionAssignment(name, v, true);
-    }
 
     /**
      * Append a list of values to a list column.
@@ -561,20 +540,8 @@ public final class QueryBuilder {
      * @param list the list of values to append
      * @return the correspond assignment (to use in an update query)
      */
-    public static Assignment appendAll(String name, List<?> list) {
-        return new Assignment.CollectionAssignment(name, list, true);
-    }
 
-    /**
-     * Append a list of values to a list column.
-     * <p>
-     * This will generate: {@code name = name + list}.
-     *
-     * @param name the column name (must be of type list).
-     * @param list a bind marker representing the list of values to append
-     * @return the correspond assignment (to use in an update query)
-     */
-    public static Assignment appendAll(String name, BindMarker list) {
+    public static Assignment appendAll(String name, List<?> list) {
         return new Assignment.CollectionAssignment(name, list, true);
     }
 
@@ -587,10 +554,6 @@ public final class QueryBuilder {
      * @param value the value to discard
      * @return the correspond assignment (to use in an update query)
      */
-    public static Assignment discard(String name, Object value) {
-        Object v = value instanceof BindMarker ? value : Collections.singletonList(value);
-        return new Assignment.CollectionAssignment(name, v, false);
-    }
 
     /**
      * Discard a list of values to a list column.
@@ -601,20 +564,8 @@ public final class QueryBuilder {
      * @param list the list of values to discard
      * @return the correspond assignment (to use in an update query)
      */
-    public static Assignment discardAll(String name, List<?> list) {
-        return new Assignment.CollectionAssignment(name, list, false);
-    }
 
-    /**
-     * Discard a list of values to a list column.
-     * <p>
-     * This will generate: {@code name = name - list}.
-     *
-     * @param name the column name (must be of type list).
-     * @param list a bind marker representing the list of values to discard
-     * @return the correspond assignment (to use in an update query)
-     */
-    public static Assignment discardAll(String name, BindMarker list) {
+    public static Assignment discardAll(String name, List<?> list) {
         return new Assignment.CollectionAssignment(name, list, false);
     }
 
@@ -628,6 +579,7 @@ public final class QueryBuilder {
      * @param value the value to set
      * @return the correspond assignment (to use in an update query)
      */
+
     public static Assignment setIdx(String name, int idx, Object value) {
         return new Assignment.ListSetIdxAssignment(name, idx, value);
     }
@@ -641,10 +593,6 @@ public final class QueryBuilder {
      * @param value the value to add
      * @return the correspond assignment (to use in an update query)
      */
-    public static Assignment add(String name, Object value) {
-        Object v = value instanceof BindMarker ? value : Collections.singleton(value);
-        return new Assignment.CollectionAssignment(name, v, true);
-    }
 
     /**
      * Adds a set of values to a set column.
@@ -655,20 +603,8 @@ public final class QueryBuilder {
      * @param set the set of values to append
      * @return the correspond assignment (to use in an update query)
      */
-    public static Assignment addAll(String name, Set<?> set) {
-        return new Assignment.CollectionAssignment(name, set, true);
-    }
 
-    /**
-     * Adds a set of values to a set column.
-     * <p>
-     * This will generate: {@code name = name + set}.
-     *
-     * @param name the column name (must be of type set).
-     * @param set a bind marker representing the set of values to append
-     * @return the correspond assignment (to use in an update query)
-     */
-    public static Assignment addAll(String name, BindMarker set) {
+    public static Assignment addAll(String name, Set<?> set) {
         return new Assignment.CollectionAssignment(name, set, true);
     }
 
@@ -681,10 +617,6 @@ public final class QueryBuilder {
      * @param value the value to remove
      * @return the correspond assignment (to use in an update query)
      */
-    public static Assignment remove(String name, Object value) {
-        Object v = value instanceof BindMarker ? value : Collections.singleton(value);
-        return new Assignment.CollectionAssignment(name, v, false);
-    }
 
     /**
      * Remove a set of values from a set column.
@@ -695,20 +627,8 @@ public final class QueryBuilder {
      * @param set the set of values to remove
      * @return the correspond assignment (to use in an update query)
      */
-    public static Assignment removeAll(String name, Set<?> set) {
-        return new Assignment.CollectionAssignment(name, set, false);
-    }
 
-    /**
-     * Remove a set of values from a set column.
-     * <p>
-     * This will generate: {@code name = name - set}.
-     *
-     * @param name the column name (must be of type set).
-     * @param set a bind marker representing the set of values to remove
-     * @return the correspond assignment (to use in an update query)
-     */
-    public static Assignment removeAll(String name, BindMarker set) {
+    public static Assignment removeAll(String name, Set<?> set) {
         return new Assignment.CollectionAssignment(name, set, false);
     }
 
@@ -722,6 +642,7 @@ public final class QueryBuilder {
      * @param value the value to put
      * @return the correspond assignment (to use in an update query)
      */
+
     public static Assignment put(String name, Object key, Object value) {
         return new Assignment.MapPutAssignment(name, key, value);
     }
@@ -735,20 +656,8 @@ public final class QueryBuilder {
      * @param map the map of key/value pairs to put
      * @return the correspond assignment (to use in an update query)
      */
-    public static Assignment putAll(String name, Map<?, ?> map) {
-        return new Assignment.CollectionAssignment(name, map, true);
-    }
 
-    /**
-     * Puts a map of new key/value pairs to a map column.
-     * <p>
-     * This will generate: {@code name = name + map}.
-     *
-     * @param name the column name (must be of type map).
-     * @param map a bind marker representing the map of key/value pairs to put
-     * @return the correspond assignment (to use in an update query)
-     */
-    public static Assignment putAll(String name, BindMarker map) {
+    public static Assignment putAll(String name, Map<?, ?> map) {
         return new Assignment.CollectionAssignment(name, map, true);
     }
 
@@ -764,8 +673,9 @@ public final class QueryBuilder {
      * }
      * </pre>
      *
-     * @return a new bind marker.
+     * @return an object representing a bind marker.
      */
+
     public static BindMarker bindMarker() {
         return BindMarker.ANONYMOUS;
     }
@@ -787,6 +697,7 @@ public final class QueryBuilder {
      * @param name the name for the bind marker.
      * @return an object representing a bind marker named {@code name}.
      */
+
     public static BindMarker bindMarker(String name) {
         return new BindMarker(name);
     }
@@ -812,9 +723,188 @@ public final class QueryBuilder {
      * @param str the raw value to use as a string
      * @return the value but protected from being interpreted/escaped by the query builder.
      */
+
     public static Object raw(String str) {
         return new Utils.RawString(str);
     }
+
+    /**
+     * Start building a new UPDATE query.
+     *
+     * @param table the name of the table to update.
+     * @return an in-construction UPDATE query (at least a SET and a WHERE
+     * clause needs to be provided to complete the query).
+     */
+
+    /**
+     * Start building a new UPDATE query.
+     *
+     * @param table the name of the table to update.
+     * @return an in-construction UPDATE query (at least a SET and a WHERE
+     * clause needs to be provided to complete the query).
+     */
+
+    /**
+     * Incrementation of a counter column by a provided value.
+     * <p>
+     * This will generate: {@code name = name + value}.
+     *
+     * @param name the column name to increment
+     * @param value a bind marker representing the value by which to increment
+     * @return the correspond assignment (to use in an update query)
+     */
+
+    public static Assignment incr(String name, BindMarker value) {
+        return new Assignment.CounterAssignment(name, value, true);
+    }
+
+    /**
+     * Decrementation of a counter column by a provided value.
+     * <p>
+     * This will generate: {@code name = name - value}.
+     *
+     * @param name the column name to decrement
+     * @param value a bind marker representing the value by which to decrement
+     * @return the correspond assignment (to use in an update query)
+     */
+
+    public static Assignment decr(String name, BindMarker value) {
+        return new Assignment.CounterAssignment(name, value, false);
+    }
+
+    public static Assignment prepend(String name, Object value) {
+        Object v = value == BindMarker.ANONYMOUS ? value : Collections.singletonList(value);
+        return new Assignment.ListPrependAssignment(name, v);
+    }
+
+    /**
+     * Prepend a list of values to a list column.
+     * <p>
+     * This will generate: {@code name = list + name}.
+     *
+     * @param name the column name (must be of type list).
+     * @param list the list of values to prepend.
+     * @return the correspond assignment (to use in an update query)
+     */
+
+    /**
+     * Prepend a list of values to a list column.
+     * <p>
+     * This will generate: {@code name = list + name}.
+     *
+     * @param name the column name (must be of type list).
+     * @param list a bind marker representing the list of values to prepend.
+     * @return the correspond assignment (to use in an update query)
+     */
+
+    public static Assignment prependAll(String name, BindMarker list) {
+        return new Assignment.ListPrependAssignment(name, list);
+    }
+
+    public static Assignment append(String name, Object value) {
+        Object v = value == BindMarker.ANONYMOUS ? value : Collections.singletonList(value);
+        return new Assignment.CollectionAssignment(name, v, true);
+    }
+
+    /**
+     * Append a list of values to a list column.
+     * <p>
+     * This will generate: {@code name = name + list}.
+     *
+     * @param name the column name (must be of type list).
+     * @param list a bind marker representing the list of values to append
+     * @return the correspond assignment (to use in an update query)
+     */
+
+    public static Assignment appendAll(String name, BindMarker list) {
+        return new Assignment.CollectionAssignment(name, list, true);
+    }
+
+    public static Assignment discard(String name, Object value) {
+        Object v = value == BindMarker.ANONYMOUS ? value : Collections.singletonList(value);
+        return new Assignment.CollectionAssignment(name, v, false);
+    }
+
+    /**
+     * Discard a list of values to a list column.
+     * <p>
+     * This will generate: {@code name = name - list}.
+     *
+     * @param name the column name (must be of type list).
+     * @param list a bind marker representing the list of values to discard
+     * @return the correspond assignment (to use in an update query)
+     */
+
+    public static Assignment discardAll(String name, BindMarker list) {
+        return new Assignment.CollectionAssignment(name, list, false);
+    }
+
+    public static Assignment add(String name, Object value) {
+        Object v = value == BindMarker.ANONYMOUS ? value : Collections.singleton(value);
+        return new Assignment.CollectionAssignment(name, v, true);
+    }
+
+    /**
+     * Adds a set of values to a set column.
+     * <p>
+     * This will generate: {@code name = name + set}.
+     *
+     * @param name the column name (must be of type set).
+     * @param set a bind marker representing the set of values to append
+     * @return the correspond assignment (to use in an update query)
+     */
+
+    public static Assignment addAll(String name, BindMarker set) {
+        return new Assignment.CollectionAssignment(name, set, true);
+    }
+
+    public static Assignment remove(String name, Object value) {
+        Object v = value == BindMarker.ANONYMOUS ? value : Collections.singleton(value);
+        return new Assignment.CollectionAssignment(name, v, false);
+    }
+
+    /**
+     * Remove a set of values from a set column.
+     * <p>
+     * This will generate: {@code name = name - set}.
+     *
+     * @param name the column name (must be of type set).
+     * @param set a bind marker representing the set of values to remove
+     * @return the correspond assignment (to use in an update query)
+     */
+
+    public static Assignment removeAll(String name, BindMarker set) {
+        return new Assignment.CollectionAssignment(name, set, false);
+    }
+
+    /**
+     * Puts a map of new key/value pairs to a map column.
+     * <p>
+     * This will generate: {@code name = name + map}.
+     *
+     * @param name the column name (must be of type map).
+     * @param map a bind marker representing the map of key/value pairs to put
+     * @return the correspond assignment (to use in an update query)
+     */
+
+    public static Assignment putAll(String name, BindMarker map) {
+        return new Assignment.CollectionAssignment(name, map, true);
+    }
+
+    /**
+     * A bind marker (a question mark).
+     * <p>
+     * This can be used wherever a value is expected. For instance, one can do:
+     * <pre>
+     * {@code
+     *     Insert i = QueryBuilder.insertInto("test").value("k", 0)
+     *                                               .value("c", QueryBuilder.bindMarker());
+     *     PreparedState p = session.prepare(i.toString());
+     * }
+     * </pre>
+     *
+     * @return a new bind marker.
+     */
 
     /**
      * Creates a function call.

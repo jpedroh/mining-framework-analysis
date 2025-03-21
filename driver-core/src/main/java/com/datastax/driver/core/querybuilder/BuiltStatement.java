@@ -121,7 +121,13 @@ abstract class BuiltStatement extends RegularStatement {
 
     // TODO: Correctly document the InvalidTypeException
     void maybeAddRoutingKey(String name, Object value) {
+<<<<<<< /usr/src/app/output/datastax/java-driver/d0383411e7f091c42f77ca6dff54a61d143b9021/driver-core/src/main/java/com/datastax/driver/core/querybuilder/BuiltStatement.java/left.java
         if (routingKey == null || name == null || value == null || value instanceof BindMarker)
+||||||| /usr/src/app/output/datastax/java-driver/d0383411e7f091c42f77ca6dff54a61d143b9021/driver-core/src/main/java/com/datastax/driver/core/querybuilder/BuiltStatement.java/base.java
+        if (routingKey == null || name == null || value == null || value == QueryBuilder.BIND_MARKER)
+=======
+        if (routingKey == null || name == null || value == null || value == BindMarker.ANONYMOUS)
+>>>>>>> /usr/src/app/output/datastax/java-driver/d0383411e7f091c42f77ca6dff54a61d143b9021/driver-core/src/main/java/com/datastax/driver/core/querybuilder/BuiltStatement.java/right.java
             return;
 
         for (int i = 0; i < partitionKey.size(); i++) {

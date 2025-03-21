@@ -143,7 +143,13 @@ abstract class Utils {
         } else if (value instanceof ByteBuffer) {
             sb.append(Bytes.toHexString((ByteBuffer)value));
             return true;
+<<<<<<< /usr/src/app/output/datastax/java-driver/d0383411e7f091c42f77ca6dff54a61d143b9021/driver-core/src/main/java/com/datastax/driver/core/querybuilder/Utils.java/left.java
         } else if (value instanceof BindMarker) {
+||||||| /usr/src/app/output/datastax/java-driver/d0383411e7f091c42f77ca6dff54a61d143b9021/driver-core/src/main/java/com/datastax/driver/core/querybuilder/Utils.java/base.java
+        } else if (value == QueryBuilder.BIND_MARKER) {
+=======
+        } else if (value == BindMarker.ANONYMOUS) {
+>>>>>>> /usr/src/app/output/datastax/java-driver/d0383411e7f091c42f77ca6dff54a61d143b9021/driver-core/src/main/java/com/datastax/driver/core/querybuilder/Utils.java/right.java
             sb.append(value);
             return true;
         } else if (value instanceof FCall) {
@@ -267,7 +273,13 @@ abstract class Utils {
         return value != null
             && !(value instanceof FCall)
             && !(value instanceof CName)
+<<<<<<< /usr/src/app/output/datastax/java-driver/d0383411e7f091c42f77ca6dff54a61d143b9021/driver-core/src/main/java/com/datastax/driver/core/querybuilder/Utils.java/left.java
             && !(value instanceof BindMarker);
+||||||| /usr/src/app/output/datastax/java-driver/d0383411e7f091c42f77ca6dff54a61d143b9021/driver-core/src/main/java/com/datastax/driver/core/querybuilder/Utils.java/base.java
+            && value != QueryBuilder.BIND_MARKER;
+=======
+            && value != BindMarker.ANONYMOUS;
+>>>>>>> /usr/src/app/output/datastax/java-driver/d0383411e7f091c42f77ca6dff54a61d143b9021/driver-core/src/main/java/com/datastax/driver/core/querybuilder/Utils.java/right.java
     }
 
     static String toRawString(Object value) {

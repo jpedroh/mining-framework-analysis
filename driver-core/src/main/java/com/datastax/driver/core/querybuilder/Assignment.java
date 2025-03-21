@@ -52,6 +52,7 @@ public abstract class Assignment extends Utils.Appendeable {
 
     static class CounterAssignment extends Assignment {
 
+        // TODO: should be object to allow for bind markers
         private final Object value;
         private final boolean isIncr;
 
@@ -81,6 +82,7 @@ public abstract class Assignment extends Utils.Appendeable {
 
     static class ListPrependAssignment extends Assignment {
 
+        // TODO: should be object to allow for bind markers
         private final Object value;
 
         ListPrependAssignment(String name, Object value) {
@@ -140,7 +142,7 @@ public abstract class Assignment extends Utils.Appendeable {
         void appendTo(StringBuilder sb, List<ByteBuffer> variables) {
             appendName(name, sb).append("=");
             appendName(name, sb).append(isAdd ? "+" : "-");
-            appendValue(collection, sb);
+            appendValue(collection, sb, variables);
         }
 
         @Override
