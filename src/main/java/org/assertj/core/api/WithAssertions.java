@@ -1,17 +1,4 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright 2012-2015 the original author or authors.
- */
 package org.assertj.core.api;
-
 import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -26,7 +13,6 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
-
 import org.assertj.core.api.filter.Filters;
 import org.assertj.core.condition.DoesNotHave;
 import org.assertj.core.condition.Not;
@@ -51,7 +37,6 @@ import org.assertj.core.groups.Tuple;
  *
  */
 public interface WithAssertions {
-
   /**
    * Delegate call to {@link org.assertj.core.api.Assertions#offset(Float)}
    */
@@ -69,7 +54,7 @@ public interface WithAssertions {
   /**
    * Delegate call to {@link org.assertj.core.api.Assertions#entry(Object, Object)}
    */
-  default public <K, V> MapEntry<K, V> entry(final K key, final V value) {
+  default public <K extends java.lang.Object, V extends java.lang.Object> MapEntry<K, V> entry(final K key, final V value) {
     return Assertions.entry(key, value);
   }
 
@@ -90,28 +75,28 @@ public interface WithAssertions {
   /**
    * Delegate call to {@link org.assertj.core.api.Assertions#not(Condition)}
    */
-  default public <T> Not<T> not(final Condition<? super T> condition) {
+  default public <T extends java.lang.Object> Not<T> not(final Condition<? super T> condition) {
     return Assertions.not(condition);
   }
 
   /**
    * Delegate call to {@link org.assertj.core.api.Assertions#allOf(Iterable<? extends Condition>)}
    */
-  default public <T> Condition<T> allOf(final Iterable<? extends Condition<? super T>> conditions) {
+  default public <T extends java.lang.Object> Condition<T> allOf(final Iterable<? extends Condition<? super T>> conditions) {
     return Assertions.allOf(conditions);
   }
 
   /**
    * Delegate call to {@link org.assertj.core.api.Assertions#allOf(Condition[])}
    */
-  default public <T> Condition<T> allOf(@SuppressWarnings("unchecked") final Condition<? super T>... conditions) {
+  default public <T extends java.lang.Object> Condition<T> allOf(@SuppressWarnings(value = { "unchecked" }) final Condition<? super T>... conditions) {
     return Assertions.allOf(conditions);
   }
 
   /**
    * Delegate call to {@link org.assertj.core.api.Assertions#assertThat(T[])}
    */
-  default public <T> AbstractObjectArrayAssert<?, T> assertThat(final T[] actual) {
+  default public <T extends java.lang.Object> AbstractObjectArrayAssert<?, T> assertThat(final T[] actual) {
     return Assertions.assertThat(actual);
   }
 
@@ -125,7 +110,7 @@ public interface WithAssertions {
   /**
    * Delegate call to {@link org.assertj.core.api.Assertions#assertThat(Map)}
    */
-  default public <K, V> AbstractMapAssert<?, ? extends Map<K, V>, K, V> assertThat(final Map<K, V> actual) {
+  default public <K extends java.lang.Object, V extends java.lang.Object> AbstractMapAssert<?, ? extends Map<K, V>, K, V> assertThat(final Map<K, V> actual) {
     return Assertions.assertThat(actual);
   }
 
@@ -160,7 +145,7 @@ public interface WithAssertions {
   /**
    * Delegate call to {@link org.assertj.core.api.Assertions#assertThat(T)}
    */
-  default public <T> AbstractObjectAssert<?, T> assertThat(final T actual) {
+  default public <T extends java.lang.Object> AbstractObjectAssert<?, T> assertThat(final T actual) {
     return Assertions.assertThat(actual);
   }
 
@@ -251,16 +236,14 @@ public interface WithAssertions {
   /**
    * Delegate call to {@link org.assertj.core.api.Assertions#assertThat(Iterable)}
    */
-  @SuppressWarnings("unchecked")
-  default public <T> AbstractIterableAssert<?, ? extends Iterable<T>, T> assertThat(final Iterable<T> actual) {
+  @SuppressWarnings(value = { "unchecked" }) default public <T extends java.lang.Object> AbstractIterableAssert<?, ? extends Iterable<T>, T> assertThat(final Iterable<T> actual) {
     return (AbstractIterableAssert<?, ? extends Iterable<T>, T>) Assertions.assertThat(actual);
   }
 
   /**
    * Delegate call to {@link org.assertj.core.api.Assertions#assertThat(Iterator)}
    */
-  @SuppressWarnings("unchecked")
-  default public <T> AbstractIterableAssert<?, ? extends Iterable<T>, T> assertThat(final Iterator<T> actual) {
+  @SuppressWarnings(value = { "unchecked" }) default public <T extends java.lang.Object> AbstractIterableAssert<?, ? extends Iterable<T>, T> assertThat(final Iterator<T> actual) {
     return (AbstractIterableAssert<?, ? extends Iterable<T>, T>) Assertions.assertThat(actual);
   }
 
@@ -379,8 +362,7 @@ public interface WithAssertions {
   /**
    * Delegate call to {@link org.assertj.core.api.Assertions#assertThat(List)}
    */
-  @SuppressWarnings("unchecked")
-  default public <T> AbstractListAssert<?, ? extends List<T>, T> assertThat(final List<T> actual) {
+  @SuppressWarnings(value = { "unchecked" }) default public <T extends java.lang.Object> AbstractListAssert<?, ? extends List<T>, T> assertThat(final List<T> actual) {
     return (AbstractListAssert<?, ? extends List<T>, T>) Assertions.assertThat(actual);
   }
 
@@ -401,7 +383,7 @@ public interface WithAssertions {
   /**
    * Delegate call to {@link org.assertj.core.api.Assertions#extractProperty(String,Class)}
    */
-  default public <T> Properties<T> extractProperty(final String propertyName, final Class<T> propertyType) {
+  default public <T extends java.lang.Object> Properties<T> extractProperty(final String propertyName, final Class<T> propertyType) {
     return Assertions.extractProperty(propertyName, propertyType);
   }
 
@@ -443,21 +425,21 @@ public interface WithAssertions {
   /**
    * Delegate call to {@link org.assertj.core.api.Assertions#anyOf(Iterable)}
    */
-  default public <T> Condition<T> anyOf(final Iterable<? extends Condition<? super T>> conditions) {
+  default public <T extends java.lang.Object> Condition<T> anyOf(final Iterable<? extends Condition<? super T>> conditions) {
     return Assertions.anyOf(conditions);
   }
 
   /**
    * Delegate call to {@link org.assertj.core.api.Assertions#anyOf(Condition[])}
    */
-  default public <T> Condition<T> anyOf(@SuppressWarnings("unchecked") final Condition<? super T>... conditions) {
+  default public <T extends java.lang.Object> Condition<T> anyOf(@SuppressWarnings(value = { "unchecked" }) final Condition<? super T>... conditions) {
     return Assertions.anyOf(conditions);
   }
 
   /**
    * Delegate call to {@link org.assertj.core.api.Assertions#doesNotHave(Condition)}
    */
-  default public <T> DoesNotHave<T> doesNotHave(final Condition<? super T> condition) {
+  default public <T extends java.lang.Object> DoesNotHave<T> doesNotHave(final Condition<? super T> condition) {
     return Assertions.doesNotHave(condition);
   }
 
@@ -555,7 +537,7 @@ public interface WithAssertions {
   /**
    * Delegate call to {@link org.assertj.core.api.Assertions#assertThat(Optional)}
    */
-  default public <T> OptionalAssert<T> assertThat(final Optional<T> optional) {
+  default public <T extends java.lang.Object> OptionalAssert<T> assertThat(final Optional<T> optional) {
     return Assertions.assertThat(optional);
   }
 
@@ -566,19 +548,23 @@ public interface WithAssertions {
     return Assertions.assertThat(optional);
   }
 
+
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/df54907840a677e22be2141132df77fa1f64dc18/src/main/java/org/assertj/core/api/WithAssertions.java/left.java
   /**
    * Delegate call to {@link org.assertj.core.api.Assertions#assertThat(java.util.OptionalInt)}
    */
   default public OptionalIntAssert assertThat(final OptionalInt optional) {
     return Assertions.assertThat(optional);
   }
-
+=======
   /**
-   * Delegate call to {@link org.assertj.core.api.Assertions#assertThat(java.util.OptionalLong)}
+   * Delegate call to {@link org.assertj.core.api.Assertions#assertThat(LocalTime)}
    */
-  default public OptionalLongAssert assertThat(final OptionalLong optional) {
-    return Assertions.assertThat(optional);
+  default public AbstractLocalTimeAssert<?> assertThat(final LocalTime localTime) {
+    return Assertions.assertThat(localTime);
   }
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/df54907840a677e22be2141132df77fa1f64dc18/src/main/java/org/assertj/core/api/WithAssertions.java/right.java
+
 
   /**
    * Delegate call to {@link org.assertj.core.api.Assertions#assertThat(LocalDateTime)}
@@ -587,6 +573,24 @@ public interface WithAssertions {
     return Assertions.assertThat(localDateTime);
   }
 
+
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/df54907840a677e22be2141132df77fa1f64dc18/src/main/java/org/assertj/core/api/WithAssertions.java/left.java
+  /**
+   * Delegate call to {@link org.assertj.core.api.Assertions#assertThat(java.util.OptionalLong)}
+   */
+  default public OptionalLongAssert assertThat(final OptionalLong optional) {
+    return Assertions.assertThat(optional);
+  }
+=======
+  /**
+   * Delegate call to {@link org.assertj.core.api.Assertions#assertThat(OffsetTime)}
+   */
+  default public AbstractOffsetTimeAssert<?> assertThat(final OffsetTime offsetTime) {
+    return Assertions.assertThat(offsetTime);
+  }
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/df54907840a677e22be2141132df77fa1f64dc18/src/main/java/org/assertj/core/api/WithAssertions.java/right.java
+
+
   /**
    * Delegate call to {@link org.assertj.core.api.Assertions#assertThat(LocalDate)}
    */
@@ -594,35 +598,17 @@ public interface WithAssertions {
     return Assertions.assertThat(localDate);
   }
 
-  // --------------------------------------------------------------------------------------------------
-  // Filter methods : not assertions but here to have a complete entry point to all AssertJ features.
-  // --------------------------------------------------------------------------------------------------
-
   /**
    * Delegate call to {@link org.assertj.core.api.Assertions#filter(E[])}
    */
-  default public <E> Filters<E> filter(final E[] array) {
+  default public <E extends java.lang.Object> Filters<E> filter(final E[] array) {
     return Assertions.filter(array);
   }
 
   /**
    * Delegate call to {@link org.assertj.core.api.Assertions#filter(Iterable)}
    */
-  default public <E> Filters<E> filter(final Iterable<E> iterableToFilter) {
+  default public <E extends java.lang.Object> Filters<E> filter(final Iterable<E> iterableToFilter) {
     return Assertions.filter(iterableToFilter);
-  }
-
-  /**
-   * Delegate call to {@link org.assertj.core.api.Assertions#assertThat(LocalTime)}
-   */
-  default public AbstractLocalTimeAssert<?> assertThat(final LocalTime localTime) {
-      return Assertions.assertThat(localTime);
-  }
-
-  /**
-   * Delegate call to {@link org.assertj.core.api.Assertions#assertThat(OffsetTime)}
-   */
-  default public AbstractOffsetTimeAssert<?> assertThat(final OffsetTime offsetTime) {
-      return Assertions.assertThat(offsetTime);
   }
 }
