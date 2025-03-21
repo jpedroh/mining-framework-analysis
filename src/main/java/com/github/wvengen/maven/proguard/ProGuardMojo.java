@@ -455,12 +455,70 @@ public class ProGuardMojo extends AbstractMojo {
 		Map<Artifact, Inclusion> libraryjars = new HashMap<Artifact, Inclusion>();
 		boolean hasInclusionLibrary = false;
 		if (assembly != null && assembly.inclusions != null) {
-			for (Inclusion inc : assembly.inclusions) {
+<<<<<<< /usr/src/app/output/wvengen/proguard-maven-plugin/65fb4b434c390988653d6eec5ae61a4a60ef3f7a/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/left.java
+			@SuppressWarnings("unchecked")
+			final List<Inclusion> inclusions = assembly.inclusions;
+			for (Inclusion inc : inclusions) {
 				for (Artifact artifact : getDependencies(inc, mavenProject)) {
 					if (inc.library) {
 						if (!injars.containsKey(artifact)) {
 							libraryjars.put(artifact, inc);
 						}
+||||||| /usr/src/app/output/wvengen/proguard-maven-plugin/65fb4b434c390988653d6eec5ae61a4a60ef3f7a/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/base.java
+			@SuppressWarnings("unchecked")
+			final List<Inclusion> inclusions = assembly.inclusions;
+			for (Inclusion inc : inclusions) {
+				if (!inc.library) {
+					File file = getClasspathElement(getDependency(inc, mavenProject), mavenProject);
+					inPath.add(file.toString());
+					log.debug("--- ADD injars:" + inc.artifactId);
+					StringBuilder filter = new StringBuilder(fileToString(file));
+					filter.append("(!META-INF/MANIFEST.MF");
+					if (!addMavenDescriptor) {
+						filter.append(",");
+						filter.append("!META-INF/maven/**");
+					}
+					if (inc.filter != null) {
+						filter.append(",").append(inc.filter);
+					}
+					filter.append(")");
+					args.add("-injars");
+					args.add(filter.toString());
+				} else {
+					hasInclusionLibrary = true;
+					log.debug("--- ADD libraryjars:" + inc.artifactId);
+					// This may not be CompileArtifacts, maven 2.0.6 bug
+					File file = getClasspathElement(getDependency(inc, mavenProject), mavenProject);
+					inPath.add(file.toString());
+					if(putLibraryJarsInTempDir){
+						libraryJars.add(file);
+=======
+			for (Inclusion inc : assembly.inclusions) {
+				if (!inc.library) {
+					File file = getClasspathElement(getDependency(inc, mavenProject), mavenProject);
+					inPath.add(file.toString());
+					log.debug("--- ADD injars:" + inc.artifactId);
+					StringBuilder filter = new StringBuilder(fileToString(file));
+					filter.append("(!META-INF/MANIFEST.MF");
+					if (!addMavenDescriptor) {
+						filter.append(",");
+						filter.append("!META-INF/maven/**");
+					}
+					if (inc.filter != null) {
+						filter.append(",").append(inc.filter);
+					}
+					filter.append(")");
+					args.add("-injars");
+					args.add(filter.toString());
+				} else {
+					hasInclusionLibrary = true;
+					log.debug("--- ADD libraryjars:" + inc.artifactId);
+					// This may not be CompileArtifacts, maven 2.0.6 bug
+					File file = getClasspathElement(getDependency(inc, mavenProject), mavenProject);
+					inPath.add(file.toString());
+					if(putLibraryJarsInTempDir){
+						libraryJars.add(file);
+>>>>>>> /usr/src/app/output/wvengen/proguard-maven-plugin/65fb4b434c390988653d6eec5ae61a4a60ef3f7a/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/right.java
 					} else {
 						injars.put(artifact, inc);
 						if (libraryjars.containsKey(artifact)) {
@@ -660,7 +718,14 @@ public class ProGuardMojo extends AbstractMojo {
 
 			try {
 				jarArchiver.addArchivedFileSet(baseFile);
+
+<<<<<<< /usr/src/app/output/wvengen/proguard-maven-plugin/65fb4b434c390988653d6eec5ae61a4a60ef3f7a/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/left.java
 				for (Entry<Artifact, Inclusion> entry : libraryjars.entrySet()) {
+||||||| /usr/src/app/output/wvengen/proguard-maven-plugin/65fb4b434c390988653d6eec5ae61a4a60ef3f7a/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/base.java
+				for (Entry<Artifact, Inclusion> entry : inclusions) {
+=======
+				for (Entry<Artifact, Inclusion> entry : assembly.inclusions) {
+>>>>>>> /usr/src/app/output/wvengen/proguard-maven-plugin/65fb4b434c390988653d6eec5ae61a4a60ef3f7a/src/main/java/com/github/wvengen/maven/proguard/ProGuardMojo.java/right.java
 					File file;
 					file = getClasspathElement(entry.getKey(), mavenProject);
 					if (file.isDirectory()) {
