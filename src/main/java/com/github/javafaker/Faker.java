@@ -171,8 +171,12 @@ public class Faker {
         this.lebowski = new Lebowski(this);
         this.medical = new Medical(this);
         this.country = new Country(this);
+<<<<<<< /usr/src/app/output/dius/java-faker/488048254b56e4f15119caece52a4da1ad60436b/src/main/java/com/github/javafaker/Faker.java/left.java
         this.animal = new Animal(this);
+||||||| /usr/src/app/output/dius/java-faker/488048254b56e4f15119caece52a4da1ad60436b/src/main/java/com/github/javafaker/Faker.java/base.java
+=======
         this.backToTheFuture = new BackToTheFuture(this);
+>>>>>>> /usr/src/app/output/dius/java-faker/488048254b56e4f15119caece52a4da1ad60436b/src/main/java/com/github/javafaker/Faker.java/right.java
     }
 
     /**
@@ -562,7 +566,6 @@ public class Faker {
     public Country country(){ return country;}
 
     public Animal animal(){ return animal; }
-
     public BackToTheFuture backToTheFuture() {
         return  backToTheFuture;
     }
