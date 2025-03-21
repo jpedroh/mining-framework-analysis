@@ -33,13 +33,25 @@ import com.google.inject.Stage;
 import com.google.inject.multibindings.Multibinder;
 
 import ninja.application.ApplicationRoutes;
+
+import ninja.lifecycle.LifecycleSupport;
+
 import ninja.logging.LogbackConfigurator;
+
 import ninja.params.ParamParser;
+
+import ninja.scheduler.SchedulerSupport;
+
 import ninja.utils.NinjaConstant;
+
 import ninja.utils.NinjaProperties;
+
 import ninja.utils.NinjaPropertiesImpl;
+
 import ninja.conf.FrameworkModule;
+
 import ninja.conf.NinjaBaseModule;
+
 import ninja.conf.NinjaClassicModule;
 
 /**

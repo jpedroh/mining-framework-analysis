@@ -63,12 +63,15 @@ public class BodyParserEngineManagerImplTest {
                 bind(Logger.class).toProvider(LoggerProvider.class);
                 bind(Lang.class).to(LangImpl.class);
                 bind(Router.class).to(RouterImpl.class);
+<<<<<<< /usr/src/app/output/ninjaframework/ninja/6d05a83d4d51f7a56f172c2c1e0648aaa6db7965/ninja-core/src/test/java/ninja/bodyparser/BodyParserEngineManagerImplTest.java/left.java
                 Multibinder.newSetBinder(binder(), ParamParser.class);
-
+||||||| /usr/src/app/output/ninjaframework/ninja/6d05a83d4d51f7a56f172c2c1e0648aaa6db7965/ninja-core/src/test/java/ninja/bodyparser/BodyParserEngineManagerImplTest.java/base.java
+=======
                 bind(BodyParserEnginePost.class);
                 bind(BodyParserEngineJson.class);
                 bind(BodyParserEngineXml.class);
-                
+>>>>>>> /usr/src/app/output/ninjaframework/ninja/6d05a83d4d51f7a56f172c2c1e0648aaa6db7965/ninja-core/src/test/java/ninja/bodyparser/BodyParserEngineManagerImplTest.java/right.java
+
                 bind(NinjaProperties.class).toInstance(new NinjaPropertiesImpl(NinjaMode.test));
 
                 for (Class<?> clazz : toBind) {
