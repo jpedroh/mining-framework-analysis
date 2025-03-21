@@ -27,9 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.structr.api.config.Settings;
 import org.structr.api.util.Iterables;
 import org.structr.common.SecurityContext;
-import org.structr.common.error.ErrorToken;
 import org.structr.common.error.FrameworkException;
-import org.structr.common.error.ScriptingError;
 import org.structr.common.error.UnlicensedScriptException;
 import org.structr.core.GraphObject;
 import org.structr.core.GraphObjectMap;
@@ -42,14 +40,14 @@ import org.structr.core.script.polyglot.PolyglotWrapper;
 import org.structr.core.script.polyglot.context.ContextFactory;
 import org.structr.schema.action.ActionContext;
 import org.structr.schema.parser.DatePropertyParser;
-
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
+import org.structr.common.error.ErrorToken;
+import org.structr.common.error.ScriptingError;
+import java.awt.*;
+import java.util.List;
 public class Scripting {
 
 	private static final Logger logger                       = LoggerFactory.getLogger(Scripting.class.getName());
@@ -148,6 +146,7 @@ public class Scripting {
 	 * @throws FrameworkException
 	 * @throws UnlicensedScriptException
 	 */
+
 	public static Object evaluate(final ActionContext actionContext, final GraphObject entity, final String input, final String methodName) throws FrameworkException, UnlicensedScriptException {
 
 		final String expression = StringUtils.strip(input);
@@ -223,6 +222,27 @@ public class Scripting {
 		}
 	}
 
+<<<<<<< /usr/src/app/output/structr/structr/6b8372cc07443f706ee297a6b7990fe41cada5de/structr-core/src/main/java/org/structr/core/script/Scripting.java/left.java
+	public static Object evaluateJavascript(final ActionContext actionContext, final GraphObject entity, final Snippet snippet) throws FrameworkException {
+
+		final String entityType        = entity != null ? (entity.getClass().getSimpleName() + ".") : "";
+		final String entityName        = entity != null ? entity.getProperty(AbstractNode.name) : null;
+		final String entityDescription = entity != null ? ( StringUtils.isNotBlank(entityName) ? "\"" + entityName + "\":" : "" ) + entity.getUuid() : "anonymous";
+
+		Context context = ContextFactory.getContext("js", actionContext, entity);
+
+		try {
+			Object result = PolyglotWrapper.unwrap(actionContext, context.eval("js", embedInFunction(snippet.getSource())));
+
+			return result;
+		} catch (Exception ex) {
+
+			throw new FrameworkException(422, ex.getMessage());
+		}
+
+	}
+||||||| /usr/src/app/output/structr/structr/6b8372cc07443f706ee297a6b7990fe41cada5de/structr-core/src/main/java/org/structr/core/script/Scripting.java/base.java
+=======
 	public static Object evaluateJavascript(final ActionContext actionContext, final GraphObject entity, final Snippet snippet) throws FrameworkException {
 
 		final String entityType        = entity != null ? (entity.getClass().getSimpleName() + ".") : "";
@@ -269,7 +289,7 @@ public class Scripting {
 		}
 
 	}
-
+>>>>>>> /usr/src/app/output/structr/structr/6b8372cc07443f706ee297a6b7990fe41cada5de/structr-core/src/main/java/org/structr/core/script/Scripting.java/right.java
 
 	private static String getExceptionMessage (final ActionContext actionContext) {
 
@@ -297,6 +317,45 @@ public class Scripting {
 	}
 
 	// ----- private methods -----
+
+<<<<<<< /usr/src/app/output/structr/structr/6b8372cc07443f706ee297a6b7990fe41cada5de/structr-core/src/main/java/org/structr/core/script/Scripting.java/left.java
+	private static Object evaluateScript(final ActionContext actionContext, final GraphObject entity, final String engineName, final String script) throws FrameworkException {
+
+		try {
+
+			final Context context = ContextFactory.getContext(engineName, actionContext, entity);
+
+			final StringBuilder wrappedScript = new StringBuilder();
+
+			switch (engineName) {
+				case "R":
+					wrappedScript.append("main <- function() {");
+					wrappedScript.append(script);
+					wrappedScript.append("}\n");
+					break;
+				case "python":
+					// Prepend tabs
+					final String tabPrependedScript = Arrays.stream(script.trim().split("\n")).map(line -> "	" + line).collect(Collectors.joining("\n"));
+					wrappedScript.append("def main():\n");
+					wrappedScript.append(tabPrependedScript);
+					wrappedScript.append("\n");
+					break;
+			}
+
+			context.eval(engineName, wrappedScript.toString());
+
+			return PolyglotWrapper.unwrap(actionContext, context.getBindings(engineName).getMember("main").execute());
+		} catch (PolyglotException ex) {
+
+			throw new FrameworkException(422, ex.getMessage());
+		} catch (Throwable ex) {
+
+			throw new FrameworkException(422, ex.getMessage());
+		}
+
+	}
+||||||| /usr/src/app/output/structr/structr/6b8372cc07443f706ee297a6b7990fe41cada5de/structr-core/src/main/java/org/structr/core/script/Scripting.java/base.java
+=======
 	private static Object evaluateScript(final ActionContext actionContext, final GraphObject entity, final String engineName, final String script) throws FrameworkException {
 
 		try {
@@ -363,7 +422,7 @@ public class Scripting {
 		}
 
 	}
-
+>>>>>>> /usr/src/app/output/structr/structr/6b8372cc07443f706ee297a6b7990fe41cada5de/structr-core/src/main/java/org/structr/core/script/Scripting.java/right.java
 
 	private static String embedInFunction(final Snippet snippet) {
 
@@ -387,6 +446,7 @@ public class Scripting {
 	}
 
 	// this is only public to be testable :(
+
 	public static List<String> extractScripts(final String source) {
 
 		final List<String> otherParts  = new LinkedList<>();
@@ -585,6 +645,14 @@ public class Scripting {
 
 		}
 	}
+
+	// ----- nested classes -----
+
+	//private static final Map<String, Script> compiledScripts = Collections.synchronizedMap(new LRUMap<>(10000));
+
+	// ----- private methods -----
+
+	// this is only public to be testable :(
 
 	// ----- nested classes -----
 	private static class Tuple {
