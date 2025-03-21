@@ -50,12 +50,7 @@ public class GameState implements ActionsMixin, BoardMixin,
     private final Phase phase;
     private final int turnNumber;
     private final boolean commited;
-<<<<<<< HEAD
-    private final boolean passed;
     private final int nextPlayerIncrement;
-=======
->>>>>>> upstream/master
-
     public static GameState createInitial(
             Map<Rule, Object> rules,
             Map<String, Object> elements,
@@ -79,16 +74,10 @@ public class GameState implements ActionsMixin, BoardMixin,
             Queue.empty(),
             null,
             1,
-<<<<<<< HEAD
-            false,
             false,
             1
-=======
-            false
->>>>>>> upstream/master
         );
     }
-
     public GameState(
             Map<Rule, Object> rules,
             Map<String, Object> elements,
@@ -104,13 +93,16 @@ public class GameState implements ActionsMixin, BoardMixin,
             Queue<PlayEvent> events,
             Phase phase,
             int turnNumber,
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/left.java
             boolean commited,
             boolean passed,
             int nextPlayerIncrement) {
+||||||| /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/base.java
+            boolean commited,
+            boolean passed) {
 =======
             boolean commited) {
->>>>>>> upstream/master
+>>>>>>> /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/right.java
         this.rules = rules;
         this.elements = elements;
         this.capabilities = capabilities;
@@ -128,13 +120,14 @@ public class GameState implements ActionsMixin, BoardMixin,
         this.phase = phase;
         this.turnNumber = turnNumber;
         this.commited = commited;
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/left.java
         this.passed = passed;
         this.nextPlayerIncrement = nextPlayerIncrement;
+||||||| /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/base.java
+        this.passed = passed;
 =======
->>>>>>> upstream/master
+>>>>>>> /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/right.java
     }
-
     @Override
     public GameState setCapabilities(CapabilitiesState capabilities) {
         if (capabilities == this.capabilities) return this;
@@ -144,14 +137,15 @@ public class GameState implements ActionsMixin, BoardMixin,
             featureMap, neutralFigures,
             deployedMeeples, playerActions,
             flags, events,
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/left.java
             phase, turnNumber, commited, passed, nextPlayerIncrement
+||||||| /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/base.java
+            phase, turnNumber, commited, passed
 =======
             phase, turnNumber, commited
->>>>>>> upstream/master
+>>>>>>> /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/right.java
         );
     }
-
     @Override
     public GameState setPlayers(PlayersState players) {
         if (players == this.players) return this;
@@ -161,14 +155,15 @@ public class GameState implements ActionsMixin, BoardMixin,
             featureMap, neutralFigures,
             deployedMeeples, playerActions,
             flags, events,
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/left.java
             phase, turnNumber, commited, passed, nextPlayerIncrement
+||||||| /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/base.java
+            phase, turnNumber, commited, passed
 =======
             phase, turnNumber, commited
->>>>>>> upstream/master
+>>>>>>> /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/right.java
         );
     }
-
     public GameState setTilePack(TilePack tilePack) {
         if (tilePack == this.tilePack) return this;
         return new GameState(
@@ -177,18 +172,18 @@ public class GameState implements ActionsMixin, BoardMixin,
             featureMap, neutralFigures,
             deployedMeeples, playerActions,
             flags, events,
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/left.java
             phase, turnNumber, commited, passed, nextPlayerIncrement
+||||||| /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/base.java
+            phase, turnNumber, commited, passed
 =======
             phase, turnNumber, commited
->>>>>>> upstream/master
+>>>>>>> /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/right.java
         );
     }
-
     public GameState mapTilePack(Function<TilePack, TilePack> fn) {
         return setTilePack(fn.apply(tilePack));
     }
-
     public GameState setDrawnTile(Tile drawnTile) {
         if (drawnTile == this.drawnTile) return this;
         return new GameState(
@@ -197,14 +192,15 @@ public class GameState implements ActionsMixin, BoardMixin,
             featureMap, neutralFigures,
             deployedMeeples, playerActions,
             flags, events,
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/left.java
             phase, turnNumber, commited, passed, nextPlayerIncrement
+||||||| /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/base.java
+            phase, turnNumber, commited, passed
 =======
             phase, turnNumber, commited
->>>>>>> upstream/master
+>>>>>>> /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/right.java
         );
     }
-
     @Override
     public GameState setPlacedTiles(LinkedHashMap<Position, PlacedTile> placedTiles) {
         if (placedTiles == this.placedTiles) return this;
@@ -214,14 +210,15 @@ public class GameState implements ActionsMixin, BoardMixin,
             featureMap, neutralFigures,
             deployedMeeples, playerActions,
             flags, events,
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/left.java
             phase, turnNumber, commited, passed, nextPlayerIncrement
+||||||| /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/base.java
+            phase, turnNumber, commited, passed
 =======
             phase, turnNumber, commited
->>>>>>> upstream/master
+>>>>>>> /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/right.java
         );
     }
-
     @Override
     public GameState setFeatureMap(Map<Position, Map<FeaturePointer, Feature>> featureMap) {
         if (featureMap == this.featureMap) return this;
@@ -231,14 +228,15 @@ public class GameState implements ActionsMixin, BoardMixin,
             featureMap, neutralFigures,
             deployedMeeples, playerActions,
             flags, events,
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/left.java
             phase, turnNumber, commited, passed, nextPlayerIncrement
+||||||| /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/base.java
+            phase, turnNumber, commited, passed
 =======
             phase, turnNumber, commited
->>>>>>> upstream/master
+>>>>>>> /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/right.java
         );
     }
-
     public GameState setDiscardedTiles(List<Tile> discardedTiles) {
         if (discardedTiles == this.discardedTiles) return this;
         return new GameState(
@@ -247,14 +245,15 @@ public class GameState implements ActionsMixin, BoardMixin,
             featureMap, neutralFigures,
             deployedMeeples, playerActions,
             flags, events,
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/left.java
             phase, turnNumber, commited, passed, nextPlayerIncrement
+||||||| /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/base.java
+            phase, turnNumber, commited, passed
 =======
             phase, turnNumber, commited
->>>>>>> upstream/master
+>>>>>>> /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/right.java
         );
     }
-
     public GameState setNeutralFigures(NeutralFiguresState neutralFigures) {
         if (neutralFigures == this.neutralFigures) return this;
         return new GameState(
@@ -263,18 +262,18 @@ public class GameState implements ActionsMixin, BoardMixin,
             featureMap, neutralFigures,
             deployedMeeples, playerActions,
             flags, events,
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/left.java
             phase, turnNumber, commited, passed, nextPlayerIncrement
+||||||| /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/base.java
+            phase, turnNumber, commited, passed
 =======
             phase, turnNumber, commited
->>>>>>> upstream/master
+>>>>>>> /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/right.java
         );
     }
-
     public GameState mapNeutralFigures(Function<NeutralFiguresState, NeutralFiguresState> fn) {
         return setNeutralFigures(fn.apply(neutralFigures));
     }
-
     public GameState setDeployedMeeples(LinkedHashMap<Meeple, FeaturePointer> deployedMeeples) {
         if (deployedMeeples == this.deployedMeeples) return this;
         return new GameState(
@@ -283,14 +282,15 @@ public class GameState implements ActionsMixin, BoardMixin,
             featureMap, neutralFigures,
             deployedMeeples, playerActions,
             flags, events,
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/left.java
             phase, turnNumber, commited, passed, nextPlayerIncrement
+||||||| /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/base.java
+            phase, turnNumber, commited, passed
 =======
             phase, turnNumber, commited
->>>>>>> upstream/master
+>>>>>>> /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/right.java
         );
     }
-
     @Override
     public GameState setPlayerActions(ActionsState playerActions) {
         if (playerActions == this.playerActions) return this;
@@ -300,18 +300,18 @@ public class GameState implements ActionsMixin, BoardMixin,
             featureMap, neutralFigures,
             deployedMeeples, playerActions,
             flags, events,
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/left.java
             phase, turnNumber, commited, passed, nextPlayerIncrement
+||||||| /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/base.java
+            phase, turnNumber, commited, passed
 =======
             phase, turnNumber, commited
->>>>>>> upstream/master
+>>>>>>> /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/right.java
         );
     }
-
     public GameState mapPlayerActions(Function<ActionsState, ActionsState> fn) {
         return setPlayerActions(fn.apply(playerActions));
     }
-
     @Override
     public GameState setFlags(Set<Flag> flags) {
         if (flags == this.flags) return this;
@@ -321,14 +321,15 @@ public class GameState implements ActionsMixin, BoardMixin,
             featureMap, neutralFigures,
             deployedMeeples, playerActions,
             flags, events,
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/left.java
             phase, turnNumber, commited, passed, nextPlayerIncrement
+||||||| /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/base.java
+            phase, turnNumber, commited, passed
 =======
             phase, turnNumber, commited
->>>>>>> upstream/master
+>>>>>>> /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/right.java
         );
     }
-
     @Override
     public GameState setEvents(Queue<PlayEvent> events) {
         if (events == this.events) return this;
@@ -338,14 +339,15 @@ public class GameState implements ActionsMixin, BoardMixin,
             featureMap, neutralFigures,
             deployedMeeples, playerActions,
             flags, events,
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/left.java
             phase, turnNumber, commited, passed, nextPlayerIncrement
+||||||| /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/base.java
+            phase, turnNumber, commited, passed
 =======
             phase, turnNumber, commited
->>>>>>> upstream/master
+>>>>>>> /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/right.java
         );
     }
-
     public GameState setPhase(Phase phase) {
         if (phase == this.phase) return this;
         return new GameState(
@@ -354,14 +356,15 @@ public class GameState implements ActionsMixin, BoardMixin,
             featureMap, neutralFigures,
             deployedMeeples, playerActions,
             flags, events,
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/left.java
             phase, turnNumber, commited, passed, nextPlayerIncrement
+||||||| /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/base.java
+            phase, turnNumber, commited, passed
 =======
             phase, turnNumber, commited
->>>>>>> upstream/master
+>>>>>>> /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/right.java
         );
     }
-
     public GameState setTurnNumber(int turnNumber) {
         if (turnNumber == this.turnNumber) return this;
         return new GameState(
@@ -370,14 +373,15 @@ public class GameState implements ActionsMixin, BoardMixin,
             featureMap, neutralFigures,
             deployedMeeples, playerActions,
             flags, events,
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/left.java
             phase, turnNumber, commited, passed, nextPlayerIncrement
+||||||| /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/base.java
+            phase, turnNumber, commited, passed
 =======
             phase, turnNumber, commited
->>>>>>> upstream/master
+>>>>>>> /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/right.java
         );
     }
-
     public GameState setCommited(boolean commited) {
         if (commited == this.commited) return this;
         return new GameState(
@@ -386,11 +390,15 @@ public class GameState implements ActionsMixin, BoardMixin,
                 featureMap, neutralFigures,
                 deployedMeeples, playerActions,
                 flags, events,
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/left.java
                 phase, turnNumber, commited, passed, nextPlayerIncrement
+||||||| /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/base.java
+                phase, turnNumber, commited, passed
+=======
+                phase, turnNumber, commited
+>>>>>>> /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/right.java
         );
     }
-
     public GameState setPassed(boolean passed) {
         if (passed == this.passed) return this;
         return new GameState(
@@ -400,12 +408,8 @@ public class GameState implements ActionsMixin, BoardMixin,
                 deployedMeeples, playerActions,
                 flags, events,
                 phase, turnNumber, commited, passed, nextPlayerIncrement
-=======
-                phase, turnNumber, commited
->>>>>>> upstream/master
         );
     }
-
     public GameState setNextPlayerIncrement(int nextPlayerIncrement) {
         if (nextPlayerIncrement == this.nextPlayerIncrement) return this;
         return new GameState(
@@ -417,91 +421,66 @@ public class GameState implements ActionsMixin, BoardMixin,
                 phase, turnNumber, commited, passed, nextPlayerIncrement
         );
     }
-    
     public Map<String, Object> getElements() {
         return elements;
     }
-
     @Override
     public Map<Rule, Object> getRules() {
         return rules;
     }
-
     @Override
     public CapabilitiesState getCapabilities() {
         return capabilities;
     }
-
     @Override
     public PlayersState getPlayers() {
         return players;
     }
-
     public TilePack getTilePack() {
         return tilePack;
     }
-
     public Tile getDrawnTile() {
         return drawnTile;
     }
-
     @Override
     public LinkedHashMap<Position, PlacedTile> getPlacedTiles() {
         return placedTiles;
     }
-
     public List<Tile> getDiscardedTiles() {
         return discardedTiles;
     }
-
     @Override
     public Map<Position, Map<FeaturePointer, Feature>> getFeatureMap() {
         return featureMap;
     }
-
     public NeutralFiguresState getNeutralFigures() {
         return neutralFigures;
     }
-
     public LinkedHashMap<Meeple, FeaturePointer> getDeployedMeeples() {
         return deployedMeeples;
     }
-
     @Override
     public ActionsState getPlayerActions() {
         return playerActions;
     }
-
     @Override
     public Set<Flag> getFlags() {
         return flags;
     }
-
     @Override
     public Queue<PlayEvent> getEvents() {
         return events;
     }
-
     public Phase getPhase() {
         return phase;
     }
-
     public int getTurnNumber() {
         return turnNumber;
     }
-
     public boolean isCommited() {
         return commited;
     }
-<<<<<<< HEAD
-
-    public boolean isPassed() {
-        return passed;
-    }
-    
     public int getNextPlayerIncrement() {
     	return nextPlayerIncrement;
     }
-=======
->>>>>>> upstream/master
 }
