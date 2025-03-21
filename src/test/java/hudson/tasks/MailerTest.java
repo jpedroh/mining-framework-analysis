@@ -302,11 +302,22 @@ public class MailerTest {
 
         @Override
         public synchronized void load() {
+<<<<<<< /usr/src/app/output/jenkinsci/mailer-plugin/06a11a1de909d15bacd04459d29807af9e0882d8/src/test/java/hudson/tasks/MailerTest.java/left.java
             try {
                 getConfigFile().delete();
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
+||||||| /usr/src/app/output/jenkinsci/mailer-plugin/06a11a1de909d15bacd04459d29807af9e0882d8/src/test/java/hudson/tasks/MailerTest.java/base.java
+            getConfigFile().delete();
+=======
+            try {
+                getConfigFile().delete();
+            } catch (Exception e) {
+                // TODO 2.325+ catch IOException and throw UncheckedIOException
+                throw new RuntimeException(e);
+            }
+>>>>>>> /usr/src/app/output/jenkinsci/mailer-plugin/06a11a1de909d15bacd04459d29807af9e0882d8/src/test/java/hudson/tasks/MailerTest.java/right.java
             super.load();
         }
     };
