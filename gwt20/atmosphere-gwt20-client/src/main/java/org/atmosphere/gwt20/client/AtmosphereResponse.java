@@ -103,8 +103,6 @@ public final class AtmosphereResponse extends JavaScriptObject {
         return this.state;
     }-*/;
     
-<<<<<<< HEAD
-=======
 
     public Transport getTransport() {
         return Transport.fromString(getTransportImpl());
@@ -113,8 +111,4 @@ public final class AtmosphereResponse extends JavaScriptObject {
     private native String getTransportImpl() /*-{
         return this.transport;
     }-*/;
-
-    protected AtmosphereResponse() {
-    }
->>>>>>> ac485fa2ff1644f6fb602640526e0618bee6bac5
 }
