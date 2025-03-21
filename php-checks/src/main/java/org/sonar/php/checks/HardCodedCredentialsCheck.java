@@ -33,10 +33,9 @@ import org.sonar.php.tree.impl.PHPTree;
 import org.sonar.plugins.php.api.tree.Tree;
 import org.sonar.plugins.php.api.tree.Tree.Kind;
 import org.sonar.plugins.php.api.tree.declaration.VariableDeclarationTree;
-import org.sonar.plugins.php.api.tree.expression.AssignmentExpressionTree;
+import org.sonar.plugins.php.api.tree.expression.*;
 import org.sonar.plugins.php.api.tree.expression.ExpressionTree;
 import org.sonar.plugins.php.api.tree.expression.FunctionCallTree;
-import org.sonar.plugins.php.api.tree.expression.LiteralTree;
 import org.sonar.plugins.php.api.tree.lexical.SyntaxToken;
 import org.sonar.plugins.php.api.visitors.PHPVisitorCheck;
 
@@ -45,8 +44,14 @@ public class HardCodedCredentialsCheck extends PHPVisitorCheck {
 
   public static final String KEY = "S2068";
   private static final String MESSAGE = "'%s' detected in this variable name, review this potentially hardcoded credential.";
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-php/47485031f09b78ac3ff59d14769be0292fd10fb5/php-checks/src/main/java/org/sonar/php/checks/HardCodedCredentialsCheck.java/left.java
+  private static final String MESSAGE_ARGUMENTS = "detected string in password argument, review this potentially hardcoded credential.";
+||||||| /usr/src/app/output/sonarcommunity/sonar-php/47485031f09b78ac3ff59d14769be0292fd10fb5/php-checks/src/main/java/org/sonar/php/checks/HardCodedCredentialsCheck.java/base.java
+=======
   private static final String MESSAGE_ARGUMENTS = "Review this hardcoded credential.";
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-php/47485031f09b78ac3ff59d14769be0292fd10fb5/php-checks/src/main/java/org/sonar/php/checks/HardCodedCredentialsCheck.java/right.java
   private static final String MESSAGE_URI = "detected URI with password, review this potentially hardcoded credential.";
+
   private static final String DEFAULT_CREDENTIAL_WORDS = "password,passwd,pwd";
 
   private static final String LITERAL_PATTERN_SUFFIX = "=(?!([\\?:']|%s))..";
