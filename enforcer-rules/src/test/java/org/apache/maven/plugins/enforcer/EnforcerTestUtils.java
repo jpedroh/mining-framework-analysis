@@ -53,7 +53,6 @@ public final class EnforcerTestUtils
     public static MavenSession getMavenSession()
     {
         PlexusContainer mock = mock( PlexusContainer.class );
-
         MavenExecutionRequest mer = mock( MavenExecutionRequest.class );
 
         Properties systemProperties = new Properties();
