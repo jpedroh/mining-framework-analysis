@@ -1,24 +1,4 @@
-/*
- * SonarQube LDAP Plugin
- * Copyright (C) 2009 SonarSource
- * sonarqube@googlegroups.com
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
- */
 package org.sonar.plugins.ldap;
-
 import java.util.Map;
 import javax.naming.NamingException;
 import javax.naming.directory.InitialDirContext;
@@ -35,9 +15,10 @@ import org.sonar.api.utils.log.Loggers;
  * @author Evgeny Mandrikov
  */
 public class LdapAuthenticator implements LoginPasswordAuthenticator {
-
   private static final Logger LOG = Loggers.get(LdapAuthenticator.class);
+
   private final Map<String, LdapContextFactory> contextFactories;
+
   private final Map<String, LdapUserMapping> userMappings;
 
   public LdapAuthenticator(Map<String, LdapContextFactory> contextFactories, Map<String, LdapUserMapping> userMappings) {
@@ -46,7 +27,6 @@ public class LdapAuthenticator implements LoginPasswordAuthenticator {
   }
 
   public void init() {
-    // nothing to do
   }
 
   /**
@@ -110,28 +90,32 @@ public class LdapAuthenticator implements LoginPasswordAuthenticator {
   private boolean checkPasswordUsingGssapi(String principal, String password, String ldapKey) {
     Configuration currentConfiguration = Configuration.getConfiguration();
     try {
-        // Use our custom configuration to avoid reliance on external config
-        Configuration.setConfiguration(new Krb5LoginConfiguration());
-        LoginContext lc;
-        try {
-          lc = new LoginContext(getClass().getName(), new CallbackHandlerImpl(principal, password));
-          lc.login();
-        } catch (LoginException e) {
-          // Bad username: Client not found in Kerberos database
-          // Bad password: Integrity check on decrypted field failed
-          LOG.debug("Password not valid for {} in server {}: {}", principal, ldapKey, e.getMessage());
-          return false;
-        }
-        try {
-          lc.logout();
-        } catch (LoginException e) {
-          LOG.warn("Logout fails", e);
-        }
+      Configuration.setConfiguration(new Krb5LoginConfiguration());
+      LoginContext lc;
+      try {
+        lc = new LoginContext(getClass().getName(), new CallbackHandlerImpl(principal, password));
+        lc.login();
+      } catch (LoginException e) {
+        LOG.debug("Password not valid for {} in server {}: {}", principal, ldapKey, e.getMessage());
+        return false;
+      }
+      try {
+        lc.logout();
+      } catch (LoginException e) {
+        LOG.warn("Logout fails", e);
+      }
       LOG.debug("Password valid for user {} in server {}!", principal, ldapKey);
       return true;
-    } finally {
+    } 
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+    catch (LoginException e) {
+      LOG.debug("Password not valid for {} in server {}: {}", principal, ldapKey, e.getMessage());
+      return false;
+    }
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-ldap/ab7831b6fffd82a5719fa7300316c4244e366a28/src/main/java/org/sonar/plugins/ldap/LdapAuthenticator.java/right.java
+     finally {
       Configuration.setConfiguration(currentConfiguration);
     }
   }
-
 }

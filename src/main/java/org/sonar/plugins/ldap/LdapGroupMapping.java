@@ -1,29 +1,9 @@
-/*
- * SonarQube LDAP Plugin
- * Copyright (C) 2009 SonarSource
- * sonarqube@googlegroups.com
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
- */
 package org.sonar.plugins.ldap;
-
 import com.google.common.base.MoreObjects;
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinNT.PSID;
-
 import javax.naming.NamingException;
+import java.util.Arrays;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.SearchResult;
 import org.apache.commons.lang.StringUtils;
@@ -31,42 +11,40 @@ import org.slf4j.LoggerFactory;
 import org.sonar.api.config.Settings;
 import org.sonar.api.utils.SonarException;
 
-import java.util.Arrays;
-
 /**
  * @author Evgeny Mandrikov
  */
 public class LdapGroupMapping {
-
   private static final String DEFAULT_OBJECT_CLASS = "groupOfUniqueNames";
+
   private static final String DEFAULT_ID_ATTRIBUTE = "cn";
+
   private static final String DEFAULT_MEMBER_ATTRIBUTE = "uniqueMember";
+
   private static final String DEFAULT_REQUEST = "(&(objectClass=groupOfUniqueNames)(uniqueMember={dn}))";
 
   private final String baseDn;
+
   private final String idAttribute;
+
   private final String request;
+
   private final String[] requiredUserAttributes;
 
   /**
    * Constructs mapping from Sonar settings.
    */
-  public LdapGroupMapping(Settings settings, String settingsPrefix) {  
+  public LdapGroupMapping(Settings settings, String settingsPrefix) {
     this.baseDn = settings.getString(settingsPrefix + ".group.baseDn");
     this.idAttribute = StringUtils.defaultString(settings.getString(settingsPrefix + ".group.idAttribute"), DEFAULT_ID_ATTRIBUTE);
-
     String objectClass = settings.getString(settingsPrefix + ".group.objectClass");
     String memberAttribute = settings.getString(settingsPrefix + ".group.memberAttribute");
-
     String req;
     if (StringUtils.isNotBlank(objectClass) || StringUtils.isNotBlank(memberAttribute)) {
-      // For backward compatibility with plugin versions 1.1 and 1.1.1
       objectClass = StringUtils.defaultString(objectClass, DEFAULT_OBJECT_CLASS);
       memberAttribute = StringUtils.defaultString(memberAttribute, DEFAULT_MEMBER_ATTRIBUTE);
       req = "(&(objectClass=" + objectClass + ")(" + memberAttribute + "=" + "{dn}))";
-      LoggerFactory.getLogger(LdapGroupMapping.class)
-        .warn("Properties '" + settingsPrefix + ".group.objectClass' and '" + settingsPrefix + ".group.memberAttribute' are deprecated" +
-          " and should be replaced by single property '" + settingsPrefix + ".group.request' with value: " + req);
+      LoggerFactory.getLogger(LdapGroupMapping.class).warn("Properties \'" + settingsPrefix + ".group.objectClass\' and \'" + settingsPrefix + ".group.memberAttribute\' are deprecated" + " and should be replaced by single property \'" + settingsPrefix + ".group.request\' with value: " + req);
     } else {
       req = StringUtils.defaultString(settings.getString(settingsPrefix + ".group.request"), DEFAULT_REQUEST);
     }
@@ -87,25 +65,23 @@ public class LdapGroupMapping {
       String attr = attrs[i];
       if ("dn".equals(attr)) {
         parameters[i] = user.getNameInNamespace();
-      } else if ("objectsid".equals(attr.toLowerCase())) {
-        Attribute attribute = user.getAttributes().get(attr);
-        byte[] objectSid;
-        try {
-          objectSid = (byte[])attribute.get();
-          PSID sid = new PSID(objectSid);
-          parameters[i] = Advapi32Util.convertSidToStringSid(sid);
-        } catch (NamingException e) {
-          parameters[i] = null;
-        }
       } else {
-        parameters[i] = getAttributeValue(user, attr);
+        if ("objectsid".equals(attr.toLowerCase())) {
+          Attribute attribute = user.getAttributes().get(attr);
+          byte[] objectSid;
+          try {
+            objectSid = (byte[]) attribute.get();
+            PSID sid = new PSID(objectSid);
+            parameters[i] = Advapi32Util.convertSidToStringSid(sid);
+          } catch (NamingException e) {
+            parameters[i] = null;
+          }
+        } else {
+          parameters[i] = getAttributeValue(user, attr);
+        }
       }
     }
-    return new LdapSearch(contextFactory)
-      .setBaseDn(getBaseDn())
-      .setRequest(getRequest())
-      .setParameters(parameters)
-      .returns(getIdAttribute());
+    return new LdapSearch(contextFactory).setBaseDn(getBaseDn()).setRequest(getRequest()).setParameters(parameters).returns(getIdAttribute());
   }
 
   private static String getAttributeValue(SearchResult user, String attributeId) {
@@ -153,13 +129,7 @@ public class LdapGroupMapping {
     return requiredUserAttributes;
   }
 
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(this)
-      .add("baseDn", getBaseDn())
-      .add("idAttribute", getIdAttribute())
-      .add("requiredUserAttributes", Arrays.toString(getRequiredUserAttributes()))
-      .add("request", getRequest())
-      .toString();
+  @Override public String toString() {
+    return MoreObjects.toStringHelper(this).add("baseDn", getBaseDn()).add("idAttribute", getIdAttribute()).add("requiredUserAttributes", Arrays.toString(getRequiredUserAttributes())).add("request", getRequest()).toString();
   }
 }
