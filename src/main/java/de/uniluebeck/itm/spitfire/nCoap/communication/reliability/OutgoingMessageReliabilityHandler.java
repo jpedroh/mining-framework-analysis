@@ -205,8 +205,8 @@ public class OutgoingMessageReliabilityHandler extends SimpleChannelHandler {
                     }
 
                     if(removedToken != null){
-                        log.debug("Message with ID " + coapMessage.getMessageID() +
-                                " for recipient " + rcptAddress + " reached the maximum number of retransmits.");
+                            log.debug("Message with ID " + coapMessage.getMessageID() +
+                                    " for recipient " + rcptAddress + " reached the maximum number of retransmits.");
                     }
 
                     //Send internal error message to the application

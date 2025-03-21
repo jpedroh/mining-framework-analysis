@@ -24,19 +24,20 @@
 package de.uniluebeck.itm.spitfire.nCoap.communication.callback;
 
 import com.google.common.collect.HashBasedTable;
-import de.uniluebeck.itm.spitfire.nCoap.communication.internal.InternalAcknowledgementMessage;
-import de.uniluebeck.itm.spitfire.nCoap.communication.internal.InternalErrorMessage;
-import de.uniluebeck.itm.spitfire.nCoap.message.header.Code;
-import de.uniluebeck.itm.spitfire.nCoap.message.header.MsgType;
-import de.uniluebeck.itm.spitfire.nCoap.toolbox.ByteArrayWrapper;
 import de.uniluebeck.itm.spitfire.nCoap.toolbox.Tools;
 import de.uniluebeck.itm.spitfire.nCoap.message.CoapRequest;
 import de.uniluebeck.itm.spitfire.nCoap.message.CoapResponse;
 import de.uniluebeck.itm.spitfire.nCoap.message.options.InvalidOptionException;
 import de.uniluebeck.itm.spitfire.nCoap.message.options.ToManyOptionsException;
-import org.jboss.netty.channel.*;
+import org.jboss.netty.channel.ExceptionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import de.uniluebeck.itm.spitfire.nCoap.communication.internal.InternalAcknowledgementMessage;
+import de.uniluebeck.itm.spitfire.nCoap.communication.internal.InternalErrorMessage;
+import de.uniluebeck.itm.spitfire.nCoap.message.header.Code;
+import de.uniluebeck.itm.spitfire.nCoap.message.header.MsgType;
+import de.uniluebeck.itm.spitfire.nCoap.toolbox.ByteArrayWrapper;
+import org.jboss.netty.channel.*;
 
 import java.net.InetSocketAddress;
 import java.util.Arrays;
@@ -69,7 +70,13 @@ public class ResponseCallbackHandler extends SimpleChannelHandler {
     public void writeRequested(ChannelHandlerContext ctx, MessageEvent me){
 
         if(me.getMessage() instanceof CoapRequest){
+<<<<<<< /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/callback/ResponseCallbackHandler.java/left.java
+            log.debug(" Handling downstream event!");
+||||||| /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/callback/ResponseCallbackHandler.java/base.java
+            log.debug("[ResponseCallbackHandler] Handling downstream event!");
+=======
             log.debug("CoapRequest received on downstream");
+>>>>>>> /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/callback/ResponseCallbackHandler.java/right.java
 
             CoapRequest coapRequest = (CoapRequest) me.getMessage();
 
@@ -78,8 +85,14 @@ public class ResponseCallbackHandler extends SimpleChannelHandler {
                     coapRequest.setToken(TokenFactory.getInstance().getNextToken());
                 }
                 catch (InvalidOptionException e) {
+<<<<<<< /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/callback/ResponseCallbackHandler.java/left.java
+                    log.debug(" Error while setting token.\n", e);
+||||||| /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/callback/ResponseCallbackHandler.java/base.java
+                    log.debug("[ResponseCallbackHandler] Error while setting token.\n", e);
+=======
                     String errorMessage = "Internal CoAP error while setting token: " + e.getCause();
                     log.error(errorMessage);
+>>>>>>> /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/callback/ResponseCallbackHandler.java/right.java
 
                     UpstreamMessageEvent ume = new UpstreamMessageEvent(ctx.getChannel(),
                             new InternalErrorMessage(errorMessage, coapRequest.getToken()), me.getRemoteAddress());
@@ -87,23 +100,49 @@ public class ResponseCallbackHandler extends SimpleChannelHandler {
                     return;
                 }
                 catch (ToManyOptionsException e) {
+<<<<<<< /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/callback/ResponseCallbackHandler.java/left.java
+                    log.debug(" Error while setting token.\n", e);
+||||||| /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/callback/ResponseCallbackHandler.java/base.java
+                    log.debug("[ResponseCallbackHandler] Error while setting token.\n", e);
+=======
                     String errorMessage = "Internal CoAP error while setting token: " + e.getCause();
                     log.error(errorMessage);
+>>>>>>> /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/callback/ResponseCallbackHandler.java/right.java
 
                     UpstreamMessageEvent ume = new UpstreamMessageEvent(ctx.getChannel(),
                             new InternalErrorMessage(errorMessage, coapRequest.getToken()), me.getRemoteAddress());
                     ctx.sendUpstream(ume);
                     return;
                 }
+<<<<<<< /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/callback/ResponseCallbackHandler.java/left.java
+            
+                log.debug(" New Confirmable Request added: \n" +
+                            "\tRemote Address: " + me.getRemoteAddress() + "\n" +
+                            "\tToken: " + Tools.toHexString(coapRequest.getToken()));
+||||||| /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/callback/ResponseCallbackHandler.java/base.java
+            
+                log.debug("[ResponseCallbackHandler] New Confirmable Request added: \n" +
+                            "\tRemote Address: " + me.getRemoteAddress() + "\n" +
+                            "\tToken: " + Helper.toHexString(coapRequest.getToken()));
+=======
+>>>>>>> /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/callback/ResponseCallbackHandler.java/right.java
 
                 callbacks.put(new ByteArrayWrapper(coapRequest.getToken()),
                         (InetSocketAddress) me.getRemoteAddress(),
                         coapRequest.getResponseCallback());
 
+<<<<<<< /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/callback/ResponseCallbackHandler.java/left.java
+                log.debug(" Number of registered callbacks: " + callbacks.size());
+||||||| /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/callback/ResponseCallbackHandler.java/base.java
+                if(log.isDebugEnabled()){
+                    log.debug("[ResponseCallbackHandler] Number of registered callbacks: " + callbacks.size());
+                }
+=======
                 log.info("New confirmable Request added (Remote Address: " + me.getRemoteAddress() +
                         ", Token: " + Tools.toHexString(coapRequest.getToken()));
 
                 log.debug("Number of registered callbacks: " + callbacks.size());
+>>>>>>> /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/callback/ResponseCallbackHandler.java/right.java
             }
         }
         ctx.sendDownstream(me);
@@ -118,6 +157,67 @@ public class ResponseCallbackHandler extends SimpleChannelHandler {
      * {@link org.jboss.netty.channel.Channel}
      * @param me The {@link MessageEvent} containing the {@link de.uniluebeck.itm.spitfire.nCoap.message.CoapMessage}
      */
+<<<<<<< /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/callback/ResponseCallbackHandler.java/left.java
+    @Override
+    public void messageReceived(ChannelHandlerContext ctx, MessageEvent me){
+
+        log.debug(" Handle Upstream Message Event.");
+
+        if(!(me.getMessage() instanceof CoapResponse)){
+            ctx.sendUpstream(me);
+            return;
+        }
+
+        CoapResponse coapResponse = (CoapResponse) me.getMessage();
+
+        log.debug(" Received message is a response: \n" +
+                    "\tRemote Address: " + me.getRemoteAddress() + "\n" +
+                    "\tToken: " + Tools.toHexString(coapResponse.getToken()));
+
+        ResponseCallback callback = callbacks.remove(new ByteArrayWrapper(coapResponse.getToken()),
+                                                     me.getRemoteAddress());
+
+        if(callback != null){
+            log.debug(" Response callback found. " +
+                        "Invoking method receiveCoapResponse");
+
+            callback.receiveCoapResponse(coapResponse);
+        }
+    }
+||||||| /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/callback/ResponseCallbackHandler.java/base.java
+    @Override
+    public void messageReceived(ChannelHandlerContext ctx, MessageEvent me){
+
+        if(log.isDebugEnabled()){
+            log.debug("[ResponseCallbackHandler] Handle Upstream Message Event.");
+        }
+
+        if(!(me.getMessage() instanceof CoapResponse)){
+            ctx.sendUpstream(me);
+            return;
+        }
+
+        CoapResponse coapResponse = (CoapResponse) me.getMessage();
+
+        if(log.isDebugEnabled()){
+           log.debug("[ResponseCallbackHandler] Received message is a response: \n" +
+                    "\tRemote Address: " + me.getRemoteAddress() + "\n" +
+                    "\tToken: " + Helper.toHexString(coapResponse.getToken()));
+        }
+
+        ResponseCallback callback = callbacks.remove(new ByteArrayWrapper(coapResponse.getToken()),
+                                                     me.getRemoteAddress());
+
+        if(callback != null){
+            if(log.isDebugEnabled()){
+                log.debug("[ResponseCallbackHandler] Response callback found. " +
+                        "Invoking method receiveCoapResponse");
+            }
+
+            callback.receiveCoapResponse(coapResponse);
+        }
+    }
+=======
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent me){
 
@@ -165,11 +265,18 @@ public class ResponseCallbackHandler extends SimpleChannelHandler {
             ctx.sendUpstream(me);
         }
     }
+>>>>>>> /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/callback/ResponseCallbackHandler.java/right.java
 
+<<<<<<< /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/callback/ResponseCallbackHandler.java/left.java
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) throws Exception{
+        log.debug(" Exception caught:\n", e);
+    }
+||||||| /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/callback/ResponseCallbackHandler.java/base.java
+=======
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) throws Exception{
         log.debug(" Exception caught:", e.getCause());
     }
-
-
+>>>>>>> /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/callback/ResponseCallbackHandler.java/right.java
 }

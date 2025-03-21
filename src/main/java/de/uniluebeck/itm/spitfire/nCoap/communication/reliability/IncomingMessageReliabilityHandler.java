@@ -91,13 +91,106 @@ public class IncomingMessageReliabilityHandler extends SimpleChannelHandler {
 
         CoapMessage coapMessage = (CoapMessage) me.getMessage();
 
+<<<<<<< /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/left.java
+        if(coapMessage.getMessageType() != MsgType.CON || !coapMessage.isRequest()){
+            ctx.sendUpstream(me);
+            return;
+        }
+||||||| /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/base.java
+        if(coapMessage.getMessageType() != MsgType.CON){
+            ctx.sendUpstream(me);
+            return;
+        }
+=======
         if(coapMessage.getMessageType() == MsgType.CON){
+>>>>>>> /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/right.java
 
+<<<<<<< /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/left.java
+        DatagramChannel datagramChannel = (DatagramChannel) ctx.getChannel();
+||||||| /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/base.java
+=======
             DatagramChannel datagramChannel = (DatagramChannel) ctx.getChannel();
+>>>>>>> /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/right.java
 
+<<<<<<< /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/left.java
+        if(coapMessage instanceof CoapRequest){
+
+            boolean inserted = false;
+            synchronized (monitor){
+                if(!incomingMessagesToBeConfirmed.contains(me.getRemoteAddress(), coapMessage.getMessageID())){
+
+                    incomingMessagesToBeConfirmed.put((InetSocketAddress) me.getRemoteAddress(),
+                                                   coapMessage.getMessageID(), false);
+
+                    inserted = true;
+                    monitor.notifyAll();
+                }
+
+            }
+
+            log.debug("New confirmable request with message ID " +
+                        coapMessage.getMessageID() + " from " + me.getRemoteAddress() + " received (duplicate = " +
+                        !inserted + ")");
+
+            //The value of "inserted" is true if the incoming message was no duplicate
+            if(inserted){
+                //Schedule empty ACK if there was no piggy backed ACK within 2 seconds
+                EmptyACKSender emptyACKSender = new EmptyACKSender((InetSocketAddress) me.getRemoteAddress(),
+                                                                    coapMessage.getMessageID(), datagramChannel);
+
+                executorService.schedule(emptyACKSender, 2000, TimeUnit.MILLISECONDS);
+
+                ctx.sendUpstream(me);
+            }
+            else{
+                EmptyACKSender emptyACKSender = new EmptyACKSender((InetSocketAddress) me.getRemoteAddress(),
+                                                                        coapMessage.getMessageID(), datagramChannel);
+||||||| /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/base.java
+        if(coapMessage instanceof CoapRequest){
+
+            boolean inserted;
+            synchronized (monitor){
+                if(!incomingMessagesToBeConfirmed.contains(me.getRemoteAddress(), coapMessage.getMessageID())){
+
+                    incomingMessagesToBeConfirmed.put((InetSocketAddress) me.getRemoteAddress(),
+                                                   coapMessage.getMessageID(), false);
+                    monitor.notifyAll();
+                }
+                inserted = true;
+            }
+
+            if(log.isDebugEnabled()){
+                log.debug("[IncomingMessageReliabilityHandler] New confirmable request with message ID " +
+                        coapMessage.getMessageID() + " from " + me.getRemoteAddress() + " received (duplicate = " +
+                        !inserted + ")");
+            }
+            //The value of "inserted" is true if the incoming message was no duplicate
+            if(inserted){
+                //Schedule empty ACK if there was no piggy backed ACK within 2 seconds
+                EmptyACKSender emptyACKSender = new EmptyACKSender((InetSocketAddress) me.getRemoteAddress(),
+                                                                    coapMessage.getMessageID());
+
+                executorService.schedule(emptyACKSender, 2000, TimeUnit.MILLISECONDS);
+
+                ctx.sendUpstream(me);
+            }
+        }
+        else{
+            EmptyACKSender emptyACKSender = new EmptyACKSender((InetSocketAddress) me.getRemoteAddress(),
+                                                                    coapMessage.getMessageID());
+=======
             EmptyACKSender emptyACKSender = new EmptyACKSender((InetSocketAddress) me.getRemoteAddress(),
                     coapMessage.getMessageID(), datagramChannel, coapMessage.isRequest());
+>>>>>>> /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/right.java
 
+<<<<<<< /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/left.java
+                //Schedule to send an empty ACK asap
+                executorService.schedule(emptyACKSender, 0, TimeUnit.MILLISECONDS);
+            }
+||||||| /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/base.java
+            //Schedule to send an empty ACK asap
+            executorService.schedule(emptyACKSender, 0, TimeUnit.MILLISECONDS);
+=======
             if(coapMessage.isRequest()){
                 boolean inserted = false;
 
@@ -128,9 +221,14 @@ public class IncomingMessageReliabilityHandler extends SimpleChannelHandler {
                 //Schedule to send an empty ACK asap
                 executorService.schedule(emptyACKSender, 0, TimeUnit.MILLISECONDS);
             }
+>>>>>>> /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/right.java
         }
-
+<<<<<<< /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/left.java
+||||||| /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/base.java
+=======
+    
         ctx.sendUpstream(me);
+>>>>>>> /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/right.java
     }
 
     /**
@@ -148,6 +246,16 @@ public class IncomingMessageReliabilityHandler extends SimpleChannelHandler {
     @Override
     public void writeRequested(ChannelHandlerContext ctx, MessageEvent me) throws Exception{
 
+<<<<<<< /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/left.java
+        log.debug("[IncomingMessageReliablityHandler] Handle Downstream Message Event.");
+
+||||||| /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/base.java
+        if(log.isDebugEnabled()){
+            log.debug("[IncomingMessageReliablityHandler] Handle Downstream Message Event.");
+        }
+
+=======
+>>>>>>> /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/right.java
         if(me.getMessage() instanceof CoapResponse){
             CoapResponse coapResponse = (CoapResponse) me.getMessage();
 
@@ -186,12 +294,23 @@ public class IncomingMessageReliabilityHandler extends SimpleChannelHandler {
 
         private DatagramChannel datagramChannel;
 
+<<<<<<< /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/left.java
+        public EmptyACKSender(InetSocketAddress rcptAddress, int messageID, DatagramChannel datagramChannel){
+||||||| /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/base.java
+        public EmptyACKSender(InetSocketAddress rcptAddress, int messageID){
+=======
         public EmptyACKSender(InetSocketAddress rcptAddress, int messageID, DatagramChannel datagramChannel,
                               boolean receivedMessageIsRequest){
+>>>>>>> /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/right.java
             this.rcptAddress = rcptAddress;
             this.messageID = messageID;
+<<<<<<< /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/left.java
+            this.datagramChannel = datagramChannel;
+||||||| /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/base.java
+=======
             this.datagramChannel = datagramChannel;
             this.receivedMessageIsRequest = receivedMessageIsRequest;
+>>>>>>> /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/right.java
         }
 
         @Override
@@ -227,7 +346,13 @@ public class IncomingMessageReliabilityHandler extends SimpleChannelHandler {
                     coapMessage.setMessageID(messageID);
                 }
                 catch (InvalidHeaderException e) {
-                    log.error("Exception while setting message ID for " +
+<<<<<<< /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/left.java
+                    log.error("This should never happen! Exception while setting message ID for  " +
+||||||| /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/base.java
+                    log.error("[EmptyACKSender] This should never happen! Exception while setting message ID for  " +
+=======
+                    log.error("Exception while setting message ID for  " +
+>>>>>>> /usr/src/app/output/okleine/ncoap/75c39babb6ba9d725f6efa3372406a04931ee74b/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/right.java
                             "empty ACK. This should never happen!", e);
                 }
 
