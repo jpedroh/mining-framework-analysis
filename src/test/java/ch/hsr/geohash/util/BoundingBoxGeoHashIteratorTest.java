@@ -24,7 +24,39 @@ public class BoundingBoxGeoHashIteratorTest {
 		BoundingBox box = new BoundingBox(37.7, 37.84, -122.52, -122.35);
 		BoundingBoxGeoHashIterator iter = new BoundingBoxGeoHashIterator(
 				TwoGeoHashBoundingBox.withBitPrecision(box, 10));
+<<<<<<< /usr/src/app/output/kungfoo/geohash-java/1e0aa77a02c168f39dc3c26f64257af4baffac6f/src/test/java/ch/hsr/geohash/util/BoundingBoxGeoHashIteratorTest.java/left.java
+		BoundingBox newBox = iter.getBoundingBox().getBoundingBox();
+		List<GeoHash> hashes = new ArrayList<>();
+		while (iter.hasNext()) {
+			hashes.add(iter.next());
+		}
+		GeoHash prev = null;
+		for (GeoHash gh : hashes) {
+			if (prev != null) {
+				Assert.assertTrue(prev.compareTo(gh) < 0);
+			}
+			Assert.assertTrue(newBox.contains(gh.getOriginatingPoint()));
+			prev = gh;
+		}
+
+||||||| /usr/src/app/output/kungfoo/geohash-java/1e0aa77a02c168f39dc3c26f64257af4baffac6f/src/test/java/ch/hsr/geohash/util/BoundingBoxGeoHashIteratorTest.java/base.java
+		BoundingBox newBox = iter.getBoundingBox().getBoundingBox();
+		List<GeoHash> hashes = new ArrayList<>();
+		while (iter.hasNext()) {
+			hashes.add(iter.next());
+		}
+		GeoHash prev = null;
+		for (GeoHash gh : hashes) {
+			if (prev != null) {
+				Assert.assertTrue(prev.compareTo(gh) < 0);
+			}
+			Assert.assertTrue(newBox.contains(gh.getPoint()));
+			prev = gh;
+		}
+
+=======
 		checkIterator(iter);
+>>>>>>> /usr/src/app/output/kungfoo/geohash-java/1e0aa77a02c168f39dc3c26f64257af4baffac6f/src/test/java/ch/hsr/geohash/util/BoundingBoxGeoHashIteratorTest.java/right.java
 	}
 
 	@Test

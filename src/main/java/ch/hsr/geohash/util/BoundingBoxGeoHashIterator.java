@@ -1,7 +1,6 @@
 package ch.hsr.geohash.util;
 
 import ch.hsr.geohash.GeoHash;
-import ch.hsr.geohash.util.TwoGeoHashBoundingBox;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -40,8 +39,8 @@ public class BoundingBoxGeoHashIterator implements Iterator<GeoHash> {
         } else {
 			current = rv.next();
             while (hasNext() && !boundingBox.getBoundingBox().contains(current.getOriginatingPoint())) {
-                current = current.next();
-            }
+		    current = current.next();
+		}
         }
 
 		return rv;
