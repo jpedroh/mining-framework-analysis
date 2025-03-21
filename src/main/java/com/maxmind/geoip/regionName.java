@@ -6858,6 +6858,815 @@ public class regionName {
             }
         } else if (country_code.equals("SI")) {
             switch (region_code2) {
+<<<<<<< /usr/src/app/output/maxmind/geoip-api-java/49ecb07cc82f13aa1a25857de424be43c88368c1/src/main/java/com/maxmind/geoip/regionName.java/left.java
+                case 1:
+                    return "Ajdovscina Commune";
+                case 2:
+                    return "Beltinci Commune";
+                case 3:
+                    return "Bled Commune";
+                case 4:
+                    return "Bohinj Commune";
+                case 5:
+                    return "Borovnica Commune";
+                case 6:
+                    return "Bovec Commune";
+                case 7:
+                    return "Brda Commune";
+                case 8:
+                    return "Brezice Commune";
+                case 9:
+                    return "Brezovica Commune";
+                case 11:
+                    return "Celje Commune";
+                case 12:
+                    return "Cerklje na Gorenjskem Commune";
+                case 13:
+                    return "Cerknica Commune";
+                case 14:
+                    return "Cerkno Commune";
+                case 15:
+                    return "Crensovci Commune";
+                case 16:
+                    return "Crna na Koroskem Commune";
+                case 17:
+                    return "Crnomelj Commune";
+                case 19:
+                    return "Divaca Commune";
+                case 20:
+                    return "Dobrepolje Commune";
+                case 22:
+                    return "Dol pri Ljubljani Commune";
+                case 24:
+                    return "Dornava Commune";
+                case 25:
+                    return "Dravograd Commune";
+                case 26:
+                    return "Duplek Commune";
+                case 27:
+                    return "Gorenja vas-Poljane Commune";
+                case 28:
+                    return "Gorisnica Commune";
+                case 29:
+                    return "Gornja Radgona Commune";
+                case 30:
+                    return "Gornji Grad Commune";
+                case 31:
+                    return "Gornji Petrovci Commune";
+                case 32:
+                    return "Grosuplje Commune";
+                case 34:
+                    return "Hrastnik Commune";
+                case 35:
+                    return "Hrpelje-Kozina Commune";
+                case 36:
+                    return "Idrija Commune";
+                case 37:
+                    return "Ig Commune";
+                case 38:
+                    return "Ilirska Bistrica Commune";
+                case 39:
+                    return "Ivancna Gorica Commune";
+                case 40:
+                    return "Izola-Isola Commune";
+                case 42:
+                    return "Jursinci Commune";
+                case 44:
+                    return "Kanal Commune";
+                case 45:
+                    return "Kidricevo Commune";
+                case 46:
+                    return "Kobarid Commune";
+                case 47:
+                    return "Kobilje Commune";
+                case 49:
+                    return "Komen Commune";
+                case 50:
+                    return "Koper-Capodistria Urban Commune";
+                case 51:
+                    return "Kozje Commune";
+                case 52:
+                    return "Kranj Commune";
+                case 53:
+                    return "Kranjska Gora Commune";
+                case 54:
+                    return "Krsko Commune";
+                case 55:
+                    return "Kungota Commune";
+                case 57:
+                    return "Lasko Commune";
+                case 61:
+                    return "Ljubljana Urban Commune";
+                case 62:
+                    return "Ljubno Commune";
+                case 64:
+                    return "Logatec Commune";
+                case 66:
+                    return "Loski Potok Commune";
+                case 68:
+                    return "Lukovica Commune";
+                case 71:
+                    return "Medvode Commune";
+                case 72:
+                    return "Menges Commune";
+                case 73:
+                    return "Metlika Commune";
+                case 74:
+                    return "Mezica Commune";
+                case 76:
+                    return "Mislinja Commune";
+                case 77:
+                    return "Moravce Commune";
+                case 78:
+                    return "Moravske Toplice Commune";
+                case 79:
+                    return "Mozirje Commune";
+                case 80:
+                    return "Murska Sobota Urban Commune";
+                case 81:
+                    return "Muta Commune";
+                case 82:
+                    return "Naklo Commune";
+                case 83:
+                    return "Nazarje Commune";
+                case 84:
+                    return "Nova Gorica Urban Commune";
+                case 86:
+                    return "Odranci Commune";
+                case 87:
+                    return "Ormoz Commune";
+                case 88:
+                    return "Osilnica Commune";
+                case 89:
+                    return "Pesnica Commune";
+                case 91:
+                    return "Pivka Commune";
+                case 92:
+                    return "Podcetrtek Commune";
+                case 94:
+                    return "Postojna Commune";
+                case 97:
+                    return "Puconci Commune";
+                case 98:
+                    return "Race-Fram Commune";
+                case 99:
+                    return "Radece Commune";
+                case 832:
+                    return "Radenci Commune";
+                case 833:
+                    return "Radlje ob Dravi Commune";
+                case 834:
+                    return "Radovljica Commune";
+                case 837:
+                    return "Rogasovci Commune";
+                case 838:
+                    return "Rogaska Slatina Commune";
+                case 839:
+                    return "Rogatec Commune";
+                case 875:
+                    return "Semic Commune";
+                case 876:
+                    return "Sencur Commune";
+                case 877:
+                    return "Sentilj Commune";
+                case 878:
+                    return "Sentjernej Commune";
+                case 880:
+                    return "Sevnica Commune";
+                case 881:
+                    return "Sezana Commune";
+                case 882:
+                    return "Skocjan Commune";
+                case 883:
+                    return "Skofja Loka Commune";
+                case 918:
+                    return "Skofljica Commune";
+                case 919:
+                    return "Slovenj Gradec Urban Commune";
+                case 921:
+                    return "Slovenske Konjice Commune";
+                case 922:
+                    return "Smarje pri Jelsah Commune";
+                case 923:
+                    return "Smartno ob Paki Commune";
+                case 924:
+                    return "Sostanj Commune";
+                case 925:
+                    return "Starse Commune";
+                case 926:
+                    return "Store Commune";
+                case 961:
+                    return "Sveti Jurij Commune";
+                case 962:
+                    return "Tolmin Commune";
+                case 963:
+                    return "Trbovlje Commune";
+                case 964:
+                    return "Trebnje Commune";
+                case 965:
+                    return "Trzic Commune";
+                case 966:
+                    return "Turnisce Commune";
+                case 967:
+                    return "Velenje Urban Commune";
+                case 968:
+                    return "Velike Lasce Commune";
+                case 1004:
+                    return "Vipava Commune";
+                case 1005:
+                    return "Vitanje Commune";
+                case 1006:
+                    return "Vodice Commune";
+                case 1008:
+                    return "Vrhnika Commune";
+                case 1009:
+                    return "Vuzenica Commune";
+                case 1010:
+                    return "Zagorje ob Savi Commune";
+                case 1012:
+                    return "Zavrc Commune";
+                case 1047:
+                    return "Zelezniki Commune";
+                case 1048:
+                    return "Ziri Commune";
+                case 1049:
+                    return "Zrece Commune";
+                case 1050:
+                    return "Benedikt Commune";
+                case 1051:
+                    return "Bistrica ob Sotli Commune";
+                case 1052:
+                    return "Bloke Commune";
+                case 1053:
+                    return "Braslovce Commune";
+                case 1054:
+                    return "Cankova Commune";
+                case 1055:
+                    return "Cerkvenjak Commune";
+                case 1090:
+                    return "Destrnik Commune";
+                case 1091:
+                    return "Dobje Commune";
+                case 1092:
+                    return "Dobrna Commune";
+                case 1093:
+                    return "Dobrova-Horjul-Polhov Gradec Commune";
+                case 1094:
+                    return "Dobrovnik-Dobronak Commune";
+                case 1095:
+                    return "Dolenjske Toplice Commune";
+                case 1096:
+                    return "Domzale Commune";
+                case 1097:
+                    return "Grad Commune";
+                case 1098:
+                    return "Hajdina Commune";
+                case 1133:
+                    return "Hoce-Slivnica Commune";
+                case 1134:
+                    return "Hodos-Hodos Commune";
+                case 1135:
+                    return "Horjul Commune";
+                case 1136:
+                    return "Jesenice Commune";
+                case 1137:
+                    return "Jezersko Commune";
+                case 1138:
+                    return "Kamnik Commune";
+                case 1139:
+                    return "Kocevje Commune";
+                case 1140:
+                    return "Komenda Commune";
+                case 1141:
+                    return "Kostel Commune";
+                case 1176:
+                    return "Krizevci Commune";
+                case 1177:
+                    return "Kuzma Commune";
+                case 1178:
+                    return "Lenart Commune";
+                case 1179:
+                    return "Lendava-Lendva Commune";
+                case 1180:
+                    return "Litija Commune";
+                case 1181:
+                    return "Ljutomer Commune";
+                case 1182:
+                    return "Loska Dolina Commune";
+                case 1183:
+                    return "Lovrenc na Pohorju Commune";
+                case 1184:
+                    return "Luce Commune";
+                case 1219:
+                    return "Majsperk Commune";
+                case 1220:
+                    return "Maribor Commune";
+                case 1221:
+                    return "Markovci Commune";
+                case 1222:
+                    return "Miklavz na Dravskem polju Commune";
+                case 1223:
+                    return "Miren-Kostanjevica Commune";
+                case 1224:
+                    return "Mirna Pec Commune";
+                case 1225:
+                    return "Novo mesto Urban Commune";
+                case 1226:
+                    return "Oplotnica Commune";
+                case 1227:
+                    return "Piran-Pirano Commune";
+                case 1262:
+                    return "Podlehnik Commune";
+                case 1263:
+                    return "Podvelka Commune";
+                case 1264:
+                    return "Polzela Commune";
+                case 1265:
+                    return "Prebold Commune";
+                case 1266:
+                    return "Preddvor Commune";
+                case 1267:
+                    return "Prevalje Commune";
+                case 1268:
+                    return "Ptuj Urban Commune";
+                case 1269:
+                    return "Ravne na Koroskem Commune";
+                case 1270:
+                    return "Razkrizje Commune";
+                case 1305:
+                    return "Ribnica Commune";
+                case 1306:
+                    return "Ribnica na Pohorju Commune";
+                case 1307:
+                    return "Ruse Commune";
+                case 1308:
+                    return "Salovci Commune";
+                case 1309:
+                    return "Selnica ob Dravi Commune";
+                case 1310:
+                    return "Sempeter-Vrtojba Commune";
+                case 1311:
+                    return "Sentjur pri Celju Commune";
+                case 1312:
+                    return "Slovenska Bistrica Commune";
+                case 1313:
+                    return "Smartno pri Litiji Commune";
+                case 1348:
+                    return "Sodrazica Commune";
+                case 1349:
+                    return "Solcava Commune";
+                case 1350:
+                    return "Sveta Ana Commune";
+                case 1351:
+                    return "Sveti Andraz v Slovenskih goricah Commune";
+                case 1352:
+                    return "Tabor Commune";
+                case 1353:
+                    return "Tisina Commune";
+                case 1354:
+                    return "Trnovska vas Commune";
+                case 1355:
+                    return "Trzin Commune";
+                case 1356:
+                    return "Velika Polana Commune";
+                case 1391:
+                    return "Verzej Commune";
+                case 1392:
+                    return "Videm Commune";
+                case 1393:
+                    return "Vojnik Commune";
+                case 1394:
+                    return "Vransko Commune";
+                case 1395:
+                    return "Zalec Commune";
+                case 1396:
+                    return "Zetale Commune";
+                case 1397:
+                    return "Zirovnica Commune";
+                case 1398:
+                    return "Zuzemberk Commune";
+                case 1399:
+                    return "Apace Commune";
+                case 1434:
+                    return "Cirkulane Commune";
+                case 1435:
+                    return "Gorje";
+                case 1436:
+                    return "Kostanjevica na Krki";
+                case 1437:
+                    return "Log-Dragomer";
+                case 1438:
+                    return "Makole";
+                case 1439:
+                    return "Mirna";
+                case 1440:
+                    return "Mokronog-Trebelno";
+                case 1441:
+                    return "Poljcane";
+                case 1442:
+                    return "Recica ob Savinji";
+                case 1477:
+                    return "Rence-Vogrsko";
+                case 1478:
+                    return "Sentrupert";
+                case 1479:
+                    return "Smarjesk Toplice";
+                case 1480:
+                    return "Sredisce ob Dravi";
+                case 1481:
+                    return "Straza";
+||||||| /usr/src/app/output/maxmind/geoip-api-java/49ecb07cc82f13aa1a25857de424be43c88368c1/src/main/java/com/maxmind/geoip/regionName.java/base.java
+            case 1:
+            	return "Ajdovscina Commune";
+            case 2:
+            	return "Beltinci Commune";
+            case 3:
+            	return "Bled Commune";
+            case 4:
+            	return "Bohinj Commune";
+            case 5:
+            	return "Borovnica Commune";
+            case 6:
+            	return "Bovec Commune";
+            case 7:
+            	return "Brda Commune";
+            case 8:
+            	return "Brezice Commune";
+            case 9:
+            	return "Brezovica Commune";
+            case 11:
+            	return "Celje Commune";
+            case 12:
+            	return "Cerklje na Gorenjskem Commune";
+            case 13:
+            	return "Cerknica Commune";
+            case 14:
+            	return "Cerkno Commune";
+            case 15:
+            	return "Crensovci Commune";
+            case 16:
+            	return "Crna na Koroskem Commune";
+            case 17:
+            	return "Crnomelj Commune";
+            case 19:
+            	return "Divaca Commune";
+            case 20:
+            	return "Dobrepolje Commune";
+            case 22:
+            	return "Dol pri Ljubljani Commune";
+            case 24:
+            	return "Dornava Commune";
+            case 25:
+            	return "Dravograd Commune";
+            case 26:
+            	return "Duplek Commune";
+            case 27:
+            	return "Gorenja vas-Poljane Commune";
+            case 28:
+            	return "Gorisnica Commune";
+            case 29:
+            	return "Gornja Radgona Commune";
+            case 30:
+            	return "Gornji Grad Commune";
+            case 31:
+            	return "Gornji Petrovci Commune";
+            case 32:
+            	return "Grosuplje Commune";
+            case 34:
+            	return "Hrastnik Commune";
+            case 35:
+            	return "Hrpelje-Kozina Commune";
+            case 36:
+            	return "Idrija Commune";
+            case 37:
+            	return "Ig Commune";
+            case 38:
+            	return "Ilirska Bistrica Commune";
+            case 39:
+            	return "Ivancna Gorica Commune";
+            case 40:
+            	return "Izola-Isola Commune";
+            case 42:
+            	return "Jursinci Commune";
+            case 44:
+            	return "Kanal Commune";
+            case 45:
+            	return "Kidricevo Commune";
+            case 46:
+            	return "Kobarid Commune";
+            case 47:
+            	return "Kobilje Commune";
+            case 49:
+            	return "Komen Commune";
+            case 50:
+            	return "Koper-Capodistria Urban Commune";
+            case 51:
+            	return "Kozje Commune";
+            case 52:
+            	return "Kranj Commune";
+            case 53:
+            	return "Kranjska Gora Commune";
+            case 54:
+            	return "Krsko Commune";
+            case 55:
+            	return "Kungota Commune";
+            case 57:
+            	return "Lasko Commune";
+            case 61:
+            	return "Ljubljana Urban Commune";
+            case 62:
+            	return "Ljubno Commune";
+            case 64:
+            	return "Logatec Commune";
+            case 66:
+            	return "Loski Potok Commune";
+            case 68:
+            	return "Lukovica Commune";
+            case 71:
+            	return "Medvode Commune";
+            case 72:
+            	return "Menges Commune";
+            case 73:
+            	return "Metlika Commune";
+            case 74:
+            	return "Mezica Commune";
+            case 76:
+            	return "Mislinja Commune";
+            case 77:
+            	return "Moravce Commune";
+            case 78:
+            	return "Moravske Toplice Commune";
+            case 79:
+            	return "Mozirje Commune";
+            case 80:
+            	return "Murska Sobota Urban Commune";
+            case 81:
+            	return "Muta Commune";
+            case 82:
+            	return "Naklo Commune";
+            case 83:
+            	return "Nazarje Commune";
+            case 84:
+            	return "Nova Gorica Urban Commune";
+            case 86:
+            	return "Odranci Commune";
+            case 87:
+            	return "Ormoz Commune";
+            case 88:
+            	return "Osilnica Commune";
+            case 89:
+            	return "Pesnica Commune";
+            case 91:
+            	return "Pivka Commune";
+            case 92:
+            	return "Podcetrtek Commune";
+            case 94:
+            	return "Postojna Commune";
+            case 97:
+            	return "Puconci Commune";
+            case 98:
+            	return "Race-Fram Commune";
+            case 99:
+            	return "Radece Commune";
+            case 832:
+            	return "Radenci Commune";
+            case 833:
+            	return "Radlje ob Dravi Commune";
+            case 834:
+            	return "Radovljica Commune";
+            case 837:
+            	return "Rogasovci Commune";
+            case 838:
+            	return "Rogaska Slatina Commune";
+            case 839:
+            	return "Rogatec Commune";
+            case 875:
+            	return "Semic Commune";
+            case 876:
+            	return "Sencur Commune";
+            case 877:
+            	return "Sentilj Commune";
+            case 878:
+            	return "Sentjernej Commune";
+            case 880:
+            	return "Sevnica Commune";
+            case 881:
+            	return "Sezana Commune";
+            case 882:
+            	return "Skocjan Commune";
+            case 883:
+            	return "Skofja Loka Commune";
+            case 918:
+            	return "Skofljica Commune";
+            case 919:
+            	return "Slovenj Gradec Urban Commune";
+            case 921:
+            	return "Slovenske Konjice Commune";
+            case 922:
+            	return "Smarje pri Jelsah Commune";
+            case 923:
+            	return "Smartno ob Paki Commune";
+            case 924:
+            	return "Sostanj Commune";
+            case 925:
+            	return "Starse Commune";
+            case 926:
+            	return "Store Commune";
+            case 961:
+            	return "Sveti Jurij Commune";
+            case 962:
+            	return "Tolmin Commune";
+            case 963:
+            	return "Trbovlje Commune";
+            case 964:
+            	return "Trebnje Commune";
+            case 965:
+            	return "Trzic Commune";
+            case 966:
+            	return "Turnisce Commune";
+            case 967:
+            	return "Velenje Urban Commune";
+            case 968:
+            	return "Velike Lasce Commune";
+            case 1004:
+            	return "Vipava Commune";
+            case 1005:
+            	return "Vitanje Commune";
+            case 1006:
+            	return "Vodice Commune";
+            case 1008:
+            	return "Vrhnika Commune";
+            case 1009:
+            	return "Vuzenica Commune";
+            case 1010:
+            	return "Zagorje ob Savi Commune";
+            case 1012:
+            	return "Zavrc Commune";
+            case 1047:
+            	return "Zelezniki Commune";
+            case 1048:
+            	return "Ziri Commune";
+            case 1049:
+            	return "Zrece Commune";
+            case 1050:
+            	return "Benedikt Commune";
+            case 1051:
+            	return "Bistrica ob Sotli Commune";
+            case 1052:
+            	return "Bloke Commune";
+            case 1053:
+            	return "Braslovce Commune";
+            case 1054:
+            	return "Cankova Commune";
+            case 1055:
+            	return "Cerkvenjak Commune";
+            case 1090:
+            	return "Destrnik Commune";
+            case 1091:
+            	return "Dobje Commune";
+            case 1092:
+            	return "Dobrna Commune";
+            case 1093:
+            	return "Dobrova-Horjul-Polhov Gradec Commune";
+            case 1094:
+            	return "Dobrovnik-Dobronak Commune";
+            case 1095:
+            	return "Dolenjske Toplice Commune";
+            case 1096:
+            	return "Domzale Commune";
+            case 1097:
+            	return "Grad Commune";
+            case 1098:
+            	return "Hajdina Commune";
+            case 1133:
+            	return "Hoce-Slivnica Commune";
+            case 1134:
+            	return "Hodos-Hodos Commune";
+            case 1135:
+            	return "Horjul Commune";
+            case 1136:
+            	return "Jesenice Commune";
+            case 1137:
+            	return "Jezersko Commune";
+            case 1138:
+            	return "Kamnik Commune";
+            case 1139:
+            	return "Kocevje Commune";
+            case 1140:
+            	return "Komenda Commune";
+            case 1141:
+            	return "Kostel Commune";
+            case 1176:
+            	return "Krizevci Commune";
+            case 1177:
+            	return "Kuzma Commune";
+            case 1178:
+            	return "Lenart Commune";
+            case 1179:
+            	return "Lendava-Lendva Commune";
+            case 1180:
+            	return "Litija Commune";
+            case 1181:
+            	return "Ljutomer Commune";
+            case 1182:
+            	return "Loska Dolina Commune";
+            case 1183:
+            	return "Lovrenc na Pohorju Commune";
+            case 1184:
+            	return "Luce Commune";
+            case 1219:
+            	return "Majsperk Commune";
+            case 1220:
+            	return "Maribor Commune";
+            case 1221:
+            	return "Markovci Commune";
+            case 1222:
+            	return "Miklavz na Dravskem polju Commune";
+            case 1223:
+            	return "Miren-Kostanjevica Commune";
+            case 1224:
+            	return "Mirna Pec Commune";
+            case 1225:
+            	return "Novo mesto Urban Commune";
+            case 1226:
+            	return "Oplotnica Commune";
+            case 1227:
+            	return "Piran-Pirano Commune";
+            case 1262:
+            	return "Podlehnik Commune";
+            case 1263:
+            	return "Podvelka Commune";
+            case 1264:
+            	return "Polzela Commune";
+            case 1265:
+            	return "Prebold Commune";
+            case 1266:
+            	return "Preddvor Commune";
+            case 1267:
+            	return "Prevalje Commune";
+            case 1268:
+            	return "Ptuj Urban Commune";
+            case 1269:
+            	return "Ravne na Koroskem Commune";
+            case 1270:
+            	return "Razkrizje Commune";
+            case 1305:
+            	return "Ribnica Commune";
+            case 1306:
+            	return "Ribnica na Pohorju Commune";
+            case 1307:
+            	return "Ruse Commune";
+            case 1308:
+            	return "Salovci Commune";
+            case 1309:
+            	return "Selnica ob Dravi Commune";
+            case 1310:
+            	return "Sempeter-Vrtojba Commune";
+            case 1311:
+            	return "Sentjur pri Celju Commune";
+            case 1312:
+            	return "Slovenska Bistrica Commune";
+            case 1313:
+            	return "Smartno pri Litiji Commune";
+            case 1348:
+            	return "Sodrazica Commune";
+            case 1349:
+            	return "Solcava Commune";
+            case 1350:
+            	return "Sveta Ana Commune";
+            case 1351:
+            	return "Sveti Andraz v Slovenskih goricah Commune";
+            case 1352:
+            	return "Tabor Commune";
+            case 1353:
+            	return "Tisina Commune";
+            case 1354:
+            	return "Trnovska vas Commune";
+            case 1355:
+            	return "Trzin Commune";
+            case 1356:
+            	return "Velika Polana Commune";
+            case 1391:
+            	return "Verzej Commune";
+            case 1392:
+            	return "Videm Commune";
+            case 1393:
+            	return "Vojnik Commune";
+            case 1394:
+            	return "Vransko Commune";
+            case 1395:
+            	return "Zalec Commune";
+            case 1396:
+            	return "Zetale Commune";
+            case 1397:
+            	return "Zirovnica Commune";
+            case 1398:
+            	return "Zuzemberk Commune";
+            case 1399:
+            	return "Apace Commune";
+            case 1434:
+            	return "Cirkulane Commune";
+=======
                 case 1:
                     return "Ajdovscina Commune";
                 case 2:
@@ -7276,6 +8085,7 @@ public class regionName {
                     return "Straza";
                 case 1483:
                     return "Sveti Jurij v Slovenskih Goricah";
+>>>>>>> /usr/src/app/output/maxmind/geoip-api-java/49ecb07cc82f13aa1a25857de424be43c88368c1/src/main/java/com/maxmind/geoip/regionName.java/right.java
             }
         } else if (country_code.equals("SK")) {
             switch (region_code2) {
