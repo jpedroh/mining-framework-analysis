@@ -674,8 +674,7 @@ public class DurationFormatUtils {
         private int count;
         private int optionalIndex = -1;
         Token(final Object value) {
-            this.value = value;
-            this.count = 1;
+            this(value, 1);
         }
 
         /**
