@@ -36,41 +36,34 @@ public abstract class JsonParser
     public enum NumberType {
         INT, LONG, BIG_INTEGER, FLOAT, DOUBLE, BIG_DECIMAL
     }
-
     /**
      * Set of default {@link StreamReadCapability}ies enabled: usable as basis
      * for format-specific instances or placeholder if non-null instance needed.
      */
     protected final static JacksonFeatureSet<StreamReadCapability> DEFAULT_READ_CAPABILITIES
         = JacksonFeatureSet.fromDefaults(StreamReadCapability.values());
-
     /*
     /**********************************************************************
     /* Life-cycle
     /**********************************************************************
      */
-
     protected JsonParser() { }
-
     /*
     /**********************************************************************
     /* Versioned
     /**********************************************************************
      */
-
     /**
      * Accessor for getting version of the core package, given a parser instance.
      * Left for sub-classes to implement.
      */
     @Override
     public abstract Version version();
-
     /*
     /**********************************************************************
     /* Public API: basic context access
     /**********************************************************************
      */
-
     /**
      * Method that can be used to access current parsing context reader
      * is in. There are 3 different types: root, array and object contexts,
@@ -86,7 +79,6 @@ public abstract class JsonParser
      * @return Stream output context ({@link TokenStreamContext}) associated with this parser
      */
     public abstract TokenStreamContext streamReadContext();
-
     /**
      * Accessor for context object provided by higher level data-binding
      * functionality (or, in some cases, simple placeholder of the same)
@@ -101,13 +93,11 @@ public abstract class JsonParser
      * @since 3.0
      */
     public abstract ObjectReadContext objectReadContext();
-
     /*
     /**********************************************************************
     /* Public API, input source, location access
     /**********************************************************************
      */
-
     /**
      * Method that return the <b>starting</b> location of the current
      * token; that is, position of the first character from input
@@ -122,7 +112,6 @@ public abstract class JsonParser
      * @return Starting location of the token parser currently points to
      */
     public abstract JsonLocation currentTokenLocation();
-
     /**
      * Method that returns location of the last processed character;
      * usually for error reporting purposes.
@@ -137,7 +126,6 @@ public abstract class JsonParser
      * @return Location of the last processed input unit (byte or character)
      */
     public abstract JsonLocation currentLocation();
-
     /**
      * Method that can be used to get access to object that is used
      * to access input being parsed; this is usually either
@@ -158,13 +146,11 @@ public abstract class JsonParser
      * @return Input source this parser was configured with
      */
     public abstract Object streamReadInputSource();
-
     /*
     /**********************************************************************
     /* Attaching additional metadata: current value
     /**********************************************************************
      */
-
     /**
      * Helper method, usually equivalent to:
      *<code>
@@ -179,7 +165,6 @@ public abstract class JsonParser
      * @return "Current value" for the current input context this parser has
      */
     public abstract Object currentValue();
-
     /**
      * Helper method, usually equivalent to:
      *<code>
@@ -189,13 +174,11 @@ public abstract class JsonParser
      * @param v "Current value" to assign to the current input context of this parser
      */
     public abstract void assignCurrentValue(Object v);
-
     /*
     /**********************************************************************
     /* Optional support for non-blocking parsing
     /**********************************************************************
      */
-
     /**
      * Method that can be called to determine if this parser instance
      * uses non-blocking ("asynchronous") input access for decoding or not.
@@ -210,7 +193,6 @@ public abstract class JsonParser
      * @return True if this is a non-blocking ("asynchronous") parser
      */
     public boolean canParseAsync() { return false; }
-
     /**
      * Method that will either return a feeder instance (if parser uses
      * non-blocking, aka asynchronous access); or <code>null</code> for
@@ -221,7 +203,6 @@ public abstract class JsonParser
     public NonBlockingInputFeeder nonBlockingInputFeeder() {
         return null;
     }
-
     /**
      * Accessor for getting metadata on capabilities of this parser, based on
      * underlying data format being read (directly or indirectly).
@@ -231,13 +212,11 @@ public abstract class JsonParser
     public JacksonFeatureSet<StreamReadCapability> streamReadCapabilities() {
         return DEFAULT_READ_CAPABILITIES;
     }
-
     /*
     /**********************************************************************
     /* Closeable implementation
     /**********************************************************************
      */
-
     /**
      * Closes the parser so that no further iteration or data access
      * can be made; will also close the underlying input source
@@ -255,7 +234,6 @@ public abstract class JsonParser
      */
     @Override
     public abstract void close();
-
     /**
      * Method that can be called to determine whether this parser
      * is closed or not. If it is closed, no new tokens can be
@@ -267,13 +245,11 @@ public abstract class JsonParser
      * @return {@code True} if this parser instance has been closed
      */
     public abstract boolean isClosed();
-
     /*
     /**********************************************************************
     /* Buffer handling
     /**********************************************************************
      */
-
     /**
      * Method that can be called to push back any content that
      * has been read but not consumed by the parser. This is usually
@@ -293,7 +269,6 @@ public abstract class JsonParser
     public int releaseBuffered(OutputStream out) throws JacksonException {
         return -1;
     }
-
     /**
      * Method that can be called to push back any content that
      * has been read but not consumed by the parser.
@@ -312,19 +287,15 @@ public abstract class JsonParser
      * @throws JacksonException if write using Writer threw exception
      */
     public int releaseBuffered(Writer w) throws JacksonException { return -1; }
-
     /*
     /**********************************************************************
     /* Public API, configuration
     /**********************************************************************
      */
-
     // 25-Jan-2021, tatu: Was needed by jax-rs providers until recently,
     //  but should no longer be needed at all. Leaving here for a bit longer.
-
 //    public abstract JsonParser enable(StreamReadFeature f);
 //    public abstract JsonParser disable(StreamReadFeature f);
-
     /**
      * Method for checking whether specified {@link StreamReadFeature} is enabled.
      *
@@ -333,7 +304,6 @@ public abstract class JsonParser
      * @return {@code True} if feature is enabled; {@code false} otherwise
      */
     public abstract boolean isEnabled(StreamReadFeature f);
-
     /**
      * Bulk access method for getting state of all standard {@link StreamReadFeature}s.
      * 
@@ -342,7 +312,6 @@ public abstract class JsonParser
      * @since 3.0
      */
     public abstract int streamReadFeatures();
-
     /**
      * Method for accessing Schema that this parser uses, if any.
      * Default implementation returns null.
@@ -350,13 +319,11 @@ public abstract class JsonParser
      * @return {@link FormatSchema} assigned to this parser, if any; {@code null} if none
      */
     public FormatSchema getSchema() { return null; }
-
     /*
     /**********************************************************************
     /* Public API, iterating accessors: general
     /**********************************************************************
      */
-
     /**
      * Main iteration method, which will advance stream enough
      * to determine type of the next token, if any. If none
@@ -370,7 +337,6 @@ public abstract class JsonParser
      * @throws com.fasterxml.jackson.core.exc.StreamReadException for decoding problems
      */
     public abstract JsonToken nextToken() throws JacksonException;
-
     /**
      * Iteration method that will advance stream enough
      * to determine type of the next token that is a value type
@@ -393,7 +359,6 @@ public abstract class JsonParser
      * @throws com.fasterxml.jackson.core.exc.StreamReadException for decoding problems
      */
     public abstract JsonToken nextValue() throws JacksonException;
-
     /**
      * Method that will skip all child tokens of an array or
      * object token that the parser currently points to,
@@ -414,7 +379,6 @@ public abstract class JsonParser
      * @throws com.fasterxml.jackson.core.exc.StreamReadException for decoding problems
      */
     public abstract JsonParser skipChildren() throws JacksonException;
-
     /**
      * Method that may be used to force full handling of the current token
      * so that even if lazy processing is enabled, the whole contents are
@@ -431,13 +395,11 @@ public abstract class JsonParser
      * @throws com.fasterxml.jackson.core.exc.StreamReadException for decoding problems
      */
     public abstract void finishToken() throws JacksonException;
-
     /*
     /**********************************************************************
     /* Public API, iterating accessors: property names
     /**********************************************************************
      */
-
     /**
      * Method that fetches next token (as if calling {@link #nextToken}) and
      * verifies whether it is {@link JsonToken#PROPERTY_NAME}; if it is,
@@ -452,7 +414,6 @@ public abstract class JsonParser
      * @throws com.fasterxml.jackson.core.exc.StreamReadException for decoding problems
      */
     public abstract String nextName() throws JacksonException;
-
     /**
      * Method that fetches next token (as if calling {@link #nextToken}) and
      * verifies whether it is {@link JsonToken#PROPERTY_NAME} with specified name
@@ -476,7 +437,6 @@ public abstract class JsonParser
      * @throws com.fasterxml.jackson.core.exc.StreamReadException for decoding problems
      */
     public abstract boolean nextName(SerializableString str) throws JacksonException;
-
     /**
      * Method that tries to match next token from stream as {@link JsonToken#PROPERTY_NAME},
      * and if so, further match it to one of pre-specified (field) names.
@@ -494,7 +454,6 @@ public abstract class JsonParser
      * @since 3.0
      */
     public abstract int nextNameMatch(PropertyNameMatcher matcher) throws JacksonException;
-
     /**
      * Method that verifies that the current token (see {@link #currentToken}) is
      * {@link JsonToken#PROPERTY_NAME} and if so, further match that associated name
@@ -510,13 +469,11 @@ public abstract class JsonParser
      * @since 3.0
      */
     public abstract int currentNameMatch(PropertyNameMatcher matcher);
-
     /*
     /**********************************************************************
     /* Public API, iterating accessors: typed values
     /**********************************************************************
      */
-
     /**
      * Method that fetches next token (as if calling {@link #nextToken}) and
      * if it is {@link JsonToken#VALUE_STRING} returns contained String value;
@@ -537,7 +494,6 @@ public abstract class JsonParser
     public String nextTextValue() throws JacksonException {
         return (nextToken() == JsonToken.VALUE_STRING) ? getText() : null;
     }
-
     /**
      * Method that fetches next token (as if calling {@link #nextToken}) and
      * if it is {@link JsonToken#VALUE_NUMBER_INT} returns 32-bit int value;
@@ -563,7 +519,6 @@ public abstract class JsonParser
     public int nextIntValue(int defaultValue) throws JacksonException {
         return (nextToken() == JsonToken.VALUE_NUMBER_INT) ? getIntValue() : defaultValue;
     }
-
     /**
      * Method that fetches next token (as if calling {@link #nextToken}) and
      * if it is {@link JsonToken#VALUE_NUMBER_INT} returns 64-bit long value;
@@ -589,7 +544,6 @@ public abstract class JsonParser
     public long nextLongValue(long defaultValue) throws JacksonException {
         return (nextToken() == JsonToken.VALUE_NUMBER_INT) ? getLongValue() : defaultValue;
     }
-
     /**
      * Method that fetches next token (as if calling {@link #nextToken}) and
      * if it is {@link JsonToken#VALUE_TRUE} or {@link JsonToken#VALUE_FALSE}
@@ -616,13 +570,11 @@ public abstract class JsonParser
         if (t == JsonToken.VALUE_FALSE) { return Boolean.FALSE; }
         return null;
     }
-
     /*
     /**********************************************************************
     /* Public API, simple token id/type access
     /**********************************************************************
      */
-
     /**
      * Accessor to find which token parser currently points to, if any;
      * null will be returned if none.
@@ -635,7 +587,6 @@ public abstract class JsonParser
      *   if the current token has been explicitly cleared.
      */
     public abstract JsonToken currentToken();
-
     /**
      * Method similar to {@link #currentToken()} but that returns an
      * <code>int</code> instead of {@link JsonToken} (enum value).
@@ -648,7 +599,6 @@ public abstract class JsonParser
      * @return {@code int} matching one of constants from {@link JsonTokenId}.
      */
     public abstract int currentTokenId();
-
     /**
      * Method for checking whether parser currently points to
      * a token (and data for that token is available).
@@ -661,7 +611,6 @@ public abstract class JsonParser
      *   has been consumed)
      */
     public abstract boolean hasCurrentToken();
-
     /**
      * Method that is functionally equivalent to:
      *<code>
@@ -678,7 +627,6 @@ public abstract class JsonParser
      * @return {@code True} if the parser current points to specified token
      */
     public abstract boolean hasTokenId(int id);
-
     /**
      * Method that is functionally equivalent to:
      *<code>
@@ -695,7 +643,6 @@ public abstract class JsonParser
      * @return {@code True} if the parser current points to specified token
      */
     public abstract boolean hasToken(JsonToken t);
-
     /**
      * Specialized accessor that can be used to verify that the current
      * token indicates start array (usually meaning that current token
@@ -716,7 +663,6 @@ public abstract class JsonParser
      *   {@code false} if not
      */
     public abstract boolean isExpectedStartArrayToken();
-
     /**
      * Similar to {@link #isExpectedStartArrayToken()}, but checks whether stream
      * currently points to {@link JsonToken#START_OBJECT}.
@@ -726,7 +672,6 @@ public abstract class JsonParser
      *   {@code false} if not
      */
     public abstract boolean isExpectedStartObjectToken();
-
     /**
      * Similar to {@link #isExpectedStartArrayToken()}, but checks whether stream
      * currently points to {@link JsonToken#VALUE_NUMBER_INT}.
@@ -739,7 +684,6 @@ public abstract class JsonParser
      *   {@code false} if not
      */
     public abstract boolean isExpectedNumberIntToken();
-
     /**
      * Access for checking whether current token is a numeric value token, but
      * one that is of "not-a-number" (NaN) variety (including both "NaN" AND
@@ -753,13 +697,11 @@ public abstract class JsonParser
      *   floating-point numbers
      */
     public abstract boolean isNaN();
-
     /*
     /**********************************************************************
     /* Public API, token state overrides
     /**********************************************************************
      */
-
     /**
      * Method called to "consume" the current token by effectively
      * removing it so that {@link #hasCurrentToken} returns false, and
@@ -773,7 +715,6 @@ public abstract class JsonParser
      * it will not be used again).
      */
     public abstract void clearCurrentToken();
-
     /**
      * Method that can be called to get the last token that was
      * cleared using {@link #clearCurrentToken}. This is not necessarily
@@ -784,13 +725,11 @@ public abstract class JsonParser
      * @return Last cleared token, if any; {@code null} otherwise
      */
     public abstract JsonToken getLastClearedToken();
-
     /*
     /**********************************************************************
     /* Public API, access to token information, text
     /**********************************************************************
      */
-
     /**
      * Method that can be called to get the name associated with
      * the current token: for {@link JsonToken#PROPERTY_NAME}s it will
@@ -801,7 +740,6 @@ public abstract class JsonParser
      * @return Name of the current property name, if any, in the parsing context ({@code null} if none)
      */
     public abstract String currentName();
-
     /**
      * Method for accessing textual representation of the current token;
      * if no current token (before first call to {@link #nextToken}, or
@@ -815,7 +753,6 @@ public abstract class JsonParser
      * @throws com.fasterxml.jackson.core.exc.StreamReadException for decoding problems
      */
     public abstract String getText() throws JacksonException;
-
     /**
      * Method to read the textual representation of the current token in chunks and 
      * pass it to the given Writer.
@@ -835,7 +772,6 @@ public abstract class JsonParser
      * @throws com.fasterxml.jackson.core.exc.StreamReadException for decoding problems
      */
     public abstract int getText(Writer writer) throws JacksonException;
-
     /**
      * Method similar to {@link #getText}, but that will return
      * underlying (unmodifiable) character array that contains
@@ -868,7 +804,6 @@ public abstract class JsonParser
      * @throws com.fasterxml.jackson.core.exc.StreamReadException for decoding problems
      */
     public abstract char[] getTextCharacters() throws JacksonException;
-
     /**
      * Accessor used with {@link #getTextCharacters}, to know length
      * of String stored in returned buffer.
@@ -881,7 +816,6 @@ public abstract class JsonParser
      * @throws com.fasterxml.jackson.core.exc.StreamReadException for decoding problems
      */
     public abstract int getTextLength() throws JacksonException;
-
     /**
      * Accessor used with {@link #getTextCharacters}, to know offset
      * of the first text content character within buffer.
@@ -894,7 +828,6 @@ public abstract class JsonParser
      * @throws com.fasterxml.jackson.core.exc.StreamReadException for decoding problems
      */
     public abstract int getTextOffset() throws JacksonException;
-
     /**
      * Method that can be used to determine whether calling of
      * {@link #getTextCharacters} would be the most efficient
@@ -913,13 +846,11 @@ public abstract class JsonParser
      *   means that it may or may not exist
      */
     public abstract boolean hasTextCharacters();
-
     /*
     /**********************************************************************
     /* Public API, access to token information, numeric
     /**********************************************************************
      */
-
     /**
      * Generic number value accessor method that will work for
      * all kinds of numeric values. It will return the optimal
@@ -932,7 +863,6 @@ public abstract class JsonParser
      * @throws InputCoercionException If the current token is not of numeric type
      */
     public abstract Number getNumberValue() throws InputCoercionException;
-
     /**
      * Method similar to {@link #getNumberValue} with the difference that
      * for floating-point numbers value returned may be {@link BigDecimal}
@@ -948,7 +878,6 @@ public abstract class JsonParser
      * @throws InputCoercionException If the current token is not of numeric type
      */
     public abstract Number getNumberValueExact() throws InputCoercionException;
-
     /**
      * If current token is of type 
      * {@link JsonToken#VALUE_NUMBER_INT} or
@@ -958,7 +887,6 @@ public abstract class JsonParser
      * @return Type of current number, if parser points to numeric token; {@code null} otherwise
      */
     public abstract NumberType getNumberType();
-
     /**
      * Numeric accessor that can be called when the current
      * token is of type {@link JsonToken#VALUE_NUMBER_INT} and
@@ -985,7 +913,6 @@ public abstract class JsonParser
      *    value exceeds allowed range
      */
     public abstract byte getByteValue() throws InputCoercionException;
-
     /**
      * Numeric accessor that can be called when the current
      * token is of type {@link JsonToken#VALUE_NUMBER_INT} and
@@ -1006,7 +933,6 @@ public abstract class JsonParser
      *    value exceeds allowed range
      */
     public abstract short getShortValue() throws InputCoercionException;
-
     /**
      * Numeric accessor that can be called when the current
      * token is of type {@link JsonToken#VALUE_NUMBER_INT} and
@@ -1027,7 +953,6 @@ public abstract class JsonParser
      *    value exceeds allowed range
      */
     public abstract int getIntValue() throws InputCoercionException;
-
     /**
      * Numeric accessor that can be called when the current
      * token is of type {@link JsonToken#VALUE_NUMBER_INT} and
@@ -1048,7 +973,6 @@ public abstract class JsonParser
      *    value exceeds allowed range
      */
     public abstract long getLongValue() throws InputCoercionException;
-
     /**
      * Numeric accessor that can be called when the current
      * token is of type {@link JsonToken#VALUE_NUMBER_INT} and
@@ -1064,7 +988,6 @@ public abstract class JsonParser
      * @throws InputCoercionException If either token type is not a number
      */
     public abstract BigInteger getBigIntegerValue() throws InputCoercionException;
-
     /**
      * Numeric accessor that can be called when the current
      * token is of type {@link JsonToken#VALUE_NUMBER_FLOAT} and
@@ -1085,7 +1008,6 @@ public abstract class JsonParser
      *    value exceeds allowed range
      */
     public abstract float getFloatValue() throws InputCoercionException;
-
     /**
      * Numeric accessor that can be called when the current
      * token is of type {@link JsonToken#VALUE_NUMBER_FLOAT} and
@@ -1106,7 +1028,6 @@ public abstract class JsonParser
      *    value exceeds allowed range
      */
     public abstract double getDoubleValue() throws InputCoercionException;
-
     /**
      * Numeric accessor that can be called when the current
      * token is of type {@link JsonToken#VALUE_NUMBER_FLOAT} or
@@ -1119,13 +1040,11 @@ public abstract class JsonParser
      * @throws InputCoercionException If either token type is not a number
      */
     public abstract BigDecimal getDecimalValue() throws InputCoercionException;
-
     /*
     /**********************************************************************
     /* Public API, access to token information, other
     /**********************************************************************
      */
-    
     /**
      * Convenience accessor that can be called when the current
      * token is {@link JsonToken#VALUE_TRUE} or
@@ -1141,7 +1060,6 @@ public abstract class JsonParser
      * @throws InputCoercionException if the current token is not of boolean type
      */
     public abstract boolean getBooleanValue() throws InputCoercionException;
-
     /**
      * Accessor that can be called if (and only if) the current token
      * is {@link JsonToken#VALUE_EMBEDDED_OBJECT}. For other token types,
@@ -1158,13 +1076,11 @@ public abstract class JsonParser
      *   for the current token, if any; {@code null otherwise}
      */
     public abstract Object getEmbeddedObject();
-
     /*
     /**********************************************************************
     /* Public API, access to token information, binary
     /**********************************************************************
      */
-
     /**
      * Method that can be used to read (and consume -- results
      * may not be accessible using other methods after the call)
@@ -1191,7 +1107,6 @@ public abstract class JsonParser
      * @throws com.fasterxml.jackson.core.exc.StreamReadException for decoding problems
      */
     public abstract byte[] getBinaryValue(Base64Variant bv) throws JacksonException;
-
     /**
      * Convenience alternative to {@link #getBinaryValue(Base64Variant)}
      * that defaults to using
@@ -1205,7 +1120,6 @@ public abstract class JsonParser
     public byte[] getBinaryValue() throws JacksonException {
         return getBinaryValue(Base64Variants.getDefaultVariant());
     }
-
     /**
      * Method that can be used as an alternative to {@link #getBinaryValue()},
      * especially when value can be large. The main difference (beyond method
@@ -1224,7 +1138,6 @@ public abstract class JsonParser
     public int readBinaryValue(OutputStream out) throws JacksonException {
         return readBinaryValue(Base64Variants.getDefaultVariant(), out);
     }
-
     /**
      * Similar to {@link #readBinaryValue(OutputStream)} but allows explicitly
      * specifying base64 variant to use.
@@ -1241,13 +1154,11 @@ public abstract class JsonParser
         _reportUnsupportedOperation();
         return 0; // never gets here
     }
-
     /*
     /**********************************************************************
     /* Public API, access to token information, coercion/conversion
     /**********************************************************************
      */
-
     /**
      * Method that will try to convert value of current token to a
      * <b>boolean</b>.
@@ -1264,7 +1175,6 @@ public abstract class JsonParser
     public boolean getValueAsBoolean() {
         return getValueAsBoolean(false);
     }
-
     /**
      * Method that will try to convert value of current token to a
      * <b>boolean</b>.
@@ -1281,7 +1191,6 @@ public abstract class JsonParser
      * @return {@code boolean} value current token is converted to, if possible; {@code def} otherwise
      */
     public abstract boolean getValueAsBoolean(boolean def);
-
     /**
      * Method that will try to convert value of current token to a
      * Java {@code int} value.
@@ -1301,7 +1210,6 @@ public abstract class JsonParser
     public int getValueAsInt() throws InputCoercionException {
         return getValueAsInt(0);
     }
-
     /**
      * Method that will try to convert value of current token to a
      * {@code int}.
@@ -1320,7 +1228,6 @@ public abstract class JsonParser
      * @throws InputCoercionException If numeric value exceeds {@code int} range
      */
     public int getValueAsInt(int def) throws InputCoercionException { return def; }
-
     /**
      * Method that will try to convert value of current token to a
      * {@code long}.
@@ -1339,7 +1246,6 @@ public abstract class JsonParser
     public long getValueAsLong() throws InputCoercionException {
         return getValueAsLong(0);
     }
-    
     /**
      * Method that will try to convert value of current token to a
      * {@code long}.
@@ -1360,7 +1266,6 @@ public abstract class JsonParser
     public long getValueAsLong(long def) throws InputCoercionException {
         return def;
     }
-    
     /**
      * Method that will try to convert value of current token to a Java
      * <b>double</b>.
@@ -1380,7 +1285,6 @@ public abstract class JsonParser
     public double getValueAsDouble() throws InputCoercionException {
         return getValueAsDouble(0.0);
     }
-
     /**
      * Method that will try to convert value of current token to a
      * Java <b>double</b>.
@@ -1401,7 +1305,6 @@ public abstract class JsonParser
     public double getValueAsDouble(double def) throws InputCoercionException {
         return def;
     }
-
     /**
      * Method that will try to convert value of current token to a
      * {@link java.lang.String}.
@@ -1416,7 +1319,6 @@ public abstract class JsonParser
     public String getValueAsString() {
         return getValueAsString(null);
     }
-    
     /**
      * Method that will try to convert value of current token to a
      * {@link java.lang.String}.
@@ -1431,13 +1333,11 @@ public abstract class JsonParser
      * @return {@link String} value current token is converted to, if possible; {@code def} otherwise
      */
     public abstract String getValueAsString(String def);
-
     /*
     /**********************************************************************
     /* Public API, Native Ids (type, object)
     /**********************************************************************
      */
-
     /**
      * Introspection method that may be called to see if the underlying
      * data format supports some kind of Object Ids natively (many do not;
@@ -1452,7 +1352,6 @@ public abstract class JsonParser
      *    {@code false} if not
      */
     public boolean canReadObjectId() { return false; }
-
     /**
      * Introspection method that may be called to see if the underlying
      * data format supports some kind of Type Ids natively (many do not;
@@ -1467,7 +1366,6 @@ public abstract class JsonParser
      *    {@code false} if not
      */
     public boolean canReadTypeId() { return false; }
-
     /**
      * Method that can be called to check whether current token
      * (one that was just read) has an associated Object id, and if
@@ -1482,7 +1380,6 @@ public abstract class JsonParser
      * @return Native Object id associated with the current token, if any; {@code null} if none
      */
     public Object getObjectId() { return null; }
-
     /**
      * Method that can be called to check whether current token
      * (one that was just read) has an associated type id, and if
@@ -1497,13 +1394,11 @@ public abstract class JsonParser
      * @return Native Type Id associated with the current token, if any; {@code null} if none
      */
     public Object getTypeId() { return null; }
-
     /*
     /**********************************************************************
     /* Public API, optional data binding functionality
     /**********************************************************************
      */
-
     /**
      * Method to deserialize stream content into a non-container
      * type (it can be an array type, however): typically a bean, array
@@ -1536,7 +1431,6 @@ public abstract class JsonParser
      *    issue at format layer
      */
     public abstract <T> T readValueAs(Class<T> valueType) throws JacksonException;
-
     /**
      * Method to deserialize stream content into a Java type, reference
      * to which is passed as argument. Type is passed using so-called
@@ -1566,9 +1460,7 @@ public abstract class JsonParser
      *    issue at format layer
      */
     public abstract <T> T readValueAs(TypeReference<T> valueTypeRef) throws JacksonException;
-
     public abstract <T> T readValueAs(ResolvedType type) throws JacksonException;
-
     /**
      * Method to deserialize stream content into equivalent "tree model",
      * represented by root {@link TreeNode} of resulting model.
@@ -1590,13 +1482,11 @@ public abstract class JsonParser
      *    issue at format layer
      */
     public abstract <T extends TreeNode> T readValueAsTree() throws JacksonException;
-
     /*
     /**********************************************************************
     /* Internal methods
     /**********************************************************************
      */
-
     /**
      * Helper method to call for operations that are not supported by
      * parser implementation.
@@ -1604,7 +1494,6 @@ public abstract class JsonParser
     protected void _reportUnsupportedOperation() {
         throw new UnsupportedOperationException("Operation not supported by parser of type "+getClass().getName());
     }
-
     /**
      * Helper method for constructing {@link StreamReadException}
      * based on current state of the parser
@@ -1616,20 +1505,23 @@ public abstract class JsonParser
     protected StreamReadException _constructReadException(String msg) {
         return new StreamReadException(this, msg);
     }
-
     protected StreamReadException _constructReadException(String msg, Object arg) {
         return _constructReadException(String.format(msg, arg));
     }
-
     protected StreamReadException _constructReadException(String msg, Object arg1, Object arg2) {
         return _constructReadException(String.format(msg, arg1, arg2));
     }
-
     protected StreamReadException _constructReadException(String msg,
             Object arg1, Object arg2, Object arg3) {
         return _constructReadException(String.format(msg, arg1, arg2, arg3));
     }
-
+    // as per [JACKSON-804], allow range up to and including 255
+    // TODO: deprecate in 2.14 or later
+    // TODO: deprecate in 2.14 or later
+    // TODO: deprecate in 2.14 or later
+    // TODO: deprecate in 2.14 or later
+    // TODO: deprecate in 2.14 or later
+    // TODO: deprecate in 2.14 or later
     protected final StreamReadException _constructReadException(String msg, Throwable t) {
         return new StreamReadException(this, msg, t);
     }

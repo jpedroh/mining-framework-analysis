@@ -125,8 +125,11 @@ public enum JsonReadFeature
      *<p>
      * Since JSON specification does not allow trailing decimal points,
      * this is a non-standard feature, and as such disabled by default.
+     *
+     * @since 2.14
      */
-    ALLOW_TRAILING_DECIMAL_POINT_FOR_NUMBERS(false),
+    @SuppressWarnings("deprecation")
+    ALLOW_TRAILING_DECIMAL_POINT_FOR_NUMBERS(false, JsonParser.Feature.ALLOW_TRAILING_DECIMAL_POINT_FOR_NUMBERS),
 
     /**
      * Feature that allows parser to recognize set of
@@ -149,7 +152,7 @@ public enum JsonReadFeature
     ALLOW_NON_NUMERIC_NUMBERS(false),
 
     // // // Support for non-standard data format constructs: array/value separators
-
+     
     /**
      * Feature allows the support for "missing" values in a JSON array: missing
      * value meaning sequence of two commas, without value in-between but only

@@ -1667,9 +1667,15 @@ public class NonBlockingJsonParser
                     ch &= 0xFF; // but here we'll want to mask it to unsigned 8-bit
                     // must be followed by sequence of ints, one minimum
                     if (fractLen == 0) {
-                        if (!isEnabled(JsonReadFeature.ALLOW_TRAILING_DECIMAL_POINT_FOR_NUMBERS)) {
-                            _reportUnexpectedNumberChar(ch, "Decimal point not followed by a digit");
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/fcef9233a200a2b9470873e4ed027cb6751b0ea5/src/main/java/com/fasterxml/jackson/core/json/async/NonBlockingJsonParser.java/left.java
+                        _reportUnexpectedNumberChar(ch, "Decimal point not followed by a digit");
+||||||| /usr/src/app/output/fasterxml/jackson-core/fcef9233a200a2b9470873e4ed027cb6751b0ea5/src/main/java/com/fasterxml/jackson/core/json/async/NonBlockingJsonParser.java/base.java
+                        reportUnexpectedNumberChar(ch, "Decimal point not followed by a digit");
+=======
+                        if (!isEnabled(JsonReadFeature.ALLOW_TRAILING_DECIMAL_POINT_FOR_NUMBERS.mappedFeature())) {
+                            reportUnexpectedNumberChar(ch, "Decimal point not followed by a digit");
                         }
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/fcef9233a200a2b9470873e4ed027cb6751b0ea5/src/main/java/com/fasterxml/jackson/core/json/async/NonBlockingJsonParser.java/right.java
                     }
                     break;
                 }
@@ -1759,9 +1765,15 @@ public class NonBlockingJsonParser
         // Ok, fraction done; what have we got next?
         // must be followed by sequence of ints, one minimum
         if (fractLen == 0) {
-            if (!isEnabled(JsonReadFeature.ALLOW_TRAILING_DECIMAL_POINT_FOR_NUMBERS)) {
-                _reportUnexpectedNumberChar(ch, "Decimal point not followed by a digit");
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/fcef9233a200a2b9470873e4ed027cb6751b0ea5/src/main/java/com/fasterxml/jackson/core/json/async/NonBlockingJsonParser.java/left.java
+            _reportUnexpectedNumberChar(ch, "Decimal point not followed by a digit");
+||||||| /usr/src/app/output/fasterxml/jackson-core/fcef9233a200a2b9470873e4ed027cb6751b0ea5/src/main/java/com/fasterxml/jackson/core/json/async/NonBlockingJsonParser.java/base.java
+            reportUnexpectedNumberChar(ch, "Decimal point not followed by a digit");
+=======
+            if (!isEnabled(JsonReadFeature.ALLOW_TRAILING_DECIMAL_POINT_FOR_NUMBERS.mappedFeature())) {
+                reportUnexpectedNumberChar(ch, "Decimal point not followed by a digit");
             }
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/fcef9233a200a2b9470873e4ed027cb6751b0ea5/src/main/java/com/fasterxml/jackson/core/json/async/NonBlockingJsonParser.java/right.java
         }
         _fractLength = fractLen;
         _textBuffer.setCurrentLength(outPtr);

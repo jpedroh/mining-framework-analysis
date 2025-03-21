@@ -36,13 +36,13 @@ public class NonStandardNumberParsingTest
     /**
      * The format "NNN." (as opposed to "NNN") is not valid JSON, so this should fail
      */
-    public void testTrailingDotInDecimal() {
+    public void testTrailingDotInDecimal() throws Exception {
         for (int mode : ALL_MODES) {
             JsonParser p = createParser(mode, " 123. ");
             try {
                 p.nextToken();
                 fail("Should not pass");
-            } catch (StreamReadException e) {
+            } catch (JsonParseException e) {
                 verifyException(e, "Decimal point not followed by a digit");
             }
             p.close();
@@ -50,7 +50,7 @@ public class NonStandardNumberParsingTest
     }
 
     public void testLeadingDotInDecimalAllowedAsync() {
-        _testLeadingDotInDecimalAllowed(jsonFactory(), MODE_DATA_INPUT);
+        _testLeadingDotInDecimalAllowed(JSON_F, MODE_DATA_INPUT);
     }
 
     public void testLeadingDotInDecimalAllowedBytes() {
@@ -62,16 +62,16 @@ public class NonStandardNumberParsingTest
         _testLeadingDotInDecimalAllowed(JSON_F, MODE_READER);
     }
 
-    public void testTrailingDotInDecimalAllowedAsync() {
+    public void testTrailingDotInDecimalAllowedAsync() throws Exception {
         _testTrailingDotInDecimalAllowed(jsonFactory(), MODE_DATA_INPUT);
     }
 
-    public void testTrailingDotInDecimalAllowedBytes() {
+    public void testTrailingDotInDecimalAllowedBytes() throws Exception {
         _testTrailingDotInDecimalAllowed(jsonFactory(), MODE_INPUT_STREAM);
         _testTrailingDotInDecimalAllowed(jsonFactory(), MODE_INPUT_STREAM_THROTTLED);
     }
 
-    public void testTrailingDotInDecimalAllowedReader() {
+    public void testTrailingDotInDecimalAllowedReader() throws Exception {
         _testTrailingDotInDecimalAllowed(jsonFactory(), MODE_READER);
     }
 
@@ -85,7 +85,7 @@ public class NonStandardNumberParsingTest
         p.close();
     }
 
-    private void _testTrailingDotInDecimalAllowed(JsonFactory f, int mode)
+    private void _testTrailingDotInDecimalAllowed(JsonFactory f, int mode) throws Exception
     {
         JsonParser p = createParser(f, mode, " 125. ");
         assertEquals(JsonToken.VALUE_NUMBER_FLOAT, p.nextToken());
