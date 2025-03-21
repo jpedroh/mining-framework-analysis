@@ -114,11 +114,10 @@ public class ApplicationController {
         return Results.html();
 
     }
-    public Result postContactForm(Context context, Contact contact) {
-        // contact is parsed into the method
-        // and automatically gets rendered via the html
-        // templating engine.
-        return Results.html().render(contact);
+    public Result postContactForm(Context context,Contact contact) {
+        HashMap<Object, Object> map = Maps.newHashMap();
+        map.put("contact", contact);
+        return Results.html().render(map);
     }
     
     public Result htmlEscaping(Context context) {
@@ -133,6 +132,22 @@ public class ApplicationController {
 
         return Results.html(renderMap);
 
-    }   
+    }
+    
+    public Result form(Context context, FormObject formObject) {
+        
+        if (formObject != null) {
+            System.out.println("form: " + formObject.name);
+        } else {
+            System.out.println("form from bodyparser null");
+            formObject = new FormObject();
+            formObject.name = "superdupername";
+            
+        }
+
+        return Results.ok().render(formObject);
+
+    }
+    
 
 }
