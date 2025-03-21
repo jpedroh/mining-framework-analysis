@@ -51,19 +51,21 @@ final class Protoc {
      */
     private final File javaOutputDirectory;
 
+    private final File descriptorSetFile;
+
+    private final boolean includeImportsInDescriptorSet;
+
     /**
      * A directory into which C++ source files will be generated.
      */
+
     private final File cppOutputDirectory;
 
     /**
      * A directory into which Python source files will be generated.
      */
+
     private final File pythonOutputDirectory;
-
-    private final File descriptorSetFile;
-
-    private final boolean includeImportsInDescriptorSet;
 
     /**
      * A buffer to consume standard output from the {@code protoc} executable.
@@ -78,33 +80,54 @@ final class Protoc {
     /**
      * Constructs a new instance. This should only be used by the {@link Builder}.
      *
+<<<<<<< /usr/src/app/output/dtrott/maven-protoc-plugin/281edcc995e2f5511028659d923d7fe3d64cb2f1/src/main/java/com/google/protobuf/maven/Protoc.java/left.java
+     * @param executable The path to the {@code protoc} executable.
+     * @param protoPath The directories in which to search for imports.
+     * @param protoFiles The proto source files to compile.
+     * @param javaOutputDirectory The directory into which the java source files will be generated.
+     * @param descriptorSetFile The directory into which a descriptor set will be generated;
+     * if {@code null}, no descriptor set will be written
+     * @param includeImportsInDescriptorSet If {@code true}, dependencies will be included in the descriptor set.
+||||||| /usr/src/app/output/dtrott/maven-protoc-plugin/281edcc995e2f5511028659d923d7fe3d64cb2f1/src/main/java/com/google/protobuf/maven/Protoc.java/base.java
+     * @param executable The path to the {@code protoc} executable.
+     * @param protoPath The directories in which to search for imports.
+     * @param protoFiles The proto source files to compile.
+     * @param javaOutputDirectory The directory into which the java source files will be generated.
+=======
      * @param executable path to the {@code protoc} executable.
      * @param protoPath a set of directories in which to search for definition imports.
      * @param protoFiles a set of protobuf definitions to process.
      * @param javaOutputDirectory a directory into which Java source files will be generated.
      * @param cppOutputDirectory a directory into which C++ source files will be generated.
      * @param pythonOutputDirectory a directory into which Python source files will be generated.
-     * @param descriptorSetFile The directory into which a descriptor set will be generated;
-     * if {@code null}, no descriptor set will be written
-     * @param includeImportsInDescriptorSet If {@code true}, dependencies will be included in the descriptor set.
+>>>>>>> /usr/src/app/output/dtrott/maven-protoc-plugin/281edcc995e2f5511028659d923d7fe3d64cb2f1/src/main/java/com/google/protobuf/maven/Protoc.java/right.java
      */
     private Protoc(
             final String executable,
             final ImmutableSet<File> protoPath,
             final ImmutableSet<File> protoFiles,
+<<<<<<< /usr/src/app/output/dtrott/maven-protoc-plugin/281edcc995e2f5511028659d923d7fe3d64cb2f1/src/main/java/com/google/protobuf/maven/Protoc.java/left.java
+            final File javaOutputDirectory,
+                   File descriptorSetFile, boolean includeImportsInDescriptorSet) {
+||||||| /usr/src/app/output/dtrott/maven-protoc-plugin/281edcc995e2f5511028659d923d7fe3d64cb2f1/src/main/java/com/google/protobuf/maven/Protoc.java/base.java
+            final File javaOutputDirectory) {
+=======
             final File javaOutputDirectory,
             final File cppOutputDirectory,
-            final File pythonOutputDirectory,
-            final File descriptorSetFile,
-            final boolean includeImportsInDescriptorSet) {
+            final File pythonOutputDirectory) {
+>>>>>>> /usr/src/app/output/dtrott/maven-protoc-plugin/281edcc995e2f5511028659d923d7fe3d64cb2f1/src/main/java/com/google/protobuf/maven/Protoc.java/right.java
         this.executable = checkNotNull(executable, "executable");
         this.protoPathElements = checkNotNull(protoPath, "protoPath");
         this.protoFiles = checkNotNull(protoFiles, "protoFiles");
         this.javaOutputDirectory = javaOutputDirectory;
-        this.cppOutputDirectory = cppOutputDirectory;
-        this.pythonOutputDirectory = pythonOutputDirectory;
+<<<<<<< /usr/src/app/output/dtrott/maven-protoc-plugin/281edcc995e2f5511028659d923d7fe3d64cb2f1/src/main/java/com/google/protobuf/maven/Protoc.java/left.java
         this.descriptorSetFile = descriptorSetFile;
         this.includeImportsInDescriptorSet = includeImportsInDescriptorSet;
+||||||| /usr/src/app/output/dtrott/maven-protoc-plugin/281edcc995e2f5511028659d923d7fe3d64cb2f1/src/main/java/com/google/protobuf/maven/Protoc.java/base.java
+=======
+        this.cppOutputDirectory = cppOutputDirectory;
+        this.pythonOutputDirectory = pythonOutputDirectory;
+>>>>>>> /usr/src/app/output/dtrott/maven-protoc-plugin/281edcc995e2f5511028659d923d7fe3d64cb2f1/src/main/java/com/google/protobuf/maven/Protoc.java/right.java
         this.error = new CommandLineUtils.StringStreamConsumer();
         this.output = new CommandLineUtils.StringStreamConsumer();
     }
@@ -229,6 +252,10 @@ final class Protoc {
 
         private final Set<File> protopathElements;
 
+        private File descriptorSetFile;
+
+        private boolean includeImportsInDescriptorSet;
+
         private final Set<File> protoFiles;
 
         /**
@@ -245,10 +272,6 @@ final class Protoc {
          * A directory into which Python source files will be generated.
          */
         private File pythonOutputDirectory;
-
-        private File descriptorSetFile;
-
-        private boolean includeImportsInDescriptorSet;
 
         /**
          * Constructs a new builder.
@@ -411,11 +434,16 @@ final class Protoc {
                     executable,
                     ImmutableSet.copyOf(protopathElements),
                     ImmutableSet.copyOf(protoFiles),
+<<<<<<< /usr/src/app/output/dtrott/maven-protoc-plugin/281edcc995e2f5511028659d923d7fe3d64cb2f1/src/main/java/com/google/protobuf/maven/Protoc.java/left.java
+                    javaOutputDirectory,
+                    descriptorSetFile, includeImportsInDescriptorSet);
+||||||| /usr/src/app/output/dtrott/maven-protoc-plugin/281edcc995e2f5511028659d923d7fe3d64cb2f1/src/main/java/com/google/protobuf/maven/Protoc.java/base.java
+                    javaOutputDirectory);
+=======
                     javaOutputDirectory,
                     cppOutputDirectory,
-                    pythonOutputDirectory,
-                    descriptorSetFile,
-                    includeImportsInDescriptorSet);
+                    pythonOutputDirectory);
+>>>>>>> /usr/src/app/output/dtrott/maven-protoc-plugin/281edcc995e2f5511028659d923d7fe3d64cb2f1/src/main/java/com/google/protobuf/maven/Protoc.java/right.java
         }
     }
 }
