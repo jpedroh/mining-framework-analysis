@@ -363,9 +363,22 @@ public class NGSession extends Thread {
                         exit.close();
                     }
                     sockout.flush();
-                    socket.shutdownOutput();
+                    socket.close();
                 }
 
+<<<<<<< /usr/src/app/output/martylamb/nailgun/543039be31b291caf41b11356f906971753f74ac/nailgun-server/src/main/java/com/martiansoftware/nailgun/NGSession.java/left.java
+                out.flush();
+                err.flush();
+                exit.flush();
+                sockout.flush();
+                socket.shutdownOutput();
+
+||||||| /usr/src/app/output/martylamb/nailgun/543039be31b291caf41b11356f906971753f74ac/nailgun-server/src/main/java/com/martiansoftware/nailgun/NGSession.java/base.java
+                sockout.flush();
+                socket.close();
+
+=======
+>>>>>>> /usr/src/app/output/martylamb/nailgun/543039be31b291caf41b11356f906971753f74ac/nailgun-server/src/main/java/com/martiansoftware/nailgun/NGSession.java/right.java
             } catch (Throwable t) {
                 t.printStackTrace();
             }
