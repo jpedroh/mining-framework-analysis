@@ -19,14 +19,14 @@ package opennlp.tools.namefind;
 
 import java.io.IOException;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import opennlp.tools.ml.model.Event;
 import opennlp.tools.util.ObjectStream;
 import opennlp.tools.util.ObjectStreamUtils;
 import opennlp.tools.util.Span;
 import opennlp.tools.util.featuregen.AdaptiveFeatureGenerator;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * This is the test class for {@link NameFinderEventStream}.
@@ -67,6 +67,7 @@ public class NameFinderEventStreamTest{
    * Tests the correctly generated outcomes for a test sentence. If the Span
    * declares its type, passing the type to event stream has no effect
    */
+<<<<<<< /usr/src/app/output/apache/opennlp/d7c92974378dbc53ab64d1be823986bb2c371d71/opennlp-tools/src/test/java/opennlp/tools/namefind/NameFinderEventStreamTest.java/left.java
   @Test
   public void testOutcomesTypeCantOverride() throws IOException {
     String type = "XYZ";
@@ -89,12 +90,37 @@ public class NameFinderEventStreamTest{
     Assert.assertNull(eventStream.read());
     eventStream.close();
   }
+||||||| /usr/src/app/output/apache/opennlp/d7c92974378dbc53ab64d1be823986bb2c371d71/opennlp-tools/src/test/java/opennlp/tools/namefind/NameFinderEventStreamTest.java/base.java
+=======
+  @Test
+  public void testOutcomesTypeCantOverride() throws IOException {
+    String type = "XYZ";
 
+    NameSample nameSample = new NameSample(SENTENCE,
+        new Span[] { new Span(0, 2, "person") }, false);
+
+    ObjectStream<Event> eventStream = new NameFinderEventStream(
+        ObjectStreamUtils.createObjectStream(nameSample), type, CG, null);
+
+    String prefix = "person-";
+    assertEquals(prefix + NameFinderME.START, eventStream.read().getOutcome());
+    assertEquals(prefix + NameFinderME.CONTINUE,
+        eventStream.read().getOutcome());
+
+    for (int i = 0; i < 10; i++) {
+      Assert.assertEquals(NameFinderME.OTHER, eventStream.read().getOutcome());
+    }
+
+    assertNull(eventStream.read());
+    eventStream.close();
+  }
+>>>>>>> /usr/src/app/output/apache/opennlp/d7c92974378dbc53ab64d1be823986bb2c371d71/opennlp-tools/src/test/java/opennlp/tools/namefind/NameFinderEventStreamTest.java/right.java
   /**
    * Tests the correctly generated outcomes for a test sentence. If the Span
    * does not declare its type and the user passed a type, use the type from
    * user
    */
+<<<<<<< /usr/src/app/output/apache/opennlp/d7c92974378dbc53ab64d1be823986bb2c371d71/opennlp-tools/src/test/java/opennlp/tools/namefind/NameFinderEventStreamTest.java/left.java
   @Test
   public void testOutcomesWithType() throws IOException {
     String type = "XYZ";
@@ -117,12 +143,37 @@ public class NameFinderEventStreamTest{
     Assert.assertNull(eventStream.read());
     eventStream.close();
   }
+||||||| /usr/src/app/output/apache/opennlp/d7c92974378dbc53ab64d1be823986bb2c371d71/opennlp-tools/src/test/java/opennlp/tools/namefind/NameFinderEventStreamTest.java/base.java
+=======
+  @Test
+  public void testOutcomesWithType() throws IOException {
+    String type = "XYZ";
 
+    NameSample nameSample = new NameSample(SENTENCE,
+        new Span[] { new Span(0, 2) }, false);
+
+    ObjectStream<Event> eventStream = new NameFinderEventStream(
+        ObjectStreamUtils.createObjectStream(nameSample), type, CG, null);
+
+    String prefix = type + "-";
+    assertEquals(prefix + NameFinderME.START, eventStream.read().getOutcome());
+    assertEquals(prefix + NameFinderME.CONTINUE,
+        eventStream.read().getOutcome());
+
+    for (int i = 0; i < 10; i++) {
+      Assert.assertEquals(NameFinderME.OTHER, eventStream.read().getOutcome());
+    }
+
+    assertNull(eventStream.read());
+    eventStream.close();
+  }
+>>>>>>> /usr/src/app/output/apache/opennlp/d7c92974378dbc53ab64d1be823986bb2c371d71/opennlp-tools/src/test/java/opennlp/tools/namefind/NameFinderEventStreamTest.java/right.java
   /**
    * Tests the correctly generated outcomes for a test sentence. If the Span
    * does not declare its type and the user did not set a type, it will use
    * "default".
    */
+<<<<<<< /usr/src/app/output/apache/opennlp/d7c92974378dbc53ab64d1be823986bb2c371d71/opennlp-tools/src/test/java/opennlp/tools/namefind/NameFinderEventStreamTest.java/left.java
   @Test
   public void testOutcomesTypeEmpty() throws IOException {
 
@@ -144,4 +195,42 @@ public class NameFinderEventStreamTest{
     Assert.assertNull(eventStream.read());
     eventStream.close();
   }
+||||||| /usr/src/app/output/apache/opennlp/d7c92974378dbc53ab64d1be823986bb2c371d71/opennlp-tools/src/test/java/opennlp/tools/namefind/NameFinderEventStreamTest.java/base.java
+=======
+  @Test
+  public void testOutcomesTypeEmpty() throws IOException {
+
+    NameSample nameSample = new NameSample(SENTENCE,
+        new Span[] { new Span(0, 2) }, false);
+
+    ObjectStream<Event> eventStream = new NameFinderEventStream(
+        ObjectStreamUtils.createObjectStream(nameSample), null, CG, null);
+
+    String prefix = "default-";
+    assertEquals(prefix + NameFinderME.START, eventStream.read().getOutcome());
+    assertEquals(prefix + NameFinderME.CONTINUE,
+        eventStream.read().getOutcome());
+
+    for (int i = 0; i < 10; i++) {
+      Assert.assertEquals(NameFinderME.OTHER, eventStream.read().getOutcome());
+    }
+
+    assertNull(eventStream.read());
+    eventStream.close();
+  }
+>>>>>>> /usr/src/app/output/apache/opennlp/d7c92974378dbc53ab64d1be823986bb2c371d71/opennlp-tools/src/test/java/opennlp/tools/namefind/NameFinderEventStreamTest.java/right.java
+  /**
+   * Tests the correctly generated outcomes for a test sentence. If the Span
+   * declares its type, passing the type to event stream has no effect
+   */
+  /**
+   * Tests the correctly generated outcomes for a test sentence. If the Span
+   * does not declare its type and the user passed a type, use the type from
+   * user
+   */
+  /**
+   * Tests the correctly generated outcomes for a test sentence. If the Span
+   * does not declare its type and the user did not set a type, it will use
+   * "default".
+   */
 }
