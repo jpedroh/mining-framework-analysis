@@ -65,154 +65,87 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MandrillRESTRequestTest {
-<<<<<<< HEAD
-	
-	MandrillRESTRequest request;
-	@Mock
-	ObjectMapper mapper;
-	@Mock
-	HttpClient client;
-	@Mock
-	ClientConnectionManager manager;
-	@Mock
-	HttpEntity entity;
-	@Mock
-	HttpResponse response;
-	@Mock
-	StatusLine statusLine;
-	MandrillConfiguration config = new MandrillConfiguration();
-	
-	BaseMandrillRequest emptyBaseRequest = new BaseMandrillRequest();
-	BaseMandrillRequest mutableBaseRequest;
-	
-	MandrillRequestWithDomain emptyEmailRequest = new MandrillRequestWithDomain();
-	MandrillRequestWithDomain mutableEmailRequest = new MandrillRequestWithDomain();
-	
-	MandrillRequestWithQuery emptyQueryRequest = new MandrillRequestWithQuery();
-	MandrillRequestWithQuery mutableQueryRequest;
-	
-	MandrillRequestWithTag emptyTagRequest = new MandrillRequestWithTag();
-	MandrillRequestWithTag mutableTagRequest;
-	
-	MandrillRequestWithUrl emptyUrlRequest = new MandrillRequestWithUrl();
-	MandrillRequestWithUrl mutableUrlRequest;
-	
-	MandrillMessageRequest emptyMessageRequest = new MandrillMessageRequest();
-	MandrillHtmlMessage emptyMessage;
-	
-	MandrillMessageRequest mutableMessageRequest = new MandrillMessageRequest();
-	MandrillHtmlMessage mutableMessage;
-	
-	@Before
-	public void before() {
-		initMocks(this);
-		config.setApiVersion("1.0");
-		config.setBaseURL("https://mandrillapp.com/api");
-	}
+
+    MandrillRESTRequest request;
+    @Mock
+    ObjectMapper mapper;
+    @Mock
+    HttpClient client;
+    @Mock
+    ClientConnectionManager manager;
+    @Mock
+    HttpEntity entity;
+    @Mock
+    HttpResponse response;
+    @Mock
+    StatusLine statusLine;
+    MandrillConfiguration config = new MandrillConfiguration();
+
+    BaseMandrillRequest emptyBaseRequest = new BaseMandrillRequest();
+    BaseMandrillRequest mutableBaseRequest;
+
+    MandrillRequestWithDomain emptyEmailRequest = new MandrillRequestWithDomain();
+    MandrillRequestWithDomain mutableEmailRequest = new MandrillRequestWithDomain();
+
+    MandrillRequestWithQuery emptyQueryRequest = new MandrillRequestWithQuery();
+    MandrillRequestWithQuery mutableQueryRequest;
+
+    MandrillRequestWithTag emptyTagRequest = new MandrillRequestWithTag();
+    MandrillRequestWithTag mutableTagRequest;
+
+    MandrillRequestWithUrl emptyUrlRequest = new MandrillRequestWithUrl();
+    MandrillRequestWithUrl mutableUrlRequest;
+
+    MandrillMessageRequest emptyMessageRequest = new MandrillMessageRequest();
+    MandrillHtmlMessage emptyMessage;
+
+    MandrillMessageRequest mutableMessageRequest = new MandrillMessageRequest();
+    MandrillHtmlMessage mutableMessage;
+
+    @Before
+    public void before() {
+        initMocks(this);
+        this.config.setApiVersion("1.0");
+        this.config.setBaseURL("https://mandrillapp.com/api");
+    }
 	
 	@Test
 	public void testGetPostDataJsonGenerationException() throws Exception {
-		initRequestWithMockedMapper();
-				
-		Mockito.when(mapper.writeValueAsString(emptyBaseRequest)).thenThrow(new JsonGenerationException("Mockito!"));
-		try {
-			request.getPostData(emptyBaseRequest);
-			fail("Exception not thrown");
-		} catch (JsonGenerationException jge) {
-			assertEquals("Mockito!", jge.getMessage());
-		}
+	    this.initRequestWithMockedMapper();
+
+	    Mockito.when(this.mapper.writeValueAsString(this.emptyBaseRequest)).thenThrow(new JsonGenerationException("Mockito!"));
+	    try {
+	        this.request.getPostData(this.emptyBaseRequest);
+	        fail("Exception not thrown");
+	    } catch (JsonGenerationException jge) {
+	        assertEquals("Mockito!", jge.getMessage());
+	    }
 	}
 	
 	@Test
 	public void testGetPostDataJsonMappingException() throws Exception {
-		initRequestWithMockedMapper();
-				
-		Mockito.when(mapper.writeValueAsString(emptyBaseRequest)).thenThrow(new JsonMappingException("Mockito!"));
-		try {
-			request.getPostData(emptyBaseRequest);
-		} catch (JsonMappingException jme) {
-			assertEquals("Mockito!", jme.getMessage());
-		}
-	}
-	
-	@Test
-	public void testGetPostDataIOException() throws Exception {
-		initRequestWithMockedMapper();
-				
-		Mockito.when(mapper.writeValueAsString(emptyBaseRequest)).thenThrow(new IOException("Mockito!"));
-		try {
-			request.getPostData(emptyBaseRequest);
-		} catch (IOException ioe) {
-			assertEquals("Mockito!", ioe.getMessage());
-		}
-	}
-	
-	private void initRequestWithMockedMapper() {
-		request = new MandrillRESTRequest();
-		request.setObjectMapper(mapper);
-	}
-	
-	private void initRequestWithActualMapper() {
-		request = new MandrillRESTRequest();
-		request.setObjectMapper(new ObjectMapper());
+	    this.initRequestWithMockedMapper();
+
+	    Mockito.when(this.mapper.writeValueAsString(this.emptyBaseRequest)).thenThrow(new JsonMappingException("Mockito!"));
+	    try {
+	        this.request.getPostData(this.emptyBaseRequest);
+	    } catch (JsonMappingException jme) {
+	        assertEquals("Mockito!", jme.getMessage());
+	    }
 	}
 	
 	@Test
 	public void testGetPostDataBaseMandrillRequest() throws Exception {
-		initRequestWithActualMapper();
-		
-		assertEquals("{\"key\":null}", request.getPostData(emptyBaseRequest));
-		mutableBaseRequest = new BaseMandrillRequest();
-		mutableBaseRequest.setKey("this is my key");
-		assertEquals("{\"key\":\"this is my key\"}", request.getPostData(mutableBaseRequest));
-		
-		mutableBaseRequest.setKey("this is my key with \"extra\" quotes");
-		assertEquals("{\"key\":\"this is my key with \\\"extra\\\" quotes\"}", request.getPostData(mutableBaseRequest));
-		
-	}
-	
-	@Test
-	public void testGetPostDataMandrillRequestWithEmail() throws Exception{
-		initRequestWithActualMapper();
-		
-		assertEquals("{\"key\":null,\"domain\":null}", request.getPostData(emptyEmailRequest));
-		mutableEmailRequest = new MandrillRequestWithDomain();
-		mutableEmailRequest.setKey("12345");
-		mutableEmailRequest.setDomain("email@email.com");
-		assertEquals("{\"key\":\"12345\",\"domain\":\"email@email.com\"}", request.getPostData(mutableEmailRequest));
-	}
-	
-	@Test
-	public void testGetPostDataMandrillRequestWithQuery() throws Exception {
-		initRequestWithActualMapper();
-		
-		assertEquals("{\"key\":null,\"q\":null}", request.getPostData(emptyQueryRequest));
-		mutableQueryRequest = new MandrillRequestWithQuery();
-		mutableQueryRequest.setKey("7890");
-		mutableQueryRequest.setQ("query string");
-		assertEquals("{\"key\":\"7890\",\"q\":\"query string\"}", request.getPostData(mutableQueryRequest));
-	}
-	
-	@Test
-	public void testGetPostDataMandrillRequestWithTag() throws Exception {
-		initRequestWithActualMapper();
-		
-		assertEquals("{\"key\":null,\"tag\":null}", request.getPostData(emptyTagRequest));
-		mutableTagRequest = new MandrillRequestWithTag();
-		mutableTagRequest.setKey("ABC");
-		mutableTagRequest.setTag("Tag, you're it");
-		assertEquals("{\"key\":\"ABC\",\"tag\":\"Tag, you're it\"}", request.getPostData(mutableTagRequest));
-	}
-	
-	@Test
-	public void testGetPostDataMandrillRequestWithUrl() throws Exception {
-		initRequestWithActualMapper();
-		
-		assertEquals("{\"key\":null,\"url\":null}", request.getPostData(emptyUrlRequest));
-		mutableUrlRequest = new MandrillRequestWithUrl();
-		mutableUrlRequest.setKey("TEST");
-		mutableUrlRequest.setUrl("http://www.google.com");
-		assertEquals("{\"key\":\"TEST\",\"url\":\"http://www.google.com\"}", request.getPostData(mutableUrlRequest));
+	    this.initRequestWithActualMapper();
+
+	    assertEquals("{\"key\":null}", this.request.getPostData(this.emptyBaseRequest));
+	    this.mutableBaseRequest = new BaseMandrillRequest();
+	    this.mutableBaseRequest.setKey("this is my key");
+	    assertEquals("{\"key\":\"this is my key\"}", this.request.getPostData(this.mutableBaseRequest));
+
+	    this.mutableBaseRequest.setKey("this is my key with \"extra\" quotes");
+	    assertEquals("{\"key\":\"this is my key with \\\"extra\\\" quotes\"}", this.request.getPostData(this.mutableBaseRequest));
+
 	}
 	
 	@Test
@@ -323,61 +256,27 @@ public class MandrillRESTRequestTest {
 		sb.append(",\"tags\":[\"tag1\",\"tag2\"]");
 		sb.append(",\"google_analytics_domains\":[]");
 		sb.append(",\"google_analytics_campaign\":[]");
-=======
-
-    MandrillRESTRequest request;
-    @Mock
-    ObjectMapper mapper;
-    @Mock
-    HttpClient client;
-    @Mock
-    ClientConnectionManager manager;
-    @Mock
-    HttpEntity entity;
-    @Mock
-    HttpResponse response;
-    @Mock
-    StatusLine statusLine;
-    MandrillConfiguration config = new MandrillConfiguration();
-
-    BaseMandrillRequest emptyBaseRequest = new BaseMandrillRequest();
-    BaseMandrillRequest mutableBaseRequest;
-
-    MandrillRequestWithDomain emptyEmailRequest = new MandrillRequestWithDomain();
-    MandrillRequestWithDomain mutableEmailRequest = new MandrillRequestWithDomain();
-
-    MandrillRequestWithQuery emptyQueryRequest = new MandrillRequestWithQuery();
-    MandrillRequestWithQuery mutableQueryRequest;
-
-    MandrillRequestWithTag emptyTagRequest = new MandrillRequestWithTag();
-    MandrillRequestWithTag mutableTagRequest;
-
-    MandrillRequestWithUrl emptyUrlRequest = new MandrillRequestWithUrl();
-    MandrillRequestWithUrl mutableUrlRequest;
-
-    MandrillMessageRequest emptyMessageRequest = new MandrillMessageRequest();
-    MandrillHtmlMessage emptyMessage;
-
-    MandrillMessageRequest mutableMessageRequest = new MandrillMessageRequest();
-    MandrillHtmlMessage mutableMessage;
-
-    @Before
-    public void before() {
-        initMocks(this);
-        this.config.setApiVersion("1.0");
-        this.config.setBaseURL("https://mandrillapp.com/api");
+        sb.append(",\"global_merge_vars\":null");
+        sb.append(",\"merge_vars\":null");
+        sb.append(",\"attachments\":null");
+        sb.append(",\"headers\":{\"headerName\":\"headerValue\"},");
+        sb.append("\"html\":\"Test html\"");
+        sb.append("}}");
+        String output = this.request.getPostData(this.mutableMessageRequest);
+        System.out.println("Comparing:\n" + sb.toString() + "\n" + output);
+        assertEquals(sb.toString(), output);
     }
-
+	
     private void initRequestWithActualMapper() {
         this.request = new MandrillRESTRequest();
         this.request.setObjectMapper(new ObjectMapper());
     }
-
+	
     private void initRequestWithMockedMapper() {
         this.request = new MandrillRESTRequest();
         this.request.setObjectMapper(this.mapper);
     }
-
+	
     @Test
     public void testDisableResponseConversion() throws IOException {
         this.initRequestWithActualMapper();
@@ -390,108 +289,6 @@ public class MandrillRESTRequestTest {
         assertEquals("example created_at", response.getCreated_at());
         assertEquals("example approved_at", response.getApproved_at());
         assertTrue(response.isIs_enabled());
-    }
-
-    @Test
-    public void testGetPostDataBaseMandrillRequest() throws Exception {
-        this.initRequestWithActualMapper();
-
-        assertEquals("{\"key\":null}", this.request.getPostData(this.emptyBaseRequest));
-        this.mutableBaseRequest = new BaseMandrillRequest();
-        this.mutableBaseRequest.setKey("this is my key");
-        assertEquals("{\"key\":\"this is my key\"}", this.request.getPostData(this.mutableBaseRequest));
-
-        this.mutableBaseRequest.setKey("this is my key with \"extra\" quotes");
-        assertEquals("{\"key\":\"this is my key with \\\"extra\\\" quotes\"}", this.request.getPostData(this.mutableBaseRequest));
-
-    }
-
-    @Test
-    public void testGetPostDataJsonGenerationException() throws Exception {
-        this.initRequestWithMockedMapper();
-
-        Mockito.when(this.mapper.writeValueAsString(this.emptyBaseRequest)).thenThrow(new JsonGenerationException("Mockito!"));
-        try {
-            this.request.getPostData(this.emptyBaseRequest);
-            fail("Exception not thrown");
-        } catch (JsonGenerationException jge) {
-            assertEquals("Mockito!", jge.getMessage());
-        }
-    }
-
-    @Test
-    public void testGetPostDataJsonMappingException() throws Exception {
-        this.initRequestWithMockedMapper();
-
-        Mockito.when(this.mapper.writeValueAsString(this.emptyBaseRequest)).thenThrow(new JsonMappingException("Mockito!"));
-        try {
-            this.request.getPostData(this.emptyBaseRequest);
-        } catch (JsonMappingException jme) {
-            assertEquals("Mockito!", jme.getMessage());
-        }
-    }
-
-    @Test
-    public void testGetPostDataMandrillMessageRequest() throws Exception {
-        this.initRequestWithActualMapper();
-
-        this.emptyMessageRequest.setMessage(this.emptyMessage);
-        assertEquals("{\"key\":null,\"message\":null}", this.request.getPostData(this.emptyMessageRequest));
-
-        this.mutableMessageRequest = new MandrillMessageRequest();
-        this.mutableMessageRequest.setKey("API Key");
-        this.mutableMessage = new MandrillHtmlMessage();
-        this.mutableMessage.setHtml("Test html");
-        this.mutableMessage.setText("Test text");
-        this.mutableMessage.setSubject("Test subject");
-        this.mutableMessage.setFrom_email("from@email.com");
-        this.mutableMessage.setFrom_name("From Name");
-        this.mutableMessage.setSubaccount("test");
-        MandrillRecipient[] to = new MandrillRecipient[2];
-        to[0] = new MandrillRecipient("to1", "to1");
-        to[1] = new MandrillRecipient("to2", "to2");
-        this.mutableMessage.setTo(to);
-        this.mutableMessage.setTrack_opens(false);
-        this.mutableMessage.setTrack_clicks(true);
-        String[] tags = new String[2];
-        tags[0] = "tag1";
-        tags[1] = "tag2";
-        this.mutableMessage.setTags(tags);
-        Map<String, String> headerMap = new HashMap<String, String>();
-        headerMap.put("headerName", "headerValue");
-
-        this.mutableMessage.setHeaders(headerMap);
-
-        this.mutableMessageRequest.setMessage(this.mutableMessage);
-        // System.out.println(request.getPostData(mutableMessageRequest));
-        StringBuffer sb = new StringBuffer();
-        sb.append("{");
-        sb.append("\"key\":\"API Key\"");
-        sb.append(",\"message\":{");
-        sb.append("\"text\":\"Test text\"");
-        sb.append(",\"subject\":\"Test subject\"");
-        sb.append(",\"from_email\":\"from@email.com\"");
-        sb.append(",\"from_name\":\"From Name\"");
-        sb.append(",\"subaccount\":\"test\"");
-        sb.append(",\"to\":[{\"email\":\"to1\",\"name\":\"to1\"},{\"email\":\"to2\",\"name\":\"to2\"}]");
-        sb.append(",\"track_opens\":false");
-        sb.append(",\"track_clicks\":true");
-        sb.append(",\"auto_text\":false");
-        sb.append(",\"url_strip_qs\":false");
-        sb.append(",\"preserve_recipients\":false");
-        sb.append(",\"tags\":[\"tag1\",\"tag2\"]");
-        sb.append(",\"google_analytics_domains\":[]");
-        sb.append(",\"google_analytics_campaign\":[]");
->>>>>>> 4da8cd42c2f2c9a7191d65645100747c130c98a3
-        sb.append(",\"global_merge_vars\":null");
-        sb.append(",\"merge_vars\":null");
-        sb.append(",\"attachments\":null");
-        sb.append(",\"headers\":{\"headerName\":\"headerValue\"},");
-        sb.append("\"html\":\"Test html\"");
-        sb.append("}}");
-        String output = this.request.getPostData(this.mutableMessageRequest);
-        System.out.println("Comparing:\n" + sb.toString() + "\n" + output);
-        assertEquals(sb.toString(), output);
     }
 
     @Test
