@@ -1548,6 +1548,12 @@ public class PHPGrammar {
 
   public ExpressionTree MEMBER_EXPRESSION() {
     return b.<ExpressionTree>nonterminal(PHPLexicalGrammar.MEMBER_EXPRESSION).is(
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-php/365b07d9f6cd62ee3a47b5f02f74b096cc25d5b9/php-frontend/src/main/java/org/sonar/php/parser/PHPGrammar.java/left.java
+      SPECIAL_CALL(),
+||||||| /usr/src/app/output/sonarcommunity/sonar-php/365b07d9f6cd62ee3a47b5f02f74b096cc25d5b9/php-frontend/src/main/java/org/sonar/php/parser/PHPGrammar.java/base.java
+      INDIRECT_METHOD_CALL(),
+=======
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-php/365b07d9f6cd62ee3a47b5f02f74b096cc25d5b9/php-frontend/src/main/java/org/sonar/php/parser/PHPGrammar.java/right.java
       f.memberExpression(
         PRIMARY_EXPRESSION(),
         b.zeroOrMore(
