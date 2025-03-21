@@ -1,13 +1,11 @@
 package com.mercadopago.resources.merchantorder;
-
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 
 /** Shipment information. */
-@Getter
-public class MerchantOrderShipment {
+@Getter public class MerchantOrderShipment {
   /** Shipping ID. */
   private Long id;
 

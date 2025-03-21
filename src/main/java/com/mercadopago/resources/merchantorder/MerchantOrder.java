@@ -1,5 +1,4 @@
 package com.mercadopago.resources.merchantorder;
-
 import com.mercadopago.net.MPResource;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -7,8 +6,7 @@ import java.util.List;
 import lombok.Getter;
 
 /** Merchant Order resource. */
-@Getter
-public class MerchantOrder extends MPResource {
+@Getter public class MerchantOrder extends MPResource {
   /** Order ID. */
   private Long id;
 

@@ -1,13 +1,11 @@
 package com.mercadopago.resources.preference;
-
 import com.mercadopago.net.MPResource;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.Getter;
 
 /** Preference resource. */
-@Getter
-public class PreferenceSearch extends MPResource {
+@Getter public class PreferenceSearch extends MPResource {
   /** Preference ID. */
   private String id;
 

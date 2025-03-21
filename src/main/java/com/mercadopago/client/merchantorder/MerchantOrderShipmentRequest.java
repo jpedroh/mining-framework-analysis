@@ -1,5 +1,4 @@
 package com.mercadopago.client.merchantorder;
-
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
@@ -7,9 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 /** Shipment information. */
-@Getter
-@Builder
-public class MerchantOrderShipmentRequest {
+@Getter @Builder public class MerchantOrderShipmentRequest {
   /** Shipping ID. */
   private final Long id;
 

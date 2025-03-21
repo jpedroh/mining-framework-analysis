@@ -1,5 +1,4 @@
 package mercadopago.client.merchantorder;
-
 import static com.mercadopago.net.HttpStatus.CREATED;
 import static com.mercadopago.net.HttpStatus.OK;
 import static mercadopago.helper.MockHelper.generateHttpResponseFromFile;
@@ -12,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
-
 import com.google.gson.JsonElement;
 import com.mercadopago.client.merchantorder.MerchantOrderClient;
 import com.mercadopago.client.merchantorder.MerchantOrderCreateRequest;
@@ -36,7 +34,6 @@ import org.apache.http.protocol.HttpContext;
 import org.junit.jupiter.api.Test;
 
 class MerchantOrderClientTest extends BaseClientTest {
-
   private static final int YEAR = 2022;
 
   private static final int JANUARY = 1;
@@ -55,174 +52,92 @@ class MerchantOrderClientTest extends BaseClientTest {
 
   private static final long MERCHANT_ORDER_ID = 4018801790L;
 
-  private static final OffsetDateTime DATE =
-      OffsetDateTime.of(YEAR, JANUARY, TEN, TEN, TEN, TEN, 0, ZoneOffset.UTC);
+  private static final OffsetDateTime DATE = OffsetDateTime.of(YEAR, JANUARY, TEN, TEN, TEN, TEN, 0, ZoneOffset.UTC);
 
   MerchantOrderClient client = new MerchantOrderClient();
 
-  @Test
-  void createSuccess() throws MPException, IOException {
-
+  @Test void createSuccess() throws MPException, IOException {
     HttpResponse httpResponse = generateHttpResponseFromFile(ORDER_BASE_JSON, CREATED);
-    doReturn(httpResponse)
-        .when(httpClient)
-        .execute(any(HttpRequestBase.class), any(HttpContext.class));
-
-    MerchantOrderCreateRequest request =
-        MerchantOrderCreateRequest.builder().preferenceId(PREFERENCE_ID).build();
-
+    doReturn(httpResponse).when(httpClient).execute(any(HttpRequestBase.class), any(HttpContext.class));
+    MerchantOrderCreateRequest request = MerchantOrderCreateRequest.builder().preferenceId(PREFERENCE_ID).build();
     MerchantOrder merchantOrder = client.create(request);
-
-    JsonElement requestPayload =
-        generateJsonElementFromUriRequest(httpClientMock.getRequestPayload());
+    JsonElement requestPayload = generateJsonElementFromUriRequest(httpClientMock.getRequestPayload());
     JsonElement requestPayloadMock = generateJsonElement(ORDER_BASE_JSON);
-
     assertEquals(requestPayloadMock, requestPayload);
     assertNotNull(merchantOrder.getResponse());
     assertEquals(CREATED, merchantOrder.getResponse().getStatusCode());
     assertMerchantOrderFields(merchantOrder);
   }
 
-  @Test
-  void createWithRequestOptionsSuccess() throws MPException, IOException {
-    MPRequestOptions requestOptions =
-        MPRequestOptions.builder()
-            .accessToken("abc")
-            .connectionTimeout(DEFAULT_TIMEOUT)
-            .connectionRequestTimeout(DEFAULT_TIMEOUT)
-            .socketTimeout(DEFAULT_TIMEOUT)
-            .build();
-
+  @Test void createWithRequestOptionsSuccess() throws MPException, IOException {
+    MPRequestOptions requestOptions = MPRequestOptions.builder().accessToken("abc").connectionTimeout(DEFAULT_TIMEOUT).connectionRequestTimeout(DEFAULT_TIMEOUT).socketTimeout(DEFAULT_TIMEOUT).build();
     HttpResponse httpResponse = generateHttpResponseFromFile(ORDER_BASE_JSON, CREATED);
-    doReturn(httpResponse)
-        .when(httpClient)
-        .execute(any(HttpRequestBase.class), any(HttpContext.class));
-
-    MerchantOrderCreateRequest request =
-        MerchantOrderCreateRequest.builder().preferenceId(PREFERENCE_ID).build();
-
+    doReturn(httpResponse).when(httpClient).execute(any(HttpRequestBase.class), any(HttpContext.class));
+    MerchantOrderCreateRequest request = MerchantOrderCreateRequest.builder().preferenceId(PREFERENCE_ID).build();
     MerchantOrder merchantOrder = client.create(request, requestOptions);
-
-    JsonElement requestPayload =
-        generateJsonElementFromUriRequest(httpClientMock.getRequestPayload());
+    JsonElement requestPayload = generateJsonElementFromUriRequest(httpClientMock.getRequestPayload());
     JsonElement requestPayloadMock = generateJsonElement(ORDER_BASE_JSON);
-
     assertEquals(requestPayloadMock, requestPayload);
     assertNotNull(merchantOrder.getResponse());
     assertEquals(CREATED, merchantOrder.getResponse().getStatusCode());
     assertMerchantOrderFields(merchantOrder);
   }
 
-  @Test
-  void getSuccess() throws MPException, IOException {
-
+  @Test void getSuccess() throws MPException, IOException {
     HttpResponse httpResponse = generateHttpResponseFromFile(ORDER_BASE_JSON, OK);
-    doReturn(httpResponse)
-        .when(httpClient)
-        .execute(any(HttpRequestBase.class), any(HttpContext.class));
-
+    doReturn(httpResponse).when(httpClient).execute(any(HttpRequestBase.class), any(HttpContext.class));
     MerchantOrder merchantOrder = client.get(MERCHANT_ORDER_ID);
-
     assertNotNull(merchantOrder.getResponse());
     assertEquals(OK, merchantOrder.getResponse().getStatusCode());
     assertMerchantOrderFields(merchantOrder);
   }
 
-  @Test
-  void getWithRequestOptionsSuccess() throws MPException, IOException {
-    MPRequestOptions requestOptions =
-        MPRequestOptions.builder()
-            .accessToken("abc")
-            .connectionTimeout(DEFAULT_TIMEOUT)
-            .connectionRequestTimeout(DEFAULT_TIMEOUT)
-            .socketTimeout(DEFAULT_TIMEOUT)
-            .build();
-
+  @Test void getWithRequestOptionsSuccess() throws MPException, IOException {
+    MPRequestOptions requestOptions = MPRequestOptions.builder().accessToken("abc").connectionTimeout(DEFAULT_TIMEOUT).connectionRequestTimeout(DEFAULT_TIMEOUT).socketTimeout(DEFAULT_TIMEOUT).build();
     HttpResponse httpResponse = generateHttpResponseFromFile(ORDER_BASE_JSON, OK);
-    doReturn(httpResponse)
-        .when(httpClient)
-        .execute(any(HttpRequestBase.class), any(HttpContext.class));
-
+    doReturn(httpResponse).when(httpClient).execute(any(HttpRequestBase.class), any(HttpContext.class));
     MerchantOrder merchantOrder = client.get(MERCHANT_ORDER_ID, requestOptions);
-
     assertNotNull(merchantOrder.getResponse());
     assertEquals(OK, merchantOrder.getResponse().getStatusCode());
     assertMerchantOrderFields(merchantOrder);
   }
 
-  @Test
-  void updateSuccess() throws MPException, IOException {
+  @Test void updateSuccess() throws MPException, IOException {
     HttpResponse httpResponse = generateHttpResponseFromFile(ORDER_UPDATED_JSON, OK);
-    doReturn(httpResponse)
-        .when(httpClient)
-        .execute(any(HttpRequestBase.class), any(HttpContext.class));
-
-    MerchantOrderPayerRequest payerRequest =
-        MerchantOrderPayerRequest.builder().id(0L).nickname("Test").build();
-
-    MerchantOrderUpdateRequest updateRequest =
-        MerchantOrderUpdateRequest.builder().payer(payerRequest).build();
-
+    doReturn(httpResponse).when(httpClient).execute(any(HttpRequestBase.class), any(HttpContext.class));
+    MerchantOrderPayerRequest payerRequest = MerchantOrderPayerRequest.builder().id(0L).nickname("Test").build();
+    MerchantOrderUpdateRequest updateRequest = MerchantOrderUpdateRequest.builder().payer(payerRequest).build();
     MerchantOrder merchantOrder = client.update(MERCHANT_ORDER_ID, updateRequest);
-
-    JsonElement requestPayload =
-        generateJsonElementFromUriRequest(httpClientMock.getRequestPayload());
+    JsonElement requestPayload = generateJsonElementFromUriRequest(httpClientMock.getRequestPayload());
     JsonElement requestPayloadMock = generateJsonElement(ORDER_UPDATED_JSON);
-
     assertEquals(requestPayloadMock, requestPayload);
     assertNotNull(merchantOrder.getResponse());
     assertEquals(OK, merchantOrder.getResponse().getStatusCode());
     assertEquals("Test", merchantOrder.getPayer().getNickname());
   }
 
-  @Test
-  void updateWithRequestOptionsSuccess() throws MPException, IOException {
-    MPRequestOptions requestOptions =
-        MPRequestOptions.builder()
-            .accessToken("abc")
-            .connectionTimeout(DEFAULT_TIMEOUT)
-            .connectionRequestTimeout(DEFAULT_TIMEOUT)
-            .socketTimeout(DEFAULT_TIMEOUT)
-            .build();
-
+  @Test void updateWithRequestOptionsSuccess() throws MPException, IOException {
+    MPRequestOptions requestOptions = MPRequestOptions.builder().accessToken("abc").connectionTimeout(DEFAULT_TIMEOUT).connectionRequestTimeout(DEFAULT_TIMEOUT).socketTimeout(DEFAULT_TIMEOUT).build();
     HttpResponse httpResponse = generateHttpResponseFromFile(ORDER_UPDATED_JSON, OK);
-    doReturn(httpResponse)
-        .when(httpClient)
-        .execute(any(HttpRequestBase.class), any(HttpContext.class));
-
-    MerchantOrderPayerRequest payerRequest =
-        MerchantOrderPayerRequest.builder().id(0L).nickname("Test").build();
-
-    MerchantOrderUpdateRequest updateRequest =
-        MerchantOrderUpdateRequest.builder().payer(payerRequest).build();
-
+    doReturn(httpResponse).when(httpClient).execute(any(HttpRequestBase.class), any(HttpContext.class));
+    MerchantOrderPayerRequest payerRequest = MerchantOrderPayerRequest.builder().id(0L).nickname("Test").build();
+    MerchantOrderUpdateRequest updateRequest = MerchantOrderUpdateRequest.builder().payer(payerRequest).build();
     MerchantOrder merchantOrder = client.update(MERCHANT_ORDER_ID, updateRequest, requestOptions);
-
-    JsonElement requestPayload =
-        generateJsonElementFromUriRequest(httpClientMock.getRequestPayload());
+    JsonElement requestPayload = generateJsonElementFromUriRequest(httpClientMock.getRequestPayload());
     JsonElement requestPayloadMock = generateJsonElement(ORDER_UPDATED_JSON);
-
     assertEquals(requestPayloadMock, requestPayload);
     assertNotNull(merchantOrder.getResponse());
     assertEquals(OK, merchantOrder.getResponse().getStatusCode());
     assertEquals("Test", merchantOrder.getPayer().getNickname());
   }
 
-  @Test
-  void searchSuccess() throws MPException, IOException {
-
+  @Test void searchSuccess() throws MPException, IOException {
     HttpResponse httpResponse = generateHttpResponseFromFile(ORDER_SEARCH_JSON, OK);
-    doReturn(httpResponse)
-        .when(httpClient)
-        .execute(any(HttpRequestBase.class), any(HttpContext.class));
-
+    doReturn(httpResponse).when(httpClient).execute(any(HttpRequestBase.class), any(HttpContext.class));
     Map<String, Object> filters = new HashMap<>();
     filters.put("preference_id", PREFERENCE_ID);
-
-    MPSearchRequest searchRequest =
-        MPSearchRequest.builder().limit(0).offset(0).filters(filters).build();
+    MPSearchRequest searchRequest = MPSearchRequest.builder().limit(0).offset(0).filters(filters).build();
     MPElementsResourcesPage<MerchantOrder> results = client.search(searchRequest);
-
     assertEquals(OK, results.getResponse().getStatusCode());
     assertNotNull(results.getResponse());
     assertEquals(2, results.getTotal());
@@ -231,28 +146,14 @@ class MerchantOrderClientTest extends BaseClientTest {
     assertMerchantOrderFields(results.getElements().get(0));
   }
 
-  @Test
-  void searchWithRequestOptionsSuccess() throws MPException, IOException {
-    MPRequestOptions requestOptions =
-        MPRequestOptions.builder()
-            .accessToken("abc")
-            .connectionTimeout(DEFAULT_TIMEOUT)
-            .connectionRequestTimeout(DEFAULT_TIMEOUT)
-            .socketTimeout(DEFAULT_TIMEOUT)
-            .build();
-
+  @Test void searchWithRequestOptionsSuccess() throws MPException, IOException {
+    MPRequestOptions requestOptions = MPRequestOptions.builder().accessToken("abc").connectionTimeout(DEFAULT_TIMEOUT).connectionRequestTimeout(DEFAULT_TIMEOUT).socketTimeout(DEFAULT_TIMEOUT).build();
     HttpResponse httpResponse = generateHttpResponseFromFile(ORDER_SEARCH_JSON, OK);
-    doReturn(httpResponse)
-        .when(httpClient)
-        .execute(any(HttpRequestBase.class), any(HttpContext.class));
-
+    doReturn(httpResponse).when(httpClient).execute(any(HttpRequestBase.class), any(HttpContext.class));
     Map<String, Object> filters = new HashMap<>();
     filters.put("preference_id", PREFERENCE_ID);
-
-    MPSearchRequest searchRequest =
-        MPSearchRequest.builder().limit(0).offset(0).filters(filters).build();
+    MPSearchRequest searchRequest = MPSearchRequest.builder().limit(0).offset(0).filters(filters).build();
     MPElementsResourcesPage<MerchantOrder> results = client.search(searchRequest, requestOptions);
-
     assertEquals(OK, results.getResponse().getStatusCode());
     assertNotNull(results.getResponse());
     assertEquals(2, results.getTotal());

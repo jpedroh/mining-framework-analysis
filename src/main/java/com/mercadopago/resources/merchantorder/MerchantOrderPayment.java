@@ -1,12 +1,10 @@
 package com.mercadopago.resources.merchantorder;
-
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import lombok.Getter;
 
 /** Payment information. */
-@Getter
-public class MerchantOrderPayment {
+@Getter public class MerchantOrderPayment {
   /** Payment ID. */
   private Long id;
 

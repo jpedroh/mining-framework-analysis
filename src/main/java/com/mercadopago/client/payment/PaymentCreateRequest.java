@@ -1,5 +1,4 @@
 package com.mercadopago.client.payment;
-
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Map;
@@ -7,9 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 /** PaymentCreateRequest class. */
-@Getter
-@Builder
-public class PaymentCreateRequest {
+@Getter @Builder public class PaymentCreateRequest {
   /**
    * Data that could improve fraud analysis and conversion rates. Try to send as much information as
    * possible.
