@@ -37,6 +37,18 @@ class FilterChainEnd implements FilterChain {
 
     @Override
     public Result next(Context context) {
+<<<<<<< /usr/src/app/output/ninjaframework/ninja/deba68759f3a7ae06bf3a5380a280eaae75beee2/ninja-core/src/main/java/ninja/FilterChainEnd.java/left.java
+||||||| /usr/src/app/output/ninjaframework/ninja/deba68759f3a7ae06bf3a5380a280eaae75beee2/ninja-core/src/main/java/ninja/FilterChainEnd.java/base.java
+        if(result != null) {
+            return result;
+        }
+
+=======
+        if (result != null) {
+            return result.copy();
+        }
+
+>>>>>>> /usr/src/app/output/ninjaframework/ninja/deba68759f3a7ae06bf3a5380a280eaae75beee2/ninja-core/src/main/java/ninja/FilterChainEnd.java/right.java
         Result controllerResult = (Result) controllerMethodInvoker.invoke(
                 controllerProvider.get(), context);
 
