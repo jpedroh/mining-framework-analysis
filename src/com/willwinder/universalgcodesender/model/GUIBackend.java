@@ -80,9 +80,9 @@ public class GUIBackend implements BackendAPI, ControllerListener {
     String cancelButtonText;
     boolean cancelButtonEnabled;
 
-//    boolean G91Mode = false;
-
     long lastResponse = Long.MIN_VALUE;
+
+//    boolean G91Mode = false;
     
     public GcodeParser gcp = new GcodeParser();
     
