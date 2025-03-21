@@ -39,8 +39,13 @@ public class MethodDeclarationTest {
       .matches("function f () : bool {}")
       .matches("function f () : ?bool {}")
       .matches("function if() {}")
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-php/61de31ef3667903965e4f26aeb52b329b5dde5a2/php-frontend/src/test/java/org/sonar/php/parser/declaration/MethodDeclarationTest.java/left.java
       .matches("function match() {}")
+||||||| /usr/src/app/output/sonarcommunity/sonar-php/61de31ef3667903965e4f26aeb52b329b5dde5a2/php-frontend/src/test/java/org/sonar/php/parser/declaration/MethodDeclarationTest.java/base.java
+      .matches
+=======
       .matches("#[A1(4)] public function f() {}")
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-php/61de31ef3667903965e4f26aeb52b329b5dde5a2/php-frontend/src/test/java/org/sonar/php/parser/declaration/MethodDeclarationTest.java/right.java
     ;
   }
 
