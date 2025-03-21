@@ -1,10 +1,6 @@
 package org.jawk.backend;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -667,6 +663,10 @@ public class AwkCompilerImpl implements AwkCompiler {
 		JVMTools_allocateField(Map.class, "pattern_pairs");
 		JVMTools_new("java.util.HashMap");
 		JVMTools_storeField(Map.class, "pattern_pairs");
+
+		JVMTools_allocateField(AwkSettings.class, "settings");
+		il.append(InstructionConstants.ALOAD_1);
+		JVMTools_storeField(AwkSettings.class, "settings");
 
 		JVMTools_allocateField(AwkSettings.class, "settings"); 
 		il.append(InstructionConstants.ALOAD_1); 
@@ -3390,7 +3390,7 @@ public class AwkCompilerImpl implements AwkCompiler {
 		JVMTools_getField(AwkSettings.class, "settings"); 
 		return il.append(factory.createInvoke(AwkSettings.class.getName(), methodName, getObjectType(returnType), 
 				buildArgs(argumentTypes), INVOKEVIRTUAL)); 
-	} 
+		} 
 	
 	private void JVMTools_allocateLocalVariable(Class<?> vartype, String varname) {
 		assert local_vars.get(varname) == null;
@@ -3750,7 +3750,13 @@ public class AwkCompilerImpl implements AwkCompiler {
 		}
 	}
 
+<<<<<<< /usr/src/app/output/hoijui/jawk/b60fdfaa97a9a12c8eda22d7707295bbd1ea90dd/src/main/java/org/jawk/backend/AwkCompilerImpl.java/left.java
 	private static Type[] buildArgs(Class<?>... arguments) {
+||||||| /usr/src/app/output/hoijui/jawk/b60fdfaa97a9a12c8eda22d7707295bbd1ea90dd/src/main/java/org/jawk/backend/AwkCompilerImpl.java/base.java
+	private static Type[] buildArgs(Class[] arguments) {
+=======
+	private static Type[] buildArgs(Class... arguments) {
+>>>>>>> /usr/src/app/output/hoijui/jawk/b60fdfaa97a9a12c8eda22d7707295bbd1ea90dd/src/main/java/org/jawk/backend/AwkCompilerImpl.java/right.java
 		java.util.List<Type> arg_list = new ArrayList<Type>();
 		for (Class<?> cls : arguments) {
 			arg_list.add(getObjectType(cls));
