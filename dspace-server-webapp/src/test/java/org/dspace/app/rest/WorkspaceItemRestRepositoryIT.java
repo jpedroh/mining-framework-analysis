@@ -71,9 +71,9 @@ import org.dspace.content.Item;
 import org.dspace.content.Relationship;
 import org.dspace.content.RelationshipType;
 import org.dspace.content.WorkspaceItem;
-import org.dspace.content.service.ItemService;
 import org.dspace.content.service.CollectionService;
 import org.dspace.core.Constants;
+import org.dspace.content.service.ItemService;
 import org.dspace.eperson.EPerson;
 import org.dspace.eperson.Group;
 import org.dspace.eperson.factory.EPersonServiceFactory;
@@ -94,9 +94,9 @@ import org.springframework.test.web.servlet.MvcResult;
 public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegrationTest {
 
     @Autowired
-    private CollectionService cs;
-    @Autowired
     private ItemService itemService;
+    @Autowired
+    private CollectionService cs;
     @Autowired
     private ConfigurationService configurationService;
 
@@ -5316,40 +5316,6 @@ public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegration
     }
 
     @Test
-    public void invalidCollectionConfigurationPreventItemCreationTest() throws Exception {
-        context.turnOffAuthorisationSystem();
-
-        parentCommunity = CommunityBuilder.createCommunity(context)
-                                          .withName("Parent Community")
-                                          .build();
-
-        Collection col = CollectionBuilder.createCollection(context, parentCommunity)
-                                           .withName("Collection 1")
-                                           .withSubmitterGroup(eperson)
-                                           .withTemplateItem()
-                                           .withEntityType("Person")
-                                           .build();
-
-        Item templateItem = col.getTemplateItem();
-        itemService.addMetadata(context, templateItem, "dspace", "entity", "type", null, "Publication");
-
-        String authToken = getAuthToken(eperson.getEmail(), password);
-
-        InputStream pdf = getClass().getResourceAsStream("simple-article.pdf");
-        MockMultipartFile pdfFile = new MockMultipartFile("file", "/local/path/myfile.pdf", "application/pdf", pdf);
-
-        context.restoreAuthSystemState();
-
-        try {
-            getClient(authToken).perform(fileUpload("/api/submission/workspaceitems")
-                                .file(pdfFile))
-                                .andExpect(status().is(500));
-        } finally {
-            pdf.close();
-        }
-    }
-
-    @Test
     public void patchUploadAddAdminRPInstallAndVerifyOnlyAdminCanView() throws Exception {
         context.turnOffAuthorisationSystem();
         Community community = CommunityBuilder.createCommunity(context).withName("Com").build();
@@ -5582,6 +5548,7 @@ public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegration
      * {@link WorkspaceItemRestRepositoryIT#patchUploadAddAdminRPInstallAndVerifyOnlyAdminCanView()}
      * except than it runs with append-mode enabled
      */
+
     @Test
     public void patchUploadAddAdminRPInstallAndVerifyOnlyAdminCanViewInAppendModeTest() throws Exception {
         configurationService.setProperty("core.authorization.installitem.inheritance-read.append-mode", true);
@@ -5660,6 +5627,7 @@ public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegration
      * {@link WorkspaceItemRestRepositoryIT#patchUploadAddOpenAccessRPInstallAndVerifyAnonCanView()}
      * except than it runs with append-mode enabled
      */
+
     @Test
     public void patchUploadAddOpenAccessRPInstallAndVerifyAnonCanViewInAppendModeTest() throws Exception {
         configurationService.setProperty("core.authorization.installitem.inheritance-read.append-mode", true);
@@ -5723,6 +5691,7 @@ public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegration
      * {@link WorkspaceItemRestRepositoryIT#patchUploadAddAdminThenOpenAccessRPInstallAndVerifyAnonCanView()}
      * except than it runs with append-mode enabled
      */
+
     @Test
     public void patchUploadAddAdminThenOpenAccessRPInstallAndVerifyAnonCanViewInAppendModeTest() throws Exception {
         configurationService.setProperty("core.authorization.installitem.inheritance-read.append-mode", true);
@@ -5924,6 +5893,40 @@ public class WorkspaceItemRestRepositoryIT extends AbstractControllerIntegration
         // Bitstream should be not accessible to anon
         getClient().perform(get("/api/core/bitstreams/" + bitstream.getID() + "/content"))
                    .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void invalidCollectionConfigurationPreventItemCreationTest() throws Exception {
+        context.turnOffAuthorisationSystem();
+
+        parentCommunity = CommunityBuilder.createCommunity(context)
+                                          .withName("Parent Community")
+                                          .build();
+
+        Collection col = CollectionBuilder.createCollection(context, parentCommunity)
+                                           .withName("Collection 1")
+                                           .withSubmitterGroup(eperson)
+                                           .withTemplateItem()
+                                           .withEntityType("Person")
+                                           .build();
+
+        Item templateItem = col.getTemplateItem();
+        itemService.addMetadata(context, templateItem, "dspace", "entity", "type", null, "Publication");
+
+        String authToken = getAuthToken(eperson.getEmail(), password);
+
+        InputStream pdf = getClass().getResourceAsStream("simple-article.pdf");
+        MockMultipartFile pdfFile = new MockMultipartFile("file", "/local/path/myfile.pdf", "application/pdf", pdf);
+
+        context.restoreAuthSystemState();
+
+        try {
+            getClient(authToken).perform(fileUpload("/api/submission/workspaceitems")
+                                .file(pdfFile))
+                                .andExpect(status().is(500));
+        } finally {
+            pdf.close();
+        }
     }
 
 }
