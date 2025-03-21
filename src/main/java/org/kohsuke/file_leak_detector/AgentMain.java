@@ -218,10 +218,20 @@ public class AgentMain {
                     // a file descriptor.
                     new CloseInterceptor("socketClose")
             ),
-            // Later versions of the JDK abstracted out the parts of PlainSocketImpl above into a super class
+            // Later versions of the JDK abstracted out the parts of PlainSocketImpl
             new ClassTransformSpec("java/net/AbstractPlainSocketImpl",
+                // this is where a new file descriptor is allocated.
+                // it'll occupy a socket even before it gets connected
                 new OpenSocketInterceptor("create", "(Z)V"),
+
+                // When a socket is accepted, it goes to "accept(SocketImpl s)"
+                // where 's' is the new socket and 'this' is the server socket
                 new AcceptInterceptor("accept","(Ljava/net/SocketImpl;)V"),
+
+                // file descriptor actually get closed in socketClose()
+                // socketPreClose() appears to do something similar, but if you read the source code
+                // of the native socketClose0() method, then you see that it actually doesn't close
+                // a file descriptor.
                 new CloseInterceptor("socketClose")
             ),
             new ClassTransformSpec("sun/nio/ch/SocketChannelImpl",
