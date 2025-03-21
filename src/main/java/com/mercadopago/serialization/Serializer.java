@@ -8,17 +8,17 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.MalformedJsonException;
 import com.mercadopago.net.MPResource;
-import com.mercadopago.net.MPResourceList;
 import com.mercadopago.resources.ResultsResourcesPage;
+import java.lang.reflect.Type;
+import com.mercadopago.net.MPResourceList;
 import java.io.IOException;
 import java.io.StringReader;
-import java.lang.reflect.Type;
 
 /** Serializer class, responsible for objects serialization and deserialization. */
 public class Serializer {
@@ -44,7 +44,7 @@ public class Serializer {
   }
 
   /**
-   * <<<<<<< HEAD Method responsible for deserialize objects to ResultsResourcesPage. =======  >>>>>>> release-v2
+   * Method responsible for deserialize objects to ResultsResourcesPage.
    *
    * @param clazz class.
    * @param jsonObject json object.
@@ -61,17 +61,16 @@ public class Serializer {
   /**
    * Method responsible for deserialize objects.
    *
-   * @param clazz clazz
-   * @param jsonObject jsonObject
-   * @param <T> type
-   * @return MPResourceList
+   * @param clazz class.
+   * @param jsonObject json object.
+   * @param <T> class type.
+   * @return object.
    */
-  public static <T extends MPResource> MPResourceList<T> deserializeListFromJson(
-      Class<T> clazz, String jsonObject) {
+  public static <T extends MPResource> MPResourceList<T> deserializeListFromJson(Class<T> clazz, String jsonObject) {
     MPResourceList<T> resourceList = new MPResourceList<>();
     JsonObject rootObject = JsonParser.parseString(jsonObject).getAsJsonObject();
     JsonArray jsonArray = getArrayFromJsonElement(rootObject);
-    for (int i = 0; i < jsonArray.size(); i++) {
+    for(int i=0; i < jsonArray.size(); i++) {
       T resource = GSON.fromJson(jsonArray.get(i), clazz);
       resourceList.add(resource);
     }
@@ -82,18 +81,19 @@ public class Serializer {
   /**
    * Method for getting a json array from a json element
    *
-   * @param jsonElement the jsonElement to be analyzed
-   * @return JsonArray
+   * @param jsonElement the jsonElement to be analized
+   * @return
    */
   static JsonArray getArrayFromJsonElement(JsonElement jsonElement) {
+    JsonArray jsonArray = null;
     if (jsonElement.isJsonArray()) {
-      return jsonElement.getAsJsonArray();
-    } else if (jsonElement.isJsonObject()
-        && ((JsonObject) jsonElement).get("results") != null
-        && ((JsonObject) jsonElement).get("results").isJsonArray()) {
-      return ((JsonObject) jsonElement).get("results").getAsJsonArray();
+      jsonArray = jsonElement.getAsJsonArray();
+    } else if (jsonElement.isJsonObject() &&
+        ((JsonObject) jsonElement).get("results") != null &&
+        ((JsonObject) jsonElement).get("results").isJsonArray()) {
+      jsonArray = ((JsonObject) jsonElement).get("results").getAsJsonArray();
     }
-    return null;
+    return jsonArray;
   }
 
   /**

@@ -1,5 +1,6 @@
 package com.mercadopago.net;
 
+import static com.mercadopago.MercadoPagoConfig.getStreamHandler;
 import static com.mercadopago.net.HttpStatus.BAD_REQUEST;
 import static com.mercadopago.net.HttpStatus.FORBIDDEN;
 import static com.mercadopago.net.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -16,11 +17,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.ConsoleHandler;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLPeerUnverifiedException;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -62,6 +63,12 @@ public class MPDefaultHttpClient implements MPHttpClient {
 
   private static final Logger LOGGER = Logger.getLogger(MPDefaultHttpClient.class.getName());
 
+  static {
+    StreamHandler streamHandler = getStreamHandler();
+    streamHandler.setLevel(MercadoPagoConfig.getLoggingLevel());
+    LOGGER.addHandler(streamHandler);
+  }
+
   private final HttpClient httpClient;
 
   /** MPDefaultHttpClient constructor. */
@@ -71,21 +78,33 @@ public class MPDefaultHttpClient implements MPHttpClient {
 
   /** MPDefaultHttpClient constructor for testing only. */
   protected MPDefaultHttpClient(HttpClient httpClient) {
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/f86264fd19a10fd46dc8cc6370f727952d54580c/src/main/java/com/mercadopago/net/MPDefaultHttpClient.java/left.java
+    this.httpClient = createHttpClient();
+||||||| /usr/src/app/output/mercadopago/sdk-java/f86264fd19a10fd46dc8cc6370f727952d54580c/src/main/java/com/mercadopago/net/MPDefaultHttpClient.java/base.java
     StreamHandler streamHandler = getStreamHandler();
     streamHandler.setLevel(MercadoPagoConfig.getLoggingLevel());
     LOGGER.addHandler(streamHandler);
-    if (Objects.isNull(httpClient)) {
+    this.httpClient = createHttpClient();
+=======
+    StreamHandler streamHandler = getStreamHandler();
+    streamHandler.setLevel(MercadoPagoConfig.getLoggingLevel());
+    LOGGER.addHandler(streamHandler);
+    if(Objects.isNull(httpClient)) {
       this.httpClient = createHttpClient();
-    } else {
+    }
+    else {
       this.httpClient = httpClient;
     }
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/f86264fd19a10fd46dc8cc6370f727952d54580c/src/main/java/com/mercadopago/net/MPDefaultHttpClient.java/right.java
   }
 
-  private StreamHandler getStreamHandler() {
-    if (Objects.isNull(MercadoPagoConfig.getLoggingHandler())) {
-      return new ConsoleHandler();
-    }
-    return MercadoPagoConfig.getLoggingHandler();
+  /**
+   * MPDefaultHttpClient constructor receiving httpClient.
+   *
+   * @param httpClient httpClient
+   */
+  public MPDefaultHttpClient(HttpClient httpClient) {
+    this.httpClient = httpClient;
   }
 
   private HttpClient createHttpClient() {
@@ -142,11 +161,11 @@ public class MPDefaultHttpClient implements MPHttpClient {
       int statusCode = response.getStatusLine().getStatusCode();
       MPResponse mpResponse = new MPResponse(statusCode, headers, responseBody);
 
-      if (!Serializer.isJsonValid(responseBody)) {
+      if(!Serializer.isJsonValid(responseBody)) {
         throw new MPApiException("Response body has malformed json", mpResponse);
       }
 
-      if (statusCode > 299) {
+      if(statusCode > 299) {
         throw new MPApiException("Api error. Check response for details", mpResponse);
       }
 
