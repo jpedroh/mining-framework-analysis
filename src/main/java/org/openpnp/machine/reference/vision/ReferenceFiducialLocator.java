@@ -1,5 +1,4 @@
 package org.openpnp.machine.reference.vision;
-
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,10 +6,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.swing.Action;
 import javax.swing.Icon;
-
 import org.apache.commons.io.IOUtils;
 import org.opencv.features2d.KeyPoint;
 import org.openpnp.gui.MainFrame;
@@ -46,138 +43,96 @@ import org.simpleframework.xml.Root;
  * Implements an algorithm for finding a set of fiducials on a board and returning the correct
  * orientation for the board.
  */
-@Root
-public class ReferenceFiducialLocator implements FiducialLocator {
-    @Element(required = false)
-    protected CvPipeline pipeline = createDefaultPipeline();
+@Root public class ReferenceFiducialLocator implements FiducialLocator {
+  @Element(required = false) protected CvPipeline pipeline = createDefaultPipeline();
 
-    @ElementMap(required = false)
-    protected Map<String, PartSettings> partSettingsByPartId = new HashMap<>();
-    
-    protected boolean useAffineTransform = false;
+  @ElementMap(required = false) protected Map<String, PartSettings> partSettingsByPartId = new HashMap<>();
 
-    @Attribute(required = false)
-    protected boolean enabledAveraging = false;
-    
-    @Attribute(required = false)
-    protected int repeatFiducialRecognition = 3;
-    
-    public Location locateBoard(BoardLocation boardLocation) throws Exception {
-        return locateBoard(boardLocation, false);
+  @Attribute(required = false) protected boolean 
+<<<<<<< /usr/src/app/output/openpnp/openpnp/c6bf9e1bc3f245d13a909271b1fbae387f75165d/src/main/java/org/openpnp/machine/reference/vision/ReferenceFiducialLocator.java/left.java
+  useAffineTransform = false
+=======
+  enabledAveraging = false
+>>>>>>> /usr/src/app/output/openpnp/openpnp/c6bf9e1bc3f245d13a909271b1fbae387f75165d/src/main/java/org/openpnp/machine/reference/vision/ReferenceFiducialLocator.java/right.java
+  ;
+
+  @Attribute(required = false) protected int repeatFiducialRecognition = 3;
+
+  public Location locateBoard(BoardLocation boardLocation) throws Exception {
+    return locateBoard(boardLocation, false);
+  }
+
+  public boolean isUseAffineTransform() {
+    return useAffineTransform;
+  }
+
+  public void setUseAffineTransform(boolean useAffineTransform) {
+    this.useAffineTransform = useAffineTransform;
+  }
+
+  public Location locateBoard(BoardLocation boardLocation, boolean checkPanel) throws Exception {
+    IdentifiableList<Placement> fiducials;
+    if (checkPanel) {
+      Panel panel = MainFrame.get().getJobTab().getJob().getPanels().get(boardLocation.getPanelId());
+      fiducials = panel.getFiducials();
+    } else {
+      fiducials = getFiducials(boardLocation);
     }
-    
-    public boolean isUseAffineTransform() {
-        return useAffineTransform;
+    if (fiducials.size() < 2) {
+      throw new Exception(String.format("The board side contains only %d placements marked as fiducials, but at least 2 are required.", fiducials.size()));
     }
-
-    public void setUseAffineTransform(boolean useAffineTransform) {
-        this.useAffineTransform = useAffineTransform;
+    boardLocation.setPlacementTransform(null);
+    if (useAffineTransform) {
+      Placement fid1 = fiducials.get(0);
+      Placement fid2 = fiducials.get(1);
+      Placement fid3 = fiducials.get(2);
+      Location fid1RealLoc = getFiducialLocation(boardLocation, fid1);
+      if (fid1RealLoc == null) {
+        throw new Exception("Unable to locate " + fid1.getId());
+      }
+      Location fid2RealLoc = getFiducialLocation(boardLocation, fid2);
+      if (fid2RealLoc == null) {
+        throw new Exception("Unable to locate " + fid2.getId());
+      }
+      Location fid3RealLoc = getFiducialLocation(boardLocation, fid3);
+      if (fid3RealLoc == null) {
+        throw new Exception("Unable to locate " + fid3.getId());
+      }
+      fid1RealLoc = fid1RealLoc.convertToUnits(LengthUnit.Millimeters);
+      fid2RealLoc = fid2RealLoc.convertToUnits(LengthUnit.Millimeters);
+      fid3RealLoc = fid3RealLoc.convertToUnits(LengthUnit.Millimeters);
+      Location fid1Loc = fid1.getLocation().convertToUnits(LengthUnit.Millimeters);
+      Location fid2Loc = fid2.getLocation().convertToUnits(LengthUnit.Millimeters);
+      Location fid3Loc = fid3.getLocation().convertToUnits(LengthUnit.Millimeters);
+      AffineTransform tx = Utils2D.deriveAffineTransform(fid1Loc.getX(), fid1Loc.getY(), fid2Loc.getX(), fid2Loc.getY(), fid3Loc.getX(), fid3Loc.getY(), fid1RealLoc.getX(), fid1RealLoc.getY(), fid2RealLoc.getX(), fid2RealLoc.getY(), fid3RealLoc.getX(), fid3RealLoc.getY());
+      boardLocation.setPlacementTransform(tx);
+      return boardLocation.getLocation();
+    } else {
+      List<Placement> mostDistant = getMostDistantPlacements(fiducials);
+      Placement placementA = mostDistant.get(0);
+      Placement placementB = mostDistant.get(1);
+      Logger.debug("Chose {} and {}", placementA.getId(), placementB.getId());
+      Location actualLocationA = getFiducialLocation(boardLocation, placementA);
+      if (actualLocationA == null) {
+        throw new Exception("Unable to locate first fiducial.");
+      }
+      Location actualLocationB = getFiducialLocation(boardLocation, placementB);
+      if (actualLocationB == null) {
+        throw new Exception("Unable to locate second fiducial.");
+      }
+      double expectedDistance = Math.abs(placementA.getLocation().getLinearDistanceTo(placementB.getLocation()));
+      double measuredDistance = Math.abs(actualLocationA.getLinearDistanceTo(actualLocationB));
+      Logger.debug("Distance between fids: expected {}, measured {}", expectedDistance, measuredDistance);
+      if (Math.abs(expectedDistance - measuredDistance) > expectedDistance * 0.01) {
+        throw new Exception("Located fiducials are more than 1% away from expected.");
+      }
+      Location location = Utils2D.calculateBoardLocation(boardLocation, placementA, placementB, actualLocationA, actualLocationB);
+      location = location.derive(null, null, boardLocation.getLocation().convertToUnits(location.getUnits()).getZ(), null);
+      return location;
     }
+  }
 
-    public Location locateBoard(BoardLocation boardLocation, boolean checkPanel) throws Exception {
-        IdentifiableList<Placement> fiducials;
-
-        if (checkPanel) {
-            Panel panel = MainFrame.get().getJobTab().getJob().getPanels()
-                    .get(boardLocation.getPanelId());
-            fiducials = panel.getFiducials();
-        }
-        else {
-            fiducials = getFiducials(boardLocation);
-        }
-
-
-        if (fiducials.size() < 2) {
-            throw new Exception(String.format(
-                    "The board side contains only %d placements marked as fiducials, but at least 2 are required.",
-                    fiducials.size()));
-        }
-
-        boardLocation.setPlacementTransform(null);
-        if (useAffineTransform) {
-            
-            Placement fid1 = fiducials.get(0);
-            Placement fid2 = fiducials.get(1);
-            Placement fid3 = fiducials.get(2);
-            
-            Location fid1RealLoc = getFiducialLocation(boardLocation, fid1);
-            if (fid1RealLoc == null) {
-                throw new Exception("Unable to locate " + fid1.getId());
-            }
-
-            Location fid2RealLoc = getFiducialLocation(boardLocation, fid2);
-            if (fid2RealLoc == null) {
-                throw new Exception("Unable to locate " + fid2.getId());
-            }
-
-            Location fid3RealLoc = getFiducialLocation(boardLocation, fid3);
-            if (fid3RealLoc == null) {
-                throw new Exception("Unable to locate " + fid3.getId());
-            }
-            
-            fid1RealLoc = fid1RealLoc.convertToUnits(LengthUnit.Millimeters);
-            fid2RealLoc = fid2RealLoc.convertToUnits(LengthUnit.Millimeters);
-            fid3RealLoc = fid3RealLoc.convertToUnits(LengthUnit.Millimeters);
-            
-            Location fid1Loc = fid1.getLocation().convertToUnits(LengthUnit.Millimeters);
-            Location fid2Loc = fid2.getLocation().convertToUnits(LengthUnit.Millimeters);
-            Location fid3Loc = fid3.getLocation().convertToUnits(LengthUnit.Millimeters);
-            
-            AffineTransform tx = Utils2D.deriveAffineTransform(
-                    fid1Loc.getX(), fid1Loc.getY(), 
-                    fid2Loc.getX(), fid2Loc.getY(), 
-                    fid3Loc.getX(), fid3Loc.getY(), 
-                    fid1RealLoc.getX(), fid1RealLoc.getY(), 
-                    fid2RealLoc.getX(), fid2RealLoc.getY(), 
-                    fid3RealLoc.getX(), fid3RealLoc.getY());
-            
-            boardLocation.setPlacementTransform(tx);
-            
-            return boardLocation.getLocation();
-        }
-        else {
-            // Find the two that are most distant from each other
-            List<Placement> mostDistant = getMostDistantPlacements(fiducials);
-    
-            Placement placementA = mostDistant.get(0);
-            Placement placementB = mostDistant.get(1);
-    
-            Logger.debug("Chose {} and {}", placementA.getId(), placementB.getId());
-    
-            // Run the fiducial check on each and get their actual locations
-            Location actualLocationA = getFiducialLocation(boardLocation, placementA);
-            if (actualLocationA == null) {
-                throw new Exception("Unable to locate first fiducial.");
-            }
-            Location actualLocationB = getFiducialLocation(boardLocation, placementB);
-            if (actualLocationB == null) {
-                throw new Exception("Unable to locate second fiducial.");
-            }
-    
-            // Calculate the linear distance between the ideal points and the
-            // located points. If they differ by more than a few percent we
-            // probably made a mistake.
-            double expectedDistance =
-                    Math.abs(placementA.getLocation().getLinearDistanceTo(placementB.getLocation()));
-            double measuredDistance = Math.abs(actualLocationA.getLinearDistanceTo(actualLocationB));
-            Logger.debug("Distance between fids: expected {}, measured {}", 
-                    expectedDistance, 
-                    measuredDistance);
-            if (Math.abs(expectedDistance - measuredDistance) > expectedDistance * 0.01) {
-                throw new Exception("Located fiducials are more than 1% away from expected.");
-            }
-            
-            Location location = Utils2D.calculateBoardLocation(boardLocation, placementA, placementB,
-                    actualLocationA, actualLocationB);
-    
-            location = location.derive(null, null,
-                    boardLocation.getLocation().convertToUnits(location.getUnits()).getZ(), null);
-            
-            return location;
-        }
-    }
-
-    /**
+  /**
      * Given a placement containing a fiducial, attempt to find the fiducial using the vision
      * system. The function first moves the camera to the ideal location of the fiducial based on
      * the board location. It then performs a template match against a template generated from the
@@ -189,11 +144,11 @@ public class ReferenceFiducialLocator implements FiducialLocator {
      * @return
      * @throws Exception
      */
-    public Location getHomeFiducialLocation(Location location, Part part) throws Exception {
-        return getFiducialLocation(location, part);
-    }
+  public Location getHomeFiducialLocation(Location location, Part part) throws Exception {
+    return getFiducialLocation(location, part);
+  }
 
-    /**
+  /**
      * Given a placement containing a fiducial, attempt to find the fiducial using the vision
      * system. The function first moves the camera to the ideal location of the fiducial based on
      * the board location. It then performs a template match against a template generated from the
@@ -205,294 +160,230 @@ public class ReferenceFiducialLocator implements FiducialLocator {
      * @return
      * @throws Exception
      */
-    private Location getFiducialLocation(BoardLocation boardLocation, Placement fid)
-            throws Exception {
-        Logger.debug("Locating {}", fid.getId());
-
-        Part part = fid.getPart();
-        if (part == null) {
-            throw new Exception(
-                    String.format("Fiducial %s does not have a valid part assigned.", fid.getId()));
-        }
-
-        Location location =
-                Utils2D.calculateBoardPlacementLocation(boardLocation, fid.getLocation());
-
-        return getFiducialLocation(location, part);
+  private Location getFiducialLocation(BoardLocation boardLocation, Placement fid) throws Exception {
+    Logger.debug("Locating {}", fid.getId());
+    Part part = fid.getPart();
+    if (part == null) {
+      throw new Exception(String.format("Fiducial %s does not have a valid part assigned.", fid.getId()));
     }
-    
-    private Location getFiducialLocation(Location location, Part part) throws Exception {
-        Camera camera = Configuration.get().getMachine().getDefaultHead().getDefaultCamera();
+    Location location = Utils2D.calculateBoardPlacementLocation(boardLocation, fid.getLocation());
+    return getFiducialLocation(location, part);
+  }
 
-        org.openpnp.model.Package pkg = part.getPackage();
-        if (pkg == null) {
-            throw new Exception(
-                    String.format("Part %s does not have a valid package assigned.", part.getId()));
-        }
-
-        Footprint footprint = pkg.getFootprint();
-        if (footprint == null) {
-            throw new Exception(String.format(
-                    "Package %s does not have a valid footprint. See https://github.com/openpnp/openpnp/wiki/Fiducials.",
-                    pkg.getId()));
-        }
-
-        if (footprint.getShape() == null) {
-            throw new Exception(String.format(
-                    "Package %s has an invalid or empty footprint.  See https://github.com/openpnp/openpnp/wiki/Fiducials.",
-                    pkg.getId()));
-        }
-        
-        int repeatFiducialRecognition = 3;
-        if ( this.repeatFiducialRecognition > 3 ) {
-        	repeatFiducialRecognition = this.repeatFiducialRecognition;
-        }
-
-        Logger.debug("Looking for {} at {}", part.getId(), location);
-        MovableUtils.moveToLocationAtSafeZ(camera, location);
-
-        PartSettings partSettings = getPartSettings(part);
-        List<Location> matchedLocations = new ArrayList<Location>();
-        
-        try (CvPipeline pipeline = partSettings.getPipeline()) {
-            MovableUtils.moveToLocationAtSafeZ(camera, location);
-
-            pipeline.setProperty("camera", camera);
-            pipeline.setProperty("part", part);
-            pipeline.setProperty("package", pkg);
-            pipeline.setProperty("footprint", footprint);
-            
-            for (int i = 0; i < repeatFiducialRecognition; i++) {
-                List<KeyPoint> keypoints;
-                try {
-                    // Perform vision operation
-                    pipeline.process();
-                    
-                    // Get the results
-                    keypoints = (List<KeyPoint>) pipeline.getResult(VisionUtils.PIPELINE_RESULTS_NAME).getModel();
-                }
-                catch (Exception e) {
-                    Logger.debug(e);
-                    return null;
-                }
-                
-                if (keypoints == null || keypoints.isEmpty()) {
-                    Logger.debug("No matches found!");
-                    return null;
-                }
-                
-                // Convert to Locations
-                List<Location> locations = new ArrayList<Location>();
-                for (KeyPoint keypoint : keypoints) {
-                    locations.add(VisionUtils.getPixelLocation(camera, keypoint.pt.x, keypoint.pt.y));
-                }
-                
-                // Sort by distance from center.
-                Collections.sort(locations, new Comparator<Location>() {
-                    @Override
-                    public int compare(Location o1, Location o2) {
-                        double d1 = o1.getLinearDistanceTo(camera.getLocation());
-                        double d2 = o2.getLinearDistanceTo(camera.getLocation());
-                        return Double.compare(d1, d2);
-                    }
-                });
-                
-                // And use the closest result
-                location = locations.get(0);
-                
-                Logger.debug("{} located at {}", part.getId(), location);
-                // Move to where we actually found the fid
-                camera.moveTo(location);
-    
-                if (i > 0) {
-                	//to average, keep a list of all matches except the first, since its probably most off
-                	matchedLocations.add(location);
-                }
-            
-                Logger.debug("{} located at {}", part.getId(), location);
-                // Move to where we actually found the fid
-                camera.moveTo(location);
-            }
-        }
-        
-        if (this.enabledAveraging && matchedLocations.size() >= 2) {
-            // the arithmetic average is calculated if user wishes to do so and there were at least
-            // 2 matches
-            double sumX = 0;
-            double sumY = 0;
-
-            for (Location matchedLocation : matchedLocations) {
-                sumX += matchedLocation.getX();
-                sumY += matchedLocation.getY();
-            }
-
-            // update the location to the arithmetic average
-            location = location.derive(sumX / matchedLocations.size(),
-                    sumY / matchedLocations.size(), null, null);
-
-            Logger.debug("{} averaged location is at {}", part.getId(), location);
-
-            camera.moveTo(location);
-        }
-        
-        return location;
+  private Location getFiducialLocation(Location location, Part part) throws Exception {
+    Camera camera = Configuration.get().getMachine().getDefaultHead().getDefaultCamera();
+    org.openpnp.model.Package pkg = part.getPackage();
+    if (pkg == null) {
+      throw new Exception(String.format("Part %s does not have a valid package assigned.", part.getId()));
     }
-    
-    /**
+    Footprint footprint = pkg.getFootprint();
+    if (footprint == null) {
+      throw new Exception(String.format("Package %s does not have a valid footprint. See https://github.com/openpnp/openpnp/wiki/Fiducials.", pkg.getId()));
+    }
+    if (footprint.getShape() == null) {
+      throw new Exception(String.format("Package %s has an invalid or empty footprint.  See https://github.com/openpnp/openpnp/wiki/Fiducials.", pkg.getId()));
+    }
+    int repeatFiducialRecognition = 3;
+    if (this.repeatFiducialRecognition > 3) {
+      repeatFiducialRecognition = this.repeatFiducialRecognition;
+    }
+    Logger.debug("Looking for {} at {}", part.getId(), location);
+    MovableUtils.moveToLocationAtSafeZ(camera, location);
+    PartSettings partSettings = getPartSettings(part);
+    List<Location> matchedLocations = new ArrayList<Location>();
+    try (CvPipeline pipeline = partSettings.getPipeline()) {
+      MovableUtils.moveToLocationAtSafeZ(camera, location);
+      pipeline.setProperty("camera", camera);
+      pipeline.setProperty("part", part);
+      pipeline.setProperty("package", pkg);
+      pipeline.setProperty("footprint", footprint);
+      for (int i = 0; i < repeatFiducialRecognition; i++) {
+        List<KeyPoint> keypoints;
+        try {
+          pipeline.process();
+          keypoints = (List<KeyPoint>) pipeline.getResult(VisionUtils.PIPELINE_RESULTS_NAME).getModel();
+        } catch (Exception e) {
+          Logger.debug(e);
+          return null;
+        }
+        if (keypoints == null || keypoints.isEmpty()) {
+          Logger.debug("No matches found!");
+          return null;
+        }
+        List<Location> locations = new ArrayList<Location>();
+        for (KeyPoint keypoint : keypoints) {
+          locations.add(VisionUtils.getPixelLocation(camera, keypoint.pt.x, keypoint.pt.y));
+        }
+        Collections.sort(locations, new Comparator<Location>() {
+          @Override public int compare(Location o1, Location o2) {
+            double d1 = o1.getLinearDistanceTo(camera.getLocation());
+            double d2 = o2.getLinearDistanceTo(camera.getLocation());
+            return Double.compare(d1, d2);
+          }
+        });
+        location = locations.get(0);
+        Logger.debug("{} located at {}", part.getId(), location);
+        camera.moveTo(location);
+        if (i > 0) {
+          matchedLocations.add(location);
+        }
+        Logger.debug("{} located at {}", part.getId(), location);
+        camera.moveTo(location);
+      }
+    }
+    if (this.enabledAveraging && matchedLocations.size() >= 2) {
+      double sumX = 0;
+      double sumY = 0;
+      for (Location matchedLocation : matchedLocations) {
+        sumX += matchedLocation.getX();
+        sumY += matchedLocation.getY();
+      }
+      location = location.derive(sumX / matchedLocations.size(), sumY / matchedLocations.size(), null, null);
+      Logger.debug("{} averaged location is at {}", part.getId(), location);
+      camera.moveTo(location);
+    }
+    return location;
+  }
+
+  /**
      * Given a List of Placements, find the two that are the most distant from each other.
      * 
      * @param fiducials
      * @return
      */
-    private static List<Placement> getMostDistantPlacements(List<Placement> fiducials) {
-        if (fiducials.size() < 2) {
-            return null;
+  private static List<Placement> getMostDistantPlacements(List<Placement> fiducials) {
+    if (fiducials.size() < 2) {
+      return null;
+    }
+    Placement maxA = null, maxB = null;
+    double max = 0;
+    for (Placement a : fiducials) {
+      for (Placement b : fiducials) {
+        if (a == b) {
+          continue;
         }
-        Placement maxA = null, maxB = null;
-        double max = 0;
-        for (Placement a : fiducials) {
-            for (Placement b : fiducials) {
-                if (a == b) {
-                    continue;
-                }
-                double d = Math.abs(a.getLocation().getLinearDistanceTo(b.getLocation()));
-                if (d > max) {
-                    maxA = a;
-                    maxB = b;
-                    max = d;
-                }
-            }
+        double d = Math.abs(a.getLocation().getLinearDistanceTo(b.getLocation()));
+        if (d > max) {
+          maxA = a;
+          maxB = b;
+          max = d;
         }
-        ArrayList<Placement> results = new ArrayList<>();
-        results.add(maxA);
-        results.add(maxB);
-        return results;
+      }
+    }
+    ArrayList<Placement> results = new ArrayList<>();
+    results.add(maxA);
+    results.add(maxB);
+    return results;
+  }
+
+  private static IdentifiableList<Placement> getFiducials(BoardLocation boardLocation) {
+    Board board = boardLocation.getBoard();
+    IdentifiableList<Placement> fiducials = new IdentifiableList<>();
+    for (Placement placement : board.getPlacements()) {
+      if (placement.getType() == Type.Fiducial && placement.getSide() == boardLocation.getSide()) {
+        fiducials.add(placement);
+      }
+    }
+    return fiducials;
+  }
+
+  public boolean isEnabledAveraging() {
+    return enabledAveraging;
+  }
+
+  public void setEnabledAveraging(boolean enabledAveraging) {
+    this.enabledAveraging = enabledAveraging;
+  }
+
+  public int getRepeatFiducialRecognition() {
+    return this.repeatFiducialRecognition;
+  }
+
+  public void setRepeatFiducialRecognition(int repeatFiducialRecognition) {
+    this.repeatFiducialRecognition = repeatFiducialRecognition;
+  }
+
+  public CvPipeline getPipeline() {
+    return pipeline;
+  }
+
+  public void setPipeline(CvPipeline pipeline) {
+    this.pipeline = pipeline;
+  }
+
+  public static CvPipeline createDefaultPipeline() {
+    try {
+      String xml = IOUtils.toString(ReferenceBottomVision.class.getResource("ReferenceFiducialLocator-DefaultPipeline.xml"));
+      return new CvPipeline(xml);
+    } catch (Exception e) {
+      throw new Error(e);
+    }
+  }
+
+  @Override public String getPropertySheetHolderTitle() {
+    return "Fiducal Locator";
+  }
+
+  @Override public PropertySheetHolder[] getChildPropertySheetHolders() {
+    return null;
+  }
+
+  @Override public PropertySheet[] getPropertySheets() {
+    return new PropertySheet[] { new PropertySheetWizardAdapter(new ReferenceFiducialLocatorConfigurationWizard(this)) };
+  }
+
+  @Override public Action[] getPropertySheetHolderActions() {
+    return null;
+  }
+
+  @Override public Icon getPropertySheetHolderIcon() {
+    return null;
+  }
+
+  public PartSettings getPartSettings(Part part) {
+    PartSettings partSettings = this.partSettingsByPartId.get(part.getId());
+    if (partSettings == null) {
+      partSettings = new PartSettings(this);
+      this.partSettingsByPartId.put(part.getId(), partSettings);
+    }
+    return partSettings;
+  }
+
+  public Map<String, PartSettings> getPartSettingsByPartId() {
+    return partSettingsByPartId;
+  }
+
+  @Override public Wizard getPartConfigurationWizard(Part part) {
+    PartSettings partSettings = getPartSettings(part);
+    try {
+      partSettings.getPipeline().setProperty("camera", VisionUtils.getBottomVisionCamera());
+    } catch (Exception e) {
+    }
+    return new ReferenceFiducialLocatorPartConfigurationWizard(this, part);
+  }
+
+  @Root public static class PartSettings {
+    @Attribute protected boolean enabled;
+
+    @Element protected CvPipeline pipeline;
+
+    public PartSettings() {
     }
 
-    private static IdentifiableList<Placement> getFiducials(BoardLocation boardLocation) {
-        Board board = boardLocation.getBoard();
-        IdentifiableList<Placement> fiducials = new IdentifiableList<>();
-        for (Placement placement : board.getPlacements()) {
-            if (placement.getType() == Type.Fiducial
-                    && placement.getSide() == boardLocation.getSide()) {
-                fiducials.add(placement);
-            }
-        }
-        return fiducials;
+    public PartSettings(ReferenceFiducialLocator fiducialLocator) {
+      try {
+        setPipeline(fiducialLocator.getPipeline().clone());
+      } catch (Exception e) {
+        throw new Error(e);
+      }
     }
 
-    public boolean isEnabledAveraging() {
-        return enabledAveraging;
-    }
-
-    public void setEnabledAveraging(boolean enabledAveraging) {
-        this.enabledAveraging = enabledAveraging;
-    }
-
-    public int getRepeatFiducialRecognition() {
-    	return this.repeatFiducialRecognition;
-    }
-    
-    public void setRepeatFiducialRecognition(int repeatFiducialRecognition) {
-        this.repeatFiducialRecognition = repeatFiducialRecognition;
-    }
-    
     public CvPipeline getPipeline() {
-        return pipeline;
+      return pipeline;
     }
 
     public void setPipeline(CvPipeline pipeline) {
-        this.pipeline = pipeline;
+      this.pipeline = pipeline;
     }
-    
-    public static CvPipeline createDefaultPipeline() {
-        try {
-            String xml = IOUtils.toString(ReferenceBottomVision.class
-                    .getResource("ReferenceFiducialLocator-DefaultPipeline.xml"));
-            return new CvPipeline(xml);
-        }
-        catch (Exception e) {
-            throw new Error(e);
-        }
-    }
-
-    @Override
-    public String getPropertySheetHolderTitle() {
-        return "Fiducal Locator";
-    }
-
-    @Override
-    public PropertySheetHolder[] getChildPropertySheetHolders() {
-        return null;
-    }
-
-    @Override
-    public PropertySheet[] getPropertySheets() {
-        return new PropertySheet[] {
-                new PropertySheetWizardAdapter(new ReferenceFiducialLocatorConfigurationWizard(this))};
-    }
-
-    @Override
-    public Action[] getPropertySheetHolderActions() {
-        return null;
-    }
-
-    @Override
-    public Icon getPropertySheetHolderIcon() {
-        return null;
-    }
-    
-    public PartSettings getPartSettings(Part part) {
-        PartSettings partSettings = this.partSettingsByPartId.get(part.getId());
-        if (partSettings == null) {
-            partSettings = new PartSettings(this);
-            this.partSettingsByPartId.put(part.getId(), partSettings);
-        }
-        return partSettings;
-    }
-
-    public Map<String, PartSettings> getPartSettingsByPartId() {
-        return partSettingsByPartId;
-    }
-
-    @Override
-    public Wizard getPartConfigurationWizard(Part part) {
-        PartSettings partSettings = getPartSettings(part);
-        try {
-            partSettings.getPipeline().setProperty("camera", VisionUtils.getBottomVisionCamera());
-        }
-        catch (Exception e) {
-        }
-        return new ReferenceFiducialLocatorPartConfigurationWizard(this, part);
-    }
-
-    @Root
-    public static class PartSettings {
-        @Attribute
-        protected boolean enabled;
-
-        @Element
-        protected CvPipeline pipeline;
-
-        public PartSettings() {
-
-        }
-
-        public PartSettings(ReferenceFiducialLocator fiducialLocator) {
-            try {
-                setPipeline(fiducialLocator.getPipeline().clone());
-            }
-            catch (Exception e) {
-                throw new Error(e);
-            }
-        }
-
-        public CvPipeline getPipeline() {
-            return pipeline;
-        }
-
-        public void setPipeline(CvPipeline pipeline) {
-            this.pipeline = pipeline;
-        }
-    }
+  }
 }
