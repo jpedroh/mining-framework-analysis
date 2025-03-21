@@ -391,7 +391,32 @@ public class IOUtils {
      * @since 2.8.0
      */
     public static void close(final Closeable... closeables) throws IOException {
+<<<<<<< /usr/src/app/output/apache/commons-io/0d1b15cd6e4982216c209c9a29114395173dfeda/src/main/java/org/apache/commons/io/IOUtils.java/left.java
+        if (closeables != null) {
+            List<IOException> exceptions = null;
+            for (final Closeable closeable : closeables) {
+                try {
+                    close(closeable);
+                } catch (IOException ex) {
+                    if (exceptions == null) {
+                        exceptions = new ArrayList<>();
+                    }
+                    exceptions.add(ex);
+                }
+            }
+            if (exceptions != null) {
+                throw new IOExceptionList(exceptions);
+            }
+        }
+||||||| /usr/src/app/output/apache/commons-io/0d1b15cd6e4982216c209c9a29114395173dfeda/src/main/java/org/apache/commons/io/IOUtils.java/base.java
+        if (closeables != null) {
+            for (final Closeable closeable : closeables) {
+                close(closeable);
+            }
+        }
+=======
         IOConsumer.forEach(closeables, IOUtils::close);
+>>>>>>> /usr/src/app/output/apache/commons-io/0d1b15cd6e4982216c209c9a29114395173dfeda/src/main/java/org/apache/commons/io/IOUtils.java/right.java
     }
 
     /**
