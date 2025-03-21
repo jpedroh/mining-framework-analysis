@@ -21,6 +21,7 @@ package org.reficio.p2;
 import aQute.bnd.osgi.Analyzer;
 import aQute.bnd.osgi.Jar;
 import org.apache.commons.io.FileUtils;
+
 import org.apache.commons.lang.StringUtils;
 import org.reficio.p2.bundler.ArtifactBundlerInstructions;
 import org.reficio.p2.bundler.ArtifactBundlerRequest;
@@ -28,7 +29,6 @@ import org.reficio.p2.bundler.impl.AquteHelper;
 import org.reficio.p2.resolver.maven.Artifact;
 import org.reficio.p2.resolver.maven.ResolvedArtifact;
 import org.reficio.p2.utils.BundleUtils;
-import org.reficio.p2.utils.JarUtils;
 import org.reficio.p2.utils.Utils;
 
 import java.io.File;
