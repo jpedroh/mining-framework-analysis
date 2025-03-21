@@ -728,6 +728,37 @@ public class SandboxTransformerTest {
         }
     }
 
+    @Test public void closureVariablesInLoopExpressions() throws Exception {
+        assertIntercept(
+                "for (int x = 0; ({s -> s})(true); x++) {\n" +
+                "    return true\n" +
+                "}\n" +
+                "return false\n",
+                true,
+                "Script1$_run_closure1.call(Boolean)");
+        assertIntercept(
+                "while (({s -> s})(true)) {\n" +
+                "    return true\n" +
+                "}\n" +
+                "return false\n",
+                true,
+                "Script2$_run_closure1.call(Boolean)");
+        assertIntercept(
+                "while (({it})(true)) {\n" +
+                "    return true\n" +
+                "}\n" +
+                "return false\n",
+                true,
+                "Script3$_run_closure1.call(Boolean)");
+    }
+
+    @Test public void forLoopDummyParameterIsNotDeclared() {
+        assertFailsWithSameException(
+                "for (int i = 0; i < 1; i++) {\n" +
+                "  println(forLoopDummyParameter)\n" +
+                "}\n");
+    }
+
     @Issue("SECURITY-2824")
     @Test
     public void sandboxInterceptsImplicitCastsMethodReturnValues() {
@@ -761,7 +792,9 @@ public class SandboxTransformerTest {
     }
 
     // https://github.com/jenkinsci/groovy-sandbox/issues/7 would allow these casts to be intercepted here, but for now,
+
     // we handle them in script-security's SandboxInterceptor
+
     @Ignore("These casts cannot be intercepted by groovy-sandbox itself without extensive modifications")
     @Issue("SECURITY-2824")
     @Test
@@ -1131,36 +1164,4 @@ public class SandboxTransformerTest {
                 "Script2.result=ArrayList",
                 "Script2.result");
     }
-
-    @Test public void closureVariablesInLoopExpressions() throws Exception {
-        assertIntercept(
-                "for (int x = 0; ({s -> s})(true); x++) {\n" +
-                "    return true\n" +
-                "}\n" +
-                "return false\n",
-                true,
-                "Script1$_run_closure1.call(Boolean)");
-        assertIntercept(
-                "while (({s -> s})(true)) {\n" +
-                "    return true\n" +
-                "}\n" +
-                "return false\n",
-                true,
-                "Script2$_run_closure1.call(Boolean)");
-        assertIntercept(
-                "while (({it})(true)) {\n" +
-                "    return true\n" +
-                "}\n" +
-                "return false\n",
-                true,
-                "Script3$_run_closure1.call(Boolean)");
-    }
-
-    @Test public void forLoopDummyParameterIsNotDeclared() {
-        assertFailsWithSameException(
-                "for (int i = 0; i < 1; i++) {\n" +
-                "  println(forLoopDummyParameter)\n" +
-                "}\n");
-    }
-
 }
