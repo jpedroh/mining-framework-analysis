@@ -44,6 +44,7 @@ public abstract class JsonGenerator
     /**
      * Accessor for finding out version of the bundle that provided this generator instance.
      */
+
     @Override
     public abstract Version version();
 
@@ -57,6 +58,7 @@ public abstract class JsonGenerator
      * Accessor for context object that provides information about low-level
      * logical position withing output token stream.
      */
+
     public abstract TokenStreamContext getOutputContext();
 
     /**
@@ -67,6 +69,7 @@ public abstract class JsonGenerator
      *
      * @since 3.0
      */
+
     public abstract ObjectWriteContext getObjectWriteContext();
 
     /**
@@ -84,6 +87,7 @@ public abstract class JsonGenerator
      * In general use of this accessor should be considered as
      * "last effort", i.e. only used if no other mechanism is applicable.
      */
+
     public Object getOutputTarget() {
         return null;
     }
@@ -104,6 +108,7 @@ public abstract class JsonGenerator
      * @return Amount of content buffered in internal units, if amount known and
      *    accessible; -1 if not accessible.
      */
+
     public int getOutputBuffered() {
         return -1;
     }
@@ -119,6 +124,7 @@ public abstract class JsonGenerator
      * The reason it is included here is that it can be stored and accessed hierarchically,
      * and gets passed through data-binding.
      */
+
     public abstract Object getCurrentValue();
 
     /**
@@ -127,6 +133,7 @@ public abstract class JsonGenerator
      *   getOutputContext().setCurrentValue(v);
      *</code>
      */
+
     public abstract void setCurrentValue(Object v);
 
     /*
@@ -141,6 +148,7 @@ public abstract class JsonGenerator
      *
      * @return Generator itself (this), to allow chaining
      */
+
     public abstract JsonGenerator enable(StreamWriteFeature f);
 
     /**
@@ -149,6 +157,7 @@ public abstract class JsonGenerator
      *
      * @return Generator itself (this), to allow chaining
      */
+
     public abstract JsonGenerator disable(StreamWriteFeature f);
 
     /**
@@ -157,6 +166,7 @@ public abstract class JsonGenerator
      *
      * @return Generator itself (this), to allow chaining
      */
+
     public final JsonGenerator configure(StreamWriteFeature f, boolean state) {
         if (state) enable(f); else disable(f);
         return this;
@@ -166,7 +176,19 @@ public abstract class JsonGenerator
      * Method for checking whether given feature is enabled.
      * Check {@link StreamWriteFeature} for list of available features.
      */
+
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/1755de36114aad71607db1b42c58714631d470a6/src/main/java/com/fasterxml/jackson/core/JsonGenerator.java/left.java
     public abstract boolean isEnabled(StreamWriteFeature f);
+||||||| /usr/src/app/output/fasterxml/jackson-core/1755de36114aad71607db1b42c58714631d470a6/src/main/java/com/fasterxml/jackson/core/JsonGenerator.java/base.java
+=======
+    public boolean isEnabled(StreamWriteFeature f) {
+        return isEnabled(f.mappedFeature());
+    }
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/1755de36114aad71607db1b42c58714631d470a6/src/main/java/com/fasterxml/jackson/core/JsonGenerator.java/right.java
+
+    /**
+     * @since 2.10
+     */
 
     /**
      * Bulk access method for getting state of all standard (non-dataformat-specific)

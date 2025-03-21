@@ -8,8 +8,16 @@ import com.fasterxml.jackson.core.*;
 public enum JsonWriteFeature
     implements FormatFeature
 {
-    // // // Support for non-standard JSON constructs: Quoting/escaping
+    // // // Support for non-standard JSON constructs: quoting
+
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/1755de36114aad71607db1b42c58714631d470a6/src/main/java/com/fasterxml/jackson/core/json/JsonWriteFeature.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-core/1755de36114aad71607db1b42c58714631d470a6/src/main/java/com/fasterxml/jackson/core/json/JsonWriteFeature.java/base.java
+    // // Quoting-related features
     
+=======
+    // // Quoting/ecsaping-related features
+    
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/1755de36114aad71607db1b42c58714631d470a6/src/main/java/com/fasterxml/jackson/core/json/JsonWriteFeature.java/right.java
     /**
      * Feature that determines whether JSON Object field names are
      * quoted using double-quotes, as specified by JSON specification
@@ -35,8 +43,11 @@ public enum JsonWriteFeature
      */
     WRITE_NAN_AS_STRINGS(true),
 
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/1755de36114aad71607db1b42c58714631d470a6/src/main/java/com/fasterxml/jackson/core/json/JsonWriteFeature.java/left.java
     // // // Support for escaping variations
     
+||||||| /usr/src/app/output/fasterxml/jackson-core/1755de36114aad71607db1b42c58714631d470a6/src/main/java/com/fasterxml/jackson/core/json/JsonWriteFeature.java/base.java
+=======
     /**
      * Feature that forces all regular number values to be written as JSON Strings,
      * instead of as JSON Numbers.
@@ -53,8 +64,10 @@ public enum JsonWriteFeature
      *<p>
      * Feature is disabled by default.
      */
-    WRITE_NUMBERS_AS_STRINGS(false),
-
+    @SuppressWarnings("deprecation")
+    WRITE_NUMBERS_AS_STRINGS(false, JsonGenerator.Feature.WRITE_NUMBERS_AS_STRINGS),
+    
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/1755de36114aad71607db1b42c58714631d470a6/src/main/java/com/fasterxml/jackson/core/json/JsonWriteFeature.java/right.java
     /**
      * Feature that specifies that all characters beyond 7-bit ASCII
      * range (i.e. code points of 128 and above) need to be output

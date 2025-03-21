@@ -22,10 +22,15 @@ public abstract class GeneratorBase extends JsonGenerator
     // // // Constants for validation messages
 
     protected final static String WRITE_BINARY = "write a binary value";
+
     protected final static String WRITE_BOOLEAN = "write a boolean value";
+
     protected final static String WRITE_NULL = "write a null";
+
     protected final static String WRITE_NUMBER = "write a number";
+
     protected final static String WRITE_RAW = "write a raw (unencoded) value";
+
     protected final static String WRITE_STRING = "write a string";
 
     /**
@@ -34,8 +39,9 @@ public abstract class GeneratorBase extends JsonGenerator
      * attack whereupon simple eng-notation with big scale is used to generate
      * huge "plain" serialization. See [core#315] for details.
      */
+
     protected final static int MAX_BIG_DECIMAL_SCALE = 9999;
-    
+
     /*
     /**********************************************************************
     /* Configuration
@@ -48,6 +54,7 @@ public abstract class GeneratorBase extends JsonGenerator
      *
      * @since 3.0
      */
+
     protected final ObjectWriteContext _objectWriteContext;
 
     /**
@@ -55,6 +62,7 @@ public abstract class GeneratorBase extends JsonGenerator
      * {@link com.fasterxml.jackson.core.StreamWriteFeature}s
      * are enabled.
      */
+
     protected int _streamWriteFeatures;
 
     /*
@@ -68,6 +76,7 @@ public abstract class GeneratorBase extends JsonGenerator
      * set when it is closed by an explicit call
      * ({@link #close}).
      */
+
     protected boolean _closed;
 
     /*
@@ -89,6 +98,7 @@ public abstract class GeneratorBase extends JsonGenerator
      */
 
     @Override public final boolean isEnabled(StreamWriteFeature f) { return (_streamWriteFeatures & f.getMask()) != 0; }
+
     @Override public int streamWriteFeatures() { return _streamWriteFeatures; }
 
     // public int formatWriteFeatures();
@@ -112,6 +122,7 @@ public abstract class GeneratorBase extends JsonGenerator
      */
 
     // public Object getCurrentValue();
+
     // public void setCurrentValue(Object v);
 
     // public TokenStreamContext getOutputContext();
@@ -125,8 +136,11 @@ public abstract class GeneratorBase extends JsonGenerator
      */
 
     //public void writeStartArray() throws IOException
+
     //public void writeEndArray() throws IOException
+
     //public void writeStartObject() throws IOException
+
     //public void writeEndObject() throws IOException
 
     @Override
@@ -246,7 +260,9 @@ public abstract class GeneratorBase extends JsonGenerator
      */
 
     @Override public abstract void flush() throws IOException;
+
     @Override public void close() throws IOException { _closed = true; }
+
     @Override public boolean isClosed() { return _closed; }
 
     /*
@@ -259,6 +275,7 @@ public abstract class GeneratorBase extends JsonGenerator
      * Method called to release any buffers generator may be holding,
      * once generator is being closed.
      */
+
     protected abstract void _releaseBuffers();
 
     /**
@@ -269,12 +286,14 @@ public abstract class GeneratorBase extends JsonGenerator
      * @param typeMsg Additional message used for generating exception message
      *   if value output is NOT legal in current generator output state.
      */
+
     protected abstract void _verifyValueWrite(String typeMsg) throws IOException;
 
     /**
      * Overridable factory method called to instantiate an appropriate {@link PrettyPrinter}
      * for case of "just use the default one", when {@link #useDefaultPrettyPrinter()} is called.
      */
+
     protected PrettyPrinter _constructDefaultPrettyPrinter() {
         return new DefaultPrettyPrinter();
     }
@@ -283,6 +302,7 @@ public abstract class GeneratorBase extends JsonGenerator
      * Helper method used to serialize a {@link java.math.BigDecimal} as a String,
      * for serialization, taking into account configuration settings
      */
+
     protected String _asString(BigDecimal value) throws IOException {
         if (StreamWriteFeature.WRITE_BIGDECIMAL_AS_PLAIN.enabledIn(_streamWriteFeatures)) {
             // 24-Aug-2016, tatu: [core#315] prevent possible DoS vector
@@ -303,6 +323,49 @@ scale, MAX_BIG_DECIMAL_SCALE, MAX_BIG_DECIMAL_SCALE));
     /**********************************************************************
      */
 
+    // // // Constants for validation messages (since 2.6)
+
+    /*
+    /**********************************************************
+    /* Configuration
+    /**********************************************************
+     */
+
+    /**
+     * @since 2.5
+     */
+
+    /*
+    /**********************************************************
+    /* Configuration
+    /**********************************************************
+     */
+
+    //public JsonGenerator configure(Feature f, boolean state) { }
+
+    //public void writeStartArray() throws IOException
+
+    //public void writeEndArray() throws IOException
+
+    //public void writeStartObject() throws IOException
+
+    //public void writeEndObject() throws IOException
+
+    //public abstract void writeString(String text) throws IOException;
+
+    //public abstract void writeString(char[] text, int offset, int len) throws IOException;
+
+    //public abstract void writeString(Reader reader, int len) throws IOException;
+
+    //public abstract void writeRaw(String text) throws IOException,;
+
+    //public abstract void writeRaw(char[] text, int offset, int len) throws IOException;
+
+    // Not implemented at this level, added as placeholders
+
+    /**
+     * @since 2.5
+     */
     protected final int _decodeSurrogate(int surr1, int surr2) throws IOException
     {
         // First is known to be valid, but how about the other?
