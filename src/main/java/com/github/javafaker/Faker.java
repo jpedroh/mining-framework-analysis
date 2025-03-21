@@ -93,8 +93,8 @@ public class Faker {
     private final Relationships relationships;
     private final Nation nation;
     private final Dune dune;
-    private final AquaTeenHungerForce aquaTeenHungerForce;
     private final ProgrammingLanguage programmingLanguage;
+    private final AquaTeenHungerForce aquaTeenHungerForce;
 
     public Faker() {
         this(Locale.ENGLISH);
@@ -189,8 +189,12 @@ public class Faker {
         this.relationships = new Relationships(this);
         this.nation = new Nation(this);
         this.dune = new Dune(this);
-        this.aquaTeenHungerForce = new AquaTeenHungerForce(this);
+<<<<<<< /usr/src/app/output/dius/java-faker/a4cf5b3822f29204fc4e9db192007df0b61e4bb8/src/main/java/com/github/javafaker/Faker.java/left.java
         this.programmingLanguage = new ProgrammingLanguage(this);
+||||||| /usr/src/app/output/dius/java-faker/a4cf5b3822f29204fc4e9db192007df0b61e4bb8/src/main/java/com/github/javafaker/Faker.java/base.java
+=======
+        this.aquaTeenHungerForce = new AquaTeenHungerForce(this);
+>>>>>>> /usr/src/app/output/dius/java-faker/a4cf5b3822f29204fc4e9db192007df0b61e4bb8/src/main/java/com/github/javafaker/Faker.java/right.java
     }
 
     /**
@@ -613,14 +617,13 @@ public class Faker {
         return dune;
     }
 
-    public AquaTeenHungerForce aquaTeenHungerForce() {
-        return aquaTeenHungerForce;
-    }
-
     public ProgrammingLanguage programmingLanguage() {
         return programmingLanguage;
     }
-
+    public AquaTeenHungerForce aquaTeenHungerForce() {
+        return aquaTeenHungerForce;
+    }
+    
     public String resolve(String key) {
         return this.fakeValuesService.resolve(key, this, this);
     }
