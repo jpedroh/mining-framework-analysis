@@ -58,10 +58,6 @@ import opennlp.tools.util.PlainTextByLineStream;
  */
 public class EvalitaNameSampleStream implements ObjectStream<NameSample> {
 
-  public enum LANGUAGE {
-    IT
-  }
-
   public static final int GENERATE_PERSON_ENTITIES = 0x01;
   public static final int GENERATE_ORGANIZATION_ENTITIES = 0x01 << 1;
   public static final int GENERATE_LOCATION_ENTITIES = 0x01 << 2;
@@ -219,5 +215,8 @@ public class EvalitaNameSampleStream implements ObjectStream<NameSample> {
     lineStream.close();
   }
 
+  public enum LANGUAGE {
+    IT
+  }
 }
 

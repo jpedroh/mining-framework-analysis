@@ -330,7 +330,7 @@ public abstract class BaseModel implements ArtifactProvider, Serializable {
     int extensionIndex = entry.lastIndexOf('.') + 1;
 
     if (extensionIndex >= entry.length())
-        throw new InvalidFormatException("Entry name must have type extension: " + entry);
+      throw new InvalidFormatException("Entry name must have type extension: " + entry);
 
     return entry.substring(extensionIndex);
   }
