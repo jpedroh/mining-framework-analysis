@@ -885,7 +885,13 @@ public class Configuration {
             "clazz",
             "parameter"
         })
+<<<<<<< /usr/src/app/output/lyncode/xoai/fe6c4bc520749bad20a6d65db9949a933e5fa34e/src/main/java/com/lyncode/xoai/dataprovider/xml/xoaiconfig/Configuration.java/left.java
+        public static class Filter implements Referable {
+||||||| /usr/src/app/output/lyncode/xoai/fe6c4bc520749bad20a6d65db9949a933e5fa34e/src/main/java/com/lyncode/xoai/dataprovider/xml/xoaiconfig/Configuration.java/base.java
+        public static class Filter {
+=======
         public static class CustomFilter {
+>>>>>>> /usr/src/app/output/lyncode/xoai/fe6c4bc520749bad20a6d65db9949a933e5fa34e/src/main/java/com/lyncode/xoai/dataprovider/xml/xoaiconfig/Configuration.java/right.java
 
             @XmlElement(name = "Class", required = true)
             protected String clazz;
@@ -1162,7 +1168,7 @@ public class Configuration {
             "schemaLocation",
             "filter"
         })
-        public static class Format {
+        public static class Format implements Referable {
 
             @XmlElement(name = "Prefix", required = true)
             protected String prefix;
@@ -1674,7 +1680,7 @@ public class Configuration {
         @XmlType(name = "", propOrder = {
             "xslt"
         })
-        public static class Transformer {
+        public static class Transformer implements Referable {
 
             @XmlElement(name = "XSLT", required = true)
             protected String xslt;
