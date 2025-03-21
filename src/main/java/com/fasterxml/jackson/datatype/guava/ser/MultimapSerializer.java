@@ -19,15 +19,10 @@ import com.fasterxml.jackson.databind.type.MapLikeType;
 import com.google.common.collect.Multimap;
 
 /**
- * Serializer for Guava's {@link Multimap} values. Output format encloses all
- * value sets in JSON Array, regardless of number of values; this to reduce
- * complexity (and inaccuracy) of trying to handle cases where values themselves
- * would be serialized as arrays (in which cases determining whether given array
- * is a wrapper or value gets complicated and unreliable).
  *<p>
  * Missing features, compared to standard Java Maps:
  *<ul>
- *  <li>Inclusion checks for content entries (non-null, non-empty)
+ *  <li>Inclusion for content entries (non-null, non-empty)
  *   </li>
  *  <li>Sorting of entries
  *   </li>
@@ -40,9 +35,13 @@ public class MultimapSerializer
     private static final long serialVersionUID = 1L;
 
     private final MapLikeType _type;
+
     private final BeanProperty _property;
+
     private final JsonSerializer<Object> _keySerializer;
+
     private final TypeSerializer _valueTypeSerializer;
+
     private final JsonSerializer<Object> _valueSerializer;
 
     /**
@@ -50,6 +49,7 @@ public class MultimapSerializer
      *
      * @since 2.5
      */
+
     protected final Set<String> _ignoredEntries;
 
     /**
@@ -58,6 +58,7 @@ public class MultimapSerializer
      *
      * @since 2.5
      */
+
     protected PropertySerializerMap _dynamicValueSerializers;
 
     /**
@@ -65,6 +66,7 @@ public class MultimapSerializer
      *
      * @since 2.5
      */
+
     protected final Object _filterId;
 
     /**
@@ -75,8 +77,9 @@ public class MultimapSerializer
      *
      * @since 2.5
      */
+
     protected final boolean _sortKeys;
-    
+
     public MultimapSerializer(MapLikeType type, BeanDescription beanDesc,
             JsonSerializer<Object> keySerializer, TypeSerializer vts, JsonSerializer<Object> valueSerializer,
             Set<String> ignoredEntries, Object filterId)
@@ -97,6 +100,7 @@ public class MultimapSerializer
     /**
      * @since 2.5
      */
+
     @SuppressWarnings("unchecked")
     protected MultimapSerializer(MultimapSerializer src, BeanProperty property,
                 JsonSerializer<?> keySerializer, TypeSerializer vts, JsonSerializer<?> valueSerializer,
@@ -215,7 +219,7 @@ public class MultimapSerializer
     /* Accessors for ContainerSerializer
     /**********************************************************
      */
-    
+
     @Override
     public JsonSerializer<?> getContentSerializer() {
         return _valueSerializer;
@@ -235,13 +239,13 @@ public class MultimapSerializer
     public boolean isEmpty(Multimap<?,?> map) {
         return map.isEmpty();
     }
-    
+
     /*
     /**********************************************************
     /* Post-processing (contextualization)
     /**********************************************************
      */
-    
+
     @Override
     public void serialize(Multimap<?, ?> value, JsonGenerator gen, SerializerProvider provider)
         throws IOException
@@ -259,6 +263,7 @@ public class MultimapSerializer
         gen.writeEndObject();
     }
 
+<<<<<<< /usr/src/app/output/fasterxml/jackson-datatype-guava/3ee74a3b1dfa156c398cf910fda03bd37cc40b59/src/main/java/com/fasterxml/jackson/datatype/guava/ser/MultimapSerializer.java/left.java
     @Override
     public void serializeWithType(Multimap<?,?> value, JsonGenerator gen, SerializerProvider provider,
             TypeSerializer typeSer)
@@ -275,6 +280,18 @@ public class MultimapSerializer
         }
         typeSer.writeTypeSuffixForObject(value, gen);
     }
+||||||| /usr/src/app/output/fasterxml/jackson-datatype-guava/3ee74a3b1dfa156c398cf910fda03bd37cc40b59/src/main/java/com/fasterxml/jackson/datatype/guava/ser/MultimapSerializer.java/base.java
+=======
+    @Override
+    public void serializeWithType(Multimap<?,?> value, JsonGenerator gen, SerializerProvider provider,
+            TypeSerializer typeSer)
+        throws IOException, JsonGenerationException
+    {
+        typeSer.writeTypePrefixForObject(value, gen);
+        serializeFields(value, gen, provider);
+        typeSer.writeTypeSuffixForObject(value, gen);
+    }
+>>>>>>> /usr/src/app/output/fasterxml/jackson-datatype-guava/3ee74a3b1dfa156c398cf910fda03bd37cc40b59/src/main/java/com/fasterxml/jackson/datatype/guava/ser/MultimapSerializer.java/right.java
 
     private final void serializeFields(Multimap<?, ?> mmap, JsonGenerator gen, SerializerProvider provider)
             throws IOException
@@ -296,10 +313,6 @@ public class MultimapSerializer
             // note: value is a List, but generic type is for contents... so:
             gen.writeStartArray();
             for (Object vv : entry.getValue()) {
-                if (vv == null) {
-                    provider.defaultSerializeNull(gen);
-                    continue;
-                }
                 JsonSerializer<Object> valueSer = _valueSerializer;
                 if (valueSer == null) {
                     Class<?> cc = vv.getClass();
@@ -328,14 +341,7 @@ public class MultimapSerializer
                 continue;
             }
             Collection<?> value = entry.getValue();
-            JsonSerializer<Object> valueSer;
-            if (value == null) {
-                // !!! TODO: null suppression?
-                valueSer = provider.getDefaultNullValueSerializer();
-            } else {
-                valueSer = _valueSerializer;
-            }
-            prop.reset(key, _keySerializer, valueSer);
+            prop.reset(key, _keySerializer, _valueSerializer);
             try {
                 filter.serializeAsField(value, gen, provider, prop);
             } catch (Exception e) {
@@ -344,7 +350,7 @@ public class MultimapSerializer
             }
         }
     }
-    
+
     /*
     /**********************************************************
     /* Schema related functionality
@@ -373,7 +379,7 @@ public class MultimapSerializer
     /* Internal helper methods
     /**********************************************************
      */
-    
+
     protected final JsonSerializer<Object> _findAndAddDynamic(PropertySerializerMap map,
             Class<?> type, SerializerProvider provider) throws JsonMappingException
     {
@@ -394,4 +400,16 @@ public class MultimapSerializer
         }
         return result.serializer;
     }
+
+    /*
+    /**********************************************************
+    /* Post-processing (contextualization)
+    /**********************************************************
+     */
+
+    /*
+    /**********************************************************
+    /* Post-processing (contextualization)
+    /**********************************************************
+     */
 }
