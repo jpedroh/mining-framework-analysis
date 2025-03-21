@@ -330,6 +330,11 @@ public class Root extends SpanSplitNode{
         }
         treeChanged = false;
     }
+    
+    @Override
+    public void onSpanResize(){
+    	getStation().updateBounds();
+    }
 
     @Override
     public void setBounds( double x, double y, double width, double height, double factorW, double factorH, boolean updateComponentBounds ){
@@ -337,11 +342,6 @@ public class Root extends SpanSplitNode{
     	treeChanged = false;
     }
     
-    @Override
-    public void onSpanResize(){
-    	getStation().updateBounds();
-    }
-
     @Override
     public PutInfo getPut( int x, int y, double factorW, double factorH, Dockable drop ) {
         if( !getBounds().contains( x, y ))

@@ -898,6 +898,9 @@ public class ScreenDockStation extends AbstractDockStation {
     	return result;
     }
     
+    public StationDropOperation prepareDrop( int x, int y, int titleX, int titleY, Dockable dockable ) {
+        return prepare( x, y, titleX, titleY, dockable );
+    }
     public StationDropOperation prepareDrop( StationDropItem item ){
         return prepare( item, item.getDockable().getDockParent() != this );
     }
@@ -924,15 +927,15 @@ public class ScreenDockStation extends AbstractDockStation {
     	return dragInfo;
     }
     
-    public StationDropOperation prepare( StationDropItem item, boolean drop ) {
+    public StationDropOperation prepare( StationDropItem item ) {
     	DropInfo dropInfo = new DropInfo();
-
-        dropInfo.x = item.getMouseX();
+        
+    	dropInfo.x = item.getMouseX();
         dropInfo.y = item.getMouseY();
         dropInfo.titleX = item.getTitleX();
         dropInfo.titleY = item.getTitleY();
         dropInfo.dockable = item.getDockable();
-        dropInfo.move = !drop;
+        dropInfo.move = dockable.getDockParent() == this;
         
         Enforcement force = Enforcement.HARD;
         dropInfo.combine = searchCombineDockable( dropInfo.x, dropInfo.y, dropInfo.dockable, true );

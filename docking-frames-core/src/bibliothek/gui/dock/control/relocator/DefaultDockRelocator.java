@@ -262,42 +262,45 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
      */
     protected RelocateOperation preparePut( int mouseX, int mouseY, int titleX, int titleY, Dockable dockable ){
         List<DockStation> list = listStationsOrdered( mouseX, mouseY, dockable );
-
+<<<<<<< /usr/src/app/output/benoker/dockingframes/928dc5c2f90afc62f8a1b8219859401fffd65bca/docking-frames-core/src/bibliothek/gui/dock/control/relocator/DefaultDockRelocator.java/left.java
         Inserter inserter = getInserter();
+||||||| /usr/src/app/output/benoker/dockingframes/928dc5c2f90afc62f8a1b8219859401fffd65bca/docking-frames-core/src/bibliothek/gui/dock/control/relocator/DefaultDockRelocator.java/base.java
+=======
         StationDropItem item = createStationDropItem( mouseX, mouseY, titleX, titleY, dockable );
-
+>>>>>>> /usr/src/app/output/benoker/dockingframes/928dc5c2f90afc62f8a1b8219859401fffd65bca/docking-frames-core/src/bibliothek/gui/dock/control/relocator/DefaultDockRelocator.java/right.java
+        
         for( DockStation station : list ){
-        	StationDropOperation operation = null;
-        	DefaultInserterSource inserterSource = new DefaultInserterSource( station, item );
-        	
-        	if( inserter != null ){
-        		operation = inserter.before( inserterSource );
-        	}
-        	if( operation == null ){
-        		operation = station.prepareDrop( item );
-        		if( inserter != null ){
-        			inserterSource.setOperation( operation );
-        			operation = inserter.after( inserterSource );
-        			if( operation == null ){
-        				operation = inserterSource.getOperation();
-        			}
-        		}
-        	}
-        	
-        	RelocateOperation result = null;
-        	
-        	boolean merge = canMerge( operation, station, dockable );
+    	StationDropOperation operation = null;
+    	DefaultInserterSource inserterSource = new DefaultInserterSource( station, dockable, mouseX, mouseY, titleX, titleY );
+    	
+    	if( inserter != null ){
+    		operation = inserter.before( inserterSource );
+    	}
+    	if( operation == null ){
+    		operation = station.prepareDrop( item );
+    		if( inserter != null ){
+    			inserterSource.setOperation( operation );
+    			operation = inserter.after( inserterSource );
+    			if( operation == null ){
+    				operation = inserterSource.getOperation();
+    			}
+    		}
+    	}
+    	
+    	RelocateOperation result = null;
+    	
+    	boolean merge = canMerge( operation, station, dockable );
 
-        	if( operation != null ){
-        		if( merge ){
-        			result = new MergeOperation( getController(), getMerger(), station, operation );
-        		}
-        		else{
-        			result = new DropOperation( getController(), station, operation );
-        		}
-        	}
-        	
-        	if( result != null ){
+    	if( operation != null ){
+    		if( merge ){
+    			result = new MergeOperation( getController(), getMerger(), station, operation );
+    		}
+    		else{
+    			result = new DropOperation( getController(), station, operation );
+    		}
+    	}
+    	
+    	if( result != null ){
 	        	DefaultDockRelocatorEvent event = new DefaultDockRelocatorEvent( getController(), dockable, result.getImplicit( dockable ), station );
 	        	fireSearched( event );
 	        	
@@ -310,8 +313,8 @@ public class DefaultDockRelocator extends AbstractDockRelocator{
 	        	}
 
 	        	return result;
-        	}
-        }
+    	}
+    }
         
         return null;
     }

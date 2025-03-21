@@ -286,9 +286,15 @@ public class Leaf extends SpanSplitNode{
     }
     
     @Override
-    public void updateBounds( double x, double y, double width, double height, double factorW, double factorH, boolean components ) {
-        super.updateBounds( x, y, width, height, factorW, factorH, components );
+    public void setBounds( double x, double y, double width, double height, double factorW, double factorH, boolean updateComponentBounds ){
+        super.setBounds( x, y, width, height, factorW, factorH, updateComponentBounds );
+<<<<<<< /usr/src/app/output/benoker/dockingframes/928dc5c2f90afc62f8a1b8219859401fffd65bca/docking-frames-core/src/bibliothek/gui/dock/station/split/Leaf.java/left.java
+        if( updateComponentBounds && displayer != null && (fullscreen == null || displayer != fullscreen.getDisplayer() )){
+||||||| /usr/src/app/output/benoker/dockingframes/928dc5c2f90afc62f8a1b8219859401fffd65bca/docking-frames-core/src/bibliothek/gui/dock/station/split/Leaf.java/base.java
+        if( components && displayer != null && (fullscreen == null || displayer != fullscreen.getDisplayer() )){
+=======
         if( components ){
+>>>>>>> /usr/src/app/output/benoker/dockingframes/928dc5c2f90afc62f8a1b8219859401fffd65bca/docking-frames-core/src/bibliothek/gui/dock/station/split/Leaf.java/right.java
         	resetDisplayerBounds();
         }
     }
