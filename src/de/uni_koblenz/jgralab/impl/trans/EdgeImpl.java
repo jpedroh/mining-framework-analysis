@@ -251,8 +251,15 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	public void setIncidentVertex(Vertex v) {
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/d530577887bef4780cb227f3724bee93a2684214/src/de/uni_koblenz/jgralab/impl/trans/EdgeImpl.java/left.java
+			incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(this,
+					(VertexBaseImpl) v);
+||||||| /usr/src/app/output/jgralab/jgralab/d530577887bef4780cb227f3724bee93a2684214/src/de/uni_koblenz/jgralab/impl/trans/EdgeImpl.java/base.java
+			incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(this, v);
+=======
 			incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(this,
 					v, "$incidentVertex");
+>>>>>>> /usr/src/app/output/jgralab/jgralab/d530577887bef4780cb227f3724bee93a2684214/src/de/uni_koblenz/jgralab/impl/trans/EdgeImpl.java/right.java
 		} else {
 			// initialization here
 			if (incidentVertex == null) {
@@ -269,7 +276,13 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.nextIncidence = new VersionedReferenceImpl<IncidenceImpl>(
+<<<<<<< /usr/src/app/output/jgralab/jgralab/d530577887bef4780cb227f3724bee93a2684214/src/de/uni_koblenz/jgralab/impl/trans/EdgeImpl.java/left.java
+					this, (IncidenceImpl) nextIncidence);
+||||||| /usr/src/app/output/jgralab/jgralab/d530577887bef4780cb227f3724bee93a2684214/src/de/uni_koblenz/jgralab/impl/trans/EdgeImpl.java/base.java
+					this, nextIncidence);
+=======
 					this, nextIncidence, "$nextIncidence");
+>>>>>>> /usr/src/app/output/jgralab/jgralab/d530577887bef4780cb227f3724bee93a2684214/src/de/uni_koblenz/jgralab/impl/trans/EdgeImpl.java/right.java
 		} else {
 			TransactionImpl transaction = (TransactionImpl) graph
 					.getCurrentTransaction();
@@ -307,7 +320,13 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.prevIncidence = new VersionedReferenceImpl<IncidenceImpl>(
+<<<<<<< /usr/src/app/output/jgralab/jgralab/d530577887bef4780cb227f3724bee93a2684214/src/de/uni_koblenz/jgralab/impl/trans/EdgeImpl.java/left.java
+					this, (IncidenceImpl) prevIncidence);
+||||||| /usr/src/app/output/jgralab/jgralab/d530577887bef4780cb227f3724bee93a2684214/src/de/uni_koblenz/jgralab/impl/trans/EdgeImpl.java/base.java
+					this, prevIncidence);
+=======
 					this, prevIncidence, "$prevIncidence");
+>>>>>>> /usr/src/app/output/jgralab/jgralab/d530577887bef4780cb227f3724bee93a2684214/src/de/uni_koblenz/jgralab/impl/trans/EdgeImpl.java/right.java
 		} else {
 			TransactionImpl transaction = (TransactionImpl) graph
 					.getCurrentTransaction();
