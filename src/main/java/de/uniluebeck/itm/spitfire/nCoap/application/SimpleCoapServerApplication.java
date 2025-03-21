@@ -50,11 +50,26 @@ public class SimpleCoapServerApplication extends CoapServerApplication {
      */
     @Override
     public CoapResponse receiveCoapRequest(CoapRequest coapRequest) {
-//        try {
-//            wait(5000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+<<<<<<< /usr/src/app/output/okleine/ncoap/805f73110b467c848fed1ff26471fff425614f01/src/main/java/de/uniluebeck/itm/spitfire/nCoap/application/SimpleCoapServerApplication.java/left.java
+        log.debug("[SimpleCoapServerApplication] Received request for " + coapRequest.getTargetUri());
+        try {
+           Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+||||||| /usr/src/app/output/okleine/ncoap/805f73110b467c848fed1ff26471fff425614f01/src/main/java/de/uniluebeck/itm/spitfire/nCoap/application/SimpleCoapServerApplication.java/base.java
+        try {
+            wait(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+=======
+    //        try {
+    //            wait(5000);
+    //        } catch (InterruptedException e) {
+    //            e.printStackTrace();
+    //        }
+>>>>>>> /usr/src/app/output/okleine/ncoap/805f73110b467c848fed1ff26471fff425614f01/src/main/java/de/uniluebeck/itm/spitfire/nCoap/application/SimpleCoapServerApplication.java/right.java
 
         CoapResponse coapResponse = new CoapResponse(Code.CONTENT_205);
         try {

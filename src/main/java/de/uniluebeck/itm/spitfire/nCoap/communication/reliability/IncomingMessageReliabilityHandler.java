@@ -96,23 +96,32 @@ public class IncomingMessageReliabilityHandler extends SimpleChannelHandler {
 
         if(coapMessage instanceof CoapRequest){
 
-            boolean inserted;
+            boolean requestIsNew;
             synchronized (incomingMessagesToBeConfirmed){
                 if(!incomingMessagesToBeConfirmed.contains(me.getRemoteAddress(), coapMessage.getMessageID())){
 
+<<<<<<< /usr/src/app/output/okleine/ncoap/805f73110b467c848fed1ff26471fff425614f01/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/left.java
+                    requestIsNew = (incomingMessagesToBeConfirmed.put((InetSocketAddress) me.getRemoteAddress(),
+                                                       coapMessage.getMessageID(), false) == null);
+||||||| /usr/src/app/output/okleine/ncoap/805f73110b467c848fed1ff26471fff425614f01/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/base.java
+                    inserted = incomingMessagesToBeConfirmed.put((InetSocketAddress) me.getRemoteAddress(),
+                                                       coapMessage.getMessageID(), false);
+=======
                     incomingMessagesToBeConfirmed.put((InetSocketAddress) me.getRemoteAddress(),
                                                    coapMessage.getMessageID(), false);
+>>>>>>> /usr/src/app/output/okleine/ncoap/805f73110b467c848fed1ff26471fff425614f01/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/reliability/IncomingMessageReliabilityHandler.java/right.java
                 }
                 inserted = true;
             }
 
             if(log.isDebugEnabled()){
                 log.debug("[IncomingMessageReliabilityHandler] New confirmable request with message ID " +
-                        coapMessage.getMessageID() + " from " + me.getRemoteAddress() + " received (duplicate = " +
-                        !inserted + ")");
+                        coapMessage.getMessageID() + " from " + me.getRemoteAddress() + " received " +
+                        "(duplicate = " + !requestIsNew + ").");
             }
+
             //The value of "inserted" is true if the incoming message was no duplicate
-            if(inserted){
+            if(requestIsNew){
                 //Schedule empty ACK if there was no piggy backed ACK within 2 seconds
                 EmptyACKSender emptyACKSender = new EmptyACKSender((InetSocketAddress) me.getRemoteAddress(),
                                                                     coapMessage.getMessageID());

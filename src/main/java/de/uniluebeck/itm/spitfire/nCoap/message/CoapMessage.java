@@ -93,9 +93,8 @@ public abstract class CoapMessage {
      */
     public byte[] getToken() {
         try{
-            return optionList.getOption(OptionRegistry.OptionName.TOKEN)
-                         .get(0)
-                         .getValue();
+            Option result = getOption(OptionRegistry.OptionName.TOKEN).get(0);
+            return result.getValue();
         }
         catch(IndexOutOfBoundsException e){
             return new byte[0];
