@@ -35,7 +35,34 @@ public abstract class AbstractSolver<GenericSolutionType> implements Solver<Gene
      * {@link #run()}.
      */
     public AbstractSolver() {
+<<<<<<< /usr/src/app/output/mh4j/metaheuristics4java/78b481eb40f47dee1a6999abd42abf74ce1bba9e/MetaHeuristics4Java/src/main/java/de/mh4j/solver/AbstractSolver.java/left.java
         randomizer = RNGGenerator.createRandomNumberGenerator();
+||||||| /usr/src/app/output/mh4j/metaheuristics4java/78b481eb40f47dee1a6999abd42abf74ce1bba9e/MetaHeuristics4Java/src/main/java/de/mh4j/solver/AbstractSolver.java/base.java
+        this(System.currentTimeMillis());
+    }
+
+    /**
+     * Creates a new solver with the given seed for the randomizer. This is
+     * useful if you want to recreate results that have been produced earlier
+     * with a specific seed.
+     */
+    public AbstractSolver(long seed) {
+        this.randomizer = new Random(seed);
+        this.seed = seed;
+=======
+        this(System.currentTimeMillis());
+    }
+
+    /**
+     * Creates a new solver with the given seed for the randomizer. This is
+     * useful if you want to recreate results that have been produced earlier
+     * with a specific seed.
+     */
+    public AbstractSolver(long seed) {
+        this.randomizer = new Random(seed);
+        this.seed = seed;
+        log.debug("seed is {}", seed);
+>>>>>>> /usr/src/app/output/mh4j/metaheuristics4java/78b481eb40f47dee1a6999abd42abf74ce1bba9e/MetaHeuristics4Java/src/main/java/de/mh4j/solver/AbstractSolver.java/right.java
     }
 
     @Override

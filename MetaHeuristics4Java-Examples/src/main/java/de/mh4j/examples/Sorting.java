@@ -109,8 +109,7 @@ public class Sorting implements Solution<Sorting> {
         if (otherObject instanceof Sorting) {
             Sorting otherSorting = (Sorting) otherObject;
             return Arrays.equals(this.numbers, otherSorting.numbers);
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -132,8 +131,7 @@ public class Sorting implements Solution<Sorting> {
      * @param amountOfNumbers
      *            Determines how many different numbers will be used in this
      *            sorting (i.e. the size of the underlying array)
-     * @param seed
-     *            for the random generator
+     * @param seed for the random generator
      */
     public static Sorting createRandomSorting(int amountOfNumbers, long seed) {
         log.debug("create random sorting using seed {}", seed);
