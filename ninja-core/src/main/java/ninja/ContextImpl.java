@@ -11,7 +11,9 @@ import ninja.async.AsyncStrategyFactoryHolder;
 import ninja.bodyparser.BodyParserEngine;
 import ninja.bodyparser.BodyParserEngineManager;
 import ninja.session.FlashCookie;
+import ninja.session.FlashCookieImpl;
 import ninja.session.SessionCookie;
+import ninja.session.SessionCookieImpl;
 import ninja.template.TemplateEngine;
 import ninja.template.TemplateEngineManager;
 

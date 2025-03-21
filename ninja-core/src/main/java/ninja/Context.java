@@ -3,6 +3,7 @@ package ninja;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import ninja.bodyparser.BodyParserEngineJson;
 import ninja.bodyparser.BodyParserEngineManager;
 import ninja.session.FlashCookie;
@@ -13,7 +14,7 @@ public interface Context {
 	enum HTTP_STATUS {
 		notFound404, ok200, forbidden403, teapot418
 	}
-
+	
 	/**
 	 * Returns the uri as seen by the server.
 	 * 
@@ -127,18 +128,23 @@ public interface Context {
 	 * @param object The object to render as Json
 	 */
 	void renderJson(Object object);
-
-    /**
-     * This will give you the request body nicely parsed. You can register your
-     * own parsers depending on the request type.
-     *
-     * Have a look at {@link BodyParserEngine} {@link BodyParserEngineJson}
-     * and {@link BodyParserEngineManager}
-     *
-     * @param classOfT The class of the result.
-     * @return The parsed request or null if something went wrong.
-     */
-    <T> T parseBody(Class<T> classOfT);
+	
+	///////////////////////////////////////////////////////////////////////////
+	// Allows to get the nicely parsed content of the request.
+	// For instance if the content is a json you could simply get the json
+	// as Java object.
+	///////////////////////////////////////////////////////////////////////////
+	/**
+	 * This will give you the request body nicely parsed. You can register your
+	 * own parsers depending on the request type.
+	 * 
+	 * Have a look at {@link BodyParserEngine} {@link BodyParserEngineJson} 
+	 * and {@link BodyParserEngineManager}
+	 * 
+	 * @param The class of the result.
+	 * @return The parsed request or null if something went wrong.
+	 */
+	<T> T parseBody(Class<T> classOfT);
 
     /**
      * Indicate that this request will be handled asynchronously
