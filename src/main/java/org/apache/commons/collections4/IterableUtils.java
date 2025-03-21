@@ -551,8 +551,6 @@ public class IterableUtils {
         };
     }
 
-    // Utility methods
-    // ----------------------------------------------------------------------
     /**
      * Returns an immutable empty iterable if the argument is null,
      * or the argument itself otherwise.
