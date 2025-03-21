@@ -442,10 +442,19 @@ public final class ApplicationsTest extends AbstractIntegrationTest {
     public void listFilterByStackId() {
         String applicationName = this.nameFactory.getApplicationName();
 
-        Mono.zip(this.spaceId, this.stackId)
-            .flatMap(function((spaceId, stackId) -> Mono.zip(
-                createApplicationId(this.cloudFoundryClient, spaceId, applicationName, stackId),
-                Mono.just(stackId))))
+        Mono.when(this.spaceId, this.stackId)
+<<<<<<< /usr/src/app/output/cloudfoundry/cf-java-client/9ad9ac0c3a11b7fb0ab081acf01ce35a93c5b687/integration-test/src/test/java/org/cloudfoundry/client/v2/ApplicationsTest.java/left.java
+            .zip(this.spaceId
+                .flatMap(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))
+||||||| /usr/src/app/output/cloudfoundry/cf-java-client/9ad9ac0c3a11b7fb0ab081acf01ce35a93c5b687/integration-test/src/test/java/org/cloudfoundry/client/v2/ApplicationsTest.java/base.java
+            .when(this.spaceId
+                .then(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))
+=======
+            .then(function((spaceId, stackId) -> Mono.when(
+                    createApplicationId(this.cloudFoundryClient, spaceId, applicationName, stackId),
+                    Mono.just(stackId)))
+>>>>>>> /usr/src/app/output/cloudfoundry/cf-java-client/9ad9ac0c3a11b7fb0ab081acf01ce35a93c5b687/integration-test/src/test/java/org/cloudfoundry/client/v2/ApplicationsTest.java/right.java
+            )
             .flatMap(function((applicationId, stackId) -> Mono.zip(
                 Mono.just(applicationId),
                 PaginationUtils

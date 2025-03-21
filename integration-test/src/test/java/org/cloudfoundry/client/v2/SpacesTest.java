@@ -482,12 +482,50 @@ public final class SpacesTest extends AbstractIntegrationTest {
         String applicationName = this.nameFactory.getApplicationName();
         String spaceName = this.nameFactory.getSpaceName();
 
-        Mono.zip(this.organizationId, this.stackId)
-            .flatMap(function((organizationId, stackId) -> Mono.zip(
+<<<<<<< /usr/src/app/output/cloudfoundry/cf-java-client/9ad9ac0c3a11b7fb0ab081acf01ce35a93c5b687/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/left.java
+        Mono.flatMap(this.organizationId, this.stackId)
+||||||| /usr/src/app/output/cloudfoundry/cf-java-client/9ad9ac0c3a11b7fb0ab081acf01ce35a93c5b687/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/base.java
+        Mono.then(this.organizationId, this.stackId)
+=======
+        Mono.when(this.organizationId, this.stackId)
+>>>>>>> /usr/src/app/output/cloudfoundry/cf-java-client/9ad9ac0c3a11b7fb0ab081acf01ce35a93c5b687/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/right.java
+<<<<<<< /usr/src/app/output/cloudfoundry/cf-java-client/9ad9ac0c3a11b7fb0ab081acf01ce35a93c5b687/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/left.java
+            .delayUntil(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName))
+||||||| /usr/src/app/output/cloudfoundry/cf-java-client/9ad9ac0c3a11b7fb0ab081acf01ce35a93c5b687/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/base.java
+            .as(thenKeep(spaceId -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName)))
+=======
+            .then(function((organizationId, stackId) -> Mono.when(
                 createSpaceId(this.cloudFoundryClient, organizationId, spaceName),
                 Mono.just(stackId)
             )))
-            .delayUntil(function((spaceId, stackId) -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName, stackId)))
+>>>>>>> /usr/src/app/output/cloudfoundry/cf-java-client/9ad9ac0c3a11b7fb0ab081acf01ce35a93c5b687/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/right.java
+<<<<<<< /usr/src/app/output/cloudfoundry/cf-java-client/9ad9ac0c3a11b7fb0ab081acf01ce35a93c5b687/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/left.java
+            .flatMap(spaceId -> Mono.zip(
+                Mono.just(spaceId),
+                PaginationUtils
+                    .requestClientV2Resources(page -> this.cloudFoundryClient.stacks()
+                        .list(ListStacksRequest.builder()
+                            .name(this.stackName)
+                            .page(page)
+                            .build()))
+                    .single()
+                    .map(ResourceUtils::getId)
+            ))
+||||||| /usr/src/app/output/cloudfoundry/cf-java-client/9ad9ac0c3a11b7fb0ab081acf01ce35a93c5b687/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/base.java
+            .then(spaceId -> Mono.when(
+                Mono.just(spaceId),
+                PaginationUtils
+                    .requestClientV2Resources(page -> this.cloudFoundryClient.stacks()
+                        .list(ListStacksRequest.builder()
+                            .name(this.stackName)
+                            .page(page)
+                            .build()))
+                    .single()
+                    .map(ResourceUtils::getId)
+            ))
+=======
+            .as(thenKeep(function((spaceId, stackId) -> createApplicationId(this.cloudFoundryClient, spaceId, applicationName, stackId))))
+>>>>>>> /usr/src/app/output/cloudfoundry/cf-java-client/9ad9ac0c3a11b7fb0ab081acf01ce35a93c5b687/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/right.java
             .flatMapMany(function((spaceId, stackId) -> requestListSpaceApplications(this.cloudFoundryClient, spaceId, builder -> builder.stackId(stackId))))
             .map(response -> ResourceUtils.getEntity(response).getName())
             .as(StepVerifier::create)
