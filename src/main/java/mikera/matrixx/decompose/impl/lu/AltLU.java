@@ -19,6 +19,7 @@
 package mikera.matrixx.decompose.impl.lu;
 
 import java.util.Arrays;
+
 import mikera.indexz.Index;
 import mikera.matrixx.AMatrix;
 import mikera.matrixx.Matrix;
@@ -59,6 +60,19 @@ public class AltLU {
 	protected boolean singular;
 
 	public AltLU(AMatrix a) {
+<<<<<<< /usr/src/app/output/mikera/vectorz/889e8999395fb5f60266d32bec790fc2ad3daeb8/src/main/java/mikera/matrixx/decompose/impl/lu/AltLU.java/left.java
+||||||| /usr/src/app/output/mikera/vectorz/889e8999395fb5f60266d32bec790fc2ad3daeb8/src/main/java/mikera/matrixx/decompose/impl/lu/AltLU.java/base.java
+		decompose(a.toMatrix());
+		L = computeL();
+		U = computeU();
+		singular = computeSingular();
+=======
+		decompose(a.toMatrix());
+		L = computeL();
+		U = computeU();
+		P = computeP();
+		singular = computeSingular();
+>>>>>>> /usr/src/app/output/mikera/vectorz/889e8999395fb5f60266d32bec790fc2ad3daeb8/src/main/java/mikera/matrixx/decompose/impl/lu/AltLU.java/right.java
 	}
 
 	public Matrix getLU() {
@@ -91,7 +105,6 @@ public class AltLU {
 		}
 		return lower;
 	}
-
 	/**
 	 * Writes the upper triangular matrix into the specified matrix.
 	 */
@@ -109,12 +122,10 @@ public class AltLU {
 
 		return upper;
 	}
-
 	public PermutationMatrix getPivotMatrix() {
 		int numPivots = LU.rowCount();
 		return PermutationMatrix.create(Index.wrap(Arrays.copyOf(pivot, numPivots)));
 	}
-
 	protected void decomposeCommonInit(Matrix A) {
 		m = A.rowCount();
 		n = A.columnCount();
@@ -131,7 +142,6 @@ public class AltLU {
 		}
 		pivsign = 1;
 	}
-
 	/**
 	 * Determines if the decomposed matrix is singular. This function can return
 	 * false and the matrix be almost singular, which is still bad.
@@ -143,14 +153,12 @@ public class AltLU {
 			throw new IllegalArgumentException("Must be a square matrix.");
 		return computeSingular();
 	}
-
 	protected boolean computeSingular() {
 		for (int i = 0; i < m; i++) {
 			if (Math.abs(dataLU[i * n + i]) < EPS) return true;
 		}
 		return false;
 	}
-
 	/**
 	 * Computes the determinant from the LU decomposition.
 	 * 
@@ -169,7 +177,6 @@ public class AltLU {
 
 		return ret;
 	}
-
 	/**
 	 * This is a modified version of what was found in the JAMA package. The
 	 * order that it performs its permutations in is the primary difference from
@@ -248,6 +255,10 @@ public class AltLU {
 		L = computeL();
 		U = computeU();
 		return new LUPResult(L, U, getPivotMatrix());
+	}
+	@Override
+	public PermutationMatrix getP() {
+		return P;
 	}
 
 
