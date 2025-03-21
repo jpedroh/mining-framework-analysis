@@ -78,11 +78,32 @@ public abstract class HttpRequestHandler {
 		ServerHeadersHandler serverHeadersHandler = new ServerHeadersHandler(urlRewriter);
 		HttpRequestBase httpCommand = null;
 		try {
+<<<<<<< /usr/src/app/output/mbaechler/proxy-servlet/456846e2b56eb09964f65677180bd70ee107d33e/src/main/java/com/woonoz/proxy/servlet/HttpRequestHandler.java/left.java
+			if (logger.isDebugEnabled()) {
+				logger.debug("Doing rewrite for uri: " + request.getRequestURL());
+			}
+||||||| /usr/src/app/output/mbaechler/proxy-servlet/456846e2b56eb09964f65677180bd70ee107d33e/src/main/java/com/woonoz/proxy/servlet/HttpRequestHandler.java/base.java
+=======
 			logger.debug("Doing rewrite for uri: " + request.getRequestURL());
+>>>>>>> /usr/src/app/output/mbaechler/proxy-servlet/456846e2b56eb09964f65677180bd70ee107d33e/src/main/java/com/woonoz/proxy/servlet/HttpRequestHandler.java/right.java
 			final URI targetUri = urlRewriter.rewriteUri(new URI(request.getRequestURL().toString()));
+<<<<<<< /usr/src/app/output/mbaechler/proxy-servlet/456846e2b56eb09964f65677180bd70ee107d33e/src/main/java/com/woonoz/proxy/servlet/HttpRequestHandler.java/left.java
+			if (logger.isDebugEnabled()) {
+				logger.debug("Making request for rewritten uri: " + targetUri);
+			}
+||||||| /usr/src/app/output/mbaechler/proxy-servlet/456846e2b56eb09964f65677180bd70ee107d33e/src/main/java/com/woonoz/proxy/servlet/HttpRequestHandler.java/base.java
+=======
 			logger.debug("Making request for rewritten uri: " + targetUri);
+>>>>>>> /usr/src/app/output/mbaechler/proxy-servlet/456846e2b56eb09964f65677180bd70ee107d33e/src/main/java/com/woonoz/proxy/servlet/HttpRequestHandler.java/right.java
 			httpCommand = createHttpCommand(targetUri, clientHeadersHandler);
+<<<<<<< /usr/src/app/output/mbaechler/proxy-servlet/456846e2b56eb09964f65677180bd70ee107d33e/src/main/java/com/woonoz/proxy/servlet/HttpRequestHandler.java/left.java
+			if (logger.isDebugEnabled()) {
+				logger.debug("http client command: " + httpCommand.getRequestLine() + ", headers: " + Arrays.asList(httpCommand.getAllHeaders()));
+			}
+||||||| /usr/src/app/output/mbaechler/proxy-servlet/456846e2b56eb09964f65677180bd70ee107d33e/src/main/java/com/woonoz/proxy/servlet/HttpRequestHandler.java/base.java
+=======
 			logger.debug("http client command: " + httpCommand.getRequestLine() + ", headers: " + Arrays.asList(httpCommand.getAllHeaders()));
+>>>>>>> /usr/src/app/output/mbaechler/proxy-servlet/456846e2b56eb09964f65677180bd70ee107d33e/src/main/java/com/woonoz/proxy/servlet/HttpRequestHandler.java/right.java
 			performHttpRequest(httpCommand, response, serverHeadersHandler);
 		} catch (URISyntaxException e) {
 			handleException(httpCommand, e);
@@ -144,10 +165,21 @@ public abstract class HttpRequestHandler {
 	}
 
 	private void performHttpRequest(HttpRequestBase requestToServer, HttpServletResponse responseToClient, ServerHeadersHandler serverHeadersHandler) throws IOException, URISyntaxException {
+<<<<<<< /usr/src/app/output/mbaechler/proxy-servlet/456846e2b56eb09964f65677180bd70ee107d33e/src/main/java/com/woonoz/proxy/servlet/HttpRequestHandler.java/left.java
+		HttpContext context = new BasicHttpContext();
+		context.setAttribute(HttpRequestHandler.class.getName(), this);
+		HttpResponse responseFromServer = client.execute(requestToServer, context);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Performed request: " + requestToServer.getRequestLine() + " --> " + responseFromServer.getStatusLine());				
+		}
+||||||| /usr/src/app/output/mbaechler/proxy-servlet/456846e2b56eb09964f65677180bd70ee107d33e/src/main/java/com/woonoz/proxy/servlet/HttpRequestHandler.java/base.java
+		HttpResponse responseFromServer = client.execute(requestToServer);
+=======
 		HttpContext context = new BasicHttpContext();
 		context.setAttribute(HttpRequestHandler.class.getName(), this);
 		HttpResponse responseFromServer = client.execute(requestToServer, context);
 		logger.debug("Performed request: " + requestToServer.getRequestLine() + " --> " + responseFromServer.getStatusLine());				
+>>>>>>> /usr/src/app/output/mbaechler/proxy-servlet/456846e2b56eb09964f65677180bd70ee107d33e/src/main/java/com/woonoz/proxy/servlet/HttpRequestHandler.java/right.java
 		responseToClient.setStatus(responseFromServer.getStatusLine().getStatusCode());
 		copyHeaders(responseFromServer, responseToClient, serverHeadersHandler);
 		HttpEntity entity = responseFromServer.getEntity();

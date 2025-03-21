@@ -96,7 +96,13 @@ public class UrlRewriterImpl implements UrlRewriter {
 	
 	private String rewritePathIfNeeded(String requestedPath) {
 		String servletURI = servletRequest.getContextPath() + servletRequest.getServletPath();
+<<<<<<< /usr/src/app/output/mbaechler/proxy-servlet/456846e2b56eb09964f65677180bd70ee107d33e/src/main/java/com/woonoz/proxy/servlet/UrlRewriterImpl.java/left.java
+		if (targetServer.getPath().length() != 0 && requestIsSubpathOfServlet(requestedPath)) {
+||||||| /usr/src/app/output/mbaechler/proxy-servlet/456846e2b56eb09964f65677180bd70ee107d33e/src/main/java/com/woonoz/proxy/servlet/UrlRewriterImpl.java/base.java
+		if (requestIsSubpathOfServlet(requestedPath)) {
+=======
 		if (!targetServer.getPath().isEmpty() && requestIsSubpathOfServlet(requestedPath)) {
+>>>>>>> /usr/src/app/output/mbaechler/proxy-servlet/456846e2b56eb09964f65677180bd70ee107d33e/src/main/java/com/woonoz/proxy/servlet/UrlRewriterImpl.java/right.java
 			return appendPathFragments(targetServer.getPath(), requestedPath.substring(servletURI.length()));
 		} else {
 			return requestedPath;
@@ -108,9 +114,16 @@ public class UrlRewriterImpl implements UrlRewriter {
 	}
 	
 	private static String removeTrailingSlashes(final String text) {
+<<<<<<< /usr/src/app/output/mbaechler/proxy-servlet/456846e2b56eb09964f65677180bd70ee107d33e/src/main/java/com/woonoz/proxy/servlet/UrlRewriterImpl.java/left.java
+		if (text.length() == 0) {
+			return text;
+		}
+||||||| /usr/src/app/output/mbaechler/proxy-servlet/456846e2b56eb09964f65677180bd70ee107d33e/src/main/java/com/woonoz/proxy/servlet/UrlRewriterImpl.java/base.java
+=======
 		if (text.isEmpty()) {
 			return text;
 		}
+>>>>>>> /usr/src/app/output/mbaechler/proxy-servlet/456846e2b56eb09964f65677180bd70ee107d33e/src/main/java/com/woonoz/proxy/servlet/UrlRewriterImpl.java/right.java
 		final CharacterIterator it = new StringCharacterIterator(text);
 		Character c = it.last();
 		while (c.equals('/')) {
@@ -120,9 +133,16 @@ public class UrlRewriterImpl implements UrlRewriter {
 	}
 
 	private static String removeLeadingSlashes(final String text) {
+<<<<<<< /usr/src/app/output/mbaechler/proxy-servlet/456846e2b56eb09964f65677180bd70ee107d33e/src/main/java/com/woonoz/proxy/servlet/UrlRewriterImpl.java/left.java
+		if (text.length() == 0) {
+			return text;
+		}
+||||||| /usr/src/app/output/mbaechler/proxy-servlet/456846e2b56eb09964f65677180bd70ee107d33e/src/main/java/com/woonoz/proxy/servlet/UrlRewriterImpl.java/base.java
+=======
 		if (text.isEmpty()) {
 			return text;
 		}
+>>>>>>> /usr/src/app/output/mbaechler/proxy-servlet/456846e2b56eb09964f65677180bd70ee107d33e/src/main/java/com/woonoz/proxy/servlet/UrlRewriterImpl.java/right.java
 		final CharacterIterator it = new StringCharacterIterator(text);
 		Character c = it.first();
 		while (c.equals('/')) {
