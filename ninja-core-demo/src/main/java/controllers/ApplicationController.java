@@ -55,10 +55,8 @@ public class ApplicationController {
     
     @Inject
     Messages messages;
-
     @Inject
     Router router;
-
 
     public Result examples(Context context) {
         logger.info("In example ");
