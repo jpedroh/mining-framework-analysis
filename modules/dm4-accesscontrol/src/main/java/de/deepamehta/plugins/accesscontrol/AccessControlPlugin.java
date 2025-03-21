@@ -317,8 +317,7 @@ public class AccessControlPlugin extends PluginActivator implements AccessContro
         try {
             dms.createAssociation(new AssociationModel(MEMBERSHIP_TYPE,
                 new TopicRoleModel(getUsernameOrThrow(username).getId(), "dm4.core.default"),
-                new TopicRoleModel(workspaceId, "dm4.core.default")
-            ));
+                new TopicRoleModel(workspaceId, "dm4.core.default")), null);   // clientState=null
         } catch (Exception e) {
             throw new RuntimeException("Creating membership for user \"" + username + "\" and workspace " +
                 workspaceId + " failed", e);

@@ -265,7 +265,8 @@ public class WorkspacesPlugin extends PluginActivator implements WorkspacesServi
         // Note 1: we are refering to an existing workspace. So we must add a topic reference.
         // Note 2: workspace_facet is a multi-facet. So we must call addRef() (as opposed to putRef()).
         FacetValue value = new FacetValue("dm4.workspaces.workspace").addRef(workspaceId);
-        facetsService.updateFacet(object, "dm4.workspaces.workspace_facet", value, new Directives());
+<<<<<<< /usr/src/app/output/jri/deepamehta/f9030aad4d4de1add68bc4906467ad37765f81da/modules/dm4-workspaces/src/main/java/de/deepamehta/plugins/workspaces/WorkspacesPlugin.java/left.java
+        facetsService.updateFacet(object, "dm4.workspaces.workspace_facet", value, null, new Directives());
         // clientState=null
         //
         // 2) store assignment property
@@ -280,6 +281,12 @@ public class WorkspacesPlugin extends PluginActivator implements WorkspacesServi
         } finally {
             tx.finish();
         }
+||||||| /usr/src/app/output/jri/deepamehta/f9030aad4d4de1add68bc4906467ad37765f81da/modules/dm4-workspaces/src/main/java/de/deepamehta/plugins/workspaces/WorkspacesPlugin.java/base.java
+        facetsService.updateFacet(object, "dm4.workspaces.workspace_facet", value, null, new Directives());
+        // clientState=null
+=======
+        facetsService.updateFacet(object, "dm4.workspaces.workspace_facet", value, new Directives());
+>>>>>>> /usr/src/app/output/jri/deepamehta/f9030aad4d4de1add68bc4906467ad37765f81da/modules/dm4-workspaces/src/main/java/de/deepamehta/plugins/workspaces/WorkspacesPlugin.java/right.java
     }
 
     // --- Helper ---
