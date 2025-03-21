@@ -562,34 +562,58 @@ public class TableMetadata {
             this.comment = isNullOrAbsent(row, COMMENT) ? "" : row.getString(COMMENT);
             this.readRepair = row.getDouble(READ_REPAIR);
             this.localReadRepair = row.getDouble(LOCAL_READ_REPAIR);
+<<<<<<< /usr/src/app/output/datastax/java-driver/0dd96ea21f85de3a8323926450891971cb36d2e1/driver-core/src/main/java/com/datastax/driver/core/TableMetadata.java/left.java
             boolean is210OrMore = version.getMajor() > 2 || (version.getMajor() == 2 && version.getMinor() >= 1);
-            this.replicateOnWrite = is210OrMore || isNullOrAbsent(row, REPLICATE_ON_WRITE) ? DEFAULT_REPLICATE_ON_WRITE : row.getBool(REPLICATE_ON_WRITE);
+            this.replicateOnWrite = is210OrMore || row.isNull(REPLICATE_ON_WRITE) ? true : row.getBool(REPLICATE_ON_WRITE);
+||||||| /usr/src/app/output/datastax/java-driver/0dd96ea21f85de3a8323926450891971cb36d2e1/driver-core/src/main/java/com/datastax/driver/core/TableMetadata.java/base.java
+            this.replicateOnWrite = (version.getMajor() > 2 || (version.getMajor() == 2 && version.getMinor() >= 1)) || row.isNull(REPLICATE_ON_WRITE) ? true : row.getBool(REPLICATE_ON_WRITE);
+=======
+            this.replicateOnWrite = (version.getMajor() > 2 || (version.getMajor() == 2 && version.getMinor() >= 1)) || isNullOrAbsent(row, REPLICATE_ON_WRITE) ? DEFAULT_REPLICATE_ON_WRITE : row.getBool(REPLICATE_ON_WRITE);
+>>>>>>> /usr/src/app/output/datastax/java-driver/0dd96ea21f85de3a8323926450891971cb36d2e1/driver-core/src/main/java/com/datastax/driver/core/TableMetadata.java/right.java
             this.gcGrace = row.getInt(GC_GRACE);
-            this.bfFpChance = isNullOrAbsent(row, BF_FP_CHANCE) ? DEFAULT_BF_FP_CHANCE : row.getDouble(BF_FP_CHANCE);
+<<<<<<< /usr/src/app/output/datastax/java-driver/0dd96ea21f85de3a8323926450891971cb36d2e1/driver-core/src/main/java/com/datastax/driver/core/TableMetadata.java/left.java
+            this.bfFpChance = row.isNull(BF_FP_CHANCE) ? DEFAULT_BF_FP_CHANCE : row.getDouble(BF_FP_CHANCE);
             this.caching = is210OrMore
                          ? SimpleJSONParser.parseStringMap(row.getString(CACHING))
                          : ImmutableMap.of("keys", row.getString(CACHING));
-            this.populateCacheOnFlush = isNullOrAbsent(row, POPULATE_CACHE_ON_FLUSH) ? DEFAULT_POPULATE_CACHE_ON_FLUSH : row.getBool(POPULATE_CACHE_ON_FLUSH);
-            this.memtableFlushPeriodMs = version.getMajor() < 2 || isNullOrAbsent(row, MEMTABLE_FLUSH_PERIOD_MS) ? DEFAULT_MEMTABLE_FLUSH_PERIOD : row.getInt(MEMTABLE_FLUSH_PERIOD_MS);
-            this.defaultTTL = version.getMajor() < 2 || isNullOrAbsent(row, DEFAULT_TTL) ? DEFAULT_DEFAULT_TTL : row.getInt(DEFAULT_TTL);
-            this.speculativeRetry = version.getMajor() < 2 || isNullOrAbsent(row, SPECULATIVE_RETRY) ? DEFAULT_SPECULATIVE_RETRY : row.getString(SPECULATIVE_RETRY);
+            this.populateCacheOnFlush = row.isNull(POPULATE_CACHE_ON_FLUSH) ? DEFAULT_POPULATE_CACHE_ON_FLUSH : row.getBool(POPULATE_CACHE_ON_FLUSH);
+            this.memtableFlushPeriodMs = version.getMajor() < 2 || row.isNull(MEMTABLE_FLUSH_PERIOD_MS) ? DEFAULT_MEMTABLE_FLUSH_PERIOD : row.getInt(MEMTABLE_FLUSH_PERIOD_MS);
+            this.defaultTTL = version.getMajor() < 2 || row.isNull(DEFAULT_TTL) ? DEFAULT_DEFAULT_TTL : row.getInt(DEFAULT_TTL);
+            this.speculativeRetry = version.getMajor() < 2 || row.isNull(SPECULATIVE_RETRY) ? DEFAULT_SPECULATIVE_RETRY : row.getString(SPECULATIVE_RETRY);
 
             if (version.getMajor() >= 2 && !is210OrMore)
-                this.indexInterval = isNullOrAbsent(row, INDEX_INTERVAL) ? DEFAULT_INDEX_INTERVAL : row.getInt(INDEX_INTERVAL);
+                this.indexInterval = row.isNull(INDEX_INTERVAL) ? DEFAULT_INDEX_INTERVAL : row.getInt(INDEX_INTERVAL);
             else
                 this.indexInterval = null;
 
             if (is210OrMore) {
-                this.minIndexInterval = isNullOrAbsent(row, MIN_INDEX_INTERVAL)
+                this.minIndexInterval = row.isNull(MIN_INDEX_INTERVAL)
                                       ? DEFAULT_MIN_INDEX_INTERVAL
                                       : row.getInt(MIN_INDEX_INTERVAL);
-                this.maxIndexInterval = isNullOrAbsent(row, MAX_INDEX_INTERVAL)
+                this.maxIndexInterval = row.isNull(MAX_INDEX_INTERVAL)
                                       ? DEFAULT_MAX_INDEX_INTERVAL
                                       : row.getInt(MAX_INDEX_INTERVAL);
             } else {
                 this.minIndexInterval = null;
                 this.maxIndexInterval = null;
             }
+||||||| /usr/src/app/output/datastax/java-driver/0dd96ea21f85de3a8323926450891971cb36d2e1/driver-core/src/main/java/com/datastax/driver/core/TableMetadata.java/base.java
+            this.bfFpChance = row.isNull(BF_FP_CHANCE) ? DEFAULT_BF_FP_CHANCE : row.getDouble(BF_FP_CHANCE);
+            this.caching = row.getString(CACHING);
+            this.populateCacheOnFlush = row.isNull(POPULATE_CACHE_ON_FLUSH) ? DEFAULT_POPULATE_CACHE_ON_FLUSH : row.getBool(POPULATE_CACHE_ON_FLUSH);
+            this.memtableFlushPeriodMs = version.getMajor() < 2 || row.isNull(MEMTABLE_FLUSH_PERIOD_MS) ? DEFAULT_MEMTABLE_FLUSH_PERIOD : row.getInt(MEMTABLE_FLUSH_PERIOD_MS);
+            this.defaultTTL = version.getMajor() < 2 || row.isNull(DEFAULT_TTL) ? DEFAULT_DEFAULT_TTL : row.getInt(DEFAULT_TTL);
+            this.speculativeRetry = version.getMajor() < 2 || row.isNull(SPECULATIVE_RETRY) ? DEFAULT_SPECULATIVE_RETRY : row.getString(SPECULATIVE_RETRY);
+            this.indexInterval = version.getMajor() < 2 || row.isNull(INDEX_INTERVAL) ? DEFAULT_INDEX_INTERVAL : row.getInt(INDEX_INTERVAL);
+=======
+            this.bfFpChance = isNullOrAbsent(row, BF_FP_CHANCE) ? DEFAULT_BF_FP_CHANCE : row.getDouble(BF_FP_CHANCE);
+            this.caching = row.getString(CACHING);
+            this.populateCacheOnFlush = isNullOrAbsent(row, POPULATE_CACHE_ON_FLUSH) ? DEFAULT_POPULATE_CACHE_ON_FLUSH : row.getBool(POPULATE_CACHE_ON_FLUSH);
+            this.memtableFlushPeriodMs = version.getMajor() < 2 || isNullOrAbsent(row, MEMTABLE_FLUSH_PERIOD_MS) ? DEFAULT_MEMTABLE_FLUSH_PERIOD : row.getInt(MEMTABLE_FLUSH_PERIOD_MS);
+            this.defaultTTL = version.getMajor() < 2 || isNullOrAbsent(row, DEFAULT_TTL) ? DEFAULT_DEFAULT_TTL : row.getInt(DEFAULT_TTL);
+            this.speculativeRetry = version.getMajor() < 2 || isNullOrAbsent(row, SPECULATIVE_RETRY) ? DEFAULT_SPECULATIVE_RETRY : row.getString(SPECULATIVE_RETRY);
+            this.indexInterval = version.getMajor() < 2 || isNullOrAbsent(row, INDEX_INTERVAL) ? DEFAULT_INDEX_INTERVAL : row.getInt(INDEX_INTERVAL);
+>>>>>>> /usr/src/app/output/datastax/java-driver/0dd96ea21f85de3a8323926450891971cb36d2e1/driver-core/src/main/java/com/datastax/driver/core/TableMetadata.java/right.java
 
             this.compaction.put("class", row.getString(COMPACTION_CLASS));
             this.compaction.putAll(SimpleJSONParser.parseStringMap(row.getString(COMPACTION_OPTIONS)));
