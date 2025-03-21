@@ -582,25 +582,61 @@ public class ClassNodeTest {
 		
 		MethodNode m = this.dw.getMethod("CalculadoraMain.main(java.lang.String[])");
 		Set<ClassNode> usedBy = m.getCalleeClasses();
-		Assert.assertEquals(7,usedBy.size());
+<<<<<<< /usr/src/app/output/joaoarthurbm/designwizard/58fcd555cc6909bb7ca3df27d277600d8c871a81/src_tests/tests/org/designwizard/design/ClassNodeTest.java/left.java
+		Assert.assertEquals(6,usedBy.size());
 		Assert.assertTrue(usedBy.contains(this.dw.getClass("CalculadoraMain")));
 		Assert.assertTrue(usedBy.contains(this.dw.getClass("Logica")));
+||||||| /usr/src/app/output/joaoarthurbm/designwizard/58fcd555cc6909bb7ca3df27d277600d8c871a81/src_tests/tests/org/designwizard/design/ClassNodeTest.java/base.java
+		assertEquals(6,usedBy.size());
+		assertTrue(usedBy.contains(this.dw.getClass("CalculadoraMain")));
+		assertTrue(usedBy.contains(this.dw.getClass("Logica")));
+=======
+		assertEquals(7, usedBy.size());
+		assertTrue(usedBy.contains(this.dw.getClass("CalculadoraMain")));
+		assertTrue(usedBy.contains(this.dw.getClass("Logica")));
+>>>>>>> /usr/src/app/output/joaoarthurbm/designwizard/58fcd555cc6909bb7ca3df27d277600d8c871a81/src_tests/tests/org/designwizard/design/ClassNodeTest.java/right.java
 		
 		clazz = this.dw.getClass("CalculadoraMain");
 		usedBy = clazz.getCalleeClasses();
-		Assert.assertEquals(8,usedBy.size());
+<<<<<<< /usr/src/app/output/joaoarthurbm/designwizard/58fcd555cc6909bb7ca3df27d277600d8c871a81/src_tests/tests/org/designwizard/design/ClassNodeTest.java/left.java
+		Assert.assertEquals(7,usedBy.size());
 		Assert.assertTrue(usedBy.contains(this.dw.getClass("CalculadoraMain")));
 		Assert.assertTrue(usedBy.contains(this.dw.getClass("Logica")));
+||||||| /usr/src/app/output/joaoarthurbm/designwizard/58fcd555cc6909bb7ca3df27d277600d8c871a81/src_tests/tests/org/designwizard/design/ClassNodeTest.java/base.java
+		assertEquals(7,usedBy.size());
+		assertTrue(usedBy.contains(this.dw.getClass("CalculadoraMain")));
+		assertTrue(usedBy.contains(this.dw.getClass("Logica")));
+=======
+		assertEquals(8, usedBy.size());
+		assertTrue(usedBy.contains(this.dw.getClass("CalculadoraMain")));
+		assertTrue(usedBy.contains(this.dw.getClass("Logica")));
+>>>>>>> /usr/src/app/output/joaoarthurbm/designwizard/58fcd555cc6909bb7ca3df27d277600d8c871a81/src_tests/tests/org/designwizard/design/ClassNodeTest.java/right.java
 		
 		clazz = this.dw.getClass("CalculadoraPolinomial");
 		usedBy = clazz.getCalleeClasses();
+<<<<<<< /usr/src/app/output/joaoarthurbm/designwizard/58fcd555cc6909bb7ca3df27d277600d8c871a81/src_tests/tests/org/designwizard/design/ClassNodeTest.java/left.java
 		Assert.assertTrue(usedBy.contains(this.dw.getClass("Polinomio")));
-		Assert.assertEquals(7,usedBy.size());
+		Assert.assertEquals(5,usedBy.size());
+||||||| /usr/src/app/output/joaoarthurbm/designwizard/58fcd555cc6909bb7ca3df27d277600d8c871a81/src_tests/tests/org/designwizard/design/ClassNodeTest.java/base.java
+		assertTrue(usedBy.contains(this.dw.getClass("Polinomio")));
+		assertEquals(5,usedBy.size());
+=======
+		assertTrue(usedBy.contains(this.dw.getClass("Polinomio")));
+		assertEquals(7, usedBy.size());
+>>>>>>> /usr/src/app/output/joaoarthurbm/designwizard/58fcd555cc6909bb7ca3df27d277600d8c871a81/src_tests/tests/org/designwizard/design/ClassNodeTest.java/right.java
 		
 		clazz = this.dw.getClass("Comando");
 		usedBy = clazz.getCalleeClasses();
+<<<<<<< /usr/src/app/output/joaoarthurbm/designwizard/58fcd555cc6909bb7ca3df27d277600d8c871a81/src_tests/tests/org/designwizard/design/ClassNodeTest.java/left.java
 		Assert.assertTrue(usedBy.contains(this.dw.getClass("Comando")));
 		Assert.assertEquals(5,usedBy.size());
+||||||| /usr/src/app/output/joaoarthurbm/designwizard/58fcd555cc6909bb7ca3df27d277600d8c871a81/src_tests/tests/org/designwizard/design/ClassNodeTest.java/base.java
+		assertTrue(usedBy.contains(this.dw.getClass("Comando")));
+		assertEquals(5,usedBy.size());
+=======
+		assertTrue(usedBy.contains(this.dw.getClass("Comando")));
+		assertEquals(5, usedBy.size());
+>>>>>>> /usr/src/app/output/joaoarthurbm/designwizard/58fcd555cc6909bb7ca3df27d277600d8c871a81/src_tests/tests/org/designwizard/design/ClassNodeTest.java/right.java
 		
 		clazz = this.dw.getClass("IF");
 		usedBy = clazz.getCalleeClasses();
@@ -608,24 +644,62 @@ public class ClassNodeTest {
 		
 		clazz = this.dw.getClass("Inteiro");
 		usedBy = clazz.getCalleeClasses();
-		Assert.assertEquals(6,usedBy.size());
+<<<<<<< /usr/src/app/output/joaoarthurbm/designwizard/58fcd555cc6909bb7ca3df27d277600d8c871a81/src_tests/tests/org/designwizard/design/ClassNodeTest.java/left.java
+		Assert.assertEquals(5,usedBy.size());
+||||||| /usr/src/app/output/joaoarthurbm/designwizard/58fcd555cc6909bb7ca3df27d277600d8c871a81/src_tests/tests/org/designwizard/design/ClassNodeTest.java/base.java
+		assertEquals(5,usedBy.size());
+=======
+		assertEquals(6,usedBy.size());
+>>>>>>> /usr/src/app/output/joaoarthurbm/designwizard/58fcd555cc6909bb7ca3df27d277600d8c871a81/src_tests/tests/org/designwizard/design/ClassNodeTest.java/right.java
 		
 		clazz = this.dw.getClass("Logica");
 		usedBy = clazz.getCalleeClasses();
+<<<<<<< /usr/src/app/output/joaoarthurbm/designwizard/58fcd555cc6909bb7ca3df27d277600d8c871a81/src_tests/tests/org/designwizard/design/ClassNodeTest.java/left.java
 		Assert.assertTrue(usedBy.contains(this.dw.getClass("TratamentosComuns")));
 		Assert.assertTrue(usedBy.contains(this.dw.getClass("Polinomio")));
 		Assert.assertTrue(usedBy.contains(this.dw.getClass("Logica")));
 		Assert.assertTrue(usedBy.contains(this.dw.getClass("Comando")));
 		Assert.assertTrue(usedBy.contains(this.dw.getClass("CalculadoraPolinomial")));
-		Assert.assertEquals(23,usedBy.size());
+		Assert.assertEquals(20,usedBy.size());
+||||||| /usr/src/app/output/joaoarthurbm/designwizard/58fcd555cc6909bb7ca3df27d277600d8c871a81/src_tests/tests/org/designwizard/design/ClassNodeTest.java/base.java
+		assertTrue(usedBy.contains(this.dw.getClass("TratamentosComuns")));
+		assertTrue(usedBy.contains(this.dw.getClass("Polinomio")));
+		assertTrue(usedBy.contains(this.dw.getClass("Logica")));
+		assertTrue(usedBy.contains(this.dw.getClass("Comando")));
+		assertTrue(usedBy.contains(this.dw.getClass("CalculadoraPolinomial")));
+		assertEquals(20,usedBy.size());
+=======
+		assertTrue(usedBy.contains(this.dw.getClass("TratamentosComuns")));
+		assertTrue(usedBy.contains(this.dw.getClass("Polinomio")));
+		assertTrue(usedBy.contains(this.dw.getClass("Logica")));
+		assertTrue(usedBy.contains(this.dw.getClass("Comando")));
+		assertTrue(usedBy.contains(this.dw.getClass("CalculadoraPolinomial")));
+		assertEquals(23, usedBy.size());
+>>>>>>> /usr/src/app/output/joaoarthurbm/designwizard/58fcd555cc6909bb7ca3df27d277600d8c871a81/src_tests/tests/org/designwizard/design/ClassNodeTest.java/right.java
 		
 		clazz = this.dw.getClass("Polinomio");
 		usedBy = clazz.getCalleeClasses();
+<<<<<<< /usr/src/app/output/joaoarthurbm/designwizard/58fcd555cc6909bb7ca3df27d277600d8c871a81/src_tests/tests/org/designwizard/design/ClassNodeTest.java/left.java
 		Assert.assertTrue(usedBy.contains(this.dw.getClass("TratamentosComuns")));
 		Assert.assertTrue(usedBy.contains(this.dw.getClass("Polinomio")));
 		Assert.assertTrue(usedBy.contains(this.dw.getClass("Inteiro")));
 		Assert.assertTrue(usedBy.contains(this.dw.getClass("Logica")));
-		Assert.assertEquals(18,usedBy.size());
+		Assert.assertEquals(13,usedBy.size());
+||||||| /usr/src/app/output/joaoarthurbm/designwizard/58fcd555cc6909bb7ca3df27d277600d8c871a81/src_tests/tests/org/designwizard/design/ClassNodeTest.java/base.java
+		assertTrue(usedBy.contains(this.dw.getClass("TratamentosComuns")));
+		assertTrue(usedBy.contains(this.dw.getClass("Polinomio")));
+		assertTrue(usedBy.contains(this.dw.getClass("Inteiro")));
+		assertTrue(usedBy.contains(this.dw.getClass("Logica")));
+		assertEquals(13,usedBy.size());
+		
+=======
+		assertTrue(usedBy.contains(this.dw.getClass("TratamentosComuns")));
+		assertTrue(usedBy.contains(this.dw.getClass("Polinomio")));
+		assertTrue(usedBy.contains(this.dw.getClass("Inteiro")));
+		assertTrue(usedBy.contains(this.dw.getClass("Logica")));
+		assertEquals(18, usedBy.size());
+		
+>>>>>>> /usr/src/app/output/joaoarthurbm/designwizard/58fcd555cc6909bb7ca3df27d277600d8c871a81/src_tests/tests/org/designwizard/design/ClassNodeTest.java/right.java
 		
 		clazz = this.dw.getClass("TratamentosComuns");
 		usedBy = clazz.getCalleeClasses();
@@ -660,7 +734,7 @@ public class ClassNodeTest {
 		Assert.assertTrue(innerusers.contains(this.dw.getClass("Logica.Polinomio")));
 	
 		Set<ClassNode> innerUse = clazz.getCalleeClasses();
-		Assert.assertEquals(9,innerUse.size());
+		Assert.assertEquals(9, innerUse.size());
 		Assert.assertTrue(innerUse.contains(this.dw.getClass("Logica.Polinomio$Monomio")));
 	}
 
