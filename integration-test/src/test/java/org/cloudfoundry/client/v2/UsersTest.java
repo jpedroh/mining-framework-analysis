@@ -1541,7 +1541,7 @@ public final class UsersTest extends AbstractIntegrationTest {
         String userId = this.nameFactory.getUserId();
 
         createOrganizationId(this.cloudFoundryClient, organizationName)
-            .flatMap(organizationId -> requestCreateUser(this.cloudFoundryClient, userId)
+            .then(organizationId -> requestCreateUser(this.cloudFoundryClient, userId)
                 .then(requestAssociateOrganization(this.cloudFoundryClient, organizationId, userId)))
             .then(this.cloudFoundryClient.users()
                 .summary(SummaryUserRequest.builder()
