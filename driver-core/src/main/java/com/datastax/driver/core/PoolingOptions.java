@@ -35,12 +35,6 @@ package com.datastax.driver.core;
  * reclaimed if the use of opened connections drops below the
  * configured threshold ({@link #getMinSimultaneousRequestsPerConnectionThreshold}).
  * <p>
- * Due to known issues with the current {@code ProtocolVersion#V2} pool implementation (see
- * <a href="https://datastax-oss.atlassian.net/browse/JAVA-419">JAVA-419</a>),
- * it is <b>strongly recommended</b> to use a fixed-size pool (core connections =
- * max connections).
- * The default values respect this (8 for local hosts, 2 for remote hosts).
- * <p>
  * <b>With {@code ProtocolVersion#V3} or above:</b>
  * the driver uses a single connection for each {@code LOCAL} or {@code REMOTE}
  * host. This connection can handle a larger amount of simultaneous requests,
@@ -49,6 +43,12 @@ package com.datastax.driver.core;
  * Each of these parameters can be separately set for {@code LOCAL} and
  * {@code REMOTE} hosts ({@link HostDistance}). For {@code IGNORED} hosts,
  * the default for all those settings is 0 and cannot be changed.
+ * <p>
+ * Due to known issues with the current pool implementation (see
+ * <a href="https://datastax-oss.atlassian.net/browse/JAVA-419">JAVA-419</a>),
+ * it is <b>strongly recommended</b> to use a fixed-size pool (core connections =
+ * max connections).
+ * The default values respect this (8 for local hosts, 2 for remote hosts).
  */
 public class PoolingOptions {
 
@@ -196,13 +196,17 @@ public class PoolingOptions {
 
     /**
      * Sets the core number of connections per host.
+<<<<<<< /usr/src/app/output/datastax/java-driver/e88ab47ec6d8ba7a062ae5df04ba533e0c9235ef/driver-core/src/main/java/com/datastax/driver/core/PoolingOptions.java/left.java
      * <p>
      * This option is only used with {@code ProtocolVersion#V2} or below.
+||||||| /usr/src/app/output/datastax/java-driver/e88ab47ec6d8ba7a062ae5df04ba533e0c9235ef/driver-core/src/main/java/com/datastax/driver/core/PoolingOptions.java/base.java
+=======
      * <p>
      * Due to known issues with the current pool implementation (see
      * <a href="https://datastax-oss.atlassian.net/browse/JAVA-419">JAVA-419</a>),
      * it is <b>strongly recommended</b> to use a fixed-size pool (core connections =
      * max connections).
+>>>>>>> /usr/src/app/output/datastax/java-driver/e88ab47ec6d8ba7a062ae5df04ba533e0c9235ef/driver-core/src/main/java/com/datastax/driver/core/PoolingOptions.java/right.java
      *
      * @param distance the {@code HostDistance} for which to set this threshold.
      * @param newCoreConnections the value to set
@@ -240,13 +244,17 @@ public class PoolingOptions {
 
     /**
      * Sets the maximum number of connections per host.
+<<<<<<< /usr/src/app/output/datastax/java-driver/e88ab47ec6d8ba7a062ae5df04ba533e0c9235ef/driver-core/src/main/java/com/datastax/driver/core/PoolingOptions.java/left.java
      * <p>
      * This option is only used with {@code ProtocolVersion#V2} or below.
+||||||| /usr/src/app/output/datastax/java-driver/e88ab47ec6d8ba7a062ae5df04ba533e0c9235ef/driver-core/src/main/java/com/datastax/driver/core/PoolingOptions.java/base.java
+=======
      * <p>
      * Due to known issues with the current pool implementation (see
      * <a href="https://datastax-oss.atlassian.net/browse/JAVA-419">JAVA-419</a>),
      * it is <b>strongly recommended</b> to use a fixed-size pool (core connections =
      * max connections).
+>>>>>>> /usr/src/app/output/datastax/java-driver/e88ab47ec6d8ba7a062ae5df04ba533e0c9235ef/driver-core/src/main/java/com/datastax/driver/core/PoolingOptions.java/right.java
      *
      * @param distance the {@code HostDistance} for which to set this threshold.
      * @param newMaxConnections the value to set

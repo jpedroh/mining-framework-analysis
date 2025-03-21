@@ -101,7 +101,6 @@ public class ControlConnectionTest {
                 ccm.remove();
         }
     }
-    
     /**
      * Ensures that if the host that the Control Connection is connected to is removed/decommissioned that the
      * Control Connection is reestablished to another host.
@@ -120,8 +119,8 @@ public class ControlConnectionTest {
             ccm = CCMBridge.create("test", 3);
 
             cluster = Cluster.builder()
-                .addContactPoint(CCMBridge.ipOfNode(1))
-                .build();
+                    .addContactPoint(CCMBridge.ipOfNode(1))
+                    .build();
             cluster.init();
 
             // Ensure the control connection host is that of the first node.
@@ -143,17 +142,17 @@ public class ControlConnectionTest {
         }
     }
 
-   static class QueryPlanCountingPolicy extends DelegatingLoadBalancingPolicy {
+    static class QueryPlanCountingPolicy extends DelegatingLoadBalancingPolicy {
 
-        final AtomicInteger counter = new AtomicInteger();
+         final AtomicInteger counter = new AtomicInteger();
 
-        public QueryPlanCountingPolicy(LoadBalancingPolicy delegate) {
-            super(delegate);
-        }
+         public QueryPlanCountingPolicy(LoadBalancingPolicy delegate) {
+             super(delegate);
+         }
 
-        public Iterator<Host> newQueryPlan(String loggedKeyspace, Statement statement) {
-            counter.incrementAndGet();
-            return super.newQueryPlan(loggedKeyspace, statement);
-        }
-    }
+         public Iterator<Host> newQueryPlan(String loggedKeyspace, Statement statement) {
+             counter.incrementAndGet();
+             return super.newQueryPlan(loggedKeyspace, statement);
+         }
+     }
 }
