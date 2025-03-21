@@ -32,7 +32,6 @@ import com.martiansoftware.nailgun.builtins.DefaultNail;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import com.sun.jna.Platform;
 
 /**
@@ -429,38 +428,26 @@ public class NGServer implements Runnable {
                     serversocket = new NGUnixDomainServerSocket(listeningAddress.getLocalAddress());
                 }
             }
-
-            while (!shutdown.get()) {
-                sessionOnDeck = sessionPool.take();
-                Socket socket = serversocket.accept();
-                sessionOnDeck.run(socket);
-            }
-
         } catch (Throwable t) {
-            // if shutdown is called while the accept() method is blocking,
-            // an exception will be thrown that we don't care about.  filter
-            // those out.
-            if (!shutdown.get()) {
-        	      getLogger().log(Level.SEVERE, "Failed to create server socket", t);
-            }
+        	getLogger().log(Level.SEVERE, "Failed to create server socket", t);
         }
         
         if (serversocket != null) {
         	LOGGER.log(Level.INFO, getStartMessage());
 	        try {
-	            while (!shutdown) {
-	                sessionOnDeck = sessionPool.take();
-	                Socket socket = serversocket.accept();
-	                sessionOnDeck.run(socket);
-	            }
-	        } catch (Throwable t) {
-	            // if shutdown is called while the accept() method is blocking,
-	            // an exception will be thrown that we don't care about.  filter
-	            // those out.
-	            if (!shutdown) {
-	            	getLogger().log(Level.SEVERE, t.getMessage(), t);
-	            }
-	        }
+            while (!shutdown.get()) {
+                sessionOnDeck = sessionPool.take();
+                Socket socket = serversocket.accept();
+                sessionOnDeck.run(socket);
+            }
+        } catch (Throwable t) {
+            // if shutdown is called while the accept() method is blocking,
+            // an exception will be thrown that we don't care about.  filter
+            // those out.
+            if (!shutdown.get()) {
+            	getLogger().log(Level.SEVERE, t.getMessage(), t);
+            }
+        }
         }
         
         if (sessionOnDeck != null) {

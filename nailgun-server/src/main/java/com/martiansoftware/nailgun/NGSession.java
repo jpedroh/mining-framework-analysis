@@ -27,11 +27,9 @@ import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.List;
 import java.util.Properties;
-
-import java.util.concurrent.atomic.AtomicLong;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Reads the NailGun stream from the client through the command, then hands off
@@ -41,10 +39,13 @@ import java.util.logging.Logger;
  * @author <a href="http://www.martiansoftware.com/contact.html">Marty Lamb</a>
  */
 public class NGSession extends Thread {
-    /**
-	   * {@linkplain Logger} instance for this class.
-	   */
+	
+	/**
+	 * {@linkplain Logger} instance for this class.
+	 */
+	private static final Logger LOGGER = Logger.getLogger(NGServer.class.getName());
     private static final Logger LOG = Logger.getLogger(NGSession.class.getName());
+
     /**
      * The server this NGSession is working for
      */
@@ -390,7 +391,13 @@ public class NGSession extends Thread {
                 }
 
             } catch (Throwable t) {
+<<<<<<< /usr/src/app/output/martylamb/nailgun/5396f2f1911f43a2063bf0700ea1d7344ae2291f/nailgun-server/src/main/java/com/martiansoftware/nailgun/NGSession.java/left.java
+                // t.printStackTrace();
+||||||| /usr/src/app/output/martylamb/nailgun/5396f2f1911f43a2063bf0700ea1d7344ae2291f/nailgun-server/src/main/java/com/martiansoftware/nailgun/NGSession.java/base.java
+=======
                 LOG.log(Level.WARNING, "Internal error in session", t);
+>>>>>>> /usr/src/app/output/martylamb/nailgun/5396f2f1911f43a2063bf0700ea1d7344ae2291f/nailgun-server/src/main/java/com/martiansoftware/nailgun/NGSession.java/right.java
+                LOGGER.log(Level.SEVERE, t.getMessage(), t);
             }
 
             ((ThreadLocalInputStream) System.in).init(null);
