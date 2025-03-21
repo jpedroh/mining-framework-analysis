@@ -54,9 +54,6 @@ import java.util.logging.Logger;
  */
 public class PAM {
     private pam_handle_t pht;
-    /**
-     * This structure needs to survive for the entire duration of authenticate invocations.
-     */
     private pam_conv conv;
     private int ret;
 
