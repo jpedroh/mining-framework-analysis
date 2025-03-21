@@ -1,5 +1,4 @@
 package com.jcloisterzone.game.state;
-
 import com.jcloisterzone.Immutable;
 import com.jcloisterzone.Player;
 import com.jcloisterzone.board.Position;
@@ -14,494 +13,278 @@ import com.jcloisterzone.game.Rule;
 import com.jcloisterzone.game.phase.Phase;
 import com.jcloisterzone.game.state.mixins.*;
 import io.vavr.collection.*;
-
 import java.io.Serializable;
 import java.util.function.Function;
 
-@Immutable
-public class GameState implements ActionsMixin, BoardMixin,
-        RulesMixin, CapabilitiesMixin, PlayersMixin, EventsMixin,
-        FlagsMixin, PlacementsMixin, Serializable {
+@Immutable public class GameState implements ActionsMixin, BoardMixin, RulesMixin, CapabilitiesMixin, PlayersMixin, EventsMixin, FlagsMixin, PlacementsMixin, Serializable {
+  private static final long serialVersionUID = 1L;
 
-    private static final long serialVersionUID = 1L;
+  private final Map<String, Object> elements;
 
-    private final Map<String, Object> elements;
-    private final Map<Rule, Object> rules;
+  private final Map<Rule, Object> rules;
 
-    private final CapabilitiesState capabilities;
-    private final PlayersState players;
+  private final CapabilitiesState capabilities;
 
-    private final TilePack tilePack;
-    private final Tile drawnTile;
+  private final PlayersState players;
 
-    private final LinkedHashMap<Position, PlacedTile> placedTiles;
-    private final List<Tile> discardedTiles;
-    private final Map<Position, Map<FeaturePointer, Feature>> featureMap;
+  private final TilePack tilePack;
 
-    private final NeutralFiguresState neutralFigures;
-    private final LinkedHashMap<Meeple, FeaturePointer> deployedMeeples;
+  private final Tile drawnTile;
 
-    //Flags for marking once per turn actions (like princess, portal, ransom ...)
-    private final Set<Flag> flags;
+  private final LinkedHashMap<Position, PlacedTile> placedTiles;
 
-    private final ActionsState playerActions;
-    private final Queue<PlayEvent> events;
+  private final List<Tile> discardedTiles;
 
-    private final Phase phase;
-    private final int turnNumber;
-    private final boolean commited;
-<<<<<<< HEAD
-    private final boolean passed;
-    private final int nextPlayerIncrement;
+  private final Map<Position, Map<FeaturePointer, Feature>> featureMap;
+
+  private final NeutralFiguresState neutralFigures;
+
+  private final LinkedHashMap<Meeple, FeaturePointer> deployedMeeples;
+
+  private final Set<Flag> flags;
+
+  private final ActionsState playerActions;
+
+  private final Queue<PlayEvent> events;
+
+  private final Phase phase;
+
+  private final int turnNumber;
+
+  private final boolean commited;
+
+  private final int nextPlayerIncrement;
+
+  public static GameState createInitial(Map<Rule, Object> rules, Map<String, Object> elements, Seq<Capability<?>> capabilities, Array<Player> players, int turnPlayerIndex) {
+    return new GameState(rules, elements, CapabilitiesState.createInitial(capabilities), PlayersState.createInitial(players, turnPlayerIndex), null, null, LinkedHashMap.empty(), List.empty(), HashMap.empty(), new NeutralFiguresState(), LinkedHashMap.empty(), null, HashSet.empty(), Queue.empty(), null, 1, false, 1);
+  }
+
+  public GameState(Map<Rule, Object> rules, Map<String, Object> elements, CapabilitiesState capabilities, PlayersState players, TilePack tilePack, Tile drawnTile, LinkedHashMap<Position, PlacedTile> placedTiles, List<Tile> discardedTiles, Map<Position, Map<FeaturePointer, Feature>> featureMap, NeutralFiguresState neutralFigures, LinkedHashMap<Meeple, FeaturePointer> deployedMeeples, ActionsState playerActions, Set<Flag> flags, Queue<PlayEvent> events, Phase phase, int turnNumber, boolean commited, int nextPlayerIncrement) {
+    this.rules = rules;
+    this.elements = elements;
+    this.capabilities = capabilities;
+    this.players = players;
+    this.tilePack = tilePack;
+    this.drawnTile = drawnTile;
+    this.placedTiles = placedTiles;
+    this.discardedTiles = discardedTiles;
+    this.featureMap = featureMap;
+    this.neutralFigures = neutralFigures;
+    this.deployedMeeples = deployedMeeples;
+    this.playerActions = playerActions;
+    this.flags = flags;
+    this.events = events;
+    this.phase = phase;
+    this.turnNumber = turnNumber;
+    this.commited = commited;
+    this.nextPlayerIncrement = nextPlayerIncrement;
+  }
+
+  @Override public GameState setCapabilities(CapabilitiesState capabilities) {
+    if (capabilities == this.capabilities) {
+      return this;
+    }
+    return new GameState(rules, elements, capabilities, players, tilePack, drawnTile, placedTiles, discardedTiles, featureMap, neutralFigures, deployedMeeples, playerActions, flags, events, phase, turnNumber, commited, nextPlayerIncrement);
+  }
+
+  @Override public GameState setPlayers(PlayersState players) {
+    if (players == this.players) {
+      return this;
+    }
+    return new GameState(rules, elements, capabilities, players, tilePack, drawnTile, placedTiles, discardedTiles, featureMap, neutralFigures, deployedMeeples, playerActions, flags, events, phase, turnNumber, commited, nextPlayerIncrement);
+  }
+
+  public GameState setTilePack(TilePack tilePack) {
+    if (tilePack == this.tilePack) {
+      return this;
+    }
+    return new GameState(rules, elements, capabilities, players, tilePack, drawnTile, placedTiles, discardedTiles, featureMap, neutralFigures, deployedMeeples, playerActions, flags, events, phase, turnNumber, commited, nextPlayerIncrement);
+  }
+
+  public GameState mapTilePack(Function<TilePack, TilePack> fn) {
+    return setTilePack(fn.apply(tilePack));
+  }
+
+  public GameState setDrawnTile(Tile drawnTile) {
+    if (drawnTile == this.drawnTile) {
+      return this;
+    }
+    return new GameState(rules, elements, capabilities, players, tilePack, drawnTile, placedTiles, discardedTiles, featureMap, neutralFigures, deployedMeeples, playerActions, flags, events, phase, turnNumber, commited, nextPlayerIncrement);
+  }
+
+  @Override public GameState setPlacedTiles(LinkedHashMap<Position, PlacedTile> placedTiles) {
+    if (placedTiles == this.placedTiles) {
+      return this;
+    }
+    return new GameState(rules, elements, capabilities, players, tilePack, drawnTile, placedTiles, discardedTiles, featureMap, neutralFigures, deployedMeeples, playerActions, flags, events, phase, turnNumber, commited, nextPlayerIncrement);
+  }
+
+  @Override public GameState setFeatureMap(Map<Position, Map<FeaturePointer, Feature>> featureMap) {
+    if (featureMap == this.featureMap) {
+      return this;
+    }
+    return new GameState(rules, elements, capabilities, players, tilePack, drawnTile, placedTiles, discardedTiles, featureMap, neutralFigures, deployedMeeples, playerActions, flags, events, phase, turnNumber, commited, nextPlayerIncrement);
+  }
+
+  public GameState setDiscardedTiles(List<Tile> discardedTiles) {
+    if (discardedTiles == this.discardedTiles) {
+      return this;
+    }
+    return new GameState(rules, elements, capabilities, players, tilePack, drawnTile, placedTiles, discardedTiles, featureMap, neutralFigures, deployedMeeples, playerActions, flags, events, phase, turnNumber, commited, nextPlayerIncrement);
+  }
+
+  public GameState setNeutralFigures(NeutralFiguresState neutralFigures) {
+    if (neutralFigures == this.neutralFigures) {
+      return this;
+    }
+    return new GameState(rules, elements, capabilities, players, tilePack, drawnTile, placedTiles, discardedTiles, featureMap, neutralFigures, deployedMeeples, playerActions, flags, events, phase, turnNumber, commited, nextPlayerIncrement);
+  }
+
+  public GameState mapNeutralFigures(Function<NeutralFiguresState, NeutralFiguresState> fn) {
+    return setNeutralFigures(fn.apply(neutralFigures));
+  }
+
+  public GameState setDeployedMeeples(LinkedHashMap<Meeple, FeaturePointer> deployedMeeples) {
+    if (deployedMeeples == this.deployedMeeples) {
+      return this;
+    }
+    return new GameState(rules, elements, capabilities, players, tilePack, drawnTile, placedTiles, discardedTiles, featureMap, neutralFigures, deployedMeeples, playerActions, flags, events, phase, turnNumber, commited, nextPlayerIncrement);
+  }
+
+  @Override public GameState setPlayerActions(ActionsState playerActions) {
+    if (playerActions == this.playerActions) {
+      return this;
+    }
+    return new GameState(rules, elements, capabilities, players, tilePack, drawnTile, placedTiles, discardedTiles, featureMap, neutralFigures, deployedMeeples, playerActions, flags, events, phase, turnNumber, commited, nextPlayerIncrement);
+  }
+
+  public GameState mapPlayerActions(Function<ActionsState, ActionsState> fn) {
+    return setPlayerActions(fn.apply(playerActions));
+  }
+
+  @Override public GameState setFlags(Set<Flag> flags) {
+    if (flags == this.flags) {
+      return this;
+    }
+    return new GameState(rules, elements, capabilities, players, tilePack, drawnTile, placedTiles, discardedTiles, featureMap, neutralFigures, deployedMeeples, playerActions, flags, events, phase, turnNumber, commited, nextPlayerIncrement);
+  }
+
+  @Override public GameState setEvents(Queue<PlayEvent> events) {
+    if (events == this.events) {
+      return this;
+    }
+    return new GameState(rules, elements, capabilities, players, tilePack, drawnTile, placedTiles, discardedTiles, featureMap, neutralFigures, deployedMeeples, playerActions, flags, events, phase, turnNumber, commited, nextPlayerIncrement);
+  }
+
+  public GameState setPhase(Phase phase) {
+    if (phase == this.phase) {
+      return this;
+    }
+    return new GameState(rules, elements, capabilities, players, tilePack, drawnTile, placedTiles, discardedTiles, featureMap, neutralFigures, deployedMeeples, playerActions, flags, events, phase, turnNumber, commited, nextPlayerIncrement);
+  }
+
+  public GameState setTurnNumber(int turnNumber) {
+    if (turnNumber == this.turnNumber) {
+      return this;
+    }
+    return new GameState(rules, elements, capabilities, players, tilePack, drawnTile, placedTiles, discardedTiles, featureMap, neutralFigures, deployedMeeples, playerActions, flags, events, phase, turnNumber, commited, nextPlayerIncrement);
+  }
+
+  public GameState setCommited(boolean commited) {
+    if (commited == this.commited) {
+      return this;
+    }
+    return new GameState(rules, elements, capabilities, players, tilePack, drawnTile, placedTiles, discardedTiles, featureMap, neutralFigures, deployedMeeples, playerActions, flags, events, phase, turnNumber, commited, nextPlayerIncrement);
+  }
+
+
+<<<<<<< /usr/src/app/output/farin/jcloisterzone/6535bd1add08898ebe26bc9440e47be238cf8241/src/main/java/com/jcloisterzone/game/state/GameState.java/left.java
+  public GameState setPassed(boolean passed) {
+    if (passed == this.passed) {
+      return this;
+    }
+    return new GameState(rules, elements, capabilities, players, tilePack, drawnTile, placedTiles, discardedTiles, featureMap, neutralFigures, deployedMeeples, playerActions, flags, events, phase, turnNumber, commited, passed, nextPlayerIncrement);
+  }
 =======
->>>>>>> upstream/master
+>>>>>>> Unknown file: This is a bug in JDime.
 
-    public static GameState createInitial(
-            Map<Rule, Object> rules,
-            Map<String, Object> elements,
-            Seq<Capability<?>> capabilities,
-            Array<Player> players,
-            int turnPlayerIndex) {
-        return new GameState(
-            rules,
-            elements,
-            CapabilitiesState.createInitial(capabilities),
-            PlayersState.createInitial(players, turnPlayerIndex),
-            null,
-            null,
-            LinkedHashMap.empty(),
-            List.empty(),
-            HashMap.empty(),
-            new NeutralFiguresState(),
-            LinkedHashMap.empty(),
-            null,
-            HashSet.empty(),
-            Queue.empty(),
-            null,
-            1,
-<<<<<<< HEAD
-            false,
-            false,
-            1
-=======
-            false
->>>>>>> upstream/master
-        );
-    }
 
-    public GameState(
-            Map<Rule, Object> rules,
-            Map<String, Object> elements,
-            CapabilitiesState capabilities,
-            PlayersState players,
-            TilePack tilePack, Tile drawnTile,
-            LinkedHashMap<Position, PlacedTile> placedTiles,
-            List<Tile> discardedTiles, Map<Position, Map<FeaturePointer, Feature>> featureMap,
-            NeutralFiguresState neutralFigures,
-            LinkedHashMap<Meeple, FeaturePointer> deployedMeeples,
-            ActionsState playerActions,
-            Set<Flag> flags,
-            Queue<PlayEvent> events,
-            Phase phase,
-            int turnNumber,
-<<<<<<< HEAD
-            boolean commited,
-            boolean passed,
-            int nextPlayerIncrement) {
-=======
-            boolean commited) {
->>>>>>> upstream/master
-        this.rules = rules;
-        this.elements = elements;
-        this.capabilities = capabilities;
-        this.players = players;
-        this.tilePack = tilePack;
-        this.drawnTile = drawnTile;
-        this.placedTiles = placedTiles;
-        this.discardedTiles = discardedTiles;
-        this.featureMap = featureMap;
-        this.neutralFigures = neutralFigures;
-        this.deployedMeeples = deployedMeeples;
-        this.playerActions = playerActions;
-        this.flags = flags;
-        this.events = events;
-        this.phase = phase;
-        this.turnNumber = turnNumber;
-        this.commited = commited;
-<<<<<<< HEAD
-        this.passed = passed;
-        this.nextPlayerIncrement = nextPlayerIncrement;
-=======
->>>>>>> upstream/master
+  public GameState setNextPlayerIncrement(int nextPlayerIncrement) {
+    if (nextPlayerIncrement == this.nextPlayerIncrement) {
+      return this;
     }
+    return new GameState(rules, elements, capabilities, players, tilePack, drawnTile, placedTiles, discardedTiles, featureMap, neutralFigures, deployedMeeples, playerActions, flags, events, phase, turnNumber, commited, passed, nextPlayerIncrement);
+  }
 
-    @Override
-    public GameState setCapabilities(CapabilitiesState capabilities) {
-        if (capabilities == this.capabilities) return this;
-        return new GameState(
-            rules, elements, capabilities, players,
-            tilePack, drawnTile, placedTiles, discardedTiles,
-            featureMap, neutralFigures,
-            deployedMeeples, playerActions,
-            flags, events,
-<<<<<<< HEAD
-            phase, turnNumber, commited, passed, nextPlayerIncrement
-=======
-            phase, turnNumber, commited
->>>>>>> upstream/master
-        );
-    }
+  public Map<String, Object> getElements() {
+    return elements;
+  }
 
-    @Override
-    public GameState setPlayers(PlayersState players) {
-        if (players == this.players) return this;
-        return new GameState(
-            rules, elements, capabilities, players,
-            tilePack, drawnTile, placedTiles, discardedTiles,
-            featureMap, neutralFigures,
-            deployedMeeples, playerActions,
-            flags, events,
-<<<<<<< HEAD
-            phase, turnNumber, commited, passed, nextPlayerIncrement
-=======
-            phase, turnNumber, commited
->>>>>>> upstream/master
-        );
-    }
+  @Override public Map<Rule, Object> getRules() {
+    return rules;
+  }
 
-    public GameState setTilePack(TilePack tilePack) {
-        if (tilePack == this.tilePack) return this;
-        return new GameState(
-            rules, elements, capabilities, players,
-            tilePack, drawnTile, placedTiles, discardedTiles,
-            featureMap, neutralFigures,
-            deployedMeeples, playerActions,
-            flags, events,
-<<<<<<< HEAD
-            phase, turnNumber, commited, passed, nextPlayerIncrement
-=======
-            phase, turnNumber, commited
->>>>>>> upstream/master
-        );
-    }
+  @Override public CapabilitiesState getCapabilities() {
+    return capabilities;
+  }
 
-    public GameState mapTilePack(Function<TilePack, TilePack> fn) {
-        return setTilePack(fn.apply(tilePack));
-    }
+  @Override public PlayersState getPlayers() {
+    return players;
+  }
 
-    public GameState setDrawnTile(Tile drawnTile) {
-        if (drawnTile == this.drawnTile) return this;
-        return new GameState(
-            rules, elements, capabilities, players,
-            tilePack, drawnTile, placedTiles, discardedTiles,
-            featureMap, neutralFigures,
-            deployedMeeples, playerActions,
-            flags, events,
-<<<<<<< HEAD
-            phase, turnNumber, commited, passed, nextPlayerIncrement
-=======
-            phase, turnNumber, commited
->>>>>>> upstream/master
-        );
-    }
+  public TilePack getTilePack() {
+    return tilePack;
+  }
 
-    @Override
-    public GameState setPlacedTiles(LinkedHashMap<Position, PlacedTile> placedTiles) {
-        if (placedTiles == this.placedTiles) return this;
-        return new GameState(
-            rules, elements, capabilities, players,
-            tilePack, drawnTile, placedTiles, discardedTiles,
-            featureMap, neutralFigures,
-            deployedMeeples, playerActions,
-            flags, events,
-<<<<<<< HEAD
-            phase, turnNumber, commited, passed, nextPlayerIncrement
-=======
-            phase, turnNumber, commited
->>>>>>> upstream/master
-        );
-    }
+  public Tile getDrawnTile() {
+    return drawnTile;
+  }
 
-    @Override
-    public GameState setFeatureMap(Map<Position, Map<FeaturePointer, Feature>> featureMap) {
-        if (featureMap == this.featureMap) return this;
-        return new GameState(
-            rules, elements, capabilities, players,
-            tilePack, drawnTile, placedTiles, discardedTiles,
-            featureMap, neutralFigures,
-            deployedMeeples, playerActions,
-            flags, events,
-<<<<<<< HEAD
-            phase, turnNumber, commited, passed, nextPlayerIncrement
-=======
-            phase, turnNumber, commited
->>>>>>> upstream/master
-        );
-    }
+  @Override public LinkedHashMap<Position, PlacedTile> getPlacedTiles() {
+    return placedTiles;
+  }
 
-    public GameState setDiscardedTiles(List<Tile> discardedTiles) {
-        if (discardedTiles == this.discardedTiles) return this;
-        return new GameState(
-            rules, elements, capabilities, players,
-            tilePack, drawnTile, placedTiles, discardedTiles,
-            featureMap, neutralFigures,
-            deployedMeeples, playerActions,
-            flags, events,
-<<<<<<< HEAD
-            phase, turnNumber, commited, passed, nextPlayerIncrement
-=======
-            phase, turnNumber, commited
->>>>>>> upstream/master
-        );
-    }
+  public List<Tile> getDiscardedTiles() {
+    return discardedTiles;
+  }
 
-    public GameState setNeutralFigures(NeutralFiguresState neutralFigures) {
-        if (neutralFigures == this.neutralFigures) return this;
-        return new GameState(
-            rules, elements, capabilities, players,
-            tilePack, drawnTile, placedTiles, discardedTiles,
-            featureMap, neutralFigures,
-            deployedMeeples, playerActions,
-            flags, events,
-<<<<<<< HEAD
-            phase, turnNumber, commited, passed, nextPlayerIncrement
-=======
-            phase, turnNumber, commited
->>>>>>> upstream/master
-        );
-    }
+  @Override public Map<Position, Map<FeaturePointer, Feature>> getFeatureMap() {
+    return featureMap;
+  }
 
-    public GameState mapNeutralFigures(Function<NeutralFiguresState, NeutralFiguresState> fn) {
-        return setNeutralFigures(fn.apply(neutralFigures));
-    }
+  public NeutralFiguresState getNeutralFigures() {
+    return neutralFigures;
+  }
 
-    public GameState setDeployedMeeples(LinkedHashMap<Meeple, FeaturePointer> deployedMeeples) {
-        if (deployedMeeples == this.deployedMeeples) return this;
-        return new GameState(
-            rules, elements, capabilities, players,
-            tilePack, drawnTile, placedTiles, discardedTiles,
-            featureMap, neutralFigures,
-            deployedMeeples, playerActions,
-            flags, events,
-<<<<<<< HEAD
-            phase, turnNumber, commited, passed, nextPlayerIncrement
-=======
-            phase, turnNumber, commited
->>>>>>> upstream/master
-        );
-    }
+  public LinkedHashMap<Meeple, FeaturePointer> getDeployedMeeples() {
+    return deployedMeeples;
+  }
 
-    @Override
-    public GameState setPlayerActions(ActionsState playerActions) {
-        if (playerActions == this.playerActions) return this;
-        return new GameState(
-            rules, elements, capabilities, players,
-            tilePack, drawnTile, placedTiles, discardedTiles,
-            featureMap, neutralFigures,
-            deployedMeeples, playerActions,
-            flags, events,
-<<<<<<< HEAD
-            phase, turnNumber, commited, passed, nextPlayerIncrement
-=======
-            phase, turnNumber, commited
->>>>>>> upstream/master
-        );
-    }
+  @Override public ActionsState getPlayerActions() {
+    return playerActions;
+  }
 
-    public GameState mapPlayerActions(Function<ActionsState, ActionsState> fn) {
-        return setPlayerActions(fn.apply(playerActions));
-    }
+  @Override public Set<Flag> getFlags() {
+    return flags;
+  }
 
-    @Override
-    public GameState setFlags(Set<Flag> flags) {
-        if (flags == this.flags) return this;
-        return new GameState(
-            rules, elements, capabilities, players,
-            tilePack, drawnTile, placedTiles, discardedTiles,
-            featureMap, neutralFigures,
-            deployedMeeples, playerActions,
-            flags, events,
-<<<<<<< HEAD
-            phase, turnNumber, commited, passed, nextPlayerIncrement
-=======
-            phase, turnNumber, commited
->>>>>>> upstream/master
-        );
-    }
+  @Override public Queue<PlayEvent> getEvents() {
+    return events;
+  }
 
-    @Override
-    public GameState setEvents(Queue<PlayEvent> events) {
-        if (events == this.events) return this;
-        return new GameState(
-            rules, elements, capabilities, players,
-            tilePack, drawnTile, placedTiles, discardedTiles,
-            featureMap, neutralFigures,
-            deployedMeeples, playerActions,
-            flags, events,
-<<<<<<< HEAD
-            phase, turnNumber, commited, passed, nextPlayerIncrement
-=======
-            phase, turnNumber, commited
->>>>>>> upstream/master
-        );
-    }
+  public Phase getPhase() {
+    return phase;
+  }
 
-    public GameState setPhase(Phase phase) {
-        if (phase == this.phase) return this;
-        return new GameState(
-            rules, elements, capabilities, players,
-            tilePack, drawnTile, placedTiles, discardedTiles,
-            featureMap, neutralFigures,
-            deployedMeeples, playerActions,
-            flags, events,
-<<<<<<< HEAD
-            phase, turnNumber, commited, passed, nextPlayerIncrement
-=======
-            phase, turnNumber, commited
->>>>>>> upstream/master
-        );
-    }
+  public int getTurnNumber() {
+    return turnNumber;
+  }
 
-    public GameState setTurnNumber(int turnNumber) {
-        if (turnNumber == this.turnNumber) return this;
-        return new GameState(
-            rules, elements, capabilities, players,
-            tilePack, drawnTile, placedTiles, discardedTiles,
-            featureMap, neutralFigures,
-            deployedMeeples, playerActions,
-            flags, events,
-<<<<<<< HEAD
-            phase, turnNumber, commited, passed, nextPlayerIncrement
-=======
-            phase, turnNumber, commited
->>>>>>> upstream/master
-        );
-    }
+  public boolean isCommited() {
+    return commited;
+  }
 
-    public GameState setCommited(boolean commited) {
-        if (commited == this.commited) return this;
-        return new GameState(
-                rules, elements, capabilities, players,
-                tilePack, drawnTile, placedTiles, discardedTiles,
-                featureMap, neutralFigures,
-                deployedMeeples, playerActions,
-                flags, events,
-<<<<<<< HEAD
-                phase, turnNumber, commited, passed, nextPlayerIncrement
-        );
-    }
-
-    public GameState setPassed(boolean passed) {
-        if (passed == this.passed) return this;
-        return new GameState(
-                rules, elements, capabilities, players,
-                tilePack, drawnTile, placedTiles, discardedTiles,
-                featureMap, neutralFigures,
-                deployedMeeples, playerActions,
-                flags, events,
-                phase, turnNumber, commited, passed, nextPlayerIncrement
-=======
-                phase, turnNumber, commited
->>>>>>> upstream/master
-        );
-    }
-
-    public GameState setNextPlayerIncrement(int nextPlayerIncrement) {
-        if (nextPlayerIncrement == this.nextPlayerIncrement) return this;
-        return new GameState(
-                rules, elements, capabilities, players,
-                tilePack, drawnTile, placedTiles, discardedTiles,
-                featureMap, neutralFigures,
-                deployedMeeples, playerActions,
-                flags, events,
-                phase, turnNumber, commited, passed, nextPlayerIncrement
-        );
-    }
-    
-    public Map<String, Object> getElements() {
-        return elements;
-    }
-
-    @Override
-    public Map<Rule, Object> getRules() {
-        return rules;
-    }
-
-    @Override
-    public CapabilitiesState getCapabilities() {
-        return capabilities;
-    }
-
-    @Override
-    public PlayersState getPlayers() {
-        return players;
-    }
-
-    public TilePack getTilePack() {
-        return tilePack;
-    }
-
-    public Tile getDrawnTile() {
-        return drawnTile;
-    }
-
-    @Override
-    public LinkedHashMap<Position, PlacedTile> getPlacedTiles() {
-        return placedTiles;
-    }
-
-    public List<Tile> getDiscardedTiles() {
-        return discardedTiles;
-    }
-
-    @Override
-    public Map<Position, Map<FeaturePointer, Feature>> getFeatureMap() {
-        return featureMap;
-    }
-
-    public NeutralFiguresState getNeutralFigures() {
-        return neutralFigures;
-    }
-
-    public LinkedHashMap<Meeple, FeaturePointer> getDeployedMeeples() {
-        return deployedMeeples;
-    }
-
-    @Override
-    public ActionsState getPlayerActions() {
-        return playerActions;
-    }
-
-    @Override
-    public Set<Flag> getFlags() {
-        return flags;
-    }
-
-    @Override
-    public Queue<PlayEvent> getEvents() {
-        return events;
-    }
-
-    public Phase getPhase() {
-        return phase;
-    }
-
-    public int getTurnNumber() {
-        return turnNumber;
-    }
-
-    public boolean isCommited() {
-        return commited;
-    }
-<<<<<<< HEAD
-
-    public boolean isPassed() {
-        return passed;
-    }
-    
-    public int getNextPlayerIncrement() {
-    	return nextPlayerIncrement;
-    }
-=======
->>>>>>> upstream/master
+  public int getNextPlayerIncrement() {
+    return nextPlayerIncrement;
+  }
 }
