@@ -161,7 +161,13 @@ public class Excel2XML {
      * @param NumErrorsToReport How many errors to print
      * @param err The output stream which to print the errors
      */
+<<<<<<< /usr/src/app/output/dtrules/dtrules/d5e924b9f3bb4fcef9236053947288bbd6aa9e6d/compilerutil/src/main/java/com/dtrules/compiler/excel/util/Excel2XML.java/left.java
+    @SuppressWarnings("rawtypes")
+||||||| /usr/src/app/output/dtrules/dtrules/d5e924b9f3bb4fcef9236053947288bbd6aa9e6d/compilerutil/src/main/java/com/dtrules/compiler/excel/util/Excel2XML.java/base.java
+    @SuppressWarnings("unchecked")
+=======
     @SuppressWarnings({ "deprecation" })
+>>>>>>> /usr/src/app/output/dtrules/dtrules/d5e924b9f3bb4fcef9236053947288bbd6aa9e6d/compilerutil/src/main/java/com/dtrules/compiler/excel/util/Excel2XML.java/right.java
     public void compile(int NumErrorsToReport, PrintStream err) {
         
         try {
@@ -228,7 +234,6 @@ public class Excel2XML {
                 rs  = rd.getRuleSet(RName.getRName(ruleset));
                 PrintStream btables = new PrintStream(rs.getWorkingdirectory()+"balanced.txt");
                 rs.newSession().printBalancedTables(btables);
-
                 if(verbose) {
                     RulesAdminService admin = new RulesAdminService(rs.newSession(),rd);
                     List<?> tables = admin.getDecisionTables(rs.getName());
@@ -237,7 +242,6 @@ public class Excel2XML {
                        dtable.check(ostream);
                     }
                 }
-                
             }
         } catch (Exception e) {
             err.print(e);
@@ -354,7 +358,7 @@ public class Excel2XML {
             String applicationRepositoryPath,
             String [] mappings,
             int    errorcnt) {
-        System.out.println("Starting: "+ new Date());
+        ostream.println("Starting: "+ new Date());
         Excel2XML excel2XML = new Excel2XML(path,rulesConfig,ruleset);
         //excel2XML.verbose = true;
         excel2XML.compileRuleSet(path, rulesConfig, ruleset, applicationRepositoryPath, mappings, errorcnt);
@@ -383,12 +387,10 @@ public class Excel2XML {
                 int    errorcnt) {
         
         try{
-            if(verbose) ostream.println("Starting: "+ new Date());
-            Excel2XML converter     = new Excel2XML(path, rulesConfig, ruleset);
             if(verbose) ostream.println("Converting: "+ new Date());
-            converter.convertRuleset();
+            convertRuleset();
             if(verbose) ostream.println("Compiling: "+ new Date());
-            converter.compile(errorcnt,ostream);
+            compile(errorcnt,ostream);
             if(verbose) ostream.println("Done: "+ new Date());
             
             if(mappings != null) for(String map : mappings){
@@ -405,7 +407,7 @@ public class Excel2XML {
                         rulesConfig,
                         "deployed");
                 cr.compare(ostream);
-                cr.compare(new FileOutputStream(converter.getRuleSet().getWorkingdirectory()+"changes.xml"));   
+                cr.compare(new FileOutputStream(getRuleSet().getWorkingdirectory()+"changes.xml"));   
             }
     
         } catch ( Exception ex ) {

@@ -46,9 +46,10 @@ import com.dtrules.xmlparser.XMLTree.Node;
 import com.dtrules.xmlparser.XMLTree.Node.MATCH;
 
 public abstract class ATestHarness implements ITestHarness {
-
 	public static PrintStream ostream = System.out;
 	public static PrintStream estream = System.err;
+	
+	
     protected DataMap     datamap     = null;
     protected AutoDataMap autoDataMap = null;
     protected String      currentfile = "";
