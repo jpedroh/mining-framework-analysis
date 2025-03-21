@@ -2,6 +2,8 @@ package dk.frankbille.scoreboard.domain;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -40,6 +42,7 @@ public class Player implements Serializable {
 		this.fullName = fullName;
 	}
 
+	@Column(name="player_group")
 	public String getGroup() {
 		return group;
 	}
