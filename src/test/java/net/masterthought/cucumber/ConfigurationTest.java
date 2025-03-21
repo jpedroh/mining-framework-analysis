@@ -162,6 +162,7 @@ public class ConfigurationTest {
         assertThat(configuration.getDirectorySuffix()).isEqualTo(directorySuffix);
     }
 
+<<<<<<< /usr/src/app/output/masterthought/cucumber-reporting/5cbd5c3b213661c3eb9644e012118b3918bec0f1/src/test/java/net/masterthought/cucumber/ConfigurationTest.java/left.java
     @Test
     public void getDirectorySuffixWithSeparator_ReturnsDirectorySuffixWithSeparator() {
 
@@ -175,6 +176,22 @@ public class ConfigurationTest {
         // then
         assertThat(configuration.getDirectorySuffixWithSeparator()).isEqualTo(ReportBuilder.SUFFIX_SEPARATOR + directorySuffix);
     }
+||||||| /usr/src/app/output/masterthought/cucumber-reporting/5cbd5c3b213661c3eb9644e012118b3918bec0f1/src/test/java/net/masterthought/cucumber/ConfigurationTest.java/base.java
+=======
+    @Test
+    public void getDirectorySuffixWithSeparator_ReturnsDirectorySuffixWithSeparator() {
+
+        // given
+        String directorySuffix = "test";
+        Configuration configuration = new Configuration(outputDirectory, projectName);
+
+        // when
+        configuration.setDirectorySuffix(directorySuffix);
+
+        // then
+        assertThat(configuration.getDirectorySuffixWithSeparator()).isEqualTo("_" + directorySuffix);
+    }
+>>>>>>> /usr/src/app/output/masterthought/cucumber-reporting/5cbd5c3b213661c3eb9644e012118b3918bec0f1/src/test/java/net/masterthought/cucumber/ConfigurationTest.java/right.java
 
     @Test
     public void getDirectorySuffixWithSeparatorForEmptySuffix_ReturnsEmptyString() {

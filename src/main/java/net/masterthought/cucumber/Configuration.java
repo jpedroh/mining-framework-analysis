@@ -147,7 +147,6 @@ public class Configuration {
     public void setDirectorySuffix(String directorySuffix) {
         this.directorySuffix = directorySuffix;
     }
-
     /**
      * Returns directory suffix
      *
@@ -156,15 +155,36 @@ public class Configuration {
     public String getDirectorySuffix() {
         return StringUtils.defaultString(directorySuffix);
     }
-
     /**
      * Returns directory suffix with separator prepended if necessary
      *
      * @return directory suffix with prepended separator
      */
+<<<<<<< /usr/src/app/output/masterthought/cucumber-reporting/5cbd5c3b213661c3eb9644e012118b3918bec0f1/src/main/java/net/masterthought/cucumber/Configuration.java/left.java
     public String getDirectorySuffixWithSeparator() {
         return StringUtils.isEmpty(directorySuffix) ? "" : ReportBuilder.SUFFIX_SEPARATOR + directorySuffix;
     }
+||||||| /usr/src/app/output/masterthought/cucumber-reporting/5cbd5c3b213661c3eb9644e012118b3918bec0f1/src/main/java/net/masterthought/cucumber/Configuration.java/base.java
+=======
+    public String getDirectorySuffixWithSeparator() {
+        return StringUtils.isEmpty(directorySuffix) ? "" : SUFFIX_SEPARATOR + directorySuffix;
+    }
+>>>>>>> /usr/src/app/output/masterthought/cucumber-reporting/5cbd5c3b213661c3eb9644e012118b3918bec0f1/src/main/java/net/masterthought/cucumber/Configuration.java/right.java
+    /**
+     * Sets directory suffix.
+     *
+     * @param directorySuffix directory suffix
+     */
+    /**
+     * Returns directory suffix
+     *
+     * @return directory suffix
+     */
+    /**
+     * Returns directory suffix with separator prepended if necessary
+     *
+     * @return directory suffix with prepended separator
+     */
 
     /**
      * Gets directory where the attachments are stored.
