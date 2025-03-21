@@ -50,18 +50,12 @@ class RequestHandler implements Connection.ResponseCallback {
     private volatile Host current;
     private volatile List<Host> triedHosts;
     private volatile HostConnectionPool currentPool;
-
     private volatile int queryRetries;
     private volatile ConsistencyLevel retryConsistencyLevel;
-
     private volatile Map<InetAddress, Throwable> errors;
-
     private volatile boolean isCanceled;
     private volatile Connection.ResponseHandler connectionHandler;
-
     private final Timer.Context timerContext;
-    private final long startTime;
-
     public RequestHandler(Session.Manager manager, Callback callback, Statement statement) {
         this.manager = manager;
         this.callback = callback;
@@ -76,15 +70,12 @@ class RequestHandler implements Connection.ResponseCallback {
                           : null;
         this.startTime = System.nanoTime();
     }
-
     private boolean metricsEnabled() {
         return manager.configuration().getMetricsOptions() != null;
     }
-
     private Metrics metrics() {
         return manager.cluster.manager.metrics;
     }
-
     public void sendRequest() {
         try {
             while (queryPlan.hasNext() && !isCanceled) {
@@ -99,7 +90,6 @@ class RequestHandler implements Connection.ResponseCallback {
             setFinalException(null, new DriverInternalError("An unexpected error happened while sending requests", e));
         }
     }
-
     private boolean query(Host host) {
         currentPool = manager.pools.get(host);
         if (currentPool == null || currentPool.isShutdown())
@@ -144,14 +134,12 @@ class RequestHandler implements Connection.ResponseCallback {
             return false;
         }
     }
-
     private void logError(InetAddress address, Throwable exception) {
         logger.debug("Error querying {}, trying next host (error is: {})", address, exception.toString());
         if (errors == null)
             errors = new HashMap<InetAddress, Throwable>();
         errors.put(address, exception);
     }
-
     private void retry(final boolean retryCurrent, ConsistencyLevel newConsistencyLevel) {
         final Host h = current;
         this.retryConsistencyLevel = newConsistencyLevel;
@@ -168,13 +156,11 @@ class RequestHandler implements Connection.ResponseCallback {
             }
         });
     }
-
     public void cancel() {
         isCanceled = true;
         if (connectionHandler != null)
             connectionHandler.cancelHandler();
     }
-
     @Override
     public Message.Request request() {
 
@@ -183,7 +169,6 @@ class RequestHandler implements Connection.ResponseCallback {
             request = manager.makeRequestMessage(statement, retryConsistencyLevel, serialConsistencyOf(request), pagingStateOf(request));
         return request;
     }
-
     private ConsistencyLevel consistencyOf(Message.Request request) {
         switch (request.type) {
             case QUERY:   return ((Requests.Query)request).options.consistency;
@@ -192,7 +177,6 @@ class RequestHandler implements Connection.ResponseCallback {
             default:      return null;
         }
     }
-
     private ConsistencyLevel serialConsistencyOf(Message.Request request) {
         switch (request.type) {
             case QUERY:   return ((Requests.Query)request).options.serialConsistency;
@@ -200,7 +184,6 @@ class RequestHandler implements Connection.ResponseCallback {
             default:      return null;
         }
     }
-
     private ByteBuffer pagingStateOf(Message.Request request) {
         switch (request.type) {
             case QUERY:   return ((Requests.Query)request).options.pagingState;
@@ -208,7 +191,6 @@ class RequestHandler implements Connection.ResponseCallback {
             default:      return null;
         }
     }
-
     private void setFinalResult(Connection connection, Message.Response response) {
         if (timerContext != null)
             timerContext.stop();
@@ -221,15 +203,14 @@ class RequestHandler implements Connection.ResponseCallback {
         }
         if (retryConsistencyLevel != null)
             info = info.withAchievedConsistency(retryConsistencyLevel);
-        callback.onSet(connection, response, info, statement, System.nanoTime() - startTime);
+<<<<<<< /usr/src/app/output/datastax/java-driver/5e108acf46ad0d498d814c533b3820c687d92dea/driver-core/src/main/java/com/datastax/driver/core/RequestHandler.java/left.java
+        callback.onSet(connection, response, info, statement);
+||||||| /usr/src/app/output/datastax/java-driver/5e108acf46ad0d498d814c533b3820c687d92dea/driver-core/src/main/java/com/datastax/driver/core/RequestHandler.java/base.java
+        callback.onSet(connection, response, info);
+=======
+        callback.onSet(connection, response, info, System.nanoTime() - startTime);
+>>>>>>> /usr/src/app/output/datastax/java-driver/5e108acf46ad0d498d814c533b3820c687d92dea/driver-core/src/main/java/com/datastax/driver/core/RequestHandler.java/right.java
     }
-
-    private void setFinalException(Connection connection, Exception exception) {
-        if (timerContext != null)
-            timerContext.stop();
-        callback.onException(connection, exception, System.nanoTime() - startTime);
-    }
-
     private void returnConnection(Connection connection) {
         // In most case currentPool won't be null since we set it before sending the
         // query. However, it's possible that for the same write we call both onSet
@@ -240,7 +221,6 @@ class RequestHandler implements Connection.ResponseCallback {
         if (currentPool != null)
             currentPool.returnConnection(connection);
     }
-
     @Override
     public void onSet(Connection connection, Message.Response response, long latency) {
 
@@ -389,7 +369,6 @@ class RequestHandler implements Connection.ResponseCallback {
                 manager.cluster.manager.reportLatency(queriedHost, latency);
         }
     }
-
     private Connection.ResponseCallback prepareAndRetry(final String toPrepare) {
         return new Connection.ResponseCallback() {
 
@@ -436,42 +415,43 @@ class RequestHandler implements Connection.ResponseCallback {
             }
         };
     }
-
     @Override
     public void onException(Connection connection, Exception exception, long latency) {
 
         returnConnection(connection);
 
-        Host queriedHost = current;
-        try {
-            if (exception instanceof ConnectionException) {
-                if (metricsEnabled())
-                    metrics().getErrorMetrics().getConnectionErrors().inc();
-                ConnectionException ce = (ConnectionException)exception;
-                logError(ce.address, ce);
-                retry(false, null);
-                return;
-            }
-            setFinalException(connection, exception);
-        } finally {
-            if (queriedHost != null)
-                manager.cluster.manager.reportLatency(queriedHost, latency);
+        if (exception instanceof ConnectionException) {
+            if (metricsEnabled())
+                metrics().getErrorMetrics().getConnectionErrors().inc();
+            ConnectionException ce = (ConnectionException)exception;
+            logError(ce.address, ce);
+            retry(false, null);
+            return;
         }
-    }
 
+        setFinalException(connection, exception);
+    }
     @Override
-    public void onTimeout(Connection connection, long latency) {
+    public void onTimeout(Connection connection) {
         returnConnection(connection);
-        Host queriedHost = current;
         logError(connection.address, new DriverException("Timeout during read"));
         retry(false, null);
-
-        if (queriedHost != null)
-            manager.cluster.manager.reportLatency(queriedHost, latency);
+    }
+    private final long startTime;
+    private void setFinalException(Connection connection, Exception exception) {
+        if (timerContext != null)
+            timerContext.stop();
+        callback.onException(connection, exception, System.nanoTime() - startTime);
     }
 
     interface Callback extends Connection.ResponseCallback {
-        public void onSet(Connection connection, Message.Response response, ExecutionInfo info, Statement statement, long latency);
+<<<<<<< /usr/src/app/output/datastax/java-driver/5e108acf46ad0d498d814c533b3820c687d92dea/driver-core/src/main/java/com/datastax/driver/core/RequestHandler.java/left.java
+        public void onSet(Connection connection, Message.Response response, ExecutionInfo info, Statement statement);
+||||||| /usr/src/app/output/datastax/java-driver/5e108acf46ad0d498d814c533b3820c687d92dea/driver-core/src/main/java/com/datastax/driver/core/RequestHandler.java/base.java
+        public void onSet(Connection connection, Message.Response response, ExecutionInfo info);
+=======
+        public void onSet(Connection connection, Message.Response response, ExecutionInfo info, long latency);
+>>>>>>> /usr/src/app/output/datastax/java-driver/5e108acf46ad0d498d814c533b3820c687d92dea/driver-core/src/main/java/com/datastax/driver/core/RequestHandler.java/right.java
         public void register(RequestHandler handler);
     }
 }

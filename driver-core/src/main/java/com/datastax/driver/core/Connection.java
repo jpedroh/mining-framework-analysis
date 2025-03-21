@@ -587,7 +587,13 @@ class Connection {
         }
 
         @Override
-        public void onSet(Connection connection, Message.Response response, ExecutionInfo info, Statement statement, long latency) {
+<<<<<<< /usr/src/app/output/datastax/java-driver/5e108acf46ad0d498d814c533b3820c687d92dea/driver-core/src/main/java/com/datastax/driver/core/Connection.java/left.java
+        public void onSet(Connection connection, Message.Response response, ExecutionInfo info, Statement statement) {
+||||||| /usr/src/app/output/datastax/java-driver/5e108acf46ad0d498d814c533b3820c687d92dea/driver-core/src/main/java/com/datastax/driver/core/Connection.java/base.java
+        public void onSet(Connection connection, Message.Response response, ExecutionInfo info) {
+=======
+        public void onSet(Connection connection, Message.Response response, ExecutionInfo info, long latency) {
+>>>>>>> /usr/src/app/output/datastax/java-driver/5e108acf46ad0d498d814c533b3820c687d92dea/driver-core/src/main/java/com/datastax/driver/core/Connection.java/right.java
             onSet(connection, response, latency);
         }
 

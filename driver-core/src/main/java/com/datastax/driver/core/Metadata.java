@@ -130,9 +130,8 @@ public class Metadata {
     }
 
     synchronized void rebuildTokenMap(String partitioner, Map<Host, Collection<String>> allTokens) {
-        if (allTokens.isEmpty())
-            return;
-
+<<<<<<< /usr/src/app/output/datastax/java-driver/5e108acf46ad0d498d814c533b3820c687d92dea/driver-core/src/main/java/com/datastax/driver/core/Metadata.java/left.java
+    
         Token.Factory factory = partitioner == null
                               ? (tokenMap == null ? null : tokenMap.factory)
                               : Token.getFactory(partitioner);
@@ -140,6 +139,12 @@ public class Metadata {
             return;
 
         this.tokenMap = TokenMap.build(factory, allTokens, keyspaces.values());
+||||||| /usr/src/app/output/datastax/java-driver/5e108acf46ad0d498d814c533b3820c687d92dea/driver-core/src/main/java/com/datastax/driver/core/Metadata.java/base.java
+        this.tokenMap = TokenMap.build(partitioner, allTokens);
+=======
+        if (!allTokens.isEmpty())
+            this.tokenMap = TokenMap.build(partitioner, allTokens);
+>>>>>>> /usr/src/app/output/datastax/java-driver/5e108acf46ad0d498d814c533b3820c687d92dea/driver-core/src/main/java/com/datastax/driver/core/Metadata.java/right.java
     }
 
     Host add(InetAddress address) {
