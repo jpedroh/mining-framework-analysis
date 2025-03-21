@@ -163,6 +163,10 @@ public class StreamingRow implements Row {
   /**
    * Not supported
    */
+
+  /**
+   * Not supported
+   */
   @Override
   public void setHeight(short height) {
     throw new NotSupportedException();
