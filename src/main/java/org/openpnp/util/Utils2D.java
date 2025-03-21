@@ -335,11 +335,6 @@ public class Utils2D {
     }
 
 
-    /**
-     * Normalizes the angle to be greater than or equal to 0 and less than or equal to +360 degrees
-     * @param angle
-     * @return
-     */
     public static double normalizeAngle(double angle) {
         while (angle > 360) {
             angle -= 360;
@@ -361,27 +356,13 @@ public class Utils2D {
     }
     
     /**
-     * Normalizes the angle to be greater than or equal to -180 and less than +180 degrees
-     * @param angle
-     * @return
-     */
-    public static double normalizeAngle180(double angle) {
-        while (angle >= 180) {
-            angle -= 360;
-        }
-        while (angle < -180) {
-            angle += 360;
-        }
-        return angle;
-    }
-    
-    /**
      * Calculate the Location along the line formed by a and b with distance from a.
      * @param a
      * @param b
      * @param distance
      * @return
      */
+    
     public static Location getPointAlongLine(Location a, Location b, Length distance) {
         b = b.convertToUnits(a.getUnits());
         distance = distance.convertToUnits(a.getUnits());
@@ -392,7 +373,7 @@ public class Utils2D {
         vu = new Point(vu.x * distance.getValue(), vu.y * distance.getValue());
         return a.add(new Location(a.getUnits(), vu.x, vu.y, 0, 0));
     }
-
+    
     /**
      * Calculate the angle in degrees between a ray from the first point in the positive x direction to
      * the ray from the first point to the second point.
@@ -400,6 +381,7 @@ public class Utils2D {
      * @param secondPoint
      * @return
      */
+    
     public static double getAngleFromPoint(Location firstPoint, Location secondPoint) {
         secondPoint = secondPoint.convertToUnits(firstPoint.getUnits());
         return Math.toDegrees(Math.atan2(secondPoint.getY() - firstPoint.getY(), secondPoint.getX() - firstPoint.getX()));
@@ -438,6 +420,7 @@ public class Utils2D {
     }
     
     // https://stackoverflow.com/questions/21270892/generate-affinetransform-from-3-points
+    
     public static AffineTransform deriveAffineTransform(
             double sourceX1, double sourceY1,
             double sourceX2, double sourceY2,
@@ -467,9 +450,28 @@ public class Utils2D {
         double m12 = transform.getEntry(1, 2);
 
         return new AffineTransform(m00, m10, m01, m11, m02, m12);       
-    }  
+    }
     
     // Best keywords: transformation matrix between two line segments
+    
+    // https://stackoverflow.com/questions/42328398/transformation-matrix-between-two-line-segments
+    
+    /**
+     * Normalizes the angle to be greater than or equal to 0 and less than or equal to +360 degrees
+     * @param angle
+     * @return
+     */
+    
+    /**
+     * Normalizes the angle to be greater than or equal to -180 and less than +180 degrees
+     * @param angle
+     * @return
+     */
+    
+    // https://stackoverflow.com/questions/21270892/generate-affinetransform-from-3-points
+    
+    // Best keywords: transformation matrix between two line segments
+    
     // https://stackoverflow.com/questions/42328398/transformation-matrix-between-two-line-segments
     public static AffineTransform deriveAffineTransform(
             double sourceX1, double sourceY1,
