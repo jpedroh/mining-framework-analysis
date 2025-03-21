@@ -84,280 +84,320 @@ public class Main {
         }
     }
 
-    // public Person insertPerson(Person person) {
-    // SqlCrudEngine sqlInsertPerson = sqlFactory.getCrudEngine("INSERT_PERSON");
-    // int count = sqlInsertPerson.insert(session, person);
-    // logger.info("insert person: " + count + ": " + person);
-    // return (count > 0) ? person : null;
-    // }
+    public Subscriber insertLibrarySubscriber(Library library, Subscriber subscriber) {
+        SqlCrudEngine sqlInsertSubscriber = sqlFactory.getCrudEngine("INSERT_SUBSCRIBER");
+        if (subscriber != null) {
+            subscriber.setLibrary(library);
+            int count = sqlInsertSubscriber.insert(session, subscriber);
+            logger.info("insert subscriber: " + count + ": " + subscriber);
+            if (count > 0)
+                library.getSubscribers().add(subscriber);
+        }
+        return subscriber;
+    }
 
-    // public Person insertPersonContacts(Person person, Contact... contacts) {
-    // SqlCrudEngine sqlInsertContact = sqlFactory.getCrudEngine("INSERT_CONTACT");
-    // if (contacts != null) {
-    // for (Contact contact : contacts) {
-    // contact.setPerson(person);
-    // int count = sqlInsertContact.insert(session, contact);
-    // logger.info("insert contact: " + count + ": " + contact);
-    // if (count > 0)
-    // person.getContacts().add(contact);
-    // }
-    // }
-    // return person;
-    // }
+    public BankAccount insertBankAccount(BankAccount bankAccount) {
+        SqlCrudEngine sqlInsertBankAccount = sqlFactory.getCrudEngine("INSERT_BANK_ACCOUNT");
+        int count = sqlInsertBankAccount.insert(session, bankAccount);
+        logger.info("insert bank account: " + count + ": " + bankAccount);
+        if (count > 0)
+            bankAccount.getSubscriber().getBillingDetails().add(bankAccount);
+        return (count > 0) ? bankAccount : null;
+    }
 
-    // public Library insertLibrary(Library library) {
-    // SqlCrudEngine sqlInsertLibrary = sqlFactory.getCrudEngine("INSERT_LIBRARY");
-    // int count = sqlInsertLibrary.insert(session, library);
-    // logger.info("insert library: " + count + ": " + library);
-    // return (count > 0) ? library : null;
-    // }
+    public CreditCard insertCreditCard(CreditCard creditCard) {
+        SqlCrudEngine sqlInsertCreditCard = sqlFactory.getCrudEngine("INSERT_CREDIT_CARD");
+        int count = sqlInsertCreditCard.insert(session, creditCard);
+        logger.info("insert credit card: " + count + ": " + creditCard);
+        if (count > 0)
+            creditCard.getSubscriber().getBillingDetails().add(creditCard);
+        return (count > 0) ? creditCard : null;
+    }
 
-    // public Subscriber insertLibrarySubscriber(Library library, Subscriber subscriber) {
-    // SqlCrudEngine sqlInsertSubscriber = sqlFactory.getCrudEngine("INSERT_SUBSCRIBER");
-    // if (subscriber != null) {
-    // subscriber.setLibrary(library);
-    // int count = sqlInsertSubscriber.insert(session, subscriber);
-    // logger.info("insert subscriber: " + count + ": " + subscriber);
-    // if (count > 0)
-    // library.getSubscribers().add(subscriber);
-    // }
-    // return subscriber;
-    // }
-
-    // public BankAccount insertBankAccount(BankAccount bankAccount) {
-    // SqlCrudEngine sqlInsertBankAccount = sqlFactory.getCrudEngine("INSERT_BANK_ACCOUNT");
-    // int count = sqlInsertBankAccount.insert(session, bankAccount);
-    // logger.info("insert bank account: " + count + ": " + bankAccount);
-    // if (count > 0)
-    // bankAccount.getSubscriber().getBillingDetails().add(bankAccount);
-    // return (count > 0) ? bankAccount : null;
-    // }
-
-    // public CreditCard insertCreditCard(CreditCard creditCard) {
-    // SqlCrudEngine sqlInsertCreditCard = sqlFactory.getCrudEngine("INSERT_CREDIT_CARD");
-    // int count = sqlInsertCreditCard.insert(session, creditCard);
-    // logger.info("insert credit card: " + count + ": " + creditCard);
-    // if (count > 0)
-    // creditCard.getSubscriber().getBillingDetails().add(creditCard);
-    // return (count > 0) ? creditCard : null;
-    // }
-
-    // public Movie insertMovie(Movie movie) {
-    // SqlCrudEngine sqlInsertMedia = sqlFactory.getCrudEngine("INSERT_MEDIA");
-    // SqlCrudEngine sqlInsertMovie = sqlFactory.getCrudEngine("INSERT_MOVIE");
-    // int count = sqlInsertMedia.insert(session, movie);
-    // if (count > 0) {
-    // sqlInsertMovie.insert(session, movie);
-    // }
-    // logger.info("insert movie: " + count + ": " + movie);
-    // return (count > 0) ? movie : null;
-    // }
-
-    // public Book insertBook(Book book) {
-    // SqlCrudEngine sqlInsertMedia = sqlFactory.getCrudEngine("INSERT_MEDIA");
-    // SqlCrudEngine sqlInsertBook = sqlFactory.getCrudEngine("INSERT_BOOK");
-    // int count = sqlInsertMedia.insert(session, book);
-    // if (count > 0) {
-    // sqlInsertBook.insert(session, book);
-    // }
-    // logger.info("insert book: " + count + ": " + book);
-    // return (count > 0) ? book : null;
-    // }
-
-    // public void insertPersonLibrary(Person person, Media... media) {
-    // SqlCrudEngine sqlInsertPersonLibrary = sqlFactory.getCrudEngine("INSERT_PERSON_LIBRARY");
-    // if (media != null) {
-    // for (Media media1 : media) {
-    // PersonLibrary personLibrary = new PersonLibrary(person.getId(), media1.getId());
-    // int count = sqlInsertPersonLibrary.insert(session, personLibrary);
-    // logger.info("insert person library: " + count + ": " + personLibrary);
-    // if (count > 0)
-    // person.getLibrary().add(media1);
-    // }
-    // }
-    // }
-
-    // public Person getPerson(Person person) {
-    // SqlCrudEngine sqlEngine = sqlFactory.getCrudEngine("GET_PERSON");
-    // String s = sqlEngine.getGetSql(person, null);
-    // Person p = sqlEngine.get(session, Person.class, person);
-    // logger.info("get person: " + p);
-    // return p;
-    // }
+    public NewBook insertNewBook(NewBook book) {
+        SqlCrudEngine sqlInsertMedia = sqlFactory.getCrudEngine("INSERT_MEDIA");
+        SqlCrudEngine sqlInsertNewBook = sqlFactory.getCrudEngine("INSERT_NEW_BOOK");
+        int count = sqlInsertMedia.insert(session, book);
+        if (count > 0) {
+            sqlInsertNewBook.insert(session, book);
+        }
+        logger.info("insert book: " + count + ": " + book);
+        return (count > 0) ? book : null;
+    }
 
     // public Person updatePersonNoNull(Person person) {
+
     // SqlCrudEngine sqlEngine = sqlFactory.getCrudEngine("UPDATE_PERSON");
+
     // sqlEngine.setFeature(SqlFeature.EMPTY_FOR_NULL, Boolean.TRUE);
+
     // int count = 0;
+
     // try {
+
     // count = sqlEngine.update(session, person);
+
     // } finally {
+
     // sqlEngine.unsetFeature(SqlFeature.EMPTY_FOR_NULL);
+
     // }
+
     // logger.info("update person: " + count);
+
     // return (count > 0) ? person : null;
+
     // }
+
+    //
 
     // public Person updatePersonIsNull(Person person) {
+
     // SqlCrudEngine sqlEngine = sqlFactory.getCrudEngine("UPDATE_PERSON");
+
     // sqlEngine.setFeature(SqlFeature.EMPTY_USE_METHOD_IS_NULL, Boolean.TRUE);
+
     // int count = 0;
+
     // try {
+
     // count = sqlEngine.update(session, person);
+
     // } finally {
+
     // sqlEngine.unsetFeature(SqlFeature.EMPTY_USE_METHOD_IS_NULL);
-    // }
-    // logger.info("update person: " + count);
-    // return (count > 0) ? person : null;
+
     // }
 
-    // public Person updatePerson(Person person) {
-    // SqlCrudEngine sqlEngine = sqlFactory.getCrudEngine("UPDATE_PERSON");
-    // int count = sqlEngine.update(session, person);
     // logger.info("update person: " + count);
+
     // return (count > 0) ? person : null;
+
     // }
 
-    // public Book getBook(Book book) {
-    // SqlCrudEngine sqlEngine = sqlFactory.getCrudEngine("GET_BOOK");
-    // Book b = sqlEngine.get(session, Book.class, book);
-    // logger.info("get book: " + b);
-    // return b;
-    // }
+    public NewBook getNewBook(NewBook book) {
+        SqlCrudEngine sqlEngine = sqlFactory.getCrudEngine("GET_NEW_BOOK");
+        NewBook b = sqlEngine.get(session, NewBook.class, book);
+        logger.info("get book: " + b);
+        return b;
+    }
+
+    //
 
     // public List<Person> listAll() {
+
     // SqlQueryEngine sqlEngine = sqlFactory.getQueryEngine("ALL_PEOPLE");
+
     // List<Person> list = sqlEngine.query(session, Person.class);
+
     // logger.info("listAll size: " + list.size());
+
     // return list;
+
     // }
+
+    //
 
     // public List<Person> listSome(Person person) {
+
     // SqlQueryEngine sqlEngine = sqlFactory.getQueryEngine("ALL_PEOPLE");
+
     // List<Person> list = sqlEngine.query(session, Person.class, person, SqlOrder.getDescOrder(2));
+
     // logger.info("listSome size: " + list.size());
+
     // return list;
+
     // }
+
+    //
 
     // public List<Person> listLike(Person person, boolean partialLike) {
+
     // SqlQueryEngine sqlEngine = partialLike ? sqlFactory.getQueryEngine("LIKE_PEOPLE") : sqlFactory
+
     // .getQueryEngine("LIKE_PEOPLE_FULL");
+
     // List<Person> list = sqlEngine.query(session, Person.class, person, SqlOrder.getDescOrder(2));
+
     // logger.info("listSome size: " + list.size());
+
     // return list;
+
     // }
+
+    //
+
+    //
 
     // public boolean delete(Person person) {
+
     // SqlCrudEngine sqlEngine = sqlFactory.getCrudEngine("DELETE_PERSON");
+
     // int count = sqlEngine.delete(session, person);
+
     // logger.info("delete: " + count);
+
     // return (count > 0);
+
     // }
+
+    //
 
     // public List<Person> listPeopleAndContacts(Person person) {
+
     // SqlQueryEngine sqlEngine = sqlFactory.getQueryEngine("ALL_PEOPLE_AND_CONTACTS");
+
     // List<Person> list = sqlEngine.query(session, Person.class, person, SqlQueryEngine.ASC_ORDER);
+
     // logger.info("listSome size: " + list.size());
+
     // return list;
+
     // }
+
+    //
 
     // public List<Person> listPeopleAndContacts2(Person person) {
+
     // SqlQueryEngine sqlEngine = sqlFactory.getQueryEngine("ALL_PEOPLE_AND_CONTACTS2");
-    // / Map<String, Class<?>> moreResultClasses = new HashMap<String, Class<?>>();
+
+    // Map<String, Class<?>> moreResultClasses = new HashMap<String, Class<?>>();
+
     // moreResultClasses.put("linked", LinkedList.class);
+
     // List<Person> list = sqlEngine.query(session, Person.class, person, null, SqlQueryEngine.ASC_ORDER,
+
     // moreResultClasses);
+
     // logger.info("listSome size: " + list.size());
+
     // return list;
+
     // }
+
+    //
 
     // public List<Person> listPeopleLibrary(Person person) {
+
     // SqlQueryEngine sqlEngine = sqlFactory.getQueryEngine("ALL_PEOPLE_LIBRARY");
+
     // Map<String, Class<?>> moreResultClasses = new HashMap<String, Class<?>>();
+
     // moreResultClasses.put("movie", Movie.class);
+
     // moreResultClasses.put("book", NewBook.class);
+
     // List<Person> list = sqlEngine.query(session, Person.class, null, null, SqlQueryEngine.ASC_ORDER,
+
     // moreResultClasses);
+
     // logger.info("listSome size: " + list.size());
+
     // return list;
+
     // }
+
+    //
 
     // public List<Person> listCustom(Contact contact) {
+
     // SqlQueryEngine sqlEngine = sqlFactory.getQueryEngine("ALL_PEOPLE_AND_CONTACTS_CUSTOM");
+
     // List<Person> list = sqlEngine.query(session, Person.class, contact, SqlQueryEngine.ASC_ORDER);
+
     // logger.info("listCustom size: " + list.size());
+
     // return list;
+
     // }
+
+    //
 
     // public List<Subscriber> listAllSubsribersWithBillingDetails() {
+
     // SqlQueryEngine sqlEngine = sqlFactory.getQueryEngine("ALL_SUBSCRIBERS_BILLING_DETAILS");
+
     // Map<String, Class<?>> moreResultClasses = new HashMap<String, Class<?>>();
+
     // moreResultClasses.put("BA", BankAccount.class);
+
     // moreResultClasses.put("CC", CreditCard.class);
+
     // List<Subscriber> list = sqlEngine.query(session, Subscriber.class, null, null, SqlQueryEngine.ASC_ORDER,
+
     // moreResultClasses);
+
     // logger.info("listAllSubsribersWithBillingDetails size: " + list.size());
+
     // return list;
+
     // }
 
+    //
+
     // public java.sql.Timestamp callSimpleFunction(java.sql.Timestamp stamp) {
+
     // FormSimpleFunction f = new FormSimpleFunction();
+
     // f.setTime(stamp);
+
     // SqlProcedureEngine callableEngine = sqlFactory.getProcedureEngine("SIMPLE_FUNCTION");
+
     // Object result = callableEngine.callFunction(session, f);
+
     // logger.info("callSimpleFunction result: " + result);
+
     // return (java.sql.Timestamp) result;
+
     // }
 
     // public java.sql.Timestamp callSimpleFunctionToInputForm(java.sql.Timestamp stamp) {
+
     // FormSimpleFunction f = new FormSimpleFunction();
+
     // f.setTime(stamp);
+
     // SqlProcedureEngine callableEngine = sqlFactory.getProcedureEngine("SIMPLE_FUNCTION_TO_IN_FORM");
+
     // callableEngine.callFunction(session, f);
+
     // logger.info("callSimpleFunctionToInputForm result: " + f.getTime2());
+
     // return f.getTime2();
+
     // }
 
     // public Long callStoredProcedure(String name) {
+
     // Person p = new Person(name);
+
     // SqlProcedureEngine callableEngine = sqlFactory.getProcedureEngine("INSERT_PERSON_CALL");
+
     // callableEngine.callUpdate(session, p);
+
     // logger.info("callStoredProcedure result: " + p.getId());
+
     // return p.getId();
+
     // }
-
-    public void initDao() throws SQLException {
-        bankAccountDao = new BankAccountDao(session, sqlFactory);
-        bookDao = new BookDao(session, sqlFactory);
-        contactDao = new ContactDao(session, sqlFactory);
-        creditCardDao = new CreditCardDao(session, sqlFactory);
-        libraryDao = new LibraryDao(session, sqlFactory);
-        movieDao = new MovieDao(session, sqlFactory);
-        personDao = new PersonDao(session, sqlFactory);
-        personLibraryDao = new PersonLibraryDao(session, sqlFactory);
-        subscriberDao = new SubscriberDao(session, sqlFactory);
-    }
-
-    private BankAccountDao bankAccountDao;
-    private BookDao bookDao;
-    private ContactDao contactDao;
-    private CreditCardDao creditCardDao;
-    private LibraryDao libraryDao;
-    private MovieDao movieDao;
-    private PersonDao personDao;
-    private PersonLibraryDao personLibraryDao;
-    private SubscriberDao subscriberDao;
 
     public static void main(String[] args) throws Exception {
         Person person, p;
-        BankAccount bankAccount, b1;
+<<<<<<< /usr/src/app/output/hudec/sql-processor/698fa6c48c7df343e390675eacd507b886609038/sql-samples/simple-jdbc-crud/src/main/java/org/sqlproc/sample/simple/Main.java/left.java
         NewBook book, b;
+||||||| /usr/src/app/output/hudec/sql-processor/698fa6c48c7df343e390675eacd507b886609038/sql-samples/simple-jdbc-crud/src/main/java/org/sqlproc/sample/simple/Main.java/base.java
+        Book book, b;
+=======
+        BankAccount bankAccount, b1;
+        Book book, b;
         Contact contact, c;
         CreditCard creditCard, c1;
         Library l, library;
         Movie movie, m;
         Subscriber subscriber, s;
 
+>>>>>>> /usr/src/app/output/hudec/sql-processor/698fa6c48c7df343e390675eacd507b886609038/sql-samples/simple-jdbc-crud/src/main/java/org/sqlproc/sample/simple/Main.java/right.java
         List<Person> list;
         boolean deleted;
         Main main = new Main();
@@ -391,10 +431,22 @@ public class Main {
                 new CreditCard(janikS, "CC")._setCcNumber(123L));
         main.getCreditCardDao().insertCreditCard(new CreditCard(honzaS, "CC")._setCcNumber(456L));
 
-        NewBook book1 = main.getBookDao().insertBook(new NewBook("The Adventures of Robin Hood", "978-0140367003"));
-        NewBook book2 = main.getBookDao().insertBook(new NewBook("The Three Musketeers", "978-1897093634"));
+<<<<<<< /usr/src/app/output/hudec/sql-processor/698fa6c48c7df343e390675eacd507b886609038/sql-samples/simple-jdbc-crud/src/main/java/org/sqlproc/sample/simple/Main.java/left.java
+        NewBook book1 = main.insertNewBook(new NewBook("The Adventures of Robin Hood", "978-0140367003"));
+        NewBook book2 = main.insertNewBook(new NewBook("The Three Musketeers", "978-1897093634"));
+        Movie movie1 = main.insertMovie(new Movie("Pippi Långstrump i Söderhavet", "abc", 82));
+        Movie movie2 = main.insertMovie(new Movie("Die Another Day", "def", 95));
+||||||| /usr/src/app/output/hudec/sql-processor/698fa6c48c7df343e390675eacd507b886609038/sql-samples/simple-jdbc-crud/src/main/java/org/sqlproc/sample/simple/Main.java/base.java
+        Book book1 = main.insertBook(new Book("The Adventures of Robin Hood", "978-0140367003"));
+        Book book2 = main.insertBook(new Book("The Three Musketeers", "978-1897093634"));
+        Movie movie1 = main.insertMovie(new Movie("Pippi Långstrump i Söderhavet", "abc", 82));
+        Movie movie2 = main.insertMovie(new Movie("Die Another Day", "def", 95));
+=======
+        Book book1 = main.getBookDao().insertBook(new Book("The Adventures of Robin Hood", "978-0140367003"));
+        Book book2 = main.getBookDao().insertBook(new Book("The Three Musketeers", "978-1897093634"));
         Movie movie1 = main.getMovieDao().insertMovie(new Movie("Pippi Långstrump i Söderhavet", "abc", 82));
         Movie movie2 = main.getMovieDao().insertMovie(new Movie("Die Another Day", "def", 95));
+>>>>>>> /usr/src/app/output/hudec/sql-processor/698fa6c48c7df343e390675eacd507b886609038/sql-samples/simple-jdbc-crud/src/main/java/org/sqlproc/sample/simple/Main.java/right.java
 
         main.getPersonLibraryDao().insertPersonLibrary(jan, book1, movie1);
         main.getPersonLibraryDao().insertPersonLibrary(honza, book2, movie2);
@@ -412,7 +464,7 @@ public class Main {
         b1 = main.getBankAccountDao().updateBankAccount(bankAccount1);
         Assert.assertNotNull(b1);
 
-        book1.setNewIsbn("978-9940367003");
+        book1.setIsbn("978-9940367003");
         book1.setTitle("The Adventures of Robin Hood Updated");
         b = main.getBookDao().updateBook(book1);
         Assert.assertNotNull(b);
@@ -468,9 +520,22 @@ public class Main {
         // get
         book = new NewBook();
         book.setId(book1.getId());
+<<<<<<< /usr/src/app/output/hudec/sql-processor/698fa6c48c7df343e390675eacd507b886609038/sql-samples/simple-jdbc-crud/src/main/java/org/sqlproc/sample/simple/Main.java/left.java
+        b = main.getNewBook(book);
+||||||| /usr/src/app/output/hudec/sql-processor/698fa6c48c7df343e390675eacd507b886609038/sql-samples/simple-jdbc-crud/src/main/java/org/sqlproc/sample/simple/Main.java/base.java
+        b = main.getBook(book);
+=======
         b = main.getBookDao().getBook(book);
+>>>>>>> /usr/src/app/output/hudec/sql-processor/698fa6c48c7df343e390675eacd507b886609038/sql-samples/simple-jdbc-crud/src/main/java/org/sqlproc/sample/simple/Main.java/right.java
         Assert.assertNotNull(b);
-        Assert.assertEquals("978-9940367003", b.getNewIsbn());
+<<<<<<< /usr/src/app/output/hudec/sql-processor/698fa6c48c7df343e390675eacd507b886609038/sql-samples/simple-jdbc-crud/src/main/java/org/sqlproc/sample/simple/Main.java/left.java
+        Assert.assertEquals("978-0140367003", b.getNewIsbn());
+        Assert.assertEquals("The Adventures of Robin Hood", b.getTitle());
+||||||| /usr/src/app/output/hudec/sql-processor/698fa6c48c7df343e390675eacd507b886609038/sql-samples/simple-jdbc-crud/src/main/java/org/sqlproc/sample/simple/Main.java/base.java
+        Assert.assertEquals("978-0140367003", b.getIsbn());
+        Assert.assertEquals("The Adventures of Robin Hood", b.getTitle());
+=======
+        Assert.assertEquals("978-9940367003", b.getIsbn());
         Assert.assertEquals("The Adventures of Robin Hood Updated", b.getTitle());
 
         bankAccount = new BankAccount();
@@ -510,6 +575,7 @@ public class Main {
         s = main.getSubscriberDao().getSubscriber(subscriber);
         Assert.assertNotNull(s);
         Assert.assertEquals("Janik Subscr Updated", s.getName());
+>>>>>>> /usr/src/app/output/hudec/sql-processor/698fa6c48c7df343e390675eacd507b886609038/sql-samples/simple-jdbc-crud/src/main/java/org/sqlproc/sample/simple/Main.java/right.java
 
         // get object tree
         person = new Person();
@@ -618,6 +684,468 @@ public class Main {
         // Long id = main.callStoredProcedure("Katka");
         // Assert.assertNotNull(id);
     }
+
+    // public Person insertPerson(Person person) {
+
+    // SqlCrudEngine sqlInsertPerson = sqlFactory.getCrudEngine("INSERT_PERSON");
+
+    // int count = sqlInsertPerson.insert(session, person);
+
+    // logger.info("insert person: " + count + ": " + person);
+
+    // return (count > 0) ? person : null;
+
+    // }
+
+    // public Person insertPersonContacts(Person person, Contact... contacts) {
+
+    // SqlCrudEngine sqlInsertContact = sqlFactory.getCrudEngine("INSERT_CONTACT");
+
+    // if (contacts != null) {
+
+    // for (Contact contact : contacts) {
+
+    // contact.setPerson(person);
+
+    // int count = sqlInsertContact.insert(session, contact);
+
+    // logger.info("insert contact: " + count + ": " + contact);
+
+    // if (count > 0)
+
+    // person.getContacts().add(contact);
+
+    // }
+
+    // }
+
+    // return person;
+
+    // }
+
+    // public Library insertLibrary(Library library) {
+
+    // SqlCrudEngine sqlInsertLibrary = sqlFactory.getCrudEngine("INSERT_LIBRARY");
+
+    // int count = sqlInsertLibrary.insert(session, library);
+
+    // logger.info("insert library: " + count + ": " + library);
+
+    // return (count > 0) ? library : null;
+
+    // }
+
+    // public Subscriber insertLibrarySubscriber(Library library, Subscriber subscriber) {
+
+    // SqlCrudEngine sqlInsertSubscriber = sqlFactory.getCrudEngine("INSERT_SUBSCRIBER");
+
+    // if (subscriber != null) {
+
+    // subscriber.setLibrary(library);
+
+    // int count = sqlInsertSubscriber.insert(session, subscriber);
+
+    // logger.info("insert subscriber: " + count + ": " + subscriber);
+
+    // if (count > 0)
+
+    // library.getSubscribers().add(subscriber);
+
+    // }
+
+    // return subscriber;
+
+    // }
+
+    // public BankAccount insertBankAccount(BankAccount bankAccount) {
+
+    // SqlCrudEngine sqlInsertBankAccount = sqlFactory.getCrudEngine("INSERT_BANK_ACCOUNT");
+
+    // int count = sqlInsertBankAccount.insert(session, bankAccount);
+
+    // logger.info("insert bank account: " + count + ": " + bankAccount);
+
+    // if (count > 0)
+
+    // bankAccount.getSubscriber().getBillingDetails().add(bankAccount);
+
+    // return (count > 0) ? bankAccount : null;
+
+    // }
+
+    // public CreditCard insertCreditCard(CreditCard creditCard) {
+
+    // SqlCrudEngine sqlInsertCreditCard = sqlFactory.getCrudEngine("INSERT_CREDIT_CARD");
+
+    // int count = sqlInsertCreditCard.insert(session, creditCard);
+
+    // logger.info("insert credit card: " + count + ": " + creditCard);
+
+    // if (count > 0)
+
+    // creditCard.getSubscriber().getBillingDetails().add(creditCard);
+
+    // return (count > 0) ? creditCard : null;
+
+    // }
+
+    // public Movie insertMovie(Movie movie) {
+
+    // SqlCrudEngine sqlInsertMedia = sqlFactory.getCrudEngine("INSERT_MEDIA");
+
+    // SqlCrudEngine sqlInsertMovie = sqlFactory.getCrudEngine("INSERT_MOVIE");
+
+    // int count = sqlInsertMedia.insert(session, movie);
+
+    // if (count > 0) {
+
+    // sqlInsertMovie.insert(session, movie);
+
+    // }
+
+    // logger.info("insert movie: " + count + ": " + movie);
+
+    // return (count > 0) ? movie : null;
+
+    // }
+
+    // public Book insertBook(Book book) {
+
+    // SqlCrudEngine sqlInsertMedia = sqlFactory.getCrudEngine("INSERT_MEDIA");
+
+    // SqlCrudEngine sqlInsertBook = sqlFactory.getCrudEngine("INSERT_BOOK");
+
+    // int count = sqlInsertMedia.insert(session, book);
+
+    // if (count > 0) {
+
+    // sqlInsertBook.insert(session, book);
+
+    // }
+
+    // logger.info("insert book: " + count + ": " + book);
+
+    // return (count > 0) ? book : null;
+
+    // }
+
+    // public void insertPersonLibrary(Person person, Media... media) {
+
+    // SqlCrudEngine sqlInsertPersonLibrary = sqlFactory.getCrudEngine("INSERT_PERSON_LIBRARY");
+
+    // if (media != null) {
+
+    // for (Media media1 : media) {
+
+    // PersonLibrary personLibrary = new PersonLibrary(person.getId(), media1.getId());
+
+    // int count = sqlInsertPersonLibrary.insert(session, personLibrary);
+
+    // logger.info("insert person library: " + count + ": " + personLibrary);
+
+    // if (count > 0)
+
+    // person.getLibrary().add(media1);
+
+    // }
+
+    // }
+
+    // }
+
+    // public Person getPerson(Person person) {
+
+    // SqlCrudEngine sqlEngine = sqlFactory.getCrudEngine("GET_PERSON");
+
+    // String s = sqlEngine.getGetSql(person, null);
+
+    // Person p = sqlEngine.get(session, Person.class, person);
+
+    // logger.info("get person: " + p);
+
+    // return p;
+
+    // }
+
+    // public Person updatePersonNoNull(Person person) {
+
+    // SqlCrudEngine sqlEngine = sqlFactory.getCrudEngine("UPDATE_PERSON");
+
+    // sqlEngine.setFeature(SqlFeature.EMPTY_FOR_NULL, Boolean.TRUE);
+
+    // int count = 0;
+
+    // try {
+
+    // count = sqlEngine.update(session, person);
+
+    // } finally {
+
+    // sqlEngine.unsetFeature(SqlFeature.EMPTY_FOR_NULL);
+
+    // }
+
+    // logger.info("update person: " + count);
+
+    // return (count > 0) ? person : null;
+
+    // }
+
+    // public Person updatePersonIsNull(Person person) {
+
+    // SqlCrudEngine sqlEngine = sqlFactory.getCrudEngine("UPDATE_PERSON");
+
+    // sqlEngine.setFeature(SqlFeature.EMPTY_USE_METHOD_IS_NULL, Boolean.TRUE);
+
+    // int count = 0;
+
+    // try {
+
+    // count = sqlEngine.update(session, person);
+
+    // } finally {
+
+    // sqlEngine.unsetFeature(SqlFeature.EMPTY_USE_METHOD_IS_NULL);
+
+    // }
+
+    // logger.info("update person: " + count);
+
+    // return (count > 0) ? person : null;
+
+    // }
+
+    // public Person updatePerson(Person person) {
+
+    // SqlCrudEngine sqlEngine = sqlFactory.getCrudEngine("UPDATE_PERSON");
+
+    // int count = sqlEngine.update(session, person);
+
+    // logger.info("update person: " + count);
+
+    // return (count > 0) ? person : null;
+
+    // }
+
+    // public Book getBook(Book book) {
+
+    // SqlCrudEngine sqlEngine = sqlFactory.getCrudEngine("GET_BOOK");
+
+    // Book b = sqlEngine.get(session, Book.class, book);
+
+    // logger.info("get book: " + b);
+
+    // return b;
+
+    // }
+
+    // public List<Person> listAll() {
+
+    // SqlQueryEngine sqlEngine = sqlFactory.getQueryEngine("ALL_PEOPLE");
+
+    // List<Person> list = sqlEngine.query(session, Person.class);
+
+    // logger.info("listAll size: " + list.size());
+
+    // return list;
+
+    // }
+
+    // public List<Person> listSome(Person person) {
+
+    // SqlQueryEngine sqlEngine = sqlFactory.getQueryEngine("ALL_PEOPLE");
+
+    // List<Person> list = sqlEngine.query(session, Person.class, person, SqlOrder.getDescOrder(2));
+
+    // logger.info("listSome size: " + list.size());
+
+    // return list;
+
+    // }
+
+    // public List<Person> listLike(Person person, boolean partialLike) {
+
+    // SqlQueryEngine sqlEngine = partialLike ? sqlFactory.getQueryEngine("LIKE_PEOPLE") : sqlFactory
+
+    // .getQueryEngine("LIKE_PEOPLE_FULL");
+
+    // List<Person> list = sqlEngine.query(session, Person.class, person, SqlOrder.getDescOrder(2));
+
+    // logger.info("listSome size: " + list.size());
+
+    // return list;
+
+    // }
+
+    // public boolean delete(Person person) {
+
+    // SqlCrudEngine sqlEngine = sqlFactory.getCrudEngine("DELETE_PERSON");
+
+    // int count = sqlEngine.delete(session, person);
+
+    // logger.info("delete: " + count);
+
+    // return (count > 0);
+
+    // }
+
+    // public List<Person> listPeopleAndContacts(Person person) {
+
+    // SqlQueryEngine sqlEngine = sqlFactory.getQueryEngine("ALL_PEOPLE_AND_CONTACTS");
+
+    // List<Person> list = sqlEngine.query(session, Person.class, person, SqlQueryEngine.ASC_ORDER);
+
+    // logger.info("listSome size: " + list.size());
+
+    // return list;
+
+    // }
+
+    // public List<Person> listPeopleAndContacts2(Person person) {
+
+    // SqlQueryEngine sqlEngine = sqlFactory.getQueryEngine("ALL_PEOPLE_AND_CONTACTS2");
+
+    // / Map<String, Class<?>> moreResultClasses = new HashMap<String, Class<?>>();
+
+    // moreResultClasses.put("linked", LinkedList.class);
+
+    // List<Person> list = sqlEngine.query(session, Person.class, person, null, SqlQueryEngine.ASC_ORDER,
+
+    // moreResultClasses);
+
+    // logger.info("listSome size: " + list.size());
+
+    // return list;
+
+    // }
+
+    // public List<Person> listPeopleLibrary(Person person) {
+
+    // SqlQueryEngine sqlEngine = sqlFactory.getQueryEngine("ALL_PEOPLE_LIBRARY");
+
+    // Map<String, Class<?>> moreResultClasses = new HashMap<String, Class<?>>();
+
+    // moreResultClasses.put("movie", Movie.class);
+
+    // moreResultClasses.put("book", Book.class);
+
+    // List<Person> list = sqlEngine.query(session, Person.class, null, null, SqlQueryEngine.ASC_ORDER,
+
+    // moreResultClasses);
+
+    // logger.info("listSome size: " + list.size());
+
+    // return list;
+
+    // }
+
+    // public List<Person> listCustom(Contact contact) {
+
+    // SqlQueryEngine sqlEngine = sqlFactory.getQueryEngine("ALL_PEOPLE_AND_CONTACTS_CUSTOM");
+
+    // List<Person> list = sqlEngine.query(session, Person.class, contact, SqlQueryEngine.ASC_ORDER);
+
+    // logger.info("listCustom size: " + list.size());
+
+    // return list;
+
+    // }
+
+    // public List<Subscriber> listAllSubsribersWithBillingDetails() {
+
+    // SqlQueryEngine sqlEngine = sqlFactory.getQueryEngine("ALL_SUBSCRIBERS_BILLING_DETAILS");
+
+    // Map<String, Class<?>> moreResultClasses = new HashMap<String, Class<?>>();
+
+    // moreResultClasses.put("BA", BankAccount.class);
+
+    // moreResultClasses.put("CC", CreditCard.class);
+
+    // List<Subscriber> list = sqlEngine.query(session, Subscriber.class, null, null, SqlQueryEngine.ASC_ORDER,
+
+    // moreResultClasses);
+
+    // logger.info("listAllSubsribersWithBillingDetails size: " + list.size());
+
+    // return list;
+
+    // }
+
+    // public java.sql.Timestamp callSimpleFunction(java.sql.Timestamp stamp) {
+
+    // FormSimpleFunction f = new FormSimpleFunction();
+
+    // f.setTime(stamp);
+
+    // SqlProcedureEngine callableEngine = sqlFactory.getProcedureEngine("SIMPLE_FUNCTION");
+
+    // Object result = callableEngine.callFunction(session, f);
+
+    // logger.info("callSimpleFunction result: " + result);
+
+    // return (java.sql.Timestamp) result;
+
+    // }
+
+    // public java.sql.Timestamp callSimpleFunctionToInputForm(java.sql.Timestamp stamp) {
+
+    // FormSimpleFunction f = new FormSimpleFunction();
+
+    // f.setTime(stamp);
+
+    // SqlProcedureEngine callableEngine = sqlFactory.getProcedureEngine("SIMPLE_FUNCTION_TO_IN_FORM");
+
+    // callableEngine.callFunction(session, f);
+
+    // logger.info("callSimpleFunctionToInputForm result: " + f.getTime2());
+
+    // return f.getTime2();
+
+    // }
+
+    // public Long callStoredProcedure(String name) {
+
+    // Person p = new Person(name);
+
+    // SqlProcedureEngine callableEngine = sqlFactory.getProcedureEngine("INSERT_PERSON_CALL");
+
+    // callableEngine.callUpdate(session, p);
+
+    // logger.info("callStoredProcedure result: " + p.getId());
+
+    // return p.getId();
+
+    // }
+
+    public void initDao() throws SQLException {
+        bankAccountDao = new BankAccountDao(session, sqlFactory);
+        bookDao = new BookDao(session, sqlFactory);
+        contactDao = new ContactDao(session, sqlFactory);
+        creditCardDao = new CreditCardDao(session, sqlFactory);
+        libraryDao = new LibraryDao(session, sqlFactory);
+        movieDao = new MovieDao(session, sqlFactory);
+        personDao = new PersonDao(session, sqlFactory);
+        personLibraryDao = new PersonLibraryDao(session, sqlFactory);
+        subscriberDao = new SubscriberDao(session, sqlFactory);
+    }
+
+    private BankAccountDao bankAccountDao;
+
+    private BookDao bookDao;
+
+    private ContactDao contactDao;
+
+    private CreditCardDao creditCardDao;
+
+    private LibraryDao libraryDao;
+
+    private MovieDao movieDao;
+
+    private PersonDao personDao;
+
+    private PersonLibraryDao personLibraryDao;
+
+    private SubscriberDao subscriberDao;
 
     public BankAccountDao getBankAccountDao() {
         return bankAccountDao;
