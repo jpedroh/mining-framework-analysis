@@ -166,7 +166,10 @@ public class FakerIT {
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.relationships());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.nation());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.dune());
+<<<<<<< /usr/src/app/output/dius/java-faker/ae3df4feca9bdceacb502f535cf7bf68a699c9b7/src/test/java/com/github/javafaker/integration/FakerIT.java/left.java
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.babylon5());
+||||||| /usr/src/app/output/dius/java-faker/ae3df4feca9bdceacb502f535cf7bf68a699c9b7/src/test/java/com/github/javafaker/integration/FakerIT.java/base.java
+=======
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.aquaTeenHungerForce());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.programmingLanguage());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.kaamelott());
@@ -177,6 +180,7 @@ public class FakerIT {
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.basketball());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.barcode());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.englandfootball());
+>>>>>>> /usr/src/app/output/dius/java-faker/ae3df4feca9bdceacb502f535cf7bf68a699c9b7/src/test/java/com/github/javafaker/integration/FakerIT.java/right.java
     }
 
     private void testAllMethodsThatReturnStringsActuallyReturnStrings(Object object) throws Exception {

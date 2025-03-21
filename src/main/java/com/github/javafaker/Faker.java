@@ -212,7 +212,10 @@ public class Faker {
         this.relationships = new Relationships(this);
         this.nation = new Nation(this);
         this.dune = new Dune(this);
+<<<<<<< /usr/src/app/output/dius/java-faker/ae3df4feca9bdceacb502f535cf7bf68a699c9b7/src/main/java/com/github/javafaker/Faker.java/left.java
         this.babylon5 = new Babylon5(this);
+||||||| /usr/src/app/output/dius/java-faker/ae3df4feca9bdceacb502f535cf7bf68a699c9b7/src/main/java/com/github/javafaker/Faker.java/base.java
+=======
         this.aquaTeenHungerForce = new AquaTeenHungerForce(this);
         this.programmingLanguage = new ProgrammingLanguage(this);
         this.kaamelott = new Kaamelott(this);
@@ -225,6 +228,7 @@ public class Faker {
         this.sip = new Sip(this);
         this.englandfootball = new EnglandFootBall(this);
         this.mountain = new Mountain(this);
+>>>>>>> /usr/src/app/output/dius/java-faker/ae3df4feca9bdceacb502f535cf7bf68a699c9b7/src/main/java/com/github/javafaker/Faker.java/right.java
     }
 
     /**
@@ -662,7 +666,7 @@ public class Faker {
     public Babylon5 babylon5() {
         return babylon5;
     }
-    
+
     public AquaTeenHungerForce aquaTeenHungerForce() {
         return aquaTeenHungerForce;
     }
