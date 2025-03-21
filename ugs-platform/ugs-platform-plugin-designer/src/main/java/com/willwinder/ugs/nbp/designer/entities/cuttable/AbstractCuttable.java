@@ -77,6 +77,7 @@ public abstract class AbstractCuttable extends AbstractEntity implements Cuttabl
 
     @Override
     public void render(Graphics2D graphics) {
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/7b9ba31f2342bbb0d3901bee3ba097fedd592195/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/cuttable/AbstractCuttable.java/left.java
         if (getCutType() != CutType.NONE && getCutDepth() == 0) {
             graphics.setStroke(new BasicStroke(0.4f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1, new float[]{0.8f, 0.8f}, 0));
             graphics.setColor(Colors.SHAPE_HINT);
@@ -84,15 +85,43 @@ public abstract class AbstractCuttable extends AbstractEntity implements Cuttabl
         } else if (getCutType() == CutType.POCKET) {
             graphics.setStroke(new BasicStroke(0.4f));
             graphics.setColor(getCutColor());
+||||||| /usr/src/app/output/winder/universal-g-code-sender/7b9ba31f2342bbb0d3901bee3ba097fedd592195/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/cuttable/AbstractCuttable.java/base.java
+        graphics.setStroke(new BasicStroke(1));
+
+        if (getCutType() == CutType.POCKET) {
+            graphics.setColor(Color.BLACK);
+=======
+        if (getCutType() != CutType.NONE && getCutDepth() == 0) {
+            graphics.setStroke(new BasicStroke(0.8f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1, new float[]{0.8f, 0.8f}, 0));
+            graphics.setColor(Colors.SHAPE_HINT);
+            graphics.draw(getShape());
+        } else if (getCutType() == CutType.POCKET) {
+            graphics.setStroke(new BasicStroke(0.8f));
+            graphics.setColor(getCutColor());
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/7b9ba31f2342bbb0d3901bee3ba097fedd592195/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/cuttable/AbstractCuttable.java/right.java
             graphics.fill(getShape());
             graphics.draw(getShape());
         } else if (getCutType() == CutType.INSIDE_PATH || getCutType() == CutType.ON_PATH || getCutType() == CutType.OUTSIDE_PATH) {
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/7b9ba31f2342bbb0d3901bee3ba097fedd592195/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/cuttable/AbstractCuttable.java/left.java
             graphics.setStroke(new BasicStroke(0.4f));
             graphics.setColor(getCutColor());
+||||||| /usr/src/app/output/winder/universal-g-code-sender/7b9ba31f2342bbb0d3901bee3ba097fedd592195/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/cuttable/AbstractCuttable.java/base.java
+            graphics.setColor(Color.BLACK);
+=======
+            graphics.setStroke(new BasicStroke(0.8f));
+            graphics.setColor(getCutColor());
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/7b9ba31f2342bbb0d3901bee3ba097fedd592195/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/cuttable/AbstractCuttable.java/right.java
             graphics.draw(getShape());
         } else {
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/7b9ba31f2342bbb0d3901bee3ba097fedd592195/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/cuttable/AbstractCuttable.java/left.java
             graphics.setStroke(new BasicStroke(0.4f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1, new float[]{0.8f, 0.8f}, 0));
             graphics.setColor(Colors.SHAPE_OUTLINE);
+||||||| /usr/src/app/output/winder/universal-g-code-sender/7b9ba31f2342bbb0d3901bee3ba097fedd592195/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/cuttable/AbstractCuttable.java/base.java
+            graphics.setColor(Color.LIGHT_GRAY);
+=======
+            graphics.setStroke(new BasicStroke(0.8f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1, new float[]{0.8f, 0.8f}, 0));
+            graphics.setColor(Colors.SHAPE_OUTLINE);
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/7b9ba31f2342bbb0d3901bee3ba097fedd592195/ugs-platform/ugs-platform-plugin-designer/src/main/java/com/willwinder/ugs/nbp/designer/entities/cuttable/AbstractCuttable.java/right.java
             graphics.draw(getShape());
         }
     }
