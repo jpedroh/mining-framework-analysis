@@ -1,5 +1,4 @@
 package ruby;
-
 import hudson.model.Hudson;
 import hudson.model.Items;
 import hudson.util.XStream2;
@@ -19,13 +18,13 @@ import org.jruby.embed.ScriptingContainer;
  * @author Kohsuke Kawaguchi
  */
 public class ScriptingContainerHolder {
-    /**
+  /**
      * The unique JRuby environment used by this plugin and all the objects
      * and classes that it contains.
      */
-    public final ScriptingContainer ruby;
+  public final ScriptingContainer ruby;
 
-    /**
+  /**
      * Initializes this plugin by setting up the JRuby scripting container
      * and then loading up the ruby side of the plugin by creating an
      * instance of the Ruby class Jenkins::Plugin which will serve as
@@ -34,16 +33,16 @@ public class ScriptingContainerHolder {
      * We also register xstream mappers for JRuby objects so that they
      * can be persisted along with other objects in Jenkins.
      */
-    public ScriptingContainerHolder() {
-        this.ruby = new ScriptingContainer(LocalContextScope.SINGLETHREAD);
-        this.ruby.setCompatVersion(CompatVersion.RUBY1_9);
-        this.ruby.setClassLoader(Jenkins.getActiveInstance().pluginManager.uberClassLoader);
-    }
+  public ScriptingContainerHolder() {
+    this.ruby = new ScriptingContainer(LocalContextScope.SINGLETHREAD);
+    this.ruby.setCompatVersion(CompatVersion.RUBY1_9);
+    this.ruby.setClassLoader(Jenkins.getActiveInstance().pluginManager.uberClassLoader);
+  }
 
-    private void register(XStream2 xs, ScriptingContainer ruby) {
-        JRubyXStream.register(xs, ruby);
-        synchronized (xs) {
-            xs.setMapper(new JRubyMapper(xs.getMapperInjectionPoint()));
-        }
+  private void register(XStream2 xs, ScriptingContainer ruby) {
+    JRubyXStream.register(xs, ruby);
+    synchronized (xs) {
+      xs.setMapper(new JRubyMapper(xs.getMapperInjectionPoint()));
     }
+  }
 }
