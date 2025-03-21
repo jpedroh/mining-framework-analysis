@@ -1,23 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.apache.accumulo.test.functional;
-
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.accumulo.core.util.LazySingletons.RANDOM;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -43,7 +23,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-
 import org.apache.accumulo.core.client.Accumulo;
 import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.client.AccumuloException;
@@ -94,87 +73,65 @@ import org.apache.hadoop.io.Text;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
 public class CompactionIT extends AccumuloClusterHarness {
-
   public static class TestFilter extends Filter {
-
     int modulus = 1;
 
-    @Override
-    public void init(SortedKeyValueIterator<Key,Value> source, Map<String,String> options,
-        IteratorEnvironment env) throws IOException {
+    @Override public void init(SortedKeyValueIterator<Key, Value> source, Map<String, String> options, IteratorEnvironment env) throws IOException {
       super.init(source, options, env);
-
-      // if the init function is never called at all, then not setting the modulus option should
-      // cause the test to fail
       if (options.containsKey("modulus")) {
         Preconditions.checkArgument(!options.containsKey("pmodulus"));
         modulus = Integer.parseInt(options.get("modulus"));
       }
-
-      // use when partial compaction is expected
       if (options.containsKey("pmodulus")) {
         Preconditions.checkArgument(!options.containsKey("modulus"));
         modulus = Integer.parseInt(options.get("pmodulus"));
       }
     }
 
-    @Override
-    public boolean accept(Key k, Value v) {
+    @Override public boolean accept(Key k, Value v) {
       return Integer.parseInt(v.toString()) % modulus == 0;
     }
-
   }
 
   public static class RandomErrorThrowingSelector implements CompactionSelector {
-
     public static final String FILE_LIST_PARAM = "filesToCompact";
+
     private static Boolean ERROR_THROWN = Boolean.FALSE;
 
     private List<String> filesToCompact;
 
-    @Override
-    public void init(InitParameters iparams) {
+    @Override public void init(InitParameters iparams) {
       String files = iparams.getOptions().get(FILE_LIST_PARAM);
       Objects.requireNonNull(files);
       String[] f = files.split(",");
       filesToCompact = Lists.newArrayList(f);
     }
 
-    @Override
-    public Selection select(SelectionParameters sparams) {
+    @Override public Selection select(SelectionParameters sparams) {
       if (!ERROR_THROWN) {
         ERROR_THROWN = Boolean.TRUE;
         throw new RuntimeException("Exception for test");
       }
       List<CompactableFile> matches = new ArrayList<>();
-      sparams.getAvailableFiles().forEach(cf -> {
+      sparams.getAvailableFiles().forEach((cf) -> {
         if (filesToCompact.contains(cf.getFileName())) {
           matches.add(cf);
         }
       });
       return new Selection(matches);
     }
-
   }
 
-  /**
-   * CompactionSelector that selects nothing for testing
-   */
   public static class EmptyCompactionSelector implements CompactionSelector {
-
-    @Override
-    public void init(InitParameters iparams) {
-
+    @Override public void init(InitParameters iparams) {
     }
 
-    @Override
-    public Selection select(SelectionParameters sparams) {
+    @Override public Selection select(SelectionParameters sparams) {
       return new Selection(Set.of());
     }
   }
@@ -183,66 +140,48 @@ public class CompactionIT extends AccumuloClusterHarness {
 
   private static final int MAX_DATA = 1000;
 
-  @Override
-  protected Duration defaultTimeout() {
+  @Override protected Duration defaultTimeout() {
     return Duration.ofMinutes(4);
   }
 
-  @Override
-  public void configureMiniCluster(MiniAccumuloConfigImpl cfg, Configuration hadoopCoreSite) {
+  @Override public void configureMiniCluster(MiniAccumuloConfigImpl cfg, Configuration hadoopCoreSite) {
     cfg.setProperty(Property.INSTANCE_ZK_TIMEOUT, "15s");
     cfg.setProperty(Property.TSERV_MAJC_DELAY, "1");
-    // use raw local file system so walogs sync and flush will work
     hadoopCoreSite.set("fs.file.impl", RawLocalFileSystem.class.getName());
   }
 
-  @Test
-  public void testBadSelector() throws Exception {
+  @Test public void testBadSelector() throws Exception {
     try (AccumuloClient c = Accumulo.newClient().from(getClientProps()).build()) {
       final String tableName = getUniqueNames(1)[0];
       NewTableConfiguration tc = new NewTableConfiguration();
-      // Ensure compactions don't kick off
       tc.setProperties(Map.of(Property.TABLE_MAJC_RATIO.getKey(), "10.0"));
       c.tableOperations().create(tableName, tc);
-      // Create multiple RFiles
       try (BatchWriter bw = c.createBatchWriter(tableName)) {
         for (int i = 1; i <= 4; i++) {
           Mutation m = new Mutation(Integer.toString(i));
           m.put("cf", "cq", new Value());
           bw.addMutation(m);
           bw.flush();
-          // flush often to create multiple files to compact
           c.tableOperations().flush(tableName, null, null, true);
         }
       }
-
       List<String> files = FunctionalTestUtils.getRFilePaths(c, tableName);
       assertEquals(4, files.size());
-
-      String subset = files.get(0).substring(files.get(0).lastIndexOf('/') + 1) + ","
-          + files.get(3).substring(files.get(3).lastIndexOf('/') + 1);
-
-      CompactionConfig config = new CompactionConfig()
-          .setSelector(new PluginConfig(RandomErrorThrowingSelector.class.getName(),
-              Map.of(RandomErrorThrowingSelector.FILE_LIST_PARAM, subset)))
-          .setWait(true);
+      String subset = files.get(0).substring(files.get(0).lastIndexOf('/') + 1) + "," + files.get(3).substring(files.get(3).lastIndexOf('/') + 1);
+      CompactionConfig config = new CompactionConfig().setSelector(new PluginConfig(RandomErrorThrowingSelector.class.getName(), Map.of(RandomErrorThrowingSelector.FILE_LIST_PARAM, subset))).setWait(true);
       c.tableOperations().compact(tableName, config);
-
-      // check that the subset of files selected are compacted, but the others remain untouched
       List<String> filesAfterCompact = FunctionalTestUtils.getRFilePaths(c, tableName);
       assertFalse(filesAfterCompact.contains(files.get(0)));
       assertTrue(filesAfterCompact.contains(files.get(1)));
       assertTrue(filesAfterCompact.contains(files.get(2)));
       assertFalse(filesAfterCompact.contains(files.get(3)));
-
       List<String> rows = new ArrayList<>();
       c.createScanner(tableName).forEach((k, v) -> rows.add(k.getRow().toString()));
       assertEquals(List.of("1", "2", "3", "4"), rows);
     }
   }
 
-  @Test
-  public void testCompactionWithTableIterator() throws Exception {
+  @Test public void testCompactionWithTableIterator() throws Exception {
     String table1 = this.getUniqueNames(1)[0];
     try (AccumuloClient client = Accumulo.newClient().from(getClientProps()).build()) {
       client.tableOperations().create(table1);
@@ -252,23 +191,19 @@ public class CompactionIT extends AccumuloClusterHarness {
           m.put("cf", "cq", new Value());
           bw.addMutation(m);
           bw.flush();
-          // flush often to create multiple files to compact
           client.tableOperations().flush(table1, null, null, true);
         }
       }
-
       IteratorSetting setting = new IteratorSetting(50, "delete", DevNull.class);
       client.tableOperations().attachIterator(table1, setting, EnumSet.of(IteratorScope.majc));
       client.tableOperations().compact(table1, new CompactionConfig().setWait(true));
-
       try (Scanner s = client.createScanner(table1)) {
         assertFalse(s.iterator().hasNext());
       }
     }
   }
 
-  @Test
-  public void testUserCompactionCancellation() throws Exception {
+  @Test public void testUserCompactionCancellation() throws Exception {
     final String table1 = this.getUniqueNames(1)[0];
     try (AccumuloClient client = Accumulo.newClient().from(getClientProps()).build()) {
       client.tableOperations().create(table1);
@@ -278,11 +213,9 @@ public class CompactionIT extends AccumuloClusterHarness {
           m.put("cf", "cq", new Value());
           bw.addMutation(m);
           bw.flush();
-          // flush often to create multiple files to compact
           client.tableOperations().flush(table1, null, null, true);
         }
       }
-
       final AtomicReference<Exception> error = new AtomicReference<>();
       final AtomicBoolean started = new AtomicBoolean(false);
       Thread t = new Thread(() -> {
@@ -309,72 +242,55 @@ public class CompactionIT extends AccumuloClusterHarness {
     }
   }
 
-  @Test
-  public void testErrorDuringUserCompaction() throws Exception {
+  @Test public void testErrorDuringUserCompaction() throws Exception {
     final String table1 = this.getUniqueNames(1)[0];
     try (AccumuloClient client = Accumulo.newClient().from(getClientProps()).build()) {
       client.tableOperations().create(table1);
       client.tableOperations().setProperty(table1, Property.TABLE_FILE_MAX.getKey(), "1001");
       client.tableOperations().setProperty(table1, Property.TABLE_MAJC_RATIO.getKey(), "1001");
       TableId tid = TableId.of(client.tableOperations().tableIdMap().get(table1));
-
       ReadWriteIT.ingest(client, MAX_DATA, 1, 1, 0, "colf", table1, 1);
-
       Ample ample = ((ClientContext) client).getAmple();
       TabletsMetadata tms = ample.readTablets().forTable(tid).fetch(ColumnType.FILES).build();
       TabletMetadata tm = tms.iterator().next();
       assertEquals(1000, tm.getFiles().size());
-
       IteratorSetting setting = new IteratorSetting(50, "error", ErrorThrowingIterator.class);
       setting.addOption(ErrorThrowingIterator.TIMES, "3");
       client.tableOperations().attachIterator(table1, setting, EnumSet.of(IteratorScope.majc));
       client.tableOperations().compact(table1, new CompactionConfig().setWait(true));
-
       tms = ample.readTablets().forTable(tid).fetch(ColumnType.FILES).build();
       tm = tms.iterator().next();
       assertEquals(1, tm.getFiles().size());
-
       ReadWriteIT.verify(client, MAX_DATA, 1, 1, 0, table1);
-
     }
   }
 
-  @Test
-  public void testErrorDuringCompactionNoOutput() throws Exception {
+  @Test public void testErrorDuringCompactionNoOutput() throws Exception {
     final String table1 = this.getUniqueNames(1)[0];
     try (AccumuloClient client = Accumulo.newClient().from(getClientProps()).build()) {
       client.tableOperations().create(table1);
       client.tableOperations().setProperty(table1, Property.TABLE_MAJC_RATIO.getKey(), "51");
       TableId tid = TableId.of(client.tableOperations().tableIdMap().get(table1));
-
       ReadWriteIT.ingest(client, 50, 1, 1, 0, "colf", table1, 1);
       ReadWriteIT.verify(client, 50, 1, 1, 0, table1);
-
       Ample ample = ((ClientContext) client).getAmple();
       TabletsMetadata tms = ample.readTablets().forTable(tid).fetch(ColumnType.FILES).build();
       TabletMetadata tm = tms.iterator().next();
       assertEquals(50, tm.getFiles().size());
-
       IteratorSetting setting = new IteratorSetting(50, "ageoff", AgeOffFilter.class);
       setting.addOption("ttl", "0");
       setting.addOption("currentTime", Long.toString(System.currentTimeMillis() + 86400));
       client.tableOperations().attachIterator(table1, setting, EnumSet.of(IteratorScope.majc));
-
-      // Since this iterator is on the top, it will throw an error 3 times, then allow the
-      // ageoff iterator to do its work.
       IteratorSetting setting2 = new IteratorSetting(51, "error", ErrorThrowingIterator.class);
       setting2.addOption(ErrorThrowingIterator.TIMES, "3");
       client.tableOperations().attachIterator(table1, setting2, EnumSet.of(IteratorScope.majc));
       client.tableOperations().compact(table1, new CompactionConfig().setWait(true));
-
-      assertThrows(NoSuchElementException.class, () -> ample.readTablets().forTable(tid)
-          .fetch(ColumnType.FILES).build().iterator().next());
+      assertThrows(NoSuchElementException.class, () -> ample.readTablets().forTable(tid).fetch(ColumnType.FILES).build().iterator().next());
       assertEquals(0, client.createScanner(table1).stream().count());
     }
   }
 
-  @Test
-  public void testTableDeletedDuringUserCompaction() throws Exception {
+  @Test public void testTableDeletedDuringUserCompaction() throws Exception {
     final String table1 = this.getUniqueNames(1)[0];
     try (AccumuloClient client = Accumulo.newClient().from(getClientProps()).build()) {
       client.tableOperations().create(table1);
@@ -384,11 +300,9 @@ public class CompactionIT extends AccumuloClusterHarness {
           m.put("cf", "cq", new Value());
           bw.addMutation(m);
           bw.flush();
-          // flush often to create multiple files to compact
           client.tableOperations().flush(table1, null, null, true);
         }
       }
-
       final AtomicReference<Exception> error = new AtomicReference<>();
       final AtomicBoolean started = new AtomicBoolean(false);
       Thread t = new Thread(() -> {
@@ -415,14 +329,10 @@ public class CompactionIT extends AccumuloClusterHarness {
     }
   }
 
-  @Test
-  public void testPartialCompaction() throws Exception {
+  @Test public void testPartialCompaction() throws Exception {
     String tableName = getUniqueNames(1)[0];
-    try (final AccumuloClient client = Accumulo.newClient().from(getClientProps()).build()) {
-
+    try (AccumuloClient client = Accumulo.newClient().from(getClientProps()).build()) {
       client.tableOperations().create(tableName);
-
-      // Insert MAX_DATA rows
       try (BatchWriter bw = client.createBatchWriter(tableName)) {
         for (int i = 0; i < MAX_DATA; i++) {
           Mutation m = new Mutation(String.format("r:%04d", i));
@@ -432,13 +342,9 @@ public class CompactionIT extends AccumuloClusterHarness {
       }
       client.tableOperations().flush(tableName);
       IteratorSetting iterSetting = new IteratorSetting(100, TestFilter.class);
-      // make sure iterator options make it to compactor process
       iterSetting.addOption("modulus", 17 + "");
-      CompactionConfig config =
-          new CompactionConfig().setIterators(List.of(iterSetting)).setWait(true);
+      CompactionConfig config = new CompactionConfig().setIterators(List.of(iterSetting)).setWait(true);
       client.tableOperations().compact(tableName, config);
-
-      // Insert 2 * MAX_DATA rows
       try (BatchWriter bw = client.createBatchWriter(tableName)) {
         for (int i = MAX_DATA; i < MAX_DATA * 2; i++) {
           Mutation m = new Mutation(String.format("r:%04d", i));
@@ -446,30 +352,19 @@ public class CompactionIT extends AccumuloClusterHarness {
           bw.addMutation(m);
         }
       }
-      // this should create an F file
       client.tableOperations().flush(tableName);
-
-      // run a compaction that only compacts F files
       iterSetting = new IteratorSetting(100, TestFilter.class);
-      // compact F file w/ different modulus and user pmodulus option for partial compaction
       iterSetting.addOption("pmodulus", 19 + "");
-      config = new CompactionConfig().setIterators(List.of(iterSetting)).setWait(true)
-          .setSelector(new PluginConfig(FSelector.class.getName()));
+      config = new CompactionConfig().setIterators(List.of(iterSetting)).setWait(true).setSelector(new PluginConfig(FSelector.class.getName()));
       client.tableOperations().compact(tableName, config);
-
       try (Scanner scanner = client.createScanner(tableName)) {
         int count = 0;
-        for (Entry<Key,Value> entry : scanner) {
-
+        for (Entry<Key, Value> entry : scanner) {
           int v = Integer.parseInt(entry.getValue().toString());
           int modulus = v < MAX_DATA ? 17 : 19;
-
-          assertEquals(0, Integer.parseInt(entry.getValue().toString()) % modulus,
-              String.format("%s %s %d != 0", entry.getValue(), "%", modulus));
+          assertEquals(0, Integer.parseInt(entry.getValue().toString()) % modulus, String.format("%s %s %d != 0", entry.getValue(), "%", modulus));
           count++;
         }
-
-        // Verify
         int expectedCount = 0;
         for (int i = 0; i < MAX_DATA * 2; i++) {
           int modulus = i < MAX_DATA ? 17 : 19;
@@ -479,20 +374,15 @@ public class CompactionIT extends AccumuloClusterHarness {
         }
         assertEquals(expectedCount, count);
       }
-
     }
   }
 
-  @Test
-  public void testConfigurer() throws Exception {
+  @Test public void testConfigurer() throws Exception {
     String tableName = this.getUniqueNames(1)[0];
-
     try (AccumuloClient client = Accumulo.newClient().from(getClientProps()).build()) {
-
-      Map<String,String> props = Map.of(Property.TABLE_FILE_COMPRESSION_TYPE.getKey(), "none");
+      Map<String, String> props = Map.of(Property.TABLE_FILE_COMPRESSION_TYPE.getKey(), "none");
       NewTableConfiguration ntc = new NewTableConfiguration().setProperties(props);
       client.tableOperations().create(tableName, ntc);
-
       byte[] data = new byte[100000];
       Arrays.fill(data, (byte) 65);
       try (var writer = client.createBatchWriter(tableName)) {
@@ -503,35 +393,18 @@ public class CompactionIT extends AccumuloClusterHarness {
         }
       }
       client.tableOperations().flush(tableName, null, null, true);
-
-      // without compression, expect file to be large
       long sizes = CompactionExecutorIT.getFileSizes(client, tableName);
-      assertTrue(sizes > data.length * 10 && sizes < data.length * 11,
-          "Unexpected files sizes : " + sizes);
-
-      client.tableOperations().compact(tableName,
-          new CompactionConfig().setWait(true)
-              .setConfigurer(new PluginConfig(CompressionConfigurer.class.getName(),
-                  Map.of(CompressionConfigurer.LARGE_FILE_COMPRESSION_TYPE, "gz",
-                      CompressionConfigurer.LARGE_FILE_COMPRESSION_THRESHOLD, data.length + ""))));
-
-      // after compacting with compression, expect small file
+      assertTrue(sizes > data.length * 10 && sizes < data.length * 11, "Unexpected files sizes : " + sizes);
+      client.tableOperations().compact(tableName, new CompactionConfig().setWait(true).setConfigurer(new PluginConfig(CompressionConfigurer.class.getName(), Map.of(CompressionConfigurer.LARGE_FILE_COMPRESSION_TYPE, "gz", CompressionConfigurer.LARGE_FILE_COMPRESSION_THRESHOLD, data.length + ""))));
       sizes = CompactionExecutorIT.getFileSizes(client, tableName);
-      assertTrue(sizes < data.length,
-          "Unexpected files sizes: data: " + data.length + ", file:" + sizes);
-
+      assertTrue(sizes < data.length, "Unexpected files sizes: data: " + data.length + ", file:" + sizes);
       client.tableOperations().compact(tableName, new CompactionConfig().setWait(true));
-
-      // after compacting without compression, expect big files again
       sizes = CompactionExecutorIT.getFileSizes(client, tableName);
-      assertTrue(sizes > data.length * 10 && sizes < data.length * 11,
-          "Unexpected files sizes : " + sizes);
-
+      assertTrue(sizes > data.length * 10 && sizes < data.length * 11, "Unexpected files sizes : " + sizes);
     }
   }
 
-  @Test
-  public void testSuccessfulCompaction() throws Exception {
+  @Test public void testSuccessfulCompaction() throws Exception {
     try (AccumuloClient c = Accumulo.newClient().from(getClientProps()).build()) {
       final String tableName = getUniqueNames(1)[0];
       c.tableOperations().create(tableName);
@@ -542,10 +415,8 @@ public class CompactionIT extends AccumuloClusterHarness {
       Path testrf = new Path(root, "testrf");
       fs.deleteOnExit(testrf);
       FunctionalTestUtils.createRFiles(c, fs, testrf.toString(), 500000, 59, 4);
-
       c.tableOperations().importDirectory(testrf.toString()).to(tableName).load();
       int beforeCount = countFiles(c);
-
       final AtomicBoolean fail = new AtomicBoolean(false);
       final int THREADS = 5;
       for (int count = 0; count < THREADS; count++) {
@@ -570,132 +441,89 @@ public class CompactionIT extends AccumuloClusterHarness {
         }
         executor.shutdown();
         executor.awaitTermination(defaultTimeout().toSeconds(), SECONDS);
-        assertFalse(fail.get(),
-            "Failed to successfully run all threads, Check the test output for error");
+        assertFalse(fail.get(), "Failed to successfully run all threads, Check the test output for error");
       }
-
       int finalCount = countFiles(c);
       assertTrue(finalCount < beforeCount);
       try {
         getClusterControl().adminStopAll();
-      } finally {
-        // Make sure the internal state in the cluster is reset (e.g. processes in MAC)
+      }  finally {
         getCluster().stop();
         if (getClusterType() == ClusterType.STANDALONE) {
-          // Then restart things for the next test if it's a standalone
           getCluster().start();
         }
       }
     }
   }
 
-  @Test
-  public void testMultiStepCompactionThatDeletesAll() throws Exception {
-
-    // There was a bug where user compactions would never complete when : the tablet had to be
-    // compacted in multiple passes AND the intermediate passes produced no output.
-
+  @Test public void testMultiStepCompactionThatDeletesAll() throws Exception {
     try (AccumuloClient c = Accumulo.newClient().from(getClientProps()).build()) {
       final String tableName = getUniqueNames(1)[0];
       c.tableOperations().create(tableName);
       c.tableOperations().setProperty(tableName, Property.TABLE_MAJC_RATIO.getKey(), "100.0");
-
       var beforeCount = countFiles(c);
-
       final int NUM_ENTRIES_AND_FILES = 60;
-
       try (var writer = c.createBatchWriter(tableName)) {
         for (int i = 0; i < NUM_ENTRIES_AND_FILES; i++) {
           Mutation m = new Mutation("r" + i);
           m.put("f1", "q1", "v" + i);
           writer.addMutation(m);
           writer.flush();
-          // flush often to create multiple files to compact
           c.tableOperations().flush(tableName, null, null, true);
         }
       }
-
       try (var scanner = c.createScanner(tableName)) {
         assertEquals(NUM_ENTRIES_AND_FILES, scanner.stream().count());
       }
-
       var afterCount = countFiles(c);
-
       assertTrue(afterCount >= beforeCount + NUM_ENTRIES_AND_FILES);
-
       CompactionConfig comactionConfig = new CompactionConfig();
-      // configure an iterator that drops all data
       IteratorSetting iter = new IteratorSetting(100, GrepIterator.class);
       GrepIterator.setTerm(iter, "keep");
       comactionConfig.setIterators(List.of(iter));
       comactionConfig.setWait(true);
       c.tableOperations().compact(tableName, comactionConfig);
-
       try (var scanner = c.createScanner(tableName)) {
         assertEquals(0, scanner.stream().count());
       }
-
       var finalCount = countFiles(c);
       assertTrue(finalCount <= beforeCount);
     }
   }
 
-  @Test
-  public void testSelectNoFiles() throws Exception {
-
-    // Test a compaction selector that selects no files. In this case there is no work to,
-    // so we want to ensure it does not hang
-
+  @Test public void testSelectNoFiles() throws Exception {
     try (AccumuloClient c = Accumulo.newClient().from(getClientProps()).build()) {
       String tableName = getUniqueNames(1)[0];
       c.tableOperations().create(tableName);
-
       writeFlush(c, tableName, "a");
       writeFlush(c, tableName, "b");
-
-      CompactionConfig config = new CompactionConfig()
-          .setSelector(new PluginConfig(EmptyCompactionSelector.class.getName(), Map.of()))
-          .setWait(true);
+      CompactionConfig config = new CompactionConfig().setSelector(new PluginConfig(EmptyCompactionSelector.class.getName(), Map.of())).setWait(true);
       c.tableOperations().compact(tableName, config);
-
       assertEquals(Set.of("a", "b"), getRows(c, tableName));
     }
-
   }
 
-  @Test
-  public void testConcurrent() throws Exception {
-    // two compactions without iterators or strategy should be able to run concurrently
-
+  @Test public void testConcurrent() throws Exception {
     try (AccumuloClient c = Accumulo.newClient().from(getClientProps()).build()) {
-
       String tableName = getUniqueNames(1)[0];
       c.tableOperations().create(tableName);
-
-      // write random data because its very unlikely it will compress
       writeRandomValue(c, tableName, 1 << 16);
       writeRandomValue(c, tableName, 1 << 16);
-
       c.tableOperations().compact(tableName, new CompactionConfig().setWait(false));
       c.tableOperations().compact(tableName, new CompactionConfig().setWait(true));
-
       assertEquals(1, FunctionalTestUtils.countRFiles(c, tableName));
-
       writeRandomValue(c, tableName, 1 << 16);
-
       IteratorSetting iterConfig = new IteratorSetting(30, SlowIterator.class);
       SlowIterator.setSleepTime(iterConfig, 1000);
-
       long t1 = System.currentTimeMillis();
-      c.tableOperations().compact(tableName,
-          new CompactionConfig().setWait(false).setIterators(java.util.Arrays.asList(iterConfig)));
+      c.tableOperations().compact(tableName, new CompactionConfig().setWait(false).setIterators(java.util.Arrays.asList(iterConfig)));
       try {
-        // this compaction should fail because previous one set iterators
         c.tableOperations().compact(tableName, new CompactionConfig().setWait(true));
         if (System.currentTimeMillis() - t1 < 2000) {
           fail("Expected compaction to fail because another concurrent compaction set iterators");
         }
-      } catch (AccumuloException e) {}
+      } catch (AccumuloException e) {
+      }
     }
   }
 
@@ -710,7 +538,6 @@ public class CompactionIT extends AccumuloClusterHarness {
   private void writeRandomValue(AccumuloClient c, String tableName, int size) throws Exception {
     byte[] data1 = new byte[size];
     RANDOM.get().nextBytes(data1);
-
     try (BatchWriter bw = c.createBatchWriter(tableName)) {
       Mutation m1 = new Mutation("r" + RANDOM.get().nextInt(909090));
       m1.put("data", "bl0b", new Value(data1));
@@ -722,7 +549,7 @@ public class CompactionIT extends AccumuloClusterHarness {
   private Set<String> getRows(AccumuloClient c, String tableName) throws TableNotFoundException {
     Set<String> rows = new HashSet<>();
     try (Scanner scanner = c.createScanner(tableName, Authorizations.EMPTY)) {
-      for (Entry<Key,Value> entry : scanner) {
+      for (Entry<Key, Value> entry : scanner) {
         rows.add(entry.getKey().getRowData().toString());
       }
     }
@@ -737,5 +564,4 @@ public class CompactionIT extends AccumuloClusterHarness {
     }
     client.tableOperations().flush(tablename, null, null, true);
   }
-
 }
