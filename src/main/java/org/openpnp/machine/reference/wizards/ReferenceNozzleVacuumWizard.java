@@ -26,6 +26,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.openpnp.Translations;
 import org.openpnp.gui.support.AbstractConfigurationWizard;
 import org.openpnp.gui.support.ActuatorsComboBoxModel;
 import org.openpnp.gui.support.NamedConverter;
@@ -79,14 +80,16 @@ public class ReferenceNozzleVacuumWizard extends AbstractConfigurationWizard {
                 FormSpecs.RELATED_GAP_ROWSPEC,
                 FormSpecs.DEFAULT_ROWSPEC,}));
         
-        label = new JLabel("Vacuum Actuator");
+        label = new JLabel(Translations.getString(
+                "ReferenceNozzleVacuumWizard.ContentPanel.VacuumActuatorLabel.text")); //$NON-NLS-1$
         panel.add(label, "2, 2, right, center");
         
         vacuumComboBoxActuator = new JComboBox();
         vacuumComboBoxActuator.setMaximumRowCount(15);
         vacuumComboBoxActuator.setModel(new ActuatorsComboBoxModel(nozzle.getHead()));
         panel.add(vacuumComboBoxActuator, "4, 2");
-        label = new JLabel("Blow Off Actuator");
+        label = new JLabel(Translations.getString(
+                "ReferenceNozzleVacuumWizard.ContentPanel.BlowOffActuatorLabel.text")); //$NON-NLS-1$
         panel.add(label, "2, 4, right, center");
 
         blowOffComboBoxActuator = new JComboBox();
@@ -100,7 +103,8 @@ public class ReferenceNozzleVacuumWizard extends AbstractConfigurationWizard {
         
         blowOffClosingValve = new JCheckBox("");
         panel.add(blowOffClosingValve, "8, 4");
-        lblSensingActuator = new JLabel("Sensing Actuator");
+        lblSensingActuator = new JLabel(Translations.getString(
+                "ReferenceNozzleVacuumWizard.ContentPanel.SensingActuatorLabel.text")); //$NON-NLS-1$
         panel.add(lblSensingActuator, "2, 6, right, default");
 
         vacuumSenseActuator = new JComboBox(new ActuatorsComboBoxModel(nozzle.getHead()));

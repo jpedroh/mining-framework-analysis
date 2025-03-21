@@ -45,6 +45,7 @@ import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.Bindings;
 import org.jdesktop.beansbinding.Converter;
+import org.openpnp.Translations;
 import org.openpnp.gui.components.AutoSelectTextTable;
 import org.openpnp.gui.components.CameraView;
 import org.openpnp.gui.components.ComponentDecorators;
@@ -89,7 +90,7 @@ public class PackageVisionPanel extends JPanel {
         JPanel propertiesPanel = new JPanel();
         add(propertiesPanel, BorderLayout.NORTH);
         propertiesPanel.setBorder(
-                new TitledBorder(null, "Settings",
+                new TitledBorder(null, Translations.getString("PackageVisionPanel.SettingsPanel.Boprder.title"),
                         TitledBorder.LEADING, TitledBorder.TOP, null));
         propertiesPanel.setLayout(new FormLayout(new ColumnSpec[] {
                 FormSpecs.RELATED_GAP_COLSPEC,
@@ -116,7 +117,7 @@ public class PackageVisionPanel extends JPanel {
                         FormSpecs.RELATED_GAP_ROWSPEC,
                         FormSpecs.DEFAULT_ROWSPEC,}));
 
-        JLabel lblUnits = new JLabel("Units");
+        JLabel lblUnits = new JLabel(Translations.getString("PackageVisionPanel.SettingsPanel.UnitsLabel.text"));
         propertiesPanel.add(lblUnits, "2, 2, right, default");
 
         unitsCombo = new JComboBox(LengthUnit.values());
@@ -139,13 +140,15 @@ public class PackageVisionPanel extends JPanel {
         JButton generateBga = new JButton(generateBgaAction);
         panelGenerate.add(generateBga);
 
-        JLabel lblBodyWidth = new JLabel("Body Width");
+        JLabel lblBodyWidth = new JLabel(Translations.getString(
+                "PackageVisionPanel.SettingsPanel.BodyWidthLabel.text"));
         propertiesPanel.add(lblBodyWidth, "2, 4, right, default");
 
         bodyWidthTf = new JTextField();
         propertiesPanel.add(bodyWidthTf, "4, 4, left, default");
         bodyWidthTf.setColumns(10);
 
+<<<<<<< /usr/src/app/output/openpnp/openpnp/f9a8fe8740a0c227349eb465f22314b826ed7d2f/src/main/java/org/openpnp/gui/PackageVisionPanel.java/left.java
         JLabel lblDimension = new JLabel("Outside dimension");
         lblDimension.setToolTipText("<html>\nOverall outside dimension of the footprint <br/>\nFor Dual this is the width, for Quad width and height (it is calculated for BGE).\n</html>");
         propertiesPanel.add(lblDimension, "8, 4, right, default");
@@ -163,6 +166,12 @@ public class PackageVisionPanel extends JPanel {
         innerDimension.setColumns(10);
 
         JLabel lblBodyHeight = new JLabel("Body Length");
+||||||| /usr/src/app/output/openpnp/openpnp/f9a8fe8740a0c227349eb465f22314b826ed7d2f/src/main/java/org/openpnp/gui/PackageVisionPanel.java/base.java
+        JLabel lblBodyHeight = new JLabel("Body Length");
+=======
+        JLabel lblBodyHeight = new JLabel(Translations.getString("" +
+                "PackageVisionPanel.SettingsPanel.BodyLengthLabel.text"));
+>>>>>>> /usr/src/app/output/openpnp/openpnp/f9a8fe8740a0c227349eb465f22314b826ed7d2f/src/main/java/org/openpnp/gui/PackageVisionPanel.java/right.java
         propertiesPanel.add(lblBodyHeight, "2, 6, right, default");
 
         bodyHeightTf = new JTextField();
@@ -203,7 +212,9 @@ public class PackageVisionPanel extends JPanel {
         JPanel tablePanel = new JPanel();
         add(tablePanel, BorderLayout.CENTER);
         tablePanel.setBorder(
-                new TitledBorder(null, "Pads", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+                new TitledBorder(null, Translations.getString(
+                        "PackageVisionPanel.PadsPanel.Border.title"),
+                        TitledBorder.LEADING, TitledBorder.TOP, null, null));
 
         table = new AutoSelectTextTable(tableModel);
         table.setAutoCreateRowSorter(true);
@@ -279,8 +290,9 @@ public class PackageVisionPanel extends JPanel {
     public final Action newAction = new AbstractAction() {
         {
             putValue(SMALL_ICON, Icons.add);
-            putValue(NAME, "New Pad...");
-            putValue(SHORT_DESCRIPTION, "Create a new pad, specifying it's ID.");
+            putValue(NAME, Translations.getString("PackageVisionPanel.PadsPanel.Action.NewPad")); //$NON-NLS-1$
+            putValue(SHORT_DESCRIPTION, Translations.getString(
+                    "PackageVisionPanel.PadsPanel.Action.NewPad.Description")); //$NON-NLS-1$
         }
 
         @Override
@@ -301,15 +313,18 @@ public class PackageVisionPanel extends JPanel {
     public final Action deleteAction = new AbstractAction() {
         {
             putValue(SMALL_ICON, Icons.delete);
-            putValue(NAME, "Delete Pad");
-            putValue(SHORT_DESCRIPTION, "Delete the currently selected pad.");
+            putValue(NAME, Translations.getString("PackageVisionPanel.PadsPanel.Action.DeletePad")); //$NON-NLS-1$
+            putValue(SHORT_DESCRIPTION, Translations.getString(
+                    "PackageVisionPanel.PadsPanel.Action.DeletePad.Description")); //$NON-NLS-1$
         }
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
             int ret = JOptionPane.showConfirmDialog(getTopLevelAncestor(),
-                    "Are you sure you want to delete " + getSelectedPad().getName() + "?",
-                    "Delete " + getSelectedPad().getName() + "?", JOptionPane.YES_NO_OPTION);
+                    Translations.getString("DialogMessages.ConfirmDelete.text") //$NON-NLS-1$
+                            + " " + getSelectedPad().getName() + "?", //$NON-NLS-1$ //$NON-NLS-2$
+                    Translations.getString("DialogMessages.ConfirmDelete.title") //$NON-NLS-1$ //$NON-NLS-2$
+                            + " " + getSelectedPad().getName() + "?", JOptionPane.YES_NO_OPTION); //$NON-NLS-1$ //$NON-NLS-2$
             if (ret == JOptionPane.YES_OPTION) {
                 footprint.removePad(getSelectedPad());
                 tableModel.fireTableDataChanged();

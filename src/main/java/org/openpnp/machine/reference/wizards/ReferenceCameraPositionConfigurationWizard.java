@@ -7,6 +7,7 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import org.jdesktop.beansbinding.AutoBinding.UpdateStrategy;
+import org.openpnp.Translations;
 import org.openpnp.gui.components.ComponentDecorators;
 import org.openpnp.gui.components.LocationButtonsPanel;
 import org.openpnp.gui.support.AbstractConfigurationWizard;
@@ -64,7 +65,8 @@ public class ReferenceCameraPositionConfigurationWizard extends AbstractConfigur
         panelOffsets = new JPanel();
         contentPanel.add(panelOffsets);
         panelOffsets.setBorder(new TitledBorder(null,
-                "Coordinate System", TitledBorder.LEADING, TitledBorder.TOP, null));
+                Translations.getString("ReferenceCameraPositionConfigurationWizard.OffsetsPanel.Border.title"), //$NON-NLS-1$
+                TitledBorder.LEADING, TitledBorder.TOP, null));
         panelOffsets.setLayout(new FormLayout(new ColumnSpec[] {
                 FormSpecs.RELATED_GAP_COLSPEC,
                 ColumnSpec.decode("max(70dlu;default)"),
@@ -97,10 +99,12 @@ public class ReferenceCameraPositionConfigurationWizard extends AbstractConfigur
         JLabel olblZ = new JLabel("Z");
         panelOffsets.add(olblZ, "8, 2");
         
-        lblRotation = new JLabel("Rotation");
+        lblRotation = new JLabel(Translations.getString(
+                "ReferenceCameraPositionConfigurationWizard.OffsetsPanel.RotationLabel.text")); //$NON-NLS-1$
         panelOffsets.add(lblRotation, "10, 2");
         
-        lblAxis = new JLabel("Axis");
+        lblAxis = new JLabel(Translations.getString(
+                "ReferenceCameraPositionConfigurationWizard.OffsetsPanel.AxisLabel.text")); //$NON-NLS-1$
         panelOffsets.add(lblAxis, "2, 4, right, default");
         
         axisX = new JComboBox(new AxesComboBoxModel(machine, AbstractAxis.class, Axis.Type.X, true));
@@ -115,7 +119,8 @@ public class ReferenceCameraPositionConfigurationWizard extends AbstractConfigur
         axisRotation = new JComboBox(new AxesComboBoxModel(machine, AbstractAxis.class, Axis.Type.Rotation, true));
         panelOffsets.add(axisRotation, "10, 4, fill, default");
         
-        lblOffset = new JLabel("Offset");
+        lblOffset = new JLabel(Translations.getString(
+                "ReferenceCameraPositionConfigurationWizard.OffsetsPanel.OffsetLabel.text")); //$NON-NLS-1$
         panelOffsets.add(lblOffset, "2, 6, right, default");
 
 
@@ -135,8 +140,36 @@ public class ReferenceCameraPositionConfigurationWizard extends AbstractConfigur
         panelOffsets.add(textFieldOffRotation, "10, 6, fill, default");
         textFieldOffRotation.setColumns(10);
 
+<<<<<<< /usr/src/app/output/openpnp/openpnp/f9a8fe8740a0c227349eb465f22314b826ed7d2f/src/main/java/org/openpnp/machine/reference/wizards/ReferenceCameraPositionConfigurationWizard.java/left.java
         JLabel lblSafeZ = new JLabel("Safe Z");
         panelOffsets.add(lblSafeZ, "2, 10, right, default");
+||||||| /usr/src/app/output/openpnp/openpnp/f9a8fe8740a0c227349eb465f22314b826ed7d2f/src/main/java/org/openpnp/machine/reference/wizards/ReferenceCameraPositionConfigurationWizard.java/base.java
+        JPanel panelSafeZ = new JPanel();
+        panelSafeZ.setBorder(new TitledBorder(null, "Safe Z", TitledBorder.LEADING,
+                TitledBorder.TOP, null, null));
+        contentPanel.add(panelSafeZ);
+        panelSafeZ.setLayout(new FormLayout(
+                new ColumnSpec[] {FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+                        FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,},
+                new RowSpec[] {FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,}));
+
+        JLabel lblSafeZ = new JLabel("Safe Z");
+        panelSafeZ.add(lblSafeZ, "2, 2, right, default");
+=======
+        JPanel panelSafeZ = new JPanel();
+        panelSafeZ.setBorder(new TitledBorder(null, Translations.getString(
+                "ReferenceCameraPositionConfigurationWizard.SafeZPanel.Border.title"), //$NON-NLS-1$
+                TitledBorder.LEADING, TitledBorder.TOP, null, null));
+        contentPanel.add(panelSafeZ);
+        panelSafeZ.setLayout(new FormLayout(
+                new ColumnSpec[] {FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,
+                        FormSpecs.RELATED_GAP_COLSPEC, FormSpecs.DEFAULT_COLSPEC,},
+                new RowSpec[] {FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,}));
+
+        JLabel lblSafeZ = new JLabel(Translations.getString(
+                "ReferenceCameraPositionConfigurationWizard.SafeZPanel.SafeZLabel.text")); //$NON-NLS-1$
+        panelSafeZ.add(lblSafeZ, "2, 2, right, default");
+>>>>>>> /usr/src/app/output/openpnp/openpnp/f9a8fe8740a0c227349eb465f22314b826ed7d2f/src/main/java/org/openpnp/machine/reference/wizards/ReferenceCameraPositionConfigurationWizard.java/right.java
 
         textFieldSafeZ = new JTextField();
         panelOffsets.add(textFieldSafeZ, "8, 10");
@@ -144,8 +177,9 @@ public class ReferenceCameraPositionConfigurationWizard extends AbstractConfigur
         textFieldSafeZ.setColumns(10);
 
         panelLocation = new JPanel();
-        panelLocation.setBorder(new TitledBorder(null, "Location", TitledBorder.LEADING,
-                TitledBorder.TOP, null, null));
+        panelLocation.setBorder(new TitledBorder(null, Translations.getString(
+                "ReferenceCameraPositionConfigurationWizard.LocationPanel.Border.title"), //$NON-NLS-1$
+                TitledBorder.LEADING, TitledBorder.TOP, null, null));
         contentPanel.add(panelLocation);
         panelLocation.setLayout(new FormLayout(new ColumnSpec[] {
                 FormSpecs.RELATED_GAP_COLSPEC,
@@ -177,11 +211,20 @@ public class ReferenceCameraPositionConfigurationWizard extends AbstractConfigur
         lblZ = new JLabel("Z");
         panelLocation.add(lblZ, "8, 2");
 
+<<<<<<< /usr/src/app/output/openpnp/openpnp/f9a8fe8740a0c227349eb465f22314b826ed7d2f/src/main/java/org/openpnp/machine/reference/wizards/ReferenceCameraPositionConfigurationWizard.java/left.java
         lblRotation_1 = new JLabel("Rotation");
         panelLocation.add(lblRotation_1, "10, 2");
         
         lblLocation = new JLabel("Location");
         panelLocation.add(lblLocation, "2, 4, right, default");
+||||||| /usr/src/app/output/openpnp/openpnp/f9a8fe8740a0c227349eb465f22314b826ed7d2f/src/main/java/org/openpnp/machine/reference/wizards/ReferenceCameraPositionConfigurationWizard.java/base.java
+        lblRotation_1 = new JLabel("Rotation");
+        panelLocation.add(lblRotation_1, "8, 2");
+=======
+        lblRotation_1 = new JLabel(Translations.getString(
+                "ReferenceCameraPositionConfigurationWizard.LocationPanel.RotationLabel.text")); //$NON-NLS-1$
+        panelLocation.add(lblRotation_1, "8, 2");
+>>>>>>> /usr/src/app/output/openpnp/openpnp/f9a8fe8740a0c227349eb465f22314b826ed7d2f/src/main/java/org/openpnp/machine/reference/wizards/ReferenceCameraPositionConfigurationWizard.java/right.java
 
         textFieldLocationX = new JTextField();
         panelLocation.add(textFieldLocationX, "4, 4, fill, default");

@@ -13,6 +13,7 @@ import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.util.ConcurrentModificationException;
 
+import org.openpnp.Translations;
 import org.openpnp.gui.support.Wizard;
 import org.openpnp.machine.reference.SimulationModeMachine;
 import org.openpnp.machine.reference.camera.wizards.SimulatedUpCameraConfigurationWizard;
@@ -388,9 +389,9 @@ public class SimulatedUpCamera extends ReferenceCamera {
         super.findIssues(solutions);
         if (solutions.isTargeting(Milestone.Connect)) {
             solutions.add(new Solutions.Issue(
-                    this, 
-                    "The SimulatedUpCamera can be replaced with a OpenPnpCaptureCamera to connect to a real USB camera.", 
-                    "Replace with OpenPnpCaptureCamera.", 
+                    this,
+                    Translations.getString("SimulatedUpCamera.Issue"), //$NON-NLS-1$
+                    Translations.getString("SimulatedUpCamera.Solution"), //$NON-NLS-1$
                     Severity.Fundamental,
                     "https://github.com/openpnp/openpnp/wiki/OpenPnpCaptureCamera") {
 
@@ -399,8 +400,7 @@ public class SimulatedUpCamera extends ReferenceCamera {
                     if (state == Solutions.State.Solved) {
                         OpenPnpCaptureCamera camera = CameraSolutions.createReplacementCamera(SimulatedUpCamera.this);
                         CameraSolutions.replaceCamera(camera);
-                    }
-                    else if (getState() == Solutions.State.Solved) {
+                    } else if (getState() == Solutions.State.Solved) {
                         // Place the old one back (from the captured SimulatedUpCamera.this).
                         CameraSolutions.replaceCamera(SimulatedUpCamera.this);
                     }
