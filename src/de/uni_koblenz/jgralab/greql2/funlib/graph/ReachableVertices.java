@@ -54,12 +54,14 @@ import de.uni_koblenz.jgralab.greql2.types.pathsearch.VertexStateQueue;
 
 @NeedsEvaluatorArgument
 public class ReachableVertices extends Function {
-
-	@Description(params = { "v", "dfa" }, description = "Returns all vertices that are reachable from the given vertex by a path matching the the given path description.", categories = {
-			Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES })
+	
+	@Description(params = {"v","dfa"}, description = 
+			"Returns all vertices that are reachable from the given vertex by a path matching the the given path description.",
+			categories = {Category.GRAPH, Category.PATHS_AND_PATHSYSTEMS_AND_SLICES})
 	public ReachableVertices() {
 		super(100, 10, 1.0);
 	}
+
 
 	public PSet<Vertex> evaluate(InternalGreqlEvaluator evaluator, Vertex v,
 			NFA nfa) {

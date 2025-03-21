@@ -65,7 +65,8 @@ public class IsReachable extends Function {
 		super(50, 1, 0.01);
 	}
 
-	public Boolean evaluate(InternalGreqlEvaluator evaluator, Vertex u, Vertex v, NFA nfa) {
+	public Boolean evaluate(InternalGreqlEvaluator evaluator, Vertex u,
+			Vertex v, NFA nfa) {
 		DFA dfa = nfa.getDFA();
 		if (u.getGraph() != v.getGraph()) {
 			throw new IllegalArgumentException(
