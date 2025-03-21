@@ -107,6 +107,20 @@ public class CreateTriggerParser {
             parser.expect(")");
         }
 
+<<<<<<< /usr/src/app/output/fordfrog/apgdiff/a42c3242b6e78aa612e362f409e373225a9c4a2e/src/main/java/cz/startnet/utils/pgdiff/parsers/CreateTriggerParser.java/left.java
+        parser.expect("EXECUTE");
+        if(parser.expectOptional("PROCEDURE")){
+        }
+        else if (parser.expectOptional("FUNCTION")){
+        }
+        else {
+            parser.throwUnsupportedCommand();
+        }
+        trigger.setFunction(parser.getRest());
+||||||| /usr/src/app/output/fordfrog/apgdiff/a42c3242b6e78aa612e362f409e373225a9c4a2e/src/main/java/cz/startnet/utils/pgdiff/parsers/CreateTriggerParser.java/base.java
+        parser.expect("EXECUTE", "PROCEDURE");
+        trigger.setFunction(parser.getRest());
+=======
         parser.expect("EXECUTE");
 
         if (parser.expectOptional("PROCEDURE")) {
@@ -116,6 +130,7 @@ public class CreateTriggerParser {
         } else {
             parser.throwUnsupportedCommand();
         }
+>>>>>>> /usr/src/app/output/fordfrog/apgdiff/a42c3242b6e78aa612e362f409e373225a9c4a2e/src/main/java/cz/startnet/utils/pgdiff/parsers/CreateTriggerParser.java/right.java
 
         final boolean ignoreSlonyTrigger = ignoreSlonyTriggers
                 && ("_slony_logtrigger".equals(trigger.getName())

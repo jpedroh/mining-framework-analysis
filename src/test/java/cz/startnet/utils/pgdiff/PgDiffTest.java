@@ -275,12 +275,16 @@ public class PgDiffTest {
                   , {"alter_view_owner", false, false, false, false}
                   , {"grant_on_table_cols_mixed", false, false, false, false}
                   , {"grant_on_view_cols_mixed", false, false, false, false}
+<<<<<<< /usr/src/app/output/fordfrog/apgdiff/a42c3242b6e78aa612e362f409e373225a9c4a2e/src/test/java/cz/startnet/utils/pgdiff/PgDiffTest.java/left.java
                   , {"create_schema_no_change_table", false, false, false, false}
                   , {"add_table_identity_sequence",false,false,false,false}      
+||||||| /usr/src/app/output/fordfrog/apgdiff/a42c3242b6e78aa612e362f409e373225a9c4a2e/src/test/java/cz/startnet/utils/pgdiff/PgDiffTest.java/base.java
+=======
                     // Test create trigger in PostgreSQL v12
                   , {"add_trigger_function_postgres12", false, false, false, false}
                     // Test create trigger with referencing tables
                   , {"add_trigger_with_referencing_tables", false, false, false, false}
+>>>>>>> /usr/src/app/output/fordfrog/apgdiff/a42c3242b6e78aa612e362f409e373225a9c4a2e/src/test/java/cz/startnet/utils/pgdiff/PgDiffTest.java/right.java
                 });
     }
     /**
