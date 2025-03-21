@@ -113,7 +113,13 @@ public abstract class ReversedEdgeImpl extends
 	public void setIncidentVertex(Vertex v) {
 		if (graph.isLoading()) {
 			incidentVertex = new VersionedReferenceImpl<VertexBaseImpl>(
-					normalEdge, (VertexBaseImpl) v, "$normalEdge");
+<<<<<<< /usr/src/app/output/jgralab/jgralab/9484ebcb89e0ce8320d5aa8d39003409505d340c/src/de/uni_koblenz/jgralab/impl/trans/ReversedEdgeImpl.java/left.java
+					normalEdge, (VertexBaseImpl) v);
+||||||| /usr/src/app/output/jgralab/jgralab/9484ebcb89e0ce8320d5aa8d39003409505d340c/src/de/uni_koblenz/jgralab/impl/trans/ReversedEdgeImpl.java/base.java
+					normalEdge, v);
+=======
+					normalEdge, v, "$normalEdge");
+>>>>>>> /usr/src/app/output/jgralab/jgralab/9484ebcb89e0ce8320d5aa8d39003409505d340c/src/de/uni_koblenz/jgralab/impl/trans/ReversedEdgeImpl.java/right.java
 		} else {
 			// initialize here
 			if (incidentVertex == null) {
@@ -129,7 +135,13 @@ public abstract class ReversedEdgeImpl extends
 	public void setNextIncidenceInternal(InternalEdge nextIncidence) {
 		if (graph.isLoading()) {
 			this.nextIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					normalEdge, (IncidenceImpl) nextIncidence, "$revNextIncidence");
+<<<<<<< /usr/src/app/output/jgralab/jgralab/9484ebcb89e0ce8320d5aa8d39003409505d340c/src/de/uni_koblenz/jgralab/impl/trans/ReversedEdgeImpl.java/left.java
+					normalEdge, (IncidenceImpl) nextIncidence);
+||||||| /usr/src/app/output/jgralab/jgralab/9484ebcb89e0ce8320d5aa8d39003409505d340c/src/de/uni_koblenz/jgralab/impl/trans/ReversedEdgeImpl.java/base.java
+					normalEdge, nextIncidence);
+=======
+					normalEdge, nextIncidence, "$revNextIncidence");
+>>>>>>> /usr/src/app/output/jgralab/jgralab/9484ebcb89e0ce8320d5aa8d39003409505d340c/src/de/uni_koblenz/jgralab/impl/trans/ReversedEdgeImpl.java/right.java
 		} else {
 			TransactionImpl transaction = (TransactionImpl) graph
 					.getCurrentTransaction();
@@ -167,7 +179,13 @@ public abstract class ReversedEdgeImpl extends
 	public void setPrevIncidenceInternal(InternalEdge prevIncidence) {
 		if (graph.isLoading()) {
 			this.prevIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					normalEdge, (IncidenceImpl) prevIncidence, "$revPrevIncidence");
+<<<<<<< /usr/src/app/output/jgralab/jgralab/9484ebcb89e0ce8320d5aa8d39003409505d340c/src/de/uni_koblenz/jgralab/impl/trans/ReversedEdgeImpl.java/left.java
+					normalEdge, (IncidenceImpl) prevIncidence);
+||||||| /usr/src/app/output/jgralab/jgralab/9484ebcb89e0ce8320d5aa8d39003409505d340c/src/de/uni_koblenz/jgralab/impl/trans/ReversedEdgeImpl.java/base.java
+					normalEdge, prevIncidence);
+=======
+					normalEdge, prevIncidence, "$revPrevIncidence");
+>>>>>>> /usr/src/app/output/jgralab/jgralab/9484ebcb89e0ce8320d5aa8d39003409505d340c/src/de/uni_koblenz/jgralab/impl/trans/ReversedEdgeImpl.java/right.java
 		} else {
 			TransactionImpl transaction = (TransactionImpl) graph
 					.getCurrentTransaction();

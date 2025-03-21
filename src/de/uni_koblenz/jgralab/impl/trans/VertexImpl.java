@@ -175,7 +175,13 @@ public abstract class VertexImpl extends
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.firstIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					this, (IncidenceImpl) firstIncidence, "$firstIncidence");
+<<<<<<< /usr/src/app/output/jgralab/jgralab/9484ebcb89e0ce8320d5aa8d39003409505d340c/src/de/uni_koblenz/jgralab/impl/trans/VertexImpl.java/left.java
+					this, (IncidenceImpl) firstIncidence);
+||||||| /usr/src/app/output/jgralab/jgralab/9484ebcb89e0ce8320d5aa8d39003409505d340c/src/de/uni_koblenz/jgralab/impl/trans/VertexImpl.java/base.java
+					this, firstIncidence);
+=======
+					this, firstIncidence, "$firstIncidence");
+>>>>>>> /usr/src/app/output/jgralab/jgralab/9484ebcb89e0ce8320d5aa8d39003409505d340c/src/de/uni_koblenz/jgralab/impl/trans/VertexImpl.java/right.java
 		} else {
 			// initialize here
 			if (this.firstIncidence == null) {
@@ -192,7 +198,13 @@ public abstract class VertexImpl extends
 		// graph loading -> new initialization...
 		if (graph.isLoading()) {
 			this.lastIncidence = new VersionedReferenceImpl<IncidenceImpl>(
-					this, (IncidenceImpl) lastIncidence, "$lastIncidence");
+<<<<<<< /usr/src/app/output/jgralab/jgralab/9484ebcb89e0ce8320d5aa8d39003409505d340c/src/de/uni_koblenz/jgralab/impl/trans/VertexImpl.java/left.java
+					this, (IncidenceImpl) lastIncidence);
+||||||| /usr/src/app/output/jgralab/jgralab/9484ebcb89e0ce8320d5aa8d39003409505d340c/src/de/uni_koblenz/jgralab/impl/trans/VertexImpl.java/base.java
+					this, lastIncidence);
+=======
+					this, lastIncidence, "$lastIncidence");
+>>>>>>> /usr/src/app/output/jgralab/jgralab/9484ebcb89e0ce8320d5aa8d39003409505d340c/src/de/uni_koblenz/jgralab/impl/trans/VertexImpl.java/right.java
 		} else {
 			// initialize here
 			if (this.lastIncidence == null) {
