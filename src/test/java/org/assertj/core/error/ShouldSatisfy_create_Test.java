@@ -27,11 +27,23 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for <code>{@link ShouldSatisfy#create(Description)}</code>.
  */
-@DisplayName("ShouldSatisfy create")
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/0a68d1e394ac0936322110de62f8739e4694c3fe/src/test/java/org/assertj/core/error/ShouldSatisfy_create_Test.java/left.java
 class ShouldSatisfy_create_Test {
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/0a68d1e394ac0936322110de62f8739e4694c3fe/src/test/java/org/assertj/core/error/ShouldSatisfy_create_Test.java/base.java
+public class ShouldSatisfy_create_Test {
+=======
+@DisplayName("ShouldSatisfy create")
+public class ShouldSatisfy_create_Test {
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/0a68d1e394ac0936322110de62f8739e4694c3fe/src/test/java/org/assertj/core/error/ShouldSatisfy_create_Test.java/right.java
 
   @Test
-  void should_create_error_message_if_condition_is_not_satisfied() {
+<<<<<<< /usr/src/app/output/joel-costigliola/assertj-core/0a68d1e394ac0936322110de62f8739e4694c3fe/src/test/java/org/assertj/core/error/ShouldSatisfy_create_Test.java/left.java
+  void should_create_error_message() {
+||||||| /usr/src/app/output/joel-costigliola/assertj-core/0a68d1e394ac0936322110de62f8739e4694c3fe/src/test/java/org/assertj/core/error/ShouldSatisfy_create_Test.java/base.java
+  public void should_create_error_message() {
+=======
+  public void should_create_error_message_if_condition_is_not_satisfied() {
+>>>>>>> /usr/src/app/output/joel-costigliola/assertj-core/0a68d1e394ac0936322110de62f8739e4694c3fe/src/test/java/org/assertj/core/error/ShouldSatisfy_create_Test.java/right.java
     // GIVEN
     ErrorMessageFactory factory = shouldSatisfy("Yoda", new TestCondition<>("green lightsaber bearer"));
     // WHEN
