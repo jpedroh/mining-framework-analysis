@@ -1,20 +1,4 @@
-/*
- *      Copyright (C) 2012-2014 DataStax Inc.
- *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- */
 package com.datastax.driver.core;
-
 import java.nio.ByteBuffer;
 
 /**
@@ -26,20 +10,20 @@ import java.nio.ByteBuffer;
  * from its query string.
  */
 public abstract class RegularStatement extends Statement {
-
-    /**
+  /**
      * Creates a new RegularStatement.
      */
-    protected RegularStatement() {}
+  protected RegularStatement() {
+  }
 
-    /**
+  /**
      * Returns the query string for this statement.
      *
      * @return a valid CQL query string.
      */
-    public abstract String getQueryString();
+  public abstract String getQueryString();
 
-    /**
+  /**
      * The values to use for this statement.
      * <p>
      * Note: Values for a RegularStatement (i.e. if this method does not return
@@ -56,19 +40,18 @@ public abstract class RegularStatement extends Statement {
      *
      * @see SimpleStatement#SimpleStatement(String, Object...)
      */
-    public abstract ByteBuffer[] getValues(int protocolVersion);
+  public abstract ByteBuffer[] getValues(int protocolVersion);
 
-    /**
+  /**
      * Whether or not this statement has values, that is if {@code getValues}
      * will return {@code null} or not.
      *
      * @return {@code false} if {@link #getValues} returns {@code null}, {@code true}
      * otherwise.
      */
-    public abstract boolean hasValues();
+  public abstract boolean hasValues();
 
-    @Override
-    public String toString() {
-        return getQueryString();
-    }
+  @Override public String toString() {
+    return getQueryString();
+  }
 }

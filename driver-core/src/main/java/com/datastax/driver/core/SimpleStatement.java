@@ -1,20 +1,4 @@
-/*
- *      Copyright (C) 2012-2014 DataStax Inc.
- *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- */
 package com.datastax.driver.core;
-
 import java.nio.ByteBuffer;
 
 /**
@@ -22,24 +6,25 @@ import java.nio.ByteBuffer;
  * string.
  */
 public class SimpleStatement extends RegularStatement {
+  private final String query;
 
-    private final String query;
-    private final Object[] values;
+  private final Object[] values;
 
-    private volatile ByteBuffer routingKey;
-    private volatile String keyspace;
+  private volatile ByteBuffer routingKey;
 
-    /**
+  private volatile String keyspace;
+
+  /**
      * Creates a new {@code SimpleStatement} with the provided query string (and no values).
      *
      * @param query the query string.
      */
-    public SimpleStatement(String query) {
-        this.query = query;
-        this.values = null;
-    }
+  public SimpleStatement(String query) {
+    this.query = query;
+    this.values = null;
+  }
 
-    /**
+  /**
      * Creates a new {@code SimpleStatement} with the provided query string and values.
      * <p>
      * This version of SimpleStatement is useful when you do not want to execute a
@@ -82,55 +67,51 @@ public class SimpleStatement extends RegularStatement {
      * corresponding to a CQL3 type, i.e. is not a Class that could be returned
      * by {@link DataType#asJavaClass}.
      */
-    public SimpleStatement(String query, Object... values) {
-        this.query = query;
-        this.values = values;
-    }
+  public SimpleStatement(String query, Object... values) {
+    this.query = query;
+    this.values = values;
+  }
 
-    private static ByteBuffer[] convert(Object[] values, int protocolVersion) {
-        ByteBuffer[] serializedValues = new ByteBuffer[values.length];
-        for (int i = 0; i < values.length; i++) {
-            try {
-                serializedValues[i] = DataType.serializeValue(values[i], protocolVersion);
-            } catch (IllegalArgumentException e) {
-                // Catch and rethrow to provide a more helpful error message (one that include which value is bad)
-                throw new IllegalArgumentException(String.format("Value %d of type %s does not correspond to any CQL3 type", i, values[i].getClass()));
-            }
-        }
-        return serializedValues;
+  private static ByteBuffer[] convert(Object[] values, int protocolVersion) {
+    ByteBuffer[] serializedValues = new ByteBuffer[values.length];
+    for (int i = 0; i < values.length; i++) {
+      try {
+        serializedValues[i] = DataType.serializeValue(values[i], protocolVersion);
+      } catch (IllegalArgumentException e) {
+        throw new IllegalArgumentException(String.format("Value %d of type %s does not correspond to any CQL3 type", i, values[i].getClass()));
+      }
     }
+    return serializedValues;
+  }
 
-    /**
+  /**
      * Returns the query string.
      *
      * @return the query string;
      */
-    @Override
-    public String getQueryString() {
-        return query;
-    }
+  @Override public String getQueryString() {
+    return query;
+  }
 
-    @Override
-    public ByteBuffer[] getValues(int protocolVersion) {
-        return values == null ? null : convert(values, protocolVersion);
-    }
+  @Override public ByteBuffer[] getValues(int protocolVersion) {
+    return values == null ? null : convert(values, protocolVersion);
+  }
 
-    /**
+  /**
      * The number of values for this statement, that is the size of the array
      * that will be returned by {@code getValues}.
      *
      * @return the number of values.
      */
-    public int valuesCount() {
-        return values == null ? 0 : values.length;
-    }
+  public int valuesCount() {
+    return values == null ? 0 : values.length;
+  }
 
-    @Override
-    public boolean hasValues() {
-        return values != null && values.length > 0;
-    }
+  @Override public boolean hasValues() {
+    return values != null && values.length > 0;
+  }
 
-    /**
+  /**
      * Returns the routing key for the query.
      * <p>
      * Unless the routing key has been explicitly set through
@@ -142,12 +123,11 @@ public class SimpleStatement extends RegularStatement {
      *
      * @see Statement#getRoutingKey
      */
-    @Override
-    public ByteBuffer getRoutingKey() {
-        return routingKey;
-    }
+  @Override public ByteBuffer getRoutingKey() {
+    return routingKey;
+  }
 
-    /**
+  /**
      * Sets the routing key for this query.
      * <p>
      * This method allows you to manually provide a routing key for this query. It
@@ -163,12 +143,12 @@ public class SimpleStatement extends RegularStatement {
      *
      * @see Statement#getRoutingKey
      */
-    public SimpleStatement setRoutingKey(ByteBuffer routingKey) {
-        this.routingKey = routingKey;
-        return this;
-    }
+  public SimpleStatement setRoutingKey(ByteBuffer routingKey) {
+    this.routingKey = routingKey;
+    return this;
+  }
 
-    /**
+  /**
      * Returns the keyspace this query operates on.
      * <p>
      * Unless the keyspace has been explicitly set through {@link #setKeyspace},
@@ -180,12 +160,11 @@ public class SimpleStatement extends RegularStatement {
      *
      * @see Statement#getKeyspace
      */
-    @Override
-    public String getKeyspace() {
-        return keyspace;
-    }
+  @Override public String getKeyspace() {
+    return keyspace;
+  }
 
-    /**
+  /**
      * Sets the keyspace this query operates on.
      * <p>
      * This method allows you to manually provide a keyspace for this query. It
@@ -201,12 +180,12 @@ public class SimpleStatement extends RegularStatement {
      *
      * @see Statement#getKeyspace
      */
-    public SimpleStatement setKeyspace(String keyspace) {
-        this.keyspace = keyspace;
-        return this;
-    }
+  public SimpleStatement setKeyspace(String keyspace) {
+    this.keyspace = keyspace;
+    return this;
+  }
 
-    /**
+  /**
      * Sets the routing key for this query.
      * <p>
      * See {@link #setRoutingKey(ByteBuffer)} for more information. This
@@ -219,31 +198,29 @@ public class SimpleStatement extends RegularStatement {
      *
      * @see Statement#getRoutingKey
      */
-    public SimpleStatement setRoutingKey(ByteBuffer... routingKeyComponents) {
-        this.routingKey = compose(routingKeyComponents);
-        return this;
-    }
+  public SimpleStatement setRoutingKey(ByteBuffer... routingKeyComponents) {
+    this.routingKey = compose(routingKeyComponents);
+    return this;
+  }
 
-    // TODO: we could find that a better place (but it's not expose so it doesn't matter too much)
-    static ByteBuffer compose(ByteBuffer... buffers) {
-        int totalLength = 0;
-        for (ByteBuffer bb : buffers)
-            totalLength += 2 + bb.remaining() + 1;
-
-        ByteBuffer out = ByteBuffer.allocate(totalLength);
-        for (ByteBuffer buffer : buffers)
-        {
-            ByteBuffer bb = buffer.duplicate();
-            putShortLength(out, bb.remaining());
-            out.put(bb);
-            out.put((byte) 0);
-        }
-        out.flip();
-        return out;
+  static ByteBuffer compose(ByteBuffer... buffers) {
+    int totalLength = 0;
+    for (ByteBuffer bb : buffers) {
+      totalLength += 2 + bb.remaining() + 1;
     }
-
-    private static void putShortLength(ByteBuffer bb, int length) {
-        bb.put((byte) ((length >> 8) & 0xFF));
-        bb.put((byte) (length & 0xFF));
+    ByteBuffer out = ByteBuffer.allocate(totalLength);
+    for (ByteBuffer buffer : buffers) {
+      ByteBuffer bb = buffer.duplicate();
+      putShortLength(out, bb.remaining());
+      out.put(bb);
+      out.put((byte) 0);
     }
+    out.flip();
+    return out;
+  }
+
+  private static void putShortLength(ByteBuffer bb, int length) {
+    bb.put((byte) ((length >> 8) & 0xFF));
+    bb.put((byte) (length & 0xFF));
+  }
 }

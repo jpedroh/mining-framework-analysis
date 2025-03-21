@@ -1,26 +1,9 @@
-/*
- *      Copyright (C) 2012-2014 DataStax Inc.
- *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- */
 package com.datastax.driver.core;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.*;
-
 import com.datastax.driver.core.exceptions.InvalidTypeException;
 
 /**
@@ -31,16 +14,14 @@ import com.datastax.driver.core.exceptions.InvalidTypeException;
  * rules explained in {@link ColumnDefinitions}.
  */
 public interface Row extends GettableData {
-    // Note that we re-include all the methods of GettableData just for the sake of better javadoc
-
-    /**
+  /**
      * Returns the columns contained in this Row.
      *
      * @return the columns contained in this Row.
      */
-    public ColumnDefinitions getColumnDefinitions();
+  public ColumnDefinitions getColumnDefinitions();
 
-    /**
+  /**
      * Returns whether the {@code i}th value of this row is NULL.
      *
      * @param i the index ({@code 0 <= i < size()}) of the column to check.
@@ -48,10 +29,9 @@ public interface Row extends GettableData {
      *
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.columns().size()}.
      */
-    @Override
-    public boolean isNull(int i);
+  @Override public boolean isNull(int i);
 
-    /**
+  /**
      * Returns whether the value for column {@code name} in this row is NULL.
      *
      * @param name the name of the column to check.
@@ -60,10 +40,9 @@ public interface Row extends GettableData {
      * @throws IllegalArgumentException if {@code name} is not part of the
      * ResultSet this row is part of, i.e. if {@code !this.columns().names().contains(name)}.
      */
-    @Override
-    public boolean isNull(String name);
+  @Override public boolean isNull(String name);
 
-    /**
+  /**
      * Returns the {@code i}th value of this row as a boolean.
      *
      * @param i the index ({@code 0 <= i < size()}) of the column to retrieve.
@@ -73,10 +52,9 @@ public interface Row extends GettableData {
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.columns().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type BOOLEAN.
      */
-    @Override
-    public boolean getBool(int i);
+  @Override public boolean getBool(int i);
 
-    /**
+  /**
      * Returns the value of column {@code name} as a boolean.
      *
      * @param name the name of the column to retrieve.
@@ -87,10 +65,9 @@ public interface Row extends GettableData {
      * ResultSet this row is part of, i.e. if {@code !this.columns().names().contains(name)}.
      * @throws InvalidTypeException if column {@code name} is not of type BOOLEAN.
      */
-    @Override
-    public boolean getBool(String name);
+  @Override public boolean getBool(String name);
 
-    /**
+  /**
      * Returns the {@code i}th value of this row as an integer.
      *
      * @param i the index ({@code 0 <= i < size()}) of the column to retrieve.
@@ -100,10 +77,9 @@ public interface Row extends GettableData {
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.columns().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type INT.
      */
-    @Override
-    public int getInt(int i);
+  @Override public int getInt(int i);
 
-    /**
+  /**
      * Returns the value of column {@code name} as an integer.
      *
      * @param name the name of the column to retrieve.
@@ -114,10 +90,9 @@ public interface Row extends GettableData {
      * ResultSet this row is part of, i.e. if {@code !this.columns().names().contains(name)}.
      * @throws InvalidTypeException if column {@code name} is not of type INT.
      */
-    @Override
-    public int getInt(String name);
+  @Override public int getInt(String name);
 
-    /**
+  /**
      * Returns the {@code i}th value of this row as a long.
      *
      * @param i the index ({@code 0 <= i < size()}) of the column to retrieve.
@@ -127,10 +102,9 @@ public interface Row extends GettableData {
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.columns().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type BIGINT or COUNTER.
      */
-    @Override
-    public long getLong(int i);
+  @Override public long getLong(int i);
 
-    /**
+  /**
      * Returns the value of column {@code name} as a long.
      *
      * @param name the name of the column to retrieve.
@@ -141,10 +115,9 @@ public interface Row extends GettableData {
      * ResultSet this row is part of, i.e. if {@code !this.columns().names().contains(name)}.
      * @throws InvalidTypeException if column {@code i} is not of type BIGINT or COUNTER.
      */
-    @Override
-    public long getLong(String name);
+  @Override public long getLong(String name);
 
-    /**
+  /**
      * Returns the {@code i}th value of this row as a date.
      *
      * @param i the index ({@code 0 <= i < size()}) of the column to retrieve.
@@ -154,10 +127,9 @@ public interface Row extends GettableData {
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.columns().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type TIMESTAMP.
      */
-    @Override
-    public Date getDate(int i);
+  @Override public Date getDate(int i);
 
-    /**
+  /**
      * Returns the value of column {@code name} as a date.
      *
      * @param name the name of the column to retrieve.
@@ -168,10 +140,9 @@ public interface Row extends GettableData {
      * ResultSet this row is part of, i.e. if {@code !this.columns().names().contains(name)}.
      * @throws InvalidTypeException if column {@code name} is not of type TIMESTAMP.
      */
-    @Override
-    public Date getDate(String name);
+  @Override public Date getDate(String name);
 
-    /**
+  /**
      * Returns the {@code i}th value of this row as a float.
      *
      * @param i the index ({@code 0 <= i < size()}) of the column to retrieve.
@@ -181,10 +152,9 @@ public interface Row extends GettableData {
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.columns().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type FLOAT.
      */
-    @Override
-    public float getFloat(int i);
+  @Override public float getFloat(int i);
 
-    /**
+  /**
      * Returns the value of column {@code name} as a float.
      *
      * @param name the name of the column to retrieve.
@@ -195,10 +165,9 @@ public interface Row extends GettableData {
      * ResultSet this row is part of, i.e. if {@code !this.columns().names().contains(name)}.
      * @throws InvalidTypeException if column {@code name} is not of type FLOAT.
      */
-    @Override
-    public float getFloat(String name);
+  @Override public float getFloat(String name);
 
-    /**
+  /**
      * Returns the {@code i}th value of this row as a double.
      *
      * @param i the index ({@code 0 <= i < size()}) of the column to retrieve.
@@ -208,10 +177,9 @@ public interface Row extends GettableData {
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.columns().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type DOUBLE.
      */
-    @Override
-    public double getDouble(int i);
+  @Override public double getDouble(int i);
 
-    /**
+  /**
      * Returns the value of column {@code name} as a double.
      *
      * @param name the name of the column to retrieve.
@@ -222,10 +190,9 @@ public interface Row extends GettableData {
      * ResultSet this row is part of, i.e. if {@code !this.columns().names().contains(name)}.
      * @throws InvalidTypeException if column {@code name} is not of type DOUBLE.
      */
-    @Override
-    public double getDouble(String name);
+  @Override public double getDouble(String name);
 
-    /**
+  /**
      * Returns the {@code i}th value of this row as a ByteBuffer.
      *
      * Note: this method always return the bytes composing the value, even if
@@ -239,10 +206,9 @@ public interface Row extends GettableData {
      *
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.columns().size()}.
      */
-    @Override
-    public ByteBuffer getBytesUnsafe(int i);
+  @Override public ByteBuffer getBytesUnsafe(int i);
 
-    /**
+  /**
      * Returns the value of column {@code name} as a ByteBuffer.
      *
      * Note: this method always return the bytes composing the value, even if
@@ -257,10 +223,9 @@ public interface Row extends GettableData {
      * @throws IllegalArgumentException if {@code name} is not part of the
      * ResultSet this row is part of, i.e. if {@code !this.columns().names().contains(name)}.
      */
-    @Override
-    public ByteBuffer getBytesUnsafe(String name);
+  @Override public ByteBuffer getBytesUnsafe(String name);
 
-    /**
+  /**
      * Returns the {@code i}th value of this row as a byte array.
      * <p>
      * Note that this method validate that the column is of type BLOB. If you want to retrieve
@@ -273,10 +238,9 @@ public interface Row extends GettableData {
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.columns().size()}.
      * @throws InvalidTypeException if column {@code i} type is not of type BLOB.
      */
-    @Override
-    public ByteBuffer getBytes(int i);
+  @Override public ByteBuffer getBytes(int i);
 
-    /**
+  /**
      * Returns the value of column {@code name} as a byte array.
      * <p>
      * Note that this method validate that the column is of type BLOB. If you want to retrieve
@@ -290,10 +254,9 @@ public interface Row extends GettableData {
      * ResultSet this row is part of, i.e. if {@code !this.columns().names().contains(name)}.
      * @throws InvalidTypeException if column {@code i} type is not of type BLOB.
      */
-    @Override
-    public ByteBuffer getBytes(String name);
+  @Override public ByteBuffer getBytes(String name);
 
-    /**
+  /**
      * Returns the {@code i}th value of this row as a string.
      *
      * @param i the index ({@code 0 <= i < size()}) of the column to retrieve.
@@ -304,10 +267,9 @@ public interface Row extends GettableData {
      * @throws InvalidTypeException if column {@code i} type is none of:
      * VARCHAR, TEXT or ASCII.
      */
-    @Override
-    public String getString(int i);
+  @Override public String getString(int i);
 
-    /**
+  /**
      * Returns the value of column {@code name} as a string.
      *
      * @param name the name of the column to retrieve.
@@ -319,10 +281,9 @@ public interface Row extends GettableData {
      * @throws InvalidTypeException if column {@code name} type is none of:
      * VARCHAR, TEXT or ASCII.
      */
-    @Override
-    public String getString(String name);
+  @Override public String getString(String name);
 
-    /**
+  /**
      * Returns the {@code i}th value of this row as a variable length integer.
      *
      * @param i the index ({@code 0 <= i < size()}) of the column to retrieve.
@@ -332,10 +293,9 @@ public interface Row extends GettableData {
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.columns().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type VARINT.
      */
-    @Override
-    public BigInteger getVarint(int i);
+  @Override public BigInteger getVarint(int i);
 
-    /**
+  /**
      * Returns the value of column {@code name} as a variable length integer.
      *
      * @param name the name of the column to retrieve.
@@ -346,10 +306,9 @@ public interface Row extends GettableData {
      * ResultSet this row is part of, i.e. if {@code !this.columns().names().contains(name)}.
      * @throws InvalidTypeException if column {@code name} is not of type VARINT.
      */
-    @Override
-    public BigInteger getVarint(String name);
+  @Override public BigInteger getVarint(String name);
 
-    /**
+  /**
      * Returns the {@code i}th value of this row as a variable length decimal.
      *
      * @param i the index ({@code 0 <= i < size()}) of the column to retrieve.
@@ -359,10 +318,9 @@ public interface Row extends GettableData {
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.columns().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type DECIMAL.
      */
-    @Override
-    public BigDecimal getDecimal(int i);
+  @Override public BigDecimal getDecimal(int i);
 
-    /**
+  /**
      * Returns the value of column {@code name} as a variable length decimal.
      *
      * @param name the name of the column to retrieve.
@@ -373,10 +331,9 @@ public interface Row extends GettableData {
      * ResultSet this row is part of, i.e. if {@code !this.columns().names().contains(name)}.
      * @throws InvalidTypeException if column {@code name} is not of type DECIMAL.
      */
-    @Override
-    public BigDecimal getDecimal(String name);
+  @Override public BigDecimal getDecimal(String name);
 
-    /**
+  /**
      * Returns the {@code i}th value of this row as a UUID.
      *
      * @param i the index ({@code 0 <= i < size()}) of the column to retrieve.
@@ -387,10 +344,9 @@ public interface Row extends GettableData {
      * @throws InvalidTypeException if column {@code i} is not of type UUID
      * or TIMEUUID.
      */
-    @Override
-    public UUID getUUID(int i);
+  @Override public UUID getUUID(int i);
 
-    /**
+  /**
      * Returns the value of column {@code name} as a UUID.
      *
      * @param name the name of the column to retrieve.
@@ -402,10 +358,9 @@ public interface Row extends GettableData {
      * @throws InvalidTypeException if column {@code name} is not of type
      * UUID or TIMEUUID.
      */
-    @Override
-    public UUID getUUID(String name);
+  @Override public UUID getUUID(String name);
 
-    /**
+  /**
      * Returns the {@code i}th value of this row as an InetAddress.
      *
      * @param i the index ({@code 0 <= i < size()}) of the column to retrieve.
@@ -415,10 +370,9 @@ public interface Row extends GettableData {
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.columns().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type INET.
      */
-    @Override
-    public InetAddress getInet(int i);
+  @Override public InetAddress getInet(int i);
 
-    /**
+  /**
      * Returns the value of column {@code name} as an InetAddress.
      *
      * @param name the name of the column to retrieve.
@@ -430,10 +384,9 @@ public interface Row extends GettableData {
      * @throws InvalidTypeException if column {@code name} is not of type
      * INET.
      */
-    @Override
-    public InetAddress getInet(String name);
+  @Override public InetAddress getInet(String name);
 
-    /**
+  /**
      * Returns the {@code i}th value of this row as a list.
      *
      * @param <T> the type of the elements of the list to return.
@@ -448,10 +401,9 @@ public interface Row extends GettableData {
      * @throws InvalidTypeException if column {@code i} is not a list or if its
      * elements are not of class {@code elementsClass}.
      */
-    @Override
-    public <T> List<T> getList(int i, Class<T> elementsClass);
+  @Override public <T extends java.lang.Object> List<T> getList(int i, Class<T> elementsClass);
 
-    /**
+  /**
      * Returns the value of column {@code name} as a list.
      *
      * @param <T> the type of the elements of the list to return.
@@ -467,10 +419,9 @@ public interface Row extends GettableData {
      * @throws InvalidTypeException if column {@code name} is not a list or if its
      * elements are not of class {@code elementsClass}.
      */
-    @Override
-    public <T> List<T> getList(String name, Class<T> elementsClass);
+  @Override public <T extends java.lang.Object> List<T> getList(String name, Class<T> elementsClass);
 
-    /**
+  /**
      * Returns the {@code i}th value of this row as a set.
      *
      * @param <T> the type of the elements of the set to return.
@@ -485,10 +436,9 @@ public interface Row extends GettableData {
      * @throws InvalidTypeException if column {@code i} is not a set or if its
      * elements are not of class {@code elementsClass}.
      */
-    @Override
-    public <T> Set<T> getSet(int i, Class<T> elementsClass);
+  @Override public <T extends java.lang.Object> Set<T> getSet(int i, Class<T> elementsClass);
 
-    /**
+  /**
      * Returns the value of column {@code name} as a set.
      *
      * @param <T> the type of the elements of the set to return.
@@ -504,10 +454,9 @@ public interface Row extends GettableData {
      * @throws InvalidTypeException if column {@code name} is not a set or if its
      * elements are not of class {@code elementsClass}.
      */
-    @Override
-    public <T> Set<T> getSet(String name, Class<T> elementsClass);
+  @Override public <T extends java.lang.Object> Set<T> getSet(String name, Class<T> elementsClass);
 
-    /**
+  /**
      * Returns the {@code i}th value of this row as a map.
      *
      * @param <K> the type of the keys of the map to return.
@@ -526,10 +475,9 @@ public interface Row extends GettableData {
      * keys are not of class {@code keysClass} or if its values are not of
      * class {@code valuesClass}.
      */
-    @Override
-    public <K, V> Map<K, V> getMap(int i, Class<K> keysClass, Class<V> valuesClass);
+  @Override public <K extends java.lang.Object, V extends java.lang.Object> Map<K, V> getMap(int i, Class<K> keysClass, Class<V> valuesClass);
 
-    /**
+  /**
      * Returns the value of column {@code name} as a map.
      *
      * @param <K> the type of the keys of the map to return.
@@ -549,6 +497,5 @@ public interface Row extends GettableData {
      * keys are not of class {@code keysClass} or if its values are not of
      * class {@code valuesClass}.
      */
-    @Override
-    public <K, V> Map<K, V> getMap(String name, Class<K> keysClass, Class<V> valuesClass);
+  @Override public <K extends java.lang.Object, V extends java.lang.Object> Map<K, V> getMap(String name, Class<K> keysClass, Class<V> valuesClass);
 }
