@@ -115,10 +115,7 @@ public class Journal {
     //
     private volatile boolean archiveFiles;
     //
-    private RecoveryErrorHandler recoveryErrorHandler;
-    //
-    private ReplicationTarget replicationTarget;
-
+    private volatile ReplicationTarget replicationTarget;
     /**
      * Open the journal, eventually recovering it if already existent.
      *
@@ -194,7 +191,6 @@ public class Journal {
             lastAppendLocation = new Location(1, PRE_START_POINTER);
         }
     }
-
     /**
      * Close the journal.
      *
@@ -220,7 +216,6 @@ public class Journal {
             disposer = null;
         }
     }
-
     /**
      * Compact the journal, reducing size of logs containing deleted entries and
      * completely removing completely empty (with only deleted entries) logs.
@@ -254,7 +249,6 @@ public class Journal {
             }
         }
     }
-
     /**
      * Sync asynchronously written records on disk.
      *
@@ -270,7 +264,6 @@ public class Journal {
             throw new IllegalStateException(ex.getMessage(), ex);
         }
     }
-
     /**
      * Read the record stored at the given {@link Location}, either by syncing
      * with the disk state (if {@code ReadType.SYNC}) or by taking advantage of
@@ -288,7 +281,6 @@ public class Journal {
     public byte[] read(Location location, ReadType read) throws IOException, IllegalStateException {
         return accessor.readLocation(location, read.equals(ReadType.SYNC) ? true : false);
     }
-
     /**
      * Write the given byte buffer record, either sync (if {@code WriteType.SYNC})
      * or async (if {@code WriteType.ASYNC}), and returns the
@@ -304,7 +296,6 @@ public class Journal {
     public Location write(byte[] data, WriteType write) throws IOException, IllegalStateException {
         return write(data, write, Location.NoWriteCallback.INSTANCE);
     }
-
     /**
      * Write the given byte buffer record, either sync (if {@code WriteType.SYNC})
      * or async (if {@code WriteType.ASYNC}), and returns the
@@ -323,7 +314,6 @@ public class Journal {
         Location loc = appender.storeItem(data, Location.USER_RECORD_TYPE, write.equals(WriteType.SYNC) ? true : false, callback);
         return loc;
     }
-
     /**
      * Delete the record at the given {@link Location}.<br/> Deletes cause first
      * a batch sync and always are logical: records will be actually deleted at
@@ -336,7 +326,6 @@ public class Journal {
     public void delete(Location location) throws IOException, IllegalStateException {
         accessor.updateLocation(location, Location.DELETED_RECORD_TYPE, true);
     }
-
     /**
      * Return an iterable to replay the journal by going through all records
      * locations.
@@ -351,7 +340,6 @@ public class Journal {
         }
         return new Redo(goToFirstLocation(firstEntry.getValue(), Location.USER_RECORD_TYPE, true));
     }
-
     /**
      * Return an iterable to replay the journal by going through all records
      * locations starting from the given one.
@@ -363,7 +351,6 @@ public class Journal {
     public Iterable<Location> redo(Location start) throws IOException {
         return new Redo(start);
     }
-
     /**
      * Return an iterable to replay the journal in reverse, starting with the
      * newest location and ending with the first. The iterable does not include
@@ -375,7 +362,6 @@ public class Journal {
     public Iterable<Location> undo() throws IOException {
         return new Undo(redo());
     }
-
     /**
      * Return an iterable to replay the journal in reverse, starting with the
      * newest location and ending with the specified end location. The iterable
@@ -388,7 +374,6 @@ public class Journal {
     public Iterable<Location> undo(Location end) throws IOException {
         return new Undo(redo(end));
     }
-
     /**
      * Get the files part of this journal.
      *
@@ -401,7 +386,6 @@ public class Journal {
         }
         return result;
     }
-
     /**
      * Get the max length of each log file.
      *
@@ -410,14 +394,12 @@ public class Journal {
     public int getMaxFileLength() {
         return maxFileLength;
     }
-
     /**
      * Set the max length of each log file.
      */
     public void setMaxFileLength(int maxFileLength) {
         this.maxFileLength = maxFileLength;
     }
-
     /**
      * Get the journal directory containing log files.
      *
@@ -426,14 +408,12 @@ public class Journal {
     public File getDirectory() {
         return directory;
     }
-
     /**
      * Set the journal directory containing log files.
      */
     public void setDirectory(File directory) {
         this.directory = directory;
     }
-
     /**
      * Get the prefix for log files.
      *
@@ -442,7 +422,6 @@ public class Journal {
     public String getFilePrefix() {
         return filePrefix;
     }
-
     /**
      * Set the prefix for log files.
      *
@@ -451,7 +430,6 @@ public class Journal {
     public void setFilePrefix(String filePrefix) {
         this.filePrefix = filePrefix;
     }
-
     /**
      * Get the optional archive directory used to archive cleaned up log files.
      *
@@ -460,7 +438,6 @@ public class Journal {
     public File getDirectoryArchive() {
         return directoryArchive;
     }
-
     /**
      * Set the optional archive directory used to archive cleaned up log files.
      *
@@ -469,7 +446,6 @@ public class Journal {
     public void setDirectoryArchive(File directoryArchive) {
         this.directoryArchive = directoryArchive;
     }
-
     /**
      * Return true if cleaned up log files should be archived, false otherwise.
      *
@@ -478,7 +454,6 @@ public class Journal {
     public boolean isArchiveFiles() {
         return archiveFiles;
     }
-
     /**
      * Set true if cleaned up log files should be archived, false otherwise.
      *
@@ -487,7 +462,6 @@ public class Journal {
     public void setArchiveFiles(boolean archiveFiles) {
         this.archiveFiles = archiveFiles;
     }
-
     /**
      * Set the {@link ReplicationTarget} to replicate batch writes to.
      *
@@ -496,7 +470,6 @@ public class Journal {
     public void setReplicationTarget(ReplicationTarget replicationTarget) {
         this.replicationTarget = replicationTarget;
     }
-
     /**
      * Get the {@link ReplicationTarget} to replicate batch writes to.
      *
@@ -505,7 +478,6 @@ public class Journal {
     public ReplicationTarget getReplicationTarget() {
         return replicationTarget;
     }
-
     /**
      * Get the suffix for log files.
      *
@@ -514,7 +486,6 @@ public class Journal {
     public String getFileSuffix() {
         return fileSuffix;
     }
-
     /**
      * Set the suffix for log files.
      *
@@ -523,7 +494,6 @@ public class Journal {
     public void setFileSuffix(String fileSuffix) {
         this.fileSuffix = fileSuffix;
     }
-
     /**
      * Return true if records checksum is enabled, false otherwise.
      *
@@ -532,7 +502,6 @@ public class Journal {
     public boolean isChecksum() {
         return checksum;
     }
-
     /**
      * Set true if records checksum is enabled, false otherwise.
      *
@@ -541,7 +510,6 @@ public class Journal {
     public void setChecksum(boolean checksumWrites) {
         this.checksum = checksumWrites;
     }
-
     /**
      * Return true if every disk write is followed by a physical disk sync,
      * synchronizing file descriptor properties and flushing hardware buffers,
@@ -552,7 +520,6 @@ public class Journal {
     public boolean isPhysicalSync() {
         return physicalSync;
     }
-
     /**
      * Set true if every disk write must be followed by a physical disk sync,
      * synchronizing file descriptor properties and flushing hardware buffers,
@@ -563,7 +530,6 @@ public class Journal {
     public void setPhysicalSync(boolean physicalSync) {
         this.physicalSync = physicalSync;
     }
-
     /**
      * Get the max size in bytes of the write batch: must always be equal or
      * less than the max file length.
@@ -573,7 +539,6 @@ public class Journal {
     public int getMaxWriteBatchSize() {
         return maxWriteBatchSize;
     }
-
     /**
      * Set the max size in bytes of the write batch: must always be equal or
      * less than the max file length.
@@ -583,7 +548,6 @@ public class Journal {
     public void setMaxWriteBatchSize(int maxWriteBatchSize) {
         this.maxWriteBatchSize = maxWriteBatchSize;
     }
-
     /**
      * Set the milliseconds interval for resources disposal: i.e., un-accessed
      * files will be closed.
@@ -593,7 +557,6 @@ public class Journal {
     public void setDisposeInterval(long disposeInterval) {
         this.disposeInterval = disposeInterval;
     }
-
     /**
      * Get the milliseconds interval for resources disposal.
      *
@@ -602,7 +565,6 @@ public class Journal {
     public long getDisposeInterval() {
         return disposeInterval;
     }
-
     /**
      * Set the Executor to use for writing new record entries.
      *
@@ -614,7 +576,6 @@ public class Journal {
         this.writer = writer;
         this.managedWriter = false;
     }
-
     /**
      * Set the ScheduledExecutorService to use for internal resources disposing.
      *
@@ -627,7 +588,8 @@ public class Journal {
         this.disposer = disposer;
         this.managedDisposer = false;
     }
-
+    private RecoveryErrorHandler recoveryErrorHandler;
+    //
     /**
      * Set the RecoveryErrorHandler to invoke in case of checksum errors.
      *
