@@ -345,8 +345,9 @@ public class PoolIT {
     assertTrue("shutdown timeout elapsed", completion.await(longTimeout));
   }
 
-  @Test public void
-  explicitlyExpiredSlotsMustNotCauseBackgroundCPUBurn()
+  @Test
+  @Theory public void
+  explicitlyExpiredSlotsMustNotCauseBackgroundCPUBurn(final PoolFixture fixture)
       throws InterruptedException {
     final ThreadMXBean threads = ManagementFactory.getThreadMXBean();
     final AtomicLong lastUserTimeIncrement = new AtomicLong();
@@ -355,7 +356,7 @@ public class PoolIT {
         measureLastCPUTime(threads, lastUserTimeIncrement)));
     config.setAllocator(allocator);
     config.setSize(2);
-    createPool();
+    createPool(fixture);
     GenericPoolable a = pool.claim(longTimeout);
     GenericPoolable b = pool.claim(longTimeout);
     a.expire();
@@ -393,9 +394,10 @@ public class PoolIT {
     };
   }
 
-  @Test public void
-  explicitlyExpiredSlotsThatAreDeallocatedThroughPoolShrinkingMustNotCauseBackgroundCPUBurn()
-      throws InterruptedException {
+  @Test
+  @Theory public void
+  explicitlyExpiredSlotsThatAreDeallocatedThroughPoolShrinkingMustNotCauseBackgroundCPUBurn(
+      PoolFixture fixture) throws InterruptedException {
     final ThreadMXBean threads = ManagementFactory.getThreadMXBean();
     final AtomicLong lastUserTimeIncrement = new AtomicLong();
     final AtomicLong maxUserTimeIncrement = new AtomicLong();
@@ -423,8 +425,8 @@ public class PoolIT {
     config.setAllocator(allocator);
     int size = 30;
     config.setSize(size);
-    createPool();
-    LinkedList<GenericPoolable> objs = new LinkedList<>();
+    createPool(fixture);
+    LinkedList<GenericPoolable> objs = new LinkedList<GenericPoolable>();
     for (int i = 0; i < size; i++) {
       GenericPoolable obj = pool.claim(longTimeout);
       objs.offer(obj);
@@ -451,16 +453,17 @@ public class PoolIT {
         is(lessThan(millisecondsAllowedToBurnCPU / 2)));
   }
 
-  @Test public void
-  explicitlyExpiredButUnreleasedSlotsMustNotCauseBackgroundCPUBurn()
-      throws InterruptedException {
+  @Test
+  @Theory public void
+  explicitlyExpiredButUnreleasedSlotsMustNotCauseBackgroundCPUBurn(
+      PoolFixture fixture) throws InterruptedException {
     final ThreadMXBean threads = ManagementFactory.getThreadMXBean();
     final AtomicLong lastUserTimeIncrement = new AtomicLong();
     assumeTrue(threads.isCurrentThreadCpuTimeSupported());
     allocator = allocator(alloc(
         measureLastCPUTime(threads, lastUserTimeIncrement)));
     config.setAllocator(allocator);
-    createPool();
+    createPool(fixture);
     GenericPoolable a = pool.claim(longTimeout);
     a.expire();
 
@@ -477,8 +480,9 @@ public class PoolIT {
         is(lessThan(millisecondsAllowedToBurnCPU / 2)));
   }
 
-  @Test public void
-  mustNotBurnTooMuchCPUWhileThePoolIsWorkingOnShrinking()
+  @Test
+  @Theory public void
+  mustNotBurnTooMuchCPUWhileThePoolIsWorkingOnShrinking(PoolFixture fixture)
       throws InterruptedException {
     final ThreadMXBean threads = ManagementFactory.getThreadMXBean();
     final AtomicLong lastUserTimeIncrement = new AtomicLong();
@@ -488,8 +492,8 @@ public class PoolIT {
         measureLastCPUTime(threads, lastUserTimeIncrement)));
     config.setAllocator(allocator);
     config.setSize(size);
-    createPool();
-    LinkedList<GenericPoolable> objs = new LinkedList<>();
+    createPool(fixture);
+    LinkedList<GenericPoolable> objs = new LinkedList<GenericPoolable>();
     for (int i = 0; i < size; i++) {
       objs.add(pool.claim(longTimeout));
     }
