@@ -336,6 +336,7 @@ public class RecurlyUnitCurrency {
         return true;
     }
 
+<<<<<<< /usr/src/app/output/killbilling/recurly-java-library/c978e4add5640a493a55339972b2cd4363d42957/src/main/java/com/ning/billing/recurly/model/RecurlyUnitCurrency.java/left.java
     @Override
     public int hashCode() {
         return Objects.hashCode(
@@ -357,4 +358,27 @@ public class RecurlyUnitCurrency {
                 unitAmountJPY
         );
     }
+||||||| /usr/src/app/output/killbilling/recurly-java-library/c978e4add5640a493a55339972b2cd4363d42957/src/main/java/com/ning/billing/recurly/model/RecurlyUnitCurrency.java/base.java
+=======
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(
+                unitAmountUSD,
+                unitAmountCAD,
+                unitAmountAUD,
+                unitAmountEUR,
+                unitAmountGBP,
+                unitAmountCZK,
+                unitAmountDKK,
+                unitAmountHUF,
+                unitAmountNOK,
+                unitAmountNZD,
+                unitAmountPLN,
+                unitAmountSGD,
+                unitAmountSEK,
+                unitAmountCHF,
+                unitAmountZAR
+        );
+    }
+>>>>>>> /usr/src/app/output/killbilling/recurly-java-library/c978e4add5640a493a55339972b2cd4363d42957/src/main/java/com/ning/billing/recurly/model/RecurlyUnitCurrency.java/right.java
 }
