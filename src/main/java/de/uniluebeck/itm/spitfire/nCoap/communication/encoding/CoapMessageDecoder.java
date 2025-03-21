@@ -107,10 +107,18 @@ public class CoapMessageDecoder extends OneToOneDecoder{
             result.setRcptAdress(rcptAddress);
 
 
+<<<<<<< /usr/src/app/output/okleine/ncoap/553a89b66dd92de4f155b99ca36859fc71c70738/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/encoding/CoapMessageDecoder.java/left.java
+            if(log.isDebugEnabled()){
+                log.debug("[CoapMessageDecoder] Recipient address is " +
+                    ((channel.getLocalAddress() + ", bound: " + channel.isBound())));
+            }
+||||||| /usr/src/app/output/okleine/ncoap/553a89b66dd92de4f155b99ca36859fc71c70738/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/encoding/CoapMessageDecoder.java/base.java
+=======
             if(log.isDebugEnabled()){
                 log.debug("[CoapMessageDecoder] Set receipient address to: " + rcptAddress);
             }
-            
+>>>>>>> /usr/src/app/output/okleine/ncoap/553a89b66dd92de4f155b99ca36859fc71c70738/src/main/java/de/uniluebeck/itm/spitfire/nCoap/communication/encoding/CoapMessageDecoder.java/right.java
+
             return result;
         }
         catch(InvalidOptionException e){
