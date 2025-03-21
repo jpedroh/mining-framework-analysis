@@ -22,9 +22,9 @@ public class ValidateMojo extends AbstractJenkinsMojo {
             throw new MojoExecutionException("Java " + javaVersion + " or later is necessary to build this plugin.");
         }
 
-        if (new VersionNumber(findJenkinsVersion()).compareTo(new VersionNumber("2.204")) < 0) {
-            throw new MojoExecutionException("This version of maven-hpi-plugin requires Jenkins 2.204 or later");
-        }
+<<<<<<< /usr/src/app/output/jenkinsci/maven-hpi-plugin/47546f63c65605f85296c517613a8ef93b04d7f5/src/main/java/org/jenkinsci/maven/plugins/hpi/ValidateMojo.java/left.java
+        if (new VersionNumber(findJenkinsVersion()).compareTo(new VersionNumber("1.419.99"))<=0)
+            throw new MojoExecutionException("This version of maven-hpi-plugin requires Jenkins 1.420 or later");
 
         MavenProject parent = project.getParent();
         if (parent != null
@@ -36,5 +36,13 @@ public class ValidateMojo extends AbstractJenkinsMojo {
                     + " This property should be removed from your plugin's POM."
                     + " In the future this warning will be changed to an error and will break the build.");
         }
+||||||| /usr/src/app/output/jenkinsci/maven-hpi-plugin/47546f63c65605f85296c517613a8ef93b04d7f5/src/main/java/org/jenkinsci/maven/plugins/hpi/ValidateMojo.java/base.java
+        if (new VersionNumber(findJenkinsVersion()).compareTo(new VersionNumber("1.419.99"))<=0)
+            throw new MojoExecutionException("This version of maven-hpi-plugin requires Jenkins 1.420 or later");
+=======
+        if (new VersionNumber(findJenkinsVersion()).compareTo(new VersionNumber("2.204")) < 0) {
+            throw new MojoExecutionException("This version of maven-hpi-plugin requires Jenkins 2.204 or later");
+        }
+>>>>>>> /usr/src/app/output/jenkinsci/maven-hpi-plugin/47546f63c65605f85296c517613a8ef93b04d7f5/src/main/java/org/jenkinsci/maven/plugins/hpi/ValidateMojo.java/right.java
     }
 }
