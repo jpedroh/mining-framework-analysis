@@ -1,5 +1,4 @@
 package de.deepamehta.plugins.webservice;
-
 import de.deepamehta.core.Association;
 import de.deepamehta.core.AssociationType;
 import de.deepamehta.core.RelatedTopic;
@@ -18,7 +17,6 @@ import de.deepamehta.core.service.CommandResult;
 import de.deepamehta.core.service.CoreEvent;
 import de.deepamehta.core.service.Directives;
 import de.deepamehta.core.service.PluginInfo;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -33,426 +31,260 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
-
 import java.util.Set;
 import java.util.logging.Logger;
 
+@Path(value = "/core") @Consumes(value = "application/json") @Produces(value = "application/json") public class WebservicePlugin extends PluginActivator {
+  private Logger logger = Logger.getLogger(getClass().getName());
 
-
-@Path("/core")
-@Consumes("application/json")
-@Produces("application/json")
-public class WebservicePlugin extends PluginActivator {
-
-    // ---------------------------------------------------------------------------------------------- Instance Variables
-
-    private Logger logger = Logger.getLogger(getClass().getName());
-
-    // -------------------------------------------------------------------------------------------------- Public Methods
-
-
-
-    // === Topics ===
-
-    @GET
-    @Path("/topic/{id}")
-    public Topic getTopic(@PathParam("id") long topicId,
-                          @QueryParam("fetch_composite") @DefaultValue("true") boolean fetchComposite,
-                          @HeaderParam("Cookie") ClientState clientState) {
-        try {
-            Topic topic = dms.getTopic(topicId, fetchComposite, clientState);
-            //
-            firePreSend(topic, clientState);
-            //
-            return topic;
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @GET @Path(value = "/topic/{id}") public Topic getTopic(@PathParam(value = "id") long topicId, @QueryParam(value = "fetch_composite") @DefaultValue(value = "true") boolean fetchComposite, @HeaderParam(value = "Cookie") ClientState clientState) {
+    try {
+      Topic topic = dms.getTopic(topicId, fetchComposite, clientState);
+      firePreSend(topic, clientState);
+      return topic;
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-    @GET
-    @Path("/topic/by_value/{key}/{value}")
-    public Topic getTopic(@PathParam("key") String key, @PathParam("value") SimpleValue value,
-                          @QueryParam("fetch_composite") @DefaultValue("true") boolean fetchComposite,
-                          @HeaderParam("Cookie") ClientState clientState) {
-        try {
-            return dms.getTopic(key, value, fetchComposite, clientState);
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @GET @Path(value = "/topic/by_value/{key}/{value}") public Topic getTopic(@PathParam(value = "key") String key, @PathParam(value = "value") SimpleValue value, @QueryParam(value = "fetch_composite") @DefaultValue(value = "true") boolean fetchComposite, @HeaderParam(value = "Cookie") ClientState clientState) {
+    try {
+      return dms.getTopic(key, value, fetchComposite, clientState);
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-    @GET
-    @Path("/topic/by_type/{type_uri}")
-    public ResultSet<Topic> getTopics(@PathParam("type_uri") String typeUri,
-                                      @QueryParam("fetch_composite") @DefaultValue("false") boolean fetchComposite,
-                                      @QueryParam("max_result_size") int maxResultSize,
-                                      @HeaderParam("Cookie") ClientState clientState) {
-        try {
-            ResultSet<Topic> topics = dms.getTopics(typeUri, fetchComposite, maxResultSize, clientState);
-            //
-            firePreSend(topics, clientState);
-            //
-            return topics;
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @GET @Path(value = "/topic/by_type/{type_uri}") public ResultSet<Topic> getTopics(@PathParam(value = "type_uri") String typeUri, @QueryParam(value = "fetch_composite") @DefaultValue(value = "false") boolean fetchComposite, @QueryParam(value = "max_result_size") int maxResultSize, @HeaderParam(value = "Cookie") ClientState clientState) {
+    try {
+      ResultSet<Topic> topics = dms.getTopics(typeUri, fetchComposite, maxResultSize, clientState);
+      triggerPreSend(topics, clientState);
+      return topics;
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-    @GET
-    @Path("/topic")
-    public Set<Topic> searchTopics(@QueryParam("search")    String searchTerm,
-                                   @QueryParam("field")     String fieldUri,
-                                   @QueryParam("wholeword") boolean wholeWord,
-                                   @HeaderParam("Cookie")   ClientState clientState) {
-        try {
-            return dms.searchTopics(searchTerm, fieldUri, wholeWord, clientState);
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @GET @Path(value = "/topic") public Set<Topic> searchTopics(@QueryParam(value = "search") String searchTerm, @QueryParam(value = "field") String fieldUri, @QueryParam(value = "wholeword") boolean wholeWord, @HeaderParam(value = "Cookie") ClientState clientState) {
+    try {
+      return dms.searchTopics(searchTerm, fieldUri, wholeWord, clientState);
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-    @POST
-    @Path("/topic")
-    public Topic createTopic(TopicModel model, @HeaderParam("Cookie") ClientState clientState) {
-        try {
-            Topic topic = dms.createTopic(model, clientState);
-            //
-            firePreSend(topic, clientState);
-            //
-            return topic;
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @POST @Path(value = "/topic") public Topic createTopic(TopicModel model, @HeaderParam(value = "Cookie") ClientState clientState) {
+    try {
+      Topic topic = dms.createTopic(model, clientState);
+      firePreSend(topic, clientState);
+      return topic;
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-    @PUT
-    @Path("/topic")
-    public Directives updateTopic(TopicModel model, @HeaderParam("Cookie") ClientState clientState) {
-        try {
-            Directives directives = dms.updateTopic(model, clientState);
-            //
-            firePreSend(directives, clientState);
-            //
-            return directives;
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @PUT @Path(value = "/topic") public Directives updateTopic(TopicModel model, @HeaderParam(value = "Cookie") ClientState clientState) {
+    try {
+      Directives directives = dms.updateTopic(model, clientState);
+      firePreSend(directives, clientState);
+      return directives;
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-    @DELETE
-    @Path("/topic/{id}")
-    public Directives deleteTopic(@PathParam("id") long topicId, @HeaderParam("Cookie") ClientState clientState) {
-        try {
-            return dms.deleteTopic(topicId, clientState);
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @DELETE @Path(value = "/topic/{id}") public Directives deleteTopic(@PathParam(value = "id") long topicId, @HeaderParam(value = "Cookie") ClientState clientState) {
+    try {
+      return dms.deleteTopic(topicId, clientState);
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-
-
-    // === Associations ===
-
-    @GET
-    @Path("/association/{id}")
-    public Association getAssociation(@PathParam("id") long assocId,
-                                      @QueryParam("fetch_composite") @DefaultValue("true") boolean fetchComposite,
-                                      @HeaderParam("Cookie") ClientState clientState) {
-        try {
-            Association assoc = dms.getAssociation(assocId, fetchComposite, clientState);
-            //
-            // firePreSend(assoc, clientState);  ### TODO
-            //
-            return assoc;
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @GET @Path(value = "/association/{id}") public Association getAssociation(@PathParam(value = "id") long assocId, @QueryParam(value = "fetch_composite") @DefaultValue(value = "true") boolean fetchComposite, @HeaderParam(value = "Cookie") ClientState clientState) {
+    try {
+      Association assoc = dms.getAssociation(assocId, fetchComposite, clientState);
+      return assoc;
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-    @GET
-    @Path("/association/{assoc_type_uri}/{topic1_id}/{topic2_id}/{role_type1_uri}/{role_type2_uri}")
-    public Association getAssociation(@PathParam("assoc_type_uri") String assocTypeUri,
-                   @PathParam("topic1_id") long topic1Id, @PathParam("topic2_id") long topic2Id,
-                   @PathParam("role_type1_uri") String roleTypeUri1, @PathParam("role_type2_uri") String roleTypeUri2,
-                   @QueryParam("fetch_composite") @DefaultValue("true") boolean fetchComposite,
-                   @HeaderParam("Cookie") ClientState clientState) {
-        try {
-            return dms.getAssociation(assocTypeUri, topic1Id, topic2Id, roleTypeUri1, roleTypeUri2, fetchComposite,
-                clientState);
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @GET @Path(value = "/association/{assoc_type_uri}/{topic1_id}/{topic2_id}/{role_type1_uri}/{role_type2_uri}") public Association getAssociation(@PathParam(value = "assoc_type_uri") String assocTypeUri, @PathParam(value = "topic1_id") long topic1Id, @PathParam(value = "topic2_id") long topic2Id, @PathParam(value = "role_type1_uri") String roleTypeUri1, @PathParam(value = "role_type2_uri") String roleTypeUri2, @QueryParam(value = "fetch_composite") @DefaultValue(value = "true") boolean fetchComposite, @HeaderParam(value = "Cookie") ClientState clientState) {
+    try {
+      return dms.getAssociation(assocTypeUri, topic1Id, topic2Id, roleTypeUri1, roleTypeUri2, fetchComposite, clientState);
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-    // ---
-
-    @GET
-    @Path("/association/multiple/{topic1_id}/{topic2_id}")
-    public Set<Association> getAssociations(@PathParam("topic1_id") long topic1Id,
-                                            @PathParam("topic2_id") long topic2Id) {
-        try {
-            return dms.getAssociations(topic1Id, topic2Id);
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @GET @Path(value = "/association/multiple/{topic1_id}/{topic2_id}") public Set<Association> getAssociations(@PathParam(value = "topic1_id") long topic1Id, @PathParam(value = "topic2_id") long topic2Id) {
+    try {
+      return dms.getAssociations(topic1Id, topic2Id);
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-    @GET
-    @Path("/association/multiple/{topic1_id}/{topic2_id}/{assoc_type_uri}")
-    public Set<Association> getAssociations(@PathParam("topic1_id") long topic1Id,
-                                            @PathParam("topic2_id") long topic2Id,
-                                            @PathParam("assoc_type_uri") String assocTypeUri) {
-        try {
-            return dms.getAssociations(topic1Id, topic2Id, assocTypeUri);
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @GET @Path(value = "/association/multiple/{topic1_id}/{topic2_id}/{assoc_type_uri}") public Set<Association> getAssociations(@PathParam(value = "topic1_id") long topic1Id, @PathParam(value = "topic2_id") long topic2Id, @PathParam(value = "assoc_type_uri") String assocTypeUri) {
+    try {
+      return dms.getAssociations(topic1Id, topic2Id, assocTypeUri);
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-    // ---
-
-    @POST
-    @Path("/association")
-    public Association createAssociation(AssociationModel model, @HeaderParam("Cookie") ClientState clientState) {
-        try {
-            return dms.createAssociation(model, clientState);
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @POST @Path(value = "/association") public Association createAssociation(AssociationModel model, @HeaderParam(value = "Cookie") ClientState clientState) {
+    try {
+      return dms.createAssociation(model, clientState);
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-    @PUT
-    @Path("/association")
-    public Directives updateAssociation(AssociationModel model, @HeaderParam("Cookie") ClientState clientState) {
-        try {
-            return dms.updateAssociation(model, clientState);
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @PUT @Path(value = "/association") public Directives updateAssociation(AssociationModel model, @HeaderParam(value = "Cookie") ClientState clientState) {
+    try {
+      return dms.updateAssociation(model, clientState);
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-    @DELETE
-    @Path("/association/{id}")
-    public Directives deleteAssociation(@PathParam("id") long assocId, @HeaderParam("Cookie") ClientState clientState) {
-        try {
-            return dms.deleteAssociation(assocId, clientState);
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @DELETE @Path(value = "/association/{id}") public Directives deleteAssociation(@PathParam(value = "id") long assocId, @HeaderParam(value = "Cookie") ClientState clientState) {
+    try {
+      return dms.deleteAssociation(assocId, clientState);
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-
-
-    // === Topic Types ===
-
-    @GET
-    @Path("/topictype")
-    public Set<String> getTopicTypeUris() {
-        try {
-            return dms.getTopicTypeUris();
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @GET @Path(value = "/topictype") public Set<String> getTopicTypeUris() {
+    try {
+      return dms.getTopicTypeUris();
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-    @GET
-    @Path("/topictype/{uri}")
-    public TopicType getTopicType(@PathParam("uri") String uri, @HeaderParam("Cookie") ClientState clientState) {
-        try {
-            TopicType topicType = dms.getTopicType(uri, clientState);
-            //
-            firePreSend(topicType, clientState);
-            //
-            return topicType;
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @GET @Path(value = "/topictype/{uri}") public TopicType getTopicType(@PathParam(value = "uri") String uri, @HeaderParam(value = "Cookie") ClientState clientState) {
+    try {
+      TopicType topicType = dms.getTopicType(uri, clientState);
+      firePreSend(topicType, clientState);
+      return topicType;
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-    @GET
-    @Path("/topictype/all")
-    public Set<TopicType> getAllTopicTypes(@HeaderParam("Cookie") ClientState clientState) {
-        try {
-            return dms.getAllTopicTypes(clientState);
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @GET @Path(value = "/topictype/all") public Set<TopicType> getAllTopicTypes(@HeaderParam(value = "Cookie") ClientState clientState) {
+    try {
+      return dms.getAllTopicTypes(clientState);
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-    @POST
-    @Path("/topictype")
-    public TopicType createTopicType(TopicTypeModel topicTypeModel, @HeaderParam("Cookie") ClientState clientState) {
-        try {
-            TopicType topicType = dms.createTopicType(topicTypeModel, clientState);
-            //
-            firePreSend(topicType, clientState);
-            //
-            return topicType;
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @POST @Path(value = "/topictype") public TopicType createTopicType(TopicTypeModel topicTypeModel, @HeaderParam(value = "Cookie") ClientState clientState) {
+    try {
+      TopicType topicType = dms.createTopicType(topicTypeModel, clientState);
+      triggerPreSend(topicType, clientState);
+      return topicType;
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-    @PUT
-    @Path("/topictype")
-    public Directives updateTopicType(TopicTypeModel model, @HeaderParam("Cookie") ClientState clientState) {
-        try {
-            Directives directives = dms.updateTopicType(model, clientState);
-            //
-            firePreSend(directives, clientState);
-            //
-            return directives;
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @PUT @Path(value = "/topictype") public Directives updateTopicType(TopicTypeModel model, @HeaderParam(value = "Cookie") ClientState clientState) {
+    try {
+      Directives directives = dms.updateTopicType(model, clientState);
+      triggerPreSend(directives, clientState);
+      return directives;
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-
-
-    // === Association Types ===
-
-    @GET
-    @Path("/assoctype")
-    public Set<String> getAssociationTypeUris() {
-        try {
-            return dms.getAssociationTypeUris();
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @GET @Path(value = "/assoctype") public Set<String> getAssociationTypeUris() {
+    try {
+      return dms.getAssociationTypeUris();
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-    @GET
-    @Path("/assoctype/{uri}")
-    public AssociationType getAssociationType(@PathParam("uri") String uri,
-                                              @HeaderParam("Cookie") ClientState clientState) {
-        try {
-            return dms.getAssociationType(uri, clientState);
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @GET @Path(value = "/assoctype/{uri}") public AssociationType getAssociationType(@PathParam(value = "uri") String uri, @HeaderParam(value = "Cookie") ClientState clientState) {
+    try {
+      return dms.getAssociationType(uri, clientState);
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-    @GET
-    @Path("/assoctype/all")
-    public Set<AssociationType> getAssociationAllTypes(@HeaderParam("Cookie") ClientState clientState) {
-        try {
-            return dms.getAllAssociationTypes(clientState);
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @GET @Path(value = "/assoctype/all") public Set<AssociationType> getAssociationAllTypes(@HeaderParam(value = "Cookie") ClientState clientState) {
+    try {
+      return dms.getAllAssociationTypes(clientState);
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-    @POST
-    @Path("/assoctype")
-    public AssociationType createAssociationType(AssociationTypeModel assocTypeModel,
-                                                 @HeaderParam("Cookie") ClientState clientState) {
-        try {
-            return dms.createAssociationType(assocTypeModel, clientState);
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @POST @Path(value = "/assoctype") public AssociationType createAssociationType(AssociationTypeModel assocTypeModel, @HeaderParam(value = "Cookie") ClientState clientState) {
+    try {
+      return dms.createAssociationType(assocTypeModel, clientState);
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-
-
-    // === Commands ===
-
-    // ### TODO: drop this method. For the moment it stays here to illustrate file uploading.
-    // ### See de.deepamehta.plugins.webservice.provider.CommandParamsProvider
-    @POST
-    @Path("/command/{command}")
-    @Consumes("application/json, multipart/form-data")
-    public CommandResult executeCommand(@PathParam("command") String command, CommandParams params,
-                                        @HeaderParam("Cookie") ClientState clientState) {
-        try {
-            return null;    // ### dms.executeCommand(command, params, clientState);
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @POST @Path(value = "/command/{command}") @Consumes(value = "application/json, multipart/form-data") public CommandResult executeCommand(@PathParam(value = "command") String command, CommandParams params, @HeaderParam(value = "Cookie") ClientState clientState) {
+    try {
+      return null;
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-
-
-    // === Plugins ===
-
-    @GET
-    @Path("/plugin")
-    public Set<PluginInfo> getPluginInfo() {
-        try {
-            return dms.getPluginInfo();
-        } catch (Exception e) {
-            throw new WebApplicationException(e);
-        }
+  @GET @Path(value = "/plugin") public Set<PluginInfo> getPluginInfo() {
+    try {
+      return dms.getPluginInfo();
+    } catch (Exception e) {
+      throw new WebApplicationException(e);
     }
+  }
 
-
-
-    // **********************
-    // *** Topic REST API ***
-    // **********************
-
-
-
-    @GET
-    @Path("/topic/{id}/related_topics")
-    public ResultSet<RelatedTopic> getRelatedTopics(@PathParam("id")                     long topicId,
-                                                    @QueryParam("assoc_type_uri")        String assocTypeUri,
-                                                    @QueryParam("my_role_type_uri")      String myRoleTypeUri,
-                                                    @QueryParam("others_role_type_uri")  String othersRoleTypeUri,
-                                                    @QueryParam("others_topic_type_uri") String othersTopicTypeUri,
-                                                    @QueryParam("max_result_size")       int maxResultSize,
-                                                    @HeaderParam("Cookie")               ClientState clientState) {
-        logger.info("topicId=" + topicId + ", assocTypeUri=\"" + assocTypeUri + "\", myRoleTypeUri=\"" + myRoleTypeUri +
-            "\", othersRoleTypeUri=\"" + othersRoleTypeUri + "\", othersTopicTypeUri=\"" + othersTopicTypeUri +
-            "\", maxResultSize=" + maxResultSize);
-        try {
-            return dms.getTopic(topicId, false, clientState).getRelatedTopics(assocTypeUri, myRoleTypeUri,
-                othersRoleTypeUri, othersTopicTypeUri, false, false, maxResultSize, clientState);
-        } catch (Exception e) {
-            throw new WebApplicationException(new RuntimeException("Retrieving related topics of topic " + topicId +
-                " failed (assocTypeUri=\"" + assocTypeUri + "\", myRoleTypeUri=\"" + myRoleTypeUri +
-                "\", othersRoleTypeUri=\"" + othersRoleTypeUri + "\", othersTopicTypeUri=\"" + othersTopicTypeUri +
-                "\", maxResultSize=" + maxResultSize + ")", e));
-        }
+  @GET @Path(value = "/topic/{id}/related_topics") public ResultSet<RelatedTopic> getRelatedTopics(@PathParam(value = "id") long topicId, @QueryParam(value = "assoc_type_uri") String assocTypeUri, @QueryParam(value = "my_role_type_uri") String myRoleTypeUri, @QueryParam(value = "others_role_type_uri") String othersRoleTypeUri, @QueryParam(value = "others_topic_type_uri") String othersTopicTypeUri, @QueryParam(value = "max_result_size") int maxResultSize, @HeaderParam(value = "Cookie") ClientState clientState) {
+    logger.info("topicId=" + topicId + ", assocTypeUri=\"" + assocTypeUri + "\", myRoleTypeUri=\"" + myRoleTypeUri + "\", othersRoleTypeUri=\"" + othersRoleTypeUri + "\", othersTopicTypeUri=\"" + othersTopicTypeUri + "\", maxResultSize=" + maxResultSize);
+    try {
+      return dms.getTopic(topicId, false, clientState).getRelatedTopics(assocTypeUri, myRoleTypeUri, othersRoleTypeUri, othersTopicTypeUri, false, false, maxResultSize, clientState);
+    } catch (Exception e) {
+      throw new WebApplicationException(new RuntimeException("Retrieving related topics of topic " + topicId + " failed (assocTypeUri=\"" + assocTypeUri + "\", myRoleTypeUri=\"" + myRoleTypeUri + "\", othersRoleTypeUri=\"" + othersRoleTypeUri + "\", othersTopicTypeUri=\"" + othersTopicTypeUri + "\", maxResultSize=" + maxResultSize + ")", e));
     }
+  }
 
+  private void firePreSend(Topic topic, ClientState clientState) {
+    dms.fireEvent(CoreEvent.PRE_SEND_TOPIC, topic, clientState);
+  }
 
+  private void firePreSend(TopicType topicType, ClientState clientState) {
+    dms.fireEvent(CoreEvent.PRE_SEND_TOPIC_TYPE, topicType, clientState);
+  }
 
-    // ****************************
-    // *** Association REST API ***
-    // ****************************
-
-    // ### TODO
-
-
-
-    // ------------------------------------------------------------------------------------------------- Private Methods
-
-    private void firePreSend(Topic topic, ClientState clientState) {
-        dms.fireEvent(CoreEvent.PRE_SEND_TOPIC, topic, clientState);
+  private void triggerPreSend(ResultSet<Topic> topics, ClientState clientState) {
+    for (Topic topic : topics) {
+      triggerPreSend(topic, clientState);
     }
+  }
 
-    private void firePreSend(TopicType topicType, ClientState clientState) {
-        dms.fireEvent(CoreEvent.PRE_SEND_TOPIC_TYPE, topicType, clientState);
+  private void firePreSend(Directives directives, ClientState clientState) {
+    for (Directives.Entry entry : directives) {
+      switch (entry.dir) {
+        case UPDATE_TOPIC:
+        firePreSend((Topic) entry.arg, clientState);
+        break;
+        case UPDATE_TOPIC_TYPE:
+        firePreSend((TopicType) entry.arg, clientState);
+        break;
+      }
     }
-
-    private void firePreSend(ResultSet<Topic> topics, ClientState clientState) {
-        for (Topic topic : topics) {
-            firePreSend(topic, clientState);
-        }
-    }
-
-    private void firePreSend(Directives directives, ClientState clientState) {
-        for (Directives.Entry entry : directives) {
-            switch (entry.dir) {
-            case UPDATE_TOPIC:
-                firePreSend((Topic) entry.arg, clientState);
-                break;
-            case UPDATE_TOPIC_TYPE:
-                firePreSend((TopicType) entry.arg, clientState);
-                break;
-            }
-        }
-    }
+  }
 }
