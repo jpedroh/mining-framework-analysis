@@ -210,11 +210,15 @@ public class Faker {
         this.aquaTeenHungerForce = new AquaTeenHungerForce(this);
         this.programmingLanguage = new ProgrammingLanguage(this);
         this.kaamelott = new Kaamelott(this);
+<<<<<<< /usr/src/app/output/dius/java-faker/aaaf8d9e4783a7e5a2d693f5b870fd2a3756238c/src/main/java/com/github/javafaker/Faker.java/left.java
         this.starCraft = new StarCraft(this);
+||||||| /usr/src/app/output/dius/java-faker/aaaf8d9e4783a7e5a2d693f5b870fd2a3756238c/src/main/java/com/github/javafaker/Faker.java/base.java
+=======
         this.bojackHorseman = new BojackHorseman(this);
         this.disease = new Disease(this);
         this.basketball = new Basketball(this);
         this.barcode = new Barcode(this);
+>>>>>>> /usr/src/app/output/dius/java-faker/aaaf8d9e4783a7e5a2d693f5b870fd2a3756238c/src/main/java/com/github/javafaker/Faker.java/right.java
     }
 
     /**

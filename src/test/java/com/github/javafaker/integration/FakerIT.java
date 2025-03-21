@@ -169,11 +169,15 @@ public class FakerIT {
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.aquaTeenHungerForce());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.programmingLanguage());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.kaamelott());
+<<<<<<< /usr/src/app/output/dius/java-faker/aaaf8d9e4783a7e5a2d693f5b870fd2a3756238c/src/test/java/com/github/javafaker/integration/FakerIT.java/left.java
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.starCraft());
+||||||| /usr/src/app/output/dius/java-faker/aaaf8d9e4783a7e5a2d693f5b870fd2a3756238c/src/test/java/com/github/javafaker/integration/FakerIT.java/base.java
+=======
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.bojackHorseman());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.disease());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.basketball());
         testAllMethodsThatReturnStringsActuallyReturnStrings(faker.barcode());
+>>>>>>> /usr/src/app/output/dius/java-faker/aaaf8d9e4783a7e5a2d693f5b870fd2a3756238c/src/test/java/com/github/javafaker/integration/FakerIT.java/right.java
     }
 
     private void testAllMethodsThatReturnStringsActuallyReturnStrings(Object object) throws Exception {
