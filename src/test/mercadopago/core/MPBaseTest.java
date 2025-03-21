@@ -1,9 +1,9 @@
 package test.mercadopago.core;
 
+import com.mercadopago.core.MPBaseResponse;
 import com.mercadopago.MPConf;
 import com.mercadopago.core.MPBase;
 import com.mercadopago.core.annotations.idempotent.Idempotent;
-import com.mercadopago.core.MPBaseResponse;
 import com.mercadopago.core.annotations.rest.GET;
 import com.mercadopago.core.annotations.rest.POST;
 import com.mercadopago.core.annotations.rest.PUT;

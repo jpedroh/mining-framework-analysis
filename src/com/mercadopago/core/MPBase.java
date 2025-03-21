@@ -139,29 +139,22 @@ public abstract class MPBase {
         MPValidator.validate(this);
         PayloadType payloadType = (PayloadType) hashAnnotation.get("payloadType");
         JsonObject payload = generatePayload(httpMethod);
-
-        Collection<Header> colHeaders = getStandardHeaders();
-        if (StringUtils.isNotEmpty(getIdempotenceKey())) {
-            colHeaders.add(new BasicHeader("x-idempotency-key", getIdempotenceKey()));
-        }
-
-        MPBaseResponse response = new MPRestClient().executeRequest(
-                httpMethod,
-                path,
-                payloadType,
-                payload,
-                colHeaders,
-                retries,
-                connectionTimeout,
-                socketTimeout);
-
+<<<<<<< /usr/src/app/output/mercadopago/sdk-java/c71a33c366866371a12e0d1c864172f84a555561/src/com/mercadopago/core/MPBase.java/left.java
+        MPBaseResponse response = new MPRestClient().executeRequest(httpMethod, path, payloadType, payload, null);
         if (response.getJsonEntity() != null) {
             assignValuesToFields(
                     this,
                     MPCoreUtils.getResourceFromJson(this.getClass(), response.getJsonEntity()));
-            _lastKnownJson = MPCoreUtils.getJsonFromResource(this);
+            lastKnownJson = MPCoreUtils.getJsonFromResource(this);
         }
 
+||||||| /usr/src/app/output/mercadopago/sdk-java/c71a33c366866371a12e0d1c864172f84a555561/src/com/mercadopago/core/MPBase.java/base.java
+        String response = callApi(httpMethod, path, payload, payloadType);
+        lastKnownJson = MPCoreUtils.getJson(this);
+=======
+        String response = callApi(httpMethod, path, payload, payloadType, retries, connectionTimeout, socketTimeout);
+        _lastKnownJson = MPCoreUtils.getJson(this);
+>>>>>>> /usr/src/app/output/mercadopago/sdk-java/c71a33c366866371a12e0d1c864172f84a555561/src/com/mercadopago/core/MPBase.java/right.java
         return response;
     }
 
@@ -182,7 +175,20 @@ public abstract class MPBase {
             }
         }
     }
-
+    /**
+     * callApi method instanciate a MPRestClient obj and makes a request to the endpoint defined by the resource.
+     * It returns a MPBaseResponse with the status code and the response parsed in text and json, if possible
+     *
+     * @param httpMethod                HttpMethod that will be used to make the request
+     * @param path                      full path to the endpoint including the get params and the access_token
+     * @param payload                   payload to make the request if POST or PUT method are used, null if other method
+     * @param payloadType               payload type (NONE, JSON or X_WWW_FORM_URLENCODED
+     * @param retries                   number of retries, defined in the rest annotation
+     * @param connectionTimeout         connection timeout, defined in the rest annotation expressed in milliseconds
+     * @param socketTimeout             socket timeout, defined in the rest annotation expressed in milliseconds
+     * @return                          an MPBaseResponse obj.
+     * @throws MPException
+     */
     /**
      * Returns standard headers for all the requests
      *
