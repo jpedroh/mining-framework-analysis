@@ -1,8 +1,5 @@
 package net.masterthought.cucumber.generators;
 
-import java.io.File;
-import java.io.IOException;
-
 import mockit.Deencapsulation;
 import net.masterthought.cucumber.ReportBuilder;
 import net.masterthought.cucumber.ReportResult;
@@ -12,7 +9,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.velocity.VelocityContext;
 import org.junit.Before;
 import org.junit.Test;
-
+import java.io.File;
+import java.io.IOException;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
