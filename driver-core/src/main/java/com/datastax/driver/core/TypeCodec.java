@@ -35,8 +35,8 @@ abstract class TypeCodec<T> {
 
     // Somehow those don't seem to get properly initialized if they're not here. The reason
     // escape me right now so let's just leave it here for now
-    public static final StringCodec utf8Instance = new StringCodec(Charset.forName("UTF-8"));
-    public static final StringCodec asciiInstance = new StringCodec(Charset.forName("US-ASCII"));
+    public static final StringCodec utf8Instance = new StringCodec(true);
+    public static final StringCodec asciiInstance = new StringCodec(false);
 
     private static final Map<DataType.Name, TypeCodec<?>> primitiveCodecs = new EnumMap<DataType.Name, TypeCodec<?>>(DataType.Name.class);
     static {
@@ -281,6 +281,9 @@ abstract class TypeCodec<T> {
     }
 
     static class StringCodec extends TypeCodec<String> {
+
+        static final StringCodec utf8Instance = new StringCodec(Charset.forName("UTF-8"));
+        static final StringCodec asciiInstance = new StringCodec(Charset.forName("US-ASCII"));
 
         private final Charset charset;
 
