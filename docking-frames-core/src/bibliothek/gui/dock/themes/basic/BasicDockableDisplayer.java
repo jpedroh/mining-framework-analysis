@@ -164,12 +164,45 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     
     
     /** the panel that shows the content of this displayer */
+<<<<<<< /usr/src/app/output/benoker/dockingframes/6f59a544b682b9366e7f5c6d8e2804fd58609aed/docking-frames-core/src/bibliothek/gui/dock/themes/basic/BasicDockableDisplayer.java/left.java
+    private BackgroundPanel content = new ConfiguredBackgroundPanel( null, Transparency.TRANSPARENT ){
+    	@Override
+    	public void doLayout(){
+	    	BasicDockableDisplayer.this.doLayout( content );
+    	}
+    	@Override
+    	public Dimension getMinimumSize(){
+    		return getContentMinimumSize();
+    	}
+    	@Override
+    	public Dimension getPreferredSize(){
+    		return getContentPreferredSize();
+    	}
+    	@Override
+    	public Dimension getMaximumSize(){
+    		return getContentMaximumSize();
+    	}
+    };
+||||||| /usr/src/app/output/benoker/dockingframes/6f59a544b682b9366e7f5c6d8e2804fd58609aed/docking-frames-core/src/bibliothek/gui/dock/themes/basic/BasicDockableDisplayer.java/base.java
+    private BackgroundPanel content = new ConfiguredBackgroundPanel( null, false, true ){
+    	@Override
+    	public void doLayout(){
+	    	BasicDockableDisplayer.this.doLayout( content );
+    	}
+    	@Override
+    	public Dimension getMinimumSize(){
+    		return getContentMinimumSize();
+    	}
+    };
+=======
     private DisplayerContentPane content;
+>>>>>>> /usr/src/app/output/benoker/dockingframes/6f59a544b682b9366e7f5c6d8e2804fd58609aed/docking-frames-core/src/bibliothek/gui/dock/themes/basic/BasicDockableDisplayer.java/right.java
     
     /**
      * Creates a new displayer
      * @param station the station for which this displayer is needed
      */
+    
     public BasicDockableDisplayer( DockStation station ){
         this( station, null, null );
     }
@@ -180,6 +213,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
      * @param dockable the content, may be <code>null</code>
      * @param title the title, may be <code>null</code>
      */
+    
     public BasicDockableDisplayer( DockStation station, Dockable dockable, DockTitle title ){
         this( station, dockable, title, Location.TOP );
     }
@@ -192,11 +226,12 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
      * @param title the title of <code>dockable</code>, can be <code>null</code>
      * @param location the location of the title, can be <code>null</code>
      */
+    
     public BasicDockableDisplayer( DockStation station, Dockable dockable, DockTitle title, Location location ){
         super( new GridLayout( 1, 1 ), Transparency.DEFAULT );
         init( station, dockable, title, location );
     }
-   
+    
     /**
      * Creates a new displayer but does not set the properties of the
      * displayer. Subclasses may call {@link #init(DockStation, Dockable, DockTitle, bibliothek.gui.dock.station.DockableDisplayer.Location) init}
@@ -207,6 +242,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
      * {@link #init(DockStation, Dockable, DockTitle, bibliothek.gui.dock.station.DockableDisplayer.Location) init}
      * will be called.
      */
+    
     protected BasicDockableDisplayer( DockStation station, boolean initialize ){
     	super( new GridLayout( 1, 1 ), Transparency.DEFAULT );
     	if( initialize ){
@@ -223,6 +259,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
      * @param title the title of <code>dockable</code>, can be <code>null</code>
      * @param location the location of the title, can be <code>null</code>
      */
+    
     protected void init( DockStation station, Dockable dockable, DockTitle title, Location location ){
 //    	content.setOpaque( false );
     	content = createContentPane();
@@ -248,6 +285,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
      * displayer.
      * @return the new content pane, not <code>null</code>
      */
+    
     protected DisplayerContentPane createContentPane(){
     	return new DisplayerContentPane();
     }
@@ -256,6 +294,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
      * Exchanges the decorator of this displayer.
      * @param decorator the new decorator
      */
+    
     protected void setDecorator( BasicDockableDisplayerDecorator decorator ){
     	if( decorator == null )
     		throw new IllegalArgumentException( "decorator must not be null" );
@@ -281,6 +320,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     /**
      * Replaces the current {@link BasicDockableDisplayerDecorator decorator} if necessary.
      */
+    
     protected void updateDecorator(){
     	updateDecorator( false );
     }
@@ -289,6 +329,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
      * Replaces the current {@link BasicDockableDisplayerDecorator decorator} if necessary.
      * @param force whether to force an update
      */
+    
     protected void updateDecorator( boolean force ){
     	if( force ){
     		pendingForcedUpdateDecorator = true;
@@ -316,6 +357,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
      * {@link #createStackedDecorator()} instead of {@link #createMinimalDecorator()}.
      * @param stacked whether this displayer is part of a stack of displayerss
      */
+    
     public void setStacked( boolean stacked ){
     	if( this.stacked != stacked ){
     		this.stacked = stacked;
@@ -328,6 +370,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
      * {@link #createStackedDecorator()} instead of {@link #createMinimalDecorator()}.
      * @return whether this displayer is part of a stack of displayerss
      */
+    
     public boolean isStacked(){
 		return stacked;
 	}
@@ -336,6 +379,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
      * Creates a new {@link MinimalDecorator} that will be shown on this displayer.
      * @return the new decorator
      */
+    
     protected BasicDockableDisplayerDecorator createMinimalDecorator(){
 		return new MinimalDecorator();
 	}
@@ -348,6 +392,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
      * @return the new decorator
      * @see #createStackedDecorator(PropertyKey)
      */
+    
     protected BasicDockableDisplayerDecorator createStackedDecorator(){
     	return createMinimalDecorator();
     }
@@ -357,6 +402,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
      * @param distributor the key to the filter for the actions
      * @return the new decorator
      */
+    
     protected BasicDockableDisplayerDecorator createStackedDecorator( final PropertyKey<DockActionDistributor> distributor ){
     	return new MinimalDecorator(){
 			private DockActionDistributorSource source = new DockActionDistributorSource( Target.TITLE, distributor );
@@ -378,6 +424,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
      * Creates a new {@link TabDecorator} that will be shown on this displayer.
      * @return the new decorator
      */
+    
     protected BasicDockableDisplayerDecorator createTabDecorator(){
     	return new TabDecorator( station, null );
     }
@@ -408,6 +455,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
      * Gets a list of all listeners currently registered at this displayer.
      * @return the list of listeners
      */
+    
     protected DockableDisplayerListener[] listeners(){
     	return listeners.toArray( new DockableDisplayerListener[ listeners.size() ] );
     }
@@ -424,7 +472,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     public Dockable getDockable() {
         return dockable;
     }
-
+    
     public void setDockable( Dockable dockable ) {
     	if( this.dockable != null ){
     	    this.dockable.configureDisplayerHints( null );
@@ -448,6 +496,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
      * Resets the decorator, this method removes all {@link Component}s from this displayer, then adds them again
      * in the order that is necessary according to the current settings
      */
+    
     protected void resetDecorator(){
     	removeAll();
     	
@@ -478,11 +527,11 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
         	}
     	}
     }
-
+    
     public Location getTitleLocation() {
         return location;
     }
-
+    
     public void setTitleLocation( Location location ) {
         if( location == null )
             location = Location.TOP;
@@ -496,13 +545,14 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
         
         revalidate();
     }
-
+    
     /**
      * Determines the orientation of a {@link DockTitle} according to its
      * location on this displayer.
      * @param location the location on this displayer
      * @return the orientation
      */
+    
     protected DockTitle.Orientation orientation( Location location ){
         switch( location ){
             case TOP: return DockTitle.Orientation.NORTH_SIDED;
@@ -517,7 +567,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     public DockTitle getTitle() {
         return title;
     }
-
+    
     public void setTitle( DockTitle title ) {
         this.title = title;
         if( title == null ){
@@ -544,6 +594,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
      * @param dockable the current Dockable, never <code>null</code>
      * @return the component representing <code>dockable</code>
      */
+    
     protected Component getComponent( Dockable dockable ){
         return dockable.getComponent();
     }
@@ -554,6 +605,7 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
      * @param title the current DockTitle, never <code>null</code>
      * @return the component representing <code>title</code>
      */
+    
     protected Component getComponent( DockTitle title ){
         return title.getComponent();
     }
@@ -573,6 +625,66 @@ public class BasicDockableDisplayer extends ConfiguredBackgroundPanel implements
     
     public Component getComponent(){
     	return this;
+    }
+    
+    public Dimension getContentPreferredSize() {
+    	Dimension base;
+    	
+    	if( title == null && dockable != null )
+    		base = getComponent( dockable ).getPreferredSize();
+    	else if( dockable == null && title != null )
+    		base = getComponent( title ).getPreferredSize();
+    	else if( dockable == null && title == null )
+    		base = new Dimension( 0, 0 );
+    	else if( location == Location.LEFT || location == Location.RIGHT ){
+    		Dimension titleSize = getComponent( title ).getPreferredSize();
+    		base = getComponent( dockable ).getPreferredSize();
+    		base = new Dimension( base.width + titleSize.width, 
+    				Math.max( base.height, titleSize.height ));
+    	}
+    	else{
+    		Dimension titleSize = getComponent( title ).getPreferredSize();
+    		base = getComponent( dockable ).getPreferredSize();
+    		base = new Dimension( Math.max( titleSize.width, base.width ),
+    				titleSize.height + base.height );
+    	}
+    	
+    	Insets insets = getInsets();
+    	if( insets != null ){
+    		base = new Dimension( base.width + insets.left + insets.right,
+    				base.height + insets.top + insets.bottom );
+    	}
+    	return base;
+    }
+    
+    public Dimension getContentMaximumSize() {
+    	Dimension base;
+    	
+    	if( title == null && dockable != null )
+    		base = getComponent( dockable ).getMaximumSize();
+    	else if( dockable == null && title != null )
+    		base = getComponent( title ).getMaximumSize();
+    	else if( dockable == null && title == null )
+    		base = new Dimension( 0, 0 );
+    	else if( location == Location.LEFT || location == Location.RIGHT ){
+    		Dimension titleSize = getComponent( title ).getMaximumSize();
+    		base = getComponent( dockable ).getMaximumSize();
+    		base = new Dimension( base.width + titleSize.width, 
+    				Math.max( base.height, titleSize.height ));
+    	}
+    	else{
+    		Dimension titleSize = getComponent( title ).getMaximumSize();
+    		base = getComponent( dockable ).getMaximumSize();
+    		base = new Dimension( Math.max( titleSize.width, base.width ),
+    				titleSize.height + base.height );
+    	}
+    	
+    	Insets insets = getInsets();
+    	if( insets != null ){
+    		base = new Dimension( base.width + insets.left + insets.right,
+    				base.height + insets.top + insets.bottom );
+    	}
+    	return base;
     }
     
     public Insets getDockableInsets() {
