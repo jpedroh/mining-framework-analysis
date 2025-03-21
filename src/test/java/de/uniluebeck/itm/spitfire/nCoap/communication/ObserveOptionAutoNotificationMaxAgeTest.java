@@ -38,10 +38,24 @@ public class ObserveOptionAutoNotificationMaxAgeTest extends AbstractCoapCommuni
 
     @Override
     public void createTestScenario() throws Exception {
+<<<<<<< /usr/src/app/output/okleine/ncoap/0fe28d174e89355a76eb698dd4f13327180400a3/src/test/java/de/uniluebeck/itm/spitfire/nCoap/communication/ObserveOptionAutoNotificationMaxAgeTest.java/left.java
+        //init
+        testServer.reset();
+        //wait for possible 404 NOT FOUND messages when removing all services
+        Thread.sleep(150);
+        testReceiver.reset();
+        testReceiver.setReceiveEnabled(true);
+||||||| /usr/src/app/output/okleine/ncoap/0fe28d174e89355a76eb698dd4f13327180400a3/src/test/java/de/uniluebeck/itm/spitfire/nCoap/communication/ObserveOptionAutoNotificationMaxAgeTest.java/base.java
+        //init
+        testReceiver.reset();
+        testServer.reset();
+        testReceiver.setReceiveEnabled(true);
+=======
         //define expected notifications
         expectedNotification1 = new CoapResponse(Code.CONTENT_205);
         expectedNotification1.setPayload("testpayload1".getBytes("UTF-8"));
         expectedNotification1.setMaxAge(5);
+>>>>>>> /usr/src/app/output/okleine/ncoap/0fe28d174e89355a76eb698dd4f13327180400a3/src/test/java/de/uniluebeck/itm/spitfire/nCoap/communication/ObserveOptionAutoNotificationMaxAgeTest.java/right.java
 
         expectedNotification2 = new CoapResponse(Code.CONTENT_205);
         expectedNotification2.setPayload("testpayload2".getBytes("UTF-8"));

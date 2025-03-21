@@ -39,8 +39,22 @@ public class ClientReceivesPiggyBackedResponseTest extends AbstractCoapCommunica
         expectedCoapResponse.setPayload(NOT_OBSERVABLE_RESOURCE_CONTENT.getBytes("UTF-8"));
         expectedCoapResponse.getHeader().setMsgType(MsgType.ACK);
 
+<<<<<<< /usr/src/app/output/okleine/ncoap/0fe28d174e89355a76eb698dd4f13327180400a3/src/test/java/de/uniluebeck/itm/spitfire/nCoap/communication/ClientReceivesPiggyBackedResponseTest.java/left.java
+        //init
+        testServer.reset();
+        //wait for possible 404 NOT FOUND messages when removing all services
+        Thread.sleep(150);
+        testReceiver.reset();
+        testReceiver.setReceiveEnabled(true);
+||||||| /usr/src/app/output/okleine/ncoap/0fe28d174e89355a76eb698dd4f13327180400a3/src/test/java/de/uniluebeck/itm/spitfire/nCoap/communication/ClientReceivesPiggyBackedResponseTest.java/base.java
+        //init
+        testReceiver.reset();
+        testServer.reset();
+        testReceiver.setReceiveEnabled(true);
+=======
         //register webservice
         registerNotObservableDummyService(0);
+>>>>>>> /usr/src/app/output/okleine/ncoap/0fe28d174e89355a76eb698dd4f13327180400a3/src/test/java/de/uniluebeck/itm/spitfire/nCoap/communication/ClientReceivesPiggyBackedResponseTest.java/right.java
 
         //create request
         requestToken = new byte[]{0x12, 0x24, 0x36};

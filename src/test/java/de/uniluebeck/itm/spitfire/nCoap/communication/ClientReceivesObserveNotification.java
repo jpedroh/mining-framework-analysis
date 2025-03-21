@@ -37,8 +37,24 @@ public class ClientReceivesObserveNotification extends AbstractCoapCommunication
         expectedNotification1 = new CoapResponse(CONTENT_205);
         expectedNotification1.setPayload("testpayload1".getBytes("UTF-8"));
 
+<<<<<<< /usr/src/app/output/okleine/ncoap/0fe28d174e89355a76eb698dd4f13327180400a3/src/test/java/de/uniluebeck/itm/spitfire/nCoap/communication/ClientReceivesObserveNotification.java/left.java
+    @BeforeClass
+    public static void init() throws Exception {
+        InitializeLoggingForTests.init();
+        testServer.reset();
+        //wait for possible 404 NOT FOUND messages when removing all services
+        Thread.sleep(150);
+        testClient.reset();
+||||||| /usr/src/app/output/okleine/ncoap/0fe28d174e89355a76eb698dd4f13327180400a3/src/test/java/de/uniluebeck/itm/spitfire/nCoap/communication/ClientReceivesObserveNotification.java/base.java
+    @BeforeClass
+    public static void init() throws Exception {
+        InitializeLoggingForTests.init();
+        testServer.reset();
+        testClient.reset();
+=======
         expectedNotification2 = new CoapResponse(CONTENT_205);
         expectedNotification2.setPayload("testpayload2".getBytes("UTF-8"));
+>>>>>>> /usr/src/app/output/okleine/ncoap/0fe28d174e89355a76eb698dd4f13327180400a3/src/test/java/de/uniluebeck/itm/spitfire/nCoap/communication/ClientReceivesObserveNotification.java/right.java
 
         //setup testserver
         registerObservableDummyService(0, 3000);

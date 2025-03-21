@@ -49,8 +49,30 @@ public class ClientReceivesSeparateResponseTest extends AbstractCoapCommunicatio
         expectedCoapResponse.setPayload(NOT_OBSERVABLE_RESOURCE_CONTENT.getBytes("UTF-8"));
         expectedCoapResponse.getHeader().setMsgType(MsgType.ACK);
 
+<<<<<<< /usr/src/app/output/okleine/ncoap/0fe28d174e89355a76eb698dd4f13327180400a3/src/test/java/de/uniluebeck/itm/spitfire/nCoap/communication/ClientReceivesSeparateResponseTest.java/left.java
+        //init
+        testServer.reset();
+        //wait for possible 404 NOT FOUND messages when removing all services
+        Thread.sleep(150);
+        testReceiver.reset();
+        testReceiver.setReceiveEnabled(true);
+
+        //define parameters for webservice
+        uriPath = "/testpath";
+        responsePayload = "testpayload";
+||||||| /usr/src/app/output/okleine/ncoap/0fe28d174e89355a76eb698dd4f13327180400a3/src/test/java/de/uniluebeck/itm/spitfire/nCoap/communication/ClientReceivesSeparateResponseTest.java/base.java
+        //init
+        testReceiver.reset();
+        testServer.reset();
+        testReceiver.setReceiveEnabled(true);
+
+        //define parameters for webservice
+        uriPath = "/testpath";
+        responsePayload = "testpayload";
+=======
         //setup test server
         registerNotObservableDummyService(2500);
+>>>>>>> /usr/src/app/output/okleine/ncoap/0fe28d174e89355a76eb698dd4f13327180400a3/src/test/java/de/uniluebeck/itm/spitfire/nCoap/communication/ClientReceivesSeparateResponseTest.java/right.java
 
         //create request
         requestToken = new byte[]{0x12, 0x23, 0x34};
