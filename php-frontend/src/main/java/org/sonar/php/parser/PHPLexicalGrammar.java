@@ -250,15 +250,33 @@ public enum PHPLexicalGrammar implements GrammarRuleKey {
     // Literals
     b.rule(HEREDOC).is(SPACING, b.regexp(LexicalConstant.HEREDOC));
     b.rule(NUMERIC_LITERAL).is(SPACING, b.regexp(LexicalConstant.NUMERIC_LITERAL));
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-php/76e939e3841dfc3f0d15b4e61ea893242000a417/php-frontend/src/main/java/org/sonar/php/parser/PHPLexicalGrammar.java/left.java
+||||||| /usr/src/app/output/sonarcommunity/sonar-php/76e939e3841dfc3f0d15b4e61ea893242000a417/php-frontend/src/main/java/org/sonar/php/parser/PHPLexicalGrammar.java/base.java
+  //    b.rule(STRING_LITERAL).is(SPACING, b.firstOf(b.regexp(LexicalConstant.STRING_LITERAL), ENCAPS_STRING_LITERAL));
+=======
+    // b.rule(STRING_LITERAL).is(SPACING, b.firstOf(b.regexp(LexicalConstant.STRING_LITERAL), ENCAPS_STRING_LITERAL));
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-php/76e939e3841dfc3f0d15b4e61ea893242000a417/php-frontend/src/main/java/org/sonar/php/parser/PHPLexicalGrammar.java/right.java
     b.rule(REGULAR_STRING_LITERAL).is(SPACING, b.regexp(LexicalConstant.STRING_LITERAL));
 
     b.rule(STRING_WITH_ENCAPS_VAR_CHARACTERS).is(b.regexp(LexicalConstant.STRING_WITH_ENCAPS_VAR_CHARACTERS));
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-php/76e939e3841dfc3f0d15b4e61ea893242000a417/php-frontend/src/main/java/org/sonar/php/parser/PHPLexicalGrammar.java/left.java
+||||||| /usr/src/app/output/sonarcommunity/sonar-php/76e939e3841dfc3f0d15b4e61ea893242000a417/php-frontend/src/main/java/org/sonar/php/parser/PHPLexicalGrammar.java/base.java
+  //    b.rule(ENCAPS_STRING_LITERAL).is(SPACING, "\"", ENCAPS_LIST, "\"");
+=======
+    // b.rule(ENCAPS_STRING_LITERAL).is(SPACING, "\"", ENCAPS_LIST, "\"");
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-php/76e939e3841dfc3f0d15b4e61ea893242000a417/php-frontend/src/main/java/org/sonar/php/parser/PHPLexicalGrammar.java/right.java
     b.rule(DOUBLE_QUOTE).is("\"");
     // FIXME: this recovery is introduce in order to parse ${var}, as expression cannot match keywords.
     b.rule(SEMI_COMPLEX_RECOVERY_EXPRESSION).is(b.regexp("[^}]++"));
 
     // Identifier
     b.rule(WHITESPACES).is(b.regexp("[" + LexicalConstant.WHITESPACE + "]*+"));
+<<<<<<< /usr/src/app/output/sonarcommunity/sonar-php/76e939e3841dfc3f0d15b4e61ea893242000a417/php-frontend/src/main/java/org/sonar/php/parser/PHPLexicalGrammar.java/left.java
+||||||| /usr/src/app/output/sonarcommunity/sonar-php/76e939e3841dfc3f0d15b4e61ea893242000a417/php-frontend/src/main/java/org/sonar/php/parser/PHPLexicalGrammar.java/base.java
+  //    b.rule(ENCAPS_VAR_IDENTIFIER).is(WHITESPACES, VARIABLE_IDENTIFIER).skip();
+=======
+    // b.rule(ENCAPS_VAR_IDENTIFIER).is(WHITESPACES, VARIABLE_IDENTIFIER).skip();
+>>>>>>> /usr/src/app/output/sonarcommunity/sonar-php/76e939e3841dfc3f0d15b4e61ea893242000a417/php-frontend/src/main/java/org/sonar/php/parser/PHPLexicalGrammar.java/right.java
     b.rule(REGULAR_VAR_IDENTIFIER).is(SPACING, VARIABLE_IDENTIFIER).skip();
     b.rule(VARIABLE_IDENTIFIER).is(b.regexp(LexicalConstant.VAR_IDENTIFIER));
     b.rule(IDENTIFIER).is(SPACING, b.nextNot(KEYWORDS), b.regexp(LexicalConstant.IDENTIFIER));
