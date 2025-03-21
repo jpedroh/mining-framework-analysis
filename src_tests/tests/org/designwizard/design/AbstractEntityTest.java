@@ -40,7 +40,13 @@ public class AbstractEntityTest {
 	}
 	
 	/**
+<<<<<<< /usr/src/app/output/joaoarthurbm/designwizard/662a073a370b6ceeac9ccc052db9ee6d9a64ec1c/src_tests/tests/org/designwizard/design/AbstractEntityTest.java/left.java
 	 * All methods in the interface are public and abstract.
+||||||| /usr/src/app/output/joaoarthurbm/designwizard/662a073a370b6ceeac9ccc052db9ee6d9a64ec1c/src_tests/tests/org/designwizard/design/AbstractEntityTest.java/base.java
+	 * Todos os m�todos na interface s�o p�blicos e abstratos
+=======
+	 * Todos os métodos na interface são públicos e abstratos
+>>>>>>> /usr/src/app/output/joaoarthurbm/designwizard/662a073a370b6ceeac9ccc052db9ee6d9a64ec1c/src_tests/tests/org/designwizard/design/AbstractEntityTest.java/right.java
 	 * @throws InexistentEntityException
 	 * @throws IOException 
 	 */

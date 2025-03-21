@@ -713,6 +713,7 @@ public class ClassNodeTest {
 	
 	@Test
 	public void testClassesWithRegularExpressions() throws InexistentEntityException {
+		
 		// Testa o retorno das classes que contém a string "api"
 		Set<ClassNode> classesThatContainsApi = dw.getClasses(".*api.*");
 		Assert.assertFalse(classesThatContainsApi.isEmpty());
