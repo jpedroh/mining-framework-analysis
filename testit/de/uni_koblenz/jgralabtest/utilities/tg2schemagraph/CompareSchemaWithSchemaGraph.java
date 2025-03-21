@@ -88,6 +88,8 @@ import de.uni_koblenz.jgralab.grumlschema.structure.SpecializesVertexClass;
 import de.uni_koblenz.jgralab.grumlschema.structure.Subsets;
 import de.uni_koblenz.jgralab.grumlschema.structure.VertexClass;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
+import de.uni_koblenz.jgralab.schema.impl.TemporaryEdgeClassImpl;
+import de.uni_koblenz.jgralab.schema.impl.TemporaryVertexClassImpl;
 
 /**
  * Compares a given Schema and SchemaGraph with each other.
@@ -371,10 +373,50 @@ public class CompareSchemaWithSchemaGraph {
 	final private void compareAllGraphElementClasses(
 			de.uni_koblenz.jgralab.schema.Package xPackage, Package gPackage) {
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/518fc01e6bec91cd0a597ff873ef2e91169448b9/testit/de/uni_koblenz/jgralabtest/utilities/tg2schemagraph/CompareSchemaWithSchemaGraph.java/left.java
+		// This loop prevents the comparison of internal structures
+		for (Iterator<Entry<String, de.uni_koblenz.jgralab.schema.VertexClass>> it = vertexClasses
+				.entrySet().iterator(); it.hasNext();) {
+			de.uni_koblenz.jgralab.schema.VertexClass vc = it.next().getValue();
+			if (vc.isDefaultGraphElementClass()) {
+				it.remove();
+			}else if(vc instanceof TemporaryVertexClassImpl){
+				it.remove();
+			}
+		}
+
+		// This loop prevents the comparison of internal structures
+		for (Iterator<Entry<String, de.uni_koblenz.jgralab.schema.EdgeClass>> it = edgeClasses
+				.entrySet().iterator(); it.hasNext();) {
+			de.uni_koblenz.jgralab.schema.EdgeClass ec = it.next().getValue();
+			if (ec.isDefaultGraphElementClass()) {
+				it.remove();
+			}else if (ec instanceof TemporaryEdgeClassImpl){
+				it.remove();
+			}
+		}
+||||||| /usr/src/app/output/jgralab/jgralab/518fc01e6bec91cd0a597ff873ef2e91169448b9/testit/de/uni_koblenz/jgralabtest/utilities/tg2schemagraph/CompareSchemaWithSchemaGraph.java/base.java
+		// This loop prevents the comparison of internal structures
+		for (Iterator<Entry<String, de.uni_koblenz.jgralab.schema.VertexClass>> it = vertexClasses
+				.entrySet().iterator(); it.hasNext();) {
+			if (it.next().getValue().isDefaultGraphElementClass()) {
+				it.remove();
+			}
+		}
+
+		// This loop prevents the comparison of internal structures
+		for (Iterator<Entry<String, de.uni_koblenz.jgralab.schema.EdgeClass>> it = edgeClasses
+				.entrySet().iterator(); it.hasNext();) {
+			if (it.next().getValue().isDefaultGraphElementClass()) {
+				it.remove();
+			}
+		}
+=======
 		assertEquals("The number of graph element classes in package "
 				+ xPackage + " don't match!", xPackage.getVertexClasses()
 				.size() + xPackage.getEdgeClasses().size(),
 				gPackage.getDegree(ContainsGraphElementClass.class));
+>>>>>>> /usr/src/app/output/jgralab/jgralab/518fc01e6bec91cd0a597ff873ef2e91169448b9/testit/de/uni_koblenz/jgralabtest/utilities/tg2schemagraph/CompareSchemaWithSchemaGraph.java/right.java
 
 		// Loop over all ContainsGraphElementClass edges
 		for (ContainsGraphElementClass containsGraphElementClass : gPackage

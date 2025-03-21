@@ -193,10 +193,18 @@ public class GraphCodeGenerator extends
 		TreeSet<GraphElementClass<?, ?>> sortedClasses = new TreeSet<GraphElementClass<?, ?>>();
 		sortedClasses.addAll(gc.getGraphElementClasses());
 		for (GraphElementClass<?, ?> gec : sortedClasses) {
-			if(gec instanceof TemporaryVertexClassImpl || gec instanceof TemporaryEdgeClassImpl){
+<<<<<<< /usr/src/app/output/jgralab/jgralab/518fc01e6bec91cd0a597ff873ef2e91169448b9/src/de/uni_koblenz/jgralab/codegenerator/GraphCodeGenerator.java/left.java
+			if (gec.isDefaultGraphElementClass()) {
+				continue;
+			}else if(gec instanceof TemporaryVertexClassImpl || gec instanceof TemporaryEdgeClassImpl){
 				continue;
 			}
-
+||||||| /usr/src/app/output/jgralab/jgralab/518fc01e6bec91cd0a597ff873ef2e91169448b9/src/de/uni_koblenz/jgralab/codegenerator/GraphCodeGenerator.java/base.java
+			if (gec.isDefaultGraphElementClass()) {
+				continue;
+			}
+=======
+>>>>>>> /usr/src/app/output/jgralab/jgralab/518fc01e6bec91cd0a597ff873ef2e91169448b9/src/de/uni_koblenz/jgralab/codegenerator/GraphCodeGenerator.java/right.java
 			CodeList gecCode = new CodeList();
 			code.addNoIndent(gecCode);
 
@@ -366,6 +374,18 @@ public class GraphCodeGenerator extends
 		vertexClassSet.addAll(gc.getVertexClasses());
 
 		for (VertexClass vertex : vertexClassSet) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/518fc01e6bec91cd0a597ff873ef2e91169448b9/src/de/uni_koblenz/jgralab/codegenerator/GraphCodeGenerator.java/left.java
+			if (vertex.isDefaultGraphElementClass()) {
+				continue;
+			}else if(vertex instanceof TemporaryVertexClassImpl){
+				continue;
+			}
+||||||| /usr/src/app/output/jgralab/jgralab/518fc01e6bec91cd0a597ff873ef2e91169448b9/src/de/uni_koblenz/jgralab/codegenerator/GraphCodeGenerator.java/base.java
+			if (vertex.isDefaultGraphElementClass()) {
+				continue;
+			}
+=======
+>>>>>>> /usr/src/app/output/jgralab/jgralab/518fc01e6bec91cd0a597ff873ef2e91169448b9/src/de/uni_koblenz/jgralab/codegenerator/GraphCodeGenerator.java/right.java
 			if (currentCycle.isStdOrDbImplOrTransImpl()) {
 				addImports("#jgImplPackage#.VertexIterable");
 			}

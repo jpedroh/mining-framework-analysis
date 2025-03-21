@@ -92,6 +92,8 @@ import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.BasicDomainImpl;
 import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
 import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
+import de.uni_koblenz.jgralab.schema.impl.TemporaryEdgeClassImpl;
+import de.uni_koblenz.jgralab.schema.impl.TemporaryVertexClassImpl;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
 /**
@@ -430,6 +432,18 @@ public class GraphIO {
 
 			// write vertex classes
 			for (VertexClass vc : pkg.getVertexClasses()) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/518fc01e6bec91cd0a597ff873ef2e91169448b9/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
+				if (vc.isDefaultGraphElementClass()) {
+					continue;
+				}else if(vc instanceof TemporaryVertexClassImpl){
+					continue;
+				}
+||||||| /usr/src/app/output/jgralab/jgralab/518fc01e6bec91cd0a597ff873ef2e91169448b9/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+				if (vc.isDefaultGraphElementClass()) {
+					continue;
+				}
+=======
+>>>>>>> /usr/src/app/output/jgralab/jgralab/518fc01e6bec91cd0a597ff873ef2e91169448b9/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 				if (vc.isAbstract()) {
 					write("abstract ");
 				}
@@ -446,6 +460,8 @@ public class GraphIO {
 			// write edge classes
 			for (EdgeClass ec : pkg.getEdgeClasses()) {
 				if (ec.isDefaultGraphElementClass()) {
+					continue;
+				}else if(ec instanceof TemporaryEdgeClassImpl){
 					continue;
 				}
 				if (ec.isAbstract()) {
