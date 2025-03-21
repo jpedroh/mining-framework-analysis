@@ -31,7 +31,6 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -42,9 +41,7 @@ import javax.crypto.spec.DHParameterSpec;
 import javax.crypto.spec.DHPublicKeySpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-
 import net.java.otr4j.io.SerializationUtils;
-
 import org.bouncycastle.util.BigIntegers;
 
 /**
@@ -79,6 +76,7 @@ public class OtrCryptoEngineImpl implements OtrCryptoEngine {
 		}
 	}
 
+<<<<<<< /usr/src/app/output/redsolution/otr4j/fee9c908d0389fa3e5ae469d907f2c872a23ce39/src/main/java/net/java/otr4j/crypto/OtrCryptoEngineImpl.java/left.java
 	@Override
 	public KeyPair generateDHKeyPair() {
 		try {
@@ -91,12 +89,25 @@ public class OtrCryptoEngineImpl implements OtrCryptoEngine {
 			throw new IllegalStateException("BUG: DH algorithm is unavailable (for keypair generation).", e);
 		}
 	}
+||||||| /usr/src/app/output/redsolution/otr4j/fee9c908d0389fa3e5ae469d907f2c872a23ce39/src/main/java/net/java/otr4j/crypto/OtrCryptoEngineImpl.java/base.java
+=======
+	@Override
+	public KeyPair generateDHKeyPair() throws OtrCryptoException {
+		try {
+			KeyPairGenerator gen = KeyPairGenerator.getInstance("DH");
+			gen.initialize(new DHParameterSpec(MODULUS, GENERATOR, DH_PRIVATE_KEY_MINIMUM_BIT_LENGTH));
+			return gen.generateKeyPair();
+		} catch (Exception e) {
+			throw new OtrCryptoException(e);
+		}
+	}
+>>>>>>> /usr/src/app/output/redsolution/otr4j/fee9c908d0389fa3e5ae469d907f2c872a23ce39/src/main/java/net/java/otr4j/crypto/OtrCryptoEngineImpl.java/right.java
 
 	public DHPublicKey getDHPublicKey(byte[] mpiBytes)
-			throws OtrCryptoException
-	{
-		return getDHPublicKey(new BigInteger(mpiBytes));
-	}
+		throws OtrCryptoException
+{
+	return getDHPublicKey(new BigInteger(mpiBytes));
+}
 
 	@Override
 	public DHPublicKey getDHPublicKey(BigInteger mpi) throws OtrCryptoException {
