@@ -1,13 +1,9 @@
 /**
  * Maven iOS Plugin
  * <p/>
- * User: sbott
- * Date: 19.07.2012
- * Time: 19:54:44
+ * User: sbott Date: 19.07.2012 Time: 19:54:44
  * <p/>
- * This code is copyright (c) 2012 let's dev.
- * URL: http://www.letsdev.de
- * e-Mail: contact@letsdev.de
+ * This code is copyright (c) 2012 let's dev. URL: http://www.letsdev.de e-Mail: contact@letsdev.de
  */
 
 package de.letsdev.maven.plugins.ios;
@@ -86,9 +82,14 @@ public class ProjectBuilder {
                 installCocoaPodsDependencies(projectDirectory);
             }
 
+<<<<<<< /usr/src/app/output/brewinapps/ios-maven-plugin/ccc17f78b72bd7d10a1e55e134f3eb6205a97180/src/main/java/de/letsdev/maven/plugins/ios/ProjectBuilder.java/left.java
+            //remove simulator architechtures if requested
+||||||| /usr/src/app/output/brewinapps/ios-maven-plugin/ccc17f78b72bd7d10a1e55e134f3eb6205a97180/src/main/java/de/letsdev/maven/plugins/ios/ProjectBuilder.java/base.java
+=======
             if (Utils.carthageEnebled(properties)) {
                 installCarthageDependencies(projectDirectory);
             }
+>>>>>>> /usr/src/app/output/brewinapps/ios-maven-plugin/ccc17f78b72bd7d10a1e55e134f3eb6205a97180/src/main/java/de/letsdev/maven/plugins/ios/ProjectBuilder.java/right.java
 
             // Build the application
 
@@ -117,6 +118,7 @@ public class ProjectBuilder {
 
                 File targetWorkDirectory;
                 if (Utils.isMacOSFramework(properties)) {
+
                     targetWorkDirectory = new File(targetDirectory.toString() + File.separator + properties.get(
                             Utils.PLUGIN_PROPERTIES.CONFIGURATION.toString()) + File.separator);
                 } else {
@@ -647,18 +649,42 @@ public class ProjectBuilder {
             buildParameters.add("CODE_SIGNING_REQUIRED=NO");
         }
 
+<<<<<<< /usr/src/app/output/brewinapps/ios-maven-plugin/ccc17f78b72bd7d10a1e55e134f3eb6205a97180/src/main/java/de/letsdev/maven/plugins/ios/ProjectBuilder.java/left.java
+        if (Utils.shouldCodeSign(mavenProject, properties) && properties.containsKey(
+                Utils.PLUGIN_PROPERTIES.PROVISIONING_PROFILE_UUID.toString())) {
+            buildParameters.add("PROVISIONING_PROFILE=\"" + properties.get(
+                    Utils.PLUGIN_PROPERTIES.PROVISIONING_PROFILE_UUID.toString()) + "\"");
+||||||| /usr/src/app/output/brewinapps/ios-maven-plugin/ccc17f78b72bd7d10a1e55e134f3eb6205a97180/src/main/java/de/letsdev/maven/plugins/ios/ProjectBuilder.java/base.java
+        if (Utils.shouldCodeSign(mavenProject, properties) && properties.containsKey(Utils.PLUGIN_PROPERTIES.PROVISIONING_PROFILE_UUID.toString())) {
+            buildParameters.add("PROVISIONING_PROFILE=\"" + properties.get(Utils.PLUGIN_PROPERTIES.PROVISIONING_PROFILE_UUID.toString()) + "\"");
+=======
         if (Utils.shouldCodeSign(mavenProject, properties) && properties.containsKey(
                 Utils.PLUGIN_PROPERTIES.PROVISIONING_PROFILE_UUID.toString()) && !properties.get(
                 Utils.PLUGIN_PROPERTIES.PROVISIONING_PROFILE_UUID.toString()).equals("")) {
             buildParameters.add("PROVISIONING_PROFILE=\"" + properties.get(
                     Utils.PLUGIN_PROPERTIES.PROVISIONING_PROFILE_UUID.toString()) + "\"");
+>>>>>>> /usr/src/app/output/brewinapps/ios-maven-plugin/ccc17f78b72bd7d10a1e55e134f3eb6205a97180/src/main/java/de/letsdev/maven/plugins/ios/ProjectBuilder.java/right.java
         }
 
+<<<<<<< /usr/src/app/output/brewinapps/ios-maven-plugin/ccc17f78b72bd7d10a1e55e134f3eb6205a97180/src/main/java/de/letsdev/maven/plugins/ios/ProjectBuilder.java/left.java
+        if (Utils.shouldCodeSign(mavenProject, properties) && properties.containsKey(
+                Utils.PLUGIN_PROPERTIES.PROVISIONING_PROFILE_SPECIFIER.toString())) {
+            buildParameters.add("PROVISIONING_PROFILE_SPECIFIER=\"" + properties.get(
+                    Utils.PLUGIN_PROPERTIES.PROVISIONING_PROFILE_SPECIFIER.toString()) + "\"");
+        } else {
+            buildParameters.add("PROVISIONING_PROFILE_SPECIFIER=");
+||||||| /usr/src/app/output/brewinapps/ios-maven-plugin/ccc17f78b72bd7d10a1e55e134f3eb6205a97180/src/main/java/de/letsdev/maven/plugins/ios/ProjectBuilder.java/base.java
+        if (Utils.shouldCodeSign(mavenProject, properties) && properties.containsKey(Utils.PLUGIN_PROPERTIES.PROVISIONING_PROFILE_SPECIFIER.toString())) {
+            buildParameters.add("PROVISIONING_PROFILE_SPECIFIER=\"" + properties.get(Utils.PLUGIN_PROPERTIES.PROVISIONING_PROFILE_SPECIFIER.toString()) + "\"");
+        } else {
+            buildParameters.add("PROVISIONING_PROFILE_SPECIFIER=");
+=======
         if (Utils.shouldCodeSign(mavenProject, properties) && properties.containsKey(
                 Utils.PLUGIN_PROPERTIES.PROVISIONING_PROFILE_SPECIFIER.toString()) && !properties.get(
                 Utils.PLUGIN_PROPERTIES.PROVISIONING_PROFILE_SPECIFIER.toString()).equals("")) {
             buildParameters.add("PROVISIONING_PROFILE_SPECIFIER=\"" + properties.get(
                     Utils.PLUGIN_PROPERTIES.PROVISIONING_PROFILE_SPECIFIER.toString()) + "\"");
+>>>>>>> /usr/src/app/output/brewinapps/ios-maven-plugin/ccc17f78b72bd7d10a1e55e134f3eb6205a97180/src/main/java/de/letsdev/maven/plugins/ios/ProjectBuilder.java/right.java
         }
 
         if (Utils.shouldCodeSign(mavenProject, properties) && properties.containsKey(
@@ -711,9 +737,21 @@ public class ProjectBuilder {
             buildParameters.add("OTHER_CFLAGS='-fembed-bitcode'");
         }
 
+<<<<<<< /usr/src/app/output/brewinapps/ios-maven-plugin/ccc17f78b72bd7d10a1e55e134f3eb6205a97180/src/main/java/de/letsdev/maven/plugins/ios/ProjectBuilder.java/left.java
+        if (shouldUseIphoneSimulatorSDK) {
+            buildParameters.add("CONFIGURATION_BUILD_DIR=\"" + targetDirectory.getAbsolutePath() + "/" + properties.get(
+                    Utils.PLUGIN_PROPERTIES.CONFIGURATION.toString()) + "-" + Utils.SDK_IPHONE_SIMULATOR + "\"");
+        } else {
+            buildParameters.add("CONFIGURATION_BUILD_DIR=\"" + targetDirectory.getAbsolutePath() + "/" + properties.get(
+                    Utils.PLUGIN_PROPERTIES.CONFIGURATION.toString()) + "-" + Utils.SDK_IPHONE_OS + "\"");
+||||||| /usr/src/app/output/brewinapps/ios-maven-plugin/ccc17f78b72bd7d10a1e55e134f3eb6205a97180/src/main/java/de/letsdev/maven/plugins/ios/ProjectBuilder.java/base.java
+        if (shouldUseIphoneSimulatorSDK) {
+            buildParameters.add("CONFIGURATION_BUILD_DIR=\"" + targetDirectory.getAbsolutePath() + "/" + properties.get(Utils.PLUGIN_PROPERTIES.CONFIGURATION.toString()) + "-" + Utils.SDK_IPHONE_SIMULATOR + "\"");
+=======
         if (properties.containsKey(Utils.PLUGIN_PROPERTIES.DERIVED_DATA_PATH.toString())) {
             buildParameters.add(
                     "-derivedDataPath " + properties.get(Utils.PLUGIN_PROPERTIES.DERIVED_DATA_PATH.toString()));
+>>>>>>> /usr/src/app/output/brewinapps/ios-maven-plugin/ccc17f78b72bd7d10a1e55e134f3eb6205a97180/src/main/java/de/letsdev/maven/plugins/ios/ProjectBuilder.java/right.java
         }
 
         //add each dynamic parameter from pom
@@ -741,7 +779,7 @@ public class ProjectBuilder {
         final String iphoneosFrameworkProductPath =
                 targetWorkDirectoryIphone.toString() + "/" + frameworkName;
         final String iphoneSimulatorFrameworkProductPath =
-                targetWorkDirectoryIphoneSimulator.toString() + "/" + frameworkName;
+        targetWorkDirectoryIphoneSimulator.toString() + "/" + frameworkName;
         final String mergedFrameworkPath = targetWorkDirectoryIphone.toString() + "/" + frameworkName;
 
         File tempFile;
@@ -972,18 +1010,6 @@ public class ProjectBuilder {
         }
     }
 
-    private static void installCarthageDependencies(File projectDirectory) throws IOSException {
-
-        try {
-            ProcessBuilder processBuilder = new ProcessBuilder("carthage", "update");
-            processBuilder.directory(projectDirectory);
-            CommandHelper.performCommand(processBuilder);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new IOSException(e);
-        }
-    }
-
     private static File generateExportOptionsPlist(XcodeExportOptions xcodeExportOptions,
                                                    File workDirectory) throws IOSException {
         //create tmp file path
@@ -1022,5 +1048,17 @@ public class ProjectBuilder {
         }
 
         return plistFile;
+    }
+
+    private static void installCarthageDependencies(File projectDirectory) throws IOSException {
+
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder("carthage", "update");
+            processBuilder.directory(projectDirectory);
+            CommandHelper.performCommand(processBuilder);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IOSException(e);
+        }
     }
 }
