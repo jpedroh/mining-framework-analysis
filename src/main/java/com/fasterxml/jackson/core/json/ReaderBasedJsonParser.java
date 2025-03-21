@@ -1305,25 +1305,42 @@ public class ReaderBasedJsonParser
     /**********************************************************************
      */
 
-    protected final JsonToken _parseFloatThatStartsWithPeriod(final boolean neg,
-            final boolean prependSign)
-        throws JacksonException
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/ed19a3431f5f0d23f0d574f5a437576dd5d5f86e/src/main/java/com/fasterxml/jackson/core/json/ReaderBasedJsonParser.java/left.java
+    protected final JsonToken _parseFloatThatStartsWithPeriod() throws JacksonException
     {
-        // [core#611]: allow optionally leading decimal point
-        if (!isEnabled(JsonReadFeature.ALLOW_LEADING_DECIMAL_POINT_FOR_NUMBERS)) {
-            return _handleOddValue('.');
-        }
-        // 26-Jun-2022, tatu: At this point it is assumed that the whole input is
-        //    within input buffer so we can "rewind" not just one but two characters
-        //    (leading sign, period) within same buffer. Caller must ensure this is
-        //    the case.
-        //    Little bit suspicious of code paths that would go to "_parseNumber2(...)"
-        int startPtr = _inputPtr - 1;
-        if (prependSign) {
-            --startPtr;
-        }
-        return _parseFloat(INT_PERIOD, startPtr, _inputPtr, neg, 0);
+        return _parseFloatThatStartsWithPeriod(false);
     }
+||||||| /usr/src/app/output/fasterxml/jackson-core/ed19a3431f5f0d23f0d574f5a437576dd5d5f86e/src/main/java/com/fasterxml/jackson/core/json/ReaderBasedJsonParser.java/base.java
+    protected final JsonToken _parseFloatThatStartsWithPeriod() throws IOException
+    {
+        return _parseFloatThatStartsWithPeriod(false);
+    }
+=======
+    @Deprecated // since 2.14
+    protected final JsonToken _parseFloatThatStartsWithPeriod() throws IOException {
+        return _parseFloatThatStartsWithPeriod(false, false);
+    }
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/ed19a3431f5f0d23f0d574f5a437576dd5d5f86e/src/main/java/com/fasterxml/jackson/core/json/ReaderBasedJsonParser.java/right.java
+
+    protected final JsonToken _parseFloatThatStartsWithPeriod(final boolean neg,
+        final boolean prependSign)
+    throws JacksonException
+{
+    // [core#611]: allow optionally leading decimal point
+    if (!isEnabled(JsonReadFeature.ALLOW_LEADING_DECIMAL_POINT_FOR_NUMBERS)) {
+        return _handleOddValue('.');
+    }
+    // 26-Jun-2022, tatu: At this point it is assumed that the whole input is
+    //    within input buffer so we can "rewind" not just one but two characters
+    //    (leading sign, period) within same buffer. Caller must ensure this is
+    //    the case.
+    //    Little bit suspicious of code paths that would go to "_parseNumber2(...)"
+    int startPtr = _inputPtr - 1;
+    if (prependSign) {
+        --startPtr;
+    }
+    return _parseFloat(INT_PERIOD, startPtr, _inputPtr, neg, 0);
+}
 
     /**
      * Initial parsing method for number values. It needs to be able

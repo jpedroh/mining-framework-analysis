@@ -1742,21 +1742,38 @@ public class UTF8StreamJsonParser
     /**********************************************************************
      */
 
-    protected final JsonToken _parseFloatThatStartsWithPeriod(final boolean neg,
-            final boolean prependSign)
-        throws JacksonException
+<<<<<<< /usr/src/app/output/fasterxml/jackson-core/ed19a3431f5f0d23f0d574f5a437576dd5d5f86e/src/main/java/com/fasterxml/jackson/core/json/UTF8StreamJsonParser.java/left.java
+    protected final JsonToken _parseFloatThatStartsWithPeriod() throws JacksonException
     {
-        // [core#611]: allow optionally leading decimal point
-        if (!isEnabled(JsonReadFeature.ALLOW_LEADING_DECIMAL_POINT_FOR_NUMBERS)) {
-            return _handleUnexpectedValue(INT_PERIOD);
-        }
-        final char[] outBuf = _textBuffer.emptyAndGetCurrentSegment();
-        int outPtr = 0;
-        if (prependSign) {
-            outBuf[outPtr++] = neg ? '-' : '+';
-        }
-        return _parseFloat(outBuf, outPtr, INT_PERIOD, neg, 0);
+        return _parseFloatThatStartsWithPeriod(false);
     }
+||||||| /usr/src/app/output/fasterxml/jackson-core/ed19a3431f5f0d23f0d574f5a437576dd5d5f86e/src/main/java/com/fasterxml/jackson/core/json/UTF8StreamJsonParser.java/base.java
+    protected final JsonToken _parseFloatThatStartsWithPeriod() throws IOException
+    {
+        return _parseFloatThatStartsWithPeriod(false);
+    }
+=======
+    @Deprecated // since 2.14
+    protected final JsonToken _parseFloatThatStartsWithPeriod() throws IOException {
+        return _parseFloatThatStartsWithPeriod(false, false);
+    }
+>>>>>>> /usr/src/app/output/fasterxml/jackson-core/ed19a3431f5f0d23f0d574f5a437576dd5d5f86e/src/main/java/com/fasterxml/jackson/core/json/UTF8StreamJsonParser.java/right.java
+
+    protected final JsonToken _parseFloatThatStartsWithPeriod(final boolean neg,
+        final boolean prependSign)
+    throws JacksonException
+{
+    // [core#611]: allow optionally leading decimal point
+    if (!isEnabled(JsonReadFeature.ALLOW_LEADING_DECIMAL_POINT_FOR_NUMBERS)) {
+        return _handleUnexpectedValue(INT_PERIOD);
+    }
+    final char[] outBuf = _textBuffer.emptyAndGetCurrentSegment();
+    int outPtr = 0;
+    if (prependSign) {
+        outBuf[outPtr++] = neg ? '-' : '+';
+    }
+    return _parseFloat(outBuf, outPtr, INT_PERIOD, neg, 0);
+}
 
     /**
      * Initial parsing method for number values. It needs to be able
