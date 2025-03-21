@@ -18,6 +18,11 @@ import java.lang.annotation.Target;
  *  public String name;
  *}
  *</pre>
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/2eb50f161c5dbdd1fa1d94cd756f5a49ad945536/src/main/java/com/fasterxml/jackson/annotation/JsonAlias.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/2eb50f161c5dbdd1fa1d94cd756f5a49ad945536/src/main/java/com/fasterxml/jackson/annotation/JsonAlias.java/base.java
+ *
+ * @since 2.9
+=======
  * <p>
  * NOTE: Order of alias declaration has no effect. All properties are assigned
  * in the order they come from incoming JSON document. If same property is
@@ -34,6 +39,8 @@ import java.lang.annotation.Target;
  * { "fullName": "Faster Jackson", "name": "Jackson" }
  * </pre>
  * will have value "Jackson".
+ * @since 2.9
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/2eb50f161c5dbdd1fa1d94cd756f5a49ad945536/src/main/java/com/fasterxml/jackson/annotation/JsonAlias.java/right.java
  */
 @Target({ElementType.ANNOTATION_TYPE, // for combo-annotations
     ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER// for properties (field, setter, ctor param)
