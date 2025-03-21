@@ -118,15 +118,15 @@ public class Faker implements Resolver {
         return fakeValuesService.bothify(string);
     }
 
+    public App app() {
+        return app;
+    }
+
     /**
      * Generates a String that matches the given regular expression,
      */
     public String regexify(String regex) {
         return fakeValuesService.regexify(regex);
-    }
-
-    public App app() {
-        return app;
     }
 
     public Name name() {
