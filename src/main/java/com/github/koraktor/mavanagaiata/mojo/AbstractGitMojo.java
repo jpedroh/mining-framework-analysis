@@ -177,13 +177,68 @@ public abstract class AbstractGitMojo extends AbstractMojo {
      * @throws GitRepositoryException if retrieving information from the Git
      *         repository fails
      */
+<<<<<<< /usr/src/app/output/koraktor/mavanagaiata/3db986aced967917053dd5fad68a469976a6b27a/src/main/java/com/github/koraktor/mavanagaiata/mojo/AbstractGitMojo.java/left.java
+    protected boolean initRepository()
+            throws GitRepositoryException, IOException,
+                   MojoExecutionException {
+        FileRepositoryBuilder repositoryBuilder = new FileRepositoryBuilder();
+        repositoryBuilder.readEnvironment();
+
+        if (this.gitDir == null && this.baseDir == null) {
+            throw new MojoExecutionException("Neither baseDir nor gitDir is set.");
+        } else {
+            if (this.baseDir != null && !this.baseDir.exists()) {
+                if (skipNoGit) {
+                    return false;
+                }
+                throw new FileNotFoundException("The baseDir " + this.baseDir + " does not exist");
+            }
+            if (this.gitDir != null && !this.gitDir.exists()) {
+                if (skipNoGit) {
+                    return false;
+                }
+                throw new FileNotFoundException("The gitDir " + this.gitDir + " does not exist");
+            }
+        }
+
+        repositoryBuilder.setGitDir(this.gitDir);
+        repositoryBuilder.setWorkTree(this.baseDir);
+        this.repository = new JGitRepository(repositoryBuilder.build());
+        if (!repository.check()) {
+            if (skipNoGit) {
+                return false;
+            }
+            throw new GitRepositoryException(baseDir + " is not a Git repository");
+        }
+
+||||||| /usr/src/app/output/koraktor/mavanagaiata/3db986aced967917053dd5fad68a469976a6b27a/src/main/java/com/github/koraktor/mavanagaiata/mojo/AbstractGitMojo.java/base.java
+    protected void initRepository()
+            throws GitRepositoryException, IOException,
+                   MojoExecutionException {
+        FileRepositoryBuilder repositoryBuilder = new FileRepositoryBuilder();
+        repositoryBuilder.readEnvironment();
+
+        if (this.gitDir == null && this.baseDir == null) {
+            throw new MojoExecutionException("Neither baseDir nor gitDir is set.");
+        } else {
+            if (this.baseDir != null && !this.baseDir.exists()) {
+                throw new FileNotFoundException("The baseDir " + this.baseDir + " does not exist");
+            }
+            if (this.gitDir != null && !this.gitDir.exists()) {
+                throw new FileNotFoundException("The gitDir " + this.gitDir + " does not exist");
+            }
+        }
+
+        repositoryBuilder.setGitDir(this.gitDir);
+        repositoryBuilder.setWorkTree(this.baseDir);
+        this.repository = new JGitRepository(repositoryBuilder.build());
+        this.repository.check();
+=======
     protected void initRepository()
             throws GitRepositoryException {
         this.repository = new JGitRepository(this.baseDir, this.gitDir);
-        if (!this.repository.check()) {
-            return false;
-        }
-
+        this.repository.check();
+>>>>>>> /usr/src/app/output/koraktor/mavanagaiata/3db986aced967917053dd5fad68a469976a6b27a/src/main/java/com/github/koraktor/mavanagaiata/mojo/AbstractGitMojo.java/right.java
         this.repository.setHeadRef(this.head);
 
         return true;
