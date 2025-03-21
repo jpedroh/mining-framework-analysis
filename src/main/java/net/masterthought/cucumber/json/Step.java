@@ -2,9 +2,11 @@ package net.masterthought.cucumber.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.commons.lang.ArrayUtils;
 
 import net.masterthought.cucumber.json.deserializers.OutputsDeserializer;
+
+import org.apache.commons.lang.ArrayUtils;
+
 import net.masterthought.cucumber.json.support.Argument;
 import net.masterthought.cucumber.json.support.Resultsable;
 
@@ -51,9 +53,17 @@ public class Step implements Resultsable {
         return keyword.trim();
     }
 
+<<<<<<< /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/json/Step.java/left.java
+    public Output[] getOutputs() {
+        return outputs;
+||||||| /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/json/Step.java/base.java
+    public Output getOutput() {
+        return output;
+=======
     @Override
     public Output[] getOutputs() {
         return outputs;
+>>>>>>> /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/json/Step.java/right.java
     }
 
     @Override

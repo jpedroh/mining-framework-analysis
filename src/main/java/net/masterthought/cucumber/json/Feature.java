@@ -9,7 +9,6 @@ import net.masterthought.cucumber.json.support.StatusCounter;
 import net.masterthought.cucumber.util.Util;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ObjectUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 

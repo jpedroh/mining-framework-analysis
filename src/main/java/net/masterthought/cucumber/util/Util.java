@@ -73,6 +73,12 @@ public final class Util {
      * @return converted string
      */
     public static String toValidFileName(String fileName) {
+<<<<<<< /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/util/Util.java/left.java
+        return StringEscapeUtils.escapeJava(value).replaceAll("[^\\d\\w]", "-");
+||||||| /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/util/Util.java/base.java
+        return value.replaceAll("[^\\d\\w]", "-");
+=======
         return StringEscapeUtils.escapeJava(fileName).replaceAll("[^\\d\\w]", "-");
+>>>>>>> /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/util/Util.java/right.java
     }
 }

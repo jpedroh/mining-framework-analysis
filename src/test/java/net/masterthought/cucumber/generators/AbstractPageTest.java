@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 import java.util.Properties;
 
-import mockit.Deencapsulation;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.velocity.VelocityContext;
 import org.junit.Before;
@@ -13,6 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import mockit.Deencapsulation;
 import net.masterthought.cucumber.ReportBuilder;
 import net.masterthought.cucumber.Trends;
 import net.masterthought.cucumber.ValidationException;

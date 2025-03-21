@@ -28,8 +28,6 @@ public class Configuration {
     private List<Map.Entry<String, String>> classifications = new ArrayList<>();
 
     private Collection<Pattern> tagsToExcludeFromChart = new ArrayList<>();
-    private SortingMethod sortingMethod = SortingMethod.NATURAL;
-    private List<String> classificationFiles;
 
     public Configuration(File reportOutputDirectory, String projectName) {
         this.reportDirectory = reportOutputDirectory;
@@ -60,19 +58,12 @@ public class Configuration {
         return trendsFile;
     }
 
-    /**
-     * Checks if the file for the trends was set.
-     *
-     * @return <code>true</code> if the file location was provided, otherwise <code>false</code>
-     */
+    /** Checks if the file for the trends was set. */
+
     public boolean isTrendsStatsFile() {
         return trendsFile != null;
     }
 
-    /**
-     * Calls {@link #setTrends(File, int)} with zero limit.
-     * @param trendsFile file with trends
-     */
     public void setTrendsStatsFile(File trendsFile) {
         setTrends(trendsFile, 0);
     }
@@ -87,6 +78,7 @@ public class Configuration {
      * @param trendsFile  file where information about previous builds is stored
      * @param trendsLimit number of builds that should be presented (older builds are skipped)
      */
+
     public void setTrends(File trendsFile, int trendsLimit) {
         this.trendsFile = trendsFile;
         this.trendsLimit = trendsLimit;
@@ -96,12 +88,6 @@ public class Configuration {
         return buildNumber;
     }
 
-    /**
-     * Sets number of the build. If the {{@link #setRunWithJenkins(boolean)} executed on Jenkins}, this should be
-     * integer value so the number of previous build can be calculated properly.
-     *
-     * @param buildNumber number of the build
-     */
     public void setBuildNumber(String buildNumber) {
         this.buildNumber = buildNumber;
     }
@@ -118,6 +104,7 @@ public class Configuration {
     /**
      * @return Patterns to be used to filter out tags in the 'Tags Overview' chart. Returns an empty list by default.
      */
+
     public Collection<Pattern> getTagsToExcludeFromChart() {
         return tagsToExcludeFromChart;
     }
@@ -128,6 +115,7 @@ public class Configuration {
      * @param patterns Regex patterns to match against tags
      * @throws ValidationException when any of the given strings is not a valid regex pattern.
      */
+
     public void setTagsToExcludeFromChart(String... patterns) {
         for (String pattern : patterns) {
             try {
@@ -145,6 +133,7 @@ public class Configuration {
      * @param name  name of the property
      * @param value value of the property
      */
+
     public void addClassifications(String name, String value) {
         classifications.add(new AbstractMap.SimpleEntry<>(name, value));
     }
@@ -152,15 +141,39 @@ public class Configuration {
     /**
      * Returns the classification for the report.
      */
+
     public List<Map.Entry<String, String>> getClassifications() {
         return classifications;
     }
+
+    private SortingMethod sortingMethod = SortingMethod.NATURAL;
+
+    private List<String> classificationFiles;
+
+    /**
+     * Checks if the file for the trends was set.
+     *
+     * @return <code>true</code> if the file location was provided, otherwise <code>false</code>
+     */
+
+    /**
+     * Calls {@link #setTrends(File, int)} with zero limit.
+     * @param trendsFile file with trends
+     */
+
+    /**
+     * Sets number of the build. If the {{@link #setRunWithJenkins(boolean)} executed on Jenkins}, this should be
+     * integer value so the number of previous build can be calculated properly.
+     *
+     * @param buildNumber number of the build
+     */
 
     /**
      * Configure how items will be sorted in the report by default.
      *
      * @param sortingMethod how the items should be sorted
      */
+
     public void setSortingMethod(SortingMethod sortingMethod) {
         this.sortingMethod = sortingMethod;
     }
@@ -168,6 +181,7 @@ public class Configuration {
     /**
      * Returns the default sorting method.
      */
+
     public SortingMethod getSortingMethod() {
         return this.sortingMethod;
     }
@@ -177,6 +191,7 @@ public class Configuration {
      * processed these classifications get displayed on the main page of the report as metadata in the order in which
      * they appear within the file.
      */
+
     public void addClassificationFiles(List<String> classificationFiles) {
         this.classificationFiles = classificationFiles;
     }
@@ -184,6 +199,7 @@ public class Configuration {
     /**
      * Returns the list of properties files.
      */
+
     public List<String> getClassificationFiles() {
         return this.classificationFiles;
     }

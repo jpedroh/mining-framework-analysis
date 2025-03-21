@@ -224,7 +224,13 @@ public class ReportBuilderTest extends ReportGenerator {
         Deencapsulation.setField(builder, "reportResult", new ReportResult(features, configuration.getSortingMethod()));
 
         // when
+<<<<<<< /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/test/java/net/masterthought/cucumber/ReportBuilderTest.java/left.java
+        List<AbstractPage> pages = Deencapsulation.invoke(builder, "collectPages", new Trends());
+||||||| /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/test/java/net/masterthought/cucumber/ReportBuilderTest.java/base.java
+        List<AbstractPage> pages = Deencapsulation.invoke(builder, "collectPages");
+=======
         Deencapsulation.invoke(builder, "generatePages", new Trends());
+>>>>>>> /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/test/java/net/masterthought/cucumber/ReportBuilderTest.java/right.java
 
         // then
         assertThat(countHtmlFiles(configuration).length).isEqualTo(9);
@@ -241,10 +247,49 @@ public class ReportBuilderTest extends ReportGenerator {
         Deencapsulation.setField(builder, "reportResult", new ReportResult(features, configuration.getSortingMethod()));
 
         // when
+<<<<<<< /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/test/java/net/masterthought/cucumber/ReportBuilderTest.java/left.java
+        List<AbstractPage> pages = Deencapsulation.invoke(builder, "collectPages", new Trends());
+||||||| /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/test/java/net/masterthought/cucumber/ReportBuilderTest.java/base.java
+        List<AbstractPage> pages = Deencapsulation.invoke(builder, "collectPages");
+=======
         Deencapsulation.invoke(builder, "generatePages", new Trends());
+>>>>>>> /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/test/java/net/masterthought/cucumber/ReportBuilderTest.java/right.java
 
         // then
         assertThat(countHtmlFiles(configuration).length).isEqualTo(10);
+    }
+
+    @Test
+    public void generatePages_CallsGeneratePagesOverPassedPages() {
+
+        // given
+        Configuration configuration = new Configuration(null, null);
+        ReportBuilder builder = new ReportBuilder(jsonReports, configuration);
+
+        final MutableInt counter = new MutableInt();
+        AbstractPage page = new AbstractPage(null, null, configuration) {
+            @Override
+            public String getWebPage() {
+                return null;
+            }
+
+            @Override
+            protected void prepareReport() {
+                // only to satisfy abstract class contract
+            }
+
+            @Override
+            public void generatePage() {
+                counter.increment();
+            }
+        };
+        List<AbstractPage> pages = Arrays.asList(page, page, page);
+
+        // when
+        Deencapsulation.invoke(builder, "generatePages", pages);
+
+        // then
+        assertThat(counter.getValue()).isEqualTo(pages.size());
     }
 
     @Test
@@ -492,7 +537,7 @@ public class ReportBuilderTest extends ReportGenerator {
         // then
         assertPageExists(reportDirectory, ReportBuilder.HOME_PAGE);
     }
-    
+
     private File[] countHtmlFiles(Configuration configuration) {
     	FileFilter fileFilter = new WildcardFileFilter("*.html");
     	File dir = new File(configuration.getReportDirectory(), ReportBuilder.BASE_DIRECTORY);

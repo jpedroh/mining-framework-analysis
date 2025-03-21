@@ -32,25 +32,35 @@ import net.masterthought.cucumber.json.support.TagObject;
 
 public class ReportBuilder {
 
+<<<<<<< /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/ReportBuilder.java/left.java
+    private static final Logger LOG = LogManager.getLogger(ReportBuilder.class);
+||||||| /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/ReportBuilder.java/base.java
+    private static final Logger LOG = LogManager.getLogger(ReportBuilder.class);
+=======
     private static final Logger LOG = Logger.getLogger(ReportBuilder.class.getName());
+>>>>>>> /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/ReportBuilder.java/right.java
 
     /**
      * Page that should be displayed when the reports is generated. Shared between {@link FeaturesOverviewPage} and
      * {@link ErrorPage}.
      */
+
     public static final String HOME_PAGE = "overview-features.html";
 
     /**
      * Subdirectory where the report will be created.
      */
+
     public static final String BASE_DIRECTORY = "cucumber-html-reports";
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
     private ReportResult reportResult;
+
     private final ReportParser reportParser;
 
     private Configuration configuration;
+
     private List<String> jsonFiles;
 
     /**
@@ -58,6 +68,7 @@ public class ReportBuilder {
      * If the report crashes and the trends was not saved then it tries to save trends again with empty data
      * to mark that the build crashed.
      */
+
     private boolean wasTrendsFileSaved = false;
 
     public ReportBuilder(List<String> jsonFiles, Configuration configuration) {
@@ -66,11 +77,6 @@ public class ReportBuilder {
         reportParser = new ReportParser(configuration);
     }
 
-    /**
-     * Parses provided files and generates the report. When generating process fails
-     * report with information about error is provided.
-     * @return stats for the generated report
-     */
     public Reportable generateReports() {
         Trends trends = null;
 
@@ -81,25 +87,62 @@ public class ReportBuilder {
             // create directory for embeddings before files are generated
             createEmbeddingsDirectory();
 
+<<<<<<< /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/ReportBuilder.java/left.java
+            // parse json files for results
+||||||| /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/ReportBuilder.java/base.java
+=======
             // add metadata info sourced from files
             reportParser.parseClassificationsFiles(configuration.getClassificationFiles());
 
             // parse json files for results
+>>>>>>> /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/ReportBuilder.java/right.java
             List<Feature> features = reportParser.parseJsonFiles(jsonFiles);
+<<<<<<< /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/ReportBuilder.java/left.java
+            reportResult = new ReportResult(features);
+            Reportable reportable = reportResult.getFeatureReport();
+||||||| /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/ReportBuilder.java/base.java
+            reportResult = new ReportResult(features);
+=======
             reportResult = new ReportResult(features, configuration.getSortingMethod());
             Reportable reportable = reportResult.getFeatureReport();
+>>>>>>> /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/ReportBuilder.java/right.java
 
+<<<<<<< /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/ReportBuilder.java/left.java
             if (configuration.isTrendsStatsFile()) {
                 // prepare data required by generators, collect generators and generate pages
                 trends = updateAndSaveTrends(reportable);
             }
 
+            List<AbstractPage> pages = collectPages(trends);
+            generatePages(pages);
+||||||| /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/ReportBuilder.java/base.java
+            List<AbstractPage> pages = collectPages();
+            generatePages(pages);
+=======
+            if (configuration.isTrendsStatsFile()) {
+                // prepare data required by generators, collect generators and generate pages
+                trends = updateAndSaveTrends(reportable);
+            }
+>>>>>>> /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/ReportBuilder.java/right.java
+
+<<<<<<< /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/ReportBuilder.java/left.java
+            return reportable;
+||||||| /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/ReportBuilder.java/base.java
+            return reportResult.getFeatureReport();
+=======
             // Collect and generate pages in a single pass
             generatePages(trends);
+>>>>>>> /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/ReportBuilder.java/right.java
 
+<<<<<<< /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/ReportBuilder.java/left.java
+            // whatever happens we want to provide at least error page instead of incomplete report or exception
+||||||| /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/ReportBuilder.java/base.java
+            // whatever happens we want to provide at least error page instead of empty report
+=======
             return reportable;
 
             // whatever happens we want to provide at least error page instead of incomplete report or exception
+>>>>>>> /usr/src/app/output/masterthought/cucumber-reporting/75f67d3da0f458007b14998d6e8aa96ef4e40104/src/main/java/net/masterthought/cucumber/ReportBuilder.java/right.java
         } catch (Exception e) {
             generateErrorPage(e);
             // update trends so there is information in history that the build failed
@@ -147,27 +190,27 @@ public class ReportBuilder {
         }
     }
 
-	private void generatePages(Trends trends) {
-		new FeaturesOverviewPage(reportResult, configuration).generatePage();
-		
-		for (Feature feature : reportResult.getAllFeatures()) {
-			new FeatureReportPage(reportResult, configuration, feature).generatePage();
-		}
-		
-		new TagsOverviewPage(reportResult, configuration).generatePage();
-		
-		for (TagObject tagObject : reportResult.getAllTags()) {
-			new TagReportPage(reportResult, configuration, tagObject).generatePage();
-		}
+    private void generatePages(Trends trends) {
+    	new FeaturesOverviewPage(reportResult, configuration).generatePage();
+    	
+    	for (Feature feature : reportResult.getAllFeatures()) {
+    		new FeatureReportPage(reportResult, configuration, feature).generatePage();
+    	}
+    	
+    	new TagsOverviewPage(reportResult, configuration).generatePage();
+    	
+    	for (TagObject tagObject : reportResult.getAllTags()) {
+    		new TagReportPage(reportResult, configuration, tagObject).generatePage();
+    	}
 
-		new StepsOverviewPage(reportResult, configuration).generatePage();
-		new FailuresOverviewPage(reportResult, configuration).generatePage();
+    	new StepsOverviewPage(reportResult, configuration).generatePage();
+    	new FailuresOverviewPage(reportResult, configuration).generatePage();
 
-		if (configuration.isTrendsStatsFile()) {
-			new TrendsOverviewPage(reportResult, configuration, trends).generatePage();
-		}
-	}
-	
+    	if (configuration.isTrendsStatsFile()) {
+    		new TrendsOverviewPage(reportResult, configuration, trends).generatePage();
+    	}
+    }
+
     private Trends updateAndSaveTrends(Reportable reportable) {
         Trends trends = loadOrCreateTrends();
         appendToTrends(trends, reportable);
@@ -183,6 +226,10 @@ public class ReportBuilder {
         return trends;
     }
 
+    private void appendToTrends(Trends trends, Reportable result) {
+        trends.addBuild(configuration.getBuildNumber(), result);
+    }
+
     private Trends loadOrCreateTrends() {
         File trendsFile = configuration.getTrendsStatsFile();
         if (trendsFile != null && trendsFile.exists()) {
@@ -191,6 +238,18 @@ public class ReportBuilder {
             return new Trends();
         }
     }
+
+    /**
+     * Flag used to detect if the file with updated trends is saved.
+     * If the report crashes and the trends was not saved then it tries to save trends again with empty data
+     * to mark that the build crashed.
+     */
+
+    /**
+     * Parses provided files and generates the report. When generating process fails
+     * report with information about error is provided.
+     * @return stats for the generated report
+     */
 
     private static Trends loadTrends(File file) {
         try (Reader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
@@ -201,10 +260,6 @@ public class ReportBuilder {
             // IO problem - stop generating and re-throw the problem
             throw new ValidationException(e);
         }
-    }
-
-    private void appendToTrends(Trends trends, Reportable result) {
-        trends.addBuild(configuration.getBuildNumber(), result);
     }
 
     private void saveTrends(Trends trends, File file) {
