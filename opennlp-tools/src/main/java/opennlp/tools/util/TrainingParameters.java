@@ -1,22 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package opennlp.tools.util;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,20 +8,22 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
-
 import opennlp.tools.cmdline.CmdLineUtil;
 import opennlp.tools.ml.EventTrainer;
 
 public class TrainingParameters {
-
-  // TODO: are them duplicated?
   public static final String ALGORITHM_PARAM = "Algorithm";
+
   public static final String TRAINER_TYPE_PARAM = "TrainerType";
 
   public static final String ITERATIONS_PARAM = "Iterations";
+
   public static final String CUTOFF_PARAM = "Cutoff";
+
   public static final String THREADS_PARAM = "Threads";
+
   public static final int ITERATIONS_DEFAULT_VALUE = 100;
+
   public static final int CUTOFF_DEFAULT_VALUE = 5;
 
   private final Map<String, Object> parameters = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
@@ -51,15 +35,13 @@ public class TrainingParameters {
     this.parameters.putAll(trainingParameters.parameters);
   }
 
-  public TrainingParameters(Map<String,Object> map) {
+  public TrainingParameters(Map<String, Object> map) {
     parameters.putAll(map);
   }
 
   public TrainingParameters(InputStream in) throws IOException {
-
     Properties properties = new Properties();
     properties.load(in);
-
     for (Map.Entry<Object, Object> entry : properties.entrySet()) {
       parameters.put((String) entry.getKey(), entry.getValue());
     }
@@ -71,7 +53,7 @@ public class TrainingParameters {
    * @return the name or null if not set.
    */
   public String algorithm(String namespace) {
-    return (String)parameters.get(getKey(namespace, ALGORITHM_PARAM));
+    return (String) parameters.get(getKey(namespace, ALGORITHM_PARAM));
   }
 
   /**
@@ -80,21 +62,22 @@ public class TrainingParameters {
    * @return the name or null if not set.
    */
   public String algorithm() {
-    return (String)parameters.get(ALGORITHM_PARAM);
+    return (String) parameters.get(ALGORITHM_PARAM);
   }
 
   private static String getStringValue(Object value) {
     if (value instanceof Integer) {
-      return Integer.toString((Integer)value);
-    }
-    else if (value instanceof Double) {
-      return Double.toString((Double)value);
-    }
-    else if (value instanceof Boolean) {
-      return Boolean.toString((Boolean)value);
-    }
-    else {
-      return (String)value;
+      return Integer.toString((Integer) value);
+    } else {
+      if (value instanceof Double) {
+        return Double.toString((Double) value);
+      } else {
+        if (value instanceof Boolean) {
+          return Boolean.toString((Boolean) value);
+        } else {
+          return (String) value;
+        }
+      }
     }
   }
 
@@ -106,25 +89,20 @@ public class TrainingParameters {
    * @return a parameter map which can be passed to the train and validate methods.
    */
   public Map<String, Object> getObjectSettings(String namespace) {
-
     Map<String, Object> trainingParams = new HashMap<>();
     String prefix = namespace + ".";
-
     for (Map.Entry<String, Object> entry : parameters.entrySet()) {
       String key = entry.getKey();
-
       if (namespace != null) {
-        if (key.startsWith(prefix))  {
+        if (key.startsWith(prefix)) {
           trainingParams.put(key.substring(prefix.length()), entry.getValue());
         }
-      }
-      else {
+      } else {
         if (!key.contains(".")) {
           trainingParams.put(key, entry.getValue());
         }
       }
     }
-
     return Collections.unmodifiableMap(trainingParams);
   }
 
@@ -137,29 +115,27 @@ public class TrainingParameters {
     return getObjectSettings(null);
   }
 
-  // reduces the params to contain only the params in the name space
   public TrainingParameters getParameters(String namespace) {
-
     TrainingParameters params = new TrainingParameters();
     Map<String, Object> settings = getObjectSettings(namespace);
-
-    for (Entry<String, Object> entry: settings.entrySet()) {
+    for (Entry<String, Object> entry : settings.entrySet()) {
       String key = entry.getKey();
-      Object value = entry.getValue();;
+      Object value = entry.getValue();
+      ;
       if (value instanceof Integer) {
-        params.put(key, (Integer)value);
-      }
-      else if (value instanceof Double) {
-        params.put(key, (Double)value);
-      }
-      else if (value instanceof Boolean) {
-        params.put(key, (Boolean)value);
-      }
-      else {
-        params.put(key, (String)value);
+        params.put(key, (Integer) value);
+      } else {
+        if (value instanceof Double) {
+          params.put(key, (Double) value);
+        } else {
+          if (value instanceof Boolean) {
+            params.put(key, (Boolean) value);
+          } else {
+            params.put(key, (String) value);
+          }
+        }
       }
     }
-
     return params;
   }
 
@@ -229,11 +205,9 @@ public class TrainingParameters {
 
   public void serialize(OutputStream out) throws IOException {
     Properties properties = new Properties();
-
-    for (Map.Entry<String, Object> entry: parameters.entrySet()) {
+    for (Map.Entry<String, Object> entry : parameters.entrySet()) {
       properties.put(entry.getKey(), entry.getValue());
     }
-
     properties.store(out, null);
   }
 
@@ -262,9 +236,8 @@ public class TrainingParameters {
     Object value = parameters.get(getKey(namespace, key));
     if (value == null) {
       return defaultValue;
-    }
-    else {
-      return (String)value;
+    } else {
+      return (String) value;
     }
   }
 
@@ -289,15 +262,11 @@ public class TrainingParameters {
     Object value = parameters.get(getKey(namespace, key));
     if (value == null) {
       return defaultValue;
-    }
-    else {
-      // TODO: We have this try-catch for back-compat reason. After removing deprecated flag,
-      // we can remove try-catch block and just return (Integer)value;
+    } else {
       try {
         return (Integer) value;
-      }
-      catch (ClassCastException e) {
-        return Integer.parseInt((String)value);
+      } catch (ClassCastException e) {
+        return Integer.parseInt((String) value);
       }
     }
   }
@@ -323,15 +292,11 @@ public class TrainingParameters {
     Object value = parameters.get(getKey(namespace, key));
     if (value == null) {
       return defaultValue;
-    }
-    else {
-      // TODO: We have this try-catch for back-compat reason. After removing deprecated flag,
-      // we can remove try-catch block and just return (Double)value;
+    } else {
       try {
         return (Double) value;
-      }
-      catch (ClassCastException e) {
-        return Double.parseDouble((String)value);
+      } catch (ClassCastException e) {
+        return Double.parseDouble((String) value);
       }
     }
   }
@@ -357,50 +322,37 @@ public class TrainingParameters {
     Object value = parameters.get(getKey(namespace, key));
     if (value == null) {
       return defaultValue;
-    }
-    else {
-      // TODO: We have this try-catch for back-compat reason. After removing deprecated flag,
-      // we can remove try-catch block and just return (Boolean)value;
+    } else {
       try {
         return (Boolean) value;
-      }
-      catch (ClassCastException e) {
-        return Boolean.parseBoolean((String)value);
+      } catch (ClassCastException e) {
+        return Boolean.parseBoolean((String) value);
       }
     }
   }
-  
+
   public static TrainingParameters defaultParams() {
     TrainingParameters mlParams = new TrainingParameters();
     mlParams.put(TrainingParameters.ALGORITHM_PARAM, "MAXENT");
     mlParams.put(TrainingParameters.TRAINER_TYPE_PARAM, EventTrainer.EVENT_VALUE);
     mlParams.put(TrainingParameters.ITERATIONS_PARAM, ITERATIONS_DEFAULT_VALUE);
     mlParams.put(TrainingParameters.CUTOFF_PARAM, CUTOFF_DEFAULT_VALUE);
-
     return mlParams;
   }
 
   public static TrainingParameters setParams(String[] args) {
     TrainingParameters mlParams = new TrainingParameters();
-    mlParams.put(TrainingParameters.ALGORITHM_PARAM , "MAXENT");
-    mlParams.put(TrainingParameters.TRAINER_TYPE_PARAM , EventTrainer.EVENT_VALUE);
-    mlParams.put(TrainingParameters.ITERATIONS_PARAM ,
-        null != CmdLineUtil.getIntParameter("-" + TrainingParameters.ITERATIONS_PARAM.toLowerCase() , args) ?
-            CmdLineUtil.getIntParameter("-" + TrainingParameters.ITERATIONS_PARAM.toLowerCase() , args) :
-            ITERATIONS_DEFAULT_VALUE);
-    mlParams.put(TrainingParameters.CUTOFF_PARAM ,
-        null != CmdLineUtil.getIntParameter("-" + TrainingParameters.CUTOFF_PARAM.toLowerCase() , args) ?
-            CmdLineUtil.getIntParameter("-" + TrainingParameters.CUTOFF_PARAM.toLowerCase() , args) :
-            CUTOFF_DEFAULT_VALUE);
-
+    mlParams.put(TrainingParameters.ALGORITHM_PARAM, "MAXENT");
+    mlParams.put(TrainingParameters.TRAINER_TYPE_PARAM, EventTrainer.EVENT_VALUE);
+    mlParams.put(TrainingParameters.ITERATIONS_PARAM, null != CmdLineUtil.getIntParameter("-" + TrainingParameters.ITERATIONS_PARAM.toLowerCase(), args) ? CmdLineUtil.getIntParameter("-" + TrainingParameters.ITERATIONS_PARAM.toLowerCase(), args) : ITERATIONS_DEFAULT_VALUE);
+    mlParams.put(TrainingParameters.CUTOFF_PARAM, null != CmdLineUtil.getIntParameter("-" + TrainingParameters.CUTOFF_PARAM.toLowerCase(), args) ? CmdLineUtil.getIntParameter("-" + TrainingParameters.CUTOFF_PARAM.toLowerCase(), args) : CUTOFF_DEFAULT_VALUE);
     return mlParams;
   }
 
   static String getKey(String namespace, String key) {
     if (namespace == null) {
       return key;
-    }
-    else {
+    } else {
       return namespace + "." + key;
     }
   }
