@@ -93,4 +93,36 @@ public class ScriptGenerationTest {
 			return Collections.emptyList();
 		}
 	}
+<<<<<<< /usr/src/app/output/tackley/dbdeploy/50e6bb3003bf2e91512f9263a966f9e30fb17113/dbdeploy-core/src/test/java/com/dbdeploy/database/ScriptGenerationTest.java/left.java
+||||||| /usr/src/app/output/tackley/dbdeploy/50e6bb3003bf2e91512f9263a966f9e30fb17113/dbdeploy-core/src/test/java/com/dbdeploy/database/ScriptGenerationTest.java/base.java
+
+	private class StubChangeScript extends ChangeScript {
+		private final String changeContents;
+
+		public StubChangeScript(int changeNumber, String description, String changeContents) {
+			super(changeNumber, description);
+			this.changeContents = changeContents;
+		}
+
+		@Override
+		public String getContent() {
+			return changeContents;
+		}
+	}
+=======
+
+	private class StubChangeScript extends ChangeScript {
+		private final String changeContents;
+
+		public StubChangeScript(long changeNumber, String description, String changeContents) {
+			super(changeNumber, description);
+			this.changeContents = changeContents;
+		}
+
+		@Override
+		public String getContent() {
+			return changeContents;
+		}
+	}
+>>>>>>> /usr/src/app/output/tackley/dbdeploy/50e6bb3003bf2e91512f9263a966f9e30fb17113/dbdeploy-core/src/test/java/com/dbdeploy/database/ScriptGenerationTest.java/right.java
 }
