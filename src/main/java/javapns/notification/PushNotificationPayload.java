@@ -1,11 +1,9 @@
 package javapns.notification;
-
 import javapns.notification.exceptions.PayloadAlertAlreadyExistsException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.List;
 
 /**
@@ -15,13 +13,10 @@ import java.util.List;
  * @author Sylvain Pedneault
  */
 public class PushNotificationPayload extends Payload {
-
   static final Logger logger = LoggerFactory.getLogger(PushNotificationPayload.class);
 
-  /* Maximum total length (serialized) of a payload */
   private static final int MAXIMUM_PAYLOAD_LENGTH = 256;
 
-  /* The application Dictionary */
   private JSONObject apsDictionary;
 
   /**
@@ -56,7 +51,6 @@ public class PushNotificationPayload extends Payload {
         this.apsDictionary = new JSONObject();
         payload.put("aps", this.apsDictionary);
       }
-
     } catch (final JSONException e) {
       logger.error(e.getMessage(), e);
     }
@@ -95,7 +89,6 @@ public class PushNotificationPayload extends Payload {
     try {
       payload.addAlert(message);
     } catch (final JSONException e) {
-      // empty
     }
     return payload;
   }
@@ -111,7 +104,6 @@ public class PushNotificationPayload extends Payload {
     try {
       payload.addBadge(badge);
     } catch (final JSONException e) {
-      // empty
     }
     return payload;
   }
@@ -264,7 +256,7 @@ public class PushNotificationPayload extends Payload {
    * @return the property's value
    * @throws JSONException
    */
-  private <T> T getCompatibleProperty(final String propertyName, final Class<T> expectedClass, final String exceptionMessage) throws JSONException {
+  private <T extends java.lang.Object> T getCompatibleProperty(final String propertyName, final Class<T> expectedClass, final String exceptionMessage) throws JSONException {
     return getCompatibleProperty(propertyName, expectedClass, exceptionMessage, this.apsDictionary);
   }
 
@@ -284,13 +276,11 @@ public class PushNotificationPayload extends Payload {
    * @return the property's value
    * @throws JSONException
    */
-  @SuppressWarnings("unchecked")
-  private <T> T getCompatibleProperty(final String propertyName, final Class<T> expectedClass, String exceptionMessage, final JSONObject dictionary) throws JSONException {
+  @SuppressWarnings(value = { "unchecked" }) private <T extends java.lang.Object> T getCompatibleProperty(final String propertyName, final Class<T> expectedClass, String exceptionMessage, final JSONObject dictionary) throws JSONException {
     Object propertyValue = null;
     try {
       propertyValue = dictionary.get(propertyName);
     } catch (final Exception e) {
-      // empty
     }
     if (propertyValue == null) {
       return null;
@@ -301,10 +291,8 @@ public class PushNotificationPayload extends Payload {
     try {
       exceptionMessage = String.format(exceptionMessage, propertyValue);
     } catch (final Exception e) {
-      // empty
     }
     throw new PayloadAlertAlreadyExistsException(exceptionMessage);
-
   }
 
   /**
@@ -368,8 +356,7 @@ public class PushNotificationPayload extends Payload {
    *
    * @return the maximum payload size in bytes (256)
    */
-  @Override
-  public int getMaximumPayloadSize() {
+  @Override public int getMaximumPayloadSize() {
     return MAXIMUM_PAYLOAD_LENGTH;
   }
 
@@ -377,7 +364,6 @@ public class PushNotificationPayload extends Payload {
     if (getPreSendConfiguration() != 0) {
       return;
     }
-
     if (toString().equals("{\"aps\":{}}")) {
       throw new IllegalArgumentException("Payload cannot be empty");
     }
