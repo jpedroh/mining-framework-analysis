@@ -482,8 +482,20 @@ public class SlimefunItem implements Placeable {
             }
 
             // Lock the SlimefunItemStack from any accidental manipulations
+<<<<<<< /usr/src/app/output/mrcookieslime/slimefun-3.0/e80f137a790588e876a669336d8998ed30134693/src/main/java/io/github/thebusybiscuit/slimefun4/api/items/SlimefunItem.java/left.java
+            if (itemStackTemplate instanceof SlimefunItemStack slimefunItemStack && isItemStackImmutable()) {
+||||||| /usr/src/app/output/mrcookieslime/slimefun-3.0/e80f137a790588e876a669336d8998ed30134693/src/main/java/io/github/thebusybiscuit/slimefun4/api/items/SlimefunItem.java/base.java
+            if (itemStackTemplate instanceof SlimefunItemStack  && isItemStackImmutable()) {
+=======
             if (itemStackTemplate instanceof SlimefunItemStack stack && isItemStackImmutable()) {
+>>>>>>> /usr/src/app/output/mrcookieslime/slimefun-3.0/e80f137a790588e876a669336d8998ed30134693/src/main/java/io/github/thebusybiscuit/slimefun4/api/items/SlimefunItem.java/right.java
+<<<<<<< /usr/src/app/output/mrcookieslime/slimefun-3.0/e80f137a790588e876a669336d8998ed30134693/src/main/java/io/github/thebusybiscuit/slimefun4/api/items/SlimefunItem.java/left.java
+                slimefunItemStack.lock();
+||||||| /usr/src/app/output/mrcookieslime/slimefun-3.0/e80f137a790588e876a669336d8998ed30134693/src/main/java/io/github/thebusybiscuit/slimefun4/api/items/SlimefunItem.java/base.java
+                ((SlimefunItemStack) itemStackTemplate).lock();
+=======
                 stack.lock();
+>>>>>>> /usr/src/app/output/mrcookieslime/slimefun-3.0/e80f137a790588e876a669336d8998ed30134693/src/main/java/io/github/thebusybiscuit/slimefun4/api/items/SlimefunItem.java/right.java
             }
 
             postRegister();
