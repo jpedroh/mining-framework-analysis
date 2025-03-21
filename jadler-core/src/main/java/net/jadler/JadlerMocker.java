@@ -7,6 +7,8 @@ package net.jadler;
 import net.jadler.stubbing.Stubber;
 import net.jadler.stubbing.server.StubHttpServerManager;
 import java.nio.charset.Charset;
+import java.util.*;
+
 import net.jadler.stubbing.RequestStubbing;
 import net.jadler.stubbing.StubbingFactory;
 import net.jadler.stubbing.Stubbing;
@@ -15,14 +17,6 @@ import net.jadler.stubbing.HttpStub;
 import net.jadler.exception.JadlerException;
 import net.jadler.stubbing.server.StubHttpServer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -95,7 +89,7 @@ public class JadlerMocker implements StubHttpServerManager, Stubber, RequestMana
             this.requestqueue = new LinkedBlockingQueue<Request>();
         }
     }
-
+    
     
     /**
      * Creates new JadlerMocker instance bound to the given http stub server.
@@ -331,21 +325,23 @@ public class JadlerMocker implements StubHttpServerManager, Stubber, RequestMana
             final Matcher<Integer> nrRequestsPredicate) {
 
         validateEvaluateVerificationArgsAndState(requestPredicates, nrRequestsPredicate);
-
+        
         synchronized(this) {
-            final int cnt = this.numberOfRequestsMatching(requestPredicates);
+        final int cnt = this.numberOfRequestsMatching(requestPredicates);
 
-            if (!nrRequestsPredicate.matches(cnt)) {
-                this.logReceivedRequests(requestPredicates);
-                throw new VerificationException(this.mismatchDescription(cnt, requestPredicates, nrRequestsPredicate));
-            }
+        if (!nrRequestsPredicate.matches(cnt)) {
+            this.logReceivedRequests(requestPredicates);
+            throw new VerificationException(this.mismatchDescription(cnt, requestPredicates, nrRequestsPredicate));
         }
+    }
     }
 
     @Override
-    public void evaluateVerificationAsync(
+    public
+    @Override void evaluateVerificationAsync(
             final Collection<Matcher<? super Request>> requestPredicates,
             final Matcher<Integer> nrRequestsPredicate,
+<<<<<<< /usr/src/app/output/jadler-mocking/jadler/dd9a8d0b6ca858a54ddc1a52627e16d0b9dba600/jadler-core/src/main/java/net/jadler/JadlerMocker.java/left.java
             final Duration timeOut) {
 
         validateEvaluateVerificationArgsAndState(requestPredicates, nrRequestsPredicate);
@@ -380,6 +376,52 @@ public class JadlerMocker implements StubHttpServerManager, Stubber, RequestMana
         // If it reach here, then the time is up, and we should fail.
         failAsyncVerification(myQueue, requestPredicates, cnt, nrRequestsPredicate);
     }
+||||||| /usr/src/app/output/jadler-mocking/jadler/dd9a8d0b6ca858a54ddc1a52627e16d0b9dba600/jadler-core/src/main/java/net/jadler/JadlerMocker.java/base.java
+            final Duration timeOut) 
+=======
+            final Duration timeOut) {
+
+        validateEvaluateVerificationArgsAndState(requestPredicates, nrRequestsPredicate);
+        Validate.notNull(timeOut, "timeUnit cannot be null");
+
+
+        final long startTime = System.nanoTime();
+        final AsyncVerificator myQueue = new AsyncVerificator();
+        final Matcher<Request> allPredicates = allOf(requestPredicates);
+        int cnt = 0;
+
+        synchronized (this) {
+            cnt = this.numberOfRequestsMatching(requestPredicates);
+
+            if (nrRequestsPredicate.matches(cnt)) {
+                return;
+            }
+            this.asyncVerificators.add(myQueue);
+        }
+
+        Duration timeLeft = calculateTimeLeft(startTime, timeOut);
+
+        while (!timeLeft.isZero()) {
+            try {
+                final Request req =
+                        myQueue.requestqueue.poll(timeLeft.getValue(), timeLeft.getTimeUnit());
+                if (allPredicates.matches(req))
+                    cnt++;
+                if (nrRequestsPredicate.matches(cnt)) {
+                    removeFromAsyncVerificators(myQueue);
+                    return;
+                } else {
+                    timeLeft = calculateTimeLeft(startTime, timeOut);
+                }
+            } catch (InterruptedException e) {
+                timeLeft = calculateTimeLeft(startTime, timeOut);
+            }
+        }
+
+        // If it reach here, then the time is up, and we should fail.
+        failAsyncVerification(myQueue, requestPredicates, cnt, nrRequestsPredicate);
+    }
+>>>>>>> /usr/src/app/output/jadler-mocking/jadler/dd9a8d0b6ca858a54ddc1a52627e16d0b9dba600/jadler-core/src/main/java/net/jadler/JadlerMocker.java/right.java
 
     private void validateEvaluateVerificationArgsAndState(
             final Collection<Matcher<? super Request>> requestPredicates,
