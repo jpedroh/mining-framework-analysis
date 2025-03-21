@@ -78,9 +78,7 @@ public class DbcReader {
         private Set<LabelDescription> labels = new HashSet<LabelDescription>();
         private Set<SignalComment> signalComments = new HashSet<SignalComment>();
         private String version = "";
-
         private PrintWriter logWriter;
-
         private class LabelDescription {
 
             private long id;
@@ -120,8 +118,8 @@ public class DbcReader {
                 this.signalName = signalName;
             }
 
-        };
-
+        }
+;
         private class SignalComment {
 
             private long id;
@@ -161,8 +159,8 @@ public class DbcReader {
                 this.signalName = signalName;
             }
 
-        };
-
+        }
+;
         private static Signal findSignal(List<Message> messages, long id, boolean e, String name) {
             for(Message message : messages) {
                 boolean extended = (message.getFormat().equals("extended"));
@@ -189,7 +187,6 @@ public class DbcReader {
             }
             return null;
         }
-
 	public boolean parseFile(File file, OutputStream logStream) {
             logWriter = new PrintWriter(logStream);
             factory = new ObjectFactory();
@@ -276,7 +273,6 @@ public class DbcReader {
 
             return true;
         }
-
 	/**
 	 * Produces a file in KCD format.
 	 *
@@ -319,11 +315,9 @@ public class DbcReader {
 
             return true;
         }
-
 	public boolean isReadable() {
 		return this.isReadable;
 	}
-
 	/**
 	 * Returns the available network nodes as set.
 	 *
@@ -332,7 +326,6 @@ public class DbcReader {
 	public List<String> getNodes() {
 		return Collections.unmodifiableList((List<String>) nodes);
 	}
-
 	/**
 	 * Returns true, if a line from the input file starts with a keyword from
 	 * the list of
@@ -354,7 +347,6 @@ public class DbcReader {
 		}
 		return retval;
 	}
-
 	/**
 	 * Several lines of a DBC-File, which begins with a keyword
 	 * will be sorted here for further processing.
@@ -391,20 +383,24 @@ public class DbcReader {
 		}
 
 	}
-
+<<<<<<< /usr/src/app/output/julietkilo/canbabel/41057a06b792ee5007209eff19affa91a6c3dce6/src/main/java/com/github/canbabel/canio/dbc/DbcReader.java/left.java
 	private void parseVersion(StringBuffer line) {
             String[] splitted =  splitString(line.toString());
             version = splitted[1];
 	}
+||||||| /usr/src/app/output/julietkilo/canbabel/41057a06b792ee5007209eff19affa91a6c3dce6/src/main/java/com/github/canbabel/canio/dbc/DbcReader.java/base.java
+=======
+	private static void parseVersion(StringBuffer line) {
+		//System.out.println("Version: " + line.toString());
 
+	}
+>>>>>>> /usr/src/app/output/julietkilo/canbabel/41057a06b792ee5007209eff19affa91a6c3dce6/src/main/java/com/github/canbabel/canio/dbc/DbcReader.java/right.java
 	private static void parseBitTimingSection(StringBuffer line) {
 		//System.out.println("Bit timing section: " + line.toString());
 	}
-
 	private static void parseNewSymbols(StringBuffer line) {
 		//System.out.println("New symbol entries: " + line.toString());
 	}
-
 	/**
 	 * Handling method for network node starting by a line that begins with BU_.
 	 *
@@ -426,7 +422,6 @@ public class DbcReader {
 
 		// System.out.println("Network Node: " + line.toString());
 	}
-
 	/**
 	 * Handling method for message transmitter starting by a line that begins with BO_TX_BU_.
 	 *
@@ -437,7 +432,6 @@ public class DbcReader {
 		//System.out.println("Message transmitter: " + line.toString());
 
 	}
-
 	/**
 	 * Handling method for message transmitter starting by a line that begins with CM_.
 	 *
@@ -446,7 +440,6 @@ public class DbcReader {
 	private static void parseComment(StringBuffer line) {
 		// System.out.println("Comment: " + line.toString());
 	}
-
 	/**
 	 * Handling method for attributes starting by a line that begins with BA_.
 	 *
@@ -456,7 +449,6 @@ public class DbcReader {
 		// System.out.println("Attribute: " + line.toString());
 
 	}
-
 	/**
 	 * Handling method for message definition starting by a line that begins with BO_ {decimal}.
 	 *
@@ -497,48 +489,51 @@ public class DbcReader {
 			message.setProducer(producer);
 		}
 		for (int i = 1; i < lineArray.length; i++) {
-
+<<<<<<< /usr/src/app/output/julietkilo/canbabel/41057a06b792ee5007209eff19affa91a6c3dce6/src/main/java/com/github/canbabel/canio/dbc/DbcReader.java/left.java
+		
 			//System.out.println("Signal: " + lineArray[i]);
+||||||| /usr/src/app/output/julietkilo/canbabel/41057a06b792ee5007209eff19affa91a6c3dce6/src/main/java/com/github/canbabel/canio/dbc/DbcReader.java/base.java
+		
+			System.out.println("Signal: " + lineArray[i]);
+=======
+>>>>>>> /usr/src/app/output/julietkilo/canbabel/41057a06b792ee5007209eff19affa91a6c3dce6/src/main/java/com/github/canbabel/canio/dbc/DbcReader.java/right.java
 			parseSignal(message, lineArray[i]);
 		}
 
                 /* Check if we have to add a multiplex definition to the last
-                 * message.
-                 */
+	 * message.
+	 */
                 if(muxed != null && muxed.size() > 0) {
-                    if(message.getMultiplex().size() == 1) {
-                        Multiplex mul = message.getMultiplex().get(0);
-                        List<MuxGroup> muxgroups = mul.getMuxGroup();
+	    if(message.getMultiplex().size() == 1) {
+	        Multiplex mul = message.getMultiplex().get(0);
+	        List<MuxGroup> muxgroups = mul.getMuxGroup();
 
-                        for(Long i : muxed.keySet()) {
-                            MuxGroup group = new MuxGroup();
-                            group.setCount(i);
-                            group.getSignal().addAll(muxed.get(i));
-                            muxgroups.add(group);
-                        }
-                    }
+	        for(Long i : muxed.keySet()) {
+	            MuxGroup group = new MuxGroup();
+	            group.setCount(i);
+	            group.getSignal().addAll(muxed.get(i));
+	            muxgroups.add(group);
+	        }
+	    }
 
-                } else {
-                    /* Make sure there is no empty multiplex in the message */
-                    message.getMultiplex().clear();
-                }
+	} else {
+	    /* Make sure there is no empty multiplex in the message */
+	    message.getMultiplex().clear();
+	}
 
 		bus.getMessage().add(message);
 	}
-
 	private int getCanIdFromString(String canIdStr){
 
 		long canIdLong = Long.valueOf(canIdStr).longValue();
 		int canId = (int) canIdLong & 0x1FFFFFFF;
 		return canId;
 	}
-
 	private boolean isExtendedFrameFormat(String canIdStr){
 
 		long canIdLong = Long.valueOf(canIdStr).longValue();
 		return ((canIdLong >>> 31 & 1) == 1) ? true : false;
 	}
-
 	/**
 	 * Parses a dbc file signal line without the SG_ header. Parses also signal
 	 * lines with multiplexed signals (e.g. m2) and multiplexors (M).
@@ -561,90 +556,104 @@ public class DbcReader {
 			if (signalName.endsWith("M")) {
 				/* signal type is multiplexor */
 				/* FIN_MUX M : 0|2@1+ (1,0) [0|255] "" Motor */
+<<<<<<< /usr/src/app/output/julietkilo/canbabel/41057a06b792ee5007209eff19affa91a6c3dce6/src/main/java/com/github/canbabel/canio/dbc/DbcReader.java/left.java
 				//System.out.println("###Multiplexor: " + lineArray[0]);
 				Multiplex mux = (Multiplex) factory.createMultiplex();
+||||||| /usr/src/app/output/julietkilo/canbabel/41057a06b792ee5007209eff19affa91a6c3dce6/src/main/java/com/github/canbabel/canio/dbc/DbcReader.java/base.java
+				System.out.println("###Multiplexor: " + lineArray[0]);
+				mux = (Multiplex) factory.createMultiplex();
+=======
+				mux = (Multiplex) factory.createMultiplex();
+>>>>>>> /usr/src/app/output/julietkilo/canbabel/41057a06b792ee5007209eff19affa91a6c3dce6/src/main/java/com/github/canbabel/canio/dbc/DbcReader.java/right.java
 				mux.setName(signalName.replace(" M", "").trim());
 
-                                signal = (Signal) factory.createSignal();
+			                                signal = (Signal) factory.createSignal();
 
-                                String[] splitted = splitString(lineArray[1]);
+			                                String[] splitted = splitString(lineArray[1]);
 
-                                if (splitted != null) {
-                                        mux.setOffset(Integer.parseInt(splitted[0]));
+			                                if (splitted != null) {
+			                                        mux.setOffset(Integer.parseInt(splitted[0]));
 
-                                        // Omit length == "1" (default)
-                                        if (!splitted[1].equals("1"))
-                                                mux.setLength(Integer.parseInt(splitted[1]));
+			                                        // Omit length == "1" (default)
+			                                        if (!splitted[1].equals("1"))
+			                                                mux.setLength(Integer.parseInt(splitted[1]));
 
-                                        // find big endian signals, little is default
-                                        if (splitted[2].equals("0"))
-                                                mux.setEndianess("big");
+			                                        // find big endian signals, little is default
+			                                        if (splitted[2].equals("0"))
+			                                                mux.setEndianess("big");
 
-                                        /*
-                                         * TODO: Signed / unsigned is currenty ignored for
-                                         * multiplex values.
-                                         */
-                                }
+			                                        /*
+			                                         * TODO: Signed / unsigned is currenty ignored for
+			                                         * multiplex values.
+			                                         */
+			                                }
 
 				message.getMultiplex().add(mux);
 			} else {
 				/* signal type is multiplex */
 				/* Signal: FIN17 m2 : 43|8@1+ (1,0) [0|255] "" YBOX,CO2,Clima */
-
+<<<<<<< /usr/src/app/output/julietkilo/canbabel/41057a06b792ee5007209eff19affa91a6c3dce6/src/main/java/com/github/canbabel/canio/dbc/DbcReader.java/left.java
+			
 				//System.out.println("###Multiplex: "
 				//		+ signalName);
+||||||| /usr/src/app/output/julietkilo/canbabel/41057a06b792ee5007209eff19affa91a6c3dce6/src/main/java/com/github/canbabel/canio/dbc/DbcReader.java/base.java
+			
+				System.out.println("###Multiplex: "
+						+ signalName);
+=======
+>>>>>>> /usr/src/app/output/julietkilo/canbabel/41057a06b792ee5007209eff19affa91a6c3dce6/src/main/java/com/github/canbabel/canio/dbc/DbcReader.java/right.java
 
-                                signal = (Signal) factory.createSignal();
+			                                signal = (Signal) factory.createSignal();
 
-                                signal.setName(lineArray[0].split(" ")[0]);
+			                                signal.setName(lineArray[0].split(" ")[0]);
 
-                                /* Parse multiplex count */
-                                String countstring = lineArray[0].trim();
-                                for(int i=countstring.length()-1;i>0;i--) {
-                                    if(countstring.charAt(i) == 'm') {
-                                        countstring = countstring.substring(i+1);
-                                        break;
-                                    }
-                                }
-                                long muxcount = Long.parseLong(countstring);
+			                                /* Parse multiplex count */
+			                                String countstring = lineArray[0].trim();
+			                                for(int i=countstring.length()-1;i>0;i--) {
+			                                    if(countstring.charAt(i) == 'm') {
+			                                        countstring = countstring.substring(i+1);
+			                                        break;
+			                                    }
+			                                }
+			                                long muxcount = Long.parseLong(countstring);
 
-                                String[] splitted = splitString(lineArray[1]);
+			                                String[] splitted = splitString(lineArray[1]);
 
-                                if (splitted != null) {
-                                        signal.setOffset(Integer.parseInt(splitted[0]));
+			                                if (splitted != null) {
+			                                        signal.setOffset(Integer.parseInt(splitted[0]));
 
-                                        // Omit length == "1" (default)
-                                        if (!splitted[1].equals("1"))
-                                                signal.setLength(Integer.parseInt(splitted[1]));
+			                                        // Omit length == "1" (default)
+			                                        if (!splitted[1].equals("1"))
+			                                                signal.setLength(Integer.parseInt(splitted[1]));
 
-                                        // find big endian signals, little is default
-                                        if (splitted[2].equals("0"))
-                                                signal.setEndianess("big");
+			                                        // find big endian signals, little is default
+			                                        if (splitted[2].equals("0"))
+			                                                signal.setEndianess("big");
 
-                                        Value value = (Value) factory.createValue();
+			                                        Value value = (Value) factory.createValue();
 
-                                        if("-".equals(splitted[3])) {
-                                            value.setType("signed");
-                                        } else {
-                                            value.setType("unsigned");
-                                        }
+			                                        if("-".equals(splitted[3])) {
+			                                            value.setType("signed");
+			                                        } else {
+			                                            value.setType("unsigned");
+			                                        }
 
-                                        value.setSlope(Double.valueOf(splitted[4]));
-                                        value.setIntercept(Double.valueOf(splitted[5]));
+			                                        value.setSlope(Double.valueOf(splitted[4]));
+			                                        value.setIntercept(Double.valueOf(splitted[5]));
 
-                                        if(!"".equals(splitted[8])) {
-                                            value.setUnit(splitted[8]);
-                                        }
-                                }
+			                                        if(!"".equals(splitted[8])) {
+			                                            value.setUnit(splitted[8]);
+			                                        }
+			                                }
 
-                                /* Do we have a signal list for muxcount? */
-                                Set<Signal> signalSet = muxed.get(muxcount);
-                                if(signalSet == null) {
-                                    signalSet = new HashSet<Signal>();
-                                    muxed.put(muxcount, signalSet);
-                                }
+			                                /* Do we have a signal list for muxcount? */
+			                                Set<Signal> signalSet = muxed.get(muxcount);
+			                                if(signalSet == null) {
+			                                    signalSet = new HashSet<Signal>();
+			                                    muxed.put(muxcount, signalSet);
+			                                }
 
-                                signalSet.add(signal);
+			                                signalSet.add(signal);
 			}
 
 		} else {
@@ -653,8 +662,6 @@ public class DbcReader {
 		}
 		/* printMuxed(); */
 	}
-
-
 	/**
 	 * Parses a plain signal that is not a multiplexor or muxed signal.
 	 *
@@ -720,7 +727,6 @@ public class DbcReader {
 		message.getSignal().add(signal);
 
 	}
-
 	/**
 	 * Check for character classes. Returns true if the checked character is a
 	 * devider.
@@ -733,7 +739,6 @@ public class DbcReader {
 		return (c == '[' || c == ']' || c == '(' || c == ')' || c == '|'
 				|| c == ',' || c == '@' || c == ' ');
 	}
-
 	/**
 	 * Check for character classes. Returns true if the checked character is a
 	 * symbol.
@@ -745,7 +750,6 @@ public class DbcReader {
 	private static boolean isSymbol(char c) {
 		return (c == '+' || c == '-');
 	}
-
 	/**
 	 * Check for character classes. Returns true if the checked character is a
 	 * quotation.
@@ -757,7 +761,6 @@ public class DbcReader {
 	private static boolean isQuote(char c) {
 		return (c == '"');
 	}
-
 	/**
 	 * Method to split a signal string in fields. A typical string looks like
 	 *
@@ -820,11 +823,10 @@ public class DbcReader {
             }
             return elements.toArray(new String[elements.size()]);
         }
-
 	private void setReadable(boolean isReadable) {
 		this.isReadable = isReadable;
 	}
-
+<<<<<<< /usr/src/app/output/julietkilo/canbabel/41057a06b792ee5007209eff19affa91a6c3dce6/src/main/java/com/github/canbabel/canio/dbc/DbcReader.java/left.java
     private void parseValueDescription(StringBuffer line) {
         /* line e.g. "VAL_ 1234 signalname 1 "on" 2 "off" ;" */
 
@@ -855,7 +857,13 @@ public class DbcReader {
 
         labels.add(description);
     }
+||||||| /usr/src/app/output/julietkilo/canbabel/41057a06b792ee5007209eff19affa91a6c3dce6/src/main/java/com/github/canbabel/canio/dbc/DbcReader.java/base.java
+=======
+    private static void parseValueDescription(StringBuffer line) {
+		//System.out.println("Value Description: " + line.toString());
 
+	}
+>>>>>>> /usr/src/app/output/julietkilo/canbabel/41057a06b792ee5007209eff19affa91a6c3dce6/src/main/java/com/github/canbabel/canio/dbc/DbcReader.java/right.java
     private void parseSignalComment(StringBuffer line) {
         /* line e.g. "CM_ SG_ 1234 signalname 1 "comment";" */
 
