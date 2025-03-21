@@ -18,11 +18,19 @@ package com.ning.billing.recurly.model;
 
 import javax.xml.bind.annotation.XmlElement;
 
+<<<<<<< /usr/src/app/output/killbilling/recurly-java-library/500781acecc44ce57590effaab9a7369c2358035/src/main/java/com/ning/billing/recurly/model/SubscriptionUpdate.java/left.java
+||||||| /usr/src/app/output/killbilling/recurly-java-library/500781acecc44ce57590effaab9a7369c2358035/src/main/java/com/ning/billing/recurly/model/SubscriptionUpdate.java/base.java
+/**
+ * Created by User: bathily
+ * Date: 31/12/12
+ */
+=======
 /**
  * Subscription object for update calls.
  * <p/>
  * The timeframe parameter is specific to the update.
  */
+>>>>>>> /usr/src/app/output/killbilling/recurly-java-library/500781acecc44ce57590effaab9a7369c2358035/src/main/java/com/ning/billing/recurly/model/SubscriptionUpdate.java/right.java
 public class SubscriptionUpdate extends AbstractSubscription {
 
     public static enum Timeframe {
