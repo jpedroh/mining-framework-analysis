@@ -99,6 +99,11 @@ public @interface JsonProperty
      * State of this property is exposed via introspection, and its
      * value is typically used by Schema generators, such as one for
      * JSON Schema.
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/ea746ea4efb59e14f6af514696b63ffc2ddface2/src/main/java/com/fasterxml/jackson/annotation/JsonProperty.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/ea746ea4efb59e14f6af514696b63ffc2ddface2/src/main/java/com/fasterxml/jackson/annotation/JsonProperty.java/base.java
+     *
+     * @since 2.0
+=======
      *<p>
      * Also note that the required value must come <b>directly</b> from the
      * input source (e.g., JSON) and not from secondary sources, such as
@@ -107,6 +112,9 @@ public @interface JsonProperty
      * this property should be set to {@code false}. This is important because
      * validation of {@code required} properties occurs before the application of
      * secondary sources.
+     *
+     * @since 2.0
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/ea746ea4efb59e14f6af514696b63ffc2ddface2/src/main/java/com/fasterxml/jackson/annotation/JsonProperty.java/right.java
      */
     boolean required() default false;
 
