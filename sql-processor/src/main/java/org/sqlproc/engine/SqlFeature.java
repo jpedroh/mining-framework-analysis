@@ -357,6 +357,14 @@ public interface SqlFeature {
      * the filter value <code>INFORMIX</code> is used for the {@link SqlEngineLoader} instance creation.
      */
     public static final String INFORMIX_DEFAULT_IDSEL = "SELECT FIRST 1 dbinfo('bigserial') FROM systables";
+<<<<<<< /usr/src/app/output/hudec/sql-processor/8968e32ea09be0994799e017dbaf14422ff7afe2/sql-processor/src/main/java/org/sqlproc/engine/SqlFeature.java/left.java
+    /**
+     * <code>DB2_DEFAULT_IDSEL</code> is the default value related to the key <code>SET_IDSEL</code> in the case the
+     * filter value <code>DB2</code> is used for the {@link SqlEngineLoader} instance creation.
+     */
+    public static final String DB2_DEFAULT_IDSEL = "SELECT identity_val_local() FROM SYSIBM.DUAL";
+||||||| /usr/src/app/output/hudec/sql-processor/8968e32ea09be0994799e017dbaf14422ff7afe2/sql-processor/src/main/java/org/sqlproc/engine/SqlFeature.java/base.java
+=======
     /**
      * <code>MSSQL_DEFAULT_IDSEL</code> is the default value related to the key <code>SET_IDSEL</code> in the case the
      * filter value <code>MSSQL</code> is used for the {@link SqlEngineLoader} instance creation.
@@ -364,14 +372,9 @@ public interface SqlFeature {
      * The default value is {@link #IDSEL_JDBC}.
      */
     public static final String MSSQL_DEFAULT_IDSEL = IDSEL_JDBC;
+>>>>>>> /usr/src/app/output/hudec/sql-processor/8968e32ea09be0994799e017dbaf14422ff7afe2/sql-processor/src/main/java/org/sqlproc/engine/SqlFeature.java/right.java
     /**
-    /**
-     * <code>DB2_DEFAULT_IDSEL</code> is the default value related to the key <code>SET_IDSEL</code> in the case the
-     * filter value <code>DB2</code> is used for the {@link SqlEngineLoader} instance creation.
-     */
-    public static final String DB2_DEFAULT_IDSEL = "SELECT identity_val_local() FROM SYSIBM.DUAL";
-    /*
-     * <code>DEFAULT_VERSION_COLUMN</code> is the default name of the column devoted to the optimistic locking.
-     */
+ * <code>DEFAULT_VERSION_COLUMN</code> is the default name of the column devoted to the optimistic locking.
+ */
     public static final String DEFAULT_VERSION_COLUMN = "version";
 }

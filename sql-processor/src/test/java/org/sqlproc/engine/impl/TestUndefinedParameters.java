@@ -20,10 +20,14 @@ public class TestUndefinedParameters extends TestDatabase {
             return "dbunit/TypesTest_postgresql.xml";
         else if (dbType.equalsIgnoreCase("informix"))
             return "dbunit/TypesTest_informix.xml";
-        else if (dbType.equalsIgnoreCase("mssql"))
-            return "dbunit/TypesTest_mssql.xml";
+<<<<<<< /usr/src/app/output/hudec/sql-processor/8968e32ea09be0994799e017dbaf14422ff7afe2/sql-processor/src/test/java/org/sqlproc/engine/impl/TestUndefinedParameters.java/left.java
         else if (dbType.equalsIgnoreCase("db2"))
             return "dbunit/TypesTest_db2.xml";
+||||||| /usr/src/app/output/hudec/sql-processor/8968e32ea09be0994799e017dbaf14422ff7afe2/sql-processor/src/test/java/org/sqlproc/engine/impl/TestUndefinedParameters.java/base.java
+=======
+        else if (dbType.equalsIgnoreCase("mssql"))
+            return "dbunit/TypesTest_mssql.xml";
+>>>>>>> /usr/src/app/output/hudec/sql-processor/8968e32ea09be0994799e017dbaf14422ff7afe2/sql-processor/src/test/java/org/sqlproc/engine/impl/TestUndefinedParameters.java/right.java
         else
             return "dbunit/TypesTest.xml";
     }
