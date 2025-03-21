@@ -505,8 +505,80 @@ public class Plugin {
         }
 
         json.put("wiki", "https://plugins.jenkins.io/" + artifactId);
+<<<<<<< /usr/src/app/output/jenkinsci/backend-update-center2/54a67ed32bfbe9621d903b6590f3187a3007ae2d/src/main/java/org/jvnet/hudson/update_center/Plugin.java/left.java
         json.put("popularity", Popularities.getInstance().getPopularity(artifactId));
+
+        GitHubSource gh = GitHubSource.getInstance();
+        ArrayList<String> labels = new ArrayList<String>();
+        labels.addAll(Arrays.asList(getLabels()));
+
+        if (scm != null && scm.contains("https://github.com/")) {
+            String[] parts = scm.replaceFirst("https://github.com/", "").split("/");
+            if (parts.length >= 2) {
+                labels.addAll(
+                    Arrays.asList(
+                        gh.getTopics(parts[0], parts[1]).toArray(new String[0])
+                    )
+                );
+            }
+        }
+
+        if (!labels.isEmpty()) {
+            HashSet<String> allowedLabels = new HashSet<String>();
+
+            for (String label : labels) {
+                if (label.startsWith("jenkins-")) {
+                    label = label.replaceFirst("jenkins-", "");
+                }
+
+                if (ALLOWED_LABELS.containsKey(label)) {
+                    allowedLabels.add(label);
+                } else {
+                    System.err.println(artifactId + " has a label of " + label + " which is not in ALLOWED_LABELS, so dropping");
+                }
+            }
+
+            labels = new ArrayList<String>(allowedLabels);
+        }
+        json.put("labels", labels);
+||||||| /usr/src/app/output/jenkinsci/backend-update-center2/54a67ed32bfbe9621d903b6590f3187a3007ae2d/src/main/java/org/jvnet/hudson/update_center/Plugin.java/base.java
+    
+        GitHubSource gh = GitHubSource.getInstance();
+        ArrayList<String> labels = new ArrayList<String>();
+        labels.addAll(Arrays.asList(getLabels()));
+
+        if (scm != null && scm.contains("https://github.com/")) {
+            String[] parts = scm.replaceFirst("https://github.com/", "").split("/");
+            if (parts.length >= 2) {
+                labels.addAll(
+                    Arrays.asList(
+                        gh.getTopics(parts[0], parts[1]).toArray(new String[0])
+                    )
+                );
+            }
+        }
+
+        if (!labels.isEmpty()) {
+            HashSet<String> allowedLabels = new HashSet<String>();
+
+            for (String label : labels) {
+                if (label.startsWith("jenkins-")) {
+                    label = label.replaceFirst("jenkins-", "");
+                }
+
+                if (ALLOWED_LABELS.containsKey(label)) {
+                    allowedLabels.add(label);
+                } else {
+                    System.err.println(artifactId + " has a label of " + label + " which is not in ALLOWED_LABELS, so dropping");
+                }
+            }
+
+            labels = new ArrayList<String>(allowedLabels);
+        }
+        json.put("labels", labels);
+=======
         json.put("labels", getLabels());
+>>>>>>> /usr/src/app/output/jenkinsci/backend-update-center2/54a67ed32bfbe9621d903b6590f3187a3007ae2d/src/main/java/org/jvnet/hudson/update_center/Plugin.java/right.java
 
         String description = plainText2html(readSingleValueFromXmlFile(latest.resolvePOM(), "/project/description"));
 
