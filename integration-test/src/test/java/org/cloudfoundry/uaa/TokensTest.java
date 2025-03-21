@@ -90,7 +90,7 @@ public final class TokensTest extends AbstractIntegrationTest {
     @Test
     public void getTokenByAuthorizationCode() {
         requestGetAuthorizationCode(this.uaaClient, this.clientId)
-            .flatMap(authorizationCode -> this.uaaClient.tokens()
+            .then(authorizationCode -> this.uaaClient.tokens()
                 .getByAuthorizationCode(GetTokenByAuthorizationCodeRequest.builder()
                     .authorizationCode(authorizationCode)
                     .clientId(this.clientId)
@@ -139,7 +139,7 @@ public final class TokensTest extends AbstractIntegrationTest {
     @Test
     public void getTokenByOpenId() {
         requestGetAuthorizationCode(this.uaaClient, this.clientId)
-            .flatMap(authorizationCode -> this.uaaClient.tokens()
+            .then(authorizationCode -> this.uaaClient.tokens()
                 .getByOpenId(GetTokenByOpenIdRequest.builder()
                     .authorizationCode(authorizationCode)
                     .clientId(this.clientId)
@@ -206,7 +206,7 @@ public final class TokensTest extends AbstractIntegrationTest {
     @Test
     public void refreshToken() {
         getRequestToken(this.uaaClient, this.clientId, this.clientSecret, this.password, this.username)
-            .flatMap(refreshToken -> this.uaaClient.tokens()
+            .then(refreshToken -> this.uaaClient.tokens()
                 .refresh(RefreshTokenRequest.builder()
                     .tokenFormat(TokenFormat.OPAQUE)
                     .clientId(this.clientId)
