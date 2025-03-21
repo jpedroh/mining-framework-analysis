@@ -20,6 +20,13 @@ import static weiboclient4j.utils.StringUtils.isNotBlank;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+<<<<<<< /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/left.java
+import java.util.TimeZone;
+import java.util.logging.Level;
+||||||| /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/base.java
+import java.util.TimeZone;
+=======
+>>>>>>> /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/right.java
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -116,6 +123,15 @@ public class WeiboClient {
     }
 
     public long getUserId() {
+        if (userId <= 0) {
+            try {
+                User user = get("account/verify_credentials.json", User.class);
+                userId = user.getId();
+            } catch (WeiboClientException e) {
+                log.log(Level.WARNING, "Failed getting uid from account/verify_credentials.json: " + e.getMessage(), e);
+            }
+        }
+
         return userId;
     }
 
@@ -638,6 +654,22 @@ public class WeiboClient {
     }
 
     //=======================================================================
+    //  Social Graph API
+    //=======================================================================
+
+    public IdList getFriendsIds(long userId, int cursor, int count) throws WeiboClientException {
+        Paging paging = Paging.create().count(count);
+        Parameters params = Parameters.create().add(P_USER_ID, userId).add(P_CURSOR, cursor);
+        return get("friends/ids", IdList.class, paging, params);
+    }
+
+    public IdList getFollowerIds(long userId, int cursor, int count) throws WeiboClientException {
+        Paging paging = Paging.create().count(count);
+        Parameters params = Parameters.create().add(P_USER_ID, userId).add(P_CURSOR, cursor);
+        return get("followers/ids", IdList.class, paging, params);
+    }
+
+    //=======================================================================
     //  Tags API
     //=======================================================================
 
@@ -756,66 +788,154 @@ public class WeiboClient {
         }
     }
 
+<<<<<<< /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/left.java
+    public <T> T get(String path, Class<T> clazz) throws WeiboClientException {
+        return get(path, clazz, Paging.EMPTY_PAGING, Parameters.create());
+||||||| /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/base.java
+    private <T> T get(String path, Class<T> clazz) throws WeiboClientException {
+        return get(path, clazz, Paging.EMPTY_PAGING, Parameters.create());
+=======
     private <T> T get(String path, Class<T> clazz) throws WeiboClientException {
         return get(path, clazz, Paging.EMPTY, Parameters.create());
+>>>>>>> /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/right.java
     }
 
+<<<<<<< /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/left.java
+    public <T> T get(String path, Class<T> clazz, Parameters params) throws WeiboClientException {
+        String content = getContent(Verb.GET, path, Paging.EMPTY_PAGING, params);
+||||||| /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/base.java
+    private <T> T get(String path, Class<T> clazz, Parameters params) throws WeiboClientException {
+        String content = getContent(Verb.GET, path, Paging.EMPTY_PAGING, params);
+=======
     private <T> T get(String path, Class<T> clazz, Parameters params) throws WeiboClientException {
         Response response = getContent(Verb.GET, path, Paging.EMPTY, params);
+>>>>>>> /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/right.java
 
         return parseJsonObject(response, clazz);
     }
 
+<<<<<<< /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/left.java
+    public <T> T get(String path, Class<T> clazz, Paging paging, Parameters params) throws WeiboClientException {
+        String content = getContent(Verb.GET, path, paging, params);
+||||||| /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/base.java
+    private <T> T get(String path, Class<T> clazz, Paging paging, Parameters params) throws WeiboClientException {
+        String content = getContent(Verb.GET, path, paging, params);
+=======
     private <T> T get(String path, Class<T> clazz, Paging paging, Parameters params) throws WeiboClientException {
         Response response = getContent(Verb.GET, path, paging, params);
+>>>>>>> /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/right.java
 
         return parseJsonObject(response, clazz);
     }
 
+<<<<<<< /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/left.java
+    public <T> List<T> get(String path, TypeReference<List<T>> type) throws WeiboClientException {
+        return get(path, type, Paging.EMPTY_PAGING, Parameters.create());
+||||||| /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/base.java
+    private <T> List<T> get(String path, TypeReference<List<T>> type) throws WeiboClientException {
+        return get(path, type, Paging.EMPTY_PAGING, Parameters.create());
+=======
     private <T> List<T> get(String path, TypeReference<List<T>> type) throws WeiboClientException {
         return get(path, type, Paging.EMPTY, Parameters.create());
+>>>>>>> /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/right.java
     }
 
-    private <T> List<T> get(String path, TypeReference<List<T>> type, Paging paging) throws WeiboClientException {
+    public <T> List<T> get(String path, TypeReference<List<T>> type, Paging paging) throws WeiboClientException {
         return get(path, type, paging, Parameters.create());
     }
 
+<<<<<<< /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/left.java
+    public <T> List<T> get(String path, TypeReference<List<T>> type, Parameters params) throws WeiboClientException {
+        return get(path, type, Paging.EMPTY_PAGING, params);
+||||||| /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/base.java
+    private <T> List<T> get(String path, TypeReference<List<T>> type, Parameters params) throws WeiboClientException {
+        return get(path, type, Paging.EMPTY_PAGING, params);
+=======
     private <T> List<T> get(String path, TypeReference<List<T>> type, Parameters params) throws WeiboClientException {
         return get(path, type, Paging.EMPTY, params);
+>>>>>>> /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/right.java
     }
 
+<<<<<<< /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/left.java
+    public <T> List<T> get(String path, TypeReference<List<T>> type, Paging paging, Parameters params) throws WeiboClientException {
+        String content = getContent(Verb.GET, path, paging, params);
+||||||| /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/base.java
+    private <T> List<T> get(String path, TypeReference<List<T>> type, Paging paging, Parameters params) throws WeiboClientException {
+        String content = getContent(Verb.GET, path, paging, params);
+=======
     private <T> List<T> get(String path, TypeReference<List<T>> type, Paging paging, Parameters params) throws WeiboClientException {
         Response response = getContent(Verb.GET, path, paging, params);
+>>>>>>> /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/right.java
 
         return parseJsonObject(response, type);
     }
 
+<<<<<<< /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/left.java
+    public <T> T post(String path, Class<T> clazz) throws WeiboClientException {
+        return post(path, clazz, Paging.EMPTY_PAGING, Parameters.create());
+||||||| /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/base.java
+    private <T> T post(String path, Class<T> clazz) throws WeiboClientException {
+        return get(path, clazz, Paging.EMPTY_PAGING, Parameters.create());
+=======
     private <T> T post(String path, Class<T> clazz) throws WeiboClientException {
         return get(path, clazz, Paging.EMPTY, Parameters.create());
+>>>>>>> /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/right.java
     }
 
+<<<<<<< /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/left.java
+    public <T> T post(String path, Class<T> clazz, Parameters params) throws WeiboClientException {
+        String content = getContent(Verb.POST, path, Paging.EMPTY_PAGING, params);
+||||||| /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/base.java
+    private <T> T post(String path, Class<T> clazz, Parameters params) throws WeiboClientException {
+        String content = getContent(Verb.POST, path, Paging.EMPTY_PAGING, params);
+=======
     private <T> T post(String path, Class<T> clazz, Parameters params) throws WeiboClientException {
         Response response = getContent(Verb.POST, path, Paging.EMPTY, params);
+>>>>>>> /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/right.java
 
         return parseJsonObject(response, clazz);
     }
 
+<<<<<<< /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/left.java
+    public <T> T post(String path, Class<T> clazz, Paging paging, Parameters params) throws WeiboClientException {
+        String content = getContent(Verb.POST, path, paging, params);
+||||||| /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/base.java
+    private <T> T post(String path, Class<T> clazz, Paging paging, Parameters params) throws WeiboClientException {
+        String content = getContent(Verb.POST, path, paging, params);
+=======
     private <T> T post(String path, Class<T> clazz, Paging paging, Parameters params) throws WeiboClientException {
         Response response = getContent(Verb.POST, path, paging, params);
+>>>>>>> /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/right.java
 
         return parseJsonObject(response, clazz);
     }
 
-    private <T> List<T> post(String path, TypeReference<List<T>> type, Paging paging) throws WeiboClientException {
-        return get(path, type, paging, Parameters.create());
+    public <T> List<T> post(String path, TypeReference<List<T>> type, Paging paging) throws WeiboClientException {
+        return post(path, type, paging, Parameters.create());
     }
 
+<<<<<<< /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/left.java
+    public <T> List<T> post(String path, TypeReference<List<T>> type, Parameters params) throws WeiboClientException {
+        return post(path, type, Paging.EMPTY_PAGING, params);
+||||||| /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/base.java
+    private <T> List<T> post(String path, TypeReference<List<T>> type, Parameters params) throws WeiboClientException {
+        return get(path, type, Paging.EMPTY_PAGING, params);
+=======
     private <T> List<T> post(String path, TypeReference<List<T>> type, Parameters params) throws WeiboClientException {
         return get(path, type, Paging.EMPTY, params);
+>>>>>>> /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/right.java
     }
 
+<<<<<<< /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/left.java
+    public <T> List<T> post(String path, TypeReference<List<T>> type, Paging paging, Parameters params) throws WeiboClientException {
+        String content = getContent(Verb.POST, path, paging, params);
+||||||| /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/base.java
+    private <T> List<T> post(String path, TypeReference<List<T>> type, Paging paging, Parameters params) throws WeiboClientException {
+        String content = getContent(Verb.POST, path, paging, params);
+=======
     private <T> List<T> post(String path, TypeReference<List<T>> type, Paging paging, Parameters params) throws WeiboClientException {
         Response response = getContent(Verb.POST, path, paging, params);
+>>>>>>> /usr/src/app/output/hoverruan/weiboclient4j/62fb9296e8a8a0c3569630db86f72c4431a59af9/src/main/java/weiboclient4j/WeiboClient.java/right.java
 
         return parseJsonObject(response, type);
     }
