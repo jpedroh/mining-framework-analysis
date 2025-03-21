@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.el.ELResolver;
@@ -178,7 +179,13 @@ public class GenerateConfigurationVisitor implements AstNode.Visitor<Configurati
         private Map<String, ChannelHandler> pipelineAsMap;
 
         public State(ConcurrentMap<String, Barrier> barriersByName) {
+<<<<<<< /usr/src/app/output/k3po/k3po/b147a61164f98a41ebf0ea384a568565d34295cb/driver/src/main/java/org/kaazing/k3po/driver/internal/behavior/visitor/GenerateConfigurationVisitor.java/left.java
             this.barriersByName = barriersByName;
+||||||| /usr/src/app/output/k3po/k3po/b147a61164f98a41ebf0ea384a568565d34295cb/driver/src/main/java/org/kaazing/k3po/driver/internal/behavior/visitor/GenerateConfigurationVisitor.java/base.java
+            barriersByName = new ConcurrentHashMap<String, Barrier>();
+=======
+            barriersByName = new ConcurrentHashMap<>();
+>>>>>>> /usr/src/app/output/k3po/k3po/b147a61164f98a41ebf0ea384a568565d34295cb/driver/src/main/java/org/kaazing/k3po/driver/internal/behavior/visitor/GenerateConfigurationVisitor.java/right.java
         }
 
         private Barrier lookupBarrier(String barrierName) {

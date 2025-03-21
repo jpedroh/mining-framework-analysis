@@ -123,7 +123,8 @@ public class ControlServerHandler extends ControlUpstreamHandler {
                 }
             }
             else {
-                prepareFuture = robot.prepare(aggregatedScript);
+                prepareFuture =
+                        robot.prepare(aggregatedScript);
             }
 
             prepareFuture.addListener(new ChannelFutureListener() {
