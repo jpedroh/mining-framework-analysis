@@ -56,14 +56,18 @@ public class QueryBuilderTest {
         select = select().writeTime("a").ttl("a").from("foo").allowFiltering();
         assertEquals(select.toString(), query);
 
+<<<<<<< /usr/src/app/output/datastax/java-driver/a4b27fe7e1a7125cbb731d6e19266dab0aff125d/driver-core/src/test/java/com/datastax/driver/core/querybuilder/QueryBuilderTest.java/left.java
         query = "SELECT DISTINCT longName AS a,ttl(longName) AS ttla FROM foo LIMIT :limit;";
         select = select().distinct().column("longName").as("a").ttl("longName").as("ttla").from("foo").limit(bindMarker("limit"));
         assertEquals(select.toString(), query);
 
+||||||| /usr/src/app/output/datastax/java-driver/a4b27fe7e1a7125cbb731d6e19266dab0aff125d/driver-core/src/test/java/com/datastax/driver/core/querybuilder/QueryBuilderTest.java/base.java
+=======
         query = "SELECT a FROM foo WHERE k IN ();";
         select = select("a").from("foo").where(in("k"));
         assertEquals(select.toString(), query);
 
+>>>>>>> /usr/src/app/output/datastax/java-driver/a4b27fe7e1a7125cbb731d6e19266dab0aff125d/driver-core/src/test/java/com/datastax/driver/core/querybuilder/QueryBuilderTest.java/right.java
         query = "SELECT count(*) FROM foo;";
         select = select().countAll().from("foo");
         assertEquals(select.toString(), query);
