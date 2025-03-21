@@ -71,66 +71,169 @@ public class IngestReader {
 	public static void main(String[] args) throws IOException {
 		IngestReader ir = new IngestReader();
 		
+<<<<<<< /usr/src/app/output/nysenate/openlegislation/915e7059ce4a4a48869de67acbe149eb59894e9f/src/main/java/gov/nysenate/openleg/ingest/IngestReader.java/left.java
 		try {
-			if(args.length > 0) {
-				String command = args[0];		
-				if(args.length == 2) {
-					String p1 = args[1];
-					if(command.equals("-gx")) {
-						XmlHelper.generateXml(p1);
-					}
-					else if(command.equals("-b")) {
-						ir.writeBills(new ArrayList<Bill>(Arrays.asList((Bill)ir.loadObject(p1, Bill.class))), null, false);
-					}
-					else if(command.equals("-c")) {
-						ir.indexSenateObject((Calendar)ir.loadObject(p1, Calendar.class));
-					}
-					else if(command.equals("-a")) {
-						ir.indexSenateObject((Agenda)ir.loadObject(p1, Agenda.class));
-					}
-					else if(command.equals("-t")) {
-						ir.indexSenateObject((Transcript)ir.loadObject(p1, Transcript.class));
-					}
-					else if(command.equals("-it")) {
-						ir.handleTranscript(p1);
-					}
-					else {
-						throw new IngestException();
-					}
+			if(args.length == 2) {
+				String command = args[0];
+				String p1 = args[1];
+				if(command.equals("-gx")) {
+					XmlHelper.generateXml(p1);
 				}
-				else if(args.length == 3){
-					String p1 = args[1];
-					String p2 = args[2];
-					if(command.equals("-i")) {
-						WRITE_DIRECTORY = p1;
-						ir.handlePath(p2);
-					}
-					else if(command.equals("-fc")) {
-						ir.fixCalendarBills(p1, p2);
-					}
-					else if(command.equals("-fa")) {
-						ir.fixAgendaBills(p1, p2);
-					}
-					else {
-						throw new IngestException();
-					}
+				else if(command.equals("-b")) {
+					ir.writeBills(new ArrayList<Bill>(Arrays.asList((Bill)ir.loadObject(p1, Bill.class))), null, false);
 				}
-				else if(args.length == 5) {
-					String p1 = args[1];
-					String p2 = args[2];
-					String p3 = args[3];
-					String p4 = args[4];
-					
-					if(command.equals("-pull")) {
-						ir.pullSobis(p1, p2, p3, p4);
-					}
-					
+				else if(command.equals("-c")) {
+					ir.indexSenateObject((Calendar)ir.loadObject(p1, Calendar.class));
+				}
+				else if(command.equals("-a")) {
+					ir.indexSenateObject((Agenda)ir.loadObject(p1, Agenda.class));
+				}
+				else if(command.equals("-t")) {
+					ir.indexSenateObject((Transcript)ir.loadObject(p1, Transcript.class));
+				}
+				else if(command.equals("-it")) {
+					ir.handleTranscript(p1);
 				}
 				else {
 					throw new IngestException();
 				}
+||||||| /usr/src/app/output/nysenate/openlegislation/915e7059ce4a4a48869de67acbe149eb59894e9f/src/main/java/gov/nysenate/openleg/ingest/IngestReader.java/base.java
+		if(args.length == 2) {
+			String command = args[0];
+			String p1 = args[1];
+			if(command.equals("-gx")) {
+				XmlHelper.generateXml(p1);
+=======
+		boolean tog = true;
+		
+		if(args.length > 0) {
+			String command = args[0];
+			if(args.length == 2) {
+				String p1 = args[1];
+				if(command.equals("-gx")) {
+					XmlHelper.generateXml(p1);
+				}
+				else if(command.equals("-b")) {
+					ir.writeBills(new ArrayList<Bill>(Arrays.asList((Bill)ir.loadObject(p1, Bill.class))), null, false);
+				}
+				else if(command.equals("-c")) {
+					ir.indexSenateObject((Calendar)ir.loadObject(p1, Calendar.class));
+				}
+				else if(command.equals("-a")) {
+					ir.indexSenateObject((Agenda)ir.loadObject(p1, Agenda.class));
+				}
+				else if(command.equals("-t")) {
+					ir.indexSenateObject((Transcript)ir.loadObject(p1, Transcript.class));
+				}
+				else if(command.equals("-it")) {
+					ir.handleTranscript(p1);
+				}
+				else {
+					tog = false;
+				}
+>>>>>>> /usr/src/app/output/nysenate/openlegislation/915e7059ce4a4a48869de67acbe149eb59894e9f/src/main/java/gov/nysenate/openleg/ingest/IngestReader.java/right.java
 			}
+<<<<<<< /usr/src/app/output/nysenate/openlegislation/915e7059ce4a4a48869de67acbe149eb59894e9f/src/main/java/gov/nysenate/openleg/ingest/IngestReader.java/left.java
+			else if(args.length == 3){
+				String command = args[0];
+				String p1 = args[1];
+				String p2 = args[2];
+				if(command.equals("-i")) {
+					WRITE_DIRECTORY = p1;
+					ir.handlePath(p2);
+				}
+				else if(command.equals("-fc")) {
+					ir.fixCalendarBills(p1, p2);
+				}
+				else if(command.equals("-fa")) {
+					ir.fixAgendaBills(p1, p2);
+				}
+				else {
+					throw new IngestException();
+				}
+||||||| /usr/src/app/output/nysenate/openlegislation/915e7059ce4a4a48869de67acbe149eb59894e9f/src/main/java/gov/nysenate/openleg/ingest/IngestReader.java/base.java
+			else if(command.equals("-b")) {
+				ir.writeBills(new ArrayList<Bill>(Arrays.asList((Bill)ir.loadObject(p1, Bill.class))), null, false);
+			}
+			else if(command.equals("-c")) {
+				ir.indexSenateObject((Calendar)ir.loadObject(p1, Calendar.class));
+			}
+			else if(command.equals("-a")) {
+				ir.indexSenateObject((Agenda)ir.loadObject(p1, Agenda.class));
+			}
+			else if(command.equals("-t")) {
+				ir.indexSenateObject((Transcript)ir.loadObject(p1, Transcript.class));
+			}
+			else if(command.equals("-it")) {
+				ir.handleTranscript(p1);
+=======
+			else if(args.length == 3){
+				String p1 = args[1];
+				String p2 = args[2];
+				if(command.equals("-i")) {
+					WRITE_DIRECTORY = p1;
+					ir.handlePath(p2);
+				}
+				else if(command.equals("-fc")) {
+					ir.fixCalendarBills(p1, p2);
+				}
+				else if(command.equals("-fa")) {
+					ir.fixAgendaBills(p1, p2);
+				}
+				else {
+					tog = false;
+				}
+				
+			}
+			else if(args.length == 5) {
+				String p1 = args[1];
+				String p2 = args[2];
+				String p3 = args[3];
+				String p4 = args[4];
+				
+				if(command.equals("-pull")) {
+					ir.pullSobis(p1, p2, p3, p4);
+				}
+				
+>>>>>>> /usr/src/app/output/nysenate/openlegislation/915e7059ce4a4a48869de67acbe149eb59894e9f/src/main/java/gov/nysenate/openleg/ingest/IngestReader.java/right.java
+			}
+			else {
+<<<<<<< /usr/src/app/output/nysenate/openlegislation/915e7059ce4a4a48869de67acbe149eb59894e9f/src/main/java/gov/nysenate/openleg/ingest/IngestReader.java/left.java
+				throw new IngestException();
+||||||| /usr/src/app/output/nysenate/openlegislation/915e7059ce4a4a48869de67acbe149eb59894e9f/src/main/java/gov/nysenate/openleg/ingest/IngestReader.java/base.java
+				System.err.println("bad command");
+=======
+				tog = false;
+>>>>>>> /usr/src/app/output/nysenate/openlegislation/915e7059ce4a4a48869de67acbe149eb59894e9f/src/main/java/gov/nysenate/openleg/ingest/IngestReader.java/right.java
+			}
+<<<<<<< /usr/src/app/output/nysenate/openlegislation/915e7059ce4a4a48869de67acbe149eb59894e9f/src/main/java/gov/nysenate/openleg/ingest/IngestReader.java/left.java
 		} catch(IngestException e) {
+||||||| /usr/src/app/output/nysenate/openlegislation/915e7059ce4a4a48869de67acbe149eb59894e9f/src/main/java/gov/nysenate/openleg/ingest/IngestReader.java/base.java
+		}
+		else if(args.length == 3){
+			String command = args[0];
+			String p1 = args[1];
+			String p2 = args[2];
+			if(command.equals("-i")) {
+				WRITE_DIRECTORY = p1;
+				ir.handlePath(p2);
+			}
+			else if(command.equals("-fc")) {
+				ir.fixCalendarBills(p1, p2);
+			}
+			else if(command.equals("-fa")) {
+				ir.fixAgendaBills(p1, p2);
+			}
+			else {
+				System.err.println("bad command");
+			}
+		}
+		else {
+=======
+		}
+		
+		if(!tog) {
+>>>>>>> /usr/src/app/output/nysenate/openlegislation/915e7059ce4a4a48869de67acbe149eb59894e9f/src/main/java/gov/nysenate/openleg/ingest/IngestReader.java/right.java
 			System.err.println("appropriate usage is:\n" +
 					"\t-i <json directory> <sobi directory> (to create index)\n" +
 					"\t-gx <sobi directory> (to generate agenda and calendar xml from sobi)\n" +
