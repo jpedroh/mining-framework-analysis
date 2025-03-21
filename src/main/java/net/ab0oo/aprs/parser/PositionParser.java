@@ -37,6 +37,13 @@ public class PositionParser {
 
     public static Position parseUncompressed(byte[] msgBody, int cursor) throws Exception {
 
+<<<<<<< /usr/src/app/output/ab0oo/javaprslib/a929486b0e7bf006bd2a192329a16f2b15ab95f1/src/main/java/net/ab0oo/aprs/parser/PositionParser.java/left.java
+||||||| /usr/src/app/output/ab0oo/javaprslib/a929486b0e7bf006bd2a192329a16f2b15ab95f1/src/main/java/net/ab0oo/aprs/parser/PositionParser.java/base.java
+        if (msgBody[0] == '/' || msgBody[0] == '@') {
+            // With a prepended timestamp, jump over it.
+            cursor += 7;
+        }
+=======
         Date date = new Date();
         if (msgBody[0] == '/' || msgBody[0] == '@') {
             // With a prepended timestamp, jump over it.
@@ -50,6 +57,7 @@ public class PositionParser {
             }
             cursor += 7;
         }
+>>>>>>> /usr/src/app/output/ab0oo/javaprslib/a929486b0e7bf006bd2a192329a16f2b15ab95f1/src/main/java/net/ab0oo/aprs/parser/PositionParser.java/right.java
         if (msgBody.length < cursor + 19) {
             throw new UnparsablePositionException("Uncompressed packet too short");
         }
