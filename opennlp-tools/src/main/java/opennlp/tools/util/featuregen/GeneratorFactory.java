@@ -1,22 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package opennlp.tools.util.featuregen;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
@@ -32,14 +14,12 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
-
 import opennlp.tools.util.InvalidFormatException;
 import opennlp.tools.util.XmlUtil;
 import opennlp.tools.util.ext.ExtensionLoader;
@@ -93,11 +73,21 @@ import opennlp.tools.util.model.POSModelSerializer;
  * {@link AggregatedFeatureGenerator} which is then returned.
  */
 public class GeneratorFactory {
-
-  // TODO: (OPENNLP-1174) just remove when back-compat is no longer needed
   private static Map<String, XmlFeatureGeneratorFactory> factories = new HashMap<>();
 
-  // TODO: (OPENNLP-1174) just remove when back-compat is no longer needed
+  @Deprecated interface XmlFeatureGeneratorFactory {
+    /**
+     * Creates an {@link AdaptiveFeatureGenerator} from a the describing
+     * XML element.
+     *
+     * @param generatorElement the element which contains the configuration
+     * @param resourceManager  the resource manager which could be used
+     *                         to access referenced resources
+     * @return the configured {@link AdaptiveFeatureGenerator}
+     */
+    AdaptiveFeatureGenerator create(Element generatorElement, FeatureGeneratorResourceProvider resourceManager) throws InvalidFormatException;
+  }
+
   static {
     AggregatedFeatureGeneratorFactory.register(factories);
     CachedFeatureGeneratorFactory.register(factories);
@@ -123,14 +113,235 @@ public class GeneratorFactory {
     POSTaggerNameFeatureGeneratorFactory.register(factories);
   }
 
-  // TODO: We have to support custom resources here. How does it work ?!
-  // Attributes get into a Map<String, String> properties
+  public static abstract class AbstractXmlFeatureGeneratorFactory {
+    protected Element generatorElement;
 
-  // How can serialization be supported ?!
-  // The model is loaded, and the manifest should contain all serializer classes registered for the
-  // resources by name.
-  // When training, the descriptor could be consulted first to register the serializers, and afterwards
-  // they are stored in the model.
+    protected FeatureGeneratorResourceProvider resourceManager;
+
+    protected LinkedHashMap<String, Object> args;
+
+    public AbstractXmlFeatureGeneratorFactory() {
+      args = new LinkedHashMap<>();
+    }
+
+    public Map<String, ArtifactSerializer<?>> getArtifactSerializerMapping() throws InvalidFormatException {
+      return null;
+    }
+
+    final void init(Element element, FeatureGeneratorResourceProvider resourceManager) throws InvalidFormatException {
+      this.generatorElement = element;
+      this.resourceManager = resourceManager;
+      List<AdaptiveFeatureGenerator> generators = new ArrayList<>();
+      NodeList childNodes = generatorElement.getChildNodes();
+      for (int i = 0; i < childNodes.getLength(); i++) {
+        Node childNode = childNodes.item(i);
+        if (childNode instanceof Element) {
+          Element elem = (Element) childNode;
+          String type = elem.getTagName();
+          if (type.equals("generator")) {
+            String key = "generator#" + Integer.toString(generators.size());
+            AdaptiveFeatureGenerator afg = buildGenerator(elem, resourceManager);
+            generators.add(afg);
+            if (afg != null) {
+              args.put(key, afg);
+            }
+          } else {
+            String name = elem.getAttribute("name");
+            Node cn = elem.getFirstChild();
+            Text text = (Text) cn;
+            switch (type) {
+              case "int":
+              args.put(name, Integer.parseInt(text.getWholeText()));
+              break;
+              case "long":
+              args.put(name, Long.parseLong(text.getWholeText()));
+              break;
+              case "float":
+              args.put(name, Float.parseFloat(text.getWholeText()));
+              break;
+              case "double":
+              args.put(name, Double.parseDouble(text.getWholeText()));
+              break;
+              case "str":
+              args.put(name, text.getWholeText());
+              break;
+              case "bool":
+              args.put(name, Boolean.parseBoolean(text.getWholeText()));
+              break;
+              default:
+              throw new InvalidFormatException("child element must be one of generator, int, long, float, double," + " str or bool");
+            }
+          }
+        }
+      }
+      if (generators.size() > 1) {
+        AdaptiveFeatureGenerator aggregatedFeatureGenerator = new AggregatedFeatureGenerator(generators.toArray(new AdaptiveFeatureGenerator[generators.size()]));
+        args.put("generator#0", aggregatedFeatureGenerator);
+      }
+    }
+
+    public int getInt(String name) throws InvalidFormatException {
+      Object value = args.get(name);
+      if (value == null) {
+        throw new InvalidFormatException("parameter " + name + " must be set!");
+      } else {
+        if (value instanceof Integer) {
+          return (Integer) value;
+        } else {
+          throw new InvalidFormatException("parameter " + name + " must be integer!");
+        }
+      }
+    }
+
+    public int getInt(String name, int defValue) throws InvalidFormatException {
+      Object value = args.get(name);
+      if (value == null) {
+        return defValue;
+      } else {
+        if (value instanceof Integer) {
+          return (Integer) value;
+        } else {
+          throw new InvalidFormatException("parameter " + name + " must be integer!");
+        }
+      }
+    }
+
+    public long getLong(String name) throws InvalidFormatException {
+      Object value = args.get(name);
+      if (value == null) {
+        throw new InvalidFormatException("parameter " + name + " must be set!");
+      } else {
+        if (value instanceof Long) {
+          return (Long) value;
+        } else {
+          throw new InvalidFormatException("parameter " + name + " must be long!");
+        }
+      }
+    }
+
+    public long getLong(String name, long defValue) throws InvalidFormatException {
+      Object value = args.get(name);
+      if (value == null) {
+        return defValue;
+      } else {
+        if (value instanceof Long) {
+          return (Long) value;
+        } else {
+          throw new InvalidFormatException("parameter " + name + " must be long!");
+        }
+      }
+    }
+
+    public float getFloat(String name) throws InvalidFormatException {
+      Object value = args.get(name);
+      if (value == null) {
+        throw new InvalidFormatException("parameter " + name + " must be set!");
+      } else {
+        if (value instanceof Float) {
+          return (Float) value;
+        } else {
+          throw new InvalidFormatException("parameter " + name + " must be float!");
+        }
+      }
+    }
+
+    public float getFloat(String name, float defValue) throws InvalidFormatException {
+      Object value = args.get(name);
+      if (value == null) {
+        return defValue;
+      } else {
+        if (value instanceof Float) {
+          return (Float) value;
+        } else {
+          throw new InvalidFormatException("parameter " + name + " must be float!");
+        }
+      }
+    }
+
+    public double getDouble(String name) throws InvalidFormatException {
+      Object value = args.get(name);
+      if (value == null) {
+        throw new InvalidFormatException("parameter " + name + " must be set!");
+      } else {
+        if (value instanceof Double) {
+          return (Double) value;
+        } else {
+          throw new InvalidFormatException("parameter " + name + " must be double!");
+        }
+      }
+    }
+
+    public double getDouble(String name, double defValue) throws InvalidFormatException {
+      Object value = args.get(name);
+      if (value == null) {
+        return defValue;
+      } else {
+        if (value instanceof Double) {
+          return (Double) value;
+        } else {
+          throw new InvalidFormatException("parameter " + name + " must be double!");
+        }
+      }
+    }
+
+    public String getStr(String name) throws InvalidFormatException {
+      Object value = args.get(name);
+      if (value == null) {
+        throw new InvalidFormatException("parameter " + name + " must be set!");
+      } else {
+        if (value instanceof String) {
+          return (String) value;
+        } else {
+          throw new InvalidFormatException("parameter " + name + " must be double!");
+        }
+      }
+    }
+
+    public String getStr(String name, String defValue) throws InvalidFormatException {
+      Object value = args.get(name);
+      if (value == null) {
+        return defValue;
+      } else {
+        if (value instanceof String) {
+          return (String) value;
+        } else {
+          throw new InvalidFormatException("parameter " + name + " must be String!");
+        }
+      }
+    }
+
+    public boolean getBool(String name) throws InvalidFormatException {
+      Object value = args.get(name);
+      if (value == null) {
+        throw new InvalidFormatException("parameter " + name + " must be set!");
+      } else {
+        if (value instanceof Boolean) {
+          return (Boolean) value;
+        } else {
+          throw new InvalidFormatException("parameter " + name + " must be boolean!");
+        }
+      }
+    }
+
+    public boolean getBool(String name, boolean defValue) throws InvalidFormatException {
+      Object value = args.get(name);
+      if (value == null) {
+        return defValue;
+      } else {
+        if (value instanceof Boolean) {
+          return (Boolean) value;
+        } else {
+          throw new InvalidFormatException("parameter " + name + " must be boolean!");
+        }
+      }
+    }
+
+    /**
+     * @return null if the subclass uses {@link #resourceManager} to instantiate
+     * @throws InvalidFormatException
+     */
+    public abstract AdaptiveFeatureGenerator create() throws InvalidFormatException;
+  }
 
   /**
    * Creates a {@link AdaptiveFeatureGenerator} for the provided element.
@@ -142,16 +353,9 @@ public class GeneratorFactory {
    * @param resourceManager
    * @return
    */
-  @Deprecated   // TODO: (OPENNLP-1174) remove back-compat support when it is unnecessary
-  static AdaptiveFeatureGenerator createGenerator(Element generatorElement,
-                                                  FeatureGeneratorResourceProvider resourceManager)
-      throws InvalidFormatException {
-
+  @Deprecated static AdaptiveFeatureGenerator createGenerator(Element generatorElement, FeatureGeneratorResourceProvider resourceManager) throws InvalidFormatException {
     String elementName = generatorElement.getTagName();
-
-    // check it is new format?
     if (elementName.equals("featureGenerators")) {
-
       List<AdaptiveFeatureGenerator> generators = new ArrayList<>();
       NodeList childNodes = generatorElement.getChildNodes();
       for (int i = 0; i < childNodes.getLength(); i++) {
@@ -161,37 +365,62 @@ public class GeneratorFactory {
           String type = elem.getTagName();
           if (type.equals("generator")) {
             generators.add(buildGenerator(elem, resourceManager));
-          } else
+          } else {
             throw new InvalidFormatException("Unexpected element: " + elementName);
+          }
         }
       }
-
       AdaptiveFeatureGenerator featureGenerator = null;
-      if (generators.size() == 1)
+      if (generators.size() == 1) {
         featureGenerator = generators.get(0);
-      else if (generators.size() > 1)
-        featureGenerator = new AggregatedFeatureGenerator(generators.toArray(
-            new AdaptiveFeatureGenerator[generators.size()]));
-      else
-        throw new InvalidFormatException("featureGenerators must have one or more generators");
-
-      // disallow manually specifying CachedFeatureGenerator
-      if (featureGenerator instanceof CachedFeatureGenerator)
-        throw new InvalidFormatException("CachedFeatureGeneratorFactory cannot be specified manually." +
-            "Use cache=\"true\" attribute in featureGenerators element instead.");
-
-      // check cache usage
-      if (Boolean.parseBoolean(generatorElement.getAttribute("cache")))
+      } else {
+        if (generators.size() > 1) {
+          featureGenerator = new AggregatedFeatureGenerator(generators.toArray(new AdaptiveFeatureGenerator[generators.size()]));
+        } else {
+          throw new InvalidFormatException("featureGenerators must have one or more generators");
+        }
+      }
+      if (featureGenerator instanceof CachedFeatureGenerator) {
+        throw new InvalidFormatException("CachedFeatureGeneratorFactory cannot be specified manually." + "Use cache=\"true\" attribute in featureGenerators element instead.");
+      }
+      if (Boolean.parseBoolean(generatorElement.getAttribute("cache"))) {
         return new CachedFeatureGenerator(featureGenerator);
-      else
+      } else {
         return featureGenerator;
+      }
     } else {
-      // support classic format
       XmlFeatureGeneratorFactory generatorFactory = factories.get(elementName);
       if (generatorFactory != null) {
         return generatorFactory.create(generatorElement, resourceManager);
-      } else
+      } else {
         throw new InvalidFormatException("Unexpected element: " + elementName);
+      }
+    }
+  }
+
+  static class CustomFeatureGeneratorFactory implements XmlFeatureGeneratorFactory {
+    static void register(Map<String, XmlFeatureGeneratorFactory> factoryMap) {
+      factoryMap.put("custom", new CustomFeatureGeneratorFactory());
+    }
+
+    public AdaptiveFeatureGenerator create(Element generatorElement, FeatureGeneratorResourceProvider resourceManager) throws InvalidFormatException {
+      String featureGeneratorClassName = generatorElement.getAttribute("class");
+      AdaptiveFeatureGenerator generator = ExtensionLoader.instantiateExtension(AdaptiveFeatureGenerator.class, featureGeneratorClassName);
+      if (generator instanceof CustomFeatureGenerator) {
+        CustomFeatureGenerator customGenerator = (CustomFeatureGenerator) generator;
+        Map<String, String> properties = new HashMap<>();
+        NamedNodeMap attributes = generatorElement.getAttributes();
+        for (int i = 0; i < attributes.getLength(); i++) {
+          Node attribute = attributes.item(i);
+          if (!"class".equals(attribute.getNodeName())) {
+            properties.put(attribute.getNodeName(), attribute.getNodeValue());
+          }
+        }
+        if (resourceManager != null) {
+          customGenerator.init(properties, resourceManager);
+        }
+      }
+      return generator;
     }
   }
 
@@ -215,9 +444,7 @@ public class GeneratorFactory {
    * @param resourceManager
    * @return
    */
-  static AdaptiveFeatureGenerator buildGenerator(Element generatorElement,
-                                                 FeatureGeneratorResourceProvider resourceManager)
-      throws InvalidFormatException {
+  static AdaptiveFeatureGenerator buildGenerator(Element generatorElement, FeatureGeneratorResourceProvider resourceManager) throws InvalidFormatException {
     String className = generatorElement.getAttribute("class");
     if (className == null) {
       throw new InvalidFormatException("generator must have class attribute");
@@ -226,12 +453,10 @@ public class GeneratorFactory {
         Class factoryClass = Class.forName(className);
         try {
           Constructor constructor = factoryClass.getConstructor();
-          AbstractXmlFeatureGeneratorFactory factory =
-              (AbstractXmlFeatureGeneratorFactory) constructor.newInstance();
+          AbstractXmlFeatureGeneratorFactory factory = (AbstractXmlFeatureGeneratorFactory) constructor.newInstance();
           factory.init(generatorElement, resourceManager);
           return factory.create();
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException
-            | IllegalAccessException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
           throw new RuntimeException(e);
         }
       } catch (ClassNotFoundException e) {
@@ -240,13 +465,9 @@ public class GeneratorFactory {
     }
   }
 
-  private static org.w3c.dom.Document createDOM(InputStream xmlDescriptorIn)
-      throws IOException {
-
+  private static org.w3c.dom.Document createDOM(InputStream xmlDescriptorIn) throws IOException {
     DocumentBuilder documentBuilder = XmlUtil.createDocumentBuilder();
-
     org.w3c.dom.Document xmlDescriptorDOM;
-
     try {
       xmlDescriptorDOM = documentBuilder.parse(xmlDescriptorIn);
     } catch (SAXException e) {
@@ -270,27 +491,16 @@ public class GeneratorFactory {
    * @throws IOException if an error occurs during reading from the descriptor
    *                     {@link InputStream}
    */
-  public static AdaptiveFeatureGenerator create(InputStream xmlDescriptorIn,
-                                                FeatureGeneratorResourceProvider resourceManager)
-      throws IOException {
-
+  public static AdaptiveFeatureGenerator create(InputStream xmlDescriptorIn, FeatureGeneratorResourceProvider resourceManager) throws IOException {
     org.w3c.dom.Document xmlDescriptorDOM = createDOM(xmlDescriptorIn);
-
     Element generatorElement = xmlDescriptorDOM.getDocumentElement();
-
-    // TODO: (OPENNLP-1174) use #buildGenerator() after back-compat support is gone
     return createGenerator(generatorElement, resourceManager);
   }
 
-  public static Map<String, ArtifactSerializer<?>> extractArtifactSerializerMappings(
-      InputStream xmlDescriptorIn) throws IOException {
-
+  public static Map<String, ArtifactSerializer<?>> extractArtifactSerializerMappings(InputStream xmlDescriptorIn) throws IOException {
     org.w3c.dom.Document xmlDescriptorDOM = createDOM(xmlDescriptorIn);
     Element element = xmlDescriptorDOM.getDocumentElement();
-
     String elementName = element.getTagName();
-
-    // check it is new format?
     if (elementName.equals("featureGenerators")) {
       Map<String, ArtifactSerializer<?>> mapping = new HashMap<>();
       NodeList nodes = element.getChildNodes();
@@ -315,14 +525,13 @@ public class GeneratorFactory {
         Class factoryClass = Class.forName(className);
         try {
           Constructor constructor = factoryClass.getConstructor();
-          AbstractXmlFeatureGeneratorFactory factory =
-              (AbstractXmlFeatureGeneratorFactory) constructor.newInstance();
+          AbstractXmlFeatureGeneratorFactory factory = (AbstractXmlFeatureGeneratorFactory) constructor.newInstance();
           factory.init(element, null);
           Map<String, ArtifactSerializer<?>> map = factory.getArtifactSerializerMapping();
-          if (map != null)
+          if (map != null) {
             mapping.putAll(map);
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException
-            | IllegalAccessException e) {
+          }
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
           throw new RuntimeException(e);
         } catch (InvalidFormatException ignored) {
         }
@@ -330,7 +539,6 @@ public class GeneratorFactory {
         throw new RuntimeException(e);
       }
     }
-
     NodeList nodes = element.getChildNodes();
     for (int i = 0; i < nodes.getLength(); i++) {
       if (nodes.item(i) instanceof Element) {
@@ -342,13 +550,9 @@ public class GeneratorFactory {
     }
   }
 
-  @Deprecated   // TODO: (OPENNLP-1174) remove back-compat support when it is unnecessary
-  static Map<String, ArtifactSerializer<?>> extractArtifactSerializerMappingsClassicFormat(
-      Element elem) throws IOException {
+  @Deprecated static Map<String, ArtifactSerializer<?>> extractArtifactSerializerMappingsClassicFormat(Element elem) throws IOException {
     Map<String, ArtifactSerializer<?>> mapping = new HashMap<>();
-
     XPath xPath = XPathFactory.newInstance().newXPath();
-
     NodeList customElements;
     try {
       XPathExpression exp = xPath.compile("//custom");
@@ -356,22 +560,16 @@ public class GeneratorFactory {
     } catch (XPathExpressionException e) {
       throw new IllegalStateException("The hard coded XPath expression should always be valid!");
     }
-
     for (int i = 0; i < customElements.getLength(); i++) {
       if (customElements.item(i) instanceof Element) {
         Element customElement = (Element) customElements.item(i);
-
-        // Note: The resource provider is not available at that point, to provide
-        // resources they need to be loaded first!
         AdaptiveFeatureGenerator generator = createGenerator(customElement, null);
-
         if (generator instanceof ArtifactToSerializerMapper) {
           ArtifactToSerializerMapper mapper = (ArtifactToSerializerMapper) generator;
           mapping.putAll(mapper.getArtifactSerializerMapping());
         }
       }
     }
-
     NodeList allElements;
     try {
       XPathExpression exp = xPath.compile("//*");
@@ -379,47 +577,37 @@ public class GeneratorFactory {
     } catch (XPathExpressionException e) {
       throw new IllegalStateException("The hard coded XPath expression should always be valid!");
     }
-
     for (int i = 0; i < allElements.getLength(); i++) {
       if (allElements.item(i) instanceof Element) {
         Element xmlElement = (Element) allElements.item(i);
-
         String dictName = xmlElement.getAttribute("dict");
         if (dictName != null) {
-
           switch (xmlElement.getTagName()) {
             case "wordcluster":
-              mapping.put(dictName, new WordClusterDictionary.WordClusterDictionarySerializer());
-              break;
-
+            mapping.put(dictName, new WordClusterDictionary.WordClusterDictionarySerializer());
+            break;
             case "brownclustertoken":
-              mapping.put(dictName, new BrownCluster.BrownClusterSerializer());
-              break;
-
-            case "brownclustertokenclass"://, ;
-              mapping.put(dictName, new BrownCluster.BrownClusterSerializer());
-              break;
-
-            case "brownclusterbigram": //, ;
-              mapping.put(dictName, new BrownCluster.BrownClusterSerializer());
-              break;
-
+            mapping.put(dictName, new BrownCluster.BrownClusterSerializer());
+            break;
+            case "brownclustertokenclass":
+            mapping.put(dictName, new BrownCluster.BrownClusterSerializer());
+            break;
+            case "brownclusterbigram":
+            mapping.put(dictName, new BrownCluster.BrownClusterSerializer());
+            break;
             case "dictionary":
-              mapping.put(dictName, new DictionarySerializer());
-              break;
+            mapping.put(dictName, new DictionarySerializer());
+            break;
           }
         }
-
         String modelName = xmlElement.getAttribute("model");
         if (modelName != null) {
-
           if ("tokenpos".equals(xmlElement.getTagName())) {
             mapping.put(modelName, new POSModelSerializer());
           }
         }
       }
     }
-
     return mapping;
   }
 
@@ -431,9 +619,7 @@ public class GeneratorFactory {
    * @throws IOException            if inputstream cannot be open
    * @throws InvalidFormatException if xml is not well-formed
    */
-  public static List<Element> getDescriptorElements(InputStream xmlDescriptorIn)
-      throws IOException {
-
+  public static List<Element> getDescriptorElements(InputStream xmlDescriptorIn) throws IOException {
     List<Element> elements = new ArrayList<>();
     org.w3c.dom.Document xmlDescriptorDOM = createDOM(xmlDescriptorIn);
     XPath xPath = XPathFactory.newInstance().newXPath();
@@ -444,7 +630,6 @@ public class GeneratorFactory {
     } catch (XPathExpressionException e) {
       throw new IllegalStateException("The hard coded XPath expression should always be valid!");
     }
-
     for (int i = 0; i < allElements.getLength(); i++) {
       if (allElements.item(i) instanceof Element) {
         Element customElement = (Element) allElements.item(i);
@@ -452,280 +637,5 @@ public class GeneratorFactory {
       }
     }
     return elements;
-  }
-
-  /**
-   * The {@link XmlFeatureGeneratorFactory} is responsible to construct
-   * an {@link AdaptiveFeatureGenerator} from an given XML {@link Element}
-   * which contains all necessary configuration if any.
-   */
-  @Deprecated // TODO: (OPENNLP-1174) just remove when back-compat is no longer needed
-  interface XmlFeatureGeneratorFactory {
-
-    /**
-     * Creates an {@link AdaptiveFeatureGenerator} from a the describing
-     * XML element.
-     *
-     * @param generatorElement the element which contains the configuration
-     * @param resourceManager  the resource manager which could be used
-     *                         to access referenced resources
-     * @return the configured {@link AdaptiveFeatureGenerator}
-     */
-    AdaptiveFeatureGenerator create(Element generatorElement,
-                                    FeatureGeneratorResourceProvider resourceManager)
-        throws InvalidFormatException;
-  }
-
-  public static abstract class AbstractXmlFeatureGeneratorFactory {
-
-    protected Element generatorElement;
-    protected FeatureGeneratorResourceProvider resourceManager;
-
-    // to respect the order <generator/> in AggregatedFeatureGenerator, let's use LinkedHashMap
-    protected LinkedHashMap<String, Object> args;
-
-    public AbstractXmlFeatureGeneratorFactory() {
-      args = new LinkedHashMap<>();
-    }
-
-    public Map<String, ArtifactSerializer<?>> getArtifactSerializerMapping() throws InvalidFormatException {
-      return null;
-    }
-
-    final void init(Element element, FeatureGeneratorResourceProvider resourceManager)
-        throws InvalidFormatException {
-      this.generatorElement = element;
-      this.resourceManager = resourceManager;
-      List<AdaptiveFeatureGenerator> generators = new ArrayList<>();
-      NodeList childNodes = generatorElement.getChildNodes();
-      for (int i = 0; i < childNodes.getLength(); i++) {
-        Node childNode = childNodes.item(i);
-        if (childNode instanceof Element) {
-          Element elem = (Element) childNode;
-          String type = elem.getTagName();
-          if (type.equals("generator")) {
-            String key = "generator#" + Integer.toString(generators.size());
-            AdaptiveFeatureGenerator afg = buildGenerator(elem, resourceManager);
-            generators.add(afg);
-            if (afg != null)
-              args.put(key, afg);
-          } else {
-            String name = elem.getAttribute("name");
-            Node cn = elem.getFirstChild();
-            Text text = (Text) cn;
-
-            switch (type) {
-              case "int":
-                args.put(name, Integer.parseInt(text.getWholeText()));
-                break;
-              case "long":
-                args.put(name, Long.parseLong(text.getWholeText()));
-                break;
-              case "float":
-                args.put(name, Float.parseFloat(text.getWholeText()));
-                break;
-              case "double":
-                args.put(name, Double.parseDouble(text.getWholeText()));
-                break;
-              case "str":
-                args.put(name, text.getWholeText());
-                break;
-              case "bool":
-                args.put(name, Boolean.parseBoolean(text.getWholeText()));
-                break;
-              default:
-                throw new InvalidFormatException(
-                    "child element must be one of generator, int, long, float, double," +
-                        " str or bool");
-            }
-          }
-        }
-      }
-
-      if (generators.size() > 1) {
-        AdaptiveFeatureGenerator aggregatedFeatureGenerator =
-            new AggregatedFeatureGenerator(generators.toArray(
-                new AdaptiveFeatureGenerator[generators.size()]));
-        args.put("generator#0", aggregatedFeatureGenerator);
-      }
-    }
-
-    public int getInt(String name) throws InvalidFormatException {
-      Object value = args.get(name);
-      if (value == null) {
-        throw new InvalidFormatException("parameter " + name + " must be set!");
-      } else if (value instanceof Integer) {
-        return (Integer) value;
-      } else {
-        throw new InvalidFormatException("parameter " + name + " must be integer!");
-      }
-    }
-
-    public int getInt(String name, int defValue) throws InvalidFormatException {
-      Object value = args.get(name);
-      if (value == null) {
-        return defValue;
-      } else if (value instanceof Integer) {
-        return (Integer) value;
-      } else {
-        throw new InvalidFormatException("parameter " + name + " must be integer!");
-      }
-    }
-
-    public long getLong(String name) throws InvalidFormatException {
-      Object value = args.get(name);
-      if (value == null) {
-        throw new InvalidFormatException("parameter " + name + " must be set!");
-      } else if (value instanceof Long) {
-        return (Long) value;
-      } else {
-        throw new InvalidFormatException("parameter " + name + " must be long!");
-      }
-    }
-
-    public long getLong(String name, long defValue) throws InvalidFormatException {
-      Object value = args.get(name);
-      if (value == null) {
-        return defValue;
-      } else if (value instanceof Long) {
-        return (Long) value;
-      } else {
-        throw new InvalidFormatException("parameter " + name + " must be long!");
-      }
-    }
-
-    public float getFloat(String name) throws InvalidFormatException {
-      Object value = args.get(name);
-      if (value == null) {
-        throw new InvalidFormatException("parameter " + name + " must be set!");
-      } else if (value instanceof Float) {
-        return (Float) value;
-      } else {
-        throw new InvalidFormatException("parameter " + name + " must be float!");
-      }
-    }
-
-    public float getFloat(String name, float defValue) throws InvalidFormatException {
-      Object value = args.get(name);
-      if (value == null) {
-        return defValue;
-      } else if (value instanceof Float) {
-        return (Float) value;
-      } else {
-        throw new InvalidFormatException("parameter " + name + " must be float!");
-      }
-    }
-
-    public double getDouble(String name) throws InvalidFormatException {
-      Object value = args.get(name);
-      if (value == null) {
-        throw new InvalidFormatException("parameter " + name + " must be set!");
-      } else if (value instanceof Double) {
-        return (Double) value;
-      } else {
-        throw new InvalidFormatException("parameter " + name + " must be double!");
-      }
-    }
-
-    public double getDouble(String name, double defValue) throws InvalidFormatException {
-      Object value = args.get(name);
-      if (value == null) {
-        return defValue;
-      } else if (value instanceof Double) {
-        return (Double) value;
-      } else {
-        throw new InvalidFormatException("parameter " + name + " must be double!");
-      }
-    }
-
-    public String getStr(String name) throws InvalidFormatException {
-      Object value = args.get(name);
-      if (value == null) {
-        throw new InvalidFormatException("parameter " + name + " must be set!");
-      } else if (value instanceof String) {
-        return (String) value;
-      } else {
-        throw new InvalidFormatException("parameter " + name + " must be double!");
-      }
-    }
-
-    public String getStr(String name, String defValue) throws InvalidFormatException {
-      Object value = args.get(name);
-      if (value == null) {
-        return defValue;
-      } else if (value instanceof String) {
-        return (String) value;
-      } else {
-        throw new InvalidFormatException("parameter " + name + " must be String!");
-      }
-    }
-
-    public boolean getBool(String name) throws InvalidFormatException {
-      Object value = args.get(name);
-      if (value == null) {
-        throw new InvalidFormatException("parameter " + name + " must be set!");
-      } else if (value instanceof Boolean) {
-        return (Boolean) value;
-      } else {
-        throw new InvalidFormatException("parameter " + name + " must be boolean!");
-      }
-    }
-
-    public boolean getBool(String name, boolean defValue) throws InvalidFormatException {
-      Object value = args.get(name);
-      if (value == null) {
-        return defValue;
-      } else if (value instanceof Boolean) {
-        return (Boolean) value;
-      } else {
-        throw new InvalidFormatException("parameter " + name + " must be boolean!");
-      }
-    }
-
-    /**
-     * @return null if the subclass uses {@link #resourceManager} to instantiate
-     * @throws InvalidFormatException
-     */
-    public abstract AdaptiveFeatureGenerator create() throws InvalidFormatException;
-  }
-
-  // TODO: (OPENNLP-1174) just remove this class when back-compat is no longer needed
-  static class CustomFeatureGeneratorFactory implements XmlFeatureGeneratorFactory {
-
-    static void register(Map<String, XmlFeatureGeneratorFactory> factoryMap) {
-      factoryMap.put("custom", new CustomFeatureGeneratorFactory());
-    }
-
-    public AdaptiveFeatureGenerator create(Element generatorElement,
-                                           FeatureGeneratorResourceProvider resourceManager)
-        throws InvalidFormatException {
-
-      String featureGeneratorClassName = generatorElement.getAttribute("class");
-
-      AdaptiveFeatureGenerator generator =
-          ExtensionLoader.instantiateExtension(AdaptiveFeatureGenerator.class, featureGeneratorClassName);
-
-      if (generator instanceof CustomFeatureGenerator) {
-
-        CustomFeatureGenerator customGenerator = (CustomFeatureGenerator) generator;
-
-        Map<String, String> properties = new HashMap<>();
-
-        NamedNodeMap attributes = generatorElement.getAttributes();
-
-        for (int i = 0; i < attributes.getLength(); i++) {
-          Node attribute = attributes.item(i);
-          if (!"class".equals(attribute.getNodeName())) {
-            properties.put(attribute.getNodeName(), attribute.getNodeValue());
-          }
-        }
-
-        if (resourceManager != null) {
-          customGenerator.init(properties, resourceManager);
-        }
-      }
-
-      return generator;
-    }
   }
 }

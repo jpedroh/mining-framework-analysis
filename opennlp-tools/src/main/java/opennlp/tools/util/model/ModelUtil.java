@@ -1,22 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package opennlp.tools.util.model;
-
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -27,7 +9,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
 import opennlp.tools.ml.maxent.GISTrainer;
 import opennlp.tools.ml.model.AbstractModel;
 import opennlp.tools.ml.model.GenericModelWriter;
@@ -38,9 +19,7 @@ import opennlp.tools.util.TrainingParameters;
  * Utility class for handling of {@link MaxentModel}s.
  */
 public final class ModelUtil {
-
   private ModelUtil() {
-    // not intended to be instantiated
   }
 
   /**
@@ -53,20 +32,14 @@ public final class ModelUtil {
    * @throws IOException
    * @throws IllegalArgumentException in case one of the parameters is null
    */
-  public static void writeModel(MaxentModel model, final OutputStream out)
-      throws IOException, IllegalArgumentException {
-
+  public static void writeModel(MaxentModel model, final OutputStream out) throws IOException, IllegalArgumentException {
     Objects.requireNonNull(model, "model parameter must not be null");
     Objects.requireNonNull(out, "out parameter must not be null");
-
-    GenericModelWriter modelWriter = new GenericModelWriter((AbstractModel) model,
-        new DataOutputStream(new OutputStream() {
-          @Override
-          public void write(int b) throws IOException {
-            out.write(b);
-          }
-        }));
-
+    GenericModelWriter modelWriter = new GenericModelWriter((AbstractModel) model, new DataOutputStream(new OutputStream() {
+      @Override public void write(int b) throws IOException {
+        out.write(b);
+      }
+    }));
     modelWriter.persist();
   }
 
@@ -78,13 +51,9 @@ public final class ModelUtil {
    * @return true if all expected outcomes are the only outcomes of the model.
    */
   public static boolean validateOutcomes(MaxentModel model, String... expectedOutcomes) {
-
     boolean result = true;
-
     if (expectedOutcomes.length == model.getNumOutcomes()) {
-
       Set<String> expectedOutcomesSet = new HashSet<>(Arrays.asList(expectedOutcomes));
-
       for (int i = 0; i < model.getNumOutcomes(); i++) {
         if (!expectedOutcomesSet.contains(model.getOutcome(i))) {
           result = false;
@@ -94,7 +63,6 @@ public final class ModelUtil {
     } else {
       result = false;
     }
-
     return result;
   }
 
@@ -109,19 +77,16 @@ public final class ModelUtil {
    */
   public static byte[] read(InputStream in) throws IOException {
     ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();
-
     int length;
     byte[] buffer = new byte[1024];
     while ((length = in.read(buffer)) > 0) {
       byteArrayOut.write(buffer, 0, length);
     }
     byteArrayOut.close();
-
     return byteArrayOut.toByteArray();
   }
 
-  public static void addCutoffAndIterations(Map<String, String> manifestInfoEntries,
-                                            int cutoff, int iterations) {
+  public static void addCutoffAndIterations(Map<String, String> manifestInfoEntries, int cutoff, int iterations) {
     manifestInfoEntries.put(BaseModel.TRAINING_CUTOFF_PROPERTY, Integer.toString(cutoff));
     manifestInfoEntries.put(BaseModel.TRAINING_ITERATIONS_PROPERTY, Integer.toString(iterations));
   }
@@ -138,7 +103,6 @@ public final class ModelUtil {
     mlParams.put(TrainingParameters.ALGORITHM_PARAM, GISTrainer.MAXENT_VALUE);
     mlParams.put(TrainingParameters.ITERATIONS_PARAM, 100);
     mlParams.put(TrainingParameters.CUTOFF_PARAM, 5);
-
     return mlParams;
   }
 }

@@ -1,22 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package opennlp.tools.ngram;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,7 +6,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
-
 import opennlp.common.util.StringList;
 import opennlp.common.util.StringUtil;
 import opennlp.tools.dictionary.Dictionary;
@@ -39,7 +20,6 @@ import opennlp.tools.util.InvalidFormatException;
  * @see StringList
  */
 public class NGramModel implements Iterable<StringList> {
-
   protected static final String COUNT = "count";
 
   private Map<StringList, Integer> mNGrams = new LinkedHashMap<>();
@@ -57,25 +37,18 @@ public class NGramModel implements Iterable<StringList> {
    * @throws IOException
    */
   public NGramModel(InputStream in) throws IOException {
-    DictionaryEntryPersistor.create(in, entry -> {
-
+    DictionaryEntryPersistor.create(in, (entry) -> {
       int count;
       String countValueString = null;
-
       try {
         countValueString = entry.getAttributes().getValue(COUNT);
-
         if (countValueString == null) {
-          throw new InvalidFormatException(
-              "The count attribute must be set!");
+          throw new InvalidFormatException("The count attribute must be set!");
         }
-
         count = Integer.parseInt(countValueString);
       } catch (NumberFormatException e) {
-        throw new InvalidFormatException("The count attribute '" + countValueString
-            + "' must be a number!", e);
+        throw new InvalidFormatException("The count attribute \'" + countValueString + "\' must be a number!", e);
       }
-
       add(entry.getTokens());
       setCount(entry.getTokens(), count);
     });
@@ -88,13 +61,10 @@ public class NGramModel implements Iterable<StringList> {
    * @return count of the ngram or 0 if it is not contained
    */
   public int getCount(StringList ngram) {
-
     Integer count = mNGrams.get(ngram);
-
     if (count == null) {
       return 0;
     }
-
     return count;
   }
 
@@ -105,9 +75,7 @@ public class NGramModel implements Iterable<StringList> {
    * @param count
    */
   public void setCount(StringList ngram, int count) {
-
     Integer oldCount = mNGrams.put(ngram, count);
-
     if (oldCount == null) {
       mNGrams.remove(ngram);
       throw new NoSuchElementException();
@@ -136,25 +104,18 @@ public class NGramModel implements Iterable<StringList> {
    * @param maxLength - maximal length
    */
   public void add(StringList ngram, int minLength, int maxLength) {
-
-    if (minLength < 1 || maxLength < 1)
-      throw new IllegalArgumentException("minLength and maxLength param must be at least 1. " +
-          "minLength=" + minLength + ", maxLength= " + maxLength);
-
-    if (minLength > maxLength)
-      throw new IllegalArgumentException("minLength param must not be larger than " +
-          "maxLength param. minLength=" + minLength + ", maxLength= " + maxLength);
-
+    if (minLength < 1 || maxLength < 1) {
+      throw new IllegalArgumentException("minLength and maxLength param must be at least 1. " + "minLength=" + minLength + ", maxLength= " + maxLength);
+    }
+    if (minLength > maxLength) {
+      throw new IllegalArgumentException("minLength param must not be larger than " + "maxLength param. minLength=" + minLength + ", maxLength= " + maxLength);
+    }
     for (int lengthIndex = minLength; lengthIndex < maxLength + 1; lengthIndex++) {
-      for (int textIndex = 0;
-           textIndex + lengthIndex - 1 < ngram.size(); textIndex++) {
-
+      for (int textIndex = 0; textIndex + lengthIndex - 1 < ngram.size(); textIndex++) {
         String[] grams = new String[lengthIndex];
-
         for (int i = textIndex; i < textIndex + lengthIndex; i++) {
           grams[i - textIndex] = ngram.getToken(i);
         }
-
         add(new StringList(grams));
       }
     }
@@ -168,15 +129,10 @@ public class NGramModel implements Iterable<StringList> {
    * @param maxLength
    */
   public void add(CharSequence chars, int minLength, int maxLength) {
-
     for (int lengthIndex = minLength; lengthIndex < maxLength + 1; lengthIndex++) {
-      for (int textIndex = 0;
-           textIndex + lengthIndex - 1 < chars.length(); textIndex++) {
-
-        String gram = StringUtil.toLowerCase(
-            chars.subSequence(textIndex, textIndex + lengthIndex));
-
-        add(new StringList(new String[] {gram}));
+      for (int textIndex = 0; textIndex + lengthIndex - 1 < chars.length(); textIndex++) {
+        String gram = StringUtil.toLowerCase(chars.subSequence(textIndex, textIndex + lengthIndex));
+        add(new StringList(new String[] { gram }));
       }
     }
   }
@@ -214,8 +170,7 @@ public class NGramModel implements Iterable<StringList> {
    *
    * @return iterator over all grams
    */
-  @Override
-  public Iterator<StringList> iterator() {
+  @Override public Iterator<StringList> iterator() {
     return mNGrams.keySet().iterator();
   }
 
@@ -226,11 +181,9 @@ public class NGramModel implements Iterable<StringList> {
    */
   public int numberOfGrams() {
     int counter = 0;
-
     for (StringList ngram : this) {
       counter += getCount(ngram);
     }
-
     return counter;
   }
 
@@ -242,17 +195,11 @@ public class NGramModel implements Iterable<StringList> {
    * @param cutoffOver
    */
   public void cutoff(int cutoffUnder, int cutoffOver) {
-
     if (cutoffUnder > 0 || cutoffOver < Integer.MAX_VALUE) {
-
       for (Iterator<StringList> it = iterator(); it.hasNext(); ) {
-
         StringList ngram = it.next();
-
         int count = getCount(ngram);
-
-        if (count < cutoffUnder ||
-            count > cutoffOver) {
+        if (count < cutoffUnder || count > cutoffOver) {
           it.remove();
         }
       }
@@ -282,13 +229,10 @@ public class NGramModel implements Iterable<StringList> {
    * @return a dictionary of the ngrams
    */
   public Dictionary toDictionary(boolean caseSensitive) {
-
     Dictionary dict = new Dictionary(caseSensitive);
-
     for (StringList stringList : this) {
       dict.put(stringList);
     }
-
     return dict;
   }
 
@@ -302,57 +246,44 @@ public class NGramModel implements Iterable<StringList> {
     Iterator<Entry> entryIterator = new Iterator<Entry>() {
       private Iterator<StringList> mDictionaryIterator = NGramModel.this.iterator();
 
-      @Override
-      public boolean hasNext() {
+      @Override public boolean hasNext() {
         return mDictionaryIterator.hasNext();
       }
 
-      @Override
-      public Entry next() {
-
+      @Override public Entry next() {
         StringList tokens = mDictionaryIterator.next();
-
         Attributes attributes = new Attributes();
-
         attributes.setValue(COUNT, Integer.toString(getCount(tokens)));
-
         return new Entry(tokens, attributes);
       }
 
-      @Override
-      public void remove() {
+      @Override public void remove() {
         throw new UnsupportedOperationException();
       }
-
     };
-
     DictionaryEntryPersistor.serialize(out, entryIterator, false);
   }
 
-  @Override
-  public boolean equals(Object obj) {
+  @Override public boolean equals(Object obj) {
     boolean result;
-
     if (obj == this) {
       result = true;
-    } else if (obj instanceof NGramModel) {
-      NGramModel model = (NGramModel) obj;
-
-      result = mNGrams.equals(model.mNGrams);
     } else {
-      result = false;
+      if (obj instanceof NGramModel) {
+        NGramModel model = (NGramModel) obj;
+        result = mNGrams.equals(model.mNGrams);
+      } else {
+        result = false;
+      }
     }
-
     return result;
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     return "Size: " + size();
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return mNGrams.hashCode();
   }
 }

@@ -1,23 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-
 package opennlp.tools.parser;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -29,89 +10,109 @@ import java.util.Stack;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import opennlp.common.util.Span;
 
 /**
  * Data structure for holding parse constituents.
  */
 public class Parse implements Cloneable, Comparable<Parse> {
-
   public static final String BRACKET_LRB = "(";
+
   public static final String BRACKET_RRB = ")";
+
   public static final String BRACKET_LCB = "{";
+
   public static final String BRACKET_RCB = "}";
+
   public static final String BRACKET_LSB = "[";
+
   public static final String BRACKET_RSB = "]";
+
   /**
    * The pattern used to find the base constituent label of a
    * Penn Treebank labeled constituent.
    */
   private static Pattern typePattern = Pattern.compile("^([^ =-]+)");
-  /**
-   * The pattern used to find the function tags.
-   */
-  private static Pattern funTypePattern = Pattern.compile("^[^ =-]+-([^ =-]+)");
-  /**
-   * The patter used to identify tokens in Penn Treebank labeled constituents.
-   */
-  private static Pattern tokenPattern = Pattern.compile("^[^ ()]+ ([^ ()]+)\\s*\\)");
-  /**
-   * Specifies whether constituent labels should include parts specified
-   * after minus character.
-   */
-  private static boolean useFunctionTags;
+
   /**
    * The text string on which this parse is based.
    * This object is shared among all parses for the same sentence.
    */
   private String text;
+
+  /**
+   * The pattern used to find the function tags.
+   */
+  private static Pattern funTypePattern = Pattern.compile("^[^ =-]+-([^ =-]+)");
+
   /**
    * The character offsets into the text for this constituent.
    */
   private Span span;
+
+  /**
+   * The patter used to identify tokens in Penn Treebank labeled constituents.
+   */
+  private static Pattern tokenPattern = Pattern.compile("^[^ ()]+ ([^ ()]+)\\s*\\)");
+
   /**
    * The syntactic type of this parse.
    */
   private String type;
+
+  /**
+   * Specifies whether constituent labels should include parts specified
+   * after minus character.
+   */
+  private static boolean useFunctionTags;
+
   /**
    * The sub-constituents of this parse.
    */
   private List<Parse> parts;
+
   /**
    * The head parse of this parse. A parse can be its own head.
    */
   private Parse head;
+
   /**
    * A string used during parse construction to specify which
    * stage of parsing has been performed on this node.
    */
   private String label;
+
   /**
    * Index in the sentence of the head of this constituent.
    */
   private int headIndex;
+
   /**
    * The parent parse of this parse.
    */
   private Parse parent;
+
   /**
    * The probability associated with the syntactic type
    * assigned to this parse.
    */
   private double prob;
+
   /**
    * The string buffer used to track the derivation of this parse.
    */
   private StringBuffer derivation;
+
   /**
    * Specifies whether this constituent was built during the chunking phase.
    */
   private boolean isChunk;
+
   /**
    * The set of punctuation parses which are between this parse and the previous parse.
    */
   private Collection<Parse> prevPunctSet;
+
   /**
    * The set of punctuation parses which are between this parse and
    * the subsequent parse.
@@ -167,72 +168,154 @@ public class Parse implements Cloneable, Comparable<Parse> {
     useFunctionTags = uft;
   }
 
+  @Override public Object clone() {
+    Parse p = new Parse(this.text, this.span, this.type, this.prob, this.head);
+    p.parts = new LinkedList<>();
+    p.parts.addAll(this.parts);
+    if (derivation != null) {
+      p.derivation = new StringBuffer(100);
+      p.derivation.append(this.derivation);
+    }
+    p.label = this.label;
+    return (p);
+  }
+
   private static String getType(String rest) {
     if (rest.startsWith("-LCB-")) {
       return "-LCB-";
-    } else if (rest.startsWith("-RCB-")) {
-      return "-RCB-";
-    } else if (rest.startsWith("-LRB-")) {
-      return "-LRB-";
-    } else if (rest.startsWith("-RRB-")) {
-      return "-RRB-";
-    } else if (rest.startsWith("-RSB-")) {
-      return "-RSB-";
-    } else if (rest.startsWith("-LSB-")) {
-      return "-LSB-";
-    } else if (rest.startsWith("-NONE-")) {
-      return "-NONE-";
     } else {
-      Matcher typeMatcher = typePattern.matcher(rest);
-      if (typeMatcher.find()) {
-        String type = typeMatcher.group(1);
-        if (useFunctionTags) {
-          Matcher funMatcher = funTypePattern.matcher(rest);
-          if (funMatcher.find()) {
-            String ftag = funMatcher.group(1);
-            type = type + "-" + ftag;
+      if (rest.startsWith("-RCB-")) {
+        return "-RCB-";
+      } else {
+        if (rest.startsWith("-LRB-")) {
+          return "-LRB-";
+        } else {
+          if (rest.startsWith("-RRB-")) {
+            return "-RRB-";
+          } else {
+            if (rest.startsWith("-RSB-")) {
+              return "-RSB-";
+            } else {
+              if (rest.startsWith("-LSB-")) {
+                return "-LSB-";
+              } else {
+                if (rest.startsWith("-NONE-")) {
+                  return "-NONE-";
+                } else {
+                  Matcher typeMatcher = typePattern.matcher(rest);
+                  if (typeMatcher.find()) {
+                    String type = typeMatcher.group(1);
+                    if (useFunctionTags) {
+                      Matcher funMatcher = funTypePattern.matcher(rest);
+                      if (funMatcher.find()) {
+                        String ftag = funMatcher.group(1);
+                        type = type + "-" + ftag;
+                      }
+                    }
+                    return type;
+                  }
+                }
+              }
+            }
           }
         }
-        return type;
       }
     }
     return null;
   }
 
+  /**
+   * Clones the right frontier of parse up to the specified node.
+   *
+   * @param node The last node in the right frontier of the parse tree which should be cloned.
+   * @return A clone of this parse and its right frontier up to and including the specified node.
+   */
+  public Parse clone(Parse node) {
+    if (this == node) {
+      return (Parse) this.clone();
+    } else {
+      Parse c = (Parse) this.clone();
+      Parse lc = c.parts.get(parts.size() - 1);
+      c.parts.set(parts.size() - 1, lc.clone(node));
+      return c;
+    }
+  }
+
   private static String encodeToken(String token) {
     if (BRACKET_LRB.equals(token)) {
       return "-LRB-";
-    } else if (BRACKET_RRB.equals(token)) {
-      return "-RRB-";
-    } else if (BRACKET_LCB.equals(token)) {
-      return "-LCB-";
-    } else if (BRACKET_RCB.equals(token)) {
-      return "-RCB-";
-    } else if (BRACKET_LSB.equals(token)) {
-      return "-LSB-";
-    } else if (BRACKET_RSB.equals(token)) {
-      return "-RSB-";
+    } else {
+      if (BRACKET_RRB.equals(token)) {
+        return "-RRB-";
+      } else {
+        if (BRACKET_LCB.equals(token)) {
+          return "-LCB-";
+        } else {
+          if (BRACKET_RCB.equals(token)) {
+            return "-RCB-";
+          } else {
+            if (BRACKET_LSB.equals(token)) {
+              return "-LSB-";
+            } else {
+              if (BRACKET_RSB.equals(token)) {
+                return "-RSB-";
+              }
+            }
+          }
+        }
+      }
     }
-
     return token;
+  }
+
+  /**
+   * Clones the right frontier of this root parse up to and including the specified node.
+   *
+   * @param node The last node in the right frontier of the parse tree which should be cloned.
+   * @param parseIndex The child index of the parse for this root node.
+   * @return A clone of this root parse and its right frontier up to and including the specified node.
+   */
+  public Parse cloneRoot(Parse node, int parseIndex) {
+    Parse c = (Parse) this.clone();
+    Parse fc = c.parts.get(parseIndex);
+    c.parts.set(parseIndex, fc.clone(node));
+    return c;
   }
 
   private static String decodeToken(String token) {
     if ("-LRB-".equals(token)) {
       return BRACKET_LRB;
-    } else if ("-RRB-".equals(token)) {
-      return BRACKET_RRB;
-    } else if ("-LCB-".equals(token)) {
-      return BRACKET_LCB;
-    } else if ("-RCB-".equals(token)) {
-      return BRACKET_RCB;
-    } else if ("-LSB-".equals(token)) {
-      return BRACKET_LSB;
-    } else if ("-RSB-".equals(token)) {
-      return BRACKET_RSB;
+    } else {
+      if ("-RRB-".equals(token)) {
+        return BRACKET_RRB;
+      } else {
+        if ("-LCB-".equals(token)) {
+          return BRACKET_LCB;
+        } else {
+          if ("-RCB-".equals(token)) {
+            return BRACKET_RCB;
+          } else {
+            if ("-LSB-".equals(token)) {
+              return BRACKET_LSB;
+            } else {
+              if ("-RSB-".equals(token)) {
+                return BRACKET_RSB;
+              }
+            }
+          }
+        }
+      }
     }
-
     return token;
+  }
+
+  /**
+   * Set the type of this constituent to the specified type.
+   *
+   * @param type The type of this constituent.
+   */
+  public void setType(String type) {
+    this.type = type;
   }
 
   /**
@@ -249,6 +332,15 @@ public class Parse implements Cloneable, Comparable<Parse> {
       return decodeToken(tokenMatcher.group(1));
     }
     return null;
+  }
+
+  /**
+   * Returns the constituent label for this node of the parse.
+   *
+   * @return The constituent label for this node of the parse.
+   */
+  public String getType() {
+    return type;
   }
 
   /**
@@ -273,6 +365,15 @@ public class Parse implements Cloneable, Comparable<Parse> {
     }
   }
 
+  /**
+   * Returns the set of punctuation parses that occur immediately before this parse.
+   *
+   * @return the set of punctuation parses that occur immediately before this parse.
+   */
+  public Collection<Parse> getPreviousPunctuationSet() {
+    return prevPunctSet;
+  }
+
   public static void fixPossesives(Parse parse) {
     Parse[] tags = parse.getTagNodes();
     for (int ti = 0; ti < tags.length; ti++) {
@@ -295,6 +396,18 @@ public class Parse implements Cloneable, Comparable<Parse> {
   }
 
   /**
+   * Designates that the specified punctuation should is prior to this parse.
+   *
+   * @param punct The punctuation.
+   */
+  public void addPreviousPunctuation(Parse punct) {
+    if (this.prevPunctSet == null) {
+      this.prevPunctSet = new TreeSet<>();
+    }
+    prevPunctSet.add(punct);
+  }
+
+  /**
    * Parses the specified tree-bank style parse string and return a Parse structure for that string.
    *
    * @param parse A tree-bank style parse string.
@@ -302,6 +415,15 @@ public class Parse implements Cloneable, Comparable<Parse> {
    */
   public static Parse parseParse(String parse) {
     return parseParse(parse, null);
+  }
+
+  /**
+   * Returns the set of punctuation parses that occur immediately after this parse.
+   *
+   * @return the set of punctuation parses that occur immediately after this parse.
+   */
+  public Collection<Parse> getNextPunctuationSet() {
+    return nextPunctSet;
   }
 
   /**
@@ -329,20 +451,20 @@ public class Parse implements Cloneable, Comparable<Parse> {
         stack.push(new Constituent(type, new Span(offset, offset)));
         if (token != null) {
           if (Objects.equals(type, "-NONE-") && gl != null) {
-            //System.err.println("stack.size="+stack.size());
             gl.labelGaps(stack);
           } else {
-            cons.add(new Constituent(AbstractBottomUpParser.TOK_NODE,
-                new Span(offset, offset + token.length())));
+            cons.add(new Constituent(AbstractBottomUpParser.TOK_NODE, new Span(offset, offset + token.length())));
             text.append(token).append(" ");
             offset += token.length() + 1;
           }
         }
-      } else if (c == ')') {
-        Constituent con = stack.pop();
-        int start = con.getSpan().getStart();
-        if (start < offset) {
-          cons.add(new Constituent(con.getLabel(), new Span(start, offset - 1)));
+      } else {
+        if (c == ')') {
+          Constituent con = stack.pop();
+          int start = con.getSpan().getStart();
+          if (start < offset) {
+            cons.add(new Constituent(con.getLabel(), new Span(start, offset - 1)));
+          }
         }
       }
     }
@@ -356,12 +478,22 @@ public class Parse implements Cloneable, Comparable<Parse> {
           tokenIndex++;
         }
         Parse c = new Parse(txt, con.getSpan(), type, 1, tokenIndex);
-        //System.err.println("insert["+ci+"] "+type+" "+c.toString()+" "+c.hashCode());
         p.insert(c);
-        //codeTree(p);
       }
     }
     return p;
+  }
+
+  /**
+   * Designates that the specified punctuation follows this parse.
+   *
+   * @param punct The punctuation set.
+   */
+  public void addNextPunctuation(Parse punct) {
+    if (this.nextPunctSet == null) {
+      this.nextPunctSet = new TreeSet<>();
+    }
+    nextPunctSet.add(punct);
   }
 
   /**
@@ -376,7 +508,6 @@ public class Parse implements Cloneable, Comparable<Parse> {
       Parse startToken = tokens[nameTokenSpan.getStart()];
       Parse endToken = tokens[nameTokenSpan.getEnd() - 1];
       Parse commonParent = startToken.getCommonParent(endToken);
-      //System.err.println("addNames: "+startToken+" .. "+endToken+" commonParent = "+commonParent);
       if (commonParent != null) {
         Span nameSpan = new Span(startToken.getSpan().getStart(), endToken.getSpan().getEnd());
         if (nameSpan.equals(commonParent.getSpan())) {
@@ -390,125 +521,18 @@ public class Parse implements Cloneable, Comparable<Parse> {
             }
           }
           if (!crossingKids) {
-            commonParent.insert(new Parse(commonParent.getText(), nameSpan,
-                tag, 1.0, endToken.getHeadIndex()));
+            commonParent.insert(new Parse(commonParent.getText(), nameSpan, tag, 1.0, endToken.getHeadIndex()));
           } else {
             if (commonParent.getType().equals("NP")) {
               Parse[] grandKids = kids[0].getChildren();
               if (grandKids.length > 1 && nameSpan.contains(grandKids[grandKids.length - 1].getSpan())) {
-                commonParent.insert(new Parse(commonParent.getText(), commonParent.getSpan(),
-                    tag, 1.0, commonParent.getHeadIndex()));
+                commonParent.insert(new Parse(commonParent.getText(), commonParent.getSpan(), tag, 1.0, commonParent.getHeadIndex()));
               }
             }
           }
         }
       }
     }
-  }
-
-  @Override
-  public Object clone() {
-    Parse p = new Parse(this.text, this.span, this.type, this.prob, this.head);
-    p.parts = new LinkedList<>();
-    p.parts.addAll(this.parts);
-
-    if (derivation != null) {
-      p.derivation = new StringBuffer(100);
-      p.derivation.append(this.derivation);
-    }
-    p.label = this.label;
-    return (p);
-  }
-
-  /**
-   * Clones the right frontier of parse up to the specified node.
-   *
-   * @param node The last node in the right frontier of the parse tree which should be cloned.
-   * @return A clone of this parse and its right frontier up to and including the specified node.
-   */
-  public Parse clone(Parse node) {
-    if (this == node) {
-      return (Parse) this.clone();
-    } else {
-      Parse c = (Parse) this.clone();
-      Parse lc = c.parts.get(parts.size() - 1);
-      c.parts.set(parts.size() - 1, lc.clone(node));
-      return c;
-    }
-  }
-
-  /**
-   * Clones the right frontier of this root parse up to and including the specified node.
-   *
-   * @param node       The last node in the right frontier of the parse tree which should be cloned.
-   * @param parseIndex The child index of the parse for this root node.
-   * @return A clone of this root parse and its right frontier up to and including the specified node.
-   */
-  public Parse cloneRoot(Parse node, int parseIndex) {
-    Parse c = (Parse) this.clone();
-    Parse fc = c.parts.get(parseIndex);
-    c.parts.set(parseIndex, fc.clone(node));
-    return c;
-  }
-
-  /**
-   * Returns the constituent label for this node of the parse.
-   *
-   * @return The constituent label for this node of the parse.
-   */
-  public String getType() {
-    return type;
-  }
-
-  /**
-   * Set the type of this constituent to the specified type.
-   *
-   * @param type The type of this constituent.
-   */
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  /**
-   * Returns the set of punctuation parses that occur immediately before this parse.
-   *
-   * @return the set of punctuation parses that occur immediately before this parse.
-   */
-  public Collection<Parse> getPreviousPunctuationSet() {
-    return prevPunctSet;
-  }
-
-  /**
-   * Designates that the specified punctuation should is prior to this parse.
-   *
-   * @param punct The punctuation.
-   */
-  public void addPreviousPunctuation(Parse punct) {
-    if (this.prevPunctSet == null) {
-      this.prevPunctSet = new TreeSet<>();
-    }
-    prevPunctSet.add(punct);
-  }
-
-  /**
-   * Returns the set of punctuation parses that occur immediately after this parse.
-   *
-   * @return the set of punctuation parses that occur immediately after this parse.
-   */
-  public Collection<Parse> getNextPunctuationSet() {
-    return nextPunctSet;
-  }
-
-  /**
-   * Designates that the specified punctuation follows this parse.
-   *
-   * @param punct The punctuation set.
-   */
-  public void addNextPunctuation(Parse punct) {
-    if (this.nextPunctSet == null) {
-      this.nextPunctSet = new TreeSet<>();
-    }
-    nextPunctSet.add(punct);
   }
 
   /**
@@ -538,36 +562,30 @@ public class Parse implements Cloneable, Comparable<Parse> {
   public void insert(final Parse constituent) {
     Span ic = constituent.span;
     if (span.contains(ic)) {
-      //double oprob=c.prob;
       int pi = 0;
       int pn = parts.size();
-      for (; pi < pn; pi++) {
+      for ( ; pi < pn; pi++) {
         Parse subPart = parts.get(pi);
-        //System.err.println("Parse.insert:con="+constituent+" sp["+pi+"] "+subPart+" "+subPart.getType());
         Span sp = subPart.span;
         if (sp.getStart() >= ic.getEnd()) {
           break;
-        }
-        // constituent contains subPart
-        else if (ic.contains(sp)) {
-          //System.err.println("Parse.insert:con contains subPart");
-          parts.remove(pi);
-          pi--;
-          constituent.parts.add(subPart);
-          subPart.setParent(constituent);
-          //System.err.println("Parse.insert: "+subPart.hashCode()+" -> "+subPart.getParent().hashCode());
-          pn = parts.size();
-        } else if (sp.contains(ic)) {
-          //System.err.println("Parse.insert:subPart contains con");
-          subPart.insert(constituent);
-          return;
+        } else {
+          if (ic.contains(sp)) {
+            parts.remove(pi);
+            pi--;
+            constituent.parts.add(subPart);
+            subPart.setParent(constituent);
+            pn = parts.size();
+          } else {
+            if (sp.contains(ic)) {
+              subPart.insert(constituent);
+              return;
+            }
+          }
         }
       }
-      //System.err.println("Parse.insert:adding con="+constituent+" to "+this);
       parts.add(pi, constituent);
       constituent.setParent(this);
-      // System.err.println("Parse.insert: "+constituent.hashCode()+" -> "
-      // +constituent.getParent().hashCode());
     } else {
       throw new IllegalArgumentException("Inserting constituent not contained in the sentence!");
     }
@@ -584,14 +602,10 @@ public class Parse implements Cloneable, Comparable<Parse> {
     if (!type.equals(AbstractBottomUpParser.TOK_NODE)) {
       sb.append("(");
       sb.append(type).append(" ");
-      //System.out.print(label+" ");
-      //System.out.print(head+" ");
-      //System.out.print(df.format(prob)+" ");
     }
     for (Parse c : parts) {
       Span s = c.span;
       if (start < s.getStart()) {
-        //System.out.println("pre "+start+" "+s.getStart());
         sb.append(encodeToken(text.substring(start, s.getStart())));
       }
       c.show(sb);
@@ -620,19 +634,19 @@ public class Parse implements Cloneable, Comparable<Parse> {
    * @return The probability associated with the pos-tag sequence assigned to this parse.
    */
   public double getTagSequenceProb() {
-    //System.err.println("Parse.getTagSequenceProb: "+type+" "+this);
     if (parts.size() == 1 && (parts.get(0)).type.equals(AbstractBottomUpParser.TOK_NODE)) {
-      //System.err.println(this+" "+prob);
       return (StrictMath.log(prob));
-    } else if (parts.size() == 0) {
-      System.err.println("Parse.getTagSequenceProb: Wrong base case!");
-      return (0.0);
     } else {
-      double sum = 0.0;
-      for (Parse part : parts) {
-        sum += part.getTagSequenceProb();
+      if (parts.size() == 0) {
+        System.err.println("Parse.getTagSequenceProb: Wrong base case!");
+        return (0.0);
+      } else {
+        double sum = 0.0;
+        for (Parse part : parts) {
+          sum += part.getTagSequenceProb();
+        }
+        return sum;
       }
-      return sum;
     }
   }
 
@@ -652,14 +666,7 @@ public class Parse implements Cloneable, Comparable<Parse> {
   /**
    * Represents this parse in a human readable way.
    */
-  @Override
-  public String toString() {
-    // TODO: Use the commented code in next bigger release,
-    // change probably breaks backward compatibility in some
-    // applications
-    //StringBuffer buffer = new StringBuffer();
-    //show(buffer);
-    //return buffer.toString();
+  @Override public String toString() {
     return getCoveredText();
   }
 
@@ -736,7 +743,7 @@ public class Parse implements Cloneable, Comparable<Parse> {
   public void remove(int index) {
     parts.remove(index);
     if (!parts.isEmpty()) {
-      if (index == 0 || index == parts.size()) { //size is orig last element
+      if (index == 0 || index == parts.size()) {
         span = new Span((parts.get(0)).span.getStart(), (parts.get(parts.size() - 1)).span.getEnd());
       }
     }
@@ -744,9 +751,7 @@ public class Parse implements Cloneable, Comparable<Parse> {
 
   public Parse adjoinRoot(Parse node, HeadRules rules, int parseIndex) {
     Parse lastChild = parts.get(parseIndex);
-    Parse adjNode = new Parse(this.text, new Span(lastChild.getSpan().getStart(),
-        node.getSpan().getEnd()), lastChild.getType(), 1,
-        rules.getHead(new Parse[] {lastChild, node}, lastChild.getType()));
+    Parse adjNode = new Parse(this.text, new Span(lastChild.getSpan().getStart(), node.getSpan().getEnd()), lastChild.getType(), 1, rules.getHead(new Parse[] { lastChild, node }, lastChild.getType()));
     adjNode.parts.add(lastChild);
     if (node.prevPunctSet != null) {
       adjNode.parts.addAll(node.prevPunctSet);
@@ -766,8 +771,7 @@ public class Parse implements Cloneable, Comparable<Parse> {
    */
   public Parse adjoin(Parse sister, HeadRules rules) {
     Parse lastChild = parts.get(parts.size() - 1);
-    Parse adjNode = new Parse(this.text, new Span(lastChild.getSpan().getStart(), sister.getSpan().getEnd()),
-        lastChild.getType(), 1, rules.getHead(new Parse[] {lastChild, sister}, lastChild.getType()));
+    Parse adjNode = new Parse(this.text, new Span(lastChild.getSpan().getStart(), sister.getSpan().getEnd()), lastChild.getType(), 1, rules.getHead(new Parse[] { lastChild, sister }, lastChild.getType()));
     adjNode.parts.add(lastChild);
     if (sister.prevPunctSet != null) {
       adjNode.parts.addAll(sister.prevPunctSet);
@@ -782,19 +786,20 @@ public class Parse implements Cloneable, Comparable<Parse> {
 
   public void expandTopNode(Parse root) {
     boolean beforeRoot = true;
-    //System.err.println("expandTopNode: parts="+parts);
     for (int pi = 0, ai = 0; pi < parts.size(); pi++, ai++) {
       Parse node = parts.get(pi);
       if (node == root) {
         beforeRoot = false;
-      } else if (beforeRoot) {
-        root.parts.add(ai, node);
-        parts.remove(pi);
-        pi--;
       } else {
-        root.parts.add(node);
-        parts.remove(pi);
-        pi--;
+        if (beforeRoot) {
+          root.parts.add(ai, node);
+          parts.remove(pi);
+          pi--;
+        } else {
+          root.parts.add(node);
+          parts.remove(pi);
+          pi--;
+        }
       }
     }
     root.updateSpan();
@@ -907,8 +912,7 @@ public class Parse implements Cloneable, Comparable<Parse> {
    * @return true if this node is a pos-tag, false otherwise.
    */
   public boolean isPosTag() {
-    return (parts.size() == 1 &&
-        (parts.get(0)).getType().equals(AbstractBottomUpParser.TOK_NODE));
+    return (parts.size() == 1 && (parts.get(0)).getType().equals(AbstractBottomUpParser.TOK_NODE));
   }
 
   /**
@@ -992,25 +996,18 @@ public class Parse implements Cloneable, Comparable<Parse> {
     return null;
   }
 
-  @Override
-  public boolean equals(Object obj) {
+  @Override public boolean equals(Object obj) {
     if (obj == this) {
       return true;
     }
-
     if (obj instanceof Parse) {
       Parse p = (Parse) obj;
-
-      return Objects.equals(label, p.label) && span.equals(p.span)
-          && text.equals(p.text) && parts.equals(p.parts);
+      return Objects.equals(label, p.label) && span.equals(p.span) && text.equals(p.text) && parts.equals(p.parts);
     }
-
     return false;
   }
 
-  @Override
-  public int hashCode() {
-    // Note: label is missing here!
+  @Override public int hashCode() {
     return Objects.hash(span, text);
   }
 
@@ -1047,9 +1044,7 @@ public class Parse implements Cloneable, Comparable<Parse> {
     }
     for (int ki = 0; ki < kids.length; ki++) {
       nlevels[levels.length] = ki;
-      System.out.println(levelsBuff.toString() + ki + "] " + kids[ki].getType() +
-          " " + kids[ki].hashCode() + " -> " + kids[ki].getParent().hashCode() +
-          " " + kids[ki].getParent().getType() + " " + kids[ki].getCoveredText());
+      System.out.println(levelsBuff.toString() + ki + "] " + kids[ki].getType() + " " + kids[ki].hashCode() + " -> " + kids[ki].getParent().hashCode() + " " + kids[ki].getParent().getType() + " " + kids[ki].getCoveredText());
       codeTree(kids[ki], nlevels);
     }
   }

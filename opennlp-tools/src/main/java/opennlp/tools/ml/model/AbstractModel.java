@@ -1,55 +1,45 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package opennlp.tools.ml.model;
-
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-
 import opennlp.tools.ml.ArrayMath;
 
 public abstract class AbstractModel implements MaxentModel {
-
   /**
    * Mapping between predicates/contexts and an integer representing them.
    */
   protected Map<String, Context> pmap;
+
   /**
    * The names of the outcomes.
    */
   protected String[] outcomeNames;
+
   /**
    * Parameters for the model.
    */
   protected EvalParameters evalParams;
+
   /**
    * Prior distribution for this model.
    */
   protected Prior prior;
+
   /**
    * The type of the model.
    */
   protected ModelType modelType;
 
-  protected AbstractModel(Context[] params, String[] predLabels,
-                          Map<String, Context> pmap, String[] outcomeNames) {
+  public enum ModelType {
+    Maxent,
+    Perceptron,
+    MaxentQn,
+    NaiveBayes
+  }
+
+  protected AbstractModel(Context[] params, String[] predLabels, Map<String, Context> pmap, String[] outcomeNames) {
     this.pmap = pmap;
     this.outcomeNames = outcomeNames;
     this.evalParams = new EvalParameters(params, outcomeNames.length);
@@ -62,11 +52,9 @@ public abstract class AbstractModel implements MaxentModel {
 
   private void init(String[] predLabels, Context[] params, String[] outcomeNames) {
     this.pmap = new LinkedHashMap<>(predLabels.length);
-
     for (int i = 0; i < predLabels.length; i++) {
       pmap.put(predLabels[i], params[i]);
     }
-
     this.outcomeNames = outcomeNames;
   }
 
@@ -100,8 +88,7 @@ public abstract class AbstractModel implements MaxentModel {
    */
   public final String getAllOutcomes(double[] ocs) {
     if (ocs.length != outcomeNames.length) {
-      return "The double array sent as a parameter to GISModel.getAllOutcomes() " +
-          "must not have been produced by this model.";
+      return "The double array sent as a parameter to GISModel.getAllOutcomes() " + "must not have been produced by this model.";
     } else {
       DecimalFormat df = new DecimalFormat("0.0000");
       StringBuilder sb = new StringBuilder(ocs.length * 2);
@@ -133,8 +120,9 @@ public abstract class AbstractModel implements MaxentModel {
    **/
   public int getIndex(String outcome) {
     for (int i = 0; i < outcomeNames.length; i++) {
-      if (outcomeNames[i].equals(outcome))
+      if (outcomeNames[i].equals(outcome)) {
         return i;
+      }
     }
     return -1;
   }
@@ -168,26 +156,18 @@ public abstract class AbstractModel implements MaxentModel {
     return data;
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(pmap, Arrays.hashCode(outcomeNames), evalParams, prior);
   }
 
-  @Override
-  public boolean equals(Object obj) {
+  @Override public boolean equals(Object obj) {
     if (obj == this) {
       return true;
     }
-
     if (obj instanceof AbstractModel) {
       AbstractModel model = (AbstractModel) obj;
-
-      return pmap.equals(model.pmap) && Objects.deepEquals(outcomeNames, model.outcomeNames)
-          && Objects.equals(prior, model.prior);
+      return pmap.equals(model.pmap) && Objects.deepEquals(outcomeNames, model.outcomeNames) && Objects.equals(prior, model.prior);
     }
-
     return false;
   }
-
-  public enum ModelType { Maxent, Perceptron, MaxentQn, NaiveBayes }
 }

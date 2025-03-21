@@ -1,22 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package opennlp.tools.lemmatizer;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,7 +11,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import opennlp.common.lemmatizer.Lemmatizer;
 
 /**
@@ -39,7 +20,6 @@ import opennlp.common.lemmatizer.Lemmatizer;
  * @version 2014-07-08
  */
 public class DictionaryLemmatizer implements Lemmatizer {
-
   /**
    * The hashmap containing the dictionary.
    */
@@ -69,8 +49,7 @@ public class DictionaryLemmatizer implements Lemmatizer {
   }
 
   private void init(InputStream dictionary) throws IOException {
-    final BufferedReader breader = new BufferedReader(
-        new InputStreamReader(dictionary));
+    final BufferedReader breader = new BufferedReader(new InputStreamReader(dictionary));
     String line;
     while ((line = breader.readLine()) != null) {
       final String[] elems = line.split("\t");
@@ -100,7 +79,6 @@ public class DictionaryLemmatizer implements Lemmatizer {
     return keys;
   }
 
-
   public String[] lemmatize(final String[] tokens, final String[] postags) {
     List<String> lemmas = new ArrayList<>();
     for (int i = 0; i < tokens.length; i++) {
@@ -127,7 +105,6 @@ public class DictionaryLemmatizer implements Lemmatizer {
   private String lemmatize(final String word, final String postag) {
     String lemma;
     final List<String> keys = this.getDictKeys(word, postag);
-    // lookup lemma as value of the map
     final List<String> keyValues = this.dictMap.get(keys);
     if (keyValues != null && !keyValues.isEmpty()) {
       lemma = keyValues.get(0);
@@ -148,7 +125,6 @@ public class DictionaryLemmatizer implements Lemmatizer {
   private List<String> getAllLemmas(final String word, final String postag) {
     List<String> lemmasList = new ArrayList<>();
     final List<String> keys = this.getDictKeys(word, postag);
-    // lookup lemma as value of the map
     final List<String> keyValues = this.dictMap.get(keys);
     if (keyValues != null && !keyValues.isEmpty()) {
       lemmasList.addAll(keyValues);

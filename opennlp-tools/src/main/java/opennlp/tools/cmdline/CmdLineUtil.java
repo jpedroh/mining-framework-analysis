@@ -1,22 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package opennlp.tools.cmdline;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-
 import opennlp.tools.ml.TrainerFactory;
 import opennlp.tools.util.InputStreamFactory;
 import opennlp.tools.util.MarkableFileInputStreamFactory;
@@ -42,11 +23,9 @@ import opennlp.tools.util.model.BaseModel;
  * <b>Note:</b> Do not use this class, internal use only!
  */
 public final class CmdLineUtil {
-
   static final int IO_BUFFER_SIZE = 1024 * 1024;
 
   private CmdLineUtil() {
-    // not intended to be instantiated
   }
 
   /**
@@ -64,17 +43,18 @@ public final class CmdLineUtil {
    *                                thrown and an error message is printed to the console.
    */
   public static void checkInputFile(String name, File inFile) {
-
     String isFailure = null;
-
     if (inFile.isDirectory()) {
       isFailure = "The " + name + " file is a directory!";
-    } else if (!inFile.exists()) {
-      isFailure = "The " + name + " file does not exist!";
-    } else if (!inFile.canRead()) {
-      isFailure = "No permissions to read the " + name + " file!";
+    } else {
+      if (!inFile.exists()) {
+        isFailure = "The " + name + " file does not exist!";
+      } else {
+        if (!inFile.canRead()) {
+          isFailure = "No permissions to read the " + name + " file!";
+        }
+      }
     }
-
     if (null != isFailure) {
       throw new TerminateToolException(-1, isFailure + " Path: " + inFile.getAbsolutePath());
     }
@@ -95,43 +75,29 @@ public final class CmdLineUtil {
    * @param outFile file
    */
   public static void checkOutputFile(String name, File outFile) {
-
     String isFailure = null;
-
     if (outFile.exists()) {
-
-      // The file already exists, ensure that it is a normal file and that it is
-      // possible to write into it
-
       if (outFile.isDirectory()) {
         isFailure = "The " + name + " file is a directory!";
-      } else if (outFile.isFile()) {
-        if (!outFile.canWrite()) {
-          isFailure = "No permissions to write the " + name + " file!";
-        }
       } else {
-        isFailure = "The " + name + " file is not a normal file!";
+        if (outFile.isFile()) {
+          if (!outFile.canWrite()) {
+            isFailure = "No permissions to write the " + name + " file!";
+          }
+        } else {
+          isFailure = "The " + name + " file is not a normal file!";
+        }
       }
     } else {
-
-      // The file does not exist ensure its parent
-      // directory exists and has write permissions to create
-      // a new file in it
-
       File parentDir = outFile.getAbsoluteFile().getParentFile();
-
       if (parentDir != null && parentDir.exists()) {
-
         if (!parentDir.canWrite()) {
           isFailure = "No permissions to create the " + name + " file!";
         }
       } else {
-        isFailure = "The parent directory of the " + name + " file does not exist, " +
-            "please create it first!";
+        isFailure = "The parent directory of the " + name + " file does not exist, " + "please create it first!";
       }
-
     }
-
     if (null != isFailure) {
       throw new TerminateToolException(-1, isFailure + " Path: " + outFile.getAbsolutePath());
     }
@@ -141,7 +107,7 @@ public final class CmdLineUtil {
     try {
       return new FileInputStream(file);
     } catch (FileNotFoundException e) {
-      throw new TerminateToolException(-1, "File '" + file + "' cannot be found", e);
+      throw new TerminateToolException(-1, "File \'" + file + "\' cannot be found", e);
     }
   }
 
@@ -149,7 +115,7 @@ public final class CmdLineUtil {
     try {
       return new MarkableFileInputStreamFactory(file);
     } catch (FileNotFoundException e) {
-      throw new TerminateToolException(-1, "File '" + file + "' cannot be found", e);
+      throw new TerminateToolException(-1, "File \'" + file + "\' cannot be found", e);
     }
   }
 
@@ -162,30 +128,20 @@ public final class CmdLineUtil {
    * @param model     the model itself which should be written to disk
    */
   public static void writeModel(String modelName, File modelFile, BaseModel model) {
-
     CmdLineUtil.checkOutputFile(modelName + " model", modelFile);
-
     System.err.print("Writing " + modelName + " model ... ");
-
     long beginModelWritingTime = System.currentTimeMillis();
-
-    try (OutputStream modelOut = new BufferedOutputStream(
-        new FileOutputStream(modelFile), IO_BUFFER_SIZE)) {
+    try (OutputStream modelOut = new BufferedOutputStream(new FileOutputStream(modelFile), IO_BUFFER_SIZE)) {
       model.serialize(modelOut);
     } catch (IOException e) {
       System.err.println("failed");
-      throw new TerminateToolException(-1, "Error during writing model file '" + modelFile + "'", e);
+      throw new TerminateToolException(-1, "Error during writing model file \'" + modelFile + "\'", e);
     }
-
     long modelWritingDuration = System.currentTimeMillis() - beginModelWritingTime;
-
     System.err.printf("done (%.3fs)\n", modelWritingDuration / 1000d);
-
     System.err.println();
-
     System.err.println("Wrote " + modelName + " model to");
     System.err.println("path: " + modelFile.getAbsolutePath());
-
     System.err.println();
   }
 
@@ -202,7 +158,6 @@ public final class CmdLineUtil {
         return i;
       }
     }
-
     return -1;
   }
 
@@ -221,7 +176,6 @@ public final class CmdLineUtil {
         return args[i];
       }
     }
-
     return null;
   }
 
@@ -234,14 +188,12 @@ public final class CmdLineUtil {
    */
   public static Integer getIntParameter(String param, String[] args) {
     String value = getParameter(param, args);
-
     try {
-      if (value != null)
+      if (value != null) {
         return Integer.parseInt(value);
+      }
     } catch (NumberFormatException ignored) {
-      // in this case return null
     }
-
     return null;
   }
 
@@ -254,24 +206,20 @@ public final class CmdLineUtil {
    */
   public static Double getDoubleParameter(String param, String[] args) {
     String value = getParameter(param, args);
-
     try {
-      if (value != null)
+      if (value != null) {
         return Double.parseDouble(value);
+      }
     } catch (NumberFormatException ignored) {
-      // in this case return null
     }
-
     return null;
   }
 
   public static void checkLanguageCode(String code) {
     List<String> languageCodes = new ArrayList<>(Arrays.asList(Locale.getISOLanguages()));
     languageCodes.add("x-unspecified");
-
     if (!languageCodes.contains(code)) {
-      throw new TerminateToolException(1, "Unknown language code " + code + ", " +
-          "must be an ISO 639 code!");
+      throw new TerminateToolException(1, "Unknown language code " + code + ", " + "must be an ISO 639 code!");
     }
   }
 
@@ -281,7 +229,6 @@ public final class CmdLineUtil {
         return true;
       }
     }
-
     return false;
   }
 
@@ -297,34 +244,23 @@ public final class CmdLineUtil {
     throw createObjectStreamError(e);
   }
 
-  // its optional, passing null is allowed
-  public static TrainingParameters loadTrainingParameters(String paramFile,
-                                                          boolean supportSequenceTraining) {
-
+  public static TrainingParameters loadTrainingParameters(String paramFile, boolean supportSequenceTraining) {
     TrainingParameters params = null;
-
     if (paramFile != null) {
-
       checkInputFile("Training Parameter", new File(paramFile));
-
       try (InputStream paramsIn = new FileInputStream(new File(paramFile))) {
         params = new opennlp.tools.util.TrainingParameters(paramsIn);
       } catch (IOException e) {
         throw new TerminateToolException(-1, "Error during parameters loading: " + e.getMessage(), e);
       }
-
       if (!TrainerFactory.isValid(params)) {
-        throw new TerminateToolException(1, "Training parameters file '" + paramFile + "' is invalid!");
+        throw new TerminateToolException(1, "Training parameters file \'" + paramFile + "\' is invalid!");
       }
-
       TrainerFactory.TrainerType trainerType = TrainerFactory.getTrainerType(params);
-
-      if (!supportSequenceTraining
-          && trainerType.equals(TrainerFactory.TrainerType.EVENT_MODEL_SEQUENCE_TRAINER)) {
+      if (!supportSequenceTraining && trainerType.equals(TrainerFactory.TrainerType.EVENT_MODEL_SEQUENCE_TRAINER)) {
         throw new TerminateToolException(1, "Sequence training is not supported!");
       }
     }
-
     return params;
   }
 }
