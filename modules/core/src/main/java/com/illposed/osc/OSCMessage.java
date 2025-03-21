@@ -43,7 +43,51 @@ public class OSCMessage extends OSCPacket {
 	 * @param address  the recipient of this OSC message
 	 */
 	public OSCMessage(String address) {
+<<<<<<< /usr/src/app/output/hoijui/javaosc/f806396898fdfbf9533f2ff881b05ff5b6df5f6e/modules/core/src/main/java/com/illposed/osc/OSCMessage.java/left.java
 		this(address, null);
+||||||| /usr/src/app/output/hoijui/javaosc/f806396898fdfbf9533f2ff881b05ff5b6df5f6e/modules/core/src/main/java/com/illposed/osc/OSCMessage.java/base.java
+		this(address, (Collection<Object>) null);
+	}
+
+	// deprecated since version 1.0, March 2012
+	/**
+	 * Creates an OSCMessage with an address and arguments already initialized.
+	 * @param address  the recipient of this OSC message
+	 * @param arguments  the data sent to the receiver
+	 * @deprecated
+	 */
+	public OSCMessage(String address, Object[] arguments) {
+
+		this.address = address;
+		if (arguments == null) {
+			this.arguments = new LinkedList();
+		} else {
+			this.arguments = new ArrayList(arguments.length);
+			this.arguments.addAll(Arrays.asList(arguments));
+		}
+		init();
+=======
+		this(address, (Collection<Object>) null);
+	}
+
+	// deprecated since version 1.0, March 2012
+	/**
+	 * Creates an OSCMessage with an address and arguments already initialized.
+	 * @param address  the recipient of this OSC message
+	 * @param arguments  the data sent to the receiver
+	 * @deprecated
+	 */
+	public OSCMessage(String address, Object[] arguments) {
+
+		this.address = address;
+		if (arguments == null) {
+			this.arguments = new LinkedList<Object>();
+		} else {
+			this.arguments = new ArrayList<Object>(arguments.length);
+			this.arguments.addAll(Arrays.asList(arguments));
+		}
+		init();
+>>>>>>> /usr/src/app/output/hoijui/javaosc/f806396898fdfbf9533f2ff881b05ff5b6df5f6e/modules/core/src/main/java/com/illposed/osc/OSCMessage.java/right.java
 	}
 
 	/**
