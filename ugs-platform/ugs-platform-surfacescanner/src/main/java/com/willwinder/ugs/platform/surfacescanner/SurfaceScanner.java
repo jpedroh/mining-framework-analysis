@@ -133,7 +133,13 @@ public class SurfaceScanner {
                         minXYZ.getX() + Math.min(maxXYZ.getX() - minXYZ.getX(), x * resolution),
                         minXYZ.getY() + Math.min(maxXYZ.getY() - minXYZ.getY(), y * resolution),
                         Double.NaN,
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/03abfc1d5c21f20b8701e7ff9e64bac6bfc8fde2/ugs-platform/ugs-platform-surfacescanner/src/main/java/com/willwinder/ugs/platform/surfacescanner/SurfaceScanner.java/left.java
                         minXYZ.getUnits());
+||||||| /usr/src/app/output/winder/universal-g-code-sender/03abfc1d5c21f20b8701e7ff9e64bac6bfc8fde2/ugs-platform/ugs-platform-surfacescanner/src/main/java/com/willwinder/ugs/platform/surfacescanner/SurfaceScanner.java/base.java
+                        units);
+=======
+                        corner1.getUnits());
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/03abfc1d5c21f20b8701e7ff9e64bac6bfc8fde2/ugs-platform/ugs-platform-surfacescanner/src/main/java/com/willwinder/ugs/platform/surfacescanner/SurfaceScanner.java/right.java
                 probePositionGrid[x][y] = p;
             }
         }
@@ -152,7 +158,81 @@ public class SurfaceScanner {
             yIndex += yIncrement;
         }
 
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/03abfc1d5c21f20b8701e7ff9e64bac6bfc8fde2/ugs-platform/ugs-platform-surfacescanner/src/main/java/com/willwinder/ugs/platform/surfacescanner/SurfaceScanner.java/left.java
         listeners.forEach(SurfaceScannerListener::onScannerUpdate);
+||||||| /usr/src/app/output/winder/universal-g-code-sender/03abfc1d5c21f20b8701e7ff9e64bac6bfc8fde2/ugs-platform/ugs-platform-surfacescanner/src/main/java/com/willwinder/ugs/platform/surfacescanner/SurfaceScanner.java/base.java
+    }
+
+    public void handleEvent(ProbeEvent evt) {
+        if (pendingPositions.isEmpty()) return;
+
+        Position probeMachinePosition = evt.getProbePosition();
+        if (!Double.isFinite(probeMachinePosition.getZ())) {
+            reset();
+            throw new RuntimeException("Probe returned invalid position");
+        }
+
+        if (probeMachinePosition.getUnits() == Units.UNKNOWN) {
+            System.out.println("Unknown units in autoleveler receiving probe. Assuming " + this.units);
+        }
+        probeMachinePosition = probeMachinePosition.getPositionIn(units);
+
+        Position probePosition = new Position(
+                probeMachinePosition.getX() + machineWorkOffset.x,
+                probeMachinePosition.getY() + machineWorkOffset.y,
+                probeMachinePosition.getZ() + machineWorkOffset.z,
+                probeMachinePosition.getUnits());
+
+        logger.log(Level.INFO, "Record ({0}, {1}, {2})",
+                new Object[] {probePosition.getX(), probePosition.getY(), probePosition.getZ()});
+        probeEvent(probePosition);
+
+        if (!pendingPositions.isEmpty()) {
+            probeNextPoint(probePosition.getZ());
+        }
+    }
+
+    private void reset() {
+        update(minXYZ, maxXYZ, units);
+=======
+    }
+
+    public void handleEvent(ProbeEvent evt) {
+        if (pendingPositions.isEmpty()) return;
+
+        Position probeMachinePosition = evt.getProbePosition();
+        if (!Double.isFinite(probeMachinePosition.getZ())) {
+            reset();
+            throw new RuntimeException("Probe returned invalid position");
+        }
+
+        if (probeMachinePosition.getUnits() == Units.UNKNOWN) {
+            logger.warning("Unknown units in autoleveler receiving probe. Assuming " + getPreferredUnits());
+        }
+        probeMachinePosition = probeMachinePosition.getPositionIn(getPreferredUnits());
+        Position probePosition = probeMachinePosition.add(machineWorkOffset);
+
+        logger.log(Level.INFO, "Record ({0}, {1}, {2})",
+                new Object[] {probePosition.getX(), probePosition.getY(), probePosition.getZ()});
+        probeEvent(probePosition);
+
+        try {
+            double retractedZ = retract(probePosition.getZ());
+            if (!pendingPositions.isEmpty()) {
+                probeNextPoint(retractedZ);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Units getPreferredUnits() {
+        return this.backend.getSettings().getPreferredUnits();
+    }
+
+    private void reset() {
+        update(minXYZ, maxXYZ);
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/03abfc1d5c21f20b8701e7ff9e64bac6bfc8fde2/ugs-platform/ugs-platform-surfacescanner/src/main/java/com/willwinder/ugs/platform/surfacescanner/SurfaceScanner.java/right.java
     }
 
     public void probeEvent(final Position p) {
@@ -161,7 +241,13 @@ public class SurfaceScanner {
             reset();
             throw new RuntimeException(String.format("Unexpected probe location, expected %s to be %s", p, probePosition));
         }
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/03abfc1d5c21f20b8701e7ff9e64bac6bfc8fde2/ugs-platform/ugs-platform-surfacescanner/src/main/java/com/willwinder/ugs/platform/surfacescanner/SurfaceScanner.java/left.java
         Position settingsOffset = settings.getAutoLevelProbeOffset().getPositionIn(getPreferredUnits());
+||||||| /usr/src/app/output/winder/universal-g-code-sender/03abfc1d5c21f20b8701e7ff9e64bac6bfc8fde2/ugs-platform/ugs-platform-surfacescanner/src/main/java/com/willwinder/ugs/platform/surfacescanner/SurfaceScanner.java/base.java
+        Position settingsOffset = settings.autoLevelProbeOffset.getPositionIn(units);
+=======
+        Position settingsOffset = settings.autoLevelProbeOffset.getPositionIn(getPreferredUnits());
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/03abfc1d5c21f20b8701e7ff9e64bac6bfc8fde2/ugs-platform/ugs-platform-surfacescanner/src/main/java/com/willwinder/ugs/platform/surfacescanner/SurfaceScanner.java/right.java
 
         probePosition.setX(probePosition.getX() + settingsOffset.getX());
         probePosition.setY(probePosition.getY() + settingsOffset.getY());
@@ -181,19 +267,35 @@ public class SurfaceScanner {
         probeNextPoint(work.getZ());
     }
 
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/03abfc1d5c21f20b8701e7ff9e64bac6bfc8fde2/ugs-platform/ugs-platform-surfacescanner/src/main/java/com/willwinder/ugs/platform/surfacescanner/SurfaceScanner.java/left.java
     public Optional<Position> getNextProbePoint() {
         return Optional.ofNullable(this.pendingPositions.peek());
     }
 
     private void probeNextPoint(Double zBackoff) {
+||||||| /usr/src/app/output/winder/universal-g-code-sender/03abfc1d5c21f20b8701e7ff9e64bac6bfc8fde2/ugs-platform/ugs-platform-surfacescanner/src/main/java/com/willwinder/ugs/platform/surfacescanner/SurfaceScanner.java/base.java
+    private void probeNextPoint(Double zLast) {
+=======
+    private void probeNextPoint(Double zBackoff) {
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/03abfc1d5c21f20b8701e7ff9e64bac6bfc8fde2/ugs-platform/ugs-platform-surfacescanner/src/main/java/com/willwinder/ugs/platform/surfacescanner/SurfaceScanner.java/right.java
         try {
             Position p = this.pendingPositions.peek();
 
             // Position over next probe position
             PartialPosition startPos = PartialPosition.builder(p).clearZ().build();
+<<<<<<< /usr/src/app/output/winder/universal-g-code-sender/03abfc1d5c21f20b8701e7ff9e64bac6bfc8fde2/ugs-platform/ugs-platform-surfacescanner/src/main/java/com/willwinder/ugs/platform/surfacescanner/SurfaceScanner.java/left.java
             String cmd = GcodeUtils.generateMoveCommand(
                     "G90G0", getProbeScanFeedRate(), startPos);
             logger.log(Level.INFO, "MoveTo {0} {1}", new Object[]{startPos, cmd});
+||||||| /usr/src/app/output/winder/universal-g-code-sender/03abfc1d5c21f20b8701e7ff9e64bac6bfc8fde2/ugs-platform/ugs-platform-surfacescanner/src/main/java/com/willwinder/ugs/platform/surfacescanner/SurfaceScanner.java/base.java
+            logger.log(Level.INFO, "MoveTo {0} {1}", new Object[] {startPos, cmd});
+            cmd = GcodeUtils.generateMoveCommand(
+                    "G90G0", settings.probeScanFeedRate, startPos);
+=======
+            String cmd = GcodeUtils.generateMoveCommand(
+                    "G90G0", getProbeScanFeedRate(), startPos);
+            logger.log(Level.INFO, "MoveTo {0} {1}", new Object[] {startPos, cmd});
+>>>>>>> /usr/src/app/output/winder/universal-g-code-sender/03abfc1d5c21f20b8701e7ff9e64bac6bfc8fde2/ugs-platform/ugs-platform-surfacescanner/src/main/java/com/willwinder/ugs/platform/surfacescanner/SurfaceScanner.java/right.java
             backend.sendGcodeCommand(true, cmd);
 
             // Send probe command, probing down to zMin
@@ -204,6 +306,32 @@ public class SurfaceScanner {
             reset();
             throw new RuntimeException(e);
         }
+    }
+
+    private double getProbeSpeed() {
+        return settings.probeSpeed * UnitUtils.scaleUnits(Units.MM, getPreferredUnits());
+    }
+
+    private double getProbeScanFeedRate() {
+        return settings.probeScanFeedRate * UnitUtils.scaleUnits(Units.MM, getPreferredUnits());
+    }
+
+    private double retract(Double zLast) throws Exception {
+        double zRetract = settings.zRetract;
+        if (zRetract <= 0) {
+            zRetract = maxXYZ.getZ() - minXYZ.getZ();
+        }
+
+        // Start by backing off the current position
+        double zBackoff = Math.min(zLast + zRetract, maxXYZ.getZ());
+        PartialPosition safeZ = PartialPosition.builder(maxXYZ.getUnits()).setZ(zBackoff).build();
+        String retractCommand = GcodeUtils.generateMoveCommand(
+                "G90G0",
+                getProbeScanFeedRate(),
+                safeZ);
+        logger.log(Level.INFO, "MoveTo {0} {1}", new Object[] {safeZ, retractCommand});
+        backend.sendGcodeCommand(true, retractCommand);
+        return zBackoff;
     }
 
     private double getProbeSpeed() {
