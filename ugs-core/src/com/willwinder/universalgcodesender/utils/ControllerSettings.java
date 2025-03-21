@@ -114,7 +114,7 @@ public class ControllerSettings {
             case LOOPBACK_SLOW:
                 return Optional.of(new GrblController(new LoopBackCommunicator(100)));
             case FLUIDNC:
-                return Optional.of(new FluidNCController());
+                return new FluidNCController();
             default:
                 return Optional.empty();
         }
@@ -138,6 +138,32 @@ public class ControllerSettings {
 
     public ProcessorConfigGroups getProcessorConfigs() {
         return this.GcodeProcessors;
+    }
+
+    public enum CONTROLLER {
+        GRBL("GRBL"),
+        GRBL_ESP32("GRBL ESP32"),
+        SMOOTHIE("SmoothieBoard"),
+        TINYG("TinyG"),
+        G2CORE("g2core"),
+        XLCD("XLCD"),
+        LOOPBACK("Loopback"),
+        LOOPBACK_SLOW("Loopback_Slow");
+
+        final String name;
+
+        CONTROLLER(String name) {
+            this.name = name;
+        }
+
+        public static CONTROLLER fromString(String name) {
+            for (CONTROLLER c : values()) {
+                if (c.name.equalsIgnoreCase(name)) {
+                    return c;
+                }
+            }
+            return null;
+        }
     }
 
     static public class ProcessorConfig {
