@@ -21,11 +21,10 @@
  */
 package org.gitools.ui.heatmap.panel;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.gitools.core.heatmap.Heatmap;
-import org.gitools.core.matrix.model.Direction;
 import org.gitools.core.matrix.model.IMatrixView;
-import org.gitools.core.matrix.model.IMatrixViewDimension;
+import org.apache.commons.lang.ArrayUtils;
+import org.gitools.matrix.model.IMatrixViewDimension;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.event.InputEvent;
@@ -196,7 +195,7 @@ class HeatmapKeyboardController extends KeyAdapter {
 
         // update selection
 
-        boolean clearSelection = true;
+        boolean clearSelection = false;
 
         boolean onRow = row != -1 && col == -1;
         boolean onBody = row != -1 && col != -1;
@@ -263,22 +262,22 @@ class HeatmapKeyboardController extends KeyAdapter {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_DOWN:
                 if (row >= 0 && row < mv.getRows().size() - 1) {
-                    mv.getRows().move(Direction.DOWN, new int[]{row});
+                    mv.getRows().move(org.gitools.core.matrix.model.Direction.DOWN, new int[]{row});
                 }
                 break;
             case KeyEvent.VK_UP:
                 if (row > 0 && row < mv.getRows().size()) {
-                    mv.getRows().move(Direction.UP, new int[]{row});
+                    mv.getRows().move(org.gitools.core.matrix.model.Direction.UP, new int[]{row});
                 }
                 break;
             case KeyEvent.VK_RIGHT:
                 if (col >= 0 && col < mv.getColumns().size() - 1) {
-                    mv.getColumns().move(Direction.RIGHT, new int[]{col});
+                    mv.getColumns().move(org.gitools.core.matrix.model.Direction.RIGHT, new int[]{col});
                 }
                 break;
             case KeyEvent.VK_LEFT:
                 if (col > 0 && col < mv.getColumns().size()) {
-                    mv.getColumns().move(Direction.LEFT, new int[]{col});
+                    mv.getColumns().move(org.gitools.core.matrix.model.Direction.LEFT, new int[]{col});
                 }
                 break;
         }
@@ -299,22 +298,22 @@ class HeatmapKeyboardController extends KeyAdapter {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_DOWN:
                 if (row >= 0 && row < mv.getRows().size() - 1) {
-                    mv.getRows().move(Direction.DOWN, sel);
+                    mv.getRows().move(org.gitools.core.matrix.model.Direction.DOWN, sel);
                 }
                 break;
             case KeyEvent.VK_UP:
                 if (row > 0 && row < mv.getRows().size()) {
-                    mv.getRows().move(Direction.UP, sel);
+                    mv.getRows().move(org.gitools.core.matrix.model.Direction.UP, sel);
                 }
                 break;
             case KeyEvent.VK_RIGHT:
                 if (col >= 0 && col < mv.getColumns().size() - 1) {
-                    mv.getColumns().move(Direction.RIGHT, sel);
+                    mv.getColumns().move(org.gitools.core.matrix.model.Direction.RIGHT, sel);
                 }
                 break;
             case KeyEvent.VK_LEFT:
                 if (col > 0 && col < mv.getColumns().size()) {
-                    mv.getColumns().move(Direction.LEFT, sel);
+                    mv.getColumns().move(org.gitools.core.matrix.model.Direction.LEFT, sel);
                 }
                 break;
         }

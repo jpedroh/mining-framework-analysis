@@ -32,6 +32,9 @@ import org.gitools.ui.utils.HeaderEnum;
 
 import java.awt.event.ActionEvent;
 
+/**
+ * @noinspection ALL
+ */
 public class EditHeaderAction extends BaseAction {
 
     private final HeaderEnum.Dimension dim;
