@@ -1,214 +1,185 @@
 package org.jinstagram.realtime;
-
 import org.jinstagram.auth.model.OAuthConstants;
 import org.jinstagram.auth.model.OAuthRequest;
 import org.jinstagram.exceptions.InstagramException;
 import org.jinstagram.http.Response;
 import org.jinstagram.http.Verbs;
 import org.jinstagram.utils.Preconditions;
-
 import com.google.gson.Gson;
-
 import java.io.IOException;
 
 public class InstagramSubscription {
-	private String aspect;
+  private String aspect;
 
-	private String callback;
+  private String callback;
 
-	private String clientId;
+  private String clientId;
 
-	private String clientSecret;
+  private String clientSecret;
 
-	private SubscriptionType subscriptionType;
+  private SubscriptionType subscriptionType;
 
-    private String objectId;
+  private String objectId;
 
-	private String verifyToken;
+  private String verifyToken;
 
-	/**
+  /**
 	 * Default constructor
 	 */
-	public InstagramSubscription() {
-		this.callback = OAuthConstants.OUT_OF_BAND;
-	}
+  public InstagramSubscription() {
+    this.callback = OAuthConstants.OUT_OF_BAND;
+  }
 
-	/**
+  /**
 	 * Configures the callback url
 	 *
 	 * @param callback The callback for your application
 	 * @return the {@link InstagramSubscription} instance for method chaining
 	 */
-	public InstagramSubscription callback(String callback) {
-		Preconditions.checkValidUrl(callback, "Invalid Callback Url");
+  public InstagramSubscription callback(String callback) {
+    Preconditions.checkValidUrl(callback, "Invalid Callback Url");
+    this.callback = callback;
+    return this;
+  }
 
-		this.callback = callback;
-
-		return this;
-	}
-
-	/**
+  /**
 	 * Configures the clientId
 	 *
 	 * @param clientId The clientId for your application
 	 * @return the {@link InstagramSubscription} instance for method chaining
 	 */
-	public InstagramSubscription clientId(String clientId) {
-		Preconditions.checkEmptyString(clientId, "Invalid 'clientId' key");
+  public InstagramSubscription clientId(String clientId) {
+    Preconditions.checkEmptyString(clientId, "Invalid \'clientId\' key");
+    this.clientId = clientId;
+    return this;
+  }
 
-		this.clientId = clientId;
+  public InstagramSubscription clientSecret(String clientSecret) {
+    Preconditions.checkEmptyString(clientSecret, "Invalid \'clientSecret\' key");
+    this.clientSecret = clientSecret;
+    return this;
+  }
 
-		return this;
-	}
+  public InstagramSubscription object(SubscriptionType type) {
+    this.subscriptionType = type;
+    return this;
+  }
 
-	public InstagramSubscription clientSecret(String clientSecret) {
-		Preconditions.checkEmptyString(clientSecret, "Invalid 'clientSecret' key");
-
-		this.clientSecret = clientSecret;
-
-		return this;
-	}
-
-	public InstagramSubscription object(SubscriptionType type) {
-
-		this.subscriptionType = type;
-
-		return this;
-	}
-
-    /**
+  /**
      * Configures the target id for the subscription, if any. In case of a a real-time tag update, this
      * defines the target tag to use.
      *
      * @param objectId the object to target for this real-time subscription
      * @return the {@link InstagramSubscription} instance for method chaining
      */
-    public InstagramSubscription objectId(String objectId) {
-        this.objectId = objectId;
-        return this;
+  public InstagramSubscription objectId(String objectId) {
+    this.objectId = objectId;
+    return this;
+  }
+
+  public InstagramSubscription verifyToken(String verifyToken) {
+    Preconditions.checkEmptyString(verifyToken, "Invalid \'verifyToken\' key");
+    this.verifyToken = verifyToken;
+    return this;
+  }
+
+  public InstagramSubscription aspect(String aspect) {
+    Preconditions.checkEmptyString(aspect, "Invalid \'aspect\' key");
+    this.aspect = aspect;
+    return this;
+  }
+
+  public SubscriptionResponse createSubscription() throws InstagramException {
+    Preconditions.checkEmptyString(clientId, "You must provide a clientId key");
+    Preconditions.checkEmptyString(clientSecret, "You must provide a clientSecret");
+    Preconditions.checkEmptyString(clientSecret, "You must provide a clientSecret");
+    OAuthRequest request = new OAuthRequest(Verbs.POST, Constants.SUBSCRIPTION_ENDPOINT);
+    request.addBodyParameter(Constants.CLIENT_ID, this.clientId);
+    request.addBodyParameter(Constants.CLIENT_SECRET, this.clientSecret);
+    request.addBodyParameter(Constants.SUBSCRIPTION_TYPE, subscriptionType.toString());
+    request.addBodyParameter(Constants.OBJECT_ID, objectId);
+    request.addBodyParameter(Constants.ASPECT, "media");
+    request.addBodyParameter(Constants.VERIFY_TOKEN, this.verifyToken);
+    request.addBodyParameter(Constants.CALLBACK_URL, callback);
+    Response response;
+    try {
+      response = request.send();
+    } catch (IOException e) {
+      throw new InstagramException("Failed to create subscription", e);
     }
+    SubscriptionResponse subscriptionResponse = getSubscriptionResponse(response.getBody());
+    return subscriptionResponse;
+  }
 
-	public InstagramSubscription verifyToken(String verifyToken) {
-		Preconditions.checkEmptyString(verifyToken, "Invalid 'verifyToken' key");
-
-		this.verifyToken = verifyToken;
-
-		return this;
-	}
-
-	public InstagramSubscription aspect(String aspect) {
-		Preconditions.checkEmptyString(aspect, "Invalid 'aspect' key");
-
-		this.aspect = aspect;
-
-		return this;
-	}
-
-	public SubscriptionResponse createSubscription() throws InstagramException {
-
-		Preconditions.checkEmptyString(clientId, "You must provide a clientId key");
-		Preconditions.checkEmptyString(clientSecret, "You must provide a clientSecret");
-		Preconditions.checkEmptyString(clientSecret, "You must provide a clientSecret");
-
-		OAuthRequest request = new OAuthRequest(Verbs.POST, Constants.SUBSCRIPTION_ENDPOINT);
-
-		// Add the oauth parameter in the body
-		request.addBodyParameter(Constants.CLIENT_ID, this.clientId);
-		request.addBodyParameter(Constants.CLIENT_SECRET, this.clientSecret);
-		request.addBodyParameter(Constants.SUBSCRIPTION_TYPE, subscriptionType.toString());
-        request.addBodyParameter(Constants.OBJECT_ID, objectId);
-		request.addBodyParameter(Constants.ASPECT, "media");
-		request.addBodyParameter(Constants.VERIFY_TOKEN, this.verifyToken);
-		request.addBodyParameter(Constants.CALLBACK_URL, callback);
-
-        Response response;
-        try {
-            response = request.send();
-        } catch (IOException e) {
-            throw new InstagramException("Failed to create subscription", e);
-        }
-
-		SubscriptionResponse subscriptionResponse = getSubscriptionResponse(response.getBody());
-		return subscriptionResponse;
-
-	}
-
-	  private SubscriptionResponse getSubscriptionResponse(String jsonBody) throws InstagramException {
-	        Gson gson = new Gson();
-	        SubscriptionResponse response;
-
-	        try {
-	            response = gson.fromJson(jsonBody, SubscriptionResponse.class);
-	        } catch (Exception e) {
-	            throw new InstagramException("Error parsing json to object type ");
-	        }
-
-	        return response;
-	    }
-
-	  private SubscriptionsListResponse getSubscriptionsListResponse(String jsonBody) throws InstagramException {
-          Gson gson = new Gson();
-          SubscriptionsListResponse response = null;
-
-          try {
-              response = gson.fromJson(jsonBody, SubscriptionsListResponse.class);
-          } catch (Exception e) {
-              throw new InstagramException("Error parsing json to object type ");
-          }
-
-          return response;
-      }
-
-	public void deleteAllSubscription() throws InstagramException {
-
-		OAuthRequest request = new OAuthRequest(Verbs.DELETE, Constants.SUBSCRIPTION_ENDPOINT);
-
-		// Add the oauth parameter in the body
-		request.addQuerystringParameter(Constants.CLIENT_ID, this.clientId);
-		request.addQuerystringParameter(Constants.CLIENT_SECRET, this.clientSecret);
-		request.addQuerystringParameter("object", "all");
-
-        try {
-            request.send();
-        } catch (IOException e) {
-            throw new InstagramException("Failed to delete all subscriptions", e);
-        }
-	}
-
-	public SubscriptionsListResponse getSubscriptionList() throws InstagramException {
-		OAuthRequest request = new OAuthRequest(Verbs.GET, Constants.SUBSCRIPTION_ENDPOINT);
-
-		// Add the oauth parameter in the body
-		request.addQuerystringParameter(Constants.CLIENT_ID, this.clientId);
-		request.addQuerystringParameter(Constants.CLIENT_SECRET, this.clientSecret);
-
-        Response response;
-        try {
-            response = request.send();
-            return getSubscriptionsListResponse(response.getBody());
-        } catch (IOException e) {
-            throw new InstagramException("Failed to get subscription list", e);
-        }
-	}
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("InstagramSubscription [");
-        if (aspect != null)
-            builder.append("aspect=").append(aspect).append(", ");
-        if (callback != null)
-            builder.append("callback=").append(callback).append(", ");
-        if (clientId != null)
-            builder.append("clientId=").append(clientId).append(", ");
-        if (clientSecret != null)
-            builder.append("clientSecret=").append(clientSecret).append(", ");
-        if (subscriptionType != null)
-            builder.append("subscriptionType=").append(subscriptionType).append(", ");
-        if (verifyToken != null)
-            builder.append("verifyToken=").append(verifyToken);
-        builder.append("]");
-        return builder.toString();
+  private SubscriptionResponse getSubscriptionResponse(String jsonBody) throws InstagramException {
+    Gson gson = new Gson();
+    SubscriptionResponse response;
+    try {
+      response = gson.fromJson(jsonBody, SubscriptionResponse.class);
+    } catch (Exception e) {
+      throw new InstagramException("Error parsing json to object type ");
     }
+    return response;
+  }
 
+  private SubscriptionsListResponse getSubscriptionsListResponse(String jsonBody) throws InstagramException {
+    Gson gson = new Gson();
+    SubscriptionsListResponse response = null;
+    try {
+      response = gson.fromJson(jsonBody, SubscriptionsListResponse.class);
+    } catch (Exception e) {
+      throw new InstagramException("Error parsing json to object type ");
+    }
+    return response;
+  }
+
+  public void deleteAllSubscription() throws InstagramException {
+    OAuthRequest request = new OAuthRequest(Verbs.DELETE, Constants.SUBSCRIPTION_ENDPOINT);
+    request.addQuerystringParameter(Constants.CLIENT_ID, this.clientId);
+    request.addQuerystringParameter(Constants.CLIENT_SECRET, this.clientSecret);
+    request.addQuerystringParameter("object", "all");
+    try {
+      request.send();
+    } catch (IOException e) {
+      throw new InstagramException("Failed to delete all subscriptions", e);
+    }
+  }
+
+  public SubscriptionsListResponse getSubscriptionList() throws InstagramException {
+    OAuthRequest request = new OAuthRequest(Verbs.GET, Constants.SUBSCRIPTION_ENDPOINT);
+    request.addQuerystringParameter(Constants.CLIENT_ID, this.clientId);
+    request.addQuerystringParameter(Constants.CLIENT_SECRET, this.clientSecret);
+    Response response;
+    try {
+      response = request.send();
+      return getSubscriptionsListResponse(response.getBody());
+    } catch (IOException e) {
+      throw new InstagramException("Failed to get subscription list", e);
+    }
+  }
+
+  @Override public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("InstagramSubscription [");
+    if (aspect != null) {
+      builder.append("aspect=").append(aspect).append(", ");
+    }
+    if (callback != null) {
+      builder.append("callback=").append(callback).append(", ");
+    }
+    if (clientId != null) {
+      builder.append("clientId=").append(clientId).append(", ");
+    }
+    if (clientSecret != null) {
+      builder.append("clientSecret=").append(clientSecret).append(", ");
+    }
+    if (subscriptionType != null) {
+      builder.append("subscriptionType=").append(subscriptionType).append(", ");
+    }
+    if (verifyToken != null) {
+      builder.append("verifyToken=").append(verifyToken);
+    }
+    builder.append("]");
+    return builder.toString();
+  }
 }
