@@ -30,10 +30,8 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
-
 import javax.swing.Icon;
 import javax.swing.JComponent;
-
 import bibliothek.gui.DockController;
 import bibliothek.gui.Dockable;
 import bibliothek.gui.dock.action.ActionPopup;
@@ -42,6 +40,10 @@ import bibliothek.gui.dock.action.DockActionSource;
 import bibliothek.gui.dock.themes.basic.action.BasicTitleViewItem;
 import bibliothek.gui.dock.themes.basic.action.buttons.ButtonPanel;
 import bibliothek.gui.dock.util.swing.OrientedLabel;
+import java.awt.event.InputEvent;
+import bibliothek.gui.dock.disable.DisablingStrategy;
+import bibliothek.gui.dock.disable.DisablingStrategyListener;
+import bibliothek.gui.dock.util.DockUtilities;
 
 /**
  * An abstract implementation of {@link DockTitle}. This title can have
@@ -67,7 +69,6 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
     private ButtonPanel itemPanel;
     /** The actions that were suggested to this title */
     private DockActionSource suggestedSource;
-    
     /**
      * Constructs a new title
      * @param dockable the Dockable which is the owner of this title
@@ -76,7 +77,6 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
     public AbstractDockTitle( Dockable dockable, DockTitleVersion origin ){
     	init( dockable, origin, true );
     }
-    
     /**
      * Standard constructor
      * @param dockable The Dockable whose title this will be
@@ -87,7 +87,6 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
     public AbstractDockTitle( Dockable dockable, DockTitleVersion origin, boolean showMiniButtons ){
     	init( dockable, origin, showMiniButtons );
     }
-    
     /**
      * Constructor which does not do anything. Subclasses should call
      * {@link #init(Dockable, DockTitleVersion, boolean)} to initialize
@@ -96,7 +95,6 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
     protected AbstractDockTitle(){
     	// ignore 
     }
-    
     /**
      * Initializer called by the constructor.
      * @param dockable The Dockable whose title this will be
@@ -108,7 +106,6 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
     	super.init( dockable, origin );
     	setShowMiniButtons( showMiniButtons );
     }
-    
     /**
      * Tells whether this titel is able to show any {@link DockAction}. 
      * @return <code>true</code> if {@link DockAction}s are enabled
@@ -117,7 +114,6 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
     public boolean isShowMiniButtons(){
     	return itemPanel != null;
     }
-    
     /**
      * Enables or disables {@link DockAction}s for this title.
      * @param showMiniButtons whether to show actions or not
@@ -149,7 +145,6 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
     		}
     	}
     }
-    
     /**
      * Sets the tooltip that will be shown on this title.
      * @param text the new tooltip, can be <code>null</code>
@@ -159,14 +154,12 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
         if( itemPanel != null )
             itemPanel.setToolTipText( text );
     }
-    
     public void setOrientation( Orientation orientation ) {
         if( itemPanel != null ){
         	itemPanel.setOrientation( orientation );
         }
         super.setOrientation( orientation );
     }
-    
     @Override
     protected void doTitleLayout(){
         Insets insets = titleInsets();
@@ -242,7 +235,6 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
                 label.setBounds( x, y, width, height );
         }
     }
-    
     public Point getPopupLocation( Point click, boolean popupTrigger ){
         if( popupTrigger )
             return click;
@@ -271,7 +263,6 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
         
         return null;
     }
-    
     @Override
     public void changed( DockTitleEvent event ){
     	super.changed( event );
@@ -279,7 +270,6 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
     		suggestActions( ((ActionsDockTitleEvent)event).getSuggestions() );
     	}
     }
-    
     @Override
     public Dimension getPreferredSize() {
     	Dimension size = super.getPreferredSize();
@@ -308,7 +298,6 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
         
         return size;
     }
-    
     /**
      * Gets a list of all actions which will be shown on this title.
      * @param dockable the owner of the actions
@@ -321,7 +310,6 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
     	
         return dockable.getGlobalActionOffers();
     }
-    
     /**
      * Called if a module using the {@link DockTitle} suggests using a specific set of {@link DockAction}s. It is
      * up to the {@link DockTitle} to follow the suggestions or to ignore them. The default behavior of this
@@ -338,7 +326,6 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
 	    	}
     	}
     }
-    
     /**
      * Gets the {@link DockActionSource} that was {@link #suggestActions(DockActionSource) suggested} to this
      * title.
@@ -347,7 +334,6 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
     protected DockActionSource getSuggestedSource(){
 		return suggestedSource;
 	}
-    
     @Override
     public void bind() {        
         DockController controller = getDockable().getController();
@@ -359,7 +345,6 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
         
         super.bind();
     }
-
     @Override
     public void unbind() {
         if( itemPanel != null ){
@@ -368,5 +353,102 @@ public class AbstractDockTitle extends AbstractMultiDockTitle {
         }
         
         super.unbind();
+    }
+    /** Insets of the size 1,2,1,2 */
+    /** Insets of the size 2,1,2,1 */
+    /** The {@link Dockable} for which this title is shown */
+    /** A label for the title-text */
+    /** A panel that displays the action-buttons of this title */
+    /** The actions that were suggested to this title */
+    /** The creator of this title */
+    /** <code>true</code> if this title is currently selected, <code>false</code> otherwise */
+    /** <code>true</code> if this title is currently bound to a {@link Dockable} */
+    /** Whether the layout should be horizontal or vertical */
+    /** The icon which is shown on this title */
+    /** The disabled version of {@link #icon} */
+    private Icon disabledIcon;
+    /** number of pixels to paint between icon and text */
+    /** the colors used by this title */
+    /** the fonts used by this title */
+    /** the fonts which are used automatically */
+    /** the background of this title */
+    /** the current border, can be <code>null</code> */
+    /** whether this title should react to user input */
+    private boolean disabled = false;
+    /** all the listeners that were added to this title */
+    private List<MouseInputListener> mouseInputListeners = new ArrayList<MouseInputListener>();
+    /** tells how to paint the text on this title */
+	/** a listener added to the current {@link OrientationToRotationStrategy} represented by {@link #orientationConverter} */
+	/** tells whether this title has to be disabled */
+	private PropertyValue<DisablingStrategy> disablingStrategy = new PropertyValue<DisablingStrategy>( DisablingStrategy.STRATEGY ){
+		@Override
+		protected void valueChanged( DisablingStrategy oldValue, DisablingStrategy newValue ){
+			if( oldValue != null ){
+				oldValue.removeDisablingStrategyListener( disablingStrategyListener );
+			}
+			if( newValue != null ){
+				newValue.addDisablingStrategyListener( disablingStrategyListener );
+				setDisabled( newValue.isDisabled( getDockable(), AbstractDockTitle.this ));
+			}
+			else{
+				setDisabled( false );
+			}
+		}
+	};
+	/** a listener added to the current {@link DisablingStrategy} */
+	private DisablingStrategyListener disablingStrategyListener = new DisablingStrategyListener(){
+		public void changed( DockElement item ){
+			setDisabled( disablingStrategy.getValue().isDisabled( getDockable(), AbstractDockTitle.this ));
+		}
+	};
+    /**
+     * Tells this title whether it should be disabled or not. This method is called when the {@link DisablingStrategy}
+     * changes. A disabled title should react to any {@link InputEvent}, and should be painted differently than an
+     * enabled title.
+     * @param disabled whether this title is disabled
+     * @see #isDisabled()
+     */
+    protected void setDisabled( boolean disabled ){
+    	if( this.disabled != disabled ){
+	    	this.disabled = disabled;
+	    	label.setEnabled( !disabled );
+	    	setEnabled( !disabled );
+	    	
+	    	if( disabled ){
+	    		for( MouseInputListener listener : mouseInputListeners ){
+	    			doRemoveMouseInputListener( listener );
+	    		}
+	    	}
+	    	else{
+	    		for( MouseInputListener listener : mouseInputListeners ){
+	    			doAddMouseInputListener( listener );
+	    		}
+	    	}
+    	}
+    }
+    /**
+     * Tells whether this title is disabled, a disabled title does not react to any user input.
+     * @return whether the title is disabled
+     * @set {@link #setDisabled(boolean)}
+     */
+    protected boolean isDisabled(){
+    	return disabled;
+    }
+    /**
+     * Paints the icon (if there is any)
+     * @param g the graphics context to use
+     * @param component the {@link Component} which represents this title
+     */
+    public void addMouseInputListener( MouseInputListener listener ) {
+    	mouseInputListeners.add( listener );
+    	if( !isDisabled() ){
+	        doAddMouseInputListener( listener );
+    	}
+    }
+    public void removeMouseInputListener( MouseInputListener listener ) {
+    	mouseInputListeners.remove( listener );
+    	if( !isDisabled() ){
+	        doRemoveMouseInputListener( listener );
+    	}
     }
 }

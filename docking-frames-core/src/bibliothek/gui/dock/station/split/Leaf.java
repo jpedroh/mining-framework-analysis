@@ -94,8 +94,9 @@ public class Leaf extends VisibleSplitNode{
     	
     	DockableDisplayer displayer = handle.getDisplayer();
     	if( displayer == null )
-    		return new Dimension( 0, 0 );
-    	return displayer.getComponent().getMinimumSize();
+    		return minimum;
+    	Dimension result = displayer.getComponent().getMinimumSize();
+    	return new Dimension( Math.max( result.width, minimum.width ), Math.max( result.height, minimum.height ));
     }
     
     @Override

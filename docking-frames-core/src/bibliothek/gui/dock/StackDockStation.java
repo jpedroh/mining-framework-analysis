@@ -24,7 +24,6 @@
  * CH - Switzerland
  */
 
-
 package bibliothek.gui.dock;
 
 import java.awt.Component;
@@ -1611,8 +1610,8 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
         	content.setBackground( panelBackground );
         	
         	setBasePane( content );
-
-        	content.setLayout( new GridLayout( 1, 1 ));        	
+        	
+            content.setLayout( new GridLayout( 1, 1 ));
         }
         
         public Dimension getMinimumSize(){
@@ -1663,6 +1662,7 @@ public class StackDockStation extends AbstractDockableStation implements StackDo
 	                    frontBounds = new Rectangle( location.x, location.y, front.getWidth(), front.getHeight() );
                 	}
                 }
+                
                 if( frontBounds != null ){
                 	if( insert != null ){
                 		paint.drawInsertion( g, bounds, frontBounds );

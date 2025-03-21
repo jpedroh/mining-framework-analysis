@@ -898,7 +898,7 @@ public class ScreenDockStation extends AbstractDockStation {
     }
     
     public StationDropOperation prepareDrop( int x, int y, int titleX, int titleY, Dockable dockable ) {
-        return prepare( x, y, titleX, titleY, dockable );
+        return prepare( x, y, titleX, titleY, dockable);
     }
     
     public StationDragOperation prepareDrag( Dockable dockable ){

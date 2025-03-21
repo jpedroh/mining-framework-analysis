@@ -162,6 +162,12 @@ public class OverpaintablePanel extends JLayeredPane {
         // do nothing
     }
     
+<<<<<<< /usr/src/app/output/benoker/dockingframes/7792989b18d9aa22f844dd8a0ba8b56c8021d1e5/docking-frames-core/src/bibliothek/gui/dock/station/OverpaintablePanel.java/left.java
+    public Dimension getMinimumSize(){
+    	return base.getMinimumSize();
+    }
+||||||| /usr/src/app/output/benoker/dockingframes/7792989b18d9aa22f844dd8a0ba8b56c8021d1e5/docking-frames-core/src/bibliothek/gui/dock/station/OverpaintablePanel.java/base.java
+=======
     @Override
     public Dimension getMinimumSize(){
     	if( isMinimumSizeSet() ){
@@ -183,7 +189,14 @@ public class OverpaintablePanel extends JLayeredPane {
     		return max( sizeBase, sizeOverlay );
     	}
     }
+>>>>>>> /usr/src/app/output/benoker/dockingframes/7792989b18d9aa22f844dd8a0ba8b56c8021d1e5/docking-frames-core/src/bibliothek/gui/dock/station/OverpaintablePanel.java/right.java
     
+<<<<<<< /usr/src/app/output/benoker/dockingframes/7792989b18d9aa22f844dd8a0ba8b56c8021d1e5/docking-frames-core/src/bibliothek/gui/dock/station/OverpaintablePanel.java/left.java
+    public Dimension getPreferredSize(){
+    	return base.getPreferredSize();
+    }
+||||||| /usr/src/app/output/benoker/dockingframes/7792989b18d9aa22f844dd8a0ba8b56c8021d1e5/docking-frames-core/src/bibliothek/gui/dock/station/OverpaintablePanel.java/base.java
+=======
     @Override
     public Dimension getPreferredSize(){
     	if( isPreferredSizeSet() ){
@@ -205,7 +218,14 @@ public class OverpaintablePanel extends JLayeredPane {
     		return max( sizeBase, sizeOverlay );
     	}
     }
+>>>>>>> /usr/src/app/output/benoker/dockingframes/7792989b18d9aa22f844dd8a0ba8b56c8021d1e5/docking-frames-core/src/bibliothek/gui/dock/station/OverpaintablePanel.java/right.java
     
+<<<<<<< /usr/src/app/output/benoker/dockingframes/7792989b18d9aa22f844dd8a0ba8b56c8021d1e5/docking-frames-core/src/bibliothek/gui/dock/station/OverpaintablePanel.java/left.java
+    public Dimension getMaximumSize(){
+    	return base.getMaximumSize();
+    }
+||||||| /usr/src/app/output/benoker/dockingframes/7792989b18d9aa22f844dd8a0ba8b56c8021d1e5/docking-frames-core/src/bibliothek/gui/dock/station/OverpaintablePanel.java/base.java
+=======
     @Override
     public Dimension getMaximumSize(){
     	if( isMaximumSizeSet() ){
@@ -227,16 +247,17 @@ public class OverpaintablePanel extends JLayeredPane {
     		return min( sizeBase, sizeOverlay );
     	}
     }
+>>>>>>> /usr/src/app/output/benoker/dockingframes/7792989b18d9aa22f844dd8a0ba8b56c8021d1e5/docking-frames-core/src/bibliothek/gui/dock/station/OverpaintablePanel.java/right.java
     
     private Dimension min( Dimension a, Dimension b ){
-    	if( a == null ){
-    		return b;
-    	}
-    	if( b == null ){
-    		return a;
-    	}
-    	return new Dimension( Math.min( a.width, b.width ), Math.min( a.height, b.height ));
-    }
+	if( a == null ){
+		return b;
+	}
+	if( b == null ){
+		return a;
+	}
+	return new Dimension( Math.min( a.width, b.width ), Math.min( a.height, b.height ));
+}
     
     private Dimension max( Dimension a, Dimension b ){
     	if( a == null ){
@@ -266,7 +287,7 @@ public class OverpaintablePanel extends JLayeredPane {
         base.setBounds( x, y, width, height );
         overlay.setBounds( x, y, width, height );
     }
-        
+    
     private class Overlay extends JPanel{
         public Overlay(){
             setOpaque( false );
