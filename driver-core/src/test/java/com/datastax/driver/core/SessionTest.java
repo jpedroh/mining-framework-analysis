@@ -240,5 +240,6 @@ public class SessionTest extends CCMBridge.PerClassSingleNodeCluster {
 
             cluster.close();
         }
+
     }
 }
