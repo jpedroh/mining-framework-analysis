@@ -145,7 +145,6 @@ public abstract class AbstractOptionalAssert<S extends AbstractOptionalAssert<S,
     if (actual.get() != expectedValue) throw failure(shouldContainSame(actual, expectedValue));
     return myself;
   }
-
   /**
    * Verifies that the actual {@link Optional} contains a value that is an instance of the argument.
    * </p>
@@ -173,5 +172,4 @@ public abstract class AbstractOptionalAssert<S extends AbstractOptionalAssert<S,
     if (!clazz.isInstance(actual.get())) throw failure(shouldContainInstanceOf(actual, clazz));
     return myself;
   }
-
 }
