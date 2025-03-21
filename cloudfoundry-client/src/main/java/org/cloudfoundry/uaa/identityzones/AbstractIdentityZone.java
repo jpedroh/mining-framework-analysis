@@ -30,6 +30,9 @@ public abstract class AbstractIdentityZone {
     @JsonProperty("active")
     @Nullable
     abstract Boolean getActive();
+    /**
+     * If the identity zone is active
+     */
 
     /**
      * The configuration
