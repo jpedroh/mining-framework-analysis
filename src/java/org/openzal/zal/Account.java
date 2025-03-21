@@ -1320,7 +1320,6 @@ public class Account extends Entry
     }
     return new Account(zAccount);
   }
-
   public void unsetMailQuota() {
     try
     {
