@@ -69,11 +69,19 @@ public @interface JsonInclude
      * if so, an instance is created by calling {@code HandlerInstantiator}
      * (of  {@code ObjectMapper}), which by default simply calls
      * zero-argument constructor of the Filter Class.
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/cec4ba4bcf1cf4c32e1beb5f612aebb9d701c599/src/main/java/com/fasterxml/jackson/annotation/JsonInclude.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/cec4ba4bcf1cf4c32e1beb5f612aebb9d701c599/src/main/java/com/fasterxml/jackson/annotation/JsonInclude.java/base.java
+     *
+     * @since 2.9
+=======
      *<p>
      * Whether value if is to be included or not is determined by calling
      * Filter's {@code equals(value)} method: if it returns {@code true}
      * value is NOT included (it is "filtered out"); if {@code false} value
      * IS included ("not filtered out").
+     *
+     * @since 2.9
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/cec4ba4bcf1cf4c32e1beb5f612aebb9d701c599/src/main/java/com/fasterxml/jackson/annotation/JsonInclude.java/right.java
      */
     public Class<?> valueFilter() default Void.class;
 
@@ -83,11 +91,19 @@ public @interface JsonInclude
      * if so, an instance is created by calling  {@code HandlerInstantiator}
      * (of  {@code ObjectMapper}), which by default simply calls
      * zero-argument constructor of the Filter Class.
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/cec4ba4bcf1cf4c32e1beb5f612aebb9d701c599/src/main/java/com/fasterxml/jackson/annotation/JsonInclude.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/cec4ba4bcf1cf4c32e1beb5f612aebb9d701c599/src/main/java/com/fasterxml/jackson/annotation/JsonInclude.java/base.java
+     *
+     * @since 2.9
+=======
      *<p>
      * Whether content value if is to be included or not is determined by calling
      * Filter's {@code equals(value)} method: if it returns {@code true}
      * content value is NOT included (it is "filtered out"); if {@code false} content value
      * IS included ("not filtered out").
+     *
+     * @since 2.9
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/cec4ba4bcf1cf4c32e1beb5f612aebb9d701c599/src/main/java/com/fasterxml/jackson/annotation/JsonInclude.java/right.java
      */
     public Class<?> contentFilter() default Void.class;
 
@@ -208,8 +224,26 @@ public @interface JsonInclude
          * to serialize; if it returns {@code true} value is <b>excluded</b>
          * (that is, filtered out); if {@code false} value is <b>included</b>.
          *<p>
-         * NOTE: the filter will be called for every value, including {@code null}
-         * values.
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/cec4ba4bcf1cf4c32e1beb5f612aebb9d701c599/src/main/java/com/fasterxml/jackson/annotation/JsonInclude.java/left.java
+         * NOTE: although filter will be called for each non-{@code null} value,
+         * it will only be called ONCE to check whether {@code null} value is to be
+         * included or not, after filter construction: it will NOT be called for
+         * each {@code null} value encountered.
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/cec4ba4bcf1cf4c32e1beb5f612aebb9d701c599/src/main/java/com/fasterxml/jackson/annotation/JsonInclude.java/base.java
+         * NOTE: although filter will be called for each non-{@code null} value,
+         * it will only be called ONCE to check whether {@code null} value is to be
+         * included or not, after filter construction: it will NOT be called for
+         * each {@code null} value encountered.
+         *
+         * @since 2.9
+=======
+         * NOTE: the filter will be called for each non-{@code null} value,
+         * but handling of {@code null} value differs: up to Jackson 2.13, call
+         * was only made once, but with 2.14 and later filter will be called
+         * once for each {@code null} value too.
+         *
+         * @since 2.9
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/cec4ba4bcf1cf4c32e1beb5f612aebb9d701c599/src/main/java/com/fasterxml/jackson/annotation/JsonInclude.java/right.java
          */
         CUSTOM,
 
