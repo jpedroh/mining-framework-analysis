@@ -1,37 +1,17 @@
-/**
- * Copyright (C) 2011 Brian Ferris <bdferris@onebusaway.org>
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.onebusaway.gtfs.services.calendar;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
-
 import org.onebusaway.gtfs.model.Agency;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.gtfs.model.ServiceCalendar;
 import org.onebusaway.gtfs.model.ServiceCalendarDate;
 import org.onebusaway.gtfs.model.StopTime;
 import org.onebusaway.gtfs.model.Trip;
+import org.onebusaway.gtfs.model.calendar.*;
 import org.onebusaway.gtfs.model.calendar.CalendarServiceData;
-import org.onebusaway.gtfs.model.calendar.LocalizedServiceId;
-import org.onebusaway.gtfs.model.calendar.ServiceDate;
-import org.onebusaway.gtfs.model.calendar.ServiceIdIntervals;
-import org.onebusaway.gtfs.model.calendar.ServiceInterval;
 
 /**
  * While the set of {@link ServiceCalendar} and {@link ServiceCalendarDate}
@@ -71,7 +51,6 @@ import org.onebusaway.gtfs.model.calendar.ServiceInterval;
  * @author bdferris
  */
 public interface CalendarService {
-
   /**
    * @return the set of all service ids used in the data set
    */
@@ -121,13 +100,11 @@ public interface CalendarService {
    * @return a localized service id with timezone info attached, or nul if the
    *         specified agency could not be found
    */
-  public LocalizedServiceId getLocalizedServiceIdForAgencyAndServiceId(
-      String agencyId, AgencyAndId serviceId);
-  
+  public LocalizedServiceId getLocalizedServiceIdForAgencyAndServiceId(String agencyId, AgencyAndId serviceId);
+
   public List<Date> getDatesForLocalizedServiceId(LocalizedServiceId localizedServiceId);
 
-  public boolean isLocalizedServiceIdActiveOnDate(
-      LocalizedServiceId localizedServiceId, Date serviceDate);
+  public boolean isLocalizedServiceIdActiveOnDate(LocalizedServiceId localizedServiceId, Date serviceDate);
 
   /**
    * Given the specified localized service id, which has a corresponding set of
@@ -175,8 +152,7 @@ public interface CalendarService {
    * @return the list of localized service dates that would make the specified
    *         service interval overlap with the specified from-to time range
    */
-  public List<Date> getServiceDatesWithinRange(LocalizedServiceId serviceId,
-      ServiceInterval interval, Date from, Date to);
+  public List<Date> getServiceDatesWithinRange(LocalizedServiceId serviceId, ServiceInterval interval, Date from, Date to);
 
   /**
    * See the description from
@@ -189,8 +165,7 @@ public interface CalendarService {
    * @param to - time interval max
    * @return the list of active service dates, keyed by service id
    */
-  public Map<LocalizedServiceId, List<Date>> getServiceDatesWithinRange(
-      ServiceIdIntervals serviceIdIntervals, Date from, Date to);
+  public Map<LocalizedServiceId, List<Date>> getServiceDatesWithinRange(ServiceIdIntervals serviceIdIntervals, Date from, Date to);
 
   /**
    * See the description from
@@ -205,8 +180,7 @@ public interface CalendarService {
    * @param to - the max portion of the target time interval
    * @return the list of active service dates
    */
-  public List<Date> getServiceDateDeparturesWithinRange(
-      LocalizedServiceId serviceId, ServiceInterval interval, Date from, Date to);
+  public List<Date> getServiceDateDeparturesWithinRange(LocalizedServiceId serviceId, ServiceInterval interval, Date from, Date to);
 
   /**
    * See the description from
@@ -219,8 +193,7 @@ public interface CalendarService {
    * @param to - time interval max
    * @return the list of active service dates, keyed by service id
    */
-  public Map<LocalizedServiceId, List<Date>> getServiceDateDeparturesWithinRange(
-      ServiceIdIntervals serviceIdIntervals, Date from, Date to);
+  public Map<LocalizedServiceId, List<Date>> getServiceDateDeparturesWithinRange(ServiceIdIntervals serviceIdIntervals, Date from, Date to);
 
   /**
    * See the description from
@@ -235,8 +208,7 @@ public interface CalendarService {
    * @param to - the max portion of the target time interval
    * @return the list of active service dates
    */
-  public List<Date> getServiceDateArrivalsWithinRange(
-      LocalizedServiceId serviceId, ServiceInterval interval, Date from, Date to);
+  public List<Date> getServiceDateArrivalsWithinRange(LocalizedServiceId serviceId, ServiceInterval interval, Date from, Date to);
 
   /**
    * See the description from
@@ -249,8 +221,7 @@ public interface CalendarService {
    * @param to - time interval max
    * @return the list of active service dates, keyed by service id
    */
-  public Map<LocalizedServiceId, List<Date>> getServiceDateArrivalsWithinRange(
-      ServiceIdIntervals serviceIdIntervals, Date from, Date to);
+  public Map<LocalizedServiceId, List<Date>> getServiceDateArrivalsWithinRange(ServiceIdIntervals serviceIdIntervals, Date from, Date to);
 
   /**
    * Computes the list of service dates whose departure service interval (min to
@@ -271,8 +242,7 @@ public interface CalendarService {
    * @param targetTime - time in UTC
    * @return the set of overlapping and next service dates
    */
-  public List<Date> getNextDepartureServiceDates(LocalizedServiceId serviceId,
-      ServiceInterval interval, long targetTime);
+  public List<Date> getNextDepartureServiceDates(LocalizedServiceId serviceId, ServiceInterval interval, long targetTime);
 
   /**
    * See the description for
@@ -284,8 +254,7 @@ public interface CalendarService {
    * @param targetTime
    * @return the set of overlapping and next service dates
    */
-  public Map<LocalizedServiceId, List<Date>> getNextDepartureServiceDates(
-      ServiceIdIntervals serviceIdIntervals, long targetTime);
+  public Map<LocalizedServiceId, List<Date>> getNextDepartureServiceDates(ServiceIdIntervals serviceIdIntervals, long targetTime);
 
   /**
    * Computes the list of service dates whose arrival service interval (min to
@@ -306,8 +275,7 @@ public interface CalendarService {
    * @param targetTime - time in UTC
    * @return the set of overlapping and previous service dates
    */
-  public List<Date> getPreviousArrivalServiceDates(
-      LocalizedServiceId serviceId, ServiceInterval interval, long targetTime);
+  public List<Date> getPreviousArrivalServiceDates(LocalizedServiceId serviceId, ServiceInterval interval, long targetTime);
 
   /**
    * See the description for
@@ -319,12 +287,7 @@ public interface CalendarService {
    * @param targetTime
    * @return the set of overlapping and previous service dates
    */
-  public Map<LocalizedServiceId, List<Date>> getPreviousArrivalServiceDates(
-      ServiceIdIntervals serviceIdIntervals, long targetTime);
+  public Map<LocalizedServiceId, List<Date>> getPreviousArrivalServiceDates(ServiceIdIntervals serviceIdIntervals, long targetTime);
 
-  /**
-   * Update the underlying data structures.
-   * @param data
-   */
   public void setData(CalendarServiceData data);
 }

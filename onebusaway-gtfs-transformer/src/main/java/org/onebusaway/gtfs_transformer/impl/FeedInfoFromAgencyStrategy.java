@@ -1,54 +1,31 @@
-/**
- * Copyright (C) 2017 Cambridge Systematics, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.onebusaway.gtfs_transformer.impl;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.onebusaway.csv_entities.schema.annotations.CsvField;
+import org.slf4j.Logger;
 import org.onebusaway.gtfs.model.Agency;
+import org.slf4j.LoggerFactory;
 import org.onebusaway.gtfs.model.FeedInfo;
 import org.onebusaway.gtfs.services.GtfsMutableRelationalDao;
 import org.onebusaway.gtfs_transformer.services.GtfsTransformStrategy;
 import org.onebusaway.gtfs_transformer.services.TransformContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
 public class FeedInfoFromAgencyStrategy implements GtfsTransformStrategy {
-
   private static Logger _log = LoggerFactory.getLogger(FeedInfoFromAgencyStrategy.class);
+
   private String agencyId;
+
   private String feedVersion;
 
-  @CsvField(optional = true)
-  private String defaultLang = "en";
+  @CsvField(optional = true) private String defaultLang = "en";
 
-  @Override
-  public String getName() {
+  @Override public String getName() {
     return this.getClass().getSimpleName();
   }
 
-  @Override
-  public void run(TransformContext context, GtfsMutableRelationalDao dao) {
-
+  @Override public void run(TransformContext context, GtfsMutableRelationalDao dao) {
     boolean foundAgency = false;
     for (Agency agency : dao.getAllAgencies()) {
       _log.info("comparing agency " + agency.getId() + " to " + agencyId);
@@ -56,9 +33,18 @@ public class FeedInfoFromAgencyStrategy implements GtfsTransformStrategy {
         foundAgency = true;
         _log.info("creating feed info from matched agency " + agencyId);
         FeedInfo info = getFeedInfoFromAgency(dao, agency);
-        // if version already present leave it alone
         if (info.getVersion() == null) {
+
+<<<<<<< /usr/src/app/output/onebusaway/onebusaway-gtfs-modules/0dfc36d5c8bb5baea8656f9c4ea68983a8e0070d/onebusaway-gtfs-transformer/src/main/java/org/onebusaway/gtfs_transformer/impl/FeedInfoFromAgencyStrategy.java/left.java
           addCreationTime(info, context);
+=======
+          if (feedVersion != null) {
+            info.setVersion(feedVersion);
+          } else {
+            addCreationTime(info, context);
+          }
+>>>>>>> /usr/src/app/output/onebusaway/onebusaway-gtfs-modules/0dfc36d5c8bb5baea8656f9c4ea68983a8e0070d/onebusaway-gtfs-transformer/src/main/java/org/onebusaway/gtfs_transformer/impl/FeedInfoFromAgencyStrategy.java/right.java
+
           dao.saveOrUpdateEntity(info);
         } else {
           _log.info("found feedVersion " + info.getVersion() + ", abandoning");
@@ -66,7 +52,6 @@ public class FeedInfoFromAgencyStrategy implements GtfsTransformStrategy {
       }
     }
     if (!foundAgency) {
-      // we didn't find the expected agency, try a default agency / first agency
       Agency agency = dao.getAllAgencies().iterator().next();
       FeedInfo info = getFeedInfoFromAgency(dao, agency);
       _log.info("creating feed info from unmatched agency " + agency.getId());
@@ -78,7 +63,7 @@ public class FeedInfoFromAgencyStrategy implements GtfsTransformStrategy {
   private FeedInfo getFeedInfoFromAgency(GtfsMutableRelationalDao dao, Agency agency) {
     FeedInfo info = dao.getFeedInfoForId(agencyId);
     if (info == null) {
-       info = new FeedInfo();
+      info = new FeedInfo();
     }
     info.setId(agencyId);
     info.setPublisherName(agency.getName());
@@ -92,7 +77,7 @@ public class FeedInfoFromAgencyStrategy implements GtfsTransformStrategy {
   }
 
   private void addCreationTime(FeedInfo feedInfo, TransformContext context) {
-    Long creationTime = (Long)context.getReader().getContext().get("lastModifiedTime");
+    Long creationTime = (Long) context.getReader().getContext().get("lastModifiedTime");
     SimpleDateFormat df = new SimpleDateFormat("zzz: dd-MMM-yyyy HH:mm");
     if (creationTime != null) {
       _log.info("setting version to lastModifiedTime of " + new Date(creationTime));
@@ -108,5 +93,7 @@ public class FeedInfoFromAgencyStrategy implements GtfsTransformStrategy {
     this.defaultLang = lang;
   }
 
-  public void setFeedVersion(String feedVersion){this.feedVersion = feedVersion;}
+  public void setFeedVersion(String feedVersion) {
+    this.feedVersion = feedVersion;
+  }
 }
