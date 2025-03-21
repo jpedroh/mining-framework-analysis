@@ -49,6 +49,55 @@ class LocksTest {
         final Lock<boolean[]> lock = Locks.lock(booleanValues);
         final boolean[] runningValues = new boolean[10];
 
+<<<<<<< /usr/src/app/output/apache/commons-lang/62f744a7f25bc456354f23fb3e1b7455a4c53f7a/src/test/java/org/apache/commons/lang3/LocksTest.java/left.java
+    	final long startTime = System.currentTimeMillis();
+    	for (int i = 0;  i < booleanValues.length;  i++) {
+    		final int index = i;
+    		final FailableConsumer<boolean[],?> consumer = (b) -> {
+    			b[index] = false;
+    			Thread.sleep(DELAY);
+    			b[index] = true;
+    			modify(runningValues, index, false);
+    		};
+    		final Thread t = new Thread(() -> lock.runReadLocked(consumer));
+    		modify(runningValues, i, true);
+    		t.start();
+    	}
+    	while (someValueIsTrue(runningValues)) {
+    		Thread.sleep(100);
+    	}
+    	final long endTime = System.currentTimeMillis();
+    	for (boolean booleanValue : booleanValues) {
+    		assertTrue(booleanValue);
+    	}
+    	// If our threads would be running in exclusive mode, then we'd need
+    	// at least DELAY milliseconds for each.
+    	assertTrue((endTime-startTime) < booleanValues.length*DELAY);
+||||||| /usr/src/app/output/apache/commons-lang/62f744a7f25bc456354f23fb3e1b7455a4c53f7a/src/test/java/org/apache/commons/lang3/LocksTest.java/base.java
+    	final long startTime = System.currentTimeMillis();
+    	for (int i = 0;  i < booleanValues.length;  i++) {
+    		final int index = i;
+    		final FailableConsumer<boolean[],?> consumer = (b) -> {
+    			b[index] = false;
+    			Thread.sleep(DELAY);
+    			b[index] = true;
+    			modify(runningValues, index, false);
+    		};
+    		final Thread t = new Thread(() -> lock.runReadLocked(consumer));
+    		modify(runningValues, i, true);
+    		t.start();
+    	}
+    	while (someValueIsTrue(runningValues)) {
+    		Thread.sleep(100);
+    	}
+    	final long endTime = System.currentTimeMillis();
+    	for (int i = 0;  i < booleanValues.length;  i++) {
+    		assertTrue(booleanValues[i]);
+    	}
+    	// If our threads would be running in exclusive mode, then we'd need
+    	// at least DELAY milliseconds for each.
+    	assertTrue((endTime-startTime) < booleanValues.length*DELAY);
+=======
         final long startTime = System.currentTimeMillis();
         for (int i = 0;  i < booleanValues.length;  i++) {
             final int index = i;
@@ -76,6 +125,7 @@ class LocksTest {
             assertTrue(booleanValues[i]);
         }
         runTimeCheck.accept(endTime-startTime);
+>>>>>>> /usr/src/app/output/apache/commons-lang/62f744a7f25bc456354f23fb3e1b7455a4c53f7a/src/test/java/org/apache/commons/lang3/LocksTest.java/right.java
     }
 
     protected void modify(boolean[] booleanArray, int offset, boolean value) {
@@ -85,12 +135,12 @@ class LocksTest {
     }
     protected boolean someValueIsTrue(boolean[] booleanArray) {
         synchronized(booleanArray) {
-            for (int i = 0;  i < booleanArray.length;  i++) {
-                if (booleanArray[i]) {
-                    return true;
-                }
-            }
-            return false;
+        	for (boolean b : booleanArray) {
+        	    if (b) {
+        	        return true;
+        	    }
+        	}
+        	return false;
         }
     }
 }
