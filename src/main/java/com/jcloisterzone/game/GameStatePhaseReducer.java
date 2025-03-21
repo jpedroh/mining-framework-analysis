@@ -64,15 +64,35 @@ public class GameStatePhaseReducer implements Function2<GameState, Message, Game
             next = new ChangeFerriesPhase(randomGenerator, next);
             next = new PlaceFerryPhase(randomGenerator, next);
         }
+<<<<<<< /usr/src/app/output/farin/jcloisterzone/692611d036c53048b40f0ae2e2dfc355fc6857d5/src/main/java/com/jcloisterzone/game/GameStatePhaseReducer.java/left.java
+        if (setup.contains(RussianPromosTrapCapability.class)) next = new RussianPromosTrapPhase(random, next);
+        if (setup.contains(TunnelCapability.class)) next = new TunnelPhase(random, next);
+        if (setup.contains(PhantomCapability.class)) next = new PhantomPhase(random, next);
+        if (setup.contains(RussianPromosTrapCapability.class)) next = new RussianPromosTrapPhase(random, next);
+        next = actionPhase = new ActionPhase(random, next);
+        if (setup.contains(BardsLuteCapability.class)) next =  new BardsLutePhase(random, next);
+        if (setup.contains(MageAndWitchCapability.class)) next =  new MageAndWitchPhase(random, next);
+        if (setup.contains(GoldminesCapability.class)) next =  new GoldPiecePhase(random, next);
+        next = tilePhase = new TilePhase(random, next);
+||||||| /usr/src/app/output/farin/jcloisterzone/692611d036c53048b40f0ae2e2dfc355fc6857d5/src/main/java/com/jcloisterzone/game/GameStatePhaseReducer.java/base.java
+        if (setup.contains(RussianPromosTrapCapability.class)) next = new RussianPromosTrapPhase(random, next);
+        if (setup.contains(TunnelCapability.class)) next = new TunnelPhase(random, next);
+        if (setup.contains(PhantomCapability.class)) next = new PhantomPhase(random, next);
+        if (setup.contains(RussianPromosTrapCapability.class)) next = new RussianPromosTrapPhase(random, next);
+        next = actionPhase = new ActionPhase(random, next);
+        if (setup.contains(MageAndWitchCapability.class)) next =  new MageAndWitchPhase(random, next);
+        if (setup.contains(GoldminesCapability.class)) next =  new GoldPiecePhase(random, next);
+        next = tilePhase = new TilePhase(random, next);
+=======
         if (setup.contains(RussianPromosTrapCapability.class)) next = new RussianPromosTrapPhase(randomGenerator, next);
         if (setup.contains(TunnelCapability.class)) next = new TunnelPhase(randomGenerator, next);
         if (setup.contains(PhantomCapability.class)) next = new PhantomPhase(randomGenerator, next);
         if (setup.contains(RussianPromosTrapCapability.class)) next = new RussianPromosTrapPhase(randomGenerator, next);
         next = actionPhase = new ActionPhase(randomGenerator, next);
-        if (setup.contains(BardsLuteCapability.class)) next =  new BardsLutePhase(random, next);
         if (setup.contains(MageAndWitchCapability.class)) next =  new MageAndWitchPhase(randomGenerator, next);
         if (setup.contains(GoldminesCapability.class)) next =  new GoldPiecePhase(randomGenerator, next);
         next = tilePhase = new TilePhase(randomGenerator, next);
+>>>>>>> /usr/src/app/output/farin/jcloisterzone/692611d036c53048b40f0ae2e2dfc355fc6857d5/src/main/java/com/jcloisterzone/game/GameStatePhaseReducer.java/right.java
         if (setup.contains(AbbeyCapability.class)) {
             // if abbey is passed, commit commit action phase follows to change salt by following Commit message
             next = new CommitAbbeyPassPhase(randomGenerator, next);

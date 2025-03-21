@@ -70,8 +70,12 @@ public class StateGsonBuilder {
         builder.registerTypeAdapter(GoldPieceAction.class, new GoldPieceActionSerializer());
         builder.registerTypeAdapter(RemoveMageOrWitchAction.class, new ActionSerializer("RemoveMageOrWitch"));
         builder.registerTypeAdapter(LittleBuildingAction.class, new LittleBuildingActionSerializer());
-        builder.registerTypeAdapter(ScoreAcrobatsAction.class, new SelectFeatureActionSerializer());
+<<<<<<< /usr/src/app/output/farin/jcloisterzone/692611d036c53048b40f0ae2e2dfc355fc6857d5/src/main/java/com/jcloisterzone/engine/StateGsonBuilder.java/left.java
         builder.registerTypeAdapter(BardsLuteAction.class, new BardsLuteActionSerializer());
+||||||| /usr/src/app/output/farin/jcloisterzone/692611d036c53048b40f0ae2e2dfc355fc6857d5/src/main/java/com/jcloisterzone/engine/StateGsonBuilder.java/base.java
+=======
+        builder.registerTypeAdapter(ScoreAcrobatsAction.class, new SelectFeatureActionSerializer());
+>>>>>>> /usr/src/app/output/farin/jcloisterzone/692611d036c53048b40f0ae2e2dfc355fc6857d5/src/main/java/com/jcloisterzone/engine/StateGsonBuilder.java/right.java
         return builder.create();
     }
 

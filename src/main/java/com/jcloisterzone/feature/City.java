@@ -10,10 +10,10 @@ import com.jcloisterzone.event.PointsExpression;
 import com.jcloisterzone.feature.modifier.BooleanAnyModifier;
 import com.jcloisterzone.feature.modifier.FeatureModifier;
 import com.jcloisterzone.feature.modifier.IntegerAddModifier;
-import com.jcloisterzone.feature.modifier.IntegerNonMergingModifier;
 import com.jcloisterzone.game.Capability;
-import com.jcloisterzone.game.capability.BardsLuteCapability;
+import com.jcloisterzone.feature.modifier.IntegerNonMergingModifier;
 import com.jcloisterzone.game.Rule;
+import com.jcloisterzone.game.capability.BardsLuteCapability;
 import com.jcloisterzone.game.setup.GameElementQuery;
 import com.jcloisterzone.game.state.GameState;
 import io.vavr.Tuple2;
@@ -127,7 +127,7 @@ public class City extends CompletableFeature<City> implements ModifiedFeature<Ci
                 if (bardsNotesCount>0) {
                     exprItems.add(new ExprItem("bardsnotes", tileCount * bardsNotesCount));
                 }
-	        }
+    	        }
         }
 
         if (points != null) {
