@@ -12,8 +12,6 @@ import sec.util.Crypto;
 
 public class CryptoBasicDecompressor implements Decompressor {
 
-	private static final Log LOG = LogFactory.getLog(CryptoCodec.class);
-
 	Crypto crypto;
 
 	byte[] in;
@@ -22,12 +20,47 @@ public class CryptoBasicDecompressor implements Decompressor {
 
 	private boolean finished = false;
 
+<<<<<<< /usr/src/app/output/geisbruch/hadoopcryptocompressor/fd94be7cfc23758491ddcbf03b92de026f2d7647/src/main/java/org/apache/hadoop/io/compress/crypto/CryptoBasicDecompressor.java/left.java
+	private static final Log LOG = LogFactory.getLog(CryptoBasicDecompressor.class);
+||||||| /usr/src/app/output/geisbruch/hadoopcryptocompressor/fd94be7cfc23758491ddcbf03b92de026f2d7647/src/main/java/org/apache/hadoop/io/compress/crypto/CryptoBasicDecompressor.java/base.java
+=======
+	private static final Log LOG = LogFactory.getLog(CryptoCodec.class);
+>>>>>>> /usr/src/app/output/geisbruch/hadoopcryptocompressor/fd94be7cfc23758491ddcbf03b92de026f2d7647/src/main/java/org/apache/hadoop/io/compress/crypto/CryptoBasicDecompressor.java/right.java
+
 	public CryptoBasicDecompressor(String key) {
 		crypto = new Crypto(key);
 		LOG.info("Init CryptoBasicDecompressor...");
 	}
 
 	@Override
+<<<<<<< /usr/src/app/output/geisbruch/hadoopcryptocompressor/fd94be7cfc23758491ddcbf03b92de026f2d7647/src/main/java/org/apache/hadoop/io/compress/crypto/CryptoBasicDecompressor.java/left.java
+	public synchronized int decompress(byte[] buf, int off, int len) throws IOException {
+		ensureBuffer(len);
+
+		if(out.position() >= len) {
+			finished = true;
+		}
+
+		if(finished && in == null) {
+			return flushBuffer(buf, off, out.position());
+		}
+
+		if(needsInput()) {
+			return 0;
+		}
+
+		byte[] b = crypto.decrypt(in);
+		in = null;
+		if(b == null) {
+			throw new IOException("Invalid key");
+		}
+		ensureBuffer(out.position() + b.length);
+		out.put(b);
+		return flushBuffer(buf, off, len);
+	}
+||||||| /usr/src/app/output/geisbruch/hadoopcryptocompressor/fd94be7cfc23758491ddcbf03b92de026f2d7647/src/main/java/org/apache/hadoop/io/compress/crypto/CryptoBasicDecompressor.java/base.java
+	public synchronized int decompress(byte[] buf, int off, int len) throws IOException 
+=======
 	public synchronized int decompress(byte[] buf, int off, int len) throws IOException {
 		ensureBuffer(len);
 
@@ -56,6 +89,7 @@ public class CryptoBasicDecompressor implements Decompressor {
 		out.put(b);
 		return flushBuffer(buf, off, len);
 	}
+>>>>>>> /usr/src/app/output/geisbruch/hadoopcryptocompressor/fd94be7cfc23758491ddcbf03b92de026f2d7647/src/main/java/org/apache/hadoop/io/compress/crypto/CryptoBasicDecompressor.java/right.java
 
 	private void ensureBuffer(int n) {
 		if(out == null) {// Initial Allocation
@@ -69,14 +103,9 @@ public class CryptoBasicDecompressor implements Decompressor {
 		}
 	}
 
-	@Override
-	public int getRemaining() {
-		return 0;
-	}
-
+<<<<<<< /usr/src/app/output/geisbruch/hadoopcryptocompressor/fd94be7cfc23758491ddcbf03b92de026f2d7647/src/main/java/org/apache/hadoop/io/compress/crypto/CryptoBasicDecompressor.java/left.java
 	private int flushBuffer(byte[] buf, int off, int len) {
 		int size = Math.min(Math.min(len, buf.length) - off, out.position());
-		LOG.info("flushBuffer size:" + size);
 		if(size <= 0)
 			return 0;
 		out.flip();
@@ -85,6 +114,21 @@ public class CryptoBasicDecompressor implements Decompressor {
 		finished = true; // We don't know if there is more data for this block, but caller checks for block completion
 		return size;
 	}
+||||||| /usr/src/app/output/geisbruch/hadoopcryptocompressor/fd94be7cfc23758491ddcbf03b92de026f2d7647/src/main/java/org/apache/hadoop/io/compress/crypto/CryptoBasicDecompressor.java/base.java
+	private int flushBuffer(byte[] buf, int off, int len) 
+=======
+	private int flushBuffer(byte[] buf, int off, int len) {
+		int size = Math.min(Math.min(len, buf.length) - off, out.position());
+		LOG.debug("flushBuffer size:" + size);
+		if(size <= 0)
+			return 0;
+		out.flip();
+		out.get(buf, off, size);
+		out.compact();
+		finished = true; // We don't know if there is more data for this block, but caller checks for block completion
+		return size;
+	}
+>>>>>>> /usr/src/app/output/geisbruch/hadoopcryptocompressor/fd94be7cfc23758491ddcbf03b92de026f2d7647/src/main/java/org/apache/hadoop/io/compress/crypto/CryptoBasicDecompressor.java/right.java
 
 	@Override
 	public void end() {
@@ -93,18 +137,29 @@ public class CryptoBasicDecompressor implements Decompressor {
 
 	@Override
 	public boolean finished() {
-		LOG.info("finished:" + finished);
+		LOG.debug("finished:" + finished);
 		return finished;
 	}
 
 	@Override
+<<<<<<< /usr/src/app/output/geisbruch/hadoopcryptocompressor/fd94be7cfc23758491ddcbf03b92de026f2d7647/src/main/java/org/apache/hadoop/io/compress/crypto/CryptoBasicDecompressor.java/left.java
+	public boolean needsInput() {
+		boolean needsInput = in == null || in.length < 0;
+		if(needsInput)
+			finished = true;
+		return needsInput;
+	}
+||||||| /usr/src/app/output/geisbruch/hadoopcryptocompressor/fd94be7cfc23758491ddcbf03b92de026f2d7647/src/main/java/org/apache/hadoop/io/compress/crypto/CryptoBasicDecompressor.java/base.java
+	public boolean needsInput() 
+=======
 	public boolean needsInput() {
 		boolean needsInput = (in == null || in.length < 0);
 		if(needsInput)
 			finished = true;
-		LOG.info("needsInput:" + needsInput);
+		LOG.debug("needsInput:" + needsInput);
 		return needsInput;
 	}
+>>>>>>> /usr/src/app/output/geisbruch/hadoopcryptocompressor/fd94be7cfc23758491ddcbf03b92de026f2d7647/src/main/java/org/apache/hadoop/io/compress/crypto/CryptoBasicDecompressor.java/right.java
 
 	@Override
 	public void reset() {
@@ -117,8 +172,8 @@ public class CryptoBasicDecompressor implements Decompressor {
 	}
 
 	@Override
+<<<<<<< /usr/src/app/output/geisbruch/hadoopcryptocompressor/fd94be7cfc23758491ddcbf03b92de026f2d7647/src/main/java/org/apache/hadoop/io/compress/crypto/CryptoBasicDecompressor.java/left.java
 	public synchronized void setInput(byte[] buf, int offset, int length) {
-		LOG.info("setInputsize buf size" + buf.length + " length:" + length);
 		if(length > 0) {
 			in = new byte[length];
 			int inIdx = 0;
@@ -128,6 +183,27 @@ public class CryptoBasicDecompressor implements Decompressor {
 			}
 			finished = false;
 		}
+	}
+||||||| /usr/src/app/output/geisbruch/hadoopcryptocompressor/fd94be7cfc23758491ddcbf03b92de026f2d7647/src/main/java/org/apache/hadoop/io/compress/crypto/CryptoBasicDecompressor.java/base.java
+	public synchronized void setInput(byte[] buf, int offset, int length) 
+=======
+	public synchronized void setInput(byte[] buf, int offset, int length) {
+		LOG.debug("setInputsize buf size" + buf.length + " length:" + length);
+		if(length > 0) {
+			in = new byte[length];
+			int inIdx = 0;
+			for(int i = offset; i < length; i++) {
+				in[inIdx] = buf[i];
+				inIdx++;
+			}
+			finished = false;
+		}
+	}
+>>>>>>> /usr/src/app/output/geisbruch/hadoopcryptocompressor/fd94be7cfc23758491ddcbf03b92de026f2d7647/src/main/java/org/apache/hadoop/io/compress/crypto/CryptoBasicDecompressor.java/right.java
+
+	@Override
+	public int getRemaining() {
+		return 0;
 	}
 
 	@Override
