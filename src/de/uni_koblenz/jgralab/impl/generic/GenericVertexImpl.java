@@ -1,8 +1,6 @@
 package de.uni_koblenz.jgralab.impl.generic;
-
 import java.io.IOException;
 import java.util.Map;
-
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
@@ -18,214 +16,170 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.impl.DirectedSchemaEdgeClass;
 
 public class GenericVertexImpl extends VertexImpl {
+  private final VertexClass type;
 
-	private final VertexClass type;
-	private Map<String, Object> attributes;
+  private Map<String, Object> attributes;
 
-	protected GenericVertexImpl(VertexClass type, int id, Graph graph) {
-		super(id, graph);
-		this.type = type;
-		attributes = GenericGraphImpl.initializeAttributes(type);
-		GenericGraphImpl.initializeGenericAttributeValues(this);
-	}
+  protected GenericVertexImpl(VertexClass type, int id, Graph graph) {
+    super(id, graph);
+    this.type = type;
+    attributes = GenericGraphImpl.initializeAttributes(type);
+    GenericGraphImpl.initializeGenericAttributeValues(this);
+  }
 
-	@Override
-	public Edge addAdjacence(String role, Vertex other) {
-		EdgeClass newEdgeClass = null;
-		// TODO optimize!
-		for (EdgeClass ec : getSchema().getEdgeClasses()) {
-			if (ec.getFrom().getRolename().equals(role)
-					|| ec.getTo().getRolename().equals(role)) {
-				newEdgeClass = ec;
-			}
-		}
-		if (newEdgeClass.getFrom().getRolename().equals(role)) {
-			return getGraph().createEdge(newEdgeClass, this, other);
-		} else {
-			return getGraph().createEdge(newEdgeClass, other, this);
-		}
+  @Override public Edge addAdjacence(String role, Vertex other) {
+    EdgeClass newEdgeClass = null;
+    for (EdgeClass ec : getSchema().getEdgeClasses()) {
+      if (ec.getFrom().getRolename().equals(role) || ec.getTo().getRolename().equals(role)) {
+        newEdgeClass = ec;
+      }
+    }
+    if (newEdgeClass.getFrom().getRolename().equals(role)) {
+      return getGraph().createEdge(newEdgeClass, this, other);
+    } else {
+      return getGraph().createEdge(newEdgeClass, other, this);
+    }
+  }
 
-	}
 
-	@Override
-	public VertexClass getAttributedElementClass() {
-		return type;
-	}
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  @Override public boolean isValidAlpha(Edge edge) {
+    return ((GenericGraphImpl) getGraph()).cachedIsValidAlpha(type, (edge.getAttributedElementClass()));
+  }
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/impl/generic/GenericVertexImpl.java/right.java
 
-	@Override
-	public void readAttributeValueFromString(String attributeName, String value)
-			throws GraphIOException, NoSuchAttributeException {
-		if ((attributes != null) && attributes.containsKey(attributeName)) {
-			attributes.put(
-					attributeName,
-					type.getAttribute(attributeName)
-							.getDomain()
-							.parseGenericAttribute(
-									GraphIO.createStringReader(value,
-											getSchema())));
-			return;
-		}
-		throw new NoSuchAttributeException(this + " doesn't have an attribute "
-				+ attributeName);
-	}
 
-	@Override
-	public void readAttributeValues(GraphIO io) throws GraphIOException {
-		for (Attribute a : type.getAttributeList()) {
-			attributes
-					.put(a.getName(), a.getDomain().parseGenericAttribute(io));
-		}
-	}
 
-	@Override
-	public String writeAttributeValueToString(String attributeName)
-			throws IOException, GraphIOException, NoSuchAttributeException {
-		GraphIO io = GraphIO.createStringWriter(getSchema());
-		type.getAttribute(attributeName).getDomain()
-				.serializeGenericAttribute(io, getAttribute(attributeName));
-		return io.getStringWriterResult();
-	}
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  @Override public boolean isValidOmega(Edge edge) {
+    return ((GenericGraphImpl) getGraph()).cachedIsValidOmega(type, (edge.getAttributedElementClass()));
+  }
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7280e66b283a5941b96f6fbf22e8795bf70b0d47/src/de/uni_koblenz/jgralab/impl/generic/GenericVertexImpl.java/right.java
 
-	@Override
-	public void writeAttributeValues(GraphIO io) throws IOException,
-			GraphIOException {
-		for (Attribute a : type.getAttributeList()) {
-			a.getDomain().serializeGenericAttribute(io,
-					attributes.get(a.getName()));
-		}
 
-	}
+  @Override public VertexClass getAttributedElementClass() {
+    return type;
+  }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T getAttribute(String name) throws NoSuchAttributeException {
-		if ((attributes == null) || !attributes.containsKey(name)) {
-			throw new NoSuchAttributeException(type.getSimpleName()
-					+ " doesn't contain an attribute " + name);
-		} else {
-			return (T) attributes.get(name);
-		}
-	}
+  @Override public void readAttributeValueFromString(String attributeName, String value) throws GraphIOException, NoSuchAttributeException {
+    if ((attributes != null) && attributes.containsKey(attributeName)) {
+      attributes.put(attributeName, type.getAttribute(attributeName).getDomain().parseGenericAttribute(GraphIO.createStringReader(value, getSchema())));
+      return;
+    }
+    throw new NoSuchAttributeException(this + " doesn\'t have an attribute " + attributeName);
+  }
 
-	@Override
-	public <T> void setAttribute(String name, T data)
-			throws NoSuchAttributeException {
-		if ((attributes == null) || !attributes.containsKey(name)) {
-			throw new NoSuchAttributeException(type.getSimpleName()
-					+ " doesn't contain an attribute " + name);
-		} else {
-			if (!type.getAttribute(name).getDomain().genericIsConform(data)) {
-				throw new ClassCastException();
-			} else {
-				attributes.put(name, data);
-			}
-		}
+  @Override public void readAttributeValues(GraphIO io) throws GraphIOException {
+    for (Attribute a : type.getAttributeList()) {
+      attributes.put(a.getName(), a.getDomain().parseGenericAttribute(io));
+    }
+  }
 
-	}
+  @Override public String writeAttributeValueToString(String attributeName) throws IOException, GraphIOException, NoSuchAttributeException {
+    GraphIO io = GraphIO.createStringWriter(getSchema());
+    type.getAttribute(attributeName).getDomain().serializeGenericAttribute(io, getAttribute(attributeName));
+    return io.getStringWriterResult();
+  }
 
-	@Override
-	public Vertex getNextVertex(VertexClass vertexClass) {
-		InternalVertex currentVertex = (InternalVertex) getNextVertex();
-		while (currentVertex != null) {
-			if (currentVertex.getAttributedElementClass().equals(vertexClass)
-					|| currentVertex.getAttributedElementClass()
-							.getAllSuperClasses().contains(vertexClass)) {
-				return currentVertex;
-			}
-			currentVertex = (InternalVertex) currentVertex.getNextVertex();
-		}
-		return currentVertex;
-	}
+  @Override public void writeAttributeValues(GraphIO io) throws IOException, GraphIOException {
+    for (Attribute a : type.getAttributeList()) {
+      a.getDomain().serializeGenericAttribute(io, attributes.get(a.getName()));
+    }
+  }
 
-	@Override
-	public Edge getFirstIncidence(EdgeClass anEdgeClass) {
-		return getFirstIncidence(anEdgeClass, EdgeDirection.INOUT);
-	}
+  @SuppressWarnings(value = { "unchecked" }) @Override public <T extends java.lang.Object> T getAttribute(String name) throws NoSuchAttributeException {
+    if ((attributes == null) || !attributes.containsKey(name)) {
+      throw new NoSuchAttributeException(type.getSimpleName() + " doesn\'t contain an attribute " + name);
+    } else {
+      return (T) attributes.get(name);
+    }
+  }
 
-	@Override
-	public Edge getFirstIncidence(EdgeClass anEdgeClass,
-			EdgeDirection orientation) {
-		Edge currentEdge = getFirstIncidence(orientation);
-		while (currentEdge != null) {
-			if (currentEdge.getNormalEdge().getAttributedElementClass()
-					.equals(anEdgeClass)
-					|| anEdgeClass.getAllSubClasses().contains(
-							currentEdge.getAttributedElementClass())) {
-				break;
-			}
-			currentEdge = currentEdge.getNextIncidence(orientation);
-		}
-		return currentEdge;
-	}
+  @Override public <T extends java.lang.Object> void setAttribute(String name, T data) throws NoSuchAttributeException {
+    if ((attributes == null) || !attributes.containsKey(name)) {
+      throw new NoSuchAttributeException(type.getSimpleName() + " doesn\'t contain an attribute " + name);
+    } else {
+      if (!type.getAttribute(name).getDomain().genericIsConform(data)) {
+        throw new ClassCastException();
+      } else {
+        attributes.put(name, data);
+      }
+    }
+  }
 
-	@Override
-	public int getDegree(EdgeClass ec) {
-		return getDegree(ec, EdgeDirection.INOUT);
-	}
+  @Override public Vertex getNextVertex(VertexClass vertexClass) {
+    InternalVertex currentVertex = (InternalVertex) getNextVertex();
+    while (currentVertex != null) {
+      if (currentVertex.getAttributedElementClass().equals(vertexClass) || currentVertex.getAttributedElementClass().getAllSuperClasses().contains(vertexClass)) {
+        return currentVertex;
+      }
+      currentVertex = (InternalVertex) currentVertex.getNextVertex();
+    }
+    return currentVertex;
+  }
 
-	@Override
-	public int getDegree(EdgeClass ec, EdgeDirection direction) {
-		int degree = 0;
-		for (Edge e = getFirstIncidence(ec, direction); e != null; e = e
-				.getNextIncidence(ec, direction)) {
-			++degree;
-		}
-		return degree;
-	}
+  @Override public Edge getFirstIncidence(EdgeClass anEdgeClass) {
+    return getFirstIncidence(anEdgeClass, EdgeDirection.INOUT);
+  }
 
-	@Override
-	public void initializeAttributesWithDefaultValues() {
-		GenericGraphImpl.initializeGenericAttributeValues(this);
-	}
+  @Override public Edge getFirstIncidence(EdgeClass anEdgeClass, EdgeDirection orientation) {
+    Edge currentEdge = getFirstIncidence(orientation);
+    while (currentEdge != null) {
+      if (currentEdge.getNormalEdge().getAttributedElementClass().equals(anEdgeClass) || anEdgeClass.getAllSubClasses().contains(currentEdge.getAttributedElementClass())) {
+        break;
+      }
+      currentEdge = currentEdge.getNextIncidence(orientation);
+    }
+    return currentEdge;
+  }
 
-	// ************** unsupported methods ***************/
-	@Override
-	public Class<? extends Vertex> getSchemaClass() {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
+  @Override public int getDegree(EdgeClass ec) {
+    return getDegree(ec, EdgeDirection.INOUT);
+  }
 
-	@Override
-	public Vertex getNextVertex(Class<? extends Vertex> vertexClass) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
+  @Override public int getDegree(EdgeClass ec, EdgeDirection direction) {
+    int degree = 0;
+    for (Edge e = getFirstIncidence(ec, direction); e != null; e = e.getNextIncidence(ec, direction)) {
+      ++degree;
+    }
+    return degree;
+  }
 
-	@Override
-	public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
+  @Override public void initializeAttributesWithDefaultValues() {
+    GenericGraphImpl.initializeGenericAttributeValues(this);
+  }
 
-	@Override
-	public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass,
-			EdgeDirection orientation) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
+  @Override public Class<? extends Vertex> getSchemaClass() {
+    throw new UnsupportedOperationException("This method is not supported by the generic implementation");
+  }
 
-	@Override
-	public int getDegree(Class<? extends Edge> ec) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
+  @Override public Vertex getNextVertex(Class<? extends Vertex> vertexClass) {
+    throw new UnsupportedOperationException("This method is not supported by the generic implementation");
+  }
 
-	@Override
-	public int getDegree(Class<? extends Edge> ec, EdgeDirection direction) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
+  @Override public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass) {
+    throw new UnsupportedOperationException("This method is not supported by the generic implementation");
+  }
 
-	@Override
-	public DirectedSchemaEdgeClass getEdgeForRolename(String rolename) {
-		throw new UnsupportedOperationException(
-				"This method is not supported by the generic implementation");
-	}
+  @Override public Edge getFirstIncidence(Class<? extends Edge> anEdgeClass, EdgeDirection orientation) {
+    throw new UnsupportedOperationException("This method is not supported by the generic implementation");
+  }
 
-	@Override
-	public boolean isInstanceOf(VertexClass cls) {
-		// Needs to be overridden from the base variant, because that relies on
-		// code generation.
-		return type.equals(cls) || type.isSubClassOf(cls);
-	}
+  @Override public int getDegree(Class<? extends Edge> ec) {
+    throw new UnsupportedOperationException("This method is not supported by the generic implementation");
+  }
+
+  @Override public int getDegree(Class<? extends Edge> ec, EdgeDirection direction) {
+    throw new UnsupportedOperationException("This method is not supported by the generic implementation");
+  }
+
+  @Override public DirectedSchemaEdgeClass getEdgeForRolename(String rolename) {
+    throw new UnsupportedOperationException("This method is not supported by the generic implementation");
+  }
+
+  @Override public boolean isInstanceOf(VertexClass cls) {
+    return type.equals(cls) || type.isSubClassOf(cls);
+  }
 }
