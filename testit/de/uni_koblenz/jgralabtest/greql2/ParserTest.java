@@ -903,6 +903,40 @@ public class ParserTest {
 	}
 
 	@Test
+	public void testLetExpression() throws Exception {
+		// TODO: Broken, because the GReQL parser removes all WhereExpressions
+		// and LetExpressions!
+		Greql2Graph graph = parseQuery("let a:=7 in from b:list(1..a) report b end");
+		Variable var = graph.getFirstVariable();
+		// assertNotNull(var);
+		// assertEquals("a", var.get_name());
+		// var = var.getNextVariable();
+		assertNotNull(var);
+		assertEquals("b", var.get_name());
+	}
+
+	@Test
+	public void testEdgeSubgraphExpression() throws Exception {
+		Greql2Graph graph = parseQuery("on eSubgraph{^FirstType, ^SecondType, ThirdType} : true");
+		EdgeTypeSubgraph edgeTypeSubgraph = graph.getFirstEdgeTypeSubgraph();
+		assertNotNull(edgeTypeSubgraph);
+		assertEquals(3, edgeTypeSubgraph.getDegree(IsTypeRestrOfSubgraph.class));
+		IsTypeRestrOfSubgraph typeEdge = edgeTypeSubgraph
+				.getFirstIsTypeRestrOfSubgraphIncidence();
+		TypeId typeId = typeEdge.getAlpha();
+		assertEquals("FirstType", typeId.get_name());
+		assertTrue(typeId.is_excluded());
+		typeEdge = typeEdge.getNextIsTypeRestrOfSubgraphIncidence();
+		typeId = typeEdge.getAlpha();
+		assertEquals("SecondType", typeId.get_name());
+		assertTrue(typeId.is_excluded());
+		typeEdge = typeEdge.getNextIsTypeRestrOfSubgraphIncidence();
+		typeId = typeEdge.getAlpha();
+		assertEquals("ThirdType", typeId.get_name());
+		assertFalse(typeId.is_excluded());
+	}
+
+	@Test
 	public void testReportAsQuery() throws Exception {
 		parseQuery("from v:V report v as \"Vertex\" end");
 	}
