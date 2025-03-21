@@ -223,13 +223,19 @@ public interface Session extends Closeable {
      * <p>
      * This method is essentially a shortcut for {@code prepareAsync(statement.getQueryString())},
      * but with the additional effect that the resulting {@code
+<<<<<<< /usr/src/app/output/datastax/java-driver/cd5f6315bc048309311d1d1f77b696d9f48cf511/driver-core/src/main/java/com/datastax/driver/core/Session.java/left.java
      * PreparedStatement} will inherit the query properties set on {@code statement}.
+||||||| /usr/src/app/output/datastax/java-driver/cd5f6315bc048309311d1d1f77b696d9f48cf511/driver-core/src/main/java/com/datastax/driver/core/Session.java/base.java
+     * PreparedStamenent} will inherit the query properties set on {@code statement}.
+=======
+     * PreparedStamenent} will inherit the query properties set on {@code statement}.
      * <p>
      * Please note however that if the same CQL statement is prepared more than
      * once, all calls to this method will return the same {@code PreparedStatement}
      * object (which imply that this unique {@code PreparedStatement} object will
      * inherit the query properties of the last statement for which this method
      * has been called).
+>>>>>>> /usr/src/app/output/datastax/java-driver/cd5f6315bc048309311d1d1f77b696d9f48cf511/driver-core/src/main/java/com/datastax/driver/core/Session.java/right.java
      *
      * @param statement the statement to prepare
      * @return a future on the prepared statement corresponding to {@code statement}.
