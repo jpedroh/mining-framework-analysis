@@ -145,8 +145,14 @@ public interface ECARuleManagerInterface {
 	public abstract void setMaxNestedTriggerCalls(int maxNestedTriggerCalls);
 
 	public abstract int getNestedTriggerCalls();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/ba28dc3943bf31e37f3beb96450dac330ebebd47/src/de/uni_koblenz/jgralab/eca/ECARuleManagerInterface.java/left.java
+||||||| /usr/src/app/output/jgralab/jgralab/ba28dc3943bf31e37f3beb96450dac330ebebd47/src/de/uni_koblenz/jgralab/eca/ECARuleManagerInterface.java/base.java
+	
+	public abstract GreqlEvaluator getGreqlEvaluator();
+=======
 
 	// TODO: This cannot be declared here, else we get a cyclic dependency in the build process
 	//public abstract GreqlEvaluator getGreqlEvaluator();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/ba28dc3943bf31e37f3beb96450dac330ebebd47/src/de/uni_koblenz/jgralab/eca/ECARuleManagerInterface.java/right.java
 
 }

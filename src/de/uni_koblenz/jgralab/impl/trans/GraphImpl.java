@@ -50,8 +50,8 @@ import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.GraphException;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.GraphStructureChangedListener;
-import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.TraversalContext;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.impl.FreeIndexList;
 import de.uni_koblenz.jgralab.impl.IncidenceImpl;
@@ -555,8 +555,8 @@ public abstract class GraphImpl extends
 		if (logger != null) {
 			logger.fine("tx id=" + transaction.getID());
 		}
-		transactionManager.setTransactionForThread(transaction,
-				Thread.currentThread());
+		transactionManager.setTransactionForThread(transaction, Thread
+				.currentThread());
 	}
 
 	@Override

@@ -512,4 +512,10 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl
 	public void internalSetDefaultValue(Attribute attr) throws GraphIOException {
 		attr.setDefaultTransactionValue(this);
 	}
+
+	// @Override
+	// public String toString() {
+	// return "e " + getId() + ": "
+	// + getAttributedElementClass().getQualifiedName();
+	// }
 }

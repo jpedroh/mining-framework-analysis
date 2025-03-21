@@ -1850,28 +1850,24 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 			GraphStructureChangedListener listener) {
 		assert listener != null;
 		if (listener instanceof GraphStructureChangedListenerWithAutoRemove) {
-			Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
+			Iterator<WeakReference<GraphStructureChangedListener>> iterator = graphStructureChangedListenersWithAutoRemoval
+					.iterator();
 			while ((iterator != null) && iterator.hasNext()) {
 				GraphStructureChangedListener currentListener = iterator.next()
 						.get();
-				if ((currentListener == null) || (currentListener == listener)) {
+				if (currentListener == null || currentListener == listener) {
 					iterator.remove();
 				}
 			}
 		} else {
-			Iterator<GraphStructureChangedListener> iterator = getListenerListIterator();
-			while ((iterator != null) && iterator.hasNext()) {
+			Iterator<GraphStructureChangedListener> iterator = graphStructureChangedListeners
+					.iterator();
+			while (iterator.hasNext()) {
 				GraphStructureChangedListener currentListener = iterator.next();
 				if (currentListener == listener) {
 					iterator.remove();
 				}
 			}
-		}
-	}
-
-	private void setAutoListenerListToNullIfEmpty() {
-		if (graphStructureChangedListenersWithAutoRemoval.isEmpty()) {
-			graphStructureChangedListenersWithAutoRemoval = null;
 		}
 	}
 
@@ -1888,16 +1884,39 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 				+ graphStructureChangedListeners.size();
 	}
 
-	private Iterator<WeakReference<GraphStructureChangedListener>> getListenerListIteratorForAutoRemove() {
-		return graphStructureChangedListenersWithAutoRemoval != null ? graphStructureChangedListenersWithAutoRemoval
-				.iterator() : null;
+	/**
+	 * Inspects the list of {@link GraphStructureChangedListener}s and builds a
+	 * copied list of active listeners. Additionally, if the list becomes empty,
+	 * the reference is nulled. This complicated approach is necessary to
+	 * prevent {@link ConcurrentModificationException}s, since during listener
+	 * notification, {@link GraphStructureChangedListener}s can be added or
+	 * removed, or garbage collected.
+	 * 
+	 * @return a list of active GraphStructureChangeListeners
+	 */
+	private ArrayList<GraphStructureChangedListener> getListenerListForAutoRemove() {
+		if (graphStructureChangedListenersWithAutoRemoval == null) {
+			return null;
+		}
+		ArrayList<GraphStructureChangedListener> listeners = new ArrayList<GraphStructureChangedListener>(
+				graphStructureChangedListenersWithAutoRemoval.size());
+		Iterator<WeakReference<GraphStructureChangedListener>> it = graphStructureChangedListenersWithAutoRemoval
+				.iterator();
+		while (it.hasNext()) {
+			GraphStructureChangedListener l = it.next().get();
+			if (l == null) {
+				it.remove();
+			} else {
+				listeners.add(l);
+			}
+		}
+		if (graphStructureChangedListenersWithAutoRemoval.isEmpty()) {
+			graphStructureChangedListenersWithAutoRemoval = null;
+		}
+		return listeners.size() == 0 ? null : listeners;
 	}
 
-	private Iterator<GraphStructureChangedListener> getListenerListIterator() {
-		return graphStructureChangedListeners != null ? graphStructureChangedListeners
-				.iterator() : null;
-	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/ba28dc3943bf31e37f3beb96450dac330ebebd47/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/left.java
 	public void notifyVertexDeleted(Vertex v) {
 		assert (v != null) && v.isValid() && vSeqContainsVertex(v);
 		if (graphStructureChangedListenersWithAutoRemoval != null) {
@@ -1911,14 +1930,50 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 					currentListener.vertexDeleted(v);
 				}
 			}
-			setAutoListenerListToNullIfEmpty();
 		}
 		int n = graphStructureChangedListeners.size();
 		for (int i = 0; i < n; i++) {
 			graphStructureChangedListeners.get(i).vertexDeleted(v);
 		}
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/ba28dc3943bf31e37f3beb96450dac330ebebd47/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/base.java
+	protected void notifyVertexDeleted(Vertex v) {
+		assert (v != null) && v.isValid() && containsVertex(v);
+		if (graphStructureChangedListenersWithAutoRemoval != null) {
+			Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
+			while (iterator.hasNext()) {
+				GraphStructureChangedListener currentListener = iterator.next()
+						.get();
+				if (currentListener == null) {
+					iterator.remove();
+				} else {
+					currentListener.vertexDeleted(v);
+				}
+			}
+		}
+		int n = graphStructureChangedListeners.size();
+		for (int i = 0; i < n; i++) {
+			graphStructureChangedListeners.get(i).vertexDeleted(v);
+		}
+	}
+=======
+	protected void notifyVertexDeleted(Vertex v) {
+		assert (v != null) && v.isValid() && containsVertex(v);
+		List<GraphStructureChangedListener> l = getListenerListForAutoRemove();
+		if (l != null) {
+			int n = l.size();
+			for (int i = 0; i < n; ++i) {
+				l.get(i).vertexDeleted(v);
+			}
+		}
+		int n = graphStructureChangedListeners.size();
+		for (int i = 0; i < n; i++) {
+			graphStructureChangedListeners.get(i).vertexDeleted(v);
+		}
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/ba28dc3943bf31e37f3beb96450dac330ebebd47/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/right.java
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/ba28dc3943bf31e37f3beb96450dac330ebebd47/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/left.java
 	public void notifyVertexAdded(Vertex v) {
 		assert (v != null) && v.isValid() && vSeqContainsVertex(v);
 		if (graphStructureChangedListenersWithAutoRemoval != null) {
@@ -1932,14 +1987,50 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 					currentListener.vertexAdded(v);
 				}
 			}
-			setAutoListenerListToNullIfEmpty();
 		}
 		int n = graphStructureChangedListeners.size();
 		for (int i = 0; i < n; i++) {
 			graphStructureChangedListeners.get(i).vertexAdded(v);
 		}
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/ba28dc3943bf31e37f3beb96450dac330ebebd47/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/base.java
+	protected void notifyVertexAdded(Vertex v) {
+		assert (v != null) && v.isValid() && containsVertex(v);
+		if (graphStructureChangedListenersWithAutoRemoval != null) {
+			Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
+			while (iterator.hasNext()) {
+				GraphStructureChangedListener currentListener = iterator.next()
+						.get();
+				if (currentListener == null) {
+					iterator.remove();
+				} else {
+					currentListener.vertexAdded(v);
+				}
+			}
+		}
+		int n = graphStructureChangedListeners.size();
+		for (int i = 0; i < n; i++) {
+			graphStructureChangedListeners.get(i).vertexAdded(v);
+		}
+	}
+=======
+	protected void notifyVertexAdded(Vertex v) {
+		assert (v != null) && v.isValid() && containsVertex(v);
+		List<GraphStructureChangedListener> l = getListenerListForAutoRemove();
+		if (l != null) {
+			int n = l.size();
+			for (int i = 0; i < n; ++i) {
+				l.get(i).vertexAdded(v);
+			}
+		}
+		int n = graphStructureChangedListeners.size();
+		for (int i = 0; i < n; i++) {
+			graphStructureChangedListeners.get(i).vertexAdded(v);
+		}
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/ba28dc3943bf31e37f3beb96450dac330ebebd47/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/right.java
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/ba28dc3943bf31e37f3beb96450dac330ebebd47/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/left.java
 	public void notifyEdgeDeleted(Edge e) {
 		assert (e != null) && e.isValid() && e.isNormal()
 				&& eSeqContainsEdge(e);
@@ -1954,14 +2045,50 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 					currentListener.edgeDeleted(e);
 				}
 			}
-			setAutoListenerListToNullIfEmpty();
 		}
 		int n = graphStructureChangedListeners.size();
 		for (int i = 0; i < n; i++) {
 			graphStructureChangedListeners.get(i).edgeDeleted(e);
 		}
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/ba28dc3943bf31e37f3beb96450dac330ebebd47/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/base.java
+	protected void notifyEdgeDeleted(Edge e) {
+		assert (e != null) && e.isValid() && e.isNormal() && containsEdge(e);
+		if (graphStructureChangedListenersWithAutoRemoval != null) {
+			Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
+			while (iterator.hasNext()) {
+				GraphStructureChangedListener currentListener = iterator.next()
+						.get();
+				if (currentListener == null) {
+					iterator.remove();
+				} else {
+					currentListener.edgeDeleted(e);
+				}
+			}
+		}
+		int n = graphStructureChangedListeners.size();
+		for (int i = 0; i < n; i++) {
+			graphStructureChangedListeners.get(i).edgeDeleted(e);
+		}
+	}
+=======
+	protected void notifyEdgeDeleted(Edge e) {
+		assert (e != null) && e.isValid() && e.isNormal() && containsEdge(e);
+		List<GraphStructureChangedListener> l = getListenerListForAutoRemove();
+		if (l != null) {
+			int n = l.size();
+			for (int i = 0; i < n; ++i) {
+				l.get(i).edgeDeleted(e);
+			}
+		}
+		int n = graphStructureChangedListeners.size();
+		for (int i = 0; i < n; i++) {
+			graphStructureChangedListeners.get(i).edgeDeleted(e);
+		}
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/ba28dc3943bf31e37f3beb96450dac330ebebd47/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/right.java
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/ba28dc3943bf31e37f3beb96450dac330ebebd47/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/left.java
 	public void notifyEdgeAdded(Edge e) {
 		assert (e != null) && e.isValid() && e.isNormal()
 				&& eSeqContainsEdge(e);
@@ -1976,14 +2103,50 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 					currentListener.edgeAdded(e);
 				}
 			}
-			setAutoListenerListToNullIfEmpty();
 		}
 		int n = graphStructureChangedListeners.size();
 		for (int i = 0; i < n; i++) {
 			graphStructureChangedListeners.get(i).edgeAdded(e);
 		}
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/ba28dc3943bf31e37f3beb96450dac330ebebd47/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/base.java
+	protected void notifyEdgeAdded(Edge e) {
+		assert (e != null) && e.isValid() && e.isNormal() && containsEdge(e);
+		if (graphStructureChangedListenersWithAutoRemoval != null) {
+			Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
+			while (iterator.hasNext()) {
+				GraphStructureChangedListener currentListener = iterator.next()
+						.get();
+				if (currentListener == null) {
+					iterator.remove();
+				} else {
+					currentListener.edgeAdded(e);
+				}
+			}
+		}
+		int n = graphStructureChangedListeners.size();
+		for (int i = 0; i < n; i++) {
+			graphStructureChangedListeners.get(i).edgeAdded(e);
+		}
+	}
+=======
+	protected void notifyEdgeAdded(Edge e) {
+		assert (e != null) && e.isValid() && e.isNormal() && containsEdge(e);
+		List<GraphStructureChangedListener> l = getListenerListForAutoRemove();
+		if (l != null) {
+			int n = l.size();
+			for (int i = 0; i < n; ++i) {
+				l.get(i).edgeAdded(e);
+			}
+		}
+		int n = graphStructureChangedListeners.size();
+		for (int i = 0; i < n; i++) {
+			graphStructureChangedListeners.get(i).edgeAdded(e);
+		}
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/ba28dc3943bf31e37f3beb96450dac330ebebd47/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/right.java
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/ba28dc3943bf31e37f3beb96450dac330ebebd47/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/left.java
 	public void notifyMaxVertexCountIncreased(int newValue) {
 		if (graphStructureChangedListenersWithAutoRemoval != null) {
 			Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
@@ -1996,7 +2159,6 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 					currentListener.maxVertexCountIncreased(newValue);
 				}
 			}
-			setAutoListenerListToNullIfEmpty();
 		}
 		int n = graphStructureChangedListeners.size();
 		for (int i = 0; i < n; i++) {
@@ -2004,7 +2166,44 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 					newValue);
 		}
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/ba28dc3943bf31e37f3beb96450dac330ebebd47/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/base.java
+	protected void notifyMaxVertexCountIncreased(int newValue) {
+		if (graphStructureChangedListenersWithAutoRemoval != null) {
+			Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
+			while (iterator.hasNext()) {
+				GraphStructureChangedListener currentListener = iterator.next()
+						.get();
+				if (currentListener == null) {
+					iterator.remove();
+				} else {
+					currentListener.maxVertexCountIncreased(newValue);
+				}
+			}
+		}
+		int n = graphStructureChangedListeners.size();
+		for (int i = 0; i < n; i++) {
+			graphStructureChangedListeners.get(i).maxVertexCountIncreased(
+					newValue);
+		}
+	}
+=======
+	protected void notifyMaxVertexCountIncreased(int newValue) {
+		ArrayList<GraphStructureChangedListener> l = getListenerListForAutoRemove();
+		if (l != null) {
+			int n = l.size();
+			for (int i = 0; i < n; ++i) {
+				l.get(i).maxVertexCountIncreased(newValue);
+			}
+		}
+		int n = graphStructureChangedListeners.size();
+		for (int i = 0; i < n; i++) {
+			graphStructureChangedListeners.get(i).maxVertexCountIncreased(
+					newValue);
+		}
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/ba28dc3943bf31e37f3beb96450dac330ebebd47/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/right.java
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/ba28dc3943bf31e37f3beb96450dac330ebebd47/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/left.java
 	public void notifyMaxEdgeCountIncreased(int newValue) {
 		if (graphStructureChangedListenersWithAutoRemoval != null) {
 			Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
@@ -2017,7 +2216,6 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 					currentListener.maxEdgeCountIncreased(newValue);
 				}
 			}
-			setAutoListenerListToNullIfEmpty();
 		}
 		int n = graphStructureChangedListeners.size();
 		for (int i = 0; i < n; i++) {
@@ -2025,10 +2223,46 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 					newValue);
 		}
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/ba28dc3943bf31e37f3beb96450dac330ebebd47/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/base.java
+	protected void notifyMaxEdgeCountIncreased(int newValue) {
+		if (graphStructureChangedListenersWithAutoRemoval != null) {
+			Iterator<WeakReference<GraphStructureChangedListener>> iterator = getListenerListIteratorForAutoRemove();
+			while (iterator.hasNext()) {
+				GraphStructureChangedListener currentListener = iterator.next()
+						.get();
+				if (currentListener == null) {
+					iterator.remove();
+				} else {
+					currentListener.maxEdgeCountIncreased(newValue);
+				}
+			}
+		}
+		int n = graphStructureChangedListeners.size();
+		for (int i = 0; i < n; i++) {
+			graphStructureChangedListeners.get(i).maxEdgeCountIncreased(
+					newValue);
+		}
+	}
+=======
+	protected void notifyMaxEdgeCountIncreased(int newValue) {
+		List<GraphStructureChangedListener> l = getListenerListForAutoRemove();
+		if (l != null) {
+			int n = l.size();
+			for (int i = 0; i < n; ++i) {
+				l.get(i).maxEdgeCountIncreased(newValue);
+			}
+		}
+		int n = graphStructureChangedListeners.size();
+		for (int i = 0; i < n; i++) {
+			graphStructureChangedListeners.get(i).maxEdgeCountIncreased(
+					newValue);
+		}
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/ba28dc3943bf31e37f3beb96450dac330ebebd47/src/de/uni_koblenz/jgralab/impl/GraphBaseImpl.java/right.java
 
 	protected boolean canAddGraphElement(int graphElementId) {
-		return graphElementId == 0;
-	}
+	return graphElementId == 0;
+}
 
 	@Override
 	public void save(String filename) throws GraphIOException {
