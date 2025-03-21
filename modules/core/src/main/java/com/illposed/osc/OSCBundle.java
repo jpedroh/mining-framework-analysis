@@ -62,7 +62,34 @@ public class OSCBundle extends OSCPacket {
 	 * @param timestamp the time to execute the bundle
 	 */
 	public OSCBundle(Date timestamp) {
+<<<<<<< /usr/src/app/output/hoijui/javaosc/afde7c1c37e7b7694d0faed5aaaef3b0efb7f463/modules/core/src/main/java/com/illposed/osc/OSCBundle.java/left.java
 		this(null, timestamp);
+||||||| /usr/src/app/output/hoijui/javaosc/afde7c1c37e7b7694d0faed5aaaef3b0efb7f463/modules/core/src/main/java/com/illposed/osc/OSCBundle.java/base.java
+		this((Collection<OSCPacket>) null, timestamp);
+	}
+
+	// deprecated since version 1.0, March 2012
+	/**
+	 * Create an OSCBundle made up of the given packets with a timestamp of now.
+	 * @param packets array of OSCPackets to initialize this object with
+	 * @deprecated
+	 */
+	public OSCBundle(OSCPacket[] packets) {
+		this(packets, TIMESTAMP_IMMEDIATE);
+=======
+		this((Collection<OSCPacket>) null, timestamp);
+	}
+
+	// deprecated since version 1.0, March 2012
+	/**
+	 * Creates an OSCBundle made up of the given packets
+	 * with a timestamp of now.
+	 * @param packets array of OSCPackets to initialize this object with
+	 * @deprecated
+	 */
+	public OSCBundle(OSCPacket[] packets) {
+		this(packets, TIMESTAMP_IMMEDIATE);
+>>>>>>> /usr/src/app/output/hoijui/javaosc/afde7c1c37e7b7694d0faed5aaaef3b0efb7f463/modules/core/src/main/java/com/illposed/osc/OSCBundle.java/right.java
 	}
 
 	/**
@@ -72,6 +99,38 @@ public class OSCBundle extends OSCPacket {
 	 */
 	public OSCBundle(Collection<OSCPacket> packets) {
 		this(packets, TIMESTAMP_IMMEDIATE);
+<<<<<<< /usr/src/app/output/hoijui/javaosc/afde7c1c37e7b7694d0faed5aaaef3b0efb7f463/modules/core/src/main/java/com/illposed/osc/OSCBundle.java/left.java
+||||||| /usr/src/app/output/hoijui/javaosc/afde7c1c37e7b7694d0faed5aaaef3b0efb7f463/modules/core/src/main/java/com/illposed/osc/OSCBundle.java/base.java
+	}
+
+	// deprecated since version 1.0, March 2012
+	/**
+	 * Create an OSCBundle, specifying the packets and timestamp.
+	 * @param packets the packets that make up the bundle
+	 * @param timestamp the time to execute the bundle
+	 * @deprecated
+	 */
+	public OSCBundle(OSCPacket[] packets, Date timestamp) {
+		this((packets == null)
+				? new LinkedList<OSCPacket>()
+				: Arrays.asList(packets),
+				timestamp);
+=======
+	}
+
+	// deprecated since version 1.0, March 2012
+	/**
+	 * Creates an OSCBundle, specifying the packets and timestamp.
+	 * @param packets the packets that make up the bundle
+	 * @param timestamp the time to execute the bundle
+	 * @deprecated
+	 */
+	public OSCBundle(OSCPacket[] packets, Date timestamp) {
+		this((packets == null)
+				? new LinkedList<OSCPacket>()
+				: Arrays.asList(packets),
+				timestamp);
+>>>>>>> /usr/src/app/output/hoijui/javaosc/afde7c1c37e7b7694d0faed5aaaef3b0efb7f463/modules/core/src/main/java/com/illposed/osc/OSCBundle.java/right.java
 	}
 
 	/**
