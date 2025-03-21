@@ -23,9 +23,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
-import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
+
+import java.util.stream.Stream;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -247,8 +249,8 @@ public class FileDemo {
         assertNull("File record for file=" + tempFile + " not removed", findFileRecord(tempFile));
 
         String traceOutput = output.toString();
-        assertContainsAdjacentLines(traceOutput, "Opened " + tempFile, "java.io.FileOutputStream.<init>(");
-        assertContainsAdjacentLines(traceOutput, "Closed " + tempFile, "java.io.FileOutputStream.close(");
+        assertContainsAdjacentLines(traceOutput, "Opened " + tempFile, "at java.io.FileInputStream.<init>(");
+        assertContainsAdjacentLines(traceOutput, "Closed " + tempFile, "at java.io.FileInputStream.close(");
     }
 
     @Test
@@ -273,8 +275,20 @@ public class FileDemo {
         assertNull("File record for file=" + tempFile + " not removed", findFileRecord(tempFile));
 
         String traceOutput = output.toString();
-        assertContainsAdjacentLines(traceOutput, "Opened " + tempFile, "java.io.FileOutputStream.<init>(");
-        assertContainsAdjacentLines(traceOutput, "Closed " + tempFile, "java.io.FileOutputStream.close(");
+<<<<<<< /usr/src/app/output/kohsuke/file-leak-detector/f4efbd253ecc47c8f05a361056c7de592016595a/src/test/java/org/kohsuke/file_leak_detector/instrumented/FileDemo.java/left.java
+        assertContainsAdjacentLines(traceOutput, "Opened " + tempFile, "Channel.open(");
+||||||| /usr/src/app/output/kohsuke/file-leak-detector/f4efbd253ecc47c8f05a361056c7de592016595a/src/test/java/org/kohsuke/file_leak_detector/instrumented/FileDemo.java/base.java
+        assertTrue(traceOutput.contains("Opened " + tempFile));
+=======
+        assertThat(traceOutput, containsString("Opened " + tempFile));
+>>>>>>> /usr/src/app/output/kohsuke/file-leak-detector/f4efbd253ecc47c8f05a361056c7de592016595a/src/test/java/org/kohsuke/file_leak_detector/instrumented/FileDemo.java/right.java
+<<<<<<< /usr/src/app/output/kohsuke/file-leak-detector/f4efbd253ecc47c8f05a361056c7de592016595a/src/test/java/org/kohsuke/file_leak_detector/instrumented/FileDemo.java/left.java
+        assertContainsAdjacentLines(traceOutput, "Closed " + tempFile, "Channel.close(");
+||||||| /usr/src/app/output/kohsuke/file-leak-detector/f4efbd253ecc47c8f05a361056c7de592016595a/src/test/java/org/kohsuke/file_leak_detector/instrumented/FileDemo.java/base.java
+        assertTrue(traceOutput.contains("Closed " + tempFile));
+=======
+        assertThat(traceOutput, containsString("Closed " + tempFile));
+>>>>>>> /usr/src/app/output/kohsuke/file-leak-detector/f4efbd253ecc47c8f05a361056c7de592016595a/src/test/java/org/kohsuke/file_leak_detector/instrumented/FileDemo.java/right.java
     }
 
     private static FileRecord findFileRecord(File file) {
@@ -293,7 +307,7 @@ public class FileDemo {
         List<String> lines = IOUtils.readLines(IOUtils.toInputStream(output));
         int index = findIndexOf(lines, thisLineContent);
         assertTrue(index != -1);
-        assertThat(lines.get(index + 1), containsString(nextLineContent));
+        assertTrue(lines.get(index + 1).contains(nextLineContent));
     }
 
     private static int findIndexOf(List<String> lines, String target) {
