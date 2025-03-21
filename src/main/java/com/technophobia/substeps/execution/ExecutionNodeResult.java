@@ -37,12 +37,11 @@ public class ExecutionNodeResult implements Serializable{
     
     private final long executionNodeId;
 
-    private Long startedAt;
-    private Long completedAt;
-
     public ExecutionNodeResult(final long id){
         this.executionNodeId = id;
     }
+    private Long startedAt;
+    private Long completedAt;
 
     public String getStackTrace() {
         if (thrown != null) {
