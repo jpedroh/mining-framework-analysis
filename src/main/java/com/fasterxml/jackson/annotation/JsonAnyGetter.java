@@ -31,9 +31,17 @@ public @interface JsonAnyGetter
      * with "mix-in annotations" (aka "annotation overrides").
      * For most cases, however, default value of "true" is just fine
      * and should be omitted.
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/ea0e95f247f31092c4593d9604ba55fb7f085e0f/src/main/java/com/fasterxml/jackson/annotation/JsonAnyGetter.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/ea0e95f247f31092c4593d9604ba55fb7f085e0f/src/main/java/com/fasterxml/jackson/annotation/JsonAnyGetter.java/base.java
+     *
+     * @since 2.9
+=======
      *
      * @return True if annotation is enabled (normal case); false if it is to
      *   be ignored (only useful for mix-in annotations to "mask" annotation
+     *
+     * @since 2.9
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/ea0e95f247f31092c4593d9604ba55fb7f085e0f/src/main/java/com/fasterxml/jackson/annotation/JsonAnyGetter.java/right.java
      */
     boolean enabled() default true;
 }

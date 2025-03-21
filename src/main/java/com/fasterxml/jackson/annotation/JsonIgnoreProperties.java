@@ -64,9 +64,17 @@ public @interface JsonIgnoreProperties
      *<p>
      * Default value is `false`, which means that getters with matching names
      * will be ignored.
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/ea0e95f247f31092c4593d9604ba55fb7f085e0f/src/main/java/com/fasterxml/jackson/annotation/JsonIgnoreProperties.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/ea0e95f247f31092c4593d9604ba55fb7f085e0f/src/main/java/com/fasterxml/jackson/annotation/JsonIgnoreProperties.java/base.java
+     * 
+     * @since 2.6
+=======
      * 
      * @return True if getters should be allowed (i.e. NOT ignored); false if getters
      *    are to be ignored
+     *
+     * @since 2.6
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/ea0e95f247f31092c4593d9604ba55fb7f085e0f/src/main/java/com/fasterxml/jackson/annotation/JsonIgnoreProperties.java/right.java
      */
     public boolean allowGetters() default false;
 
@@ -81,10 +89,17 @@ public @interface JsonIgnoreProperties
      *<p>
      * Default value is `false`, which means that setters with matching names
      * will be ignored.
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/ea0e95f247f31092c4593d9604ba55fb7f085e0f/src/main/java/com/fasterxml/jackson/annotation/JsonIgnoreProperties.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/ea0e95f247f31092c4593d9604ba55fb7f085e0f/src/main/java/com/fasterxml/jackson/annotation/JsonIgnoreProperties.java/base.java
+     * 
+     * @since 2.6
+=======
      * 
      *
      * @return True if setters should be allowed (i.e. NOT ignored); false if setters
      *    are to be ignored
+     * @since 2.6
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/ea0e95f247f31092c4593d9604ba55fb7f085e0f/src/main/java/com/fasterxml/jackson/annotation/JsonIgnoreProperties.java/right.java
      */
     public boolean allowSetters() default false;
 

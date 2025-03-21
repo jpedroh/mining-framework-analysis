@@ -33,11 +33,20 @@ public @interface JacksonInject
      * if disabled (`OptBoolean.FALSE`), input value (if any) will be ignored;
      * otherwise it will override injected value.
      *<p>
-     * Default is `OptBoolean.DEFAULT`, which translates to `OptBoolean.TRUE`.
+     * Default is `OptBoolean.DEFAULT`, which translates to `OptBoolean.TRUE`: this is
+     * for backwards compatibility (2.8 and earlier always allow binding input value).
+<<<<<<< /usr/src/app/output/fasterxml/jackson-annotations/ea0e95f247f31092c4593d9604ba55fb7f085e0f/src/main/java/com/fasterxml/jackson/annotation/JacksonInject.java/left.java
+||||||| /usr/src/app/output/fasterxml/jackson-annotations/ea0e95f247f31092c4593d9604ba55fb7f085e0f/src/main/java/com/fasterxml/jackson/annotation/JacksonInject.java/base.java
+     *
+     * @since 2.9
+=======
      *
      * @return {@link OptBoolean#TRUE} to enable use of value from input instead of
      *    injected value, if available; {@link OptBoolean#FALSE} if injected value will
      *    always be used regardless of input.
+     *
+     * @since 2.9
+>>>>>>> /usr/src/app/output/fasterxml/jackson-annotations/ea0e95f247f31092c4593d9604ba55fb7f085e0f/src/main/java/com/fasterxml/jackson/annotation/JacksonInject.java/right.java
      */
     public OptBoolean useInput() default OptBoolean.DEFAULT;
 
