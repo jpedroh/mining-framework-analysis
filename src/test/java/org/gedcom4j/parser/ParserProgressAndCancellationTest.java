@@ -77,6 +77,7 @@ public class ParserProgressAndCancellationTest implements ParseProgressListener 
         gp = new GedcomParser();
         cancelAfter = 5;
         gp.registerParseObserver(this);
+        gp.setParseNotificationRate(1);
         gp.load("sample/willis-ascii.ged");
     }
 
@@ -91,8 +92,15 @@ public class ParserProgressAndCancellationTest implements ParseProgressListener 
         gp = new GedcomParser();
         cancelAfter = Integer.MAX_VALUE;
         gp.registerParseObserver(this);
+        gp.setParseNotificationRate(10);
         gp.load("sample/willis-ascii.ged");
+<<<<<<< /usr/src/app/output/frizbog/gedcom4j/11c8b3f6955f298ade7583d2fa0d000b282e597f/src/test/java/org/gedcom4j/parser/ParserProgressAndCancellationTest.java/left.java
+        assertEquals(128, notificationCount);
+||||||| /usr/src/app/output/frizbog/gedcom4j/11c8b3f6955f298ade7583d2fa0d000b282e597f/src/test/java/org/gedcom4j/parser/ParserProgressAndCancellationTest.java/base.java
+        assertEquals(1269, notificationCount);
+=======
         assertEquals(40, notificationCount);
+>>>>>>> /usr/src/app/output/frizbog/gedcom4j/11c8b3f6955f298ade7583d2fa0d000b282e597f/src/test/java/org/gedcom4j/parser/ParserProgressAndCancellationTest.java/right.java
     }
 
 }

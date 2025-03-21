@@ -144,60 +144,11 @@ public class GedcomParser extends AbstractParser<Gedcom> {
     private int parseNotificationRate = 500;
 
     /**
-     * The {@link StringTreeBuilder} that is assisting this class
-     */
-    private StringTreeBuilder stringTreeBuilder;
-
-    /**
-     * The 1-based line number that we've most recently read, so starts at zero (when we haven't read any lines yet)
-     */
-    private int lineNum;
-
-    /**
-     * Default constructor
-     */
-    public GedcomParser() {
-        /*
-         * This is the root level parser, so there are no parent or other root nodes to hook up to (yet)
-         */
-        super(null, null, null);
-        gedcomParser = this;
-    }
-
-    /**
      * Indicate that file loading should be cancelled
      */
     public void cancel() {
         cancelled = true;
     }
-
-    /**
-     * Get the errors
-     * 
-     * @return the errors
-     */
-    public List<String> getErrors() {
-        return errors;
-    }
-
-    /**
-     * Get the fileObservers
-     * 
-     * @return the fileObservers
-     */
-    public List<WeakReference<FileProgressListener>> getFileObservers() {
-        return fileObservers;
-    }
-
-    /**
-     * Get the gedcom
-     * 
-     * @return the gedcom
-     */
-    public Gedcom getGedcom() {
-        return gedcom;
-    }
-
     /**
      * Get the parse notification rate (the number of items that get parsed between each notification, if listening)
      * 
@@ -206,16 +157,6 @@ public class GedcomParser extends AbstractParser<Gedcom> {
     public int getParseNotificationRate() {
         return parseNotificationRate;
     }
-
-    /**
-     * Get the parseObservers
-     * 
-     * @return the parseObservers
-     */
-    public List<WeakReference<ParseProgressListener>> getParseObservers() {
-        return parseObservers;
-    }
-
     /**
      * Get the read notification rate
      * 
@@ -224,16 +165,6 @@ public class GedcomParser extends AbstractParser<Gedcom> {
     public int getReadNotificationRate() {
         return readNotificationRate;
     }
-
-    /**
-     * Get the warnings
-     * 
-     * @return the warnings
-     */
-    public List<String> getWarnings() {
-        return warnings;
-    }
-
     /**
      * Is the load and parse operation cancelled?
      * 
@@ -242,35 +173,165 @@ public class GedcomParser extends AbstractParser<Gedcom> {
     public boolean isCancelled() {
         return cancelled;
     }
-
     /**
-     * Get the strictCustomTags
+     * Notify all listeners about the change
      * 
-     * @return the strictCustomTags
+     * @param e
+     *            the change event to tell the observers
      */
-    public boolean isStrictCustomTags() {
-        return strictCustomTags;
+    public void notifyFileObservers(FileProgressEvent e) {
+        int i = 0;
+        while (i < fileObservers.size()) {
+            WeakReference<FileProgressListener> observerRef = fileObservers.get(i);
+            if (observerRef == null) {
+                fileObservers.remove(observerRef);
+            } else {
+                FileProgressListener l = observerRef.get();
+                if (l != null) {
+                    l.progressNotification(e);
+                }
+                i++;
+            }
+        }
     }
-
     /**
-     * Get the strictLineBreaks
+     * Register a observer (listener) to be informed about progress and completion.
      * 
-     * @return the strictLineBreaks
+     * @param observer
+     *            the observer you want notified
      */
-    public boolean isStrictLineBreaks() {
-        return strictLineBreaks;
+    public void registerFileObserver(FileProgressListener observer) {
+        fileObservers.add(new WeakReference<FileProgressListener>(observer));
     }
-
     /**
-     * Read data from an {@link java.io.InputStream} and construct a {@link StringTree} object from its contents
+     * Register a observer (listener) to be informed about progress and completion.
      * 
-     * @param bytes
-     *            the input stream over the bytes of the file
-     * @throws IOException
-     *             if there is a problem reading the data from the reader
-     * @throws GedcomParserException
-     *             if there is an error with parsing the data from the stream
+     * @param observer
+     *            the observer you want notified
      */
+    public void registerParseObserver(ParseProgressListener observer) {
+        parseObservers.add(new WeakReference<ParseProgressListener>(observer));
+    }
+    /**
+     * Set the parse notification rate (the number of items that get parsed between each notification, if listening)
+     * 
+     * @param parseNotificationRate
+     *            the parse notification rate (the number of items that get parsed between each notification, if
+     *            listening). Must be at least 1.
+     */
+    public void setParseNotificationRate(int parseNotificationRate) {
+        if (parseNotificationRate < 1) {
+            throw new IllegalArgumentException("Parse Notification Rate must be at least 1");
+        }
+        this.parseNotificationRate = parseNotificationRate;
+    }
+    /**
+     * Set the read notification rate.
+     * 
+     * @param readNotificationRate
+     *            the read notification rate. Must be a positive integer.
+     */
+    public void setReadNotificationRate(int readNotificationRate) {
+        if (readNotificationRate < 1) {
+            throw new IllegalArgumentException("Read Notification Rate must be at least 1");
+        }
+        this.readNotificationRate = readNotificationRate;
+    }
+    /**
+     * Unregister a observer (listener) to be informed about progress and completion.
+     * 
+     * @param observer
+     *            the observer you want notified
+     */
+    public void unregisterFileObserver(FileProgressListener observer) {
+        int i = 0;
+        while (i < fileObservers.size()) {
+            WeakReference<FileProgressListener> observerRef = fileObservers.get(i);
+            if (observerRef == null || observerRef.get() == observer) {
+                fileObservers.remove(observerRef);
+            } else {
+                i++;
+            }
+        }
+        fileObservers.add(new WeakReference<FileProgressListener>(observer));
+    }
+    /**
+     * Unregister a observer (listener) to be informed about progress and completion.
+     * 
+     * @param observer
+     *            the observer you want notified
+     */
+    public void unregisterParseObserver(ParseProgressListener observer) {
+        int i = 0;
+        while (i < parseObservers.size()) {
+            WeakReference<ParseProgressListener> observerRef = parseObservers.get(i);
+            if (observerRef == null || observerRef.get() == observer) {
+                parseObservers.remove(observerRef);
+            } else {
+                i++;
+            }
+        }
+        parseObservers.add(new WeakReference<ParseProgressListener>(observer));
+    }
+    public void load(String filename) throws IOException, GedcomParserException {
+        FileInputStream fis = new FileInputStream(filename);
+        BufferedInputStream bis = null;
+        try {
+            bis = new BufferedInputStream(fis);
+            load(bis);
+        } finally {
+            if (bis != null) {
+                bis.close();
+            }
+            fis.close();
+        }
+    }
+    private void loadRootItems(StringTree st) throws GedcomParserException {
+        if (cancelled) {
+            throw new ParserCancelledException("File load/parse cancelled");
+        }
+        int i = 0;
+        for (StringTree ch : st.children) {
+            if (Tag.HEADER.equals(ch.tag)) {
+                loadHeader(ch);
+            } else if (Tag.SUBMITTER.equals(ch.tag)) {
+                loadSubmitter(ch);
+            } else if (Tag.INDIVIDUAL.equals(ch.tag)) {
+                loadIndividual(ch);
+            } else if (Tag.SUBMISSION.equals(ch.tag)) {
+                loadSubmission(ch);
+            } else if (Tag.NOTE.equals(ch.tag)) {
+                loadRootNote(ch);
+            } else if (Tag.FAMILY.equals(ch.tag)) {
+                loadFamily(ch);
+            } else if (Tag.TRAILER.equals(ch.tag)) {
+                gedcom.trailer = new Trailer();
+            } else if (Tag.SOURCE.equals(ch.tag)) {
+                loadSource(ch);
+            } else if (Tag.REPOSITORY.equals(ch.tag)) {
+                loadRepository(ch);
+            } else if (Tag.OBJECT_MULTIMEDIA.equals(ch.tag)) {
+                loadMultimediaRecord(ch);
+            } else {
+                unknownTag(ch, gedcom);
+            }
+            if (i % parseNotificationRate == 0) {
+                notifyParseObservers(new ParseProgressEvent(this, gedcom, false));
+            }
+            if (cancelled) {
+                throw new ParserCancelledException("File load/parse cancelled");
+            }
+            i++;
+        }
+        notifyParseObservers(new ParseProgressEvent(this, gedcom, true));
+    }
+    private void loadRootNote(StringTree ch) throws GedcomParserException {
+        List<Note> dummyList = new ArrayList<Note>();
+        loadNote(ch, dummyList);
+        if (!dummyList.isEmpty()) {
+            throw new GedcomParserException("At root level NOTE structures should have @ID@'s");
+        }
+    }
     public void load(BufferedInputStream bytes) throws IOException, GedcomParserException {
         // Reset counters and stuff
         lineNum = 0;
@@ -304,7 +365,131 @@ public class GedcomParser extends AbstractParser<Gedcom> {
         }
         parseAndLoadPreviousStringTree();
     }
+    /**
+     * Notify all listeners about the change
+     * 
+     * @param e
+     *            the change event to tell the observers
+     */
+    private void notifyParseObservers(ParseProgressEvent e) {
+        int i = 0;
+        while (i < parseObservers.size()) {
+            WeakReference<ParseProgressListener> observerRef = parseObservers.get(i);
+            if (observerRef == null) {
+                parseObservers.remove(observerRef);
+            } else {
+                ParseProgressListener l = observerRef.get();
+                if (l != null) {
+                    l.progressNotification(e);
+                }
+                i++;
+            }
+        }
+    }
+    private void unknownTag(StringTree node, AbstractElement element) {
+        if (node.tag.length() > 0 && (node.tag.charAt(0) == '_') || !strictCustomTags) {
+            element.customTags.add(node);
+            return;
+        }
 
+        StringBuilder sb = new StringBuilder(64); // Min size = 64
+        sb.append("Line ").append(node.lineNum).append(": Cannot handle tag ");
+        sb.append(node.tag);
+        StringTree st = node;
+        while (st.parent != null) {
+            st = st.parent;
+            sb.append(", child of ").append(st.tag == null ? null : st.tag);
+            if (st.id != null) {
+                sb.append(" ").append(st.id);
+            }
+            sb.append(" on line ").append(st.lineNum);
+        }
+        errors.add(sb.toString());
+    }
+    /**
+     * The {@link StringTreeBuilder} that is assisting this class
+     */
+    private StringTreeBuilder stringTreeBuilder;
+    /**
+     * The 1-based line number that we've most recently read, so starts at zero (when we haven't read any lines yet)
+     */
+    private int lineNum;
+    /**
+     * Default constructor
+     */
+    public GedcomParser() {
+        /*
+         * This is the root level parser, so there are no parent or other root nodes to hook up to (yet)
+         */
+        super(null, null, null);
+        gedcomParser = this;
+    }
+    /**
+     * Get the errors
+     * 
+     * @return the errors
+     */
+    public List<String> getErrors() {
+        return errors;
+    }
+    /**
+     * Get the fileObservers
+     * 
+     * @return the fileObservers
+     */
+    public List<WeakReference<FileProgressListener>> getFileObservers() {
+        return fileObservers;
+    }
+    /**
+     * Get the gedcom
+     * 
+     * @return the gedcom
+     */
+    public Gedcom getGedcom() {
+        return gedcom;
+    }
+    /**
+     * Get the parseObservers
+     * 
+     * @return the parseObservers
+     */
+    public List<WeakReference<ParseProgressListener>> getParseObservers() {
+        return parseObservers;
+    }
+    /**
+     * Get the warnings
+     * 
+     * @return the warnings
+     */
+    public List<String> getWarnings() {
+        return warnings;
+    }
+    /**
+     * Get the strictCustomTags
+     * 
+     * @return the strictCustomTags
+     */
+    public boolean isStrictCustomTags() {
+        return strictCustomTags;
+    }
+    /**
+     * Get the strictLineBreaks
+     * 
+     * @return the strictLineBreaks
+     */
+    public boolean isStrictLineBreaks() {
+        return strictLineBreaks;
+    }
+    /**
+     * Read data from an {@link java.io.InputStream} and construct a {@link StringTree} object from its contents
+     * 
+     * @param bytes
+     *            the input stream over the bytes of the file
+     * @throws IOException
+     *             if there is a problem reading the data from the reader
+     * @throws GedcomParserException
+     *             if there is an error with parsing the data from the stream
+     */
     /**
      * Load a gedcom file with the supplied name
      * 
@@ -315,89 +500,24 @@ public class GedcomParser extends AbstractParser<Gedcom> {
      * @throws GedcomParserException
      *             if the file cannot be parsed
      */
-    public void load(String filename) throws IOException, GedcomParserException {
-        FileInputStream fis = new FileInputStream(filename);
-        BufferedInputStream bis = null;
-        try {
-            bis = new BufferedInputStream(fis);
-            load(bis);
-        } finally {
-            if (bis != null) {
-                bis.close();
-            }
-            fis.close();
-        }
-    }
-
     /**
      * Notify all listeners about the change
      * 
      * @param e
      *            the change event to tell the observers
      */
-    public void notifyFileObservers(FileProgressEvent e) {
-        int i = 0;
-        while (i < fileObservers.size()) {
-            WeakReference<FileProgressListener> observerRef = fileObservers.get(i);
-            if (observerRef == null) {
-                fileObservers.remove(observerRef);
-            } else {
-                FileProgressListener l = observerRef.get();
-                if (l != null) {
-                    l.progressNotification(e);
-                }
-                i++;
-            }
-        }
-    }
-
     /**
      * Register a observer (listener) to be informed about progress and completion.
      * 
      * @param observer
      *            the observer you want notified
      */
-    public void registerFileObserver(FileProgressListener observer) {
-        fileObservers.add(new WeakReference<FileProgressListener>(observer));
-    }
-
     /**
      * Register a observer (listener) to be informed about progress and completion.
      * 
      * @param observer
      *            the observer you want notified
      */
-    public void registerParseObserver(ParseProgressListener observer) {
-        parseObservers.add(new WeakReference<ParseProgressListener>(observer));
-    }
-
-    /**
-     * Set the parse notification rate (the number of items that get parsed between each notification, if listening)
-     * 
-     * @param parseNotificationRate
-     *            the parse notification rate (the number of items that get parsed between each notification, if
-     *            listening). Must be at least 1.
-     */
-    public void setParseNotificationRate(int parseNotificationRate) {
-        if (parseNotificationRate < 1) {
-            throw new IllegalArgumentException("Parse Notification Rate must be at least 1");
-        }
-        this.parseNotificationRate = parseNotificationRate;
-    }
-
-    /**
-     * Set the read notification rate.
-     * 
-     * @param readNotificationRate
-     *            the read notification rate. Must be a positive integer.
-     */
-    public void setReadNotificationRate(int readNotificationRate) {
-        if (readNotificationRate < 1) {
-            throw new IllegalArgumentException("Read Notification Rate must be at least 1");
-        }
-        this.readNotificationRate = readNotificationRate;
-    }
-
     /**
      * Set the strictCustomTags
      * 
@@ -407,7 +527,6 @@ public class GedcomParser extends AbstractParser<Gedcom> {
     public void setStrictCustomTags(boolean strictCustomTags) {
         this.strictCustomTags = strictCustomTags;
     }
-
     /**
      * Set the strictLineBreaks
      * 
@@ -417,45 +536,18 @@ public class GedcomParser extends AbstractParser<Gedcom> {
     public void setStrictLineBreaks(boolean strictLineBreaks) {
         this.strictLineBreaks = strictLineBreaks;
     }
-
     /**
      * Unregister a observer (listener) to be informed about progress and completion.
      * 
      * @param observer
      *            the observer you want notified
      */
-    public void unregisterFileObserver(FileProgressListener observer) {
-        int i = 0;
-        while (i < fileObservers.size()) {
-            WeakReference<FileProgressListener> observerRef = fileObservers.get(i);
-            if (observerRef == null || observerRef.get() == observer) {
-                fileObservers.remove(observerRef);
-            } else {
-                i++;
-            }
-        }
-        fileObservers.add(new WeakReference<FileProgressListener>(observer));
-    }
-
     /**
      * Unregister a observer (listener) to be informed about progress and completion.
      * 
      * @param observer
      *            the observer you want notified
      */
-    public void unregisterParseObserver(ParseProgressListener observer) {
-        int i = 0;
-        while (i < parseObservers.size()) {
-            WeakReference<ParseProgressListener> observerRef = parseObservers.get(i);
-            if (observerRef == null || observerRef.get() == observer) {
-                parseObservers.remove(observerRef);
-            } else {
-                i++;
-            }
-        }
-        parseObservers.add(new WeakReference<ParseProgressListener>(observer));
-    }
-
     /**
      * Get the line number we're reading
      * 
@@ -464,7 +556,6 @@ public class GedcomParser extends AbstractParser<Gedcom> {
     int getLineNum() {
         return lineNum;
     }
-
     /**
      * {@inheritDoc}
      * <p>
@@ -475,7 +566,6 @@ public class GedcomParser extends AbstractParser<Gedcom> {
     void parse() {
         // Do nothing
     }
-
     /**
      * Load a single root-level item
      * 
@@ -536,29 +626,12 @@ public class GedcomParser extends AbstractParser<Gedcom> {
             unknownTag(rootLevelItem, gedcom);
         }
     }
-
     /**
      * Notify all listeners about the change
      * 
      * @param e
      *            the change event to tell the observers
      */
-    private void notifyParseObservers(ParseProgressEvent e) {
-        int i = 0;
-        while (i < parseObservers.size()) {
-            WeakReference<ParseProgressListener> observerRef = parseObservers.get(i);
-            if (observerRef == null) {
-                parseObservers.remove(observerRef);
-            } else {
-                ParseProgressListener l = observerRef.get();
-                if (l != null) {
-                    l.progressNotification(e);
-                }
-                i++;
-            }
-        }
-    }
-
     /**
      * Parse the {@link StringTreeBuilder}'s string tree in memory, load it into the object model, then discard that
      * string tree buffer
