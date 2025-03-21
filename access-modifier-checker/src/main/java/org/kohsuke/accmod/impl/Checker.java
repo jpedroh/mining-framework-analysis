@@ -140,7 +140,21 @@ public class Checker {
      *      This value shows up in {@link RestrictedElement#isInTheInspectedModule()}.
      */
     public void loadRestrictions(ClassLoader cl, final boolean isInTheInspectedModule) throws IOException {
+<<<<<<< /usr/src/app/output/kohsuke/access-modifier/38876ed95a6d2e7c44d433fd0cc347ba6131907a/access-modifier-checker/src/main/java/org/kohsuke/accmod/impl/Checker.java/left.java
         for (String className : Index.listClassNames(Restricted.class, cl)) {
+||||||| /usr/src/app/output/kohsuke/access-modifier/38876ed95a6d2e7c44d433fd0cc347ba6131907a/access-modifier-checker/src/main/java/org/kohsuke/accmod/impl/Checker.java/base.java
+        if (stream==null)      return;
+
+        BufferedReader r = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+        String className;
+        while ((className=r.readLine())!=null) {
+=======
+        if (stream==null)      return;
+
+        BufferedReader r = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
+        String className;
+        while ((className=r.readLine())!=null) {
+>>>>>>> /usr/src/app/output/kohsuke/access-modifier/38876ed95a6d2e7c44d433fd0cc347ba6131907a/access-modifier-checker/src/main/java/org/kohsuke/accmod/impl/Checker.java/right.java
             InputStream is = dependencies.getResourceAsStream(className.replace('.','/') + ".class");
             if (is==null) {
                 errorListener.onWarning(null,null,"Failed to find class file for "+ className);
