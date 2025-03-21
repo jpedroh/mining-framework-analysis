@@ -55,13 +55,10 @@ public class DefaultAgiServer extends AbstractAgiServer implements AgiServer
 	
 	/** Default 50?  Windows server max 200? */
 	private static final int BACKLOG = 200;
-
     private ServerSocketFacade serverSocket;
-
     private String configResourceBundleName = DEFAULT_CONFIG_RESOURCE_BUNDLE_NAME;
     private int port = DEFAULT_BIND_PORT;
     private InetAddress address = null;
-
     /**
      * Creates a new DefaultAgiServer.
      */
@@ -70,7 +67,6 @@ public class DefaultAgiServer extends AbstractAgiServer implements AgiServer
         this(null, null);
 
     }
-
     /**
      * Creates a new DefaultAgiServer and set a custom factory for creating AgiChannels
      *
@@ -80,7 +76,6 @@ public class DefaultAgiServer extends AbstractAgiServer implements AgiServer
     {
         this(null, null, agiChannelFactory);
     }
-
     /**
      * Creates a new DefaultAgiServer and loads its configuration from an alternative resource bundle.
      *
@@ -90,7 +85,6 @@ public class DefaultAgiServer extends AbstractAgiServer implements AgiServer
     {
         this(configResourceBundleName, null);
     }
-
     /**
      * Creates a new DefaultAgiServer that uses the given {@link MappingStrategy}.
      *
@@ -101,7 +95,6 @@ public class DefaultAgiServer extends AbstractAgiServer implements AgiServer
     {
         this(null, mappingStrategy);
     }
-
     /**
      * Creates a new DefaultAgiServer that runs the given {@link AgiScript} for all requests.
      *
@@ -112,7 +105,6 @@ public class DefaultAgiServer extends AbstractAgiServer implements AgiServer
     {
         this(null, new StaticMappingStrategy(agiScript));
     }
-
     /**
      * Creates a new DefaultAgiServer and loads its configuration from an alternative resource bundle and
      * uses the given {@link MappingStrategy}.
@@ -125,7 +117,6 @@ public class DefaultAgiServer extends AbstractAgiServer implements AgiServer
     {
         this(configResourceBundleName, mappingStrategy, new DefaultAgiChannelFactory());
     }
-
     /**
      * Creates a new DefaultAgiServer and loads its configuration from an alternative resource bundle and
      * uses the given {@link MappingStrategy}.
@@ -173,8 +164,6 @@ public class DefaultAgiServer extends AbstractAgiServer implements AgiServer
 
         loadConfig();
     }
-
-
     /**
      * Sets the TCP port to listen on for new connections.
      * <br>
@@ -188,7 +177,6 @@ public class DefaultAgiServer extends AbstractAgiServer implements AgiServer
     {
         this.port = bindPort;
     }
-
     /**
      * Sets the TCP port to listen on for new connections.
      * <br>
@@ -201,7 +189,6 @@ public class DefaultAgiServer extends AbstractAgiServer implements AgiServer
     {
         this.port = port;
     }
-
     /**
      * Returns the TCP port this server is configured to bind to.
      *
@@ -212,7 +199,6 @@ public class DefaultAgiServer extends AbstractAgiServer implements AgiServer
     {
         return port;
     }
-
     /**
      * Returns the address this server is configured to bind to.
      * @return the address this server is configured to bind to.
@@ -220,7 +206,6 @@ public class DefaultAgiServer extends AbstractAgiServer implements AgiServer
     public InetAddress getAddress() {
         return address;
     }
-
     /**
      * Sets the address to bind server.
      * @param address the address to bind to.
@@ -228,7 +213,6 @@ public class DefaultAgiServer extends AbstractAgiServer implements AgiServer
     public void setAddress(InetAddress address) {
         this.address = address;
     }
-
     private void loadConfig()
     {
         final ResourceBundle resourceBundle;
@@ -280,11 +264,11 @@ public class DefaultAgiServer extends AbstractAgiServer implements AgiServer
             // swallow
         }
     }
-
     protected ServerSocketFacade createServerSocket() throws IOException
     {
         return new ServerSocketFacadeImpl(port, BACKLOG, address);
     }
+	/** Default 50?  Windows server max 200? */
 
     public void startup() throws IOException, IllegalStateException
     {

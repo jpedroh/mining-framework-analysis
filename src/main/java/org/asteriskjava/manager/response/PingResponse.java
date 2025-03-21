@@ -27,13 +27,18 @@ public class PingResponse extends ManagerResponse
     private static final long serialVersionUID = 0L;
 
     private String ping;
+<<<<<<< /usr/src/app/output/srt/asterisk-java/d78b6f9d5d466bf8d509b4ff2eaf96d33eaf4fdc/src/main/java/org/asteriskjava/manager/response/PingResponse.java/left.java
     private String timestamp;
+||||||| /usr/src/app/output/srt/asterisk-java/d78b6f9d5d466bf8d509b4ff2eaf96d33eaf4fdc/src/main/java/org/asteriskjava/manager/response/PingResponse.java/base.java
+=======
+    private Double timestamp;
+>>>>>>> /usr/src/app/output/srt/asterisk-java/d78b6f9d5d466bf8d509b4ff2eaf96d33eaf4fdc/src/main/java/org/asteriskjava/manager/response/PingResponse.java/right.java
 
     /**
-     * Returns always "Pong".
-     *
-     * @return always "Pong".
-     */
+ * Returns always "Pong".
+ *
+ * @return always "Pong".
+ */
     public String getPing()
     {
         return ping;
@@ -53,9 +58,21 @@ public class PingResponse extends ManagerResponse
     {
         return timestamp;
     }
+    public Double getTimestamp() { return timestamp;}
 
     public void setTimestamp(String timestamp)
     {
         this.timestamp = timestamp;
     }
+
+	 /**
+	  * Returns the timestamp for this response.
+    * In contains the time the response was generated in seconds since the epoch.
+    * <p/>
+    * Example: 1300978224.745639
+    *
+    * @return the timestamp for this response.
+    */
+    public void setTimestamp(Double timestamp) { this.timestamp = timestamp;}
+
 }
