@@ -47,11 +47,13 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
     // ------------------------------------------------------------------------------------------------------- Constants
 
     private static final String LABEL_SEPARATOR = " ";
+
     private static final String REF_PREFIX = "ref_id:";
 
     // ---------------------------------------------------------------------------------------------- Instance Variables
 
     private DeepaMehtaObjectModel model;
+
     protected final EmbeddedService dms;
 
     private Logger logger = Logger.getLogger(getClass().getName());
@@ -78,13 +80,11 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
 
     // -------------------------------------------------------------------------------------------------- Public Methods
 
-
-
     // ***************************************
+
     // *** DeepaMehtaObject Implementation ***
+
     // ***************************************
-
-
 
     // === Model ===
 
@@ -178,8 +178,6 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
         refreshLabel();
     }
 
-
-
     // === Traversal ===
 
     @Override
@@ -240,8 +238,6 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
         return getAssociations(null);
     }
 
-
-
     // === Updating ===
 
     @Override
@@ -260,8 +256,6 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
         return report;
     }
 
-
-
     // === Deletion ===
 
     /**
@@ -270,6 +264,7 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
      * <p>
      * Note: deletion of the object itself is up to the subclasses.
      */
+
     @Override
     public void delete(Directives directives) {
         // 1) recursively delete sub-topics
@@ -306,26 +301,22 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
         }
     }
 
-
-
     // **********************************
+
     // *** JSONEnabled Implementation ***
+
     // **********************************
-
-
 
     @Override
     public JSONObject toJSON() {
         return model.toJSON();
     }
 
-
-
     // ****************
+
     // *** Java API ***
+
     // ****************
-
-
 
     @Override
     public boolean equals(Object o) {
@@ -342,13 +333,14 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
         return model.toString();
     }
 
-
-
     // ----------------------------------------------------------------------------------------------- Protected Methods
 
     // ### This is supposed to be protected, but doesn't compile!
+
     // ### It is called from the subclasses constructors, but on a differnt TopicBase instance.
+
     // ### See de.deepamehta.core.impl.storage.MGTopic and de.deepamehta.core.impl.service.AttachedTopic.
+
     public DeepaMehtaObjectModel getModel() {
         return model;
     }
@@ -373,8 +365,6 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
 
     protected abstract RoleModel getRoleModel(String roleTypeUri);
 
-
-
     // ----------------------------------------------------------------------------------------- Package Private Methods
 
     void store(ClientState clientState, Directives directives) {
@@ -391,6 +381,7 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
     /**
      * Called from {@link EmbeddedService#attach} (indirectly)
      */
+
     void loadComposite() {
         // fetch from DB
         CompositeValue comp = fetchComposite();
@@ -398,44 +389,42 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
         model.setCompositeValue(comp);
     }
 
-
-
     // ------------------------------------------------------------------------------------------------- Private Methods
 
-    // === Update ===
+    // === Fetch ===
 
-    private void updateUri(String newUri) {
-        if (newUri != null) {
-            String uri = getUri();
-            if (!uri.equals(newUri)) {
-                logger.info("### Changing URI from \"" + uri + "\" -> \"" + newUri + "\"");
-                setUri(newUri);
+    private CompositeValue fetchComposite() {
+        try {
+            CompositeValue comp = new CompositeValue();
+            for (AssociationDefinition assocDef : getType().getAssocDefs().values()) {
+                String cardinalityUri = assocDef.getPartCardinalityUri();
+                if (cardinalityUri.equals("dm4.core.one")) {
+                    AttachedTopic childTopic = fetchChildTopic(assocDef, true);                 // fetchComposite=true
+                    if (childTopic != null) {
+                        comp.put(assocDef.getUri(), childTopic.getModel());
+                    }
+                } else if (cardinalityUri.equals("dm4.core.many")) {
+                    ResultSet<RelatedTopic> childTopics = fetchChildTopics(assocDef, true);     // fetchComposite=true
+                    comp.put(assocDef.getUri(), JSONHelper.toTopicModels(childTopics));
+                } else {
+                    throw new RuntimeException("\"" + cardinalityUri + "\" is an unexpected cardinality URI");
+                }
             }
+            return comp;
+        } catch (Exception e) {
+            throw new RuntimeException("Fetching the " + className() + "'s composite failed (" + this + ")", e);
         }
     }
 
-    private void updateTypeUri(String newTypeUri, ChangeReport report) {
-        if (newTypeUri != null) {
-            String typeUri = getTypeUri();
-            if (!typeUri.equals(newTypeUri)) {
-                logger.info("### Changing type URI from \"" + typeUri + "\" -> \"" + newTypeUri + "\"");
-                report.typeUriChanged(typeUri, newTypeUri);
-                setTypeUri(newTypeUri);
-            }
+    private SimpleValue fetchChildTopicValue(AssociationDefinition assocDef) {
+        Topic childTopic = fetchChildTopic(assocDef, false);                    // fetchComposite=false
+        if (childTopic != null) {
+            return childTopic.getSimpleValue();
         }
+        return null;
     }
 
-    private void updateValue(SimpleValue newValue) {
-        if (newValue != null) {
-            SimpleValue value = getSimpleValue();
-            if (!value.equals(newValue)) {
-                logger.info("### Changing simple value from \"" + value + "\" -> \"" + newValue + "\"");
-                setSimpleValue(newValue);
-            }
-        }
-    }
-
-    // ---
+    // === Store ===
 
     private void updateCompositeValue(CompositeValue newComp, ClientState clientState, Directives directives) {
         try {
@@ -454,6 +443,7 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
     }
 
     // ### FIXME: Remove from interface. Make it private.
+
     @Override
     public void updateCompositeValue(AssociationDefinition assocDef, TopicModel valueTopic, ClientState clientState,
                                                                                             Directives directives) {
@@ -517,41 +507,6 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
         }
     }
 
-    // === Fetch ===
-
-    private CompositeValue fetchComposite() {
-        try {
-            CompositeValue comp = new CompositeValue();
-            for (AssociationDefinition assocDef : getType().getAssocDefs().values()) {
-                String cardinalityUri = assocDef.getPartCardinalityUri();
-                if (cardinalityUri.equals("dm4.core.one")) {
-                    AttachedTopic childTopic = fetchChildTopic(assocDef, true);                 // fetchComposite=true
-                    if (childTopic != null) {
-                        comp.put(assocDef.getUri(), childTopic.getModel());
-                    }
-                } else if (cardinalityUri.equals("dm4.core.many")) {
-                    ResultSet<RelatedTopic> childTopics = fetchChildTopics(assocDef, true);     // fetchComposite=true
-                    comp.put(assocDef.getUri(), JSONHelper.toTopicModels(childTopics));
-                } else {
-                    throw new RuntimeException("\"" + cardinalityUri + "\" is an unexpected cardinality URI");
-                }
-            }
-            return comp;
-        } catch (Exception e) {
-            throw new RuntimeException("Fetching the " + className() + "'s composite failed (" + this + ")", e);
-        }
-    }
-
-    private SimpleValue fetchChildTopicValue(AssociationDefinition assocDef) {
-        Topic childTopic = fetchChildTopic(assocDef, false);                    // fetchComposite=false
-        if (childTopic != null) {
-            return childTopic.getSimpleValue();
-        }
-        return null;
-    }
-
-    // === Store ===
-
     /**
      * Stores a child's topic value in the database. If the child topic does not exist it is created.
      *
@@ -561,6 +516,7 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
      *
      * @return  The child topic.
      */
+
     private Topic storeChildTopicValue(String assocDefUri, final SimpleValue value) {
         try {
             AssociationDefinition assocDef = getAssocDef(assocDefUri);
@@ -609,6 +565,7 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
     /**
      * Prerequsite: this is a composite object.
      */
+
     private void refreshLabel() {
         try {
             String label;
@@ -628,6 +585,7 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
     /**
      * Builds this object's label according to its type's label configuration.
      */
+
     private String buildLabel() {
         Type type = getType();
         if (type.getDataTypeUri().equals("dm4.core.composite")) {
@@ -670,11 +628,45 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
         }
     }
 
+    // === Update ===
+
+    private void updateUri(String newUri) {
+        if (newUri != null) {
+            String uri = getUri();
+            if (!uri.equals(newUri)) {
+                logger.info("### Changing URI from \"" + uri + "\" -> \"" + newUri + "\"");
+                setUri(newUri);
+            }
+        }
+    }
+
+    private void updateTypeUri(String newTypeUri, ChangeReport report) {
+        if (newTypeUri != null) {
+            String typeUri = getTypeUri();
+            if (!typeUri.equals(newTypeUri)) {
+                logger.info("### Changing type URI from \"" + typeUri + "\" -> \"" + newTypeUri + "\"");
+                report.typeUriChanged(typeUri, newTypeUri);
+                setTypeUri(newTypeUri);
+            }
+        }
+    }
+
+    private void updateValue(SimpleValue newValue) {
+        if (newValue != null) {
+            SimpleValue value = getSimpleValue();
+            if (!value.equals(newValue)) {
+                logger.info("### Changing simple value from \"" + value + "\" -> \"" + newValue + "\"");
+                setSimpleValue(newValue);
+            }
+        }
+    }
+
     // === Helper ===
 
     /**
      * Fetches and returns a child topic or <code>null</code> if no such topic extists.
      */
+
     private AttachedRelatedTopic fetchChildTopic(String assocDefUri, boolean fetchComposite) {
         return fetchChildTopic(getAssocDef(assocDefUri), fetchComposite);
     }
@@ -682,6 +674,7 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
     /**
      * Fetches and returns a child topic or <code>null</code> if no such topic extists.
      */
+
     private AttachedRelatedTopic fetchChildTopic(AssociationDefinition assocDef, boolean fetchComposite) {
         String assocTypeUri       = assocDef.getInstanceLevelAssocTypeUri();
         String myRoleTypeUri      = assocDef.getWholeRoleTypeUri();
@@ -709,6 +702,96 @@ abstract class AttachedDeepaMehtaObject implements DeepaMehtaObject {
             getRoleModel(assocDef.getWholeRoleTypeUri()),
             new TopicRoleModel(childTopicId, assocDef.getPartRoleTypeUri()));
     }
+
+    // ---
+
+    // ------------------------------------------------------------------------------------------------------- Constants
+
+    // ---------------------------------------------------------------------------------------------- Instance Variables
+
+    // ---------------------------------------------------------------------------------------------------- Constructors
+
+    // -------------------------------------------------------------------------------------------------- Public Methods
+
+    // ***************************************
+
+    // *** DeepaMehtaObject Implementation ***
+
+    // ***************************************
+
+    // === Model ===
+
+    // --- ID ---
+
+    // --- URI ---
+
+    // --- Type URI ---
+
+    // --- Simple Value ---
+
+    // ---
+
+    // --- Composite Value ---
+
+    // === Traversal ===
+
+    // --- Topic Retrieval ---
+
+    // --- Association Retrieval ---
+
+    // === Updating ===
+
+    // === Deletion ===
+
+    // **********************************
+
+    // *** JSONEnabled Implementation ***
+
+    // **********************************
+
+    // ****************
+
+    // *** Java API ***
+
+    // ****************
+
+    // ----------------------------------------------------------------------------------------------- Protected Methods
+
+    // ### This is supposed to be protected, but doesn't compile!
+
+    // ### It is called from the subclasses constructors, but on a differnt TopicBase instance.
+
+    // ### See de.deepamehta.core.impl.storage.MGTopic and de.deepamehta.core.impl.service.AttachedTopic.
+
+    // ---
+
+    // ----------------------------------------------------------------------------------------- Package Private Methods
+
+    // ------------------------------------------------------------------------------------------------- Private Methods
+
+    // === Update ===
+
+    // ---
+
+    // ### FIXME: Remove from interface. Make it private.
+
+    // === Fetch ===
+
+    // === Store ===
+
+    // === Label ===
+
+    // === Helper ===
+
+    /**
+     * Fetches and returns a child topic or <code>null</code> if no such topic extists.
+     */
+
+    /**
+     * Fetches and returns a child topic or <code>null</code> if no such topic extists.
+     */
+
+    // ---
 
     // ---
 
