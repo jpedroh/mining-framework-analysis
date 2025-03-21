@@ -12,6 +12,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import sun.security.pkcs.SigningCertificateInfo;
+
 public final class GeoHash implements Comparable<GeoHash>, Serializable {
 	private static final long serialVersionUID = -8553214249630252175L;
 	private static final int[] BITS = { 16, 8, 4, 2, 1 };
@@ -166,48 +168,48 @@ public final class GeoHash implements Comparable<GeoHash>, Serializable {
 				longitudeRange[1]));
 	}
 
-	public GeoHash next(int step) {
-		int insignificantBits = 64 - significantBits;
-		long unshiftedVal = bits >> insignificantBits;
-		unshiftedVal += step;
-		return fromLongValue(unshiftedVal << insignificantBits, significantBits);
-	}
+    public GeoHash next(int step) {
+        int insignificantBits = 64 - significantBits;
+        long unshiftedVal = bits >> insignificantBits;
+        unshiftedVal += step;
+        return fromLongValue(unshiftedVal << insignificantBits, significantBits);
+    }
 
-	public GeoHash next() {
-		return next(1);
-	}
+    public GeoHash next() {
+        return next(1);
+    }
 
-	public GeoHash prev() {
-		return next(-1);
-	}
+    public GeoHash prev() {
+        return next(-1);
+    }
 
-	/**
-	* Counts the number of geohashes contained between the two (ie how many times next() is called to increment from one to two)
-	* This value depends on the number of significant bits.
-	*
-	* @param one
-	* @param two
-	* @return number of steps
-	*/
-	public static long stepsBetween(GeoHash one, GeoHash two) {
-		if (one.significantBits() != two.significantBits())
-			throw new IllegalArgumentException("It is only valid to compare the number of steps between two hashes if they have the same number of significant bits");
-		int insignificantBits = 64 - one.significantBits();
-		long unshiftedVal1 = one.bits >> insignificantBits;
-		long unshiftedVal2 = two.bits >> insignificantBits;
-		return unshiftedVal2 - unshiftedVal1;
-	}
-	
-	private void divideRangeEncode(double value, double[] range) {
-		double mid = (range[0] + range[1]) / 2;
-		if (value >= mid) {
-			addOnBitToEnd();
-			range[0] = mid;
-		} else {
-			addOffBitToEnd();
-			range[1] = mid;
-		}
-	}
+    /**
+     * Counts the number of geohashes contained between the two (ie how many times next() is called to increment from one to two)
+     * This value depends on the number of significant bits.
+     *
+     * @param one
+     * @param two
+     * @return number of steps
+     */
+    public static long stepsBetween(GeoHash one, GeoHash two) {
+        if (one.significantBits() != two.significantBits())
+            throw new IllegalArgumentException("It is only valid to compare the number of steps between two hashes if they have the same number of significant bits");
+        int insignificantBits = 64 - one.significantBits();
+        long unshiftedVal1 = one.bits >> insignificantBits;
+        long unshiftedVal2 = two.bits >> insignificantBits;
+        return unshiftedVal2 - unshiftedVal1;
+    }
+
+    private void divideRangeEncode(double value, double[] range) {
+    	double mid = (range[0] + range[1]) / 2;
+    	if (value >= mid) {
+    		addOnBitToEnd();
+    		range[0] = mid;
+    	} else {
+    		addOffBitToEnd();
+    		range[1] = mid;
+    	}
+    }
 
 	private static void divideRangeDecode(GeoHash hash, double[] range, boolean b) {
 		double mid = (range[0] + range[1]) / 2;
