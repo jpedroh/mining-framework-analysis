@@ -1,34 +1,16 @@
-/*
- * Created on Jun 28, 2010
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
- *
- * Copyright @2010 the original author or authors.
- */
 package org.fest.util;
-
 import static java.lang.String.format;
-import static java.lang.reflect.Modifier.isPublic;
 import static org.fest.util.Strings.*;
-
 import java.beans.*;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 
 /**
  * Understands utility methods related to <a
  * href="http://java.sun.com/docs/books/tutorial/javabeans/introspection/index.html">JavaBeans Introspection</a>.
- *
+ * 
  * @author Alex Ruiz
  */
 public final class Introspection {
-
   /**
    * Returns a <code>{@link PropertyDescriptor}</code> for a property matching the given name in the given object.
    * @param propertyName the given property name.
@@ -48,47 +30,91 @@ public final class Introspection {
     } catch (Exception e) {
       throw new IntrospectionError(format("Unable to get BeanInfo for type %s", type.getName()), e);
     }
-    for (PropertyDescriptor d : beanInfo.getPropertyDescriptors())
-      if (propertyName.equals(d.getName())) return d;
-    throw new IntrospectionError(propertyNotFoundErrorMessage(propertyName, target));
+    for (PropertyDescriptor d : beanInfo.getPropertyDescriptors()) {
+      if (propertyName.equals(d.getName())) {
+        return d;
+      }
+    }
+    throw 
+<<<<<<< /usr/src/app/output/alexruiz/fest-util/ec150f8c4420dbd9d177e880e96f09dca7f35f30/src/main/java/org/fest/util/Introspection.java/left.java
+    new IntrospectionError(format("Unable to find property %s in %s", quote(propertyName), type.getName()))
+=======
+    buildIntrospectionErrorForMissingProperty(propertyName, target)
+>>>>>>> /usr/src/app/output/alexruiz/fest-util/ec150f8c4420dbd9d177e880e96f09dca7f35f30/src/main/java/org/fest/util/Introspection.java/right.java
+    ;
   }
 
-  private static String propertyNotFoundErrorMessage(String propertyName, Object target) {
-    String targetTypeName = target.getClass().getName();
-    String property = quote(propertyName);
-    // no PropertyDescriptor found, try to give user a precise error message
-    if (!fieldHasGetter(propertyName, target))
-      return format("No getter for property %s in %s", property, targetTypeName);
-    if (!fieldHasPublicGetter(propertyName, target))
-      return format("No public getter for property %s in %s", property, targetTypeName);
-    // generic message
-    return format("Unable to find property %s in %s", property, targetTypeName);
+  private static IntrospectionError buildIntrospectionErrorForMissingProperty(String propertyName, Object target) {
+    if (!fieldHasGetter(propertyName, target)) {
+      return new IntrospectionError(concat("No getter for property ", quote(propertyName), " in ", target.getClass().getName()));
+    }
+    if (!fieldHasPublicGetter(propertyName, target)) {
+      return new IntrospectionError(concat("No public getter for property ", quote(propertyName), " in ", target.getClass().getName()));
+    }
+    return new IntrospectionError(concat("Unable to find property ", quote(propertyName), " in ", target.getClass().getName()));
   }
 
+  private static void validate(String propertyName, Object target) {
+    if (propertyName == null) {
+      throw new NullPointerException("The property name should not be null");
+    }
+    if (isEmpty(propertyName)) {
+      throw new IllegalArgumentException("The property name should not be empty");
+    }
+    if (target == null) {
+      throw new NullPointerException("The target object should not be null");
+    }
+  }
+
+  /**
+   * Return <code>true</code> if the specified bean class has a getter for the given propertyName;
+   * otherwise, return <code>false</code>.
+   * @param propertyName Property name to be evaluated
+   * @param target Bean to be examined
+   * 
+   * @return <code>true</code> if the specified bean class has a getter for the given propertyName, <code>false</code> otherwise.
+   */
   private static boolean fieldHasGetter(String propertyName, Object target) {
-    return beanGetter(propertyName, target) != null;
+    if (beanGetter(propertyName, target) != null) {
+      return true;
+    }
+    return false;
   }
 
+  /**
+   * Return <code>true</code> if the specified bean class has a <b>public</b> getter for the given propertyName;
+   * otherwise, return <code>false</code>.
+   * @param propertyName Property name to be evaluated
+   * @param target Bean to be examined
+   * 
+   * @return <code>true</code> if the specified bean class has a <b>public</b> getter for the given propertyName, <code>false</code> otherwise.
+   */
   private static boolean fieldHasPublicGetter(String propertyName, Object target) {
-    Method getter = beanGetter(propertyName, target);
-    return getter != null && isPublic(getter.getModifiers());
+    if (!fieldHasGetter(propertyName, target)) {
+      return false;
+    }
+    return Modifier.isPublic(beanGetter(propertyName, target).getModifiers());
   }
 
+  /**
+   * Returns the getter method for the given property of target object class.
+   * @param propertyName the name of property to look for getter
+   * @param target an object to introspect
+   * @return the getter method for the given property of target object class or null if nothing found.
+   */
   private static Method beanGetter(String propertyName, Object target) {
     validate(propertyName, target);
     Method getterMethod = null;
     String propertyWithFirstLetterUppercased = propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
     try {
-      // try to find getProperty
       getterMethod = target.getClass().getDeclaredMethod("get" + propertyWithFirstLetterUppercased);
-      if (getterMethod != null) return getterMethod;
+      if (getterMethod != null) {
+        return getterMethod;
+      }
     } catch (SecurityException e) {
-      // nothing to do
     } catch (NoSuchMethodException e) {
-      // nothing to do
     }
     try {
-      // try to find isProperty for boolean properties
       getterMethod = target.getClass().getDeclaredMethod("is" + propertyWithFirstLetterUppercased);
     } catch (SecurityException e) {
       return null;
@@ -98,11 +124,6 @@ public final class Introspection {
     return getterMethod;
   }
 
-  private static void validate(String propertyName, Object target) {
-    if (propertyName == null) throw new NullPointerException("The property name should not be null");
-    if (isEmpty(propertyName)) throw new IllegalArgumentException("The property name should not be empty");
-    if (target == null) throw new NullPointerException("The target object should not be null");
+  private Introspection() {
   }
-
-  private Introspection() {}
 }
