@@ -16,9 +16,9 @@
 package org.fest.util;
 
 import static org.fest.util.Strings.*;
-
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.beans.*;
-import java.lang.reflect.*;
 
 /**
  * Understands utility methods related to
