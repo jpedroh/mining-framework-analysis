@@ -9,6 +9,9 @@ package com.github.koraktor.steamcondenser.steam.community;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -19,9 +22,6 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.github.koraktor.steamcondenser.exceptions.WebApiException;
 
@@ -287,7 +287,7 @@ abstract public class WebApi {
             url += String.format("%s=%s", param.getKey(), param.getValue());
         }
 
-        if (LOG.isInfoEnabled()) {
+        if (LOG.isLoggable(Level.INFO)) {
             String debugUrl = (apiKey == null) ?
                 url : url.replace(apiKey, "SECRET");
             LOG.info("Querying Steam Web API: " + debugUrl);

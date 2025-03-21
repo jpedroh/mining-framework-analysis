@@ -2,7 +2,13 @@
  * This code is free software; you can redistribute it and/or modify it under
  * the terms of the new BSD License.
  *
+<<<<<<< /usr/src/app/output/koraktor/steam-condenser-java/eabb0f338a3d47c5e52dcf013d2c70c64f271fa8/src/main/java/com/github/koraktor/steamcondenser/steam/servers/MasterServer.java/left.java
+ * Copyright (c) 2008-2012, Sebastian Staudt
+||||||| /usr/src/app/output/koraktor/steam-condenser-java/eabb0f338a3d47c5e52dcf013d2c70c64f271fa8/src/main/java/com/github/koraktor/steamcondenser/steam/servers/MasterServer.java/base.java
+ * Copyright (c) 2008-2011, Sebastian Staudt
+=======
  * Copyright (c) 2008-2013, Sebastian Staudt
+>>>>>>> /usr/src/app/output/koraktor/steam-condenser-java/eabb0f338a3d47c5e52dcf013d2c70c64f271fa8/src/main/java/com/github/koraktor/steamcondenser/steam/servers/MasterServer.java/right.java
  */
 
 package com.github.koraktor.steamcondenser.steam.servers;
