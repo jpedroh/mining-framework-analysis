@@ -120,6 +120,7 @@ public class BoundStatement extends Statement {
      * @throws InvalidTypeException if any of the provided value is not of
      * correct type to be bound to the corresponding bind variable.
      */
+
     public BoundStatement bind(Object... values) {
 
         if (values.length > statement.getVariables().size())
@@ -212,6 +213,7 @@ public class BoundStatement extends Statement {
      *
      * @return the routing key for this statement or {@code null}.
      */
+
     @Override
     public ByteBuffer getRoutingKey() {
         if (statement.routingKey != null)
@@ -247,6 +249,7 @@ public class BoundStatement extends Statement {
      * @return the keyspace for this statement (see above), or {@code null} if the
      * statement has no variables.
      */
+
     @Override
     public String getKeyspace() {
         return statement.metadata.size() == 0 ? null : statement.metadata.getKeyspace(0);
@@ -262,6 +265,7 @@ public class BoundStatement extends Statement {
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type BOOLEAN.
      */
+
     public BoundStatement setBool(int i, boolean v) {
         metadata().checkType(i, DataType.Name.BOOLEAN);
         return setValue(i, TypeCodec.BooleanCodec.instance.serializeNoBoxing(v));
@@ -280,6 +284,7 @@ public class BoundStatement extends Statement {
      * variable, that is, if {@code !this.preparedStatement().variables().names().contains(name)}.
      * @throws InvalidTypeException if (any one occurrence of) {@code name} is not of type BOOLEAN.
      */
+
     public BoundStatement setBool(String name, boolean v) {
         int[] indexes = metadata().getAllIdx(name);
         ByteBuffer value = TypeCodec.BooleanCodec.instance.serializeNoBoxing(v);
@@ -300,6 +305,7 @@ public class BoundStatement extends Statement {
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type INT.
      */
+
     public BoundStatement setInt(int i, int v) {
         metadata().checkType(i, DataType.Name.INT);
         return setValue(i, TypeCodec.IntCodec.instance.serializeNoBoxing(v));
@@ -318,6 +324,7 @@ public class BoundStatement extends Statement {
      * variable, that is, if {@code !this.preparedStatement().variables().names().contains(name)}.
      * @throws InvalidTypeException if (any one occurrence of) {@code name} is not of type INT.
      */
+
     public BoundStatement setInt(String name, int v) {
         int[] indexes = metadata().getAllIdx(name);
         ByteBuffer value = TypeCodec.IntCodec.instance.serializeNoBoxing(v);
@@ -338,6 +345,7 @@ public class BoundStatement extends Statement {
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type BIGINT or COUNTER.
      */
+
     public BoundStatement setLong(int i, long v) {
         metadata().checkType(i, DataType.Name.BIGINT, DataType.Name.COUNTER);
         return setValue(i, TypeCodec.LongCodec.instance.serializeNoBoxing(v));
@@ -357,6 +365,7 @@ public class BoundStatement extends Statement {
      * @throws InvalidTypeException if (nany one occurrence of) {@code name} is
      * not of type BIGINT or COUNTER.
      */
+
     public BoundStatement setLong(String name, long v) {
         int[] indexes = metadata().getAllIdx(name);
         ByteBuffer value = TypeCodec.LongCodec.instance.serializeNoBoxing(v);
@@ -377,6 +386,7 @@ public class BoundStatement extends Statement {
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type TIMESTAMP.
      */
+
     public BoundStatement setDate(int i, Date v) {
         metadata().checkType(i, DataType.Name.TIMESTAMP);
         return setValue(i, v == null ? null : TypeCodec.DateCodec.instance.serialize(v));
@@ -396,6 +406,7 @@ public class BoundStatement extends Statement {
      * @throws InvalidTypeException if (nany one occurrence of) {@code name} is
      * not of type TIMESTAMP.
      */
+
     public BoundStatement setDate(String name, Date v) {
         int[] indexes = metadata().getAllIdx(name);
         ByteBuffer value = v == null ? null : TypeCodec.DateCodec.instance.serialize(v);
@@ -416,6 +427,7 @@ public class BoundStatement extends Statement {
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type FLOAT.
      */
+
     public BoundStatement setFloat(int i, float v) {
         metadata().checkType(i, DataType.Name.FLOAT);
         return setValue(i, TypeCodec.FloatCodec.instance.serializeNoBoxing(v));
@@ -435,6 +447,7 @@ public class BoundStatement extends Statement {
      * @throws InvalidTypeException if (nany one occurrence of) {@code name} is
      * not of type FLOAT.
      */
+
     public BoundStatement setFloat(String name, float v) {
         int[] indexes = metadata().getAllIdx(name);
         ByteBuffer value = TypeCodec.FloatCodec.instance.serializeNoBoxing(v);
@@ -455,6 +468,7 @@ public class BoundStatement extends Statement {
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type DOUBLE.
      */
+
     public BoundStatement setDouble(int i, double v) {
         metadata().checkType(i, DataType.Name.DOUBLE);
         return setValue(i, TypeCodec.DoubleCodec.instance.serializeNoBoxing(v));
@@ -474,6 +488,7 @@ public class BoundStatement extends Statement {
      * @throws InvalidTypeException if (nany one occurrence of) {@code name} is
      * not of type DOUBLE.
      */
+
     public BoundStatement setDouble(String name, double v) {
         int[] indexes = metadata().getAllIdx(name);
         ByteBuffer value = TypeCodec.DoubleCodec.instance.serializeNoBoxing(v);
@@ -495,6 +510,7 @@ public class BoundStatement extends Statement {
      * @throws InvalidTypeException if column {@code i} is of neither of the
      * following types: VARCHAR, TEXT or ASCII.
      */
+
     public BoundStatement setString(int i, String v) {
         DataType.Name type = metadata().checkType(i, DataType.Name.VARCHAR,
                                                      DataType.Name.TEXT,
@@ -524,6 +540,7 @@ public class BoundStatement extends Statement {
      * @throws InvalidTypeException if (nany one occurrence of) {@code name} is
      * of neither of the following types: VARCHAR, TEXT or ASCII.
      */
+
     public BoundStatement setString(String name, String v) {
         int[] indexes = metadata().getAllIdx(name);
         for (int i = 0; i < indexes.length; i++)
@@ -545,6 +562,7 @@ public class BoundStatement extends Statement {
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type BLOB.
      */
+
     public BoundStatement setBytes(int i, ByteBuffer v) {
         metadata().checkType(i, DataType.Name.BLOB);
         return setBytesUnsafe(i, v);
@@ -567,6 +585,7 @@ public class BoundStatement extends Statement {
      * variable, that is if {@code !this.preparedStatement().variables().names().contains(name)}.
      * @throws InvalidTypeException if (nany one occurrence of) {@code name} is not of type BLOB.
      */
+
     public BoundStatement setBytes(String name, ByteBuffer v) {
         int[] indexes = metadata().getAllIdx(name);
         ByteBuffer value = v == null ? null : v.duplicate();
@@ -591,6 +610,7 @@ public class BoundStatement extends Statement {
      *
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
      */
+
     public BoundStatement setBytesUnsafe(int i, ByteBuffer v) {
         return setValue(i, v == null ? null : v.duplicate());
     }
@@ -612,6 +632,7 @@ public class BoundStatement extends Statement {
      * @throws IllegalArgumentException if {@code name} is not a prepared
      * variable, that is if {@code !this.preparedStatement().variables().names().contains(name)}.
      */
+
     public BoundStatement setBytesUnsafe(String name, ByteBuffer v) {
         int[] indexes = metadata().getAllIdx(name);
         ByteBuffer value = v == null ? null : v.duplicate();
@@ -630,6 +651,7 @@ public class BoundStatement extends Statement {
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type VARINT.
      */
+
     public BoundStatement setVarint(int i, BigInteger v) {
         metadata().checkType(i, DataType.Name.VARINT);
         return setValue(i, v == null ? null : TypeCodec.BigIntegerCodec.instance.serialize(v));
@@ -649,6 +671,7 @@ public class BoundStatement extends Statement {
      * @throws InvalidTypeException if (nany one occurrence of) {@code name} is
      * not of type VARINT.
      */
+
     public BoundStatement setVarint(String name, BigInteger v) {
         int[] indexes = metadata().getAllIdx(name);
         ByteBuffer value = v == null ? null : TypeCodec.BigIntegerCodec.instance.serialize(v);
@@ -669,6 +692,7 @@ public class BoundStatement extends Statement {
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type DECIMAL.
      */
+
     public BoundStatement setDecimal(int i, BigDecimal v) {
         metadata().checkType(i, DataType.Name.DECIMAL);
         return setValue(i, v == null ? null : TypeCodec.DecimalCodec.instance.serialize(v));
@@ -688,6 +712,7 @@ public class BoundStatement extends Statement {
      * @throws InvalidTypeException if (nany one occurrence of) {@code name} is
      * not of type DECIMAL.
      */
+
     public BoundStatement setDecimal(String name, BigDecimal v) {
         int[] indexes = metadata().getAllIdx(name);
         ByteBuffer value = v == null ? null : TypeCodec.DecimalCodec.instance.serialize(v);
@@ -710,6 +735,7 @@ public class BoundStatement extends Statement {
      * TIMEUUID, or if column {@code i} is of type TIMEUUID but {@code v} is
      * not a type 1 UUID.
      */
+
     public BoundStatement setUUID(int i, UUID v) {
         DataType.Name type = metadata().checkType(i, DataType.Name.UUID,
                                                        DataType.Name.TIMEUUID);
@@ -740,6 +766,7 @@ public class BoundStatement extends Statement {
      * not of type UUID or TIMEUUID, or if column {@code name} is of type
      * TIMEUUID but {@code v} is not a type 1 UUID.
      */
+
     public BoundStatement setUUID(String name, UUID v) {
         int[] indexes = metadata().getAllIdx(name);
         ByteBuffer value = v == null ? null : TypeCodec.UUIDCodec.instance.serialize(v);
@@ -762,6 +789,7 @@ public class BoundStatement extends Statement {
      * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
      * @throws InvalidTypeException if column {@code i} is not of type INET.
      */
+
     public BoundStatement setInet(int i, InetAddress v) {
         metadata().checkType(i, DataType.Name.INET);
         return setValue(i, v == null ? null : TypeCodec.InetCodec.instance.serialize(v));
@@ -781,6 +809,7 @@ public class BoundStatement extends Statement {
      * @throws InvalidTypeException if (nany one occurrence of) {@code name} is
      * not of type INET.
      */
+
     public BoundStatement setInet(String name, InetAddress v) {
         int[] indexes = metadata().getAllIdx(name);
         ByteBuffer value = v == null ? null : TypeCodec.InetCodec.instance.serialize(v);
@@ -791,22 +820,6 @@ public class BoundStatement extends Statement {
         return this;
     }
 
-    /**
-     * Sets the {@code i}th value to the provided list.
-     * <p>
-     * Please note that {@code null} values are not supported inside collection by CQL.
-     *
-     * @param i the index of the variable to set.
-     * @param v the value to set.
-     * @return this BoundStatement.
-     *
-     * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
-     * @throws InvalidTypeException if column {@code i} is not a list type or
-     * if the elements of {@code v} are not of the type of the elements of
-     * column {@code i}.
-     * @throws NullPointerException if {@code v} contains null values. Nulls are not supported in collections
-     * by CQL.
-     */
     public <T> BoundStatement setList(int i, List<T> v) {
         DataType type = metadata().getType(i);
         if (type.getName() != DataType.Name.LIST)
@@ -831,8 +844,6 @@ public class BoundStatement extends Statement {
     /**
      * Sets the value for (all occurrences of) variable {@code name} to the
      * provided list.
-     * <p>
-     * Please note that {@code null} values are not supported inside collection by CQL.
      *
      * @param name the name of the variable to set; if multiple variables
      * {@code name} are prepared, all of them are set.
@@ -844,9 +855,8 @@ public class BoundStatement extends Statement {
      * @throws InvalidTypeException if (nany one occurrence of) {@code name} is
      * not a list type or if the elements of {@code v} are not of the type of
      * the elements of column {@code name}.
-     * @throws NullPointerException if {@code v} contains null values. Nulls are not supported in collections
-     * by CQL.
      */
+
     public <T> BoundStatement setList(String name, List<T> v) {
         int[] indexes = metadata().getAllIdx(name);
         for (int i = 0; i < indexes.length; i++)
@@ -854,22 +864,6 @@ public class BoundStatement extends Statement {
         return this;
     }
 
-    /**
-     * Sets the {@code i}th value to the provided map.
-     * <p>
-     * Please note that {@code null} values are not supported inside collection by CQL.
-     *
-     * @param i the index of the variable to set.
-     * @param v the value to set.
-     * @return this BoundStatement.
-     *
-     * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
-     * @throws InvalidTypeException if column {@code i} is not a map type or
-     * if the elements (keys or values) of {@code v} are not of the type of the
-     * elements of column {@code i}.
-     * @throws NullPointerException if {@code v} contains null values. Nulls are not supported in collections
-     * by CQL.
-     */
     public <K, V> BoundStatement setMap(int i, Map<K, V> v) {
         DataType type = metadata().getType(i);
         if (type.getName() != DataType.Name.MAP)
@@ -896,8 +890,6 @@ public class BoundStatement extends Statement {
     /**
      * Sets the value for (all occurrences of) variable {@code name} to the
      * provided map.
-     * <p>
-     * Please note that {@code null} values are not supported inside collection by CQL.
      *
      * @param name the name of the variable to set; if multiple variables
      * {@code name} are prepared, all of them are set.
@@ -909,9 +901,8 @@ public class BoundStatement extends Statement {
      * @throws InvalidTypeException if (nany one occurrence of) {@code name} is
      * not a map type or if the elements (keys or values) of {@code v} are not of
      * the type of the elements of column {@code name}.
-     * @throws NullPointerException if {@code v} contains null values. Nulls are not supported in collections
-     * by CQL.
      */
+
     public <K, V> BoundStatement setMap(String name, Map<K, V> v) {
         int[] indexes = metadata().getAllIdx(name);
         for (int i = 0; i < indexes.length; i++)
@@ -919,22 +910,6 @@ public class BoundStatement extends Statement {
         return this;
     }
 
-    /**
-     * Sets the {@code i}th value to the provided set.
-     * <p>
-     * Please note that {@code null} values are not supported inside collection by CQL.
-     *
-     * @param i the index of the variable to set.
-     * @param v the value to set.
-     * @return this BoundStatement.
-     *
-     * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
-     * @throws InvalidTypeException if column {@code i} is not a set type or
-     * if the elements of {@code v} are not of the type of the elements of
-     * column {@code i}.
-     * @throws NullPointerException if {@code v} contains null values. Nulls are not supported in collections
-     * by CQL.
-     */
     public <T> BoundStatement setSet(int i, Set<T> v) {
         DataType type = metadata().getType(i);
         if (type.getName() != DataType.Name.SET)
@@ -958,8 +933,6 @@ public class BoundStatement extends Statement {
     /**
      * Sets the value for (all occurrences of) variable {@code name} to the
      * provided set.
-     * <p>
-     * Please note that {@code null} values are not supported inside collection by CQL.
      *
      * @param name the name of the variable to set; if multiple variables
      * {@code name} are prepared, all of them are set.
@@ -971,15 +944,122 @@ public class BoundStatement extends Statement {
      * @throws InvalidTypeException if (nany one occurrence of) {@code name} is
      * not a map type or if the elements of {@code v} are not of the type of
      * the elements of column {@code name}.
-     * @throws NullPointerException if {@code v} contains null values. Nulls are not supported in collections
-     * by CQL.
      */
+
     public <T> BoundStatement setSet(String name, Set<T> v) {
         int[] indexes = metadata().getAllIdx(name);
         for (int i = 0; i < indexes.length; i++)
             setSet(indexes[i], v);
         return this;
     }
+
+    /**
+     * Sets the {@code i}th value to the provided list.
+     * <p>
+     * Please note that {@code null} values are not supported inside collection by CQL.
+     *
+     * @param i the index of the variable to set.
+     * @param v the value to set.
+     * @return this BoundStatement.
+     *
+     * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
+     * @throws InvalidTypeException if column {@code i} is not a list type or
+     * if the elements of {@code v} are not of the type of the elements of
+     * column {@code i}.
+     * @throws NullPointerException if {@code v} contains null values. Nulls are not supported in collections
+     * by CQL.
+     */
+
+    /**
+     * Sets the value for the first occurrence of column {@code name} to the provided list.
+     * <p>
+     * Please note that {@code null} values are not supported inside collection by CQL.
+     *
+     * @param name the name of the variable to set; if multiple variables
+     * {@code name} are prepared, only the first one is set.
+     * @param v the value to set.
+     * @return this BoundStatement.
+     *
+     * @throws IllegalArgumentException if {@code name} is not a prepared
+     * variable, that is if {@code !this.preparedStatement().variables().names().contains(name)}.
+     * @throws InvalidTypeException if column {@code name} is not a list type or
+     * if the elements of {@code v} are not of the type of the elements of
+     * column {@code name}.
+     * @throws NullPointerException if {@code v} contains null values. Nulls are not supported in collections
+     * by CQL.
+     */
+
+    /**
+     * Sets the {@code i}th value to the provided map.
+     * <p>
+     * Please note that {@code null} values are not supported inside collection by CQL.
+     *
+     * @param i the index of the variable to set.
+     * @param v the value to set.
+     * @return this BoundStatement.
+     *
+     * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
+     * @throws InvalidTypeException if column {@code i} is not a map type or
+     * if the elements (keys or values) of {@code v} are not of the type of the
+     * elements of column {@code i}.
+     * @throws NullPointerException if {@code v} contains null values. Nulls are not supported in collections
+     * by CQL.
+     */
+
+    /**
+     * Sets the value for the first occurrence of column {@code name} to the provided map.
+     * <p>
+     * Please note that {@code null} values are not supported inside collection by CQL.
+     *
+     * @param name the name of the variable to set; if multiple variables
+     * {@code name} are prepared, only the first one is set.
+     * @param v the value to set.
+     * @return this BoundStatement.
+     *
+     * @throws IllegalArgumentException if {@code name} is not a prepared
+     * variable, that is if {@code !this.preparedStatement().variables().names().contains(name)}.
+     * @throws InvalidTypeException if column {@code name} is not a map type or
+     * if the elements (keys or values) of {@code v} are not of the type of the
+     * elements of column {@code name}.
+     * @throws NullPointerException if {@code v} contains null values. Nulls are not supported in collections
+     * by CQL.
+     */
+
+    /**
+     * Sets the {@code i}th value to the provided set.
+     * <p>
+     * Please note that {@code null} values are not supported inside collection by CQL.
+     *
+     * @param i the index of the variable to set.
+     * @param v the value to set.
+     * @return this BoundStatement.
+     *
+     * @throws IndexOutOfBoundsException if {@code i < 0 || i >= this.preparedStatement().variables().size()}.
+     * @throws InvalidTypeException if column {@code i} is not a set type or
+     * if the elements of {@code v} are not of the type of the elements of
+     * column {@code i}.
+     * @throws NullPointerException if {@code v} contains null values. Nulls are not supported in collections
+     * by CQL.
+     */
+
+    /**
+     * Sets the value for the first occurrence of column {@code name} to the provided set.
+     * <p>
+     * Please note that {@code null} values are not supported inside collection by CQL.
+     *
+     * @param name the name of the variable to set; if multiple variables
+     * {@code name} are prepared, only the first one is set.
+     * @param v the value to set.
+     * @return this BoundStatement.
+     *
+     * @throws IllegalArgumentException if {@code name} is not a prepared
+     * variable, that is if {@code !this.preparedStatement().variables().names().contains(name)}.
+     * @throws InvalidTypeException if column {@code name} is not a set type or
+     * if the elements of {@code v} are not of the type of the elements of
+     * column {@code name}.
+     * @throws NullPointerException if {@code v} contains null values. Nulls are not supported in collections
+     * by CQL.
+     */
 
     private ColumnDefinitions metadata() {
         return statement.metadata;
