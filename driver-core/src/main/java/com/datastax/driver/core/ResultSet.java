@@ -14,12 +14,14 @@
  *   limitations under the License.
  */
 package com.datastax.driver.core;
-
-
+import java.util.concurrent.ExecutionException;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
+import com.google.common.util.concurrent.Uninterruptibles;
+import com.datastax.driver.core.exceptions.*;
 import java.util.Iterator;
 import java.util.List;
-
-import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * The result of a query.

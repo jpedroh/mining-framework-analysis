@@ -18,7 +18,7 @@ package com.datastax.driver.core.querybuilder;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-
+import com.datastax.driver.core.RegularStatement;
 import com.datastax.driver.core.*;
 import com.datastax.driver.core.policies.RetryPolicy;
 

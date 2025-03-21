@@ -16,7 +16,7 @@
 package com.datastax.driver.core.policies;
 
 import com.datastax.driver.core.ConsistencyLevel;
-import com.datastax.driver.core.Statement;
+import com.datastax.driver.core.Query;
 import com.datastax.driver.core.WriteType;
 
 /**

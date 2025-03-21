@@ -22,6 +22,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentSkipListSet;
 
+import org.apache.cassandra.db.marshal.TimeUUIDType;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 import org.testng.annotations.Test;
 
 import com.datastax.driver.core.DataType;

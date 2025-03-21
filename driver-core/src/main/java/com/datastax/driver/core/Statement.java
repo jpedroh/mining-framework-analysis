@@ -49,6 +49,11 @@ public abstract class Statement {
     Statement() {}
 
     /**
+     * Creates a new Statement.
+     */
+    protected Statement() {}
+
+    /**
      * Sets the consistency level for the query.
      *
      * @param consistency the consistency level to set.

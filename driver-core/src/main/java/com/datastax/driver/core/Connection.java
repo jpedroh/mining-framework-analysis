@@ -22,10 +22,15 @@ import java.util.Iterator;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-
 import com.google.common.util.concurrent.AbstractFuture;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.common.util.concurrent.Uninterruptibles;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import org.apache.cassandra.transport.Frame;
+import org.apache.cassandra.transport.Message;
+import org.apache.cassandra.transport.messages.CredentialsMessage;
+import org.apache.cassandra.transport.messages.ErrorMessage;
+import org.apache.cassandra.transport.messages.QueryMessage;
+import org.apache.cassandra.transport.messages.StartupMessage;
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.*;
 import org.jboss.netty.channel.group.ChannelGroup;
@@ -507,7 +512,7 @@ class Connection {
                 handler.cancelTimeout();
                 handler.callback.onSet(Connection.this, response, System.nanoTime() - handler.startTime);
 
-                // If we happen to be shutdown and we're the last outstanding request, we need to signal the shutdown future
+                // If we happen to be shutdown and we're the last outstand request, we need to signal the shutdown future
                 // (note: this is racy as the signaling can be called more than once, but that's not a problem)
                 if (isClosed() && pending.isEmpty())
                     shutdownFuture.get().force();

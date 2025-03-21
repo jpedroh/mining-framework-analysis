@@ -17,7 +17,9 @@ package com.datastax.driver.core;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -29,6 +31,11 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.SetMultimap;
 import com.google.common.util.concurrent.*;
+import org.apache.cassandra.transport.Event;
+import org.apache.cassandra.transport.Message;
+import org.apache.cassandra.transport.messages.EventMessage;
+import org.apache.cassandra.transport.messages.PrepareMessage;
+import org.apache.cassandra.utils.MD5Digest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,6 +84,9 @@ public class Cluster {
      *
      * @param contactPoints the list of contact points to use for the new cluster.
      * @param configuration the configuration for the new cluster.
+     * @param init whether or not initialization should be perform by this constructor. Passing
+     * {@code false} is equivalent to using {@link Builder#withDeferredInitialization} on a
+     * {@code Cluster.Builder}.
      */
     protected Cluster(String name, List<InetAddress> contactPoints, Configuration configuration) {
         this(name, contactPoints, configuration, Collections.<Host.StateListener>emptySet());
@@ -122,7 +132,7 @@ public class Cluster {
     /**
      * Build a new cluster based on the provided initializer.
      * <p>
-     * Note that for building a cluster pragmatically, Cluster.Builder
+     * Note that for building a cluster programmatically, Cluster.Builder
      * provides a slightly less verbose shortcut with {@link Builder#build}.
      * <p>
      * Also note that that all the contact points provided by {@code
@@ -145,7 +155,7 @@ public class Cluster {
     /**
      * Creates a new {@link Cluster.Builder} instance.
      * <p>
-     * This is a convenience method for {@code new Cluster.Builder()}.
+     * This is a convenenience method for {@code new Cluster.Builder()}.
      *
      * @return the new cluster builder.
      */
@@ -199,7 +209,7 @@ public class Cluster {
      * place). That name can be set at Cluster building time (through
      * {@link Builder#withClusterName} for instance) but will default to a
      * name like {@code cluster1} where each Cluster instance in the same JVM
-     * will have a different number.
+     * will ahve a different number.
      *
      * @return the name for this cluster instance.
      */
@@ -255,8 +265,8 @@ public class Cluster {
      * Registering the same listener multiple times is a no-op.
      * <p>
      * Note that while {@link LoadBalancingPolicy} implements
-     * {@code Host.StateListener}, the configured load balancing does not
-     * need to (and should not) be registered through this method to
+     * {@code Host.StateListener}, the configured load balancy does not
+     * need to (and should not) be registered through this  method to
      * received host related events.
      *
      * @param listener the new {@link Host.StateListener} to register.

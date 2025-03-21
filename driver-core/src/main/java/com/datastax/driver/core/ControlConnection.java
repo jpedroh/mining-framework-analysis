@@ -24,10 +24,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.google.common.base.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.datastax.driver.core.exceptions.DriverException;
+import org.apache.cassandra.transport.messages.RegisterMessage;
 import com.datastax.driver.core.exceptions.DriverInternalError;
 import com.datastax.driver.core.exceptions.NoHostAvailableException;
 

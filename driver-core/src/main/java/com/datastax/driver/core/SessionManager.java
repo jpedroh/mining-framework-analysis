@@ -17,11 +17,14 @@ package com.datastax.driver.core;
 
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.google.common.util.concurrent.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

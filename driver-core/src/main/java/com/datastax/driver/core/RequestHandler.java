@@ -15,18 +15,22 @@
  */
 package com.datastax.driver.core;
 
-import java.net.InetAddress;
 import java.nio.ByteBuffer;
+import java.net.InetAddress;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
-import com.codahale.metrics.*;
 import com.codahale.metrics.Timer;
+import java.util.concurrent.TimeoutException;
+import com.yammer.metrics.core.TimerContext;
+import org.apache.cassandra.exceptions.UnavailableException;
+import org.apache.cassandra.transport.Message;
+import org.apache.cassandra.transport.messages.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datastax.driver.core.exceptions.*;
+import com.datastax.driver.core.exceptions.DriverInternalError;
+import com.datastax.driver.core.exceptions.NoHostAvailableException;
 import com.datastax.driver.core.policies.RetryPolicy;
 
 /**

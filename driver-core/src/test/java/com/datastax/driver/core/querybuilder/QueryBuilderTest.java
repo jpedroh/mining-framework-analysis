@@ -27,6 +27,7 @@ import static org.testng.Assert.*;
 import org.testng.annotations.Test;
 
 import com.datastax.driver.core.ConsistencyLevel;
+import com.datastax.driver.core.Statement;
 
 public class QueryBuilderTest {
 

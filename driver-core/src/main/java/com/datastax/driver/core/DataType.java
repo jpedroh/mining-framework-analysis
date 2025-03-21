@@ -21,10 +21,13 @@ import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.*;
 
+import org.jboss.netty.buffer.ChannelBuffer;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import org.jboss.netty.buffer.ChannelBuffer;
+import org.apache.cassandra.db.marshal.AbstractType;
+import org.apache.cassandra.db.marshal.MarshalException;
 
 import com.datastax.driver.core.exceptions.DriverInternalError;
 import com.datastax.driver.core.exceptions.InvalidTypeException;

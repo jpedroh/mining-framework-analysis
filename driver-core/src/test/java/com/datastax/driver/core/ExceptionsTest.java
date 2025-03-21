@@ -15,6 +15,9 @@
  */
 package com.datastax.driver.core;
 
+import static com.datastax.driver.core.TestUtils.waitForDown;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 import org.testng.annotations.Test;
 
 import com.datastax.driver.core.exceptions.*;

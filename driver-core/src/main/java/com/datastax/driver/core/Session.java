@@ -14,7 +14,11 @@
  *   limitations under the License.
  */
 package com.datastax.driver.core;
-
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.TimeUnit;
+import com.datastax.driver.core.exceptions.NoHostAvailableException;
+import com.datastax.driver.core.exceptions.QueryExecutionException;
+import com.datastax.driver.core.exceptions.QueryValidationException;
 
 /**
  * A session holds connections to a Cassandra cluster, allowing it to be queried.

@@ -16,7 +16,9 @@
 package com.datastax.driver.core;
 
 import java.nio.ByteBuffer;
+import java.util.List;
 
+import org.apache.cassandra.transport.messages.ResultMessage;
 import com.datastax.driver.core.policies.RetryPolicy;
 
 /**
