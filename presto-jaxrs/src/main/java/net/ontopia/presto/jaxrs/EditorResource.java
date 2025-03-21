@@ -51,9 +51,15 @@ public abstract class EditorResource {
 
     public final static String APPLICATION_JSON_UTF8 = "application/json;charset=UTF-8";
 
-    private @Context HttpServletRequest request;
+    @Context HttpServletRequest req;
+<<<<<<< /usr/src/app/output/grove/presto/a5fd26fc395910e29b06fc2ecd2c1b73e23c5302/presto-jaxrs/src/main/java/net/ontopia/presto/jaxrs/EditorResource.java/left.java
+    @Context UriInfo uriInfo;
+||||||| /usr/src/app/output/grove/presto/a5fd26fc395910e29b06fc2ecd2c1b73e23c5302/presto-jaxrs/src/main/java/net/ontopia/presto/jaxrs/EditorResource.java/base.java
+=======
     private @Context UriInfo uriInfo;
-    
+>>>>>>> /usr/src/app/output/grove/presto/a5fd26fc395910e29b06fc2ecd2c1b73e23c5302/presto-jaxrs/src/main/java/net/ontopia/presto/jaxrs/EditorResource.java/right.java
+    private @Context HttpServletRequest request;
+
     @GET
     @Produces(APPLICATION_JSON_UTF8)
     public Response getRootInfo() throws Exception {
@@ -545,7 +551,7 @@ public abstract class EditorResource {
     @GET
     @Produces(APPLICATION_JSON_UTF8)
     @Path("available-field-values/{databaseId}/{topicId}/{viewId}/{fieldId}")
-    public Response getAvailableFieldValues( 
+    public Response getAvailableFieldValues(
             @PathParam("databaseId") final String databaseId, 
             @PathParam("topicId") final String topicId, 
             @PathParam("viewId") final String viewId,
@@ -589,7 +595,7 @@ public abstract class EditorResource {
     @GET
     @Produces(APPLICATION_JSON_UTF8)
     @Path("available-field-types/{databaseId}/{topicId}/{viewId}/{fieldId}")
-    public Response getAvailableFieldTypes( 
+    public Response getAvailableFieldTypes(
             @PathParam("databaseId") final String databaseId, 
             @PathParam("topicId") final String topicId, 
             @PathParam("viewId") final String viewId,
