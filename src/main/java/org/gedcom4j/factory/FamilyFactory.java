@@ -26,6 +26,8 @@
  */
 package org.gedcom4j.factory;
 
+import java.util.Arrays;
+
 import org.gedcom4j.model.Family;
 import org.gedcom4j.model.FamilyChild;
 import org.gedcom4j.model.FamilySpouse;
@@ -81,6 +83,7 @@ public class FamilyFactory {
         }
 
         // Put the people in the Family record
+<<<<<<< /usr/src/app/output/frizbog/gedcom4j/dd044dc5d9b0969c4e6b6be853d35c02c10df487/src/main/java/org/gedcom4j/factory/FamilyFactory.java/left.java
         result.setHusband(new IndividualReference(father));
         result.setWife(new IndividualReference(mother));
         if (children != null) {
@@ -88,6 +91,17 @@ public class FamilyFactory {
                 result.getChildren(true).add(new IndividualReference(child));
             }
         }
+||||||| /usr/src/app/output/frizbog/gedcom4j/dd044dc5d9b0969c4e6b6be853d35c02c10df487/src/main/java/org/gedcom4j/factory/FamilyFactory.java/base.java
+        result.setHusband(father);
+        result.setWife(mother);
+        result.getChildren(true).addAll(Arrays.asList(children));
+=======
+        result.setHusband(father);
+        result.setWife(mother);
+        if (children != null && children.length > 0) {
+            result.getChildren(true).addAll(Arrays.asList(children));
+        }
+>>>>>>> /usr/src/app/output/frizbog/gedcom4j/dd044dc5d9b0969c4e6b6be853d35c02c10df487/src/main/java/org/gedcom4j/factory/FamilyFactory.java/right.java
 
         // And add the family record to the people
         if (father != null) {
