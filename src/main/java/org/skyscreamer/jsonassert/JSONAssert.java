@@ -1,5 +1,4 @@
 package org.skyscreamer.jsonassert;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,9 +35,10 @@ import org.skyscreamer.jsonassert.comparator.JSONComparator;
  *
  */
 public class JSONAssert {
-    private JSONAssert() {}
+  private JSONAssert() {
+  }
 
-    /**
+  /**
      * Asserts that the JSONObject provided matches the expected string.  If it isn't it throws an
      * {@link AssertionError}.
      *
@@ -47,12 +47,11 @@ public class JSONAssert {
      * @param strict Enables strict checking
      * @throws JSONException
      */
-    public static void assertEquals(String expectedStr, JSONObject actual, boolean strict)
-            throws JSONException {
-        assertEquals(expectedStr, actual, strict ? JSONCompareMode.STRICT : JSONCompareMode.LENIENT);
-    }
+  public static void assertEquals(String expectedStr, JSONObject actual, boolean strict) throws JSONException {
+    assertEquals(expectedStr, actual, strict ? JSONCompareMode.STRICT : JSONCompareMode.LENIENT);
+  }
 
-    /**
+  /**
      * Asserts that the JSONObject provided matches the expected string.  If it isn't it throws an
      * {@link AssertionError}.
      *
@@ -61,18 +60,16 @@ public class JSONAssert {
      * @param compareMode Specifies which comparison mode to use
      * @throws JSONException
      */
-    public static void assertEquals(String expectedStr, JSONObject actual, JSONCompareMode compareMode)
-            throws JSONException {
-        Object expected = JSONParser.parseJSON(expectedStr);
-        if (expected instanceof JSONObject) {
-            assertEquals((JSONObject)expected, actual, compareMode);
-        }
-        else {
-            throw new AssertionError("Expecting a JSON array, but passing in a JSON object");
-        }
+  public static void assertEquals(String expectedStr, JSONObject actual, JSONCompareMode compareMode) throws JSONException {
+    Object expected = JSONParser.parseJSON(expectedStr);
+    if (expected instanceof JSONObject) {
+      assertEquals((JSONObject) expected, actual, compareMode);
+    } else {
+      throw new AssertionError("Expecting a JSON array, but passing in a JSON object");
     }
+  }
 
-    /**
+  /**
      * Asserts that the JSONArray provided matches the expected string.  If it isn't it throws an
      * {@link AssertionError}.
      *
@@ -81,12 +78,11 @@ public class JSONAssert {
      * @param strict Enables strict checking
      * @throws JSONException
      */
-    public static void assertEquals(String expectedStr, JSONArray actual, boolean strict)
-            throws JSONException {
-        assertEquals(expectedStr, actual, strict ? JSONCompareMode.STRICT : JSONCompareMode.LENIENT);
-    }
+  public static void assertEquals(String expectedStr, JSONArray actual, boolean strict) throws JSONException {
+    assertEquals(expectedStr, actual, strict ? JSONCompareMode.STRICT : JSONCompareMode.LENIENT);
+  }
 
-    /**
+  /**
      * Asserts that the JSONArray provided matches the expected string.  If it isn't it throws an
      * {@link AssertionError}.
      *
@@ -95,18 +91,16 @@ public class JSONAssert {
      * @param compareMode Specifies which comparison mode to use
      * @throws JSONException
      */
-    public static void assertEquals(String expectedStr, JSONArray actual, JSONCompareMode compareMode)
-            throws JSONException {
-        Object expected = JSONParser.parseJSON(expectedStr);
-        if (expected instanceof JSONArray) {
-            assertEquals((JSONArray)expected, actual, compareMode);
-        }
-        else {
-            throw new AssertionError("Expecting a JSON object, but passing in a JSON array");
-        }
+  public static void assertEquals(String expectedStr, JSONArray actual, JSONCompareMode compareMode) throws JSONException {
+    Object expected = JSONParser.parseJSON(expectedStr);
+    if (expected instanceof JSONArray) {
+      assertEquals((JSONArray) expected, actual, compareMode);
+    } else {
+      throw new AssertionError("Expecting a JSON object, but passing in a JSON array");
     }
+  }
 
-    /**
+  /**
      * Asserts that the JSONArray provided matches the expected string.  If it isn't it throws an
      * {@link AssertionError}.
      *
@@ -115,12 +109,11 @@ public class JSONAssert {
      * @param strict Enables strict checking
      * @throws JSONException
      */
-    public static void assertEquals(String expectedStr, String actualStr, boolean strict)
-            throws JSONException {
-        assertEquals(expectedStr, actualStr, strict ? JSONCompareMode.STRICT : JSONCompareMode.LENIENT);
-    }
+  public static void assertEquals(String expectedStr, String actualStr, boolean strict) throws JSONException {
+    assertEquals(expectedStr, actualStr, strict ? JSONCompareMode.STRICT : JSONCompareMode.LENIENT);
+  }
 
-    /**
+  /**
      * Asserts that the JSONArray provided matches the expected string.  If it isn't it throws an
      * {@link AssertionError}.
      *
@@ -129,32 +122,26 @@ public class JSONAssert {
      * @param compareMode Specifies which comparison mode to use
      * @throws JSONException
      */
-    public static void assertEquals(String expectedStr, String actualStr, JSONCompareMode compareMode)
-            throws JSONException {
-        JSONCompareResult result = JSONCompare.compareJSON(expectedStr, actualStr, compareMode);
-        if (result.failed()) {
-            throw new AssertionError(result.getMessage());
-        }
+  public static void assertEquals(String expectedStr, String actualStr, 
+<<<<<<< /usr/src/app/output/skyscreamer/jsonassert/8b2593cd7449b1496c9ff3844db6f0592a049052/src/main/java/org/skyscreamer/jsonassert/JSONAssert.java/left.java
+  JSONCompareMode compareMode
+=======
+  JSONComparator comparator
+>>>>>>> /usr/src/app/output/skyscreamer/jsonassert/8b2593cd7449b1496c9ff3844db6f0592a049052/src/main/java/org/skyscreamer/jsonassert/JSONAssert.java/right.java
+  ) throws JSONException {
+    JSONCompareResult result = JSONCompare.compareJSON(expectedStr, actualStr, 
+<<<<<<< /usr/src/app/output/skyscreamer/jsonassert/8b2593cd7449b1496c9ff3844db6f0592a049052/src/main/java/org/skyscreamer/jsonassert/JSONAssert.java/left.java
+    compareMode
+=======
+    comparator
+>>>>>>> /usr/src/app/output/skyscreamer/jsonassert/8b2593cd7449b1496c9ff3844db6f0592a049052/src/main/java/org/skyscreamer/jsonassert/JSONAssert.java/right.java
+    );
+    if (result.failed()) {
+      throw new AssertionError(result.getMessage());
     }
+  }
 
-    /**
-     * Asserts that the json string provided matches the expected string.  If it isn't it throws an
-     * {@link AssertionError}.
-     *
-     * @param expectedStr Expected JSON string
-     * @param actualStr String to compare
-     * @param comparator Comparator
-     * @throws JSONException
-     */
-    public static void assertEquals(String expectedStr, String actualStr, JSONComparator comparator)
-            throws JSONException {
-        JSONCompareResult result = JSONCompare.compareJSON(expectedStr, actualStr, comparator);
-        if (result.failed()) {
-            throw new AssertionError(result.getMessage());
-        }
-    }
-
-    /**
+  /**
      * Asserts that the JSONObject provided matches the expected JSONObject.  If it isn't it throws an
      * {@link AssertionError}.
      *
@@ -163,12 +150,11 @@ public class JSONAssert {
      * @param strict Enables strict checking
      * @throws JSONException
      */
-    public static void assertEquals(JSONObject expected, JSONObject actual, boolean strict)
-            throws JSONException {
-        assertEquals(expected, actual, strict ? JSONCompareMode.STRICT : JSONCompareMode.LENIENT);
-    }
+  public static void assertEquals(JSONObject expected, JSONObject actual, boolean strict) throws JSONException {
+    assertEquals(expected, actual, strict ? JSONCompareMode.STRICT : JSONCompareMode.LENIENT);
+  }
 
-    /**
+  /**
      * Asserts that the JSONObject provided matches the expected JSONObject.  If it isn't it throws an
      * {@link AssertionError}.
      *
@@ -177,16 +163,14 @@ public class JSONAssert {
      * @param compareMode Specifies which comparison mode to use
      * @throws JSONException
      */
-    public static void assertEquals(JSONObject expected, JSONObject actual, JSONCompareMode compareMode)
-            throws JSONException
-    {
-        JSONCompareResult result = JSONCompare.compareJSON(expected, actual, compareMode);
-        if (result.failed()) {
-            throw new AssertionError(result.getMessage());
-        }
+  public static void assertEquals(JSONObject expected, JSONObject actual, JSONCompareMode compareMode) throws JSONException {
+    JSONCompareResult result = JSONCompare.compareJSON(expected, actual, compareMode);
+    if (result.failed()) {
+      throw new AssertionError(result.getMessage());
     }
+  }
 
-    /**
+  /**
      * Asserts that the JSONArray provided matches the expected JSONArray.  If it isn't it throws an
      * {@link AssertionError}.
      *
@@ -195,12 +179,11 @@ public class JSONAssert {
      * @param strict Enables strict checking
      * @throws JSONException
      */
-    public static void assertEquals(JSONArray expected, JSONArray actual, boolean strict)
-            throws JSONException {
-        assertEquals(expected, actual, strict ? JSONCompareMode.STRICT : JSONCompareMode.LENIENT);
-    }
+  public static void assertEquals(JSONArray expected, JSONArray actual, boolean strict) throws JSONException {
+    assertEquals(expected, actual, strict ? JSONCompareMode.STRICT : JSONCompareMode.LENIENT);
+  }
 
-    /**
+  /**
      * Asserts that the JSONArray provided matches the expected JSONArray.  If it isn't it throws an
      * {@link AssertionError}.
      *
@@ -209,11 +192,10 @@ public class JSONAssert {
      * @param compareMode Specifies which comparison mode to use
      * @throws JSONException
      */
-    public static void assertEquals(JSONArray expected, JSONArray actual, JSONCompareMode compareMode)
-            throws JSONException {
-        JSONCompareResult result = JSONCompare.compareJSON(expected, actual, compareMode);
-        if (result.failed()) {
-            throw new AssertionError(result.getMessage());
-        }
+  public static void assertEquals(JSONArray expected, JSONArray actual, JSONCompareMode compareMode) throws JSONException {
+    JSONCompareResult result = JSONCompare.compareJSON(expected, actual, compareMode);
+    if (result.failed()) {
+      throw new AssertionError(result.getMessage());
     }
+  }
 }
