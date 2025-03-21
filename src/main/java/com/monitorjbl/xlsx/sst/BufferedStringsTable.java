@@ -107,7 +107,15 @@ public class BufferedStringsTable extends SharedStringsTable implements AutoClos
 
   @Override
   public RichTextString getItemAt(int idx) {
+<<<<<<< /usr/src/app/output/monitorjbl/excel-streaming-reader/7c5cf8a3f6b0090293b32a9f83e3577fcc307931/src/main/java/com/monitorjbl/xlsx/sst/BufferedStringsTable.java/left.java
     return new XSSFRichTextString(list.getAt(idx));
+||||||| /usr/src/app/output/monitorjbl/excel-streaming-reader/7c5cf8a3f6b0090293b32a9f83e3577fcc307931/src/main/java/com/monitorjbl/xlsx/sst/BufferedStringsTable.java/base.java
+    CTRst result = list.getAt(idx);
+    return result != null ? result : CTRstImpl.EMPTY;
+=======
+    String result = list.getAt(idx);
+    return result != null ? new CTRstImpl(result) : CTRstImpl.EMPTY;
+>>>>>>> /usr/src/app/output/monitorjbl/excel-streaming-reader/7c5cf8a3f6b0090293b32a9f83e3577fcc307931/src/main/java/com/monitorjbl/xlsx/sst/BufferedStringsTable.java/right.java
   }
 
   @Override
