@@ -1088,7 +1088,14 @@ public final class SpacesTest extends AbstractIntegrationTest {
         String spaceName = this.nameFactory.getSpaceName();
 
         this.organizationId
-            .flatMap(organizationId -> Mono.zip(
+            .flatMap(organizationId -> Mono
+<<<<<<< /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/left.java
+                .zip(
+||||||| /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/base.java
+                .when(
+=======
+                .when(
+>>>>>>> /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/right.java
                 this.serviceBrokerId,
                 createSpaceId(this.cloudFoundryClient, organizationId, spaceName)
             ))
@@ -1115,7 +1122,15 @@ public final class SpacesTest extends AbstractIntegrationTest {
                 this.serviceBrokerId,
                 createSpaceId(this.cloudFoundryClient, organizationId, spaceName)
             ))
-            .delayUntil(function((organizationId, serviceBrokerId, spaceId) -> createServiceInstanceId(this.cloudFoundryClient, serviceBrokerId, serviceInstanceName, this.serviceName, spaceId)))
+<<<<<<< /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/left.java
+            .delayUntil(function((organizationId, serviceBrokerId, spaceId) -> createServiceInstanceId(this.cloudFoundryClient, serviceBrokerId, serviceInstanceName, spaceId)))
+||||||| /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/base.java
+            .delayUntil(function((organizationId, serviceBrokerId, spaceId) -> createServiceInstanceId(this.cloudFoundryClient, serviceBrokerId, serviceInstanceName, spaceId)
+                .then(Mono.just(Tuples.of(organizationId, spaceId)))))
+=======
+            .delayUntil(function((organizationId, serviceBrokerId, spaceId) -> createServiceInstanceId(this.cloudFoundryClient, serviceBrokerId, serviceInstanceName, this.serviceName, spaceId)
+                .then(Mono.just(Tuples.of(organizationId, spaceId)))))
+>>>>>>> /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/right.java
             .flatMapMany(function((organizationId, ignore, spaceId) -> requestListServiceInstances(this.cloudFoundryClient, spaceId, builder -> builder.organizationId(organizationId))))
             .filter(resource -> serviceInstanceName.equals(ResourceUtils.getEntity(resource).getName()))
             .as(StepVerifier::create)
@@ -1131,15 +1146,29 @@ public final class SpacesTest extends AbstractIntegrationTest {
         String spaceName = this.nameFactory.getSpaceName();
 
         this.organizationId
-            .flatMap(organizationId -> Mono.zip(
+            .flatMap(organizationId -> Mono
+<<<<<<< /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/left.java
+                .zip(
+||||||| /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/base.java
+                .when(
+=======
+                .when(
+>>>>>>> /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/right.java
                 this.serviceBrokerId,
                 createSpaceId(this.cloudFoundryClient, organizationId, spaceName)
             ))
-            .flatMap(function((serviceBrokerId, spaceId) -> Mono.zip(
-                createApplicationId(this.cloudFoundryClient, spaceId, applicationName),
-                createServiceInstanceId(this.cloudFoundryClient, serviceBrokerId, serviceInstanceName, this.serviceName, spaceId),
-                Mono.just(spaceId)
-            )))
+            .flatMap(function((serviceBrokerId, spaceId) -> Mono
+<<<<<<< /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/left.java
+                .zip(
+||||||| /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/base.java
+                .when(
+=======
+                .when(
+>>>>>>> /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/right.java
+                    createApplicationId(this.cloudFoundryClient, spaceId, applicationName),
+                    createServiceInstanceId(this.cloudFoundryClient, serviceBrokerId, serviceInstanceName, this.serviceName, spaceId),
+                    Mono.just(spaceId)
+                )))
             .flatMap(function((applicationId, serviceInstanceId, spaceId) -> Mono.zip(
                 createServiceBindingId(this.cloudFoundryClient, applicationId, serviceInstanceId),
                 Mono.just(spaceId)
@@ -1183,15 +1212,29 @@ public final class SpacesTest extends AbstractIntegrationTest {
         String spaceName = this.nameFactory.getSpaceName();
 
         this.organizationId
-            .flatMap(organizationId -> Mono.zip(
+            .flatMap(organizationId -> Mono
+<<<<<<< /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/left.java
+                .zip(
+||||||| /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/base.java
+                .when(
+=======
+                .when(
+>>>>>>> /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/right.java
                 this.serviceBrokerId,
                 createSpaceId(this.cloudFoundryClient, organizationId, spaceName)
             ))
-            .flatMap(function((serviceBrokerId, spaceId) -> Mono.zip(
-                createServiceInstanceId(this.cloudFoundryClient, serviceBrokerId, serviceInstanceName, this.serviceName, spaceId),
-                getServicePlanId(this.cloudFoundryClient, serviceBrokerId, this.serviceName),
-                Mono.just(spaceId)
-            )))
+            .flatMap(function((serviceBrokerId, spaceId) -> Mono
+<<<<<<< /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/left.java
+                .zip(
+||||||| /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/base.java
+                .when(
+=======
+                .when(
+>>>>>>> /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/right.java
+                    createServiceInstanceId(this.cloudFoundryClient, serviceBrokerId, serviceInstanceName, this.serviceName, spaceId),
+                    getServicePlanId(this.cloudFoundryClient, serviceBrokerId, this.serviceName),
+                    Mono.just(spaceId)
+                )))
             .flatMapMany(function((ignore, servicePlanId, spaceId) -> requestListServiceInstances(this.cloudFoundryClient, spaceId, builder -> builder.servicePlanId(servicePlanId))))
             .as(StepVerifier::create)
             .expectNextCount(1)
@@ -1199,6 +1242,21 @@ public final class SpacesTest extends AbstractIntegrationTest {
             .verify(Duration.ofMinutes(5));
     }
 
+<<<<<<< /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/left.java
+    @Test
+    public void listServices() {
+        Mono
+            .zip(this.serviceBrokerId, this.spaceId)
+            .flatMapMany(function((serviceBrokerId, spaceId) -> requestListSpaceServices(this.cloudFoundryClient, spaceId)
+                .filter(resource -> serviceBrokerId.equals(ResourceUtils.getEntity(resource).getServiceBrokerId()))))
+            .map(response -> response.getEntity().getLabel())
+            .as(StepVerifier::create)
+            .expectNextCount(1)
+            .expectComplete()
+            .verify(Duration.ofMinutes(5));
+    }
+||||||| /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/base.java
+=======
     @Test
     public void listServices() {
         this.spaceId
@@ -1209,18 +1267,30 @@ public final class SpacesTest extends AbstractIntegrationTest {
             .expectComplete()
             .verify(Duration.ofMinutes(5));
     }
+>>>>>>> /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/right.java
 
     @Test
-    public void listServicesFilterByActive() {
-        this.spaceId
-            .flatMapMany(spaceId -> requestListSpaceServices(this.cloudFoundryClient, spaceId)
-                .filter(resource -> this.serviceName.equals(ResourceUtils.getEntity(resource).getLabel())))
-            .map(response -> response.getEntity().getLabel())
-            .as(StepVerifier::create)
-            .expectNextCount(1)
-            .expectComplete()
-            .verify(Duration.ofMinutes(5));
-    }
+public void listServicesFilterByActive() {
+<<<<<<< /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/left.java
+    Mono
+        .zip(this.serviceBrokerId, this.spaceId)
+        .flatMapMany(function((serviceBrokerId, spaceId) -> requestListSpaceServices(this.cloudFoundryClient, spaceId)
+            .filter(resource -> serviceBrokerId.equals(ResourceUtils.getEntity(resource).getServiceBrokerId()))))
+||||||| /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/base.java
+    Mono.when(this.serviceBrokerId, this.spaceId)
+        .flatMapMany(function((serviceBrokerId, spaceId) -> requestListSpaceServices(this.cloudFoundryClient, spaceId)
+            .filter(resource -> serviceBrokerId.equals(ResourceUtils.getEntity(resource).getServiceBrokerId()))))
+=======
+    this.spaceId
+        .flatMapMany(spaceId -> requestListSpaceServices(this.cloudFoundryClient, spaceId)
+            .filter(resource -> this.serviceName.equals(ResourceUtils.getEntity(resource).getLabel())))
+>>>>>>> /usr/src/app/output/cloudfoundry/cf-java-client/fcc8e8fb113e3caadf856f92b566e5fef15ee52c/integration-test/src/test/java/org/cloudfoundry/client/v2/SpacesTest.java/right.java
+        .map(response -> response.getEntity().getLabel())
+        .as(StepVerifier::create)
+        .expectNextCount(1)
+        .expectComplete()
+        .verify(Duration.ofMinutes(5));
+}
 
     @Test
     public void listServicesFilterByLabel() {
