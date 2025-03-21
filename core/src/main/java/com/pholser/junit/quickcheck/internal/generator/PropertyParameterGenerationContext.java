@@ -26,8 +26,10 @@
 package com.pholser.junit.quickcheck.internal.generator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
+import java.util.Optional;
 import com.pholser.junit.quickcheck.generator.Generator;
 import com.pholser.junit.quickcheck.internal.GeometricDistribution;
 import com.pholser.junit.quickcheck.internal.PropertyParameterContext;
@@ -41,6 +43,7 @@ public class PropertyParameterGenerationContext extends AbstractGenerationStatus
     private final PropertyParameterContext parameter;
     private final ConstraintEvaluator evaluator;
     private final Generator<?> generator;
+    private final Map<Key<?>, Object> contextValues = new HashMap<>();
 
     private int successfulEvaluations;
     private int discards;
@@ -70,16 +73,16 @@ public class PropertyParameterGenerationContext extends AbstractGenerationStatus
     public Object generate() {
         Object nextValue;
 
-        for (nextValue = generator.generate(random(), this);
+        for (nextValue = generator.generate(random, this);
             !evaluate(nextValue);
-            nextValue = generator.generate(random(), this));
+            nextValue = generator.generate(random, this));
 
         return nextValue;
     }
 
     public List<Object> shrink(Object larger) {
         return generator.canShrink(larger)
-            ? new ArrayList<>(generator.shrink(random(), larger))
+            ? new ArrayList<>(generator.shrink(random, larger))
             : emptyList();
     }
 
@@ -116,8 +119,17 @@ public class PropertyParameterGenerationContext extends AbstractGenerationStatus
         return successfulEvaluations + discards;
     }
 
+    @Override public <T> GenerationStatus setValue(Key<T> key, T value) {
+        contextValues.put(key, value);
+        return this;
+    }
+
+    @Override public <T> Optional<T> valueOf(Key<T> key) {
+        return Optional.ofNullable(key.cast(contextValues.get(key)));
+    }
+
     public long effectiveSeed() {
-        return random().seed();
+        return random.seed();
     }
 
     public static class DiscardRatioExceededException extends RuntimeException {
