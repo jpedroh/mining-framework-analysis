@@ -46,45 +46,36 @@ import java.nio.charset.StandardCharsets;
 public final class MurmurHash3 {
 
     /** TODO Replace on Java 8 with Long.BYTES. */
-    static final int LONG_BYTES = Long.SIZE / Byte.SIZE;
-
+  static final int LONG_BYTES = Long.SIZE / Byte.SIZE;
     /** TODO Replace on Java 8 with Integer.BYTES. */
-    static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
-
+  static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
     /** TODO Replace on Java 8 with Short.BYTES. */
-    static final int SHORT_BYTES = Short.SIZE / Byte.SIZE;
-
+  static final int SHORT_BYTES = Short.SIZE / Byte.SIZE;
     // from 64-bit linear congruential generator
-    public static final long NULL_HASHCODE = 2862933555777941757L;
-
+	public static final long NULL_HASHCODE = 2862933555777941757L;
     // Constants for 32 bit variant
-    private static final int C1_32 = 0xcc9e2d51;
-    private static final int C2_32 = 0x1b873593;
-    private static final int R1_32 = 15;
-    private static final int R2_32 = 13;
-    private static final int M_32 = 5;
-    private static final int N_32 = 0xe6546b64;
+	private static final int C1_32 = 0xcc9e2d51;
+	private static final int C2_32 = 0x1b873593;
+	private static final int R1_32 = 15;
+	private static final int R2_32 = 13;
+	private static final int M_32 = 5;
+	private static final int N_32 = 0xe6546b64;
     private static final int UBYTE_MASK = 0xff;
-
     // Constants for 128 bit variant
-    private static final long C1 = 0x87c37b91114253d5L;
-    private static final long C2 = 0x4cf5ad432745937fL;
-    private static final int R1 = 31;
-    private static final int R2 = 27;
-    private static final int R3 = 33;
-    private static final int M = 5;
-    private static final int N1 = 0x52dce729;
-    private static final int N2 = 0x38495ab5;
+	private static final long C1 = 0x87c37b91114253d5L;
+	private static final long C2 = 0x4cf5ad432745937fL;
+	private static final int R1 = 31;
+	private static final int R2 = 27;
+	private static final int R3 = 33;
+	private static final int M = 5;
+	private static final int N1 = 0x52dce729;
+	private static final int N2 = 0x38495ab5;
     private static final long UINT_MASK = 0xffffffffL;
     private static final long UBYTE_LONG_MASK = 0xffL;
-
-    public static final int DEFAULT_SEED = 104729;
-
-
+	public static final int DEFAULT_SEED = 104729;
     // all methods static; private constructor.
-    private MurmurHash3() {
-    }
-
+	private MurmurHash3() {
+	}
     /**
      * Generates 32 bit hash from two longs with default seed value.
      *
@@ -97,7 +88,6 @@ public final class MurmurHash3 {
     public static int hash32(final long l0, final long l1) {
         return hash32(l0, l1, DEFAULT_SEED);
     }
-
     /**
      * Generates 32 bit hash from a long with default seed value.
      *
@@ -105,11 +95,10 @@ public final class MurmurHash3 {
      * @return 32 bit hash
      * @deprecated use hash32_x86
      */
-    @Deprecated
-    public static int hash32(final long l0) {
-        return hash32(l0, DEFAULT_SEED);
-    }
-
+	@Deprecated
+	public static int hash32(final long l0) {
+	    return hash32(l0, DEFAULT_SEED);
+	}
     /**
      * Generates 32 bit hash from a long with the given seed.
      *
@@ -128,7 +117,6 @@ public final class MurmurHash3 {
 
         return fmix32(LONG_BYTES, hash);
     }
-
     /**
      * Generates 32 bit hash from two longs with the given seed.
      *
@@ -151,7 +139,6 @@ public final class MurmurHash3 {
 
         return fmix32(LONG_BYTES * 2, hash);
     }
-
     /**
      * Generates 32 bit hash from byte array with the default seed.
      *
@@ -159,11 +146,10 @@ public final class MurmurHash3 {
      * @return 32 bit hash
      * @deprecated use hash32_x86
      */
-    @Deprecated
-    public static int hash32(final byte[] data) {
-        return hash32(data, 0, data.length, DEFAULT_SEED);
-    }
-
+	@Deprecated
+	public static int hash32(final byte[] data) {
+	    return hash32(data, 0, data.length, DEFAULT_SEED);
+	}
     /**
      * Generates 32 bit hash from a string with the default seed.
      *
@@ -171,12 +157,11 @@ public final class MurmurHash3 {
      * @return 32 bit hash
      * @deprecated use hash32_x86
      */
-    @Deprecated
-    public static int hash32(final String data) {
-        final byte[] origin = data.getBytes();
-        return hash32(origin, 0, origin.length, DEFAULT_SEED);
-    }
-
+	@Deprecated
+	public static int hash32(final String data) {
+	    final byte[] origin = data.getBytes();
+	    return hash32(origin, 0, origin.length, DEFAULT_SEED);
+	}
     /**
      * Generates 32 bit hash from byte array with the default seed.
      *
@@ -189,7 +174,6 @@ public final class MurmurHash3 {
     public static int hash32(final byte[] data, final int length) {
         return hash32(data, length, DEFAULT_SEED);
     }
-
     /**
      * Generates 32 bit hash from byte array with the given length and seed.
      *
@@ -203,7 +187,6 @@ public final class MurmurHash3 {
     public static int hash32(final byte[] data, final int length, final int seed) {
         return hash32(data, 0, length, seed);
     }
-
     /**
      * Generates 32 bit hash from byte array with the given length, offset and seed.
      *
@@ -214,192 +197,189 @@ public final class MurmurHash3 {
      * @return 32 bit hash
      * @deprecated use hash32_x86
      */
-    @Deprecated
-    public static int hash32(final byte[] data, final int offset, final int length, final int seed) {
-        int hash = seed;
-        final int nblocks = length >> 2;
+	@Deprecated
+	public static int hash32(final byte[] data, final int offset, final int length, final int seed) {
+	    int hash = seed;
+	    final int nblocks = length >> 2;
 
-        // body
-        for (int i = 0; i < nblocks; i++) {
-            final int i_4 = i << 2;
-            final int k = (data[offset + i_4] & 0xff) | ((data[offset + i_4 + 1] & 0xff) << 8)
-                    | ((data[offset + i_4 + 2] & 0xff) << 16) | ((data[offset + i_4 + 3] & 0xff) << 24);
+	    // body
+	    for (int i = 0; i < nblocks; i++) {
+	        final int i_4 = i << 2;
+	        final int k = (data[offset + i_4] & 0xff) | ((data[offset + i_4 + 1] & 0xff) << 8)
+	                | ((data[offset + i_4 + 2] & 0xff) << 16) | ((data[offset + i_4 + 3] & 0xff) << 24);
 
-            hash = mix32(k, hash);
-        }
+	        hash = mix32(k, hash);
+	    }
 
-        // tail
-        final int idx = nblocks << 2;
-        int k1 = 0;
-        switch (length - idx) {
-        case 3:
-            k1 ^= data[offset + idx + 2] << 16;
-        case 2:
-            k1 ^= data[offset + idx + 1] << 8;
-        case 1:
-            k1 ^= data[offset + idx];
+	    // tail
+	    final int idx = nblocks << 2;
+	    int k1 = 0;
+		/*
+		 * The original algorithm uses unsigned bytes.
+		 * We have to mask to match the behavior of the unsigned bytes and prevent sign extension.
+		 */
+		switch (length - idx) {
+		case 3:
+		    k1 ^= (data[offset + idx + 2] & UBYTE_MASK) << 16;
+			// fallthrough
+		case 2:
+		    k1 ^= (data[offset + idx + 1] & UBYTE_MASK) << 8;
+			// fallthrough
+		case 1:
+		    k1 ^= (data[offset + idx] & UBYTE_MASK);
+			k1 *= C1_32;
+		    k1 = Integer.rotateLeft(k1, R1_32);
+		    k1 *= C2_32;
+		    hash ^= k1;
+	}
 
-            // mix functions
-            k1 *= C1_32;
-            k1 = Integer.rotateLeft(k1, R1_32);
-            k1 *= C2_32;
-            hash ^= k1;
-        }
+	    return fmix32(length, hash);
+	}
+	/**
+	 * Murmur3 64-bit variant. This is essentially MSB 8 bytes of Murmur3 128-bit
+	 * variant.
+	 *
+	 * @param data - input byte array
+	 * @return 64 bit hash
+	 */
+	public static long hash64(final byte[] data) {
+	    return hash64(data, 0, data.length, DEFAULT_SEED);
+	}
+	/**
+	 * Murmur3 64-bit variant. This is essentially MSB 8 bytes of Murmur3 128-bit
+	 * variant.
+	 *
+	 * @param data - input long
+	 * @return 64 bit hash
+	 */
+	public static long hash64(final long data) {
+	    long hash = DEFAULT_SEED;
+	    long k = Long.reverseBytes(data);
+	    final int length = LONG_BYTES;
+	    // mix functions
+	    k *= C1;
+	    k = Long.rotateLeft(k, R1);
+	    k *= C2;
+	    hash ^= k;
+	    hash = Long.rotateLeft(hash, R2) * M + N1;
+	    // finalization
+	    hash ^= length;
+	    hash = fmix64(hash);
+	    return hash;
+	}
+	/**
+	 * Murmur3 64-bit variant. This is essentially MSB 8 bytes of Murmur3 128-bit
+	 * variant.
+	 *
+	 * @param data - input int
+	 * @return 64 bit hash
+	 */
+	public static long hash64(final int data) {
+	    long k1 = Integer.reverseBytes(data) & (-1L >>> 32);
+	    final int length = INTEGER_BYTES;
+	    long hash = DEFAULT_SEED;
+	    k1 *= C1;
+	    k1 = Long.rotateLeft(k1, R1);
+	    k1 *= C2;
+	    hash ^= k1;
+	    // finalization
+	    hash ^= length;
+	    hash = fmix64(hash);
+	    return hash;
+	}
+	/**
+	 * Murmur3 64-bit variant. This is essentially MSB 8 bytes of Murmur3 128-bit
+	 * variant.
+	 *
+	 * @param data - input short
+	 * @return 64 bit hash
+	 */
+	public static long hash64(final short data) {
+	    long hash = DEFAULT_SEED;
+	    long k1 = 0;
+	    k1 ^= ((long) data & UBYTE_MASK) << 8;
+	    k1 ^= ((long) ((data & 0xFF00) >> 8) & UBYTE_MASK);
+	    k1 *= C1;
+	    k1 = Long.rotateLeft(k1, R1);
+	    k1 *= C2;
+	    hash ^= k1;
 
-        return fmix32(length, hash);
-    }
+	    // finalization
+	    hash ^= SHORT_BYTES;
+	    hash = fmix64(hash);
+	    return hash;
+	}
+	/**
+	 * Generates 64 bit hash from byte array with the given length, offset and
+	 * default seed.
+	 *
+	 * @param data   - input byte array
+	 * @param offset - offset of data
+	 * @param length - length of array
+	 * @return 64 bit hash
+	 */
+	public static long hash64(final byte[] data, final int offset, final int length) {
+	    return hash64(data, offset, length, DEFAULT_SEED);
+	}
+	/**
+	 * Generates 64 bit hash from byte array with the given length, offset and seed.
+	 *
+	 * @param data   - input byte array
+	 * @param offset - offset of data
+	 * @param length - length of array
+	 * @param seed   - seed. (default 0)
+	 * @return 64 bit hash
+	 */
+	public static long hash64(final byte[] data, final int offset, final int length, final int seed) {
+	    long hash = seed;
+	    final int nblocks = length >> 3;
 
-    /**
-     * Murmur3 64-bit variant. This is essentially MSB 8 bytes of Murmur3 128-bit
-     * variant.
-     *
-     * @param data - input byte array
-     * @return 64 bit hash
-     */
-    public static long hash64(final byte[] data) {
-        return hash64(data, 0, data.length, DEFAULT_SEED);
-    }
+	        // body
+	        for (int i = 0; i < nblocks; i++) {
+	            final int i8 = i << 3;
+	            long k = ((long) data[offset + i8] & UBYTE_MASK) | (((long) data[offset + i8 + 1] & UBYTE_MASK) << 8)
+	                    | (((long) data[offset + i8 + 2] & UBYTE_MASK) << 16) | (((long) data[offset + i8 + 3] & UBYTE_MASK) << 24)
+	                    | (((long) data[offset + i8 + 4] & UBYTE_MASK) << 32) | (((long) data[offset + i8 + 5] & UBYTE_MASK) << 40)
+	                    | (((long) data[offset + i8 + 6] & UBYTE_MASK) << 48) | (((long) data[offset + i8 + 7] & UBYTE_MASK) << 56);
 
-    /**
-     * Murmur3 64-bit variant. This is essentially MSB 8 bytes of Murmur3 128-bit
-     * variant.
-     *
-     * @param data - input long
-     * @return 64 bit hash
-     */
-    public static long hash64(final long data) {
-        long hash = DEFAULT_SEED;
-        long k = Long.reverseBytes(data);
-        final int length = LONG_BYTES;
-        // mix functions
-        k *= C1;
-        k = Long.rotateLeft(k, R1);
-        k *= C2;
-        hash ^= k;
-        hash = Long.rotateLeft(hash, R2) * M + N1;
-        // finalization
-        hash ^= length;
-        hash = fmix64(hash);
-        return hash;
-    }
+	            // mix functions
+	            k *= C1;
+	            k = Long.rotateLeft(k, R1);
+	            k *= C2;
+	            hash ^= k;
+	            hash = Long.rotateLeft(hash, R2) * M + N1;
+	        }
 
-    /**
-     * Murmur3 64-bit variant. This is essentially MSB 8 bytes of Murmur3 128-bit
-     * variant.
-     *
-     * @param data - input int
-     * @return 64 bit hash
-     */
-    public static long hash64(final int data) {
-        long k1 = Integer.reverseBytes(data) & (-1L >>> 32);
-        final int length = INTEGER_BYTES;
-        long hash = DEFAULT_SEED;
-        k1 *= C1;
-        k1 = Long.rotateLeft(k1, R1);
-        k1 *= C2;
-        hash ^= k1;
-        // finalization
-        hash ^= length;
-        hash = fmix64(hash);
-        return hash;
-    }
+	        // tail
+	        long k1 = 0;
+	        final int tailStart = nblocks << 3;
+	        switch (length - tailStart) {
+	        case 7:
+	            k1 ^= ((long) data[offset + tailStart + 6] & UBYTE_MASK) << 48;
+	        case 6:
+	            k1 ^= ((long) data[offset + tailStart + 5] & UBYTE_MASK) << 40;
+	        case 5:
+	            k1 ^= ((long) data[offset + tailStart + 4] & UBYTE_MASK) << 32;
+	        case 4:
+	            k1 ^= ((long) data[offset + tailStart + 3] & UBYTE_MASK) << 24;
+	        case 3:
+	            k1 ^= ((long) data[offset + tailStart + 2] & UBYTE_MASK) << 16;
+	        case 2:
+	            k1 ^= ((long) data[offset + tailStart + 1] & UBYTE_MASK) << 8;
+	        case 1:
+	            k1 ^= ((long) data[offset + tailStart] & UBYTE_MASK);
+	            k1 *= C1;
+	            k1 = Long.rotateLeft(k1, R1);
+	            k1 *= C2;
+	            hash ^= k1;
+	        }
 
-    /**
-     * Murmur3 64-bit variant. This is essentially MSB 8 bytes of Murmur3 128-bit
-     * variant.
-     *
-     * @param data - input short
-     * @return 64 bit hash
-     */
-    public static long hash64(final short data) {
-        long hash = DEFAULT_SEED;
-        long k1 = 0;
-        k1 ^= ((long) data & 0xff) << 8;
-        k1 ^= ((long) ((data & 0xFF00) >> 8) & 0xff);
-        k1 *= C1;
-        k1 = Long.rotateLeft(k1, R1);
-        k1 *= C2;
-        hash ^= k1;
+	        // finalization
+	        hash ^= length;
+	        hash = fmix64(hash);
 
-        // finalization
-        hash ^= SHORT_BYTES;
-        hash = fmix64(hash);
-        return hash;
-    }
-
-    /**
-     * Generates 64 bit hash from byte array with the given length, offset and
-     * default seed.
-     *
-     * @param data   - input byte array
-     * @param offset - offset of data
-     * @param length - length of array
-     * @return 64 bit hash
-     */
-    public static long hash64(final byte[] data, final int offset, final int length) {
-        return hash64(data, offset, length, DEFAULT_SEED);
-    }
-
-    /**
-     * Generates 64 bit hash from byte array with the given length, offset and seed.
-     *
-     * @param data   - input byte array
-     * @param offset - offset of data
-     * @param length - length of array
-     * @param seed   - seed. (default 0)
-     * @return 64 bit hash
-     */
-    public static long hash64(final byte[] data, final int offset, final int length, final int seed) {
-        long hash = seed;
-        final int nblocks = length >> 3;
-
-            // body
-            for (int i = 0; i < nblocks; i++) {
-                final int i8 = i << 3;
-                long k = ((long) data[offset + i8] & 0xff) | (((long) data[offset + i8 + 1] & 0xff) << 8)
-                        | (((long) data[offset + i8 + 2] & 0xff) << 16) | (((long) data[offset + i8 + 3] & 0xff) << 24)
-                        | (((long) data[offset + i8 + 4] & 0xff) << 32) | (((long) data[offset + i8 + 5] & 0xff) << 40)
-                        | (((long) data[offset + i8 + 6] & 0xff) << 48) | (((long) data[offset + i8 + 7] & 0xff) << 56);
-
-                // mix functions
-                k *= C1;
-                k = Long.rotateLeft(k, R1);
-                k *= C2;
-                hash ^= k;
-                hash = Long.rotateLeft(hash, R2) * M + N1;
-            }
-
-            // tail
-            long k1 = 0;
-            final int tailStart = nblocks << 3;
-            switch (length - tailStart) {
-            case 7:
-                k1 ^= ((long) data[offset + tailStart + 6] & 0xff) << 48;
-            case 6:
-                k1 ^= ((long) data[offset + tailStart + 5] & 0xff) << 40;
-            case 5:
-                k1 ^= ((long) data[offset + tailStart + 4] & 0xff) << 32;
-            case 4:
-                k1 ^= ((long) data[offset + tailStart + 3] & 0xff) << 24;
-            case 3:
-                k1 ^= ((long) data[offset + tailStart + 2] & 0xff) << 16;
-            case 2:
-                k1 ^= ((long) data[offset + tailStart + 1] & 0xff) << 8;
-            case 1:
-                k1 ^= ((long) data[offset + tailStart] & 0xff);
-                k1 *= C1;
-                k1 = Long.rotateLeft(k1, R1);
-                k1 *= C2;
-                hash ^= k1;
-            }
-
-            // finalization
-            hash ^= length;
-            hash = fmix64(hash);
-
-            return hash;
-    }
-
+	        return hash;
+	}
     /**
      * Murmur3 128-bit variant.
      *
@@ -412,11 +392,10 @@ public final class MurmurHash3 {
      * @return - 128 bit hash (2 longs)
      * @deprecated use hash128_x64
      */
-    @Deprecated
-    public static long[] hash128(final byte[] data) {
-        return hash128(data, 0, data.length, DEFAULT_SEED);
-    }
-
+	@Deprecated
+	public static long[] hash128(final byte[] data) {
+	    return hash128(data, 0, data.length, DEFAULT_SEED);
+	}
     /**
      * Murmur3 128-bit variant.
      *
@@ -429,12 +408,11 @@ public final class MurmurHash3 {
      * @return - 128 bit hash (2 longs)
      * @deprecated use hash128_x64
      */
-    @Deprecated
-    public static long[] hash128(final String data) {
-        final byte[] origin = data.getBytes();
-        return hash128(origin, 0, origin.length, DEFAULT_SEED);
-    }
-
+	@Deprecated
+	public static long[] hash128(final String data) {
+	    final byte[] origin = data.getBytes();
+	    return hash128(origin, 0, origin.length, DEFAULT_SEED);
+	}
     /**
      * Murmur3 128-bit variant.
      *
@@ -450,252 +428,261 @@ public final class MurmurHash3 {
      * @return - 128 bit hash (2 longs)
      * @deprecated use hash128_x64
      */
-    @Deprecated
-    public static long[] hash128(final byte[] data, final int offset, final int length, final int seed) {
-        long h1 = seed;
-        long h2 = seed;
-        final int nblocks = length >> 4;
+	@Deprecated
+	public static long[] hash128(final byte[] data, final int offset, final int length, final int seed) {
+		// The original algorithm does have a 32 bit unsigned seed.
+		// We have to mask to match the behavior of the unsigned types and prevent sign extension.
+		long h1 = seed & UINT_MASK;
+	    long h2 = seed & UINT_MASK;
+	    final int nblocks = length >> 4;
 
-                // body
-                for (int i = 0; i < nblocks; i++) {
-                    final int i16 = i << 4;
-                    long k1 = ((long) data[offset + i16] & 0xff) | (((long) data[offset + i16 + 1] & 0xff) << 8)
-                            | (((long) data[offset + i16 + 2] & 0xff) << 16) | (((long) data[offset + i16 + 3] & 0xff) << 24)
-                            | (((long) data[offset + i16 + 4] & 0xff) << 32) | (((long) data[offset + i16 + 5] & 0xff) << 40)
-                            | (((long) data[offset + i16 + 6] & 0xff) << 48) | (((long) data[offset + i16 + 7] & 0xff) << 56);
+	            // body
+	            for (int i = 0; i < nblocks; i++) {
+	                final int i16 = i << 4;
+	                long k1 = ((long) data[offset + i16] & UBYTE_MASK) | (((long) data[offset + i16 + 1] & UBYTE_MASK) << 8)
+	                        | (((long) data[offset + i16 + 2] & UBYTE_MASK) << 16) | (((long) data[offset + i16 + 3] & UBYTE_MASK) << 24)
+	                        | (((long) data[offset + i16 + 4] & UBYTE_MASK) << 32) | (((long) data[offset + i16 + 5] & UBYTE_MASK) << 40)
+	                        | (((long) data[offset + i16 + 6] & UBYTE_MASK) << 48) | (((long) data[offset + i16 + 7] & UBYTE_MASK) << 56);
 
-                    long k2 = ((long) data[offset + i16 + 8] & 0xff) | (((long) data[offset + i16 + 9] & 0xff) << 8)
-                            | (((long) data[offset + i16 + 10] & 0xff) << 16) | (((long) data[offset + i16 + 11] & 0xff) << 24)
-                            | (((long) data[offset + i16 + 12] & 0xff) << 32) | (((long) data[offset + i16 + 13] & 0xff) << 40)
-                            | (((long) data[offset + i16 + 14] & 0xff) << 48) | (((long) data[offset + i16 + 15] & 0xff) << 56);
+	                long k2 = ((long) data[offset + i16 + 8] & UBYTE_MASK) | (((long) data[offset + i16 + 9] & UBYTE_MASK) << 8)
+	                        | (((long) data[offset + i16 + 10] & UBYTE_MASK) << 16) | (((long) data[offset + i16 + 11] & UBYTE_MASK) << 24)
+	                        | (((long) data[offset + i16 + 12] & UBYTE_MASK) << 32) | (((long) data[offset + i16 + 13] & UBYTE_MASK) << 40)
+	                        | (((long) data[offset + i16 + 14] & UBYTE_MASK) << 48) | (((long) data[offset + i16 + 15] & UBYTE_MASK) << 56);
 
-                    // mix functions for k1
-                    k1 *= C1;
-                    k1 = Long.rotateLeft(k1, R1);
-                    k1 *= C2;
-                    h1 ^= k1;
-                    h1 = Long.rotateLeft(h1, R2);
-                    h1 += h2;
-                    h1 = h1 * M + N1;
+	                // mix functions for k1
+	                k1 *= C1;
+	                k1 = Long.rotateLeft(k1, R1);
+	                k1 *= C2;
+	                h1 ^= k1;
+	                h1 = Long.rotateLeft(h1, R2);
+	                h1 += h2;
+	                h1 = h1 * M + N1;
 
-                    // mix functions for k2
-                    k2 *= C2;
-                    k2 = Long.rotateLeft(k2, R3);
-                    k2 *= C1;
-                    h2 ^= k2;
-                    h2 = Long.rotateLeft(h2, R1);
-                    h2 += h1;
-                    h2 = h2 * M + N2;
-                }
+	                // mix functions for k2
+	                k2 *= C2;
+	                k2 = Long.rotateLeft(k2, R3);
+	                k2 *= C1;
+	                h2 ^= k2;
+	                h2 = Long.rotateLeft(h2, R1);
+	                h2 += h1;
+	                h2 = h2 * M + N2;
+	            }
 
-                // tail
-                long k1 = 0;
-                long k2 = 0;
-                final int tailStart = nblocks << 4;
-                switch (length - tailStart) {
-                case 15:
-                    k2 ^= (long) (data[offset + tailStart + 14] & 0xff) << 48;
-                case 14:
-                    k2 ^= (long) (data[offset + tailStart + 13] & 0xff) << 40;
-                case 13:
-                    k2 ^= (long) (data[offset + tailStart + 12] & 0xff) << 32;
-                case 12:
-                    k2 ^= (long) (data[offset + tailStart + 11] & 0xff) << 24;
-                case 11:
-                    k2 ^= (long) (data[offset + tailStart + 10] & 0xff) << 16;
-                case 10:
-                    k2 ^= (long) (data[offset + tailStart + 9] & 0xff) << 8;
-                case 9:
-                    k2 ^= data[offset + tailStart + 8] & 0xff;
-                    k2 *= C2;
-                    k2 = Long.rotateLeft(k2, R3);
-                    k2 *= C1;
-                    h2 ^= k2;
+	            // tail
+	            long k1 = 0;
+	            long k2 = 0;
+	            final int tailStart = nblocks << 4;
+	            switch (length - tailStart) {
+	            case 15:
+	                k2 ^= (long) (data[offset + tailStart + 14] & UBYTE_MASK) << 48;
+	            case 14:
+	                k2 ^= (long) (data[offset + tailStart + 13] & UBYTE_MASK) << 40;
+	            case 13:
+	                k2 ^= (long) (data[offset + tailStart + 12] & UBYTE_MASK) << 32;
+	            case 12:
+	                k2 ^= (long) (data[offset + tailStart + 11] & UBYTE_MASK) << 24;
+	            case 11:
+	                k2 ^= (long) (data[offset + tailStart + 10] & UBYTE_MASK) << 16;
+	            case 10:
+	                k2 ^= (long) (data[offset + tailStart + 9] & UBYTE_MASK) << 8;
+	            case 9:
+	                k2 ^= data[offset + tailStart + 8] & UBYTE_MASK;
+	                k2 *= C2;
+	                k2 = Long.rotateLeft(k2, R3);
+	                k2 *= C1;
+	                h2 ^= k2;
 
-                case 8:
-                    k1 ^= (long) (data[offset + tailStart + 7] & 0xff) << 56;
-                case 7:
-                    k1 ^= (long) (data[offset + tailStart + 6] & 0xff) << 48;
-                case 6:
-                    k1 ^= (long) (data[offset + tailStart + 5] & 0xff) << 40;
-                case 5:
-                    k1 ^= (long) (data[offset + tailStart + 4] & 0xff) << 32;
-                case 4:
-                    k1 ^= (long) (data[offset + tailStart + 3] & 0xff) << 24;
-                case 3:
-                    k1 ^= (long) (data[offset + tailStart + 2] & 0xff) << 16;
-                case 2:
-                    k1 ^= (long) (data[offset + tailStart + 1] & 0xff) << 8;
-                case 1:
-                    k1 ^= data[offset + tailStart] & 0xff;
-                    k1 *= C1;
-                    k1 = Long.rotateLeft(k1, R1);
-                    k1 *= C2;
-                    h1 ^= k1;
-                }
+	            case 8:
+	                k1 ^= (long) (data[offset + tailStart + 7] & UBYTE_MASK) << 56;
+	            case 7:
+	                k1 ^= (long) (data[offset + tailStart + 6] & UBYTE_MASK) << 48;
+	            case 6:
+	                k1 ^= (long) (data[offset + tailStart + 5] & UBYTE_MASK) << 40;
+	            case 5:
+	                k1 ^= (long) (data[offset + tailStart + 4] & UBYTE_MASK) << 32;
+	            case 4:
+	                k1 ^= (long) (data[offset + tailStart + 3] & UBYTE_MASK) << 24;
+	            case 3:
+	                k1 ^= (long) (data[offset + tailStart + 2] & UBYTE_MASK) << 16;
+	            case 2:
+	                k1 ^= (long) (data[offset + tailStart + 1] & UBYTE_MASK) << 8;
+	            case 1:
+	                k1 ^= data[offset + tailStart] & UBYTE_MASK;
+	                k1 *= C1;
+	                k1 = Long.rotateLeft(k1, R1);
+	                k1 *= C2;
+	                h1 ^= k1;
+	            }
 
-                // finalization
-                h1 ^= length;
-                h2 ^= length;
+	            // finalization
+	            h1 ^= length;
+	            h2 ^= length;
 
-                h1 += h2;
-                h2 += h1;
+	            h1 += h2;
+	            h2 += h1;
 
-                h1 = fmix64(h1);
-                h2 = fmix64(h2);
+	            h1 = fmix64(h1);
+	            h2 = fmix64(h2);
 
-                h1 += h2;
-                h2 += h1;
+	            h1 += h2;
+	            h2 += h1;
 
-                return new long[] { h1, h2 };
-    }
+	            return new long[] { h1, h2 };
+	}
+	private static int mix32(int k, int hash) {
+	    k *= C1_32;
+	    k = Integer.rotateLeft(k, R1_32);
+	    k *= C2_32;
+	    hash ^= k;
+	    return Integer.rotateLeft(hash, R2_32) * M_32 + N_32;
+	}
+	private static int fmix32(final int length, int hash) {
+	    hash ^= length;
+	    hash ^= (hash >>> 16);
+	    hash *= 0x85ebca6b;
+	    hash ^= (hash >>> 13);
+	    hash *= 0xc2b2ae35;
+	    hash ^= (hash >>> 16);
 
-    private static int mix32(int k, int hash) {
-        k *= C1_32;
-        k = Integer.rotateLeft(k, R1_32);
-        k *= C2_32;
-        hash ^= k;
-        return Integer.rotateLeft(hash, R2_32) * M_32 + N_32;
-    }
+	    return hash;
+	}
+	private static long fmix64(long h) {
+	    h ^= (h >>> 33);
+	    h *= 0xff51afd7ed558ccdL;
+	    h ^= (h >>> 33);
+	    h *= 0xc4ceb9fe1a85ec53L;
+	    h ^= (h >>> 33);
+	    return h;
+	}
+	public static class IncrementalHash32 {
+	    byte[] tail = new byte[3];
+	    int tailLen;
+	    int totalLen;
+	    int hash;
 
-    private static int fmix32(final int length, int hash) {
-        hash ^= length;
-        hash ^= (hash >>> 16);
-        hash *= 0x85ebca6b;
-        hash ^= (hash >>> 13);
-        hash *= 0xc2b2ae35;
-        hash ^= (hash >>> 16);
+	    public final void start(final int hash) {
+	        tailLen = totalLen = 0;
+	        this.hash = hash;
+	    }
 
-        return hash;
-    }
+	    public final void add(final byte[] data, int offset, final int length) {
+	        if (length == 0) {
+	            return;
+	        }
+	        totalLen += length;
+	        if (tailLen + length < 4) {
+	            System.arraycopy(data, offset, tail, tailLen, length);
+	            tailLen += length;
+	            return;
+	        }
+	        int offset2 = 0;
+	        if (tailLen > 0) {
+	            offset2 = (4 - tailLen);
+	            int k = -1;
+	            switch (tailLen) {
+	            case 1:
+	                k = orBytes(tail[0], data[offset], data[offset + 1], data[offset + 2]);
+	                break;
+	            case 2:
+	                k = orBytes(tail[0], tail[1], data[offset], data[offset + 1]);
+	                break;
+	            case 3:
+	                k = orBytes(tail[0], tail[1], tail[2], data[offset]);
+	                break;
+	            default:
+	                throw new AssertionError(tailLen);
+	            }
+	            // mix functions
+	            k *= C1_32;
+	            k = Integer.rotateLeft(k, R1_32);
+	            k *= C2_32;
+	            hash ^= k;
+	            hash = Integer.rotateLeft(hash, R2_32) * M_32 + N_32;
+	        }
+	        final int length2 = length - offset2;
+	        offset += offset2;
+	        final int nblocks = length2 >> 2;
 
-    private static long fmix64(long h) {
-        h ^= (h >>> 33);
-        h *= 0xff51afd7ed558ccdL;
-        h ^= (h >>> 33);
-        h *= 0xc4ceb9fe1a85ec53L;
-        h ^= (h >>> 33);
-        return h;
-    }
+	                for (int i = 0; i < nblocks; i++) {
+	                    final int i_4 = (i << 2) + offset;
+	                    int k = orBytes(data[i_4], data[i_4 + 1], data[i_4 + 2], data[i_4 + 3]);
 
-    public static class IncrementalHash32 {
-        byte[] tail = new byte[3];
-        int tailLen;
-        int totalLen;
-        int hash;
+	                    // mix functions
+	                    k *= C1_32;
+	                    k = Integer.rotateLeft(k, R1_32);
+	                    k *= C2_32;
+	                    hash ^= k;
+	                    hash = Integer.rotateLeft(hash, R2_32) * M_32 + N_32;
+	                }
 
-        public final void start(final int hash) {
-            tailLen = totalLen = 0;
-            this.hash = hash;
-        }
+	                final int consumed = (nblocks << 2);
+	                tailLen = length2 - consumed;
+	                if (consumed == length2) {
+	                    return;
+	                }
+	                System.arraycopy(data, offset + consumed, tail, 0, tailLen);
+	    }
 
-        public final void add(final byte[] data, int offset, final int length) {
-            if (length == 0) {
-                return;
-            }
-            totalLen += length;
-            if (tailLen + length < 4) {
-                System.arraycopy(data, offset, tail, tailLen, length);
-                tailLen += length;
-                return;
-            }
-            int offset2 = 0;
-            if (tailLen > 0) {
-                offset2 = (4 - tailLen);
-                int k = -1;
-                switch (tailLen) {
-                case 1:
-                    k = orBytes(tail[0], data[offset], data[offset + 1], data[offset + 2]);
-                    break;
-                case 2:
-                    k = orBytes(tail[0], tail[1], data[offset], data[offset + 1]);
-                    break;
-                case 3:
-                    k = orBytes(tail[0], tail[1], tail[2], data[offset]);
-                    break;
-                default:
-                    throw new AssertionError(tailLen);
-                }
-                // mix functions
-                k *= C1_32;
-                k = Integer.rotateLeft(k, R1_32);
-                k *= C2_32;
-                hash ^= k;
-                hash = Integer.rotateLeft(hash, R2_32) * M_32 + N_32;
-            }
-            final int length2 = length - offset2;
-            offset += offset2;
-            final int nblocks = length2 >> 2;
+		/*
+		 * The original algorithm uses unsigned bytes.
+		 * We have to mask to match the behavior of the unsigned bytes and prevent sign extension.
+		 */
+		public final int end() {
+		    int k1 = 0;
+		    switch (tailLen) {
+		    case 3:
+		        k1 ^= (tail[2] & UBYTE_MASK) << 16;
+		    case 2:
+		        k1 ^= (tail[1] & UBYTE_MASK) << 8;
+		    case 1:
+		        k1 ^= (tail[0] & UBYTE_MASK);
 
-                    for (int i = 0; i < nblocks; i++) {
-                        final int i_4 = (i << 2) + offset;
-                        int k = orBytes(data[i_4], data[i_4 + 1], data[i_4 + 2], data[i_4 + 3]);
+		        // mix functions
+		        k1 *= C1_32;
+		        k1 = Integer.rotateLeft(k1, R1_32);
+		        k1 *= C2_32;
+		        hash ^= k1;
+		    }
 
-                        // mix functions
-                        k *= C1_32;
-                        k = Integer.rotateLeft(k, R1_32);
-                        k *= C2_32;
-                        hash ^= k;
-                        hash = Integer.rotateLeft(hash, R2_32) * M_32 + N_32;
-                    }
-
-                    final int consumed = (nblocks << 2);
-                    tailLen = length2 - consumed;
-                    if (consumed == length2) {
-                        return;
-                    }
-                    System.arraycopy(data, offset + consumed, tail, 0, tailLen);
-        }
-
-        public final int end() {
-            int k1 = 0;
-            switch (tailLen) {
-            case 3:
-                k1 ^= tail[2] << 16;
-            case 2:
-                k1 ^= tail[1] << 8;
-            case 1:
-                k1 ^= tail[0];
-
-                // mix functions
-                k1 *= C1_32;
-                k1 = Integer.rotateLeft(k1, R1_32);
-                k1 *= C2_32;
-                hash ^= k1;
-            }
-
-            // finalization
-            hash ^= totalLen;
-            hash ^= (hash >>> 16);
-            hash *= 0x85ebca6b;
-            hash ^= (hash >>> 13);
-            hash *= 0xc2b2ae35;
-            hash ^= (hash >>> 16);
-            return hash;
-        }
-    }
-
-    private static int orBytes(final byte b1, final byte b2, final byte b3, final byte b4) {
+		    // finalization
+		    hash ^= totalLen;
+		    hash ^= (hash >>> 16);
+		    hash *= 0x85ebca6b;
+		    hash ^= (hash >>> 13);
+		    hash *= 0xc2b2ae35;
+		    hash ^= (hash >>> 16);
+		    return hash;
+		}
+	}
+<<<<<<< /usr/src/app/output/apache/commons-codec/7a2a8d1c51a2851cd60d4f719592a260b366d931/src/main/java/org/apache/commons/codec/digest/MurmurHash3.java/left.java
+	private static int orBytes(final byte b1, final byte b2, final byte b3, final byte b4) {
         return (b1 & 0xff) | ((b2 & 0xff) << 8) | ((b3 & 0xff) << 16) | ((b4 & 0xff) << 24);
     }
-
-    /**
-     * Generates 32 bit hash from a long with default seed value.
-     *
-     * @param l0 long to hash
-     * @return 32 bit hash
-     */
+||||||| /usr/src/app/output/apache/commons-codec/7a2a8d1c51a2851cd60d4f719592a260b366d931/src/main/java/org/apache/commons/codec/digest/MurmurHash3.java/base.java
+	private static int orBytes(final byte b1, final byte b2, final byte b3, final byte b4) {
+		return (b1 & 0xff) | ((b2 & 0xff) << 8) | ((b3 & 0xff) << 16) | ((b4 & 0xff) << 24);
+	}
+=======
+	private static int orBytes(final byte b1, final byte b2, final byte b3, final byte b4) {
+		return (b1 & UBYTE_MASK) | ((b2 & UBYTE_MASK) << 8) | ((b3 & UBYTE_MASK) << 16) | ((b4 & UBYTE_MASK) << 24);
+	}
+>>>>>>> /usr/src/app/output/apache/commons-codec/7a2a8d1c51a2851cd60d4f719592a260b366d931/src/main/java/org/apache/commons/codec/digest/MurmurHash3.java/right.java
+	/**
+	 * Generates 32 bit hash from a long with default seed value.
+	 *
+	 * @param l0 long to hash
+	 * @return 32 bit hash
+	 */
     public static int hash32_x86(final long l0) {
         return hash32_x86(l0, DEFAULT_SEED);
     }
-
-    /**
-     * Generates 32 bit hash from a long with the given seed.
-     *
-     * @param l0   long to hash
-     * @param seed initial seed value
-     * @return 32 bit hash
-     */
+	/**
+	 * Generates 32 bit hash from a long with the given seed.
+	 *
+	 * @param l0   long to hash
+	 * @param seed initial seed value
+	 * @return 32 bit hash
+	 */
     public static int hash32_x86(final long l0, final int seed) {
         int hash = seed;
         final long r0 = Long.reverseBytes(l0);
@@ -705,26 +692,24 @@ public final class MurmurHash3 {
 
         return fmix32(LONG_BYTES, hash);
     }
-    
-    /**
-     * Generates 32 bit hash from two longs with default seed value.
-     *
-     * @param l0 long to hash
-     * @param l1 long to hash
-     * @return 32 bit hash
-     */
+	/**
+	 * Generates 32 bit hash from two longs with default seed value.
+	 *
+	 * @param l0 long to hash
+	 * @param l1 long to hash
+	 * @return 32 bit hash
+	 */
     public static int hash32_x86(final long l0, final long l1) {
         return hash32_x86(l0, l1, DEFAULT_SEED);
     }
-    
-    /**
-     * Generates 32 bit hash from two longs with the given seed.
-     *
-     * @param l0   long to hash
-     * @param l1   long to hash
-     * @param seed initial seed value
-     * @return 32 bit hash
-     */
+	/**
+	 * Generates 32 bit hash from two longs with the given seed.
+	 *
+	 * @param l0   long to hash
+	 * @param l1   long to hash
+	 * @param seed initial seed value
+	 * @return 32 bit hash
+	 */
     public static int hash32_x86(final long l0, final long l1, final int seed) {
         int hash = seed;
         final long r0 = Long.reverseBytes(l0);
@@ -737,7 +722,6 @@ public final class MurmurHash3 {
 
         return fmix32(LONG_BYTES * 2, hash);
     }
-
     /**
      * Generates 32 bit hash from byte array with the default seed.
      *
@@ -747,7 +731,6 @@ public final class MurmurHash3 {
     public static int hash32_x86(final byte[] data) {
         return hash32_x86(data, 0, data.length, DEFAULT_SEED);
     }
-
     /**
      * Generates 32 bit hash from a string with the default seed.
      *
@@ -757,7 +740,6 @@ public final class MurmurHash3 {
     public static int hash32_x86(final String data) {
         return hash32_x86(data, 0, data.length(), DEFAULT_SEED);
     }
-
     /**
      * Generates 32 bit hash from byte array with the default seed.
      *
@@ -768,7 +750,6 @@ public final class MurmurHash3 {
     public static int hash32_x86(final byte[] data, final int length) {
         return hash32_x86(data, length, DEFAULT_SEED);
     }
-
     /**
      * Generates 32 bit hash from byte array with the given length and seed.
      *
@@ -780,8 +761,6 @@ public final class MurmurHash3 {
     public static int hash32_x86(final byte[] data, final int length, final int seed) {
         return hash32_x86(data, 0, length, seed);
     }
-
-
     /**
      * Generates 32 bit hash from byte array with the given length and seed.
      *
@@ -841,8 +820,6 @@ public final class MurmurHash3 {
 
         return h1;
     }
-
-
     /** Returns the MurmurHash3_x86_32 hash of the UTF-8 bytes of the String without actually encoding
      * the string to a temporary buffer.  This is more than 2x faster than hashing the result
      * of String.getBytes().
@@ -949,7 +926,6 @@ public final class MurmurHash3 {
 
         return h1;
     }
-
     /**
      * Gets a long from a byte buffer in little endian byte order.
      * byte must be at least offset+7 bytes long.
@@ -967,7 +943,6 @@ public final class MurmurHash3 {
             | ((buf[offset+1] & UBYTE_LONG_MASK) << 8)
             | ((buf[offset  ] & UBYTE_LONG_MASK));        // no shift needed
     }
-
     /**
      * Murmur3 128-bit variant.
      *
@@ -978,7 +953,6 @@ public final class MurmurHash3 {
     public static long[] hash128_x64(final byte[] data) {
         return hash128_x64(data, DEFAULT_SEED);
     }
-
     /**
      * Murmur3 128-bit variant.
      *
@@ -989,7 +963,6 @@ public final class MurmurHash3 {
     public static long[] hash128_x64(final byte[] data, int seed) {
         return hash128_x64(data, 0, data.length, seed);
     }
-
     /**
      * Murmur3 128-bit x64 variant.
      *
@@ -1002,7 +975,6 @@ public final class MurmurHash3 {
     public static long[] hash128_x64(final String data) {
         return hash128_x64(data, DEFAULT_SEED);
     }
-
     /**
      * Murmur3 128-bit x64 variant.
      *
@@ -1016,7 +988,6 @@ public final class MurmurHash3 {
         final byte[] origin = data.getBytes(StandardCharsets.UTF_8);
         return hash128_x64(origin, 0, origin.length, seed);
     }
-
     /**
      * Murmur3 128-bit x64 variant.
      *
@@ -1085,6 +1056,11 @@ public final class MurmurHash3 {
 
         return new long[] {h1,h2};
     }
-
-
+  /** TODO Replace on Java 8 with Long.BYTES. */
+  /** TODO Replace on Java 8 with Integer.BYTES. */
+  /** TODO Replace on Java 8 with Short.BYTES. */
+	// from 64-bit linear congruential generator
+	// Constants for 32 bit variant
+	// Constants for 128 bit variant
+	// all methods static; private constructor.
 }
