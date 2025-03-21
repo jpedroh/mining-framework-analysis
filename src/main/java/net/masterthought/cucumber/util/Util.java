@@ -5,10 +5,10 @@ import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Locale;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import net.masterthought.cucumber.json.Element;
 import net.masterthought.cucumber.json.Step;
 import net.masterthought.cucumber.json.support.Status;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
