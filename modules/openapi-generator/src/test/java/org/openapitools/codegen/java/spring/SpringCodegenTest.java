@@ -749,45 +749,6 @@ public class SpringCodegenTest {
 
     }
 
-    /**define the destinationFilename*/
-    private final static String DESTINATIONFILE = "OpenAPIDocumentationConfig.java";
-    /**define the templateFile*/
-    private final static String TEMPLATEFILE = "openapiDocumentationConfig.mustache";
-
-    /**
-     * test whether OpenAPIDocumentationConfig.java is generated
-     * fix issue #10287
-     */
-    @Test
-    public void testConfigFileGeneration() {
-
-        final SpringCodegen codegen = new SpringCodegen();
-
-        codegen.additionalProperties().put(SpringCodegen.INTERFACE_ONLY, false);
-        codegen.additionalProperties().put(SpringCodegen.SPRING_CLOUD_LIBRARY, "spring-cloud");
-        codegen.additionalProperties().put(SpringCodegen.OPENAPI_DOCKET_CONFIG, true);
-        codegen.additionalProperties().put(SpringCodegen.REACTIVE, false);
-        codegen.additionalProperties().put(SpringCodegen.API_FIRST, false);
-
-        codegen.processOpts();
-        final List<SupportingFile> supList = codegen.supportingFiles();
-        String tmpFile;
-        String desFile;
-        boolean flag = false;
-        for (final SupportingFile s : supList) {
-            tmpFile = s.getTemplateFile();
-            desFile = s.getDestinationFilename();
-
-            if (TEMPLATEFILE.equals(tmpFile)) {
-                flag = true;
-                assertEquals(desFile, DESTINATIONFILE);
-            }
-        }
-        if(!flag){
-            fail("OpenAPIDocumentationConfig.java not generated");
-        }
-    }
-
     @Test
     public void oneOf_5381() throws IOException {
         File output = Files.createTempDirectory("test").toFile().getCanonicalFile();
@@ -826,14 +787,49 @@ public class SpringCodegenTest {
         assertFileContains(Paths.get(outputPath + "/src/main/java/org/openapitools/model/FooRef.java"), "public class FooRef implements FooRefOrValue");
         assertFileContains(Paths.get(outputPath + "/src/main/java/org/openapitools/model/FooRefOrValue.java"), "public interface FooRefOrValue");
     }
+    /**define the destinationFilename*/
+    private final static String DESTINATIONFILE = "OpenAPIDocumentationConfig.java";
+    /**define the templateFile*/
+    private final static String TEMPLATEFILE = "openapiDocumentationConfig.mustache";
+    /**
+     * test whether OpenAPIDocumentationConfig.java is generated
+     * fix issue #10287
+     */
+    @Test
+    public void testConfigFileGeneration() {
 
+        final SpringCodegen codegen = new SpringCodegen();
+
+        codegen.additionalProperties().put(SpringCodegen.INTERFACE_ONLY, false);
+        codegen.additionalProperties().put(SpringCodegen.SPRING_CLOUD_LIBRARY, "spring-cloud");
+        codegen.additionalProperties().put(SpringCodegen.OPENAPI_DOCKET_CONFIG, true);
+        codegen.additionalProperties().put(SpringCodegen.REACTIVE, false);
+        codegen.additionalProperties().put(SpringCodegen.API_FIRST, false);
+
+        codegen.processOpts();
+        final List<SupportingFile> supList = codegen.supportingFiles();
+        String tmpFile;
+        String desFile;
+        boolean flag = false;
+        for (final SupportingFile s : supList) {
+            tmpFile = s.getTemplateFile();
+            desFile = s.getDestinationFilename();
+
+            if (TEMPLATEFILE.equals(tmpFile)) {
+                flag = true;
+                assertEquals(desFile, DESTINATIONFILE);
+            }
+        }
+        if(!flag){
+            fail("OpenAPIDocumentationConfig.java not generated");
+        }
+    }
     @Test
     public void testTypeMappings() {
         final SpringCodegen codegen = new SpringCodegen();
         codegen.processOpts();
         Assert.assertEquals(codegen.typeMapping().get("file"), "Resource");
     }
-
     @Test
     public void testImportMappings() {
         final SpringCodegen codegen = new SpringCodegen();
