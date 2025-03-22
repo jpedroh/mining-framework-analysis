@@ -1,34 +1,6 @@
-/**
- * Copyright (C) 2010, 2011 by Arne Kesting, Martin Treiber,
- *                             Ralph Germ, Martin Budden
- *                             <info@movsim.org>
- * ----------------------------------------------------------------------
- * 
- *  This file is part of 
- *  
- *  MovSim - the multi-model open-source vehicular-traffic simulator 
- *
- *  MovSim is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  MovSim is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with MovSim.  If not, see <http://www.gnu.org/licenses/> or
- *  <http://www.movsim.org>.
- *  
- * ----------------------------------------------------------------------
- */
 package org.movsim.simulator.roadSection.impl;
-
 import java.io.PrintWriter;
 import java.util.List;
-
 import org.movsim.input.model.simulation.UpstreamBoundaryData;
 import org.movsim.output.fileoutput.FileUpstreamBoundaryData;
 import org.movsim.simulator.Constants;
@@ -42,50 +14,47 @@ import org.movsim.utilities.impl.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class UpstreamBoundaryImpl.
  */
 public class UpstreamBoundaryImpl implements UpstreamBoundary {
+  private FileUpstreamBoundaryData fileUpstreamBoundary;
 
-<<<<<<< HEAD
-    private static final String extensionFormat = ".S%d_log.csv";
-    private static final String outputHeading = Constants.COMMENT_CHAR
-            + "     t[s], lane,  xEnter[m],    v[km/h],   total qBC[1/h],    count,      queue\n";
-    private static final String outputFormat = "%10.2f, %4d, %10.2f, %10.2f, %10.2f, %8d, %10.5f%n";
+  /** The Constant logger. */
+  final static Logger logger = LoggerFactory.getLogger(UpstreamBoundaryImpl.class);
 
+
+<<<<<<< /usr/src/app/output/movsim/movsim/a1a04271dd9f9c1984db574e638fc0eb890760d3/src/main/java/org/movsim/simulator/roadSection/impl/UpstreamBoundaryImpl.java/left.java
+  private static final String outputHeading = Constants.COMMENT_CHAR + "     t[s], lane,  xEnter[m],    v[km/h],   total qBC[1/h],    count,      queue\n";
 =======
->>>>>>> df3df68bf0da2145eb5fdcbc5ccf00e098abf7ec
-    /** The Constant logger. */
-    final static Logger logger = LoggerFactory.getLogger(UpstreamBoundaryImpl.class);
+>>>>>>> Unknown file: This is a bug in JDime.
 
-    /** The n wait. */
-    private double nWait;
 
-    /** The veh generator. */
-    private final VehicleGenerator vehGenerator;
+  /** The n wait. */
+  private double nWait;
 
-    /** The veh container. */
-    private final List<VehicleContainer> vehContainers;
+  /** The veh generator. */
+  private final VehicleGenerator vehGenerator;
 
-    /** The inflow time series. */
-    private final InflowTimeSeries inflowTimeSeries;
+  /** The veh container. */
+  private final List<VehicleContainer> vehContainers;
 
-    /** The entering veh counter. */
-    private int enteringVehCounter;
+  /** The inflow time series. */
+  private final InflowTimeSeries inflowTimeSeries;
 
-    // status of last merging vehicle for logging to file
-    /** The x enter last. */
-    private double xEnterLast;
+  /** The entering veh counter. */
+  private int enteringVehCounter;
 
-    /** The v enter last. */
-    private double vEnterLast;
+  /** The x enter last. */
+  private double xEnterLast;
 
-    /** The lane enter last. */
-    private int laneEnterLast;
-    private FileUpstreamBoundaryData fileUpstreamBoundary;
+  /** The v enter last. */
+  private double vEnterLast;
 
-    /**
+  /** The lane enter last. */
+  private int laneEnterLast;
+
+  /**
      * Instantiates a new upstream boundary impl.
      * 
      * @param vehGenerator
@@ -97,74 +66,54 @@ public class UpstreamBoundaryImpl implements UpstreamBoundary {
      * @param projectName
      *            the project name
      */
-    public UpstreamBoundaryImpl(VehicleGenerator vehGenerator, List<VehicleContainer> vehContainers,
-            UpstreamBoundaryData upstreamBoundaryData, String projectName) {
-        this.vehGenerator = vehGenerator;
-        this.vehContainers = vehContainers;
-        nWait = 0;
-        enteringVehCounter = 1;
-        inflowTimeSeries = new InflowTimeSeriesImpl(upstreamBoundaryData.getInflowTimeSeries());
+  public UpstreamBoundaryImpl(VehicleGenerator vehGenerator, List<VehicleContainer> vehContainers, UpstreamBoundaryData upstreamBoundaryData, String projectName) {
+    this.vehGenerator = vehGenerator;
+    this.vehContainers = vehContainers;
+    nWait = 0;
+    enteringVehCounter = 1;
+    inflowTimeSeries = new InflowTimeSeriesImpl(upstreamBoundaryData.getInflowTimeSeries());
+    if (upstreamBoundaryData.withLogging()) {
+      fileUpstreamBoundary = new FileUpstreamBoundaryData(projectName);
+    }
+  }
 
-        if (upstreamBoundaryData.withLogging()) {
-            fileUpstreamBoundary = new FileUpstreamBoundaryData(projectName);
-        }
-    }
+  private int getNewLaneIndex(int iLane) {
+    return (iLane == vehContainers.size() - 1 ? 0 : iLane + 1);
+  }
 
-    
-    private int getNewLaneIndex(int iLane){
-        return (iLane==vehContainers.size()-1 ? 0 : iLane+1);
-    }
-    
-    
-    public double getTotalInflow(double time){
-        // inflow over all lanes
-        final double qBC = inflowTimeSeries.getFlowPerLane(time);
-        final int nLanes = vehContainers.size();
-        return nLanes * qBC;
-    }
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.movsim.simulator.roadSection.UpstreamBoundary#update(int,
-     * double, double)
-     */
-    @Override
-    public void update(int itime, double dt, double time) {
-        // integrate inflow demand
-        final double totalInflow = getTotalInflow(time);
-        nWait +=  totalInflow * dt;  
-        if (nWait >= 1) {
-            // try to insert new vehicle at inflow 
-            // iterate periodically over n lanes  
-            int iLane = laneEnterLast;
-            for (int i = 0, N = vehContainers.size(); i < N; i++) {
-                iLane = getNewLaneIndex(iLane);
-                final VehicleContainer vehContainerLane = vehContainers.get(iLane);
-                // lane index is identical to vehicle's lane number 
-                final boolean isEntered = tryEnteringNewVehicle(vehContainerLane, iLane, time, totalInflow);
-                if (isEntered) {
-                    nWait--;
-<<<<<<< HEAD
-                    if (fstrLogging != null) {
-                        fstrLogging.printf(outputFormat, time, laneEnterLast, xEnterLast, 3.6 * vEnterLast, 3600 * totalInflow,
+  public double getTotalInflow(double time) {
+    final double qBC = inflowTimeSeries.getFlowPerLane(time);
+    final int nLanes = vehContainers.size();
+    return nLanes * qBC;
+  }
+
+  @Override public void update(int itime, double dt, double time) {
+    final double totalInflow = getTotalInflow(time);
+    nWait += totalInflow * dt;
+    if (nWait >= 1) {
+      int iLane = laneEnterLast;
+      for (int i = 0, N = vehContainers.size(); i < N; i++) {
+        iLane = getNewLaneIndex(iLane);
+        final VehicleContainer vehContainerLane = vehContainers.get(iLane);
+        final boolean isEntered = tryEnteringNewVehicle(vehContainerLane, iLane, time, totalInflow);
+        if (isEntered) {
+          nWait--;
+          if (fileUpstreamBoundary != null) {
+
+<<<<<<< /usr/src/app/output/movsim/movsim/a1a04271dd9f9c1984db574e638fc0eb890760d3/src/main/java/org/movsim/simulator/roadSection/impl/UpstreamBoundaryImpl.java/left.java
+            fstrLogging.printf(outputFormat, time, laneEnterLast, xEnterLast, 3.6 * vEnterLast, 3600 * totalInflow, enteringVehCounter, nWait);
 =======
-                    if (fileUpstreamBoundary != null) {
-                        fileUpstreamBoundary.update(time, laneEnterLast, xEnterLast, 3.6 * vEnterLast, 3600 * qBC,
->>>>>>> df3df68bf0da2145eb5fdcbc5ccf00e098abf7ec
-                                enteringVehCounter, nWait);
-                        
-                    }
-                    return; // only one insert per simulation update
-                }
-            }
+>>>>>>> Unknown file: This is a bug in JDime.
+
+            fileUpstreamBoundary.update(time, laneEnterLast, xEnterLast, 3.6 * vEnterLast, 3600 * qBC, enteringVehCounter, nWait);
+          }
+          return;
         }
+      }
     }
+  }
 
-
-   
-
-    
-    /**
+  /**
      * Try entering new vehicle.
      * 
      * @param time
@@ -173,41 +122,32 @@ public class UpstreamBoundaryImpl implements UpstreamBoundary {
      *            the q bc
      * @return true, if successful
      */
-    private boolean tryEnteringNewVehicle(final VehicleContainer vehContainer, int lane, double time, double qBC) {
-
-        // type of new vehicle
-        final VehiclePrototype vehPrototype = vehGenerator.getVehiclePrototype(); 
-        final Vehicle leader = vehContainer.getMostUpstream();
-
-        // (1) empty road
-        if (leader == null) {
-            enterVehicleOnEmptyRoad(vehContainer, lane, time, vehPrototype);
-            return true;
-        }
-        // (2) check if gap to leader is sufficiently large
-        // origin of road section is assumed to be zero
-        final double netGapToLeader = leader.getPosition() - leader.getLength();
-        double gapAtQMax = 1. / vehPrototype.getRhoQMax();
-        if (vehPrototype.getLongModel().modelName().equalsIgnoreCase("")) {
-            final double tau = 1;
-            gapAtQMax = leader.getSpeed() * tau;
-        }
-        // minimal distance set to 80% of 1/rho at flow maximum in fundamental
-        // diagram
-        double minRequiredGap = 0.8 * gapAtQMax;
-        if (vehPrototype.getLongModel().isCA()) {
-            final double tau = 1;
-            minRequiredGap = leader.getSpeed() * tau;
-        }
-        if (netGapToLeader > minRequiredGap) {
-            enterVehicle(vehContainer, lane, time, minRequiredGap, vehPrototype, leader);
-            return true;
-        }
-        // no entering possible
-        return false;
+  private boolean tryEnteringNewVehicle(final VehicleContainer vehContainer, int lane, double time, double qBC) {
+    final VehiclePrototype vehPrototype = vehGenerator.getVehiclePrototype();
+    final Vehicle leader = vehContainer.getMostUpstream();
+    if (leader == null) {
+      enterVehicleOnEmptyRoad(vehContainer, lane, time, vehPrototype);
+      return true;
     }
+    final double netGapToLeader = leader.getPosition() - leader.getLength();
+    double gapAtQMax = 1. / vehPrototype.getRhoQMax();
+    if (vehPrototype.getLongModel().modelName().equalsIgnoreCase("")) {
+      final double tau = 1;
+      gapAtQMax = leader.getSpeed() * tau;
+    }
+    double minRequiredGap = 0.8 * gapAtQMax;
+    if (vehPrototype.getLongModel().isCA()) {
+      final double tau = 1;
+      minRequiredGap = leader.getSpeed() * tau;
+    }
+    if (netGapToLeader > minRequiredGap) {
+      enterVehicle(vehContainer, lane, time, minRequiredGap, vehPrototype, leader);
+      return true;
+    }
+    return false;
+  }
 
-    /**
+  /**
      * Enter vehicle on empty road.
      * 
      * @param time
@@ -215,14 +155,13 @@ public class UpstreamBoundaryImpl implements UpstreamBoundary {
      * @param vehPrototype
      *            the veh prototype
      */
-    private void enterVehicleOnEmptyRoad(final VehicleContainer vehContainer, int lane, double time, VehiclePrototype vehPrototype) {
-        final double xEnter = 0;
-        final double vEnter = inflowTimeSeries.getSpeed(time);
-        addVehicle(vehContainer, lane, vehPrototype, xEnter, vEnter);
-//        logger.debug("add vehicle from upstream boundary to empty road: xEnter={}, vEnter={}", xEnter, vEnter);
-    }
+  private void enterVehicleOnEmptyRoad(final VehicleContainer vehContainer, int lane, double time, VehiclePrototype vehPrototype) {
+    final double xEnter = 0;
+    final double vEnter = inflowTimeSeries.getSpeed(time);
+    addVehicle(vehContainer, lane, vehPrototype, xEnter, vEnter);
+  }
 
-    /**
+  /**
      * Enter vehicle.
      * 
      * @param time
@@ -234,35 +173,26 @@ public class UpstreamBoundaryImpl implements UpstreamBoundary {
      * @param leader
      *            the leader
      */
-    private void enterVehicle(final VehicleContainer vehContainer, int lane, double time, double sFreeMin, VehiclePrototype vehPrototype, Vehicle leader) {
-        final double sFree = leader.getPosition() - leader.getLength();
-        final double xLast = leader.getPosition();
-        final double vLast = leader.getSpeed();
-        final double aLast = leader.getAcc();
+  private void enterVehicle(final VehicleContainer vehContainer, int lane, double time, double sFreeMin, VehiclePrototype vehPrototype, Vehicle leader) {
+    final double sFree = leader.getPosition() - leader.getLength();
+    final double xLast = leader.getPosition();
+    final double vLast = leader.getSpeed();
+    final double aLast = leader.getAcc();
+    final double speedDefault = inflowTimeSeries.getSpeed(time);
+    final double vEnterTest = Math.min(speedDefault, 1.5 * vLast);
+    final double lengthLast = leader.getLength();
+    final double qBC = inflowTimeSeries.getFlowPerLane(time);
+    final double xEnter = Math.min(vEnterTest * nWait / Math.max(qBC, 0.001), xLast - sFreeMin - lengthLast);
+    final double rhoEnter = 1. / (xLast - xEnter);
+    final double vMaxEq = vehPrototype.getEquilibriumSpeed(0.5 * rhoEnter);
+    final double bMax = 4;
+    final double bEff = Math.max(0.1, bMax + aLast);
+    final double vMaxKin = vLast + Math.sqrt(2 * sFree * bEff);
+    final double vEnter = Math.min(Math.min(vEnterTest, vMaxEq), vMaxKin);
+    addVehicle(vehContainer, lane, vehPrototype, xEnter, vEnter);
+  }
 
-        final double speedDefault = inflowTimeSeries.getSpeed(time);
-        final double vEnterTest = Math.min(speedDefault, 1.5 * vLast);
-        final double lengthLast = leader.getLength();
-
-        final double qBC = inflowTimeSeries.getFlowPerLane(time);
-        final double xEnter = Math.min(vEnterTest * nWait / Math.max(qBC, 0.001), xLast - sFreeMin - lengthLast);
-        final double rhoEnter = 1. / (xLast - xEnter);
-        final double vMaxEq = vehPrototype.getEquilibriumSpeed(0.5 * rhoEnter);
-        final double bMax = 4; // max. kinematic deceleration at boundary
-        final double bEff = Math.max(0.1, bMax + aLast);
-        final double vMaxKin = vLast + Math.sqrt(2 * sFree * bEff);
-        final double vEnter = Math.min(Math.min(vEnterTest, vMaxEq), vMaxKin);
-        //final int laneEnter = Constants.MOST_RIGHT_LANE;
-
-        addVehicle(vehContainer, lane, vehPrototype, xEnter, vEnter);
-//        logger.debug("add vehicle from upstream boundary: xEnter={}, vEnter={}",
-//         xEnter, vEnter);
-//        System.out.printf("add vehicle from upstream boundary: xLast=%.2f, vLast=%.2f, xEnter=%.2f, vEnter=%.2f, lane=%d, rhoEnter=%.2f, vMaxEq=%.2f, vMaxKin=%.2f %n",
-//          xLast, vLast, xEnter, vEnter, lane, rhoEnter, vMaxEq, vMaxKin );
-    }
-
-    
-    /**
+  /**
      * Adds the vehicle.
      * 
      * @param vehPrototype
@@ -274,13 +204,12 @@ public class UpstreamBoundaryImpl implements UpstreamBoundary {
      * @param laneEnter
      *            the lane enter
      */
-    private void addVehicle(final VehicleContainer vehContainer, int laneEnter, final VehiclePrototype vehPrototype, double xEnter, double vEnter) {
-        final Vehicle veh = vehGenerator.createVehicle(vehPrototype);
-        vehContainer.add(veh, xEnter, vEnter, laneEnter);
-        // status variables of entering vehicle for logging
-        enteringVehCounter++;
-        xEnterLast = xEnter;
-        vEnterLast = vEnter;
-        laneEnterLast = laneEnter;
-    }
+  private void addVehicle(final VehicleContainer vehContainer, int laneEnter, final VehiclePrototype vehPrototype, double xEnter, double vEnter) {
+    final Vehicle veh = vehGenerator.createVehicle(vehPrototype);
+    vehContainer.add(veh, xEnter, vEnter, laneEnter);
+    enteringVehCounter++;
+    xEnterLast = xEnter;
+    vEnterLast = vEnter;
+    laneEnterLast = laneEnter;
+  }
 }
