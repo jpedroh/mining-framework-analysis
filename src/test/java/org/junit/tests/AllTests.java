@@ -1,5 +1,4 @@
 package org.junit.tests;
-
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import org.junit.AssumptionViolatedExceptionTest;
@@ -21,29 +20,23 @@ import org.junit.tests.manipulation.AllManipulationTests;
 import org.junit.tests.running.AllRunningTests;
 import org.junit.tests.validation.AllValidationTests;
 import org.junit.validator.AllValidatorTests;
+import org.junit.tests.manipulation.OrderWithTest;
+import org.junit.tests.manipulation.OrderableTest;
 
-@RunWith(Suite.class)
-@SuiteClasses({
-        AllAssertionTests.class,
-        AllDeprecatedTests.class,
-        AllDescriptionTests.class,
-        AllExperimentalTests.class,
-        AllInternalTests.class,
-        AllJUnit3CompatibilityTests.class,
-        AllListeningTests.class,
-        AllManipulationTests.class,
-        AllRulesTests.class,
-        AllRunnersTests.class,
-        AllRunnerTests.class,
-        AllRunningTests.class,
-        AllSamplesTests.class,
-        AllValidationTests.class,
-        AllValidatorTests.class,
-        AssumptionViolatedExceptionTest.class,
-        ObjectContractTest.class
-})
-public class AllTests {
-    public static Test suite() {
-        return new JUnit4TestAdapter(AllTests.class);
-    }
+@RunWith(value = Suite.class) @SuiteClasses(value = { AllAssertionTests.class, AllDeprecatedTests.class, AllDescriptionTests.class, AllExperimentalTests.class, AllInternalTests.class, 
+<<<<<<< /usr/src/app/output/junit-team/junit4/6e38776326e9a68beb47e8ea491eef4761be511f/src/test/java/org/junit/tests/AllTests.java/left.java
+OrderableTest
+=======
+AllJUnit3CompatibilityTests
+>>>>>>> /usr/src/app/output/junit-team/junit4/6e38776326e9a68beb47e8ea491eef4761be511f/src/test/java/org/junit/tests/AllTests.java/right.java
+.class, 
+<<<<<<< /usr/src/app/output/junit-team/junit4/6e38776326e9a68beb47e8ea491eef4761be511f/src/test/java/org/junit/tests/AllTests.java/left.java
+OrderWithTest
+=======
+AllListeningTests
+>>>>>>> /usr/src/app/output/junit-team/junit4/6e38776326e9a68beb47e8ea491eef4761be511f/src/test/java/org/junit/tests/AllTests.java/right.java
+.class, AllManipulationTests.class, AllRulesTests.class, AllRunnersTests.class, AllRunnerTests.class, AllRunningTests.class, AllSamplesTests.class, AllValidationTests.class, AllValidatorTests.class, AssumptionViolatedExceptionTest.class, ObjectContractTest.class }) public class AllTests {
+  public static Test suite() {
+    return new JUnit4TestAdapter(AllTests.class);
+  }
 }
