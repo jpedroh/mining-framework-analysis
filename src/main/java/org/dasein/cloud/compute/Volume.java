@@ -55,6 +55,7 @@ public class Volume implements Networkable, Taggable {
     private String      providerSnapshotId;
     private Map<String,String> tags;
     private VolumeType  type;
+    private Map<String,String> tags;
 
     public Volume() { }
 
@@ -296,21 +297,44 @@ public class Volume implements Networkable, Taggable {
         this.providerVlanId = providerVlanId;
     }
 
+    public @Nullable String getTag(@Nonnull String key) {
+        return getTags().get(key);
+    }
+
+    @Override
+    public @Nonnull Map<String, String> getTags() {
+        return (tags == null ? new HashMap<String, String>() : tags);
+    }
+
+    @Override
+    public void setTag(@Nonnull String key, @Nonnull String value) {
+        if( tags == null ) {
+            tags = new HashMap<String,String>();
+        }
+        tags.put(key, value);
+    }
+
+    public Object getTag(String tag) {
+        return getTags().get(tag);
+    }
+
+    public synchronized Map<String,String> getTags() {
+        if( tags == null ) {
+            tags = new HashMap<String,String>();
+        }
+        return tags;
+    }
+
+    public void setTag(@Nonnull String key, @Nonnull String value) {
+        if( tags == null ) {
+            tags = new HashMap<String, String>();
+        }
+        tags.put(key, value);
+    }
+
     public synchronized void setTags(Map<String,String> properties) {
         getTags().clear();
         getTags().putAll(properties);
     }
 
-    @Override
-    public @Nonnull Map<String, String> getTags() {
-        if( tags == null ) {
-            tags = new HashMap<String, String>();
-        }
-        return tags;
-    }
-
-    @Override
-    public void setTag(@Nonnull String key, @Nonnull String value) {
-        getTags().put(key, value);
-    }
 }

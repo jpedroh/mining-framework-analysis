@@ -297,6 +297,7 @@ public interface SnapshotSupport extends AccessControlledService {
      * @throws CloudException an error occurred with the cloud provider
      */
     public boolean supportsSnapshotSharingWithPublic() throws InternalException, CloudException;
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/1e1c2fdcee36c18925a6eeccd9f88750b47d9e39/src/main/java/org/dasein/cloud/compute/SnapshotSupport.java/left.java
 
     /**
      * Updates meta-data for a snapshot with the new values. It will not overwrite any value that currently
@@ -317,4 +318,32 @@ public interface SnapshotSupport extends AccessControlledService {
      * @throws InternalException an error occurred within the Dasein Cloud API implementation
      */
     public abstract void updateTags(@Nonnull String[] snapshotIds, @Nonnull Tag... tags) throws CloudException, InternalException;
+||||||| /usr/src/app/output/greese/dasein-cloud-core/1e1c2fdcee36c18925a6eeccd9f88750b47d9e39/src/main/java/org/dasein/cloud/compute/SnapshotSupport.java/base.java
+=======
+
+
+    /**
+     * Updates meta-data for multiple snapshots with the new values. It will not overwrite any value that currently
+     * exists unless it appears in the tags you submit.
+     *
+     * @param snapshotIds the volumes to update
+     * @param tags     the meta-data tags to set
+     * @throws CloudException    an error occurred within the cloud provider
+     * @throws InternalException an error occurred within the Dasein Cloud API implementation
+     */
+    public abstract void updateTags(@Nonnull String[] snapshotIds, @Nonnull Tag... tags) throws CloudException, InternalException;
+
+    /**
+     * Removes meta-data from multiple snapshots. If tag values are set, their removal is dependent on underlying cloud
+     * provider behavior. They may be removed only if the tag value matches or they may be removed regardless of the
+     * value.
+     *
+     * @param snapshotIds the volumes to update
+     * @param tags     the meta-data tags to remove
+     * @throws CloudException    an error occurred within the cloud provider
+     * @throws InternalException an error occurred within the Dasein Cloud API implementation
+     */
+    public abstract void removeTags(@Nonnull String[] snapshotIds, @Nonnull Tag... tags) throws CloudException, InternalException;
+
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/1e1c2fdcee36c18925a6eeccd9f88750b47d9e39/src/main/java/org/dasein/cloud/compute/SnapshotSupport.java/right.java
 }
