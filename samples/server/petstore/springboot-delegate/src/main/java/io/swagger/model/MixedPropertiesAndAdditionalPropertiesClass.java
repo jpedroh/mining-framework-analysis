@@ -1,5 +1,4 @@
 package io.swagger.model;
-
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -12,31 +11,27 @@ import java.util.Map;
 import java.util.UUID;
 import org.threeten.bp.OffsetDateTime;
 import javax.validation.constraints.*;
+
 /**
  * MixedPropertiesAndAdditionalPropertiesClass
  */
+public class MixedPropertiesAndAdditionalPropertiesClass {
+  @JsonProperty(value = "uuid") private UUID uuid = null;
 
-public class MixedPropertiesAndAdditionalPropertiesClass   {
-  @JsonProperty("uuid")
-  private UUID uuid = null;
+  @JsonProperty(value = "dateTime") private OffsetDateTime dateTime = null;
 
-  @JsonProperty("dateTime")
-  private OffsetDateTime dateTime = null;
-
-  @JsonProperty("map")
-  private Map<String, Animal> map = null;
+  @JsonProperty(value = "map") private Map<String, Animal> map = null;
 
   public MixedPropertiesAndAdditionalPropertiesClass uuid(UUID uuid) {
     this.uuid = uuid;
     return this;
   }
 
-   /**
+  /**
    * Get uuid
    * @return uuid
   **/
-  @ApiModelProperty(value = "")
-  public UUID getUuid() {
+  @ApiModelProperty(value = "") public UUID getUuid() {
     return uuid;
   }
 
@@ -49,12 +44,11 @@ public class MixedPropertiesAndAdditionalPropertiesClass   {
     return this;
   }
 
-   /**
+  /**
    * Get dateTime
    * @return dateTime
   **/
-  @ApiModelProperty(value = "")
-  public OffsetDateTime getDateTime() {
+  @ApiModelProperty(value = "") public OffsetDateTime getDateTime() {
     return dateTime;
   }
 
@@ -72,12 +66,11 @@ public class MixedPropertiesAndAdditionalPropertiesClass   {
     return this;
   }
 
-   /**
+  /**
    * Get map
    * @return map
   **/
-  @ApiModelProperty(value = "")
-  public Map<String, Animal> getMap() {
+  @ApiModelProperty(value = "") public Map<String, Animal> getMap() {
     return map;
   }
 
@@ -85,9 +78,7 @@ public class MixedPropertiesAndAdditionalPropertiesClass   {
     this.map = map;
   }
 
-
-  @Override
-  public boolean equals(java.lang.Object o) {
+  @Override public boolean equals(java.lang.Object o) {
     if (this == o) {
       return true;
     }
@@ -95,21 +86,16 @@ public class MixedPropertiesAndAdditionalPropertiesClass   {
       return false;
     }
     MixedPropertiesAndAdditionalPropertiesClass mixedPropertiesAndAdditionalPropertiesClass = (MixedPropertiesAndAdditionalPropertiesClass) o;
-    return Objects.equals(this.uuid, mixedPropertiesAndAdditionalPropertiesClass.uuid) &&
-        Objects.equals(this.dateTime, mixedPropertiesAndAdditionalPropertiesClass.dateTime) &&
-        Objects.equals(this.map, mixedPropertiesAndAdditionalPropertiesClass.map);
+    return Objects.equals(this.uuid, mixedPropertiesAndAdditionalPropertiesClass.uuid) && Objects.equals(this.dateTime, mixedPropertiesAndAdditionalPropertiesClass.dateTime) && Objects.equals(this.map, mixedPropertiesAndAdditionalPropertiesClass.map);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(uuid, dateTime, map);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class MixedPropertiesAndAdditionalPropertiesClass {\n");
-    
     sb.append("    uuid: ").append(toIndentedString(uuid)).append("\n");
     sb.append("    dateTime: ").append(toIndentedString(dateTime)).append("\n");
     sb.append("    map: ").append(toIndentedString(map)).append("\n");
@@ -128,4 +114,3 @@ public class MixedPropertiesAndAdditionalPropertiesClass   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-
