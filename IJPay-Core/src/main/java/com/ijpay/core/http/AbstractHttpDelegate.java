@@ -3,6 +3,7 @@ package com.ijpay.core.http;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.net.SSLContextBuilder;
 import cn.hutool.core.net.SSLProtocols;
+import cn.hutool.http.HttpInterceptor;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
@@ -43,6 +44,11 @@ public abstract class AbstractHttpDelegate {
 	public Proxy getProxy(){
 		return null;
 	}
+	/**
+	 * 代理
+	 * @return
+	 */
+;
 
 	/**
 	 * get 请求
