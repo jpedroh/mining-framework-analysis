@@ -15,13 +15,13 @@
  */
 package me.zhengjie.modules.security.rest;
 
-import cn.hutool.db.PageResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.exception.BadRequestException;
 import me.zhengjie.modules.security.service.OnlineUserService;
 import me.zhengjie.modules.security.service.dto.OnlineUserDto;
+import me.zhengjie.utils.PageResult;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,6 +60,22 @@ public class OnlineController {
     @DeleteMapping
     @PreAuthorize("@el.check()")
     public ResponseEntity<Object> deleteOnlineUser(@RequestBody Set<String> keys) throws Exception {
+<<<<<<< /usr/src/app/output/elunez/eladmin/ba16a830ace07bc4f5cd27e3c288f7e1d2dce89d/eladmin-system/src/main/java/me/zhengjie/modules/security/rest/OnlineController.java/left.java
         throw new BadRequestException("演示环境不可操作");
+||||||| /usr/src/app/output/elunez/eladmin/ba16a830ace07bc4f5cd27e3c288f7e1d2dce89d/eladmin-system/src/main/java/me/zhengjie/modules/security/rest/OnlineController.java/base.java
+        for (String key : keys) {
+            // 解密Key
+            key = EncryptUtils.desDecrypt(key);
+            onlineUserService.kickOut(key);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+=======
+        for (String token : keys) {
+            // 解密Key
+            token = EncryptUtils.desDecrypt(token);
+            onlineUserService.logout(token);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+>>>>>>> /usr/src/app/output/elunez/eladmin/ba16a830ace07bc4f5cd27e3c288f7e1d2dce89d/eladmin-system/src/main/java/me/zhengjie/modules/security/rest/OnlineController.java/right.java
     }
 }
