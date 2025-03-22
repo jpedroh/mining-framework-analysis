@@ -1,60 +1,21 @@
-/*
- * JGraLab - The Java Graph Laboratory
- *
- * Copyright (C) 2006-2012 Institute for Software Technology
- *                         University of Koblenz-Landau, Germany
- *                         ist@uni-koblenz.de
- *
- * For bug reports, documentation and further information, visit
- *
- *                         https://github.com/jgralab/jgralab
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
- * Free Software Foundation; either version 3 of the License, or (at your
- * option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, see <http://www.gnu.org/licenses>.
- *
- * Additional permission under GNU GPL version 3 section 7
- *
- * If you modify this Program, or any covered work, by linking or combining
- * it with Eclipse (or a modified version of that program or an Eclipse
- * plugin), containing parts covered by the terms of the Eclipse Public
- * License (EPL), the licensors of this Program grant you additional
- * permission to convey the resulting work.  Corresponding Source for a
- * non-source form of such a combination shall include the source code for
- * the parts of JGraLab used as well as that of the covered work.
- */
-
 package de.uni_koblenz.jgralab.schema;
-
 import java.util.Set;
-
 import de.uni_koblenz.jgralab.GraphElement;
 
 /**
- * Base class for VertexClass and EdgeClass.
+ * Base class for Vertex/Edge/Aggregation/Composition classes.
  * 
  * @author ist@uni-koblenz.de
  */
-public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC extends GraphElement<SC, IC>>
-		extends AttributedElementClass<SC, IC> {
-
-	/**
+public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC extends GraphElement<SC, IC>> extends AttributedElementClass<SC, IC> {
+  /**
 	 * Returns the GraphClass of this AttributedElementClass.
 	 * 
 	 * @return the GraphClass in which this graph element class resides
 	 */
-	public GraphClass getGraphClass();
+  public GraphClass getGraphClass();
 
-	/**
+  /**
 	 * Checks if the current element is a direct or indirect subclass of another
 	 * attributed element.
 	 * 
@@ -91,9 +52,9 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	 *         direct or indirect subclass of this element, otherwise
 	 *         <code>false</code>
 	 */
-	public boolean isSubClassOf(SC anAttributedElementClass);
+  public boolean isSubClassOf(SC anAttributedElementClass);
 
-	/**
+  /**
 	 * Checks if the current element is a direct or inherited superclass of
 	 * another attributed element.
 	 * 
@@ -130,9 +91,9 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	 *         direct or indirect subclass of this element, otherwise
 	 *         <code>false</code>
 	 */
-	public boolean isSuperClassOf(SC anAttributedElementClass);
+  public boolean isSuperClassOf(SC anAttributedElementClass);
 
-	/**
+  /**
 	 * Lists all direct subclasses of this element.
 	 * 
 	 * <p>
@@ -158,9 +119,9 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	 * 
 	 * @return a Set of all direct subclasses of this element
 	 */
-	public Set<SC> getDirectSubClasses();
+  public Set<SC> getDirectSubClasses();
 
-	/**
+  /**
 	 * Returns all direct superclasses of this element.
 	 * 
 	 * <p>
@@ -192,9 +153,9 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	 * 
 	 * @return a Set of all direct superclasses of this element
 	 */
-	public Set<SC> getDirectSuperClasses();
+  public Set<SC> getDirectSuperClasses();
 
-	/**
+  /**
 	 * Returns all direct and indirect subclasses of this element.
 	 * 
 	 * <p>
@@ -217,9 +178,9 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	 * 
 	 * @return a Set of all direct and indirect subclasses of this element
 	 */
-	public Set<SC> getAllSubClasses();
+  public Set<SC> getAllSubClasses();
 
-	/**
+  /**
 	 * Lists all direct and indirect superclasses of this element.
 	 * 
 	 * <p>
@@ -250,6 +211,5 @@ public interface GraphElementClass<SC extends GraphElementClass<SC, IC>, IC exte
 	 * 
 	 * @return a Set of all direct and indirect superclasses of this element
 	 */
-	public Set<SC> getAllSuperClasses();
-
+  public Set<SC> getAllSuperClasses();
 }

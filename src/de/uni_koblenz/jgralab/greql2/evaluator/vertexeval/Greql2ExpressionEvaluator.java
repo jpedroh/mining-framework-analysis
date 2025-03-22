@@ -1,43 +1,6 @@
-/*
- * JGraLab - The Java Graph Laboratory
- *
- * Copyright (C) 2006-2012 Institute for Software Technology
- *                         University of Koblenz-Landau, Germany
- *                         ist@uni-koblenz.de
- *
- * For bug reports, documentation and further information, visit
- *
- *                         https://github.com/jgralab/jgralab
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
- * Free Software Foundation; either version 3 of the License, or (at your
- * option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, see <http://www.gnu.org/licenses>.
- *
- * Additional permission under GNU GPL version 3 section 7
- *
- * If you modify this Program, or any covered work, by linking or combining
- * it with Eclipse (or a modified version of that program or an Eclipse
- * plugin), containing parts covered by the terms of the Eclipse Public
- * License (EPL), the licensors of this Program grant you additional
- * permission to convey the resulting work.  Corresponding Source for a
- * non-source form of such a combination shall include the source code for
- * the parts of JGraLab used as well as that of the covered work.
- */
-
 package de.uni_koblenz.jgralab.greql2.evaluator.vertexeval;
-
 import java.util.ArrayList;
 import java.util.Map;
-
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.greql2.evaluator.GreqlEvaluator;
 import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
@@ -51,6 +14,7 @@ import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsIdOf;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Package;
@@ -67,127 +31,116 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
  * 
  */
 public class Greql2ExpressionEvaluator extends VertexEvaluator {
-
-	/**
+  /**
 	 * The Greql2Expression-Vertex this evaluator evaluates
 	 */
-	private Greql2Expression vertex;
+  private Greql2Expression vertex;
 
-	/**
+  /**
 	 * returns the vertex this VertexEvaluator evaluates
 	 */
-	@Override
-	public Greql2Vertex getVertex() {
-		return vertex;
-	}
+  @Override public Greql2Vertex getVertex() {
+    return vertex;
+  }
 
-	/**
+  /**
 	 * The varibles that are defined via the <code>using</code> clause. They are
 	 * called bound or also free variables
 	 */
-	private Map<String, Object> boundVariables;
-	boolean boundVariablesChanged = true;
+  private Map<String, Object> boundVariables;
 
-	protected void setBoundVariables(Map<String, Object> boundVariables) {
-		this.boundVariables = boundVariables;
-		result = null;
-		boundVariablesChanged = true;
-	}
+  boolean boundVariablesChanged = true;
 
-	private void initializeBoundVariables() {
-		IsBoundVarOf inc = vertex
-				.getFirstIsBoundVarOfIncidence(EdgeDirection.IN);
-		while (inc != null) {
-			Variable currentBoundVariable = inc.getAlpha();
-			Object variableValue = boundVariables.get(currentBoundVariable
-					.get_name());
-			if (variableValue == null) {
-				throw new UndefinedVariableException(currentBoundVariable,
-						createSourcePositions(inc));
-			}
-			VariableEvaluator variableEval = (VariableEvaluator) vertexEvalMarker
-					.getMark(currentBoundVariable);
-			variableEval.setValue(variableValue);
-			inc = inc.getNextIsBoundVarOfIncidence(EdgeDirection.IN);
-		}
-	}
+  protected void setBoundVariables(Map<String, Object> boundVariables) {
+    this.boundVariables = boundVariables;
+    result = null;
+    boundVariablesChanged = true;
+  }
 
-	/**
+  private void initializeBoundVariables() {
+    IsBoundVarOf inc = vertex.getFirstIsBoundVarOfIncidence(EdgeDirection.IN);
+    while (inc != null) {
+      Variable currentBoundVariable = inc.getAlpha();
+      Object variableValue = boundVariables.get(currentBoundVariable.get_name());
+      if (variableValue == null) {
+        throw new UndefinedVariableException(currentBoundVariable, createSourcePositions(inc));
+      }
+      VariableEvaluator variableEval = (VariableEvaluator) vertexEvalMarker.getMark(currentBoundVariable);
+      variableEval.setValue(variableValue);
+      inc = inc.getNextIsBoundVarOfIncidence(EdgeDirection.IN);
+    }
+  }
+
+  /**
 	 * @param eval
 	 *            the GreqlEvaluator this VertexEvaluator belongs to
 	 * @param vertex
 	 *            the vertex which gets evaluated by this VertexEvaluator
 	 */
-	public Greql2ExpressionEvaluator(Greql2Expression vertex,
-			GreqlEvaluator eval) {
-		super(eval);
-		this.vertex = vertex;
-		boundVariables = eval.getVariables();
-		boundVariablesChanged = true;
-	}
+  public Greql2ExpressionEvaluator(Greql2Expression vertex, GreqlEvaluator eval) {
+    super(eval);
+    this.vertex = vertex;
+    boundVariables = eval.getVariables();
+    boundVariablesChanged = true;
+  }
 
-	/**
+  /**
 	 * sets the values of all bound variables and evaluates the queryexpression
 	 */
-	@Override
-	public Object evaluate() {
-		if (boundVariablesChanged) {
-			initializeBoundVariables();
-			boundVariablesChanged = false;
-		}
+  @Override public Object evaluate() {
+    if (boundVariablesChanged) {
+      initializeBoundVariables();
+      boundVariablesChanged = false;
+    }
+    if (vertex.get_importedTypes() != null && graph != null) {
+      Schema graphSchema = graph.getSchema();
+      for (String importedType : vertex.get_importedTypes()) {
+        if (importedType.endsWith(".*")) {
+          String packageName = importedType.substring(0, importedType.length() - 2);
+          Package p = graphSchema.getPackage(packageName);
+          if (p == null) {
+            throw new UnknownTypeException(packageName, new ArrayList<SourcePosition>());
+          }
+          for (VertexClass elem : p.getVertexClasses().values()) {
+            greqlEvaluator.addKnownType(elem);
+          }
+          for (EdgeClass elem : p.getEdgeClasses().values()) {
+            greqlEvaluator.addKnownType(elem);
+          }
+        } else {
 
-		if (vertex.get_importedTypes() != null && graph != null) {
-			Schema graphSchema = graph.getSchema();
-			for (String importedType : vertex.get_importedTypes()) {
-				if (importedType.endsWith(".*")) {
-					String packageName = importedType.substring(0,
-							importedType.length() - 2);
-					Package p = graphSchema.getPackage(packageName);
-					if (p == null) {
-						throw new UnknownTypeException(packageName,
-								new ArrayList<SourcePosition>());
-					}
-					// for (Domain elem : p.getDomains().values()) {
-					// greqlEvaluator.addKnownType(elem);
-					// }
-					for (VertexClass elem : p.getVertexClasses().values()) {
-						greqlEvaluator.addKnownType(elem);
-					}
-					for (EdgeClass elem : p.getEdgeClasses().values()) {
-						greqlEvaluator.addKnownType(elem);
-					}
-				} else {
-					GraphElementClass<?, ?> elemClass = graphSchema
-							.getGraphClass().getGraphElementClass(importedType);
-					if (elemClass == null) {
-						throw new UnknownTypeException(importedType,
-								new ArrayList<SourcePosition>());
-					}
-					greqlEvaluator.addKnownType(elemClass);
-				}
-			}
-		}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/Greql2ExpressionEvaluator.java/left.java
+          AttributedElementClass
+=======
+          GraphElementClass
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/Greql2ExpressionEvaluator.java/right.java
+          <?, ?> elemClass = 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/Greql2ExpressionEvaluator.java/left.java
+          graphSchema.getAttributedElementClass(importedType)
+=======
+          graphSchema.getGraphClass().getGraphElementClass(importedType)
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/Greql2ExpressionEvaluator.java/right.java
+          ;
+          if (elemClass == null) {
+            throw new UnknownTypeException(importedType, new ArrayList<SourcePosition>());
+          }
+          greqlEvaluator.addKnownType(elemClass);
+        }
+      }
+    }
+    Expression boundExpression = vertex.getFirstIsQueryExprOfIncidence(EdgeDirection.IN).getAlpha();
+    VertexEvaluator eval = vertexEvalMarker.getMark(boundExpression);
+    Object result = eval.getResult();
+    IsIdOf storeInc = vertex.getFirstIsIdOfIncidence(EdgeDirection.IN);
+    if (storeInc != null) {
+      VertexEvaluator storeEval = vertexEvalMarker.getMark(storeInc.getAlpha());
+      String varName = storeEval.getResult().toString();
+      boundVariables.put(varName, result);
+    }
+    return result;
+  }
 
-		Expression boundExpression = vertex.getFirstIsQueryExprOfIncidence(
-				EdgeDirection.IN).getAlpha();
-		VertexEvaluator eval = vertexEvalMarker.getMark(boundExpression);
-		Object result = eval.getResult();
-		// if the query contains a "store as " - clause, there is a
-		// "isIdOfInc"-Incidence connected with the Greql2Expression
-		IsIdOf storeInc = vertex.getFirstIsIdOfIncidence(EdgeDirection.IN);
-		if (storeInc != null) {
-			VertexEvaluator storeEval = vertexEvalMarker.getMark(storeInc
-					.getAlpha());
-			String varName = storeEval.getResult().toString();
-			boundVariables.put(varName, result);
-		}
-		return result;
-	}
-
-	@Override
-	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
-		return greqlEvaluator.getCostModel().calculateCostsGreql2Expression(
-				this, graphSize);
-	}
-
+  @Override public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {
+    return greqlEvaluator.getCostModel().calculateCostsGreql2Expression(this, graphSize);
+  }
 }
