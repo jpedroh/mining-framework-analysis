@@ -15,12 +15,7 @@ import org.fengfei.lanproxy.server.ProxyChannelManager;
 import org.fengfei.lanproxy.server.config.ProxyConfig;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.SimpleChannelInboundHandler;
 
 /**
  * 处理服务端 channel.
@@ -66,8 +61,14 @@ public class UserChannelHandler extends SimpleChannelInboundHandler<ByteBuf> {
         if (cmdChannel == null) {
 
             // 该端口还没有代理客户端
+<<<<<<< /usr/src/app/output/ffay/lanproxy/1e0cfe7542abf06498662d5723d547188e65c673/proxy-server/src/main/java/org/fengfei/lanproxy/server/handlers/UserChannelHandler.java/left.java
             FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.SERVICE_UNAVAILABLE);
             ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+||||||| /usr/src/app/output/ffay/lanproxy/1e0cfe7542abf06498662d5723d547188e65c673/proxy-server/src/main/java/org/fengfei/lanproxy/server/handlers/UserChannelHandler.java/base.java
+            ctx.channel().close();
+=======
+            // ctx.channel().close();
+>>>>>>> /usr/src/app/output/ffay/lanproxy/1e0cfe7542abf06498662d5723d547188e65c673/proxy-server/src/main/java/org/fengfei/lanproxy/server/handlers/UserChannelHandler.java/right.java
         } else {
             String userId = newUserId();
             String lanInfo = ProxyConfig.getInstance().getLanInfo(sa.getPort());
