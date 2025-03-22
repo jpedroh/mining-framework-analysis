@@ -104,15 +104,6 @@ public class DateTimeColumnTest {
   }
   
   @Test
-  public void testFormatter() {
-	  column1.setPrintFormatter(DateTimeFormatter.ISO_LOCAL_DATE_TIME, "NaT");
-	  column1.append(LocalDateTime.of(2000, 1, 1, 0, 0));
-	  column1.appendMissing();
-	  assertEquals("2000-01-01T00:00:00", column1.getString(0));
-	  assertEquals("NaT", column1.getString(1));
-  }
-
-  @Test
   public void testAsStringColumn() {
     column1.appendCell("1923-10-20T10:15:30");
     column1.appendMissing();
@@ -121,5 +112,13 @@ public class DateTimeColumnTest {
     assertEquals(2, sc.size());
     assertEquals("1923-10-20T10:15:30.000", sc.get(0));
     assertEquals(StringColumnType.missingValueIndicator(), sc.get(1));
+  }
+  @Test
+  public void testFormatter() {
+	  column1.setPrintFormatter(DateTimeFormatter.ISO_LOCAL_DATE_TIME, "NaT");
+	  column1.append(LocalDateTime.of(2000, 1, 1, 0, 0));
+	  column1.appendMissing();
+	  assertEquals("2000-01-01T00:00:00", column1.getString(0));
+	  assertEquals("NaT", column1.getString(1));
   }
 }
