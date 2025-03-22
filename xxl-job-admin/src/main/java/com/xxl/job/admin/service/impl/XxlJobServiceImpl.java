@@ -341,11 +341,19 @@ public class XxlJobServiceImpl implements XxlJobService {
 		} catch (SchedulerException e) {
 			logger.error(e.getMessage(), e);
 			return new ReturnT<String>(ReturnT.FAIL_CODE, e.getMessage());
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/c350052db6b1cc501dc09abc913df9113e6f2f5e/xxl-job-admin/src/main/java/com/xxl/job/admin/service/impl/XxlJobServiceImpl.java/left.java
 		}*//*
 
 	}*/
+||||||| /usr/src/app/output/xuxueli/xxl-job/c350052db6b1cc501dc09abc913df9113e6f2f5e/xxl-job-admin/src/main/java/com/xxl/job/admin/service/impl/XxlJobServiceImpl.java/base.java
+		}
+	}
+=======
+		}
+	}
 
 
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/c350052db6b1cc501dc09abc913df9113e6f2f5e/xxl-job-admin/src/main/java/com/xxl/job/admin/service/impl/XxlJobServiceImpl.java/right.java
 
 	@Override
 	public Map<String, Object> dashboardInfo() {

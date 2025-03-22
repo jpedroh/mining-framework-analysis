@@ -32,9 +32,11 @@ public class MailUtil {
 
 			//email.setDebug(true);		// 将会打印一些log
 			//email.setTLS(true);		// 是否TLS校验，，某些邮箱需要TLS安全校验，同理有SSL校验
+		            email.setSSLOnConnect(true);
 
 			email.setHostName(XxlJobAdminConfig.getAdminConfig().getMailHost());
-
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/c350052db6b1cc501dc09abc913df9113e6f2f5e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/util/MailUtil.java/left.java
+		
 			if (XxlJobAdminConfig.getAdminConfig().isMailSSL()) {
 				email.setSslSmtpPort(XxlJobAdminConfig.getAdminConfig().getMailPort());
 				email.setSSLOnConnect(true);
@@ -42,6 +44,14 @@ public class MailUtil {
 				email.setSmtpPort(Integer.valueOf(XxlJobAdminConfig.getAdminConfig().getMailPort()));
 			}
 
+||||||| /usr/src/app/output/xuxueli/xxl-job/c350052db6b1cc501dc09abc913df9113e6f2f5e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/util/MailUtil.java/base.java
+			email.setSmtpPort(Integer.valueOf(XxlJobAdminConfig.getAdminConfig().getMailPort()));
+			//email.setSslSmtpPort(port);
+=======
+			int port=Integer.valueOf(XxlJobAdminConfig.getAdminConfig().getMailPort());
+			//email.setSmtpPort();
+			email.setSslSmtpPort(port+"");
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/c350052db6b1cc501dc09abc913df9113e6f2f5e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/util/MailUtil.java/right.java
 			email.setAuthenticator(new DefaultAuthenticator(XxlJobAdminConfig.getAdminConfig().getMailUsername(), XxlJobAdminConfig.getAdminConfig().getMailPassword()));
 			email.setCharset("UTF-8");
 

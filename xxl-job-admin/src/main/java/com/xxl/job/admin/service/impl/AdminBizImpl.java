@@ -144,11 +144,17 @@ public class AdminBizImpl implements AdminBiz {
                 for (int i = 0; i < childJobIds.length; i++) {
                     int childJobId = (StringUtils.isNotBlank(childJobIds[i]) && StringUtils.isNumeric(childJobIds[i]))?Integer.valueOf(childJobIds[i]):-1;
                     if (childJobId > 0) {
-                        handleCode=0;
-                        JobUtils.putParentId(childJobId,log.getId());
-
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/c350052db6b1cc501dc09abc913df9113e6f2f5e/xxl-job-admin/src/main/java/com/xxl/job/admin/service/impl/AdminBizImpl.java/left.java
+        
                         JobTriggerPoolHelper.trigger(childJobId, TriggerTypeEnum.PARENT, 0, null, null);
                         ReturnT<String> triggerChildResult = ReturnT.SUCCESS;
+||||||| /usr/src/app/output/xuxueli/xxl-job/c350052db6b1cc501dc09abc913df9113e6f2f5e/xxl-job-admin/src/main/java/com/xxl/job/admin/service/impl/AdminBizImpl.java/base.java
+                        ReturnT<String> triggerChildResult = xxlJobService.triggerJob(childJobId);
+=======
+                        handleCode=0;
+                        JobUtils.putParentId(childJobId,log.getId());
+                        ReturnT<String> triggerChildResult = xxlJobService.triggerJob(childJobId);
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/c350052db6b1cc501dc09abc913df9113e6f2f5e/xxl-job-admin/src/main/java/com/xxl/job/admin/service/impl/AdminBizImpl.java/right.java
 
                         // add msg
                         callbackMsg += MessageFormat.format(I18nUtil.getString("jobconf_callback_child_msg1"),
@@ -166,6 +172,22 @@ public class AdminBizImpl implements AdminBiz {
                 }
 
             }
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/c350052db6b1cc501dc09abc913df9113e6f2f5e/xxl-job-admin/src/main/java/com/xxl/job/admin/service/impl/AdminBizImpl.java/left.java
+||||||| /usr/src/app/output/xuxueli/xxl-job/c350052db6b1cc501dc09abc913df9113e6f2f5e/xxl-job-admin/src/main/java/com/xxl/job/admin/service/impl/AdminBizImpl.java/base.java
+        } else if (IJobHandler.FAIL_RETRY.getCode() == handleCallbackParam.getExecuteResult().getCode()){
+            ReturnT<String> retryTriggerResult = xxlJobService.triggerJob(log.getJobId());
+            callbackMsg = "<br><br><span style=\"color:#F39C12;\" > >>>>>>>>>>>"+ I18nUtil.getString("jobconf_exe_fail_retry") +"<<<<<<<<<<< </span><br>";
+
+            callbackMsg += MessageFormat.format(I18nUtil.getString("jobconf_callback_msg1"),
+                   (retryTriggerResult.getCode()==ReturnT.SUCCESS_CODE?I18nUtil.getString("system_success"):I18nUtil.getString("system_fail")), retryTriggerResult.getMsg());
+=======
+        } else if (IJobHandler.FAIL_RETRY.getCode() == handleCode){
+            ReturnT<String> retryTriggerResult = xxlJobService.triggerJob(log.getJobId());
+            callbackMsg = "<br><br><span style=\"color:#F39C12;\" > >>>>>>>>>>>"+ I18nUtil.getString("jobconf_exe_fail_retry") +"<<<<<<<<<<< </span><br>";
+
+            callbackMsg += MessageFormat.format(I18nUtil.getString("jobconf_callback_msg1"),
+                    (retryTriggerResult.getCode()==ReturnT.SUCCESS_CODE?I18nUtil.getString("system_success"):I18nUtil.getString("system_fail")), retryTriggerResult.getMsg());
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/c350052db6b1cc501dc09abc913df9113e6f2f5e/xxl-job-admin/src/main/java/com/xxl/job/admin/service/impl/AdminBizImpl.java/right.java
         }
 
         logger.info(String.format("%d callback后1%s",log.getId(),handleCallbackParam));

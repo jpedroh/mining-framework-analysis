@@ -79,6 +79,18 @@ public interface AdminBiz {
      */
     public ReturnT<String> registryRemove(RegistryParam registryParam);
 
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/c350052db6b1cc501dc09abc913df9113e6f2f5e/xxl-job-core/src/main/java/com/xxl/job/core/biz/AdminBiz.java/left.java
+||||||| /usr/src/app/output/xuxueli/xxl-job/c350052db6b1cc501dc09abc913df9113e6f2f5e/xxl-job-core/src/main/java/com/xxl/job/core/biz/AdminBiz.java/base.java
+
+    /**
+     * trigger job for once
+     *
+     * @param jobId
+     * @return
+     */
+    public ReturnT<String> triggerJob(int jobId);
+
+=======
 
     /**
      * trigger job for once
@@ -94,4 +106,5 @@ public interface AdminBiz {
      */
      void updateChildSummaryByParentId(Integer parentId);
 
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/c350052db6b1cc501dc09abc913df9113e6f2f5e/xxl-job-core/src/main/java/com/xxl/job/core/biz/AdminBiz.java/right.java
 }
