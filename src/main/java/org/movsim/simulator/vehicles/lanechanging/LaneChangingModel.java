@@ -34,7 +34,13 @@ import org.movsim.simulator.vehicles.VehicleContainer;
  */
 public interface LaneChangingModel {
 
-
+    /**
+     * Checks if is mandatory lane change safe.
+     *
+     * @param dt the dt
+     * @param vehContainerTargetLane the veh container target lane
+     * @return true, if is mandatory lane change safe
+     */
     boolean isMandatoryLaneChangeSafe(final VehicleContainer vehContainerTargetLane);
 
 }

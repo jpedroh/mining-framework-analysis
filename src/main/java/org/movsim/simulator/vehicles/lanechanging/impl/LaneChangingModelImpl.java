@@ -144,6 +144,13 @@ public class LaneChangingModelImpl implements LaneChangingModel {
         return (false);
     }
 
+    
+    /**
+     * Determine lane changing direction.
+     *
+     * @param vehContainers the veh containers
+     * @return the int
+     */
     public int determineLaneChangingDirection(final List<VehicleContainer> vehContainers) {
 
         final int currentLane = me.getLane();
@@ -178,6 +185,13 @@ public class LaneChangingModelImpl implements LaneChangingModel {
         return Constants.NO_CHANGE;
     }
 
+
+
+    /**
+     * Sets the mandatory change.
+     *
+     * @param incentive the new mandatory change
+     */
     public void setMandatoryChange(int incentive) {
         if (incentive == Constants.NO_CHANGE || incentive == Constants.TO_RIGHT || incentive == Constants.TO_LEFT) {
             mandatoryChange = incentive;
