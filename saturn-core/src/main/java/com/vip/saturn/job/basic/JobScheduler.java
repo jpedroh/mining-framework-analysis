@@ -272,13 +272,30 @@ public class JobScheduler {
 	public void shutdown(boolean removeJob) {
 		synchronized (isShutdownFlag) {
 			isShutdownFlag.set(true);
-
+<<<<<<< /usr/src/app/output/vipshop/saturn/0cf152ef11238be032c23a774bc84e99dc6fe93e/saturn-core/src/main/java/com/vip/saturn/job/basic/JobScheduler.java/left.java
+		
 			// 关闭Listener
 			listenerManager.shutdown();
 
 			// 关闭作业：关闭调度器，强杀业务
 			if (job != null) {
 				job.shutdown();
+||||||| /usr/src/app/output/vipshop/saturn/0cf152ef11238be032c23a774bc84e99dc6fe93e/saturn-core/src/main/java/com/vip/saturn/job/basic/JobScheduler.java/base.java
+			try {
+				if (job != null) {
+					job.shutdown();
+				}
+			} catch (final Exception e) {
+				log.error(String.format(SaturnConstant.LOG_FORMAT_FOR_STRING, jobName, e.getMessage()), e);
+=======
+			try {
+				if (job != null) {
+					job.shutdown();
+				}
+			} catch (final Exception e) {
+				LogUtils.error(log, jobName,
+						String.format(SaturnConstant.LOG_FORMAT_FOR_STRING, jobName, e.getMessage()), e);
+>>>>>>> /usr/src/app/output/vipshop/saturn/0cf152ef11238be032c23a774bc84e99dc6fe93e/saturn-core/src/main/java/com/vip/saturn/job/basic/JobScheduler.java/right.java
 			}
 
 			// 关闭服务

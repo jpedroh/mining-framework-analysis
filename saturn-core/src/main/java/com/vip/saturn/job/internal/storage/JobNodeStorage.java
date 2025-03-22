@@ -14,6 +14,8 @@
 
 package com.vip.saturn.job.internal.storage;
 
+import com.vip.saturn.job.utils.LogUtils;
+
 import com.vip.saturn.job.basic.SaturnConstant;
 import com.vip.saturn.job.exception.JobException;
 import com.vip.saturn.job.internal.config.JobConfiguration;
@@ -23,7 +25,6 @@ import com.vip.saturn.job.reg.exception.RegExceptionHandler;
 import com.vip.saturn.job.reg.zookeeper.ZookeeperConfiguration;
 import com.vip.saturn.job.reg.zookeeper.ZookeeperRegistryCenter;
 import com.vip.saturn.job.utils.BlockUtils;
-import com.vip.saturn.job.utils.LogUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.api.transaction.CuratorTransactionFinal;
 import org.apache.curator.framework.recipes.leader.LeaderLatch;
@@ -341,7 +342,7 @@ public class JobNodeStorage {
 				BlockUtils.waitingShortTime();
 			}
 		} catch (Throwable t) {
-			LogUtils.error(log, jobName, "delete job node error", t);
+			log.error(String.format(SaturnConstant.LOG_FORMAT_FOR_STRING, jobName, "delete job node error"), t);
 		} finally {
 			newZk.close();
 		}
