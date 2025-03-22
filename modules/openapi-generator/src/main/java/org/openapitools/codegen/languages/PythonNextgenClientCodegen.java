@@ -25,7 +25,6 @@ import org.openapitools.codegen.*;
 import org.openapitools.codegen.meta.GeneratorMetadata;
 import org.openapitools.codegen.meta.Stability;
 import org.openapitools.codegen.meta.features.*;
-import org.openapitools.codegen.meta.features.*;
 import org.openapitools.codegen.model.ModelMap;
 import org.openapitools.codegen.model.ModelsMap;
 import org.openapitools.codegen.model.OperationMap;
@@ -47,20 +46,16 @@ public class PythonNextgenClientCodegen extends AbstractPythonCodegen implements
     public static final String DEFAULT_LIBRARY = "urllib3";
     public static final String RECURSION_LIMIT = "recursionLimit";
     public static final String ALLOW_STRING_IN_DATETIME_PARAMETERS = "allowStringInDateTimeParameters";
-    public static final String FLOAT_STRICT_TYPE = "floatStrictType";
-
     protected String packageUrl;
     protected String apiDocPath = "docs" + File.separator;
     protected String modelDocPath = "docs" + File.separator;
     protected boolean hasModelsToImport = Boolean.FALSE;
-    protected boolean useOneOfDiscriminatorLookup = false; // use oneOf discriminator's mapping for model lookup
-    protected boolean allowStringInDateTimeParameters = false; // use StrictStr instead of datetime in parameters
-    protected boolean floatStrictType = true;
-
+    protected boolean useOneOfDiscriminatorLookup = false;
+// use oneOf discriminator's mapping for model lookup
+    protected boolean allowStringInDateTimeParameters = false;
+// use StrictStr instead of datetime in parameters
     protected Map<Character, String> regexModifiers;
-
     private String testFolder;
-
     public PythonNextgenClientCodegen() {
         super();
 
@@ -167,10 +162,14 @@ public class PythonNextgenClientCodegen extends AbstractPythonCodegen implements
         cliOptions.add(new CliOption(CodegenConstants.SOURCECODEONLY_GENERATION, CodegenConstants.SOURCECODEONLY_GENERATION_DESC)
                 .defaultValue(Boolean.FALSE.toString()));
         cliOptions.add(new CliOption(RECURSION_LIMIT, "Set the recursion limit. If not set, use the system default value."));
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/a1c75d77d04f010ada34c2b6d4223a62d9630087/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/PythonNextgenClientCodegen.java/left.java
         cliOptions.add(new CliOption(ALLOW_STRING_IN_DATETIME_PARAMETERS, "Allow string as input to datetime/date parameters for backward compartibility.")
                 .defaultValue(Boolean.FALSE.toString()));
+||||||| /usr/src/app/output/openapitools/openapi-generator/a1c75d77d04f010ada34c2b6d4223a62d9630087/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/PythonNextgenClientCodegen.java/base.java
+=======
         cliOptions.add(new CliOption(FLOAT_STRICT_TYPE, "Use strict type for float, i.e. StrictFloat or confloat(strict=true, ...)")
                 .defaultValue(Boolean.TRUE.toString()));
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/a1c75d77d04f010ada34c2b6d4223a62d9630087/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/PythonNextgenClientCodegen.java/right.java
 
         supportedLibraries.put("urllib3", "urllib3-based client");
         supportedLibraries.put("asyncio", "asyncio-based client");
@@ -193,7 +192,6 @@ public class PythonNextgenClientCodegen extends AbstractPythonCodegen implements
         cliOptions.add(disallowAdditionalPropertiesIfNotPresentOpt);
         this.setDisallowAdditionalPropertiesIfNotPresent(true);
     }
-
     @Override
     public void processOpts() {
         this.setLegacyDiscriminatorBehavior(false);
@@ -266,13 +264,16 @@ public class PythonNextgenClientCodegen extends AbstractPythonCodegen implements
             additionalProperties.put(CodegenConstants.USE_ONEOF_DISCRIMINATOR_LOOKUP, useOneOfDiscriminatorLookup);
         }
 
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/a1c75d77d04f010ada34c2b6d4223a62d9630087/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/PythonNextgenClientCodegen.java/left.java
         if (additionalProperties.containsKey(ALLOW_STRING_IN_DATETIME_PARAMETERS)) {
             setAllowStringInDateTimeParameters(convertPropertyToBooleanAndWriteBack(ALLOW_STRING_IN_DATETIME_PARAMETERS));
         }
-
+||||||| /usr/src/app/output/openapitools/openapi-generator/a1c75d77d04f010ada34c2b6d4223a62d9630087/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/PythonNextgenClientCodegen.java/base.java
+=======
         if (additionalProperties.containsKey(FLOAT_STRICT_TYPE)) {
             setFloatStrictType(convertPropertyToBooleanAndWriteBack(FLOAT_STRICT_TYPE));
         }
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/a1c75d77d04f010ada34c2b6d4223a62d9630087/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/PythonNextgenClientCodegen.java/right.java
 
         String modelPath = packagePath() + File.separatorChar + modelPackage.replace('.', File.separatorChar);
         String apiPath = packagePath() + File.separatorChar + apiPackage.replace('.', File.separatorChar);
@@ -342,15 +343,12 @@ public class PythonNextgenClientCodegen extends AbstractPythonCodegen implements
         modelPackage = this.packageName + "." + modelPackage;
         apiPackage = this.packageName + "." + apiPackage;
     }
-
     public void setUseOneOfDiscriminatorLookup(boolean useOneOfDiscriminatorLookup) {
         this.useOneOfDiscriminatorLookup = useOneOfDiscriminatorLookup;
     }
-
     public boolean getUseOneOfDiscriminatorLookup() {
         return this.useOneOfDiscriminatorLookup;
     }
-
     @Override
     public String toModelImport(String name) {
         String modelImport;
@@ -365,7 +363,6 @@ public class PythonNextgenClientCodegen extends AbstractPythonCodegen implements
         }
         return modelImport;
     }
-
     @Override
     public String getTypeDeclaration(Schema p) {
         if (ModelUtils.isArraySchema(p)) {
@@ -379,7 +376,6 @@ public class PythonNextgenClientCodegen extends AbstractPythonCodegen implements
         }
         return super.getTypeDeclaration(p);
     }
-
     /*
      * Gets the pydantic type given a Codegen Parameter
      *
@@ -596,7 +592,6 @@ public class PythonNextgenClientCodegen extends AbstractPythonCodegen implements
             throw new RuntimeException("Error! Codegen Parameter not yet supported in getPydanticType: " + cp);
         }
     }
-
     /*
      * Gets the pydantic type given a Codegen Property
      *
@@ -820,7 +815,6 @@ public class PythonNextgenClientCodegen extends AbstractPythonCodegen implements
             throw new RuntimeException("Error! Codegen Property not yet supported in getPydanticType: " + cp);
         }
     }
-
     @Override
     public OperationsMap postProcessOperationsWithModels(OperationsMap objs, List<ModelMap> allModels) {
         hasModelsToImport = false;
@@ -947,7 +941,6 @@ public class PythonNextgenClientCodegen extends AbstractPythonCodegen implements
         objs.setImports(newImports);
         return objs;
     }
-
     @Override
     public Map<String, ModelsMap> postProcessAllModels(Map<String, ModelsMap> objs) {
         final Map<String, ModelsMap> processed = super.postProcessAllModels(objs);
@@ -957,7 +950,6 @@ public class PythonNextgenClientCodegen extends AbstractPythonCodegen implements
 
         return processed;
     }
-
     private ModelsMap postProcessModelsMap(ModelsMap objs) {
         // process enum in models
         objs = postProcessModelsEnum(objs);
@@ -1127,17 +1119,14 @@ public class PythonNextgenClientCodegen extends AbstractPythonCodegen implements
 
         return objs;
     }
-
     @Override
     public void postProcessParameter(CodegenParameter parameter) {
         postProcessPattern(parameter.pattern, parameter.vendorExtensions);
     }
-
     @Override
     public void postProcessModelProperty(CodegenModel model, CodegenProperty property) {
         postProcessPattern(property.pattern, property.vendorExtensions);
     }
-
     /*
      * The OpenAPI pattern spec follows the Perl convention and style of modifiers. Python
      * does not support this in as natural a way so it needs to convert it. See
@@ -1175,43 +1164,34 @@ public class PythonNextgenClientCodegen extends AbstractPythonCodegen implements
             vendorExtensions.put("x-modifiers", modifiers);
         }
     }
-
     @Override
     public CodegenType getTag() {
         return CodegenType.CLIENT;
     }
-
     @Override
     public String getName() {
         return "python-nextgen";
     }
-
     @Override
     public String getHelp() {
         return "Generates a Python client library.";
     }
-
-
     @Override
     public String apiDocFileFolder() {
         return (outputFolder + File.separator + apiDocPath);
     }
-
     @Override
     public String modelDocFileFolder() {
         return (outputFolder + File.separator + modelDocPath);
     }
-
     @Override
     public String toModelDocFilename(String name) {
         return toModelName(name);
     }
-
     @Override
     public String toApiDocFilename(String name) {
         return toApiName(name);
     }
-
     @Override
     public String addRegularExpressionDelimiter(String pattern) {
         if (StringUtils.isEmpty(pattern)) {
@@ -1225,35 +1205,28 @@ public class PythonNextgenClientCodegen extends AbstractPythonCodegen implements
 
         return pattern;
     }
-
     @Override
     public String apiFileFolder() {
         return outputFolder + File.separatorChar + apiPackage().replace('.', File.separatorChar);
     }
-
     @Override
     public String modelFileFolder() {
         return outputFolder + File.separatorChar + modelPackage().replace('.', File.separatorChar);
     }
-
     @Override
     public String apiTestFileFolder() {
         return outputFolder + File.separatorChar + testFolder;
     }
-
     @Override
     public String modelTestFileFolder() {
         return outputFolder + File.separatorChar + testFolder;
     }
-
     public void setPackageUrl(String packageUrl) {
         this.packageUrl = packageUrl;
     }
-
     public String packagePath() {
         return packageName.replace('.', File.separatorChar);
     }
-
     /**
      * Generate Python package name from String `packageName`
      * <p>
@@ -1267,12 +1240,10 @@ public class PythonNextgenClientCodegen extends AbstractPythonCodegen implements
     public String generatePackageName(String packageName) {
         return underscore(packageName.replaceAll("[^\\w]+", ""));
     }
-
     @Override
     public String generatorLanguageVersion() {
         return "3.7+";
     }
-
     @Override
     protected void addAdditionPropertiesToCodeGenModel(CodegenModel codegenModel, Schema schema) {
         final Schema additionalProperties = getAdditionalProperties(schema);
@@ -1281,7 +1252,6 @@ public class PythonNextgenClientCodegen extends AbstractPythonCodegen implements
             codegenModel.additionalPropertiesType = getSchemaType(additionalProperties);
         }
     }
-
     @Override
     public String toEnumVarName(String name, String datatype) {
         if (name.length() == 0) {
@@ -1317,7 +1287,6 @@ public class PythonNextgenClientCodegen extends AbstractPythonCodegen implements
             return enumName;
         }
     }
-
     @Override
     public String toEnumValue(String value, String datatype) {
         if ("int".equals(datatype) || "float".equals(datatype)) {
@@ -1326,12 +1295,10 @@ public class PythonNextgenClientCodegen extends AbstractPythonCodegen implements
             return "\'" + escapeText(value) + "\'";
         }
     }
-
     @Override
     public String toEnumDefaultValue(String value, String datatype) {
         return "self::" + datatype + "_" + value;
     }
-
     /**
      * checks if the data should be classified as "string" in enum
      * e.g. double in C# needs to be double-quoted (e.g. "2.8") by treating it as a string
@@ -1344,7 +1311,6 @@ public class PythonNextgenClientCodegen extends AbstractPythonCodegen implements
     public boolean isDataTypeString(String dataType) {
         return "str".equals(dataType);
     }
-
     @Override
     public String escapeReservedWord(String name) {
         if (this.reservedWordsMappings().containsKey(name)) {
@@ -1352,11 +1318,11 @@ public class PythonNextgenClientCodegen extends AbstractPythonCodegen implements
         }
         return "var_" + name;
     }
-
     public void setAllowStringInDateTimeParameters(boolean allowStringInDateTimeParameters) {
         this.allowStringInDateTimeParameters = allowStringInDateTimeParameters;
     }
-
+    public static final String FLOAT_STRICT_TYPE = "floatStrictType";
+    protected boolean floatStrictType = true;
     public void setFloatStrictType(boolean floatStrictType) {
         this.floatStrictType = floatStrictType;
     }
