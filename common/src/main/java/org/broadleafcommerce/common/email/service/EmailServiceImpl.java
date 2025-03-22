@@ -33,11 +33,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Resource;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 /**
  * @author jfischer
  * @deprecated
