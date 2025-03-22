@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,6 +20,12 @@ public class LitemallAdminService {
     private final Column[] result = new Column[]{Column.id, Column.username, Column.avatar};
     @Resource
     private LitemallAdminMapper adminMapper;
+
+    @Resource
+    private LitemallAdminRoleMapper adminRoleMapper;
+
+    @Resource
+    private LitemallRoleResourceMapper roleResourceMapper;
 
     @Resource
     private LitemallResourceMapper resourceMapper;
@@ -80,7 +87,6 @@ public class LitemallAdminService {
     public LitemallAdmin findById(Integer id) {
         return adminMapper.selectByPrimaryKeySelective(id, result);
     }
-
 
     public  List<LitemallResource> querySelective(Integer adminId){
 //        LitemallAdminRoleExample example = new LitemallAdminRoleExample();
