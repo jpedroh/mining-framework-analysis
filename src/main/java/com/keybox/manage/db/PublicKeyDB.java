@@ -660,7 +660,6 @@ public class PublicKeyDB {
 		
 		return isexisted;
 	}
-    
     public static List<PublicKey> getPublicKeysForUserandSystem(Long userId, Long systemId) {
 		
     	Connection con = null;
@@ -694,7 +693,6 @@ public class PublicKeyDB {
         
         return new ArrayList<PublicKey>(keyMap.values());
 	}
-    
     public static List<PublicKey> getPublicKeysForAdminandSystem(Long userId, Long systemId) {
 		
     	Connection con = null;

@@ -83,7 +83,12 @@ public class SystemDB {
 				hostSystem.setPort(rs.getInt("port"));
 				hostSystem.setAuthorizedKeys(rs.getString("authorized_keys"));
 				hostSystem.setStatusCd(rs.getString("status_cd"));
+<<<<<<< /usr/src/app/output/bastillion-io/bastillion/2020a322a3790cdd7521c1c61fa919cee2628e55/src/main/java/com/keybox/manage/db/SystemDB.java/left.java
+				hostSystem.setEnabled(rs.getBoolean("enabled"));
+||||||| /usr/src/app/output/bastillion-io/bastillion/2020a322a3790cdd7521c1c61fa919cee2628e55/src/main/java/com/keybox/manage/db/SystemDB.java/base.java
+=======
 				hostSystem.setPublicKeyList(PublicKeyDB.getPublicKeysForUserandSystem(userId, hostSystem.getId()));
+>>>>>>> /usr/src/app/output/bastillion-io/bastillion/2020a322a3790cdd7521c1c61fa919cee2628e55/src/main/java/com/keybox/manage/db/SystemDB.java/right.java
 				hostSystemList.add(hostSystem);
 			}
 			DBUtils.closeRs(rs);
@@ -516,6 +521,53 @@ public class SystemDB {
 		return systemIdList;
 
 	}
+
+
+	public static SortedSet getAdminSystemSet(SortedSet sortedSet, Long userId) {
+		List<HostSystem> hostSystemList = new ArrayList<HostSystem>();
+
+		String orderBy = "";
+		if (sortedSet.getOrderByField() != null && !sortedSet.getOrderByField().trim().equals("")) {
+			orderBy = "order by " + sortedSet.getOrderByField() + " " + sortedSet.getOrderByDirection();
+		}
+		String sql = "select * from  system s ";
+		//if profile id exists add to statement
+		sql += StringUtils.isNotEmpty(sortedSet.getFilterMap().get(FILTER_BY_PROFILE_ID)) ? ",system_map m where s.id=m.system_id and m.profile_id=?" : "";
+		sql += orderBy;
+
+		Connection con = null;
+		try {
+			con = DBUtils.getConn();
+			PreparedStatement stmt = con.prepareStatement(sql);
+			if (StringUtils.isNotEmpty(sortedSet.getFilterMap().get(FILTER_BY_PROFILE_ID))) {
+				stmt.setLong(1, Long.valueOf(sortedSet.getFilterMap().get(FILTER_BY_PROFILE_ID)));
+			}
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				HostSystem hostSystem = new HostSystem();
+				hostSystem.setId(rs.getLong("id"));
+				hostSystem.setDisplayNm(rs.getString("display_nm"));
+				hostSystem.setUser(rs.getString("user"));
+				hostSystem.setHost(rs.getString("host"));
+				hostSystem.setPort(rs.getInt("port"));
+				hostSystem.setAuthorizedKeys(rs.getString("authorized_keys"));
+				hostSystem.setStatusCd(rs.getString("status_cd"));
+				hostSystem.setPublicKeyList(PublicKeyDB.getPublicKeysForAdminandSystem(userId, hostSystem.getId()));
+				hostSystemList.add(hostSystem);
+			}
+			DBUtils.closeRs(rs);
+			DBUtils.closeStmt(stmt);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		DBUtils.closeConn(con);
+
+
+		sortedSet.setItemList(hostSystemList);
+		return sortedSet;
+	}
 	
 	
 	/**
@@ -563,51 +615,4 @@ public class SystemDB {
         }
         DBUtils.closeConn(con);
 	}
-
-	public static SortedSet getAdminSystemSet(SortedSet sortedSet, Long userId) {
-		List<HostSystem> hostSystemList = new ArrayList<HostSystem>();
-
-		String orderBy = "";
-		if (sortedSet.getOrderByField() != null && !sortedSet.getOrderByField().trim().equals("")) {
-			orderBy = "order by " + sortedSet.getOrderByField() + " " + sortedSet.getOrderByDirection();
-		}
-		String sql = "select * from  system s ";
-		//if profile id exists add to statement
-		sql += StringUtils.isNotEmpty(sortedSet.getFilterMap().get(FILTER_BY_PROFILE_ID)) ? ",system_map m where s.id=m.system_id and m.profile_id=?" : "";
-		sql += orderBy;
-
-		Connection con = null;
-		try {
-			con = DBUtils.getConn();
-			PreparedStatement stmt = con.prepareStatement(sql);
-			if (StringUtils.isNotEmpty(sortedSet.getFilterMap().get(FILTER_BY_PROFILE_ID))) {
-				stmt.setLong(1, Long.valueOf(sortedSet.getFilterMap().get(FILTER_BY_PROFILE_ID)));
-			}
-			ResultSet rs = stmt.executeQuery();
-
-			while (rs.next()) {
-				HostSystem hostSystem = new HostSystem();
-				hostSystem.setId(rs.getLong("id"));
-				hostSystem.setDisplayNm(rs.getString("display_nm"));
-				hostSystem.setUser(rs.getString("user"));
-				hostSystem.setHost(rs.getString("host"));
-				hostSystem.setPort(rs.getInt("port"));
-				hostSystem.setAuthorizedKeys(rs.getString("authorized_keys"));
-				hostSystem.setStatusCd(rs.getString("status_cd"));
-				hostSystem.setPublicKeyList(PublicKeyDB.getPublicKeysForAdminandSystem(userId, hostSystem.getId()));
-				hostSystemList.add(hostSystem);
-			}
-			DBUtils.closeRs(rs);
-			DBUtils.closeStmt(stmt);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		DBUtils.closeConn(con);
-
-
-		sortedSet.setItemList(hostSystemList);
-		return sortedSet;
-	}
-
 }
