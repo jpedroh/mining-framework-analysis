@@ -32,14 +32,12 @@ import org.jboss.msc.value.LookupMethodValue;
 import org.jboss.msc.value.LookupPropertyValue;
 import org.jboss.msc.value.Value;
 import org.jboss.msc.value.Values;
-
+import static org.jboss.msc.service.BatchBuilderImpl.alreadyInstalled;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static org.jboss.msc.service.BatchBuilderImpl.alreadyInstalled;
 
 /**
  * @author <a href="mailto:david.lloyd@redhat.com">David M. Lloyd</a>
