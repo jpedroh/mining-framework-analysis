@@ -116,7 +116,9 @@ public final class Data implements DataProducer {
         return result;
     }
 
+    @Override
     public void produce( final DataConsumer pReceiver ) throws IOException {
+
         if (src != null && !src.exists()) {
             if (missingSrc == IGNORE) {
                 return;
