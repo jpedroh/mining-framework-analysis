@@ -33,6 +33,7 @@ import org.jgrapht.graph.*;
  * in T</li>
  * </ul>
  * <br>
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/14285a707443d50c39d4a70fad22637514f7ba71/jgrapht-core/src/main/java/org/jgrapht/alg/decomposition/NiceDecompositionBuilder.java/left.java
  * A nice tree decomposition is a special tree decomposition, which satisfies the properties:
  * <ul>
  * <li>for root r &isin; V(T) and leaf l &isin; V(T): b(r)=b(t)=&empty;</li>
@@ -44,11 +45,39 @@ import org.jgrapht.graph.*;
  * <li>join node: t has exactly two child d_1, d_2 and b(t)=b(d_1)=b(d_2)</li>
  * </ul>
  * </ul>
+||||||| /usr/src/app/output/jgrapht/jgrapht/14285a707443d50c39d4a70fad22637514f7ba71/jgrapht-core/src/main/java/org/jgrapht/alg/decomposition/NiceDecompositionBuilder.java/base.java
+ * A nice tree decomposition is a special tree decomposition, which satisfies the properties: 
+ * <ul> <li>for root r &isin; V(T) and leaf l &isin; V(T): b(r)=b(t)=&empty;</li>
+ * <li>every non-leaf node t &isin; V(T) is of one of the following three types: 
+ * <ul><li>introduce node: t has exactly one child d and b(t) = b(d) &cup; w for some w &isin; V(G)</li>
+ * <li>forget node: t has exactly one child d and b(t) &cup; w = b(d) for some w &isin; V(G)\b(t)</li>
+ * <li>join node: t has exactly two child d_1, d_2 and b(t)=b(d_1)=b(d_2)</li></ul></ul>
+=======
+ * A nice tree decomposition is a special tree decomposition, which satisfies the properties:
+ * <ul>
+ * <li>for root r &isin; V(T) and leaf l &isin; V(T): b(r)=b(t)=&empty;</li>
+ * <li>every non-leaf node t &isin; V(T) is of one of the following three types:
+ * <ul>
+ * <li>introduce node: t has exactly one child d and b(t) = b(d) &cup; w for some w &isin; V(G)</li>
+ * <li>forget node: t has exactly one child d and b(t) &cup; w = b(d) for some w &isin;
+ * V(G)\b(t)</li>
+ * <li>join node: t has exactly two child d_1, d_2 and b(t)=b(d_1)=b(d_2)</li>
+ * </ul>
+ * </ul>
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/14285a707443d50c39d4a70fad22637514f7ba71/jgrapht-core/src/main/java/org/jgrapht/alg/decomposition/NiceDecompositionBuilder.java/right.java
  * <br>
  * See:<br>
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/14285a707443d50c39d4a70fad22637514f7ba71/jgrapht-core/src/main/java/org/jgrapht/alg/decomposition/NiceDecompositionBuilder.java/left.java
  * <href=https://www.researchgate.net/publication/220896817_Better_Algorithms_for_the_Pathwidth_and_Treewidth_of_Graphs>
  * Bodlaender, Hans &amp; Kloks, Ton. (1991). Better Algorithms for the Pathwidth and Treewidth of
  * Graphs. 544-555. 10.1007/3-540-54233-7_162.</href>
+||||||| /usr/src/app/output/jgrapht/jgrapht/14285a707443d50c39d4a70fad22637514f7ba71/jgrapht-core/src/main/java/org/jgrapht/alg/decomposition/NiceDecompositionBuilder.java/base.java
+ * Bodlaender, Hans &amp; Kloks, Ton. (1991). 
+ * Better Algorithms for the Pathwidth and Treewidth of Graphs.. 544-555. 10.1007/3-540-54233-7_162. 
+=======
+ * Bodlaender, Hans &amp; Kloks, Ton. (1991). Better Algorithms for the Pathwidth and Treewidth of
+ * Graphs.. 544-555. 10.1007/3-540-54233-7_162.
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/14285a707443d50c39d4a70fad22637514f7ba71/jgrapht-core/src/main/java/org/jgrapht/alg/decomposition/NiceDecompositionBuilder.java/right.java
  * 
  * @author Ira Justus Fesefeldt (PhoenixIra)
  *
