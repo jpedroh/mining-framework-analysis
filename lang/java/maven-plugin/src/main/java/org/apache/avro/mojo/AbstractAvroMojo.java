@@ -1,44 +1,23 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.apache.avro.mojo;
-
 import org.apache.avro.LogicalTypes;
+import java.io.File;
 import org.apache.avro.Protocol;
 import org.apache.avro.Schema;
 import org.apache.avro.compiler.specific.SpecificCompiler;
+import java.io.IOException;
 import org.apache.avro.generic.GenericData;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.model.fileset.FileSet;
-import org.apache.maven.shared.model.fileset.util.FileSetManager;
-
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import org.apache.maven.plugin.AbstractMojo;
 import java.net.MalformedURLException;
+import org.apache.maven.plugin.MojoExecutionException;
 import java.net.URL;
+import org.apache.maven.project.MavenProject;
 import java.net.URLClassLoader;
+import org.apache.maven.shared.model.fileset.FileSet;
 import java.util.ArrayList;
+import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -218,16 +197,13 @@ public abstract class AbstractAvroMojo extends AbstractMojo {
    */
   protected MavenProject project;
 
-  @Override
-  public void execute() throws MojoExecutionException {
+  @Override public void execute() throws MojoExecutionException {
     boolean hasSourceDir = null != sourceDirectory && sourceDirectory.isDirectory();
     boolean hasImports = null != imports;
     boolean hasTestDir = null != testSourceDirectory && testSourceDirectory.isDirectory();
     if (!hasSourceDir && !hasTestDir) {
-      throw new MojoExecutionException("neither sourceDirectory: " + sourceDirectory + " or testSourceDirectory: "
-          + testSourceDirectory + " are directories");
+      throw new MojoExecutionException("neither sourceDirectory: " + sourceDirectory + " or testSourceDirectory: " + testSourceDirectory + " are directories");
     }
-
     if (hasImports) {
       checkImportPaths();
       for (String importedFile : imports) {
@@ -237,22 +213,21 @@ public abstract class AbstractAvroMojo extends AbstractMojo {
           getLog().info("Importing Directory: " + file.getAbsolutePath());
           getLog().debug("Importing Directory Files: " + Arrays.toString(includedFiles));
           compileFiles(includedFiles, file, outputDirectory);
-        } else if (file.isFile()) {
-          getLog().info("Importing File: " + file.getAbsolutePath());
-          compileFiles(new String[] { file.getName() }, file.getParentFile(), outputDirectory);
+        } else {
+          if (file.isFile()) {
+            getLog().info("Importing File: " + file.getAbsolutePath());
+            compileFiles(new String[] { file.getName() }, file.getParentFile(), outputDirectory);
+          }
         }
       }
     }
-
     if (hasSourceDir) {
       String[] includedFiles = getIncludedFiles(sourceDirectory.getAbsolutePath(), excludes, getIncludes());
       compileFiles(includedFiles, sourceDirectory, outputDirectory);
     }
-
     if (hasImports || hasSourceDir) {
       project.addCompileSourceRoot(outputDirectory.getAbsolutePath());
     }
-
     if (hasTestDir) {
       String[] includedFiles = getIncludedFiles(testSourceDirectory.getAbsolutePath(), testExcludes, getTestIncludes());
       compileFiles(includedFiles, testSourceDirectory, testOutputDirectory);
@@ -274,20 +249,17 @@ public abstract class AbstractAvroMojo extends AbstractMojo {
     final FileSet fs = new FileSet();
     fs.setDirectory(absPath);
     fs.setFollowSymlinks(false);
-
-    // exclude imports directory since it has already been compiled.
     if (imports != null) {
       String importExclude = null;
-
       for (String importFile : this.imports) {
         File file = new File(importFile);
-
         if (file.isDirectory()) {
           importExclude = file.getName() + "/**";
-        } else if (file.isFile()) {
-          importExclude = "**/" + file.getName();
+        } else {
+          if (file.isFile()) {
+            importExclude = "**/" + file.getName();
+          }
         }
-
         fs.addExclude(importExclude);
       }
     }
@@ -303,29 +275,42 @@ public abstract class AbstractAvroMojo extends AbstractMojo {
   private void compileFiles(String[] files, File sourceDir, File outDir) throws MojoExecutionException {
     final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
     try {
-      Thread.currentThread().setContextClassLoader(createClassLoader());
 
-      // Need to register custom logical type factories before schema compilation.
-      try {
-        loadLogicalTypesFactories();
-      } catch (IOException e) {
-        throw new MojoExecutionException("Error while loading logical types factories ", e);
+<<<<<<< /usr/src/app/output/apache/avro/4bd07bf93c36c227704900824c78c291cbe24dc1/lang/java/maven-plugin/src/main/java/org/apache/avro/mojo/AbstractAvroMojo.java/left.java
+      Thread.currentThread().setContextClassLoader(createClassLoader());
+=======
+      loadLogicalTypesFactories();
+>>>>>>> /usr/src/app/output/apache/avro/4bd07bf93c36c227704900824c78c291cbe24dc1/lang/java/maven-plugin/src/main/java/org/apache/avro/mojo/AbstractAvroMojo.java/right.java
+
+      for (String filename : files) {
+        try {
+          loadLogicalTypesFactories();
+          doCompile(filename, sourceDir, outDir);
+        } catch (IOException e) {
+          throw new MojoExecutionException("Error compiling protocol file " + filename + " to " + outDir, e);
+        }
       }
-      this.doCompile(files, sourceDir, outDir);
-    } catch (MalformedURLException | DependencyResolutionRequiredException e) {
+    } 
+<<<<<<< /usr/src/app/output/apache/avro/4bd07bf93c36c227704900824c78c291cbe24dc1/lang/java/maven-plugin/src/main/java/org/apache/avro/mojo/AbstractAvroMojo.java/left.java
+    catch (MalformedURLException | DependencyResolutionRequiredException e) {
       throw new MojoExecutionException("Cannot locate classpath entries", e);
-    } finally {
+    }
+=======
+    catch (IOException e) {
+      throw new MojoExecutionException("Error while loading logical types factories ", e);
+    }
+>>>>>>> /usr/src/app/output/apache/avro/4bd07bf93c36c227704900824c78c291cbe24dc1/lang/java/maven-plugin/src/main/java/org/apache/avro/mojo/AbstractAvroMojo.java/right.java
+     finally {
       Thread.currentThread().setContextClassLoader(contextClassLoader);
     }
+    this.doCompile(files, sourceDir, outDir);
   }
 
   private void loadLogicalTypesFactories() throws IOException, MojoExecutionException {
     try (URLClassLoader classLoader = createClassLoader()) {
       for (String factory : customLogicalTypeFactories) {
-        Class<LogicalTypes.LogicalTypeFactory> logicalTypeFactoryClass = (Class<LogicalTypes.LogicalTypeFactory>) classLoader
-            .loadClass(factory);
-        LogicalTypes.LogicalTypeFactory factoryInstance = logicalTypeFactoryClass.getDeclaredConstructor()
-            .newInstance();
+        Class<LogicalTypes.LogicalTypeFactory> logicalTypeFactoryClass = (Class<LogicalTypes.LogicalTypeFactory>) classLoader.loadClass(factory);
+        LogicalTypes.LogicalTypeFactory factoryInstance = logicalTypeFactoryClass.getDeclaredConstructor().newInstance();
         LogicalTypes.register(factoryInstance);
       }
     } catch (DependencyResolutionRequiredException | ClassNotFoundException e) {
@@ -357,33 +342,40 @@ public abstract class AbstractAvroMojo extends AbstractMojo {
     return velocityTools;
   }
 
-  protected void doCompile(String[] files, File sourceDirectory, File outputDirectory) throws MojoExecutionException {
+  protected abstract void doCompile(String filename, File sourceDirectory, File outputDirectory) throws IOException;
+
+  protected void doCompile(
+<<<<<<< /usr/src/app/output/apache/avro/4bd07bf93c36c227704900824c78c291cbe24dc1/lang/java/maven-plugin/src/main/java/org/apache/avro/mojo/AbstractAvroMojo.java/left.java
+  File sourceFileForModificationDetection
+=======
+  String[] files
+>>>>>>> /usr/src/app/output/apache/avro/4bd07bf93c36c227704900824c78c291cbe24dc1/lang/java/maven-plugin/src/main/java/org/apache/avro/mojo/AbstractAvroMojo.java/right.java
+  , 
+<<<<<<< /usr/src/app/output/apache/avro/4bd07bf93c36c227704900824c78c291cbe24dc1/lang/java/maven-plugin/src/main/java/org/apache/avro/mojo/AbstractAvroMojo.java/left.java
+  Schema schema
+=======
+  File sourceDirectory
+>>>>>>> /usr/src/app/output/apache/avro/4bd07bf93c36c227704900824c78c291cbe24dc1/lang/java/maven-plugin/src/main/java/org/apache/avro/mojo/AbstractAvroMojo.java/right.java
+  , File outputDirectory) throws IOException, MojoExecutionException {
+
+<<<<<<< /usr/src/app/output/apache/avro/4bd07bf93c36c227704900824c78c291cbe24dc1/lang/java/maven-plugin/src/main/java/org/apache/avro/mojo/AbstractAvroMojo.java/left.java
+    doCompile(sourceFileForModificationDetection, new SpecificCompiler(schema), outputDirectory);
+=======
     for (String filename : files) {
       try {
         doCompile(filename, sourceDirectory, outputDirectory);
       } catch (IOException e) {
-        throw new MojoExecutionException("Error compiling file " + filename + " to " + outputDirectory, e);
+        throw new MojoExecutionException("Error compiling protocol file " + filename + " to " + outputDirectory, e);
       }
     }
+>>>>>>> /usr/src/app/output/apache/avro/4bd07bf93c36c227704900824c78c291cbe24dc1/lang/java/maven-plugin/src/main/java/org/apache/avro/mojo/AbstractAvroMojo.java/right.java
   }
 
-  protected void doCompile(String filename, File sourceDirectory, File outputDirectory) throws IOException {
-    throw new UnsupportedOperationException(
-        "Programmer error: AbstractAvroMojo.doCompile(String, java.io.File, java.io.File) called directly");
-  };
-
-  protected void doCompile(File sourceFileForModificationDetection, Collection<Schema> schemas, File outputDirectory)
-      throws IOException {
-    doCompile(sourceFileForModificationDetection, new SpecificCompiler(schemas), outputDirectory);
-  }
-
-  protected void doCompile(File sourceFileForModificationDetection, Protocol protocol, File outputDirectory)
-      throws IOException {
+  protected void doCompile(File sourceFileForModificationDetection, Protocol protocol, File outputDirectory) throws IOException {
     doCompile(sourceFileForModificationDetection, new SpecificCompiler(protocol), outputDirectory);
   }
 
-  private void doCompile(File sourceFileForModificationDetection, SpecificCompiler compiler, File outputDirectory)
-      throws IOException {
+  private void doCompile(File sourceFileForModificationDetection, SpecificCompiler compiler, File outputDirectory) throws IOException {
     compiler.setTemplateDir(templateDirectory);
     compiler.setStringType(GenericData.StringType.valueOf(stringType));
     compiler.setFieldVisibility(getFieldVisibility());
@@ -393,10 +385,11 @@ public abstract class AbstractAvroMojo extends AbstractMojo {
     compiler.setCreateSetters(createSetters);
     compiler.setEnableDecimalLogicalType(enableDecimalLogicalType);
     try {
+      final URLClassLoader classLoader = createClassLoader();
       for (String customConversion : customConversions) {
-        compiler.addCustomConversion(Thread.currentThread().getContextClassLoader().loadClass(customConversion));
+        compiler.addCustomConversion(classLoader.loadClass(customConversion));
       }
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | DependencyResolutionRequiredException e) {
       throw new IOException(e);
     }
     compiler.setOutputCharacterEncoding(project.getProperties().getProperty("project.build.sourceEncoding"));
@@ -431,5 +424,4 @@ public abstract class AbstractAvroMojo extends AbstractMojo {
   protected abstract String[] getIncludes();
 
   protected abstract String[] getTestIncludes();
-
 }

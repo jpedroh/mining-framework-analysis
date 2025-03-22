@@ -1,22 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.apache.avro.compiler.specific;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -37,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.apache.avro.Conversion;
 import org.apache.avro.Conversions;
 import org.apache.avro.JsonProperties;
@@ -58,7 +39,6 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.avro.specific.SpecificData.RESERVED_WORDS;
 import static org.apache.avro.specific.SpecificData.RESERVED_WORD_ESCAPE_CHAR;
@@ -69,35 +49,13 @@ import static org.apache.avro.specific.SpecificData.RESERVED_WORD_ESCAPE_CHAR;
  * Java reserved keywords are mangled to preserve compilation.
  */
 public class SpecificCompiler {
-
-  /*
-   * From Section 4.10 of the Java VM Specification: A method descriptor is valid
-   * only if it represents method parameters with a total length of 255 or less,
-   * where that length includes the contribution for this in the case of instance
-   * or interface method invocations. The total length is calculated by summing
-   * the contributions of the individual parameters, where a parameter of type
-   * long or double contributes two units to the length and a parameter of any
-   * other type contributes one unit.
-   *
-   * Arguments of type Double/Float contribute 2 "parameter units" to this limit,
-   * all other types contribute 1 "parameter unit". All instance methods for a
-   * class are passed a reference to the instance (`this), and hence, they are
-   * permitted at most `JVM_METHOD_ARG_LIMIT-1` "parameter units" for their
-   * arguments.
-   *
-   * @see <a href=
-   * "https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.10">
-   * JVM Spec: Section 4.10</a>
-   */
   private static final int JVM_METHOD_ARG_LIMIT = 255;
 
-  /*
-   * Note: This is protected instead of private only so it's visible for testing.
-   */
   protected static final int MAX_FIELD_PARAMETER_UNIT_COUNT = JVM_METHOD_ARG_LIMIT - 1;
 
   public enum FieldVisibility {
-    PUBLIC, PRIVATE
+    PUBLIC,
+    PRIVATE
   }
 
   void addLogicalTypeConversions(SpecificData specificData) {
@@ -114,63 +72,63 @@ public class SpecificCompiler {
   private final SpecificData specificData = new SpecificData();
 
   private final Set<Schema> queue = new HashSet<>();
+
   private Protocol protocol;
+
   private VelocityEngine velocityEngine;
+
   private String templateDir;
+
   private FieldVisibility fieldVisibility = FieldVisibility.PRIVATE;
+
   private boolean createOptionalGetters = false;
+
   private boolean gettersReturnOptional = false;
+
   private boolean optionalGettersForNullableFieldsOnly = false;
+
   private boolean createSetters = true;
+
   private boolean createAllArgsConstructor = true;
+
   private String outputCharacterEncoding;
+
   private boolean enableDecimalLogicalType = false;
+
   private String suffix = ".java";
+
   private List<Object> additionalVelocityTools = Collections.emptyList();
 
   private String recordSpecificClass = "org.apache.avro.specific.SpecificRecordBase";
 
   private String errorSpecificClass = "org.apache.avro.specific.SpecificExceptionBase";
 
-  /*
-   * Used in the record.vm template.
-   */
   public boolean isCreateAllArgsConstructor() {
     return createAllArgsConstructor;
   }
 
-  /* Reserved words for accessor/mutator methods */
-  protected static final Set<String> ACCESSOR_MUTATOR_RESERVED_WORDS = new HashSet<>(
-      Arrays.asList("class", "schema", "classSchema"));
+  protected static final Set<String> ACCESSOR_MUTATOR_RESERVED_WORDS = new HashSet<>(Arrays.asList("class", "schema", "classSchema"));
 
   static {
-    // Add reserved words to accessor/mutator reserved words
     ACCESSOR_MUTATOR_RESERVED_WORDS.addAll(RESERVED_WORDS);
   }
 
-  /* Reserved words for type identifiers */
-  protected static final Set<String> TYPE_IDENTIFIER_RESERVED_WORDS = new HashSet<>(
-      Arrays.asList("var", "yield", "record"));
+  protected static final Set<String> TYPE_IDENTIFIER_RESERVED_WORDS = new HashSet<>(Arrays.asList("var", "yield", "record"));
 
   static {
-    // Add reserved words to type identifier reserved words
     TYPE_IDENTIFIER_RESERVED_WORDS.addAll(RESERVED_WORDS);
   }
 
-  /* Reserved words for error types */
   protected static final Set<String> ERROR_RESERVED_WORDS = new HashSet<>(Arrays.asList("message", "cause"));
 
   static {
-    // Add accessor/mutator reserved words to error reserved words
     ERROR_RESERVED_WORDS.addAll(ACCESSOR_MUTATOR_RESERVED_WORDS);
   }
 
-  private static final String FILE_HEADER = "/**\n" + " * Autogenerated by Avro\n" + " *\n"
-      + " * DO NOT EDIT DIRECTLY\n" + " */\n";
+  private static final String FILE_HEADER = "/**\n" + " * Autogenerated by Avro\n" + " *\n" + " * DO NOT EDIT DIRECTLY\n" + " */\n";
 
   public SpecificCompiler(Protocol protocol) {
     this();
-    // enqueue all types
     for (Schema s : protocol.getTypes()) {
       enqueue(s);
     }
@@ -179,19 +137,21 @@ public class SpecificCompiler {
 
   public SpecificCompiler(Schema schema) {
     this(Collections.singleton(schema));
+    enqueue(schema);
+    this.protocol = null;
   }
 
-  public SpecificCompiler(Collection<Schema> schemas) {
+  public SpecificCompiler(
+<<<<<<< /usr/src/app/output/apache/avro/4bd07bf93c36c227704900824c78c291cbe24dc1/lang/java/compiler/src/main/java/org/apache/avro/compiler/specific/SpecificCompiler.java/left.java
+  Collection
+=======
+  Iterable
+>>>>>>> /usr/src/app/output/apache/avro/4bd07bf93c36c227704900824c78c291cbe24dc1/lang/java/compiler/src/main/java/org/apache/avro/compiler/specific/SpecificCompiler.java/right.java
+  <Schema> schemas) {
     this();
     for (Schema schema : schemas) {
       enqueue(schema);
     }
-    this.protocol = null;
-  }
-
-  public SpecificCompiler(Iterable<Schema> schemas) {
-    this();
-    schemas.forEach(this::enqueue);
     this.protocol = null;
   }
 
@@ -200,8 +160,7 @@ public class SpecificCompiler {
    * logical types.
    */
   SpecificCompiler() {
-    this.templateDir = System.getProperty("org.apache.avro.specific.templates",
-        "/org/apache/avro/compiler/specific/templates/java/classic/");
+    this.templateDir = System.getProperty("org.apache.avro.specific.templates", "/org/apache/avro/compiler/specific/templates/java/classic/");
     initializeVelocity();
     initializeSpecificData();
   }
@@ -321,57 +280,52 @@ public class SpecificCompiler {
   }
 
   public Map<String, String> getUsedCustomLogicalTypeFactories(Schema schema) {
-    final Set<String> logicalTypeNames = getUsedLogicalTypes(schema).stream().map(LogicalType::getName)
-        .collect(Collectors.toSet());
-
-    return LogicalTypes.getCustomRegisteredTypes().entrySet().stream()
-        .filter(entry -> logicalTypeNames.contains(entry.getKey()))
-        .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getClass().getCanonicalName()));
+    final Set<String> logicalTypeNames = getUsedLogicalTypes(schema).stream().map(LogicalType::getName).collect(Collectors.toSet());
+    return LogicalTypes.getCustomRegisteredTypes().entrySet().stream().filter((entry) -> logicalTypeNames.contains(entry.getKey())).collect(Collectors.toMap(Map.Entry::getKey, (entry) -> entry.getValue().getClass().getCanonicalName()));
   }
 
-  private void collectUsedTypes(Schema schema, Set<Conversion<?>> conversionResults,
-      Set<LogicalType> logicalTypeResults, Set<Schema> seenSchemas) {
+  private void collectUsedTypes(Schema schema, Set<Conversion<?>> conversionResults, Set<LogicalType> logicalTypeResults, Set<Schema> seenSchemas) {
     if (seenSchemas.contains(schema)) {
       return;
     }
-
     final LogicalType logicalType = LogicalTypes.fromSchemaIgnoreInvalid(schema);
-    if (logicalTypeResults != null && logicalType != null)
+    if (logicalTypeResults != null && logicalType != null) {
       logicalTypeResults.add(logicalType);
-
+    }
     final Conversion<?> conversion = specificData.getConversionFor(logicalType);
-    if (conversionResults != null && conversion != null)
+    if (conversionResults != null && conversion != null) {
       conversionResults.add(conversion);
-
+    }
     seenSchemas.add(schema);
     switch (schema.getType()) {
-    case RECORD:
+      case RECORD:
       for (Schema.Field field : schema.getFields()) {
         collectUsedTypes(field.schema(), conversionResults, logicalTypeResults, seenSchemas);
       }
       break;
-    case MAP:
+      case MAP:
       collectUsedTypes(schema.getValueType(), conversionResults, logicalTypeResults, seenSchemas);
       break;
-    case ARRAY:
+      case ARRAY:
       collectUsedTypes(schema.getElementType(), conversionResults, logicalTypeResults, seenSchemas);
       break;
-    case UNION:
-      for (Schema s : schema.getTypes())
+      case UNION:
+      for (Schema s : schema.getTypes()) {
         collectUsedTypes(s, conversionResults, logicalTypeResults, seenSchemas);
+      }
       break;
-    case NULL:
-    case ENUM:
-    case FIXED:
-    case STRING:
-    case BYTES:
-    case INT:
-    case LONG:
-    case FLOAT:
-    case DOUBLE:
-    case BOOLEAN:
+      case NULL:
+      case ENUM:
+      case FIXED:
+      case STRING:
+      case BYTES:
+      case INT:
+      case LONG:
+      case FLOAT:
+      case DOUBLE:
+      case BOOLEAN:
       break;
-    default:
+      default:
       throw new RuntimeException("Unknown type: " + schema);
     }
   }
@@ -390,19 +344,11 @@ public class SpecificCompiler {
 
   private void initializeVelocity() {
     this.velocityEngine = new VelocityEngine();
-
-    // These properties tell Velocity to use its own classpath-based
-    // loader, then drop down to check the root and the current folder
     velocityEngine.addProperty("resource.loaders", "class, file");
-    velocityEngine.addProperty("resource.loader.class.class",
-        "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-    velocityEngine.addProperty("resource.loader.file.class",
-        "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
+    velocityEngine.addProperty("resource.loader.class.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+    velocityEngine.addProperty("resource.loader.file.class", "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
     velocityEngine.addProperty("resource.loader.file.path", "/, ., ");
     velocityEngine.setProperty("runtime.strict_mode.enable", true);
-
-    // Set whitespace gobbling to Backward Compatible (BC)
-    // https://velocity.apache.org/engine/2.0/developer-guide.html#space-gobbling
     velocityEngine.setProperty("parser.space_gobbling", "bc");
   }
 
@@ -411,12 +357,11 @@ public class SpecificCompiler {
     specificData.addLogicalTypeConversion(new Conversions.DecimalConversion());
   }
 
-  /**
-   * Captures output file path and contents.
-   */
   static class OutputFile {
     String path;
+
     String contents;
+
     String outputCharacterEncoding;
 
     /**
@@ -425,8 +370,9 @@ public class SpecificCompiler {
      */
     File writeToDestination(File src, File destDir) throws IOException {
       File f = new File(destDir, path);
-      if (src != null && f.exists() && f.lastModified() >= src.lastModified())
-        return f; // already up to date: ignore
+      if (src != null && f.exists() && f.lastModified() >= src.lastModified()) {
+        return f;
+      }
       f.getParentFile().mkdirs();
       Writer fw = null;
       FileOutputStream fos = null;
@@ -439,11 +385,13 @@ public class SpecificCompiler {
         }
         fw.write(FILE_HEADER);
         fw.write(contents);
-      } finally {
-        if (fw != null)
+      }  finally {
+        if (fw != null) {
           fw.close();
-        if (fos != null)
+        }
+        if (fos != null) {
           fos.close();
+        }
       }
       return f;
     }
@@ -485,7 +433,6 @@ public class SpecificCompiler {
    */
   public static void compileSchema(File[] srcFiles, File dest) throws IOException {
     Schema.Parser parser = new Schema.Parser();
-
     for (File src : srcFiles) {
       Schema schema = parser.parse(src);
       SpecificCompiler compiler = new SpecificCompiler(schema);
@@ -497,38 +444,41 @@ public class SpecificCompiler {
    * Recursively enqueue schemas that need a class generated.
    */
   private void enqueue(Schema schema) {
-    if (queue.contains(schema))
+    if (queue.contains(schema)) {
       return;
+    }
     switch (schema.getType()) {
-    case RECORD:
+      case RECORD:
       queue.add(schema);
-      for (Schema.Field field : schema.getFields())
+      for (Schema.Field field : schema.getFields()) {
         enqueue(field.schema());
+      }
       break;
-    case MAP:
+      case MAP:
       enqueue(schema.getValueType());
       break;
-    case ARRAY:
+      case ARRAY:
       enqueue(schema.getElementType());
       break;
-    case UNION:
-      for (Schema s : schema.getTypes())
+      case UNION:
+      for (Schema s : schema.getTypes()) {
         enqueue(s);
+      }
       break;
-    case ENUM:
-    case FIXED:
+      case ENUM:
+      case FIXED:
       queue.add(schema);
       break;
-    case STRING:
-    case BYTES:
-    case INT:
-    case LONG:
-    case FLOAT:
-    case DOUBLE:
-    case BOOLEAN:
-    case NULL:
+      case STRING:
+      case BYTES:
+      case INT:
+      case LONG:
+      case FLOAT:
+      case DOUBLE:
+      case BOOLEAN:
+      case NULL:
       break;
-    default:
+      default:
       throw new RuntimeException("Unknown type: " + schema);
     }
   }
@@ -573,7 +523,7 @@ public class SpecificCompiler {
   }
 
   OutputFile compileInterface(Protocol protocol) {
-    protocol = addStringType(protocol); // annotate protocol as needed
+    protocol = addStringType(protocol);
     VelocityContext context = new VelocityContext();
     context.put("protocol", protocol);
     context.put("this", this);
@@ -582,7 +532,6 @@ public class SpecificCompiler {
       context.put(toolName, velocityTool);
     }
     String out = renderTemplate(templateDir + "protocol.vm", context);
-
     OutputFile outputFile = new OutputFile();
     String mangledName = mangleTypeIdentifier(protocol.getName());
     outputFile.path = makePath(mangledName, mangle(protocol.getNamespace()));
@@ -591,7 +540,6 @@ public class SpecificCompiler {
     return outputFile;
   }
 
-  // package private for testing purposes
   String makePath(String name, String space) {
     if (space == null || space.isEmpty()) {
       return name + suffix;
@@ -607,27 +555,22 @@ public class SpecificCompiler {
    * @param record a Record schema
    */
   protected int calcAllArgConstructorParameterUnits(Schema record) {
-
-    if (record.getType() != Schema.Type.RECORD)
+    if (record.getType() != Schema.Type.RECORD) {
       throw new RuntimeException("This method must only be called for record schemas.");
-
+    }
     return record.getFields().size();
   }
 
   protected void validateRecordForCompilation(Schema record) {
     this.createAllArgsConstructor = calcAllArgConstructorParameterUnits(record) <= MAX_FIELD_PARAMETER_UNIT_COUNT;
-
     if (!this.createAllArgsConstructor) {
       Logger logger = LoggerFactory.getLogger(SpecificCompiler.class);
-      logger.warn("Record '" + record.getFullName() + "' contains more than " + MAX_FIELD_PARAMETER_UNIT_COUNT
-          + " parameters which exceeds the JVM "
-          + "spec for the number of permitted constructor arguments. Clients must "
-          + "rely on the builder pattern to create objects instead. For more info " + "see JIRA ticket AVRO-1642.");
+      logger.warn("Record \'" + record.getFullName() + "\' contains more than " + MAX_FIELD_PARAMETER_UNIT_COUNT + " parameters which exceeds the JVM " + "spec for the number of permitted constructor arguments. Clients must " + "rely on the builder pattern to create objects instead. For more info " + "see JIRA ticket AVRO-1642.");
     }
   }
 
   OutputFile compile(Schema schema) {
-    schema = addStringType(schema); // annotate schema as needed
+    schema = addStringType(schema);
     String output = "";
     VelocityContext context = new VelocityContext();
     context.put("this", this);
@@ -636,25 +579,23 @@ public class SpecificCompiler {
       String toolName = velocityTool.getClass().getSimpleName().toLowerCase();
       context.put(toolName, velocityTool);
     }
-
     switch (schema.getType()) {
-    case RECORD:
+      case RECORD:
       validateRecordForCompilation(schema);
       output = renderTemplate(templateDir + "record.vm", context);
       break;
-    case ENUM:
+      case ENUM:
       output = renderTemplate(templateDir + "enum.vm", context);
       break;
-    case FIXED:
+      case FIXED:
       output = renderTemplate(templateDir + "fixed.vm", context);
       break;
-    case BOOLEAN:
-    case NULL:
+      case BOOLEAN:
+      case NULL:
       break;
-    default:
+      default:
       throw new RuntimeException("Unknown type: " + schema);
     }
-
     OutputFile outputFile = new OutputFile();
     String name = mangleTypeIdentifier(schema.getName());
     outputFile.path = makePath(name, mangle(schema.getNamespace()));
@@ -672,54 +613,49 @@ public class SpecificCompiler {
     this.stringType = t;
   }
 
-  // annotate map and string schemas with string type
   private Protocol addStringType(Protocol p) {
-    if (stringType != StringType.String)
+    if (stringType != StringType.String) {
       return p;
-
+    }
     Protocol newP = new Protocol(p.getName(), p.getDoc(), p.getNamespace());
     Map<Schema, Schema> types = new LinkedHashMap<>();
-
     p.forEachProperty(newP::addProp);
-
-    // annotate types
     Collection<Schema> namedTypes = new LinkedHashSet<>();
-    for (Schema s : p.getTypes())
+    for (Schema s : p.getTypes()) {
       namedTypes.add(addStringType(s, types));
+    }
     newP.setTypes(namedTypes);
-
-    // annotate messages
     Map<String, Message> newM = newP.getMessages();
-    for (Message m : p.getMessages().values())
-      newM.put(m.getName(),
-          m.isOneWay() ? newP.createMessage(m, addStringType(m.getRequest(), types))
-              : newP.createMessage(m, addStringType(m.getRequest(), types), addStringType(m.getResponse(), types),
-                  addStringType(m.getErrors(), types)));
+    for (Message m : p.getMessages().values()) {
+      newM.put(m.getName(), m.isOneWay() ? newP.createMessage(m, addStringType(m.getRequest(), types)) : newP.createMessage(m, addStringType(m.getRequest(), types), addStringType(m.getResponse(), types), addStringType(m.getErrors(), types)));
+    }
     return newP;
   }
 
   private Schema addStringType(Schema s) {
-    if (stringType != StringType.String)
+    if (stringType != StringType.String) {
       return s;
+    }
     return addStringType(s, new HashMap<>());
   }
 
-  // annotate map and string schemas with string type
   private Schema addStringType(Schema s, Map<Schema, Schema> seen) {
-    if (seen.containsKey(s))
-      return seen.get(s); // break loops
+    if (seen.containsKey(s)) {
+      return seen.get(s);
+    }
     Schema result = s;
     switch (s.getType()) {
-    case STRING:
+      case STRING:
       result = Schema.create(Schema.Type.STRING);
       if (s.getLogicalType() == null) {
         GenericData.setStringType(result, stringType);
       }
       break;
-    case RECORD:
+      case RECORD:
       result = Schema.createRecord(s.getFullName(), s.getDoc(), null, s.isError());
-      for (String alias : s.getAliases())
-        result.addAlias(alias, null); // copy aliases
+      for (String alias : s.getAliases()) {
+        result.addAlias(alias, null);
+      }
       seen.put(s, result);
       List<Field> newFields = new ArrayList<>(s.getFields().size());
       for (Field f : s.getFields()) {
@@ -729,19 +665,20 @@ public class SpecificCompiler {
       }
       result.setFields(newFields);
       break;
-    case ARRAY:
+      case ARRAY:
       Schema e = addStringType(s.getElementType(), seen);
       result = Schema.createArray(e);
       break;
-    case MAP:
+      case MAP:
       Schema v = addStringType(s.getValueType(), seen);
       result = Schema.createMap(v);
       GenericData.setStringType(result, stringType);
       break;
-    case UNION:
+      case UNION:
       List<Schema> types = new ArrayList<>(s.getTypes().size());
-      for (Schema branch : s.getTypes())
+      for (Schema branch : s.getTypes()) {
         types.add(addStringType(branch, seen));
+      }
       result = Schema.createUnion(types);
       break;
     }
@@ -761,29 +698,30 @@ public class SpecificCompiler {
   public String getStringType(Schema s) {
     String prop;
     switch (s.getType()) {
-    case MAP:
+      case MAP:
       prop = SpecificData.KEY_CLASS_PROP;
       break;
-    case STRING:
+      case STRING:
       prop = SpecificData.CLASS_PROP;
       break;
-    default:
-      throw new IllegalArgumentException("Can't check string-type of non-string/map type: " + s);
+      default:
+      throw new IllegalArgumentException("Can\'t check string-type of non-string/map type: " + s);
     }
     return getStringType(s.getObjectProp(prop));
   }
 
   private String getStringType(Object overrideClassProperty) {
-    if (overrideClassProperty != null)
+    if (overrideClassProperty != null) {
       return overrideClassProperty.toString();
+    }
     switch (stringType) {
-    case String:
+      case String:
       return "java.lang.String";
-    case Utf8:
+      case Utf8:
       return "org.apache.avro.util.Utf8";
-    case CharSequence:
+      case CharSequence:
       return "java.lang.CharSequence";
-    default:
+      default:
       throw new RuntimeException("Unknown string type: " + stringType);
     }
   }
@@ -795,8 +733,7 @@ public class SpecificCompiler {
    */
   public boolean isStringable(Schema schema) {
     String t = getStringType(schema);
-    return !(t.equals("java.lang.String") || t.equals("java.lang.CharSequence")
-        || t.equals("org.apache.avro.util.Utf8"));
+    return !(t.equals("java.lang.String") || t.equals("java.lang.CharSequence") || t.equals("org.apache.avro.util.Utf8"));
   }
 
   private static final Schema NULL_SCHEMA = Schema.create(Schema.Type.NULL);
@@ -815,52 +752,49 @@ public class SpecificCompiler {
         return convertedLogicalType;
       }
     }
-
     switch (schema.getType()) {
-    case RECORD:
-    case ENUM:
-    case FIXED:
+      case RECORD:
+      case ENUM:
+      case FIXED:
       return mangleFullyQualified(schema.getFullName());
-    case ARRAY:
+      case ARRAY:
       return "java.util.List<" + javaType(schema.getElementType()) + ">";
-    case MAP:
-      return "java.util.Map<" + getStringType(schema.getObjectProp(SpecificData.KEY_CLASS_PROP)) + ","
-          + javaType(schema.getValueType()) + ">";
-    case UNION:
-      List<Schema> types = schema.getTypes(); // elide unions with null
-      if ((types.size() == 2) && types.contains(NULL_SCHEMA))
+      case MAP:
+      return "java.util.Map<" + getStringType(schema.getObjectProp(SpecificData.KEY_CLASS_PROP)) + "," + javaType(schema.getValueType()) + ">";
+      case UNION:
+      List<Schema> types = schema.getTypes();
+      if ((types.size() == 2) && types.contains(NULL_SCHEMA)) {
         return javaType(types.get(types.get(0).equals(NULL_SCHEMA) ? 1 : 0));
+      }
       return "java.lang.Object";
-    case STRING:
+      case STRING:
       return getStringType(schema.getObjectProp(SpecificData.CLASS_PROP));
-    case BYTES:
+      case BYTES:
       return "java.nio.ByteBuffer";
-    case INT:
+      case INT:
       return "java.lang.Integer";
-    case LONG:
+      case LONG:
       return "java.lang.Long";
-    case FLOAT:
+      case FLOAT:
       return "java.lang.Float";
-    case DOUBLE:
+      case DOUBLE:
       return "java.lang.Double";
-    case BOOLEAN:
+      case BOOLEAN:
       return "java.lang.Boolean";
-    case NULL:
+      case NULL:
       return "java.lang.Void";
-    default:
+      default:
       throw new RuntimeException("Unknown type: " + schema);
     }
   }
 
   private String mangleFullyQualified(String fullName) {
     int lastDot = fullName.lastIndexOf('.');
-
     if (lastDot < 0) {
       return mangleTypeIdentifier(fullName);
     } else {
       String namespace = fullName.substring(0, lastDot);
       String typeName = fullName.substring(lastDot + 1);
-
       return mangle(namespace) + "." + mangleTypeIdentifier(typeName);
     }
   }
@@ -897,8 +831,7 @@ public class SpecificCompiler {
    * @deprecated use javaUnbox(Schema, boolean), kept for backward compatibility
    *             of custom templates
    */
-  @Deprecated
-  public String javaUnbox(Schema schema) {
+  @Deprecated public String javaUnbox(Schema schema) {
     return javaUnbox(schema, false);
   }
 
@@ -911,25 +844,22 @@ public class SpecificCompiler {
     if (convertedLogicalType != null) {
       return convertedLogicalType;
     }
-
     switch (schema.getType()) {
-    case INT:
+      case INT:
       return "int";
-    case LONG:
+      case LONG:
       return "long";
-    case FLOAT:
+      case FLOAT:
       return "float";
-    case DOUBLE:
+      case DOUBLE:
       return "double";
-    case BOOLEAN:
+      case BOOLEAN:
       return "boolean";
-    case NULL:
+      case NULL:
       if (unboxNullToVoid) {
-        // Used for preventing unnecessary returns for RPC methods without response but
-        // with error(s)
         return "void";
       }
-    default:
+      default:
       return javaType(schema, false);
     }
   }
@@ -939,7 +869,7 @@ public class SpecificCompiler {
    * used for indentation purposes.
    */
   public String indent(int n) {
-    return new String(new char[n]).replace('\0', ' ');
+    return new String(new char[n]).replace('\u0000', ' ');
   }
 
   /**
@@ -948,8 +878,9 @@ public class SpecificCompiler {
    * than a two-branch union with on null branch.
    */
   public int getNonNullIndex(Schema s) {
-    if (s.getType() != Schema.Type.UNION || s.getTypes().size() != 2 || !s.getTypes().contains(NULL_SCHEMA))
+    if (s.getType() != Schema.Type.UNION || s.getTypes().size() != 2 || !s.getTypes().contains(NULL_SCHEMA)) {
       throw new IllegalArgumentException("Can only be used on 2-branch union with a null branch: " + s);
+    }
     return (s.getTypes().get(0).equals(NULL_SCHEMA) ? 1 : 0);
   }
 
@@ -962,35 +893,38 @@ public class SpecificCompiler {
   }
 
   private boolean isCustomCodable(Schema schema, Set<Schema> seen) {
-    if (!seen.add(schema))
-      // Recursive call: assume custom codable until a caller on the call stack proves
-      // otherwise.
+    if (!seen.add(schema)) {
       return true;
-    if (schema.getLogicalType() != null)
+    }
+    if (schema.getLogicalType() != null) {
       return false;
+    }
     boolean result = true;
     switch (schema.getType()) {
-    case RECORD:
-      if (schema.isError())
+      case RECORD:
+      if (schema.isError()) {
         return false;
-      for (Schema.Field f : schema.getFields())
+      }
+      for (Schema.Field f : schema.getFields()) {
         result &= isCustomCodable(f.schema(), seen);
+      }
       break;
-    case MAP:
+      case MAP:
       result = isCustomCodable(schema.getValueType(), seen);
       break;
-    case ARRAY:
+      case ARRAY:
       result = isCustomCodable(schema.getElementType(), seen);
       break;
-    case UNION:
+      case UNION:
       List<Schema> types = schema.getTypes();
-      // Only know how to handle "nulling" unions for now
-      if (types.size() != 2 || !types.contains(NULL_SCHEMA))
+      if (types.size() != 2 || !types.contains(NULL_SCHEMA)) {
         return false;
-      for (Schema s : types)
+      }
+      for (Schema s : types) {
         result &= isCustomCodable(s, seen);
+      }
       break;
-    default:
+      default:
     }
     return result;
   }
@@ -1008,16 +942,13 @@ public class SpecificCompiler {
     if (schema == null || schema.getLogicalType() == null) {
       return "null";
     }
-
     if (LogicalTypes.Decimal.class.equals(schema.getLogicalType().getClass()) && !enableDecimalLogicalType) {
       return "null";
     }
-
     final Conversion<Object> conversion = specificData.getConversionFor(schema.getLogicalType());
     if (conversion != null) {
       return "new " + conversion.getClass().getCanonicalName() + "()";
     }
-
     return "null";
   }
 
@@ -1026,10 +957,12 @@ public class SpecificCompiler {
    */
   public String[] javaAnnotations(JsonProperties props) {
     final Object value = props.getObjectProp("javaAnnotation");
-    if (value == null)
+    if (value == null) {
       return new String[0];
-    if (value instanceof String)
+    }
+    if (value instanceof String) {
       return new String[] { value.toString() };
+    }
     if (value instanceof List) {
       final List<?> list = (List<?>) value;
       final List<String> annots = new ArrayList<>(list.size());
@@ -1041,7 +974,6 @@ public class SpecificCompiler {
     return new String[0];
   }
 
-  // maximum size for string constants, to avoid javac limits
   int maxStringChars = 8192;
 
   /**
@@ -1053,14 +985,15 @@ public class SpecificCompiler {
    */
   public String javaSplit(String s) throws IOException {
     StringBuilder b = new StringBuilder(s.length());
-    b.append("\""); // initial quote
+    b.append("\"");
     for (int i = 0; i < s.length(); i += maxStringChars) {
-      if (i != 0)
-        b.append("\",\""); // insert quote-comma-quote
+      if (i != 0) {
+        b.append("\",\"");
+      }
       String chunk = s.substring(i, Math.min(s.length(), i + maxStringChars));
-      b.append(javaEscape(chunk)); // escape chunks
+      b.append(javaEscape(chunk));
     }
-    b.append("\""); // final quote
+    b.append("\"");
     return b.toString();
   }
 
@@ -1130,19 +1063,15 @@ public class SpecificCompiler {
       return word;
     }
     if (word.contains(".")) {
-      // If the 'word' is really a full path of a class we must mangle just the
       String[] packageWords = word.split("\\.");
       String[] newPackageWords = new String[packageWords.length];
-
       for (int i = 0; i < packageWords.length; i++) {
         String oldName = packageWords[i];
         newPackageWords[i] = mangle(oldName, reservedWords, false);
       }
-
       return String.join(".", newPackageWords);
     }
-    if (reservedWords.contains(word) || (isMethod && reservedWords
-        .contains(Character.toLowerCase(word.charAt(0)) + ((word.length() > 1) ? word.substring(1) : "")))) {
+    if (reservedWords.contains(word) || (isMethod && reservedWords.contains(Character.toLowerCase(word.charAt(0)) + ((word.length() > 1) ? word.substring(1) : "")))) {
       return word + RESERVED_WORD_ESCAPE_CHAR;
     }
     return word;
@@ -1215,17 +1144,15 @@ public class SpecificCompiler {
    */
   public static boolean hasBuilder(Schema schema) {
     switch (schema.getType()) {
-    case RECORD:
+      case RECORD:
       return true;
-
-    case UNION:
-      List<Schema> types = schema.getTypes(); // elide unions with null
+      case UNION:
+      List<Schema> types = schema.getTypes();
       if ((types.size() == 2) && types.contains(NULL_SCHEMA)) {
         return hasBuilder(types.get(types.get(0).equals(NULL_SCHEMA) ? 1 : 0));
       }
       return false;
-
-    default:
+      default:
       return false;
     }
   }
@@ -1273,36 +1200,29 @@ public class SpecificCompiler {
    * @return the generated method name.
    */
   private static String generateMethodName(Schema schema, Field field, String prefix, String postfix) {
-
-    // Check for the special case in which the schema defines two fields whose
-    // names are identical except for the case of the first character:
     int indexNameConflict = calcNameIndex(field.name(), schema);
-
     StringBuilder methodBuilder = new StringBuilder(prefix);
-    String fieldName = mangle(field.name(), schema.isError() ? ERROR_RESERVED_WORDS : ACCESSOR_MUTATOR_RESERVED_WORDS,
-        true);
-
+    String fieldName = mangle(field.name(), schema.isError() ? ERROR_RESERVED_WORDS : ACCESSOR_MUTATOR_RESERVED_WORDS, true);
     boolean nextCharToUpper = true;
     for (int ii = 0; ii < fieldName.length(); ii++) {
       if (fieldName.charAt(ii) == '_') {
         nextCharToUpper = true;
-      } else if (nextCharToUpper) {
-        methodBuilder.append(Character.toUpperCase(fieldName.charAt(ii)));
-        nextCharToUpper = false;
       } else {
-        methodBuilder.append(fieldName.charAt(ii));
+        if (nextCharToUpper) {
+          methodBuilder.append(Character.toUpperCase(fieldName.charAt(ii)));
+          nextCharToUpper = false;
+        } else {
+          methodBuilder.append(fieldName.charAt(ii));
+        }
       }
     }
     methodBuilder.append(postfix);
-
-    // If there is a field name conflict append $0 or $1
     if (indexNameConflict >= 0) {
       if (methodBuilder.charAt(methodBuilder.length() - 1) != '$') {
         methodBuilder.append('$');
       }
       methodBuilder.append(indexNameConflict);
     }
-
     return methodBuilder.toString();
   }
 
@@ -1316,8 +1236,6 @@ public class SpecificCompiler {
    * @return index for field.
    */
   private static int calcNameIndex(String fieldName, Schema schema) {
-    // get name without underscore at start
-    // and calc number of other similar fields with same subname.
     int countSimilar = 0;
     String pureFieldName = fieldName;
     while (!pureFieldName.isEmpty() && pureFieldName.charAt(0) == '_') {
@@ -1330,18 +1248,14 @@ public class SpecificCompiler {
         countSimilar++;
       }
     }
-    // field name start with upper have +1
     String reversed = reverseFirstLetter(fieldName);
-    if (!pureFieldName.isEmpty() && Character.isUpperCase(pureFieldName.charAt(0))
-        && schema.getField(reversed) != null) {
+    if (!pureFieldName.isEmpty() && Character.isUpperCase(pureFieldName.charAt(0)) && schema.getField(reversed) != null) {
       countSimilar++;
     }
-
-    int ret = -1; // if no similar name, no index.
+    int ret = -1;
     if (countSimilar > 0) {
-      ret = countSimilar - 1; // index is count similar -1 (start with $0)
+      ret = countSimilar - 1;
     }
-
     return ret;
   }
 
@@ -1370,20 +1284,18 @@ public class SpecificCompiler {
    */
   public static boolean isUnboxedJavaTypeNullable(Schema schema) {
     switch (schema.getType()) {
-    // Primitives can't be null; assume anything else can
-    case INT:
-    case LONG:
-    case FLOAT:
-    case DOUBLE:
-    case BOOLEAN:
+      case INT:
+      case LONG:
+      case FLOAT:
+      case DOUBLE:
+      case BOOLEAN:
       return false;
-    default:
+      default:
       return true;
     }
   }
 
   public static void main(String[] args) throws Exception {
-    // compileSchema(new File(args[0]), new File(args[1]));
     compileProtocol(new File(args[0]), new File(args[1]));
   }
 
