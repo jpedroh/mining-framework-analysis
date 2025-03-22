@@ -1,18 +1,4 @@
-/*
- * Copyright 2015-2023 The OpenZipkin Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
- */
 package zipkin2.elasticsearch.internal;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -30,8 +16,8 @@ import zipkin2.Span;
  * JSON serialization utilities and parsing code.
  */
 public final class JsonSerializers {
-  public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
-    .setSerializationInclusion(JsonInclude.Include.NON_NULL);
+  public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
   public static final JsonFactory JSON_FACTORY = new JsonFactory();
 
   public static JsonGenerator jsonGenerator(OutputStream stream) {
@@ -42,7 +28,7 @@ public final class JsonSerializers {
     }
   }
 
-  public interface ObjectParser<T> {
+  public interface ObjectParser<T extends java.lang.Object> {
     T parse(JsonParser jsonParser) throws IOException;
   }
 
@@ -50,12 +36,9 @@ public final class JsonSerializers {
 
   static Span parseSpan(JsonParser parser) throws IOException {
     if (!parser.isExpectedStartObjectToken()) {
-      throw new IllegalArgumentException("Not a valid JSON object, start token: " +
-        parser.currentToken());
+      throw new IllegalArgumentException("Not a valid JSON object, start token: " + parser.currentToken());
     }
-
     Span.Builder result = Span.newBuilder();
-
     JsonToken value;
     while ((value = parser.nextValue()) != JsonToken.END_OBJECT) {
       if (value == null) {
@@ -72,143 +55,126 @@ public final class JsonSerializers {
       }
       switch (parser.currentName()) {
         case "traceId":
-          result.traceId(parser.getText());
-          break;
+        result.traceId(parser.getText());
+        break;
         case "parentId":
-          result.parentId(parser.getText());
-          break;
+        result.parentId(parser.getText());
+        break;
         case "id":
-          result.id(parser.getText());
-          break;
+        result.id(parser.getText());
+        break;
         case "kind":
-          result.kind(Span.Kind.valueOf(parser.getText()));
-          break;
+        result.kind(Span.Kind.valueOf(parser.getText()));
+        break;
         case "name":
-          result.name(parser.getText());
-          break;
+        result.name(parser.getText());
+        break;
         case "timestamp":
-          result.timestamp(parser.getLongValue());
-          break;
+        result.timestamp(parser.getLongValue());
+        break;
         case "duration":
-          result.duration(parser.getLongValue());
-          break;
+        result.duration(parser.getLongValue());
+        break;
         case "localEndpoint":
-          result.localEndpoint(parseEndpoint(parser));
-          break;
+        result.localEndpoint(parseEndpoint(parser));
+        break;
         case "remoteEndpoint":
-          result.remoteEndpoint(parseEndpoint(parser));
-          break;
+        result.remoteEndpoint(parseEndpoint(parser));
+        break;
         case "annotations":
-          if (value != JsonToken.START_ARRAY) {
-            throw new IOException("Invalid span, expecting annotations array start, got: " +
-              value);
-          }
-          while (parser.nextToken() != JsonToken.END_ARRAY) {
-            Annotation a = parseAnnotation(parser);
-            result.addAnnotation(a.timestamp(), a.value());
-          }
-          break;
+        if (value != JsonToken.START_ARRAY) {
+          throw new IOException("Invalid span, expecting annotations array start, got: " + value);
+        }
+        while (parser.nextToken() != JsonToken.END_ARRAY) {
+          Annotation a = parseAnnotation(parser);
+          result.addAnnotation(a.timestamp(), a.value());
+        }
+        break;
         case "tags":
-          if (value != JsonToken.START_OBJECT) {
-            throw new IOException("Invalid span, expecting tags object, got: " + value);
+        if (value != JsonToken.START_OBJECT) {
+          throw new IOException("Invalid span, expecting tags object, got: " + value);
+        }
+        while (parser.nextValue() != JsonToken.END_OBJECT) {
+          String parserCurrentName = parser.currentName();
+          String parserValue = parser.getValueAsString();
+          if (parserCurrentName == null || parserValue == null) {
+            continue;
           }
-          while (parser.nextValue() != JsonToken.END_OBJECT) {
-            String parserCurrentName = parser.currentName();
-            String parserValue = parser.getValueAsString();
-            if (parserCurrentName == null || parserValue == null) continue;
-            result.putTag(parserCurrentName, parserValue);
-          }
-          break;
+          result.putTag(parserCurrentName, parserValue);
+        }
+        break;
         case "debug":
-          result.debug(parser.getBooleanValue());
-          break;
+        result.debug(parser.getBooleanValue());
+        break;
         case "shared":
-          result.shared(parser.getBooleanValue());
-          break;
+        result.shared(parser.getBooleanValue());
+        break;
         default:
-          // Skip
       }
     }
-
     return result.build();
   }
 
   static Endpoint parseEndpoint(JsonParser parser) throws IOException {
     if (!parser.isExpectedStartObjectToken()) {
-      throw new IllegalArgumentException("Not a valid JSON object, start token: " +
-        parser.currentToken());
+      throw new IllegalArgumentException("Not a valid JSON object, start token: " + parser.currentToken());
     }
-
     String serviceName = null, ipv4 = null, ipv6 = null;
     int port = 0;
-
     while (parser.nextToken() != JsonToken.END_OBJECT) {
       JsonToken value = parser.nextValue();
       if (value == JsonToken.VALUE_NULL) {
         continue;
       }
-
       switch (parser.currentName()) {
         case "serviceName":
-          serviceName = parser.getText();
-          break;
+        serviceName = parser.getText();
+        break;
         case "ipv4":
-          ipv4 = parser.getText();
-          break;
+        ipv4 = parser.getText();
+        break;
         case "ipv6":
-          ipv6 = parser.getText();
-          break;
+        ipv6 = parser.getText();
+        break;
         case "port":
-          port = parser.getIntValue();
-          break;
+        port = parser.getIntValue();
+        break;
         default:
-          // Skip
       }
     }
-
-    if (serviceName == null && ipv4 == null && ipv6 == null && port == 0) return null;
-    return Endpoint.newBuilder()
-      .serviceName(serviceName)
-      .ip(ipv4)
-      .ip(ipv6)
-      .port(port)
-      .build();
+    if (serviceName == null && ipv4 == null && ipv6 == null && port == 0) {
+      return null;
+    }
+    return Endpoint.newBuilder().serviceName(serviceName).ip(ipv4).ip(ipv6).port(port).build();
   }
 
   static Annotation parseAnnotation(JsonParser parser) throws IOException {
     if (!parser.isExpectedStartObjectToken()) {
-      throw new IllegalArgumentException("Not a valid JSON object, start token: " +
-        parser.currentToken());
+      throw new IllegalArgumentException("Not a valid JSON object, start token: " + parser.currentToken());
     }
-
     long timestamp = 0;
     String value = null;
-
     while (parser.nextValue() != JsonToken.END_OBJECT) {
       switch (parser.currentName()) {
         case "timestamp":
-          timestamp = parser.getLongValue();
-          break;
+        timestamp = parser.getLongValue();
+        break;
         case "value":
-          value = parser.getValueAsString();
-          break;
+        value = parser.getValueAsString();
+        break;
         default:
-          // Skip
       }
     }
-
     if (timestamp == 0 || value == null) {
       throw new IllegalArgumentException("Incomplete annotation at " + parser.currentToken());
     }
     return Annotation.create(timestamp, value);
   }
 
-  public static final ObjectParser<DependencyLink> DEPENDENCY_LINK_PARSER = parser -> {
+  public static final ObjectParser<DependencyLink> DEPENDENCY_LINK_PARSER = (parser) -> {
     if (!parser.isExpectedStartObjectToken()) {
-      throw new IllegalArgumentException("Expected start of dependency link object but was "
-        + parser.currentToken());
+      throw new IllegalArgumentException("Expected start of dependency link object but was " + parser.currentToken());
     }
-
     DependencyLink.Builder result = DependencyLink.newBuilder();
     JsonToken value;
     while ((value = parser.nextValue()) != JsonToken.END_OBJECT) {
@@ -217,19 +183,18 @@ public final class JsonSerializers {
       }
       switch (parser.currentName()) {
         case "parent":
-          result.parent(parser.getText());
-          break;
+        result.parent(parser.getText());
+        break;
         case "child":
-          result.child(parser.getText());
-          break;
+        result.child(parser.getText());
+        break;
         case "callCount":
-          result.callCount(parser.getLongValue());
-          break;
+        result.callCount(parser.getLongValue());
+        break;
         case "errorCount":
-          result.errorCount(parser.getLongValue());
-          break;
+        result.errorCount(parser.getLongValue());
+        break;
         default:
-          // Skip
       }
     }
     return result.build();
