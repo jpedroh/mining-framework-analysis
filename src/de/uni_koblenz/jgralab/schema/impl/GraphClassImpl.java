@@ -98,7 +98,7 @@ public class GraphClassImpl extends
 		return defaultVertexClass;
 	}
 
-	protected void initializeDefaultVertexClass() {
+	final void initializeDefaultVertexClass() {
 		VertexClassImpl vc = new VertexClassImpl(
 				VertexClass.DEFAULTVERTEXCLASS_NAME,
 				(PackageImpl) schema.getDefaultPackage(), this);
@@ -106,7 +106,7 @@ public class GraphClassImpl extends
 		defaultVertexClass = vc;
 	}
 
-	protected void initializeDefaultEdgeClass() {
+	final void initializeDefaultEdgeClass() {
 		assert getDefaultVertexClass() != null : "Default VertexClass has not yet been created!";
 		assert getDefaultEdgeClass() == null : "Default EdgeClass already created!";
 		EdgeClassImpl ec = new EdgeClassImpl(EdgeClass.DEFAULTEDGECLASS_NAME,
@@ -151,7 +151,7 @@ public class GraphClassImpl extends
 	}
 
 	@Override
-	public EdgeClass createEdgeClass(String qualifiedName,
+	public final EdgeClass createEdgeClass(String qualifiedName,
 			VertexClass from, int fromMin, int fromMax, String fromRoleName,
 			AggregationKind aggrFrom, VertexClass to, int toMin, int toMax,
 			String toRoleName, AggregationKind aggrTo) {
@@ -180,7 +180,7 @@ public class GraphClassImpl extends
 	}
 
 	@Override
-	public VertexClass createVertexClass(String qualifiedName) {
+	public final VertexClass createVertexClass(String qualifiedName) {
 		assertNotFinished();
 
 		String[] qn = SchemaImpl.splitQualifiedName(qualifiedName);
@@ -245,7 +245,7 @@ public class GraphClassImpl extends
 	}
 
 	@Override
-	protected void finish() {
+	protected final void finish() {
 		assertNotFinished();
 		vertexClassDag.finish();
 		edgeClassDag.finish();

@@ -227,7 +227,7 @@ public class VertexClassImpl extends
 			IncidenceClass farInc = ic.getEdgeClass().getTo();
 			validFromInc.add(farInc);
 		}
-		for (VertexClass vc : getAllSuperClasses()) {
+		for (VertexClass vc : this.getAllSuperClasses()) {
 			for (IncidenceClass ic : vc.getAllOutIncidenceClasses()) {
 				IncidenceClass farInc = ic.getEdgeClass().getTo();
 				validFromInc.add(farInc);
@@ -252,7 +252,8 @@ public class VertexClassImpl extends
 			IncidenceClass farInc = ic.getEdgeClass().getFrom();
 			validToInc.add(farInc);
 		}
-		for (VertexClass vc : getAllSuperClasses()) {
+
+		for (VertexClass vc : this.getAllSuperClasses()) {
 			for (IncidenceClass ic : vc.getAllInIncidenceClasses()) {
 				IncidenceClass farInc = ic.getEdgeClass().getFrom();
 				validToInc.add(farInc);
@@ -274,7 +275,7 @@ public class VertexClassImpl extends
 		}
 		// System.err.print("+");
 		Set<EdgeClass> validFrom = new HashSet<EdgeClass>();
-		for (IncidenceClass ic : getValidFromFarIncidenceClasses()) {
+		for (IncidenceClass ic : this.getValidFromFarIncidenceClasses()) {
 			if (!ic.getEdgeClass().isDefaultGraphElementClass()) {
 				validFrom.add(ic.getEdgeClass());
 			}
@@ -290,8 +291,7 @@ public class VertexClassImpl extends
 		}
 		// System.err.print("-");
 		Set<EdgeClass> validTo = new HashSet<EdgeClass>();
-
-		for (IncidenceClass ic : getValidToFarIncidenceClasses()) {
+		for (IncidenceClass ic : this.getValidToFarIncidenceClasses()) {
 			if (!ic.getEdgeClass().isDefaultGraphElementClass()) {
 				validTo.add(ic.getEdgeClass());
 			}

@@ -85,7 +85,7 @@ public class EdgeClassImpl extends GraphElementClassImpl<EdgeClass, Edge>
 			String fromRoleName, AggregationKind aggrFrom, VertexClass to,
 			int toMin, int toMax, String toRoleName, AggregationKind aggrTo) {
 		super(simpleName, pkg, gc, gc.edgeClassDag);
-		
+
 		if (pkg.isDefaultPackage() && simpleName.equals(DEFAULTEDGECLASS_NAME)) {
 			// the default EC is just created
 		} else {

@@ -862,9 +862,9 @@ public class GraphIO {
 			throws IOException {
 		String delim = ":";
 		for (GraphElementClass<?, ?> superClass : aec.getDirectSuperClasses()) {
-			write(delim);
-			space();
-			writeIdentifier(superClass.getQualifiedName(pkg));
+			this.write(delim);
+			this.space();
+			this.writeIdentifier(superClass.getQualifiedName(pkg));
 			delim = ",";
 		}
 	}
@@ -990,7 +990,7 @@ public class GraphIO {
 
 	public static Graph loadGraphFromFile(String filename,
 			ImplementationType implementationType, ProgressFunction pf)
-			throws GraphIOException {
+					throws GraphIOException {
 		if ((implementationType == null)
 				|| (implementationType == ImplementationType.DATABASE)) {
 			throw new IllegalArgumentException(
@@ -1574,8 +1574,9 @@ public class GraphIO {
 	protected void addAttributes(List<AttributeData> attributesData,
 			AttributedElementClass<?, ?> aec) throws GraphIOException {
 		for (AttributeData ad : attributesData) {
-			aec.createAttribute(ad.name, attrDomain(ad.domainDescription),
-					ad.defaultValue);
+			aec.createAttribute(this.schema.createAttribute(ad.name, this.attrDomain(ad.domainDescription), aec, ad.defaultValue));
+			//aec.addAttribute(ad.name, attrDomain(ad.domainDescription),
+			//	ad.defaultValue);
 		}
 	}
 
@@ -2008,8 +2009,16 @@ public class GraphIO {
 				}
 				if (aec instanceof VertexClass) {
 					for (String superClassName : vData.directSuperClasses) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/6bbf63215fad598bdf53cca678c43d433b56e95e/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
+						superClass = (VertexClass) this.GECsearch.get(aec)
+								.getGraphElementClass(superClassName);
+||||||| /usr/src/app/output/jgralab/jgralab/6bbf63215fad598bdf53cca678c43d433b56e95e/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+						superClass = (VertexClass) GECsearch.get(aec)
+								.getGraphElementClass(superClassName);
+=======
 						superClass = GECsearch.get(aec).getVertexClass(
 								superClassName);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/6bbf63215fad598bdf53cca678c43d433b56e95e/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 						if (superClass == null) {
 							throw new GraphIOException(
 									"Undefined VertexClass '" + superClassName
@@ -2044,8 +2053,16 @@ public class GraphIO {
 				}
 				EdgeClass ec = (EdgeClass) aec;
 				for (String superClassName : eData.directSuperClasses) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/6bbf63215fad598bdf53cca678c43d433b56e95e/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
+					superClass = (EdgeClass) this.GECsearch.get(aec)
+							.getGraphElementClass(superClassName);
+||||||| /usr/src/app/output/jgralab/jgralab/6bbf63215fad598bdf53cca678c43d433b56e95e/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+					superClass = (EdgeClass) GECsearch.get(aec)
+							.getGraphElementClass(superClassName);
+=======
 					superClass = GECsearch.get(aec)
 							.getEdgeClass(superClassName);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/6bbf63215fad598bdf53cca678c43d433b56e95e/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 					if (superClass == null) {
 						throw new GraphIOException("Undefined EdgeClass '"
 								+ superClassName + "'");
