@@ -134,7 +134,15 @@ public class StripePayment implements PaymentModule {
 			
 			String strAmount = String.valueOf(amnt);
 			strAmount = strAmount.replace(".","");
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/88e6d4f7dd8c274c2ee6c267406c33c3b58376f1/sm-core/src/main/java/com/salesmanager/core/business/modules/integration/payment/impl/StripePayment.java/left.java
 			strAmount = strAmount.replaceAll(",","");
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/88e6d4f7dd8c274c2ee6c267406c33c3b58376f1/sm-core/src/main/java/com/salesmanager/core/business/modules/integration/payment/impl/StripePayment.java/base.java
+=======
+			//There may be use case where , will be added to the amount, it will not be accepted by Stripe due to non integer value
+            if(StringUtils.contains(strAmount, ",")){
+                strAmount = strAmount.replace(",", "");
+            }
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/88e6d4f7dd8c274c2ee6c267406c33c3b58376f1/sm-core/src/main/java/com/salesmanager/core/business/modules/integration/payment/impl/StripePayment.java/right.java
 			
 			Map<String, Object> chargeParams = new HashMap<String, Object>();
 			chargeParams.put("amount", strAmount);
@@ -277,7 +285,15 @@ public class StripePayment implements PaymentModule {
 		
 			String strAmount = String.valueOf(amnt);
 			strAmount = strAmount.replace(".","");
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/88e6d4f7dd8c274c2ee6c267406c33c3b58376f1/sm-core/src/main/java/com/salesmanager/core/business/modules/integration/payment/impl/StripePayment.java/left.java
 			strAmount = strAmount.replaceAll(",","");
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/88e6d4f7dd8c274c2ee6c267406c33c3b58376f1/sm-core/src/main/java/com/salesmanager/core/business/modules/integration/payment/impl/StripePayment.java/base.java
+=======
+			//There may be use case where , will be added to the amount, it will not be accepted by Stripe due to non integer value
+            if(StringUtils.contains(strAmount, ",")){
+                strAmount = strAmount.replace(",", "");
+            }
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/88e6d4f7dd8c274c2ee6c267406c33c3b58376f1/sm-core/src/main/java/com/salesmanager/core/business/modules/integration/payment/impl/StripePayment.java/right.java
 			
 			Map<String, Object> chargeParams = new HashMap<String, Object>();
 			chargeParams.put("amount", strAmount);
