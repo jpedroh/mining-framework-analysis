@@ -157,12 +157,24 @@ public class GnmRandomGraphGenerator<V, E>
         }
 
         // check whether to create loops
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/62628bcbc4bd44eed87539b6e804a189db3e299c/jgrapht-core/src/main/java/org/jgrapht/generate/GnmRandomGraphGenerator.java/left.java
+        if (createLoops && !target.getType().isAllowingSelfLoops()) {
+||||||| /usr/src/app/output/jgrapht/jgrapht/62628bcbc4bd44eed87539b6e804a189db3e299c/jgrapht-core/src/main/java/org/jgrapht/generate/GnmRandomGraphGenerator.java/base.java
+        if () {
+=======
         if (loops && !target.getType().isAllowingSelfLoops()) {
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/62628bcbc4bd44eed87539b6e804a189db3e299c/jgrapht-core/src/main/java/org/jgrapht/generate/GnmRandomGraphGenerator.java/right.java
             throw new IllegalArgumentException("Provided graph does not support self-loops");
         }
 
         // check whether to create multiple edges
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/62628bcbc4bd44eed87539b6e804a189db3e299c/jgrapht-core/src/main/java/org/jgrapht/generate/GnmRandomGraphGenerator.java/left.java
+        if (createMultipleEdges && !target.getType().isAllowingMultipleEdges()) {
+||||||| /usr/src/app/output/jgrapht/jgrapht/62628bcbc4bd44eed87539b6e804a189db3e299c/jgrapht-core/src/main/java/org/jgrapht/generate/GnmRandomGraphGenerator.java/base.java
+        if () {
+=======
         if (multipleEdges && !target.getType().isAllowingMultipleEdges()) {
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/62628bcbc4bd44eed87539b6e804a189db3e299c/jgrapht-core/src/main/java/org/jgrapht/generate/GnmRandomGraphGenerator.java/right.java
             throw new IllegalArgumentException(
                 "Provided graph does not support multiple edges between the same vertices");
         }

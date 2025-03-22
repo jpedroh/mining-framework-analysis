@@ -19,12 +19,10 @@ package org.jgrapht;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.EdgeReversedGraph;
 
