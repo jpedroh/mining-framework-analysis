@@ -931,7 +931,7 @@ public class DefaultGenerator implements Generator {
 
                 String targetFile = config.outputFolder() + File.separator + METADATA_DIR + File.separator + "FILES";
                 try {
-                    File filesFile = this.templateProcessor.writeToFile(targetFile, sb.toString().getBytes(StandardCharsets.UTF_8));
+                    File filesFile = writeToFile(targetFile, sb.toString().getBytes(StandardCharsets.UTF_8));
                     files.add(filesFile);
                 } catch (IOException e) {
                     LOGGER.warn("Failed to write FILES metadata to track generated files.");
