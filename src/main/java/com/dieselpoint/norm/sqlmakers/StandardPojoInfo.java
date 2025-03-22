@@ -50,6 +50,39 @@ public class StandardPojoInfo implements PojoInfo {
 	int updateSqlArgCount;
 	
 	String selectColumns;
+<<<<<<< /usr/src/app/output/dieselpoint/norm/f8d53daf63a983bf21265165ea8b129400f132ec/src/main/java/com/dieselpoint/norm/sqlmakers/StandardPojoInfo.java/left.java
+||||||| /usr/src/app/output/dieselpoint/norm/f8d53daf63a983bf21265165ea8b129400f132ec/src/main/java/com/dieselpoint/norm/sqlmakers/StandardPojoInfo.java/base.java
+	
+	public static class Property {
+		public String name;
+		public Method readMethod;
+		public Method writeMethod;
+		public Field field;
+		public Class<?> dataType;
+		public boolean isGenerated;
+		public boolean isPrimaryKey;
+		public boolean isEnumField;
+		public Class<Enum> enumClass;
+		public Column columnAnnotation;
+		public DbSerializable serializer;
+	}
+=======
+	
+	public static class Property {
+		public String name;
+		public Method readMethod;
+		public Method writeMethod;
+		public Field field;
+		public Class<?> dataType;
+		public boolean isGenerated;
+		public boolean isPrimaryKey;
+		public boolean isEnumField;
+		public Class<Enum> enumClass;
+		public EnumType enumType;
+		public Column columnAnnotation;
+		public DbSerializable serializer;
+	}
+>>>>>>> /usr/src/app/output/dieselpoint/norm/f8d53daf63a983bf21265165ea8b129400f132ec/src/main/java/com/dieselpoint/norm/sqlmakers/StandardPojoInfo.java/right.java
 
 	public StandardPojoInfo(Class<?> clazz) {
 
