@@ -1,20 +1,4 @@
-/*
- * Copyright (C) 2008-2021 Mycila (mathieu.carbou@gmail.com)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.mycila.maven.plugin.license;
-
 import com.mycila.maven.plugin.license.dependencies.LicenseMessage;
 import com.mycila.maven.plugin.license.dependencies.LicensePolicy;
 import com.mycila.maven.plugin.license.document.Document;
@@ -47,7 +31,6 @@ import org.apache.maven.settings.crypto.SettingsDecryptionRequest;
 import org.apache.maven.settings.crypto.SettingsDecryptionResult;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.xml.sax.InputSource;
-
 import java.io.File;
 import java.io.IOException;
 import java.time.Clock;
@@ -68,7 +51,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import static com.mycila.maven.plugin.license.document.DocumentType.defaultMapping;
 import static com.mycila.maven.plugin.license.util.FileUtils.asPath;
 import static java.lang.String.format;
@@ -80,9 +62,7 @@ import static java.util.Arrays.deepToString;
  * (mathieu.carbou@gmail.com)
  */
 public abstract class AbstractLicenseMojo extends AbstractMojo {
-
-  @Parameter
-  public LicenseSet[] licenseSets;
+  @Parameter public LicenseSet[] licenseSets;
 
   /**
    * The base directory, in which to search for project files.
@@ -91,8 +71,7 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
    * value for the base directory. This default value can be overridden
    * in each LicenseSet by setting {@link LicenseSet#basedir}.
    */
-  @Parameter(property = "license.basedir", defaultValue = "${project.basedir}", alias = "basedir", required = true)
-  public File defaultBasedir;
+  @Parameter(property = "license.basedir", defaultValue = "${project.basedir}", alias = "basedir", required = true) public File defaultBasedir;
 
   /**
    * Location of the header. It can be a relative path, absolute path,
@@ -102,18 +81,14 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
    *
    * @deprecated use {@link LicenseSet#header}
    */
-  @Deprecated
-  @Parameter(property = "license.header", alias = "header")
-  public String legacyConfigHeader;
+  @Deprecated @Parameter(property = "license.header", alias = "header") public String legacyConfigHeader;
 
   /**
    * Header, as text, directly in pom file. Using a CDATA section is strongly recommended.
    *
    * @deprecated use {@link LicenseSet#inlineHeader}
    */
-  @Deprecated
-  @Parameter(property = "license.inlineHeader", alias = "inlineHeader")
-  public String legacyConfigInlineHeader;
+  @Deprecated @Parameter(property = "license.inlineHeader", alias = "inlineHeader") public String legacyConfigInlineHeader;
 
   /**
    * Specifies additional header files to use when checking for the presence
@@ -127,9 +102,7 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
    *
    * @deprecated use {@link LicenseSet#validHeaders}
    */
-  @Deprecated
-  @Parameter(alias = "validHeaders")
-  public String[] legacyConfigValidHeaders = new String[0];
+  @Deprecated @Parameter(alias = "validHeaders") public String[] legacyConfigValidHeaders = new String[0];
 
   /**
    * Alternative to `header`, `inlineHeader`, or `validHeaders`
@@ -142,9 +115,7 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
    *
    * @deprecated use {@link LicenseSet#multi}
    */
-  @Deprecated
-  @Parameter
-  public Multi legacyConfigMulti;
+  @Deprecated @Parameter public Multi legacyConfigMulti;
 
   /**
    * Allows the use of external header definitions files. These files are
@@ -155,8 +126,7 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
    * in each LicenseSet by setting {@link LicenseSet#headerDefinitions}  or
    * {@link LicenseSet#inlineHeaderStyles} and is overridden by {@link #defaultInlineHeaderStyles}.
    */
-  @Parameter(alias = "headerDefinitions")
-  public String[] defaultHeaderDefinitions = new String[0];
+  @Parameter(alias = "headerDefinitions") public String[] defaultHeaderDefinitions = new String[0];
 
   /**
    * Allows the use of inline header definitions.
@@ -169,8 +139,7 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
    * <p>
    * Inline styles overrides those read from file
    */
-  @Parameter
-  public HeaderStyle[] defaultInlineHeaderStyles = new HeaderStyle[0];
+  @Parameter public HeaderStyle[] defaultInlineHeaderStyles = new HeaderStyle[0];
 
   /**
    * HeadSections define special regions of a header that allow for dynamic
@@ -178,9 +147,7 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
    *
    * @deprecated use {@link LicenseSet#headerSections}
    */
-  @Deprecated
-  @Parameter(alias = "headerSections")
-  public HeaderSection[] legacyConfigHeaderSections = new HeaderSection[0];
+  @Deprecated @Parameter(alias = "headerSections") public HeaderSection[] legacyConfigHeaderSections = new HeaderSection[0];
 
   /**
    * You can set here some properties that you want to use when reading the
@@ -193,8 +160,7 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
    * value for the properties. This default value can be overridden
    * in each LicenseSet by setting {@link LicenseSet#properties}.
    */
-  @Parameter(alias = "properties")
-  public Map<String, String> defaultProperties = new HashMap<String, String>();
+  @Parameter(alias = "properties") public Map<String, String> defaultProperties = new HashMap<String, String>();
 
   /**
    * Specifies files, which are included in the check. By default, all files
@@ -202,9 +168,7 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
    *
    * @deprecated use {@link LicenseSet#includes}
    */
-  @Deprecated
-  @Parameter(alias = "includes", property = "license.includes")
-  public String[] legacyConfigIncludes = new String[0];
+  @Deprecated @Parameter(alias = "includes", property = "license.includes") public String[] legacyConfigIncludes = new String[0];
 
   /**
    * Specifies files, which are excluded in the check. By default, only the
@@ -212,9 +176,7 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
    *
    * @deprecated use {@link LicenseSet#excludes}
    */
-  @Deprecated
-  @Parameter(alias = "excludes", property = "license.excludes")
-  public String[] legacyConfigExcludes = new String[0];
+  @Deprecated @Parameter(alias = "excludes", property = "license.excludes") public String[] legacyConfigExcludes = new String[0];
 
   /**
    * Specify the list of keywords to use to detect a header. A header must
@@ -223,9 +185,7 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
    *
    * @deprecated use {@link LicenseSet#keywords}
    */
-  @Deprecated
-  @Parameter(alias = "keywords")
-  public String[] legacyConfigKeywords = new String[]{"copyright"};
+  @Deprecated @Parameter(alias = "keywords") public String[] legacyConfigKeywords = new String[] { "copyright" };
 
   /**
    * Specify if you want to use default exclusions besides the files you have
@@ -236,8 +196,7 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
    * value for whether to use default excludes. This default value can be overridden
    * in each LicenseSet by setting {@link LicenseSet#useDefaultExcludes}.
    */
-  @Parameter(property = "license.useDefaultExcludes", defaultValue = "true", alias = "useDefaultExcludes")
-  public boolean defaultUseDefaultExcludes = true;
+  @Parameter(property = "license.useDefaultExcludes", defaultValue = "true", alias = "useDefaultExcludes") public boolean defaultUseDefaultExcludes = true;
 
   /**
    * You can set this flag to true if you want to check the headers for all
@@ -245,8 +204,7 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
    * for example the header licenses from the parent module for all sub
    * modules.
    */
-  @Parameter(property = "license.aggregate", defaultValue = "false")
-  public boolean aggregate = false;
+  @Parameter(property = "license.aggregate", defaultValue = "false") public boolean aggregate = false;
 
   /**
    * Set mapping between document mapping and a supported type to use. This
@@ -256,15 +214,13 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
    * an existing type of comment. The tag name is the new extension name to
    * support, and the value is the name of the comment type to use.
    */
-  @Parameter
-  public Map<String, String> mapping = new LinkedHashMap<String, String>();
+  @Parameter public Map<String, String> mapping = new LinkedHashMap<String, String>();
 
   /**
    * Whether to use the default mapping between file extensions and comment
    * types, or only the one your provide.
    */
-  @Parameter(property = "license.useDefaultMapping", defaultValue = "true")
-  public boolean useDefaultMapping = true;
+  @Parameter(property = "license.useDefaultMapping", defaultValue = "true") public boolean useDefaultMapping = true;
 
   /**
    * Maven license plugin uses concurrency to check license headers. This
@@ -274,9 +230,7 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
    * <br>
    * The default is 1.5.
    */
-  @Parameter(property = "license.concurrencyFactor", defaultValue = "1.5")
-  public float concurrencyFactor = 1.5f;
-
+  @Parameter(property = "license.concurrencyFactor", defaultValue = "1.5") public float concurrencyFactor = 1.5f;
 
   /**
    * Maven license plugin uses concurrency to check license headers. With this
@@ -286,14 +240,12 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
    * The default is 0 which implies that the default for <code>concurrencyFactor</code>
    * is used.
    */
-  @Parameter(property = "license.nThreads", defaultValue = "0")
-  public int nThreads;
+  @Parameter(property = "license.nThreads", defaultValue = "0") public int nThreads;
 
   /**
    * Whether to skip the plugin execution
    */
-  @Parameter(property = "license.skip", defaultValue = "false")
-  public boolean skip = false;
+  @Parameter(property = "license.skip", defaultValue = "false") public boolean skip = false;
 
   /**
    * Determination of the year and author of the first commit and last change year
@@ -302,15 +254,13 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
    * are certain the repository depth will permit accurate determination of these
    * values, you can disable this check.
    */
-  @Parameter(property = "license.warnIfShallow", defaultValue = "true")
-  public boolean warnIfShallow = true;
-  
+  @Parameter(property = "license.warnIfShallow", defaultValue = "true") public boolean warnIfShallow = true;
+
   /**
    * If you do not want to see the list of file having a missing header, you
    * can add the quiet flag that will shorten the output
    */
-  @Parameter(property = "license.quiet", defaultValue = "false")
-  public boolean quiet = false;
+  @Parameter(property = "license.quiet", defaultValue = "false") public boolean quiet = false;
 
   /**
    * Set to true if you need a strict check against the headers. By default,
@@ -320,22 +270,19 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
    * <br>
    * We highly recommend to keep this option set to {@code true}.
    */
-  @Parameter(property = "license.strictCheck", defaultValue = "true")
-  public boolean strictCheck = true;
+  @Parameter(property = "license.strictCheck", defaultValue = "true") public boolean strictCheck = true;
 
   /**
    * Specify the encoding of your files. Default to the project source
    * encoding property (project.build.sourceEncoding).
    */
-  @Parameter(property = "license.encoding", defaultValue = "${project.build.sourceEncoding}")
-  public String encoding = "UTF-8";
+  @Parameter(property = "license.encoding", defaultValue = "${project.build.sourceEncoding}") public String encoding = "UTF-8";
 
   /**
    * You can set this flag to false if you do not want the build to fail when
    * some headers are missing.
    */
-  @Parameter(property = "license.failIfMissing", defaultValue = "true")
-  public boolean failIfMissing = true;
+  @Parameter(property = "license.failIfMissing", defaultValue = "true") public boolean failIfMissing = true;
 
   /**
    * You can leave this flag on {@code false} if you do not want the build to
@@ -348,70 +295,57 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
    *
    * @since 2.8
    */
-  @Parameter(property = "license.failIfUnknown", defaultValue = "false")
-  public boolean failIfUnknown = false;
+  @Parameter(property = "license.failIfUnknown", defaultValue = "false") public boolean failIfUnknown = false;
 
   /**
    * If dryRun is enabled, calls to license:format and license:remove will not
    * overwrite the existing file but instead write the result to a new file
    * with the same name but ending with `.licensed`.
    */
-  @Parameter(property = "license.dryRun", defaultValue = "false")
-  public boolean dryRun = false;
+  @Parameter(property = "license.dryRun", defaultValue = "false") public boolean dryRun = false;
 
   /**
    * Skip the formatting of files which already contain a detected header.
    */
-  @Parameter(property = "license.skipExistingHeaders", defaultValue = "false")
-  public boolean skipExistingHeaders = false;
+  @Parameter(property = "license.skipExistingHeaders", defaultValue = "false") public boolean skipExistingHeaders = false;
 
   /**
    * When enforcing licenses on dependencies, exclude all but these scopes.
    */
-  @Parameter(property = "license.dependencies.scope", required = true, defaultValue = "runtime")
-  protected List<String> dependencyScopes;
+  @Parameter(property = "license.dependencies.scope", required = true, defaultValue = "runtime") protected List<String> dependencyScopes;
 
   /**
    * Whether to enforce license.dependencies.allow list.
    */
-  @Parameter(property = "license.dependencies.enforce", required = true, defaultValue = "false")
-  protected boolean dependencyEnforce;
+  @Parameter(property = "license.dependencies.enforce", required = true, defaultValue = "false") protected boolean dependencyEnforce;
 
   /**
    * Block of {@link LicensePolicy} configuration for enforcing license adherence in dependencies.
    */
-  @Parameter(property = "license.dependencies.policies")
-  protected Set<LicensePolicy> dependencyPolicies;
+  @Parameter(property = "license.dependencies.policies") protected Set<LicensePolicy> dependencyPolicies;
 
   /**
    * Exception message prefix to display when an artifact is denied by one of the license policies.
    */
-  @Parameter(property = "license.dependencies.exceptionMessage", required = true, defaultValue = LicenseMessage.WARN_POLICY_DENIED)
-  protected String dependencyExceptionMessage;
+  @Parameter(property = "license.dependencies.exceptionMessage", required = true, defaultValue = LicenseMessage.WARN_POLICY_DENIED) protected String dependencyExceptionMessage;
 
-
-  @Parameter(defaultValue = "${project}", required = true)
-  protected MavenProject project;
+  @Parameter(defaultValue = "${project}", required = true) protected MavenProject project;
 
   /**
    * Maven settings.
    */
-  @Parameter(defaultValue = "${settings}", readonly = true)
-  private Settings settings;
+  @Parameter(defaultValue = "${settings}", readonly = true) private Settings settings;
+
   /**
    * The decrypter for passwords.
    */
-  @Component
-  private SettingsDecrypter settingsDecrypter;
+  @Component private SettingsDecrypter settingsDecrypter;
 
-  @Component(hint = "default")
-  protected DependencyGraphBuilder dependencyGraphBuilder;
+  @Component(hint = "default") protected DependencyGraphBuilder dependencyGraphBuilder;
 
-  @Component
-  protected ProjectBuilder projectBuilder;
+  @Component protected ProjectBuilder projectBuilder;
 
-  @Parameter(defaultValue = "${session}")
-  public MavenSession session;
+  @Parameter(defaultValue = "${session}") public MavenSession session;
 
   /**
    * The location where to write the report of the plugin execution (file processed, action taken, etc).
@@ -432,8 +366,7 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
    * <p>
    * Activated by default.
    */
-  @Parameter(property = "license.report.location", defaultValue = "${project.reporting.outputDirectory}/license-plugin-report.xml")
-  public File reportLocation;
+  @Parameter(property = "license.report.location", defaultValue = "${project.reporting.outputDirectory}/license-plugin-report.xml") public File reportLocation;
 
   /**
    * Format of the report.
@@ -442,27 +375,24 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
    * <p>
    * Default is XML.
    */
-  @Parameter(property = "license.report.format")
-  public String reportFormat;
+  @Parameter(property = "license.report.format") public String reportFormat;
 
   /**
    * Skip the report generation. Default: false
    */
-  @Parameter(property = "license.report.skip", defaultValue = "false")
-  public boolean reportSkipped = false;
+  @Parameter(property = "license.report.skip", defaultValue = "false") public boolean reportSkipped = false;
 
   protected Clock clock = Clock.systemUTC();
+
   protected Report report;
 
   protected abstract class AbstractCallback implements Callback {
-
     /**
      * Related to {@link #failIfUnknown}.
      */
     private final Collection<File> unknownFiles = new ConcurrentLinkedQueue<>();
 
-    @Override
-    public void onUnknownFile(Document document, Header header) {
+    @Override public void onUnknownFile(Document document, Header header) {
       warn("Unknown file extension: %s", document.getFilePath());
       unknownFiles.add(document.getFile());
       report.add(document.getFile(), Report.Result.UNKNOWN);
@@ -470,32 +400,23 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
 
     public void checkUnknown() throws MojoExecutionException {
       if (!unknownFiles.isEmpty()) {
-        String msg = "Unable to find a comment style definition for some "
-            + "files. You may want to add a custom mapping for the relevant file extensions.";
+        String msg = "Unable to find a comment style definition for some " + "files. You may want to add a custom mapping for the relevant file extensions.";
         if (failIfUnknown) {
           throw new MojoExecutionException(msg);
         }
         getLog().warn(msg);
       }
     }
-
   }
 
-  @SuppressWarnings({"unchecked"})
-  protected final void execute(final Callback callback) throws MojoExecutionException, MojoFailureException {
+  @SuppressWarnings(value = { "unchecked" }) protected final void execute(final Callback callback) throws MojoExecutionException, MojoFailureException {
     if (!skip) {
-
-      // make default base dir canonical
       this.defaultBasedir = this.getCanonicalFile(this.defaultBasedir, "license.basedir");
-
-      // collect all the license sets together
       final LicenseSet[] allLicenseSets;
-
-      // if we abandon the legacy config this contiguous block can be removed
       final LicenseSet legacyLicenseSet = convertLegacyConfigToLicenseSet();
       if (legacyLicenseSet != null) {
         if (licenseSets == null) {
-          allLicenseSets = new LicenseSet[]{legacyLicenseSet};
+          allLicenseSets = new LicenseSet[] { legacyLicenseSet };
         } else {
           allLicenseSets = Arrays.copyOf(licenseSets, licenseSets.length + 1);
           allLicenseSets[licenseSets.length] = legacyLicenseSet;
@@ -503,10 +424,7 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
       } else {
         allLicenseSets = licenseSets;
       }
-
-      // execute
       executeForLicenseSets(allLicenseSets, callback);
-
       report.exportTo(reportLocation);
     }
   }
@@ -527,23 +445,18 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
       warn("At least one licenseSet must be specified");
       return;
     }
-
-    // need to perform validation first
     for (int i = 0; i < licenseSets.length; i++) {
       final LicenseSet licenseSet = licenseSets[i];
       if (!hasHeader(licenseSet)) {
         warn("No header file specified to check for license in licenseSet: " + i);
         return;
       }
-      // make licenseSet baseDir canonical
       licenseSet.basedir = this.getCanonicalFile(licenseSet.basedir, "licenseSet[" + i + "].basedir");
     }
     if (!strictCheck) {
-      warn("Property 'strictCheck' is not enabled. Please consider adding <strictCheck>true</strictCheck> in your pom.xml file.");
+      warn("Property \'strictCheck\' is not enabled. Please consider adding <strictCheck>true</strictCheck> in your pom.xml file.");
       warn("See https://mycila.carbou.me/license-maven-plugin for more information.");
     }
-
-    // then execute each license set
     for (final LicenseSet licenseSet : licenseSets) {
       executeForLicenseSet(licenseSet, callback);
     }
@@ -553,7 +466,6 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
     if (legacyConfigHeader == null && (this.legacyConfigInlineHeader == null || this.legacyConfigInlineHeader.isEmpty())) {
       return null;
     }
-
     final LicenseSet legacyLicenseSet = new LicenseSet();
     legacyLicenseSet.header = legacyConfigHeader;
     legacyLicenseSet.inlineHeader = legacyConfigInlineHeader;
@@ -574,11 +486,9 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
       throw new MojoExecutionException(e.getMessage(), e);
     }
     finder.setPluginClassPath(getClass().getClassLoader());
-
     final HeaderSource headerSource = HeaderSource.of(licenseSet.multi, licenseSet.inlineHeader, licenseSet.header, this.encoding, finder);
     final Header h = new Header(headerSource, licenseSet.headerSections);
     debug("Header: %s", h.getLocation());
-
     if (licenseSet.validHeaders == null) {
       licenseSet.validHeaders = new String[0];
     }
@@ -587,16 +497,13 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
       final HeaderSource validHeaderSource = HeaderSource.of(null, null, validHeader, this.encoding, finder);
       validHeaders.add(new Header(validHeaderSource, licenseSet.headerSections));
     }
-
     final List<PropertiesProvider> propertiesProviders = new LinkedList<PropertiesProvider>();
     for (final PropertiesProvider provider : ServiceLoader.load(PropertiesProvider.class, Thread.currentThread().getContextClassLoader())) {
       propertiesProviders.add(provider);
     }
     final DocumentPropertiesLoader propertiesLoader = new DocumentPropertiesLoader() {
-      @Override
-      public Properties load(final Document document) {
+      @Override public Properties load(final Document document) {
         final Properties props = new Properties();
-
         for (final Map.Entry<String, String> entry : mergeProperties(licenseSet, document).entrySet()) {
           if (entry.getValue() != null) {
             props.setProperty(entry.getKey(), entry.getValue());
@@ -624,15 +531,12 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
         return props;
       }
     };
-
     final DocumentFactory documentFactory = new DocumentFactory(firstNonNull(licenseSet.basedir, defaultBasedir), buildMapping(), buildHeaderDefinitions(licenseSet, finder), encoding, licenseSet.keywords, propertiesLoader);
-
     int nThreads = getNumberOfExecutorThreads();
     ExecutorService executorService = Executors.newFixedThreadPool(nThreads);
     CompletionService<?> completionService = new ExecutorCompletionService<>(executorService);
     int count = 0;
     debug("Number of execution threads: %s", nThreads);
-
     try {
       for (final String file : listSelectedFiles(licenseSet)) {
         completionService.submit(() -> {
@@ -640,27 +544,30 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
           debug("Selected file: %s [header style: %s]", document.getFilePath(), document.getHeaderDefinition());
           if (document.isNotSupported()) {
             callback.onUnknownFile(document, h);
-          } else if (document.is(h)) {
-            debug("Skipping header file: %s", document.getFilePath());
-          } else if (document.hasHeader(h, strictCheck)) {
-            callback.onExistingHeader(document, h);
           } else {
-            boolean headerFound = false;
-            for (final Header validHeader : validHeaders) {
-              headerFound = document.hasHeader(validHeader, strictCheck);
-              if (headerFound) {
+            if (document.is(h)) {
+              debug("Skipping header file: %s", document.getFilePath());
+            } else {
+              if (document.hasHeader(h, strictCheck)) {
                 callback.onExistingHeader(document, h);
-                break;
+              } else {
+                boolean headerFound = false;
+                for (final Header validHeader : validHeaders) {
+                  headerFound = document.hasHeader(validHeader, strictCheck);
+                  if (headerFound) {
+                    callback.onExistingHeader(document, h);
+                    break;
+                  }
+                }
+                if (!headerFound) {
+                  callback.onHeaderNotFound(document, h);
+                }
               }
-            }
-            if (!headerFound) {
-              callback.onHeaderNotFound(document, h);
             }
           }
         }, null);
         count++;
       }
-
       while (count-- > 0) {
         try {
           completionService.take().get();
@@ -683,58 +590,42 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
           throw new RuntimeException(cause.getMessage(), cause);
         }
       }
-
-    } finally {
+    }  finally {
       executorService.shutdownNow();
     }
   }
 
   private boolean hasHeader(final LicenseSet licenseSet) {
-    return
-        (licenseSet.multi != null
-            && ((licenseSet.multi.headers != null && licenseSet.multi.headers.length > 0)
-            || (licenseSet.multi.inlineHeaders != null && licenseSet.multi.inlineHeaders.length > 0 && !licenseSet.multi.inlineHeaders[0].isEmpty()))
-        ) || (licenseSet.header != null || (licenseSet.inlineHeader != null && !licenseSet.inlineHeader.isEmpty()));
+    return (licenseSet.multi != null && ((licenseSet.multi.headers != null && licenseSet.multi.headers.length > 0) || (licenseSet.multi.inlineHeaders != null && licenseSet.multi.inlineHeaders.length > 0 && !licenseSet.multi.inlineHeaders[0].isEmpty()))) || (licenseSet.header != null || (licenseSet.inlineHeader != null && !licenseSet.inlineHeader.isEmpty()));
   }
 
   private int getNumberOfExecutorThreads() {
-    return nThreads > 0 ?
-        nThreads :
-        Math.max(1, (int) (Runtime.getRuntime().availableProcessors() * concurrencyFactor));
+    return nThreads > 0 ? nThreads : Math.max(1, (int) (Runtime.getRuntime().availableProcessors() * concurrencyFactor));
   }
 
   private Map<String, String> mergeProperties(final LicenseSet licenseSet, final Document document) {
-    // first put system environment
     Map<String, String> props = new LinkedHashMap<String, String>(System.getenv());
-    // then add ${project.XYZ} properties
     props.put("project.groupId", project.getGroupId());
     props.put("project.artifactId", project.getArtifactId());
     props.put("project.version", project.getVersion());
     props.put("project.name", project.getName());
     props.put("project.description", project.getDescription());
     props.put("project.inceptionYear", project.getInceptionYear());
-    props.put("year", project.getInceptionYear()); // maintains backward compatibility
+    props.put("year", project.getInceptionYear());
     props.put("project.url", project.getUrl());
     Organization org = project.getOrganization();
     if (org != null) {
-      props.put("owner", org.getName()); // maintains backward compatibility
+      props.put("owner", org.getName());
       props.put("project.organization.name", org.getName());
       props.put("project.organization.url", org.getUrl());
     }
-    // then add per document properties
     props.put("file.name", document.getFile().getName());
-
-    // we override by properties in the POM
     if (this.defaultProperties != null) {
       props.putAll(this.defaultProperties);
     }
-
-    // we override by properties in the licenseSet
     if (licenseSet.properties != null) {
       props.putAll(licenseSet.properties);
     }
-
-    // then we override by java system properties (command-line -D...)
     for (String key : System.getProperties().stringPropertyNames()) {
       props.put(key, System.getProperty(key));
     }
@@ -743,9 +634,7 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
 
   private String[] listSelectedFiles(final LicenseSet licenseSet) {
     final boolean useDefaultExcludes = (licenseSet.useDefaultExcludes != null ? licenseSet.useDefaultExcludes : defaultUseDefaultExcludes);
-    final Selection selection = new Selection(
-        firstNonNull(licenseSet.basedir, defaultBasedir), licenseSet.includes, buildExcludes(licenseSet), useDefaultExcludes,
-        getLog());
+    final Selection selection = new Selection(firstNonNull(licenseSet.basedir, defaultBasedir), licenseSet.includes, buildExcludes(licenseSet), useDefaultExcludes, getLog());
     debug("From: %s", firstNonNull(licenseSet.basedir, defaultBasedir));
     debug("Including: %s", deepToString(selection.getIncluded()));
     debug("Excluding: %s", deepToString(selection.getExcluded()));
@@ -783,7 +672,6 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
 
   private Map<String, String> buildMapping() {
     Map<String, String> extensionMapping = new LinkedHashMap<>();
-    // force inclusion of unknown item to manage unknown files
     extensionMapping.put(DocumentType.UNKNOWN.getExtension(), DocumentType.UNKNOWN.getDefaultHeaderTypeName());
     for (Map.Entry<String, String> entry : mapping.entrySet()) {
       extensionMapping.put(entry.getKey().toLowerCase(), entry.getValue().toLowerCase());
@@ -799,29 +687,19 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
   }
 
   private Map<String, HeaderDefinition> buildHeaderDefinitions(final LicenseSet licenseSet, final ResourceFinder finder) throws MojoFailureException {
-    // like mappings, first get default definitions
     final Map<String, HeaderDefinition> headers = new HashMap<>(HeaderType.defaultDefinitions());
-
-    // and then override them with those provided in base config
     for (final String headerDefiniton : defaultHeaderDefinitions) {
       headers.putAll(loadHeaderDefinition(headerDefiniton, finder));
     }
-
-    // then override by inline default styles
     for (HeaderStyle defaultInlineHeaderStyle : defaultInlineHeaderStyles) {
       headers.put(defaultInlineHeaderStyle.name, defaultInlineHeaderStyle.toHeaderDefinition());
     }
-
-    // and then override them with those provided in licenseSet config
     for (final String headerDefiniton : licenseSet.headerDefinitions) {
       headers.putAll(loadHeaderDefinition(headerDefiniton, finder));
     }
-
     for (HeaderStyle inlineHeaderStyle : licenseSet.inlineHeaderStyles) {
       headers.put(inlineHeaderStyle.name, inlineHeaderStyle.toHeaderDefinition());
     }
-
-    // force inclusion of unknown item to manage unknown files
     headers.put(HeaderType.UNKNOWN.getDefinition().getType(), HeaderType.UNKNOWN.getDefinition());
     return headers;
   }
@@ -832,7 +710,7 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
       source.setEncoding(encoding);
       final AdditionalHeaderDefinition fileDefinitions = new AdditionalHeaderDefinition(XMLDoc.from(source, true));
       final Map<String, HeaderDefinition> map = fileDefinitions.getDefinitions();
-      debug("%d header definitions loaded from '%s'", map.size(), headerDefinition);
+      debug("%d header definitions loaded from \'%s\'", map.size(), headerDefinition);
       return map;
     } catch (final IOException ex) {
       throw new MojoFailureException("Error reading header definition: " + headerDefinition, ex);
@@ -860,14 +738,12 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
    */
   public Credentials findCredentials(String serverID) {
     List<Server> decryptedServers = getDecryptedServers();
-
     for (Server ds : decryptedServers) {
       if (ds.getId().equals(serverID)) {
         getLog().debug("credentials have been found for server: " + serverID + ", login:" + ds.getUsername() + ", password:" + starEncrypt(ds.getPassword()));
         return new Credentials(ds.getUsername(), ds.getPassword());
       }
     }
-
     getLog().debug("no credentials found for server: " + serverID);
     return null;
   }
@@ -879,7 +755,7 @@ public abstract class AbstractLicenseMojo extends AbstractMojo {
     return str.replaceAll(".", "*");
   }
 
-  private static <T> T firstNonNull(final T t1, final T t2) {
+  private static <T extends java.lang.Object> T firstNonNull(final T t1, final T t2) {
     if (t1 != null) {
       return t1;
     }
