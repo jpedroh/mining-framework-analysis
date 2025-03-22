@@ -94,9 +94,15 @@ public abstract class GraphElementImpl implements GraphElementBase {
 	 */
 	public void ecaAttributeChanging(String name, Object oldValue,
 			Object newValue) {
-		if (!graph.isLoading() && graph.getECARuleManagerIfThere() != null) {
-			graph.getECARuleManager().fireBeforeChangeAttributeEvents(this,
-					name, oldValue, newValue);
+<<<<<<< /usr/src/app/output/jgralab/jgralab/9e10661f5de9a2260cc2cf184d92598a1285679c/src/de/uni_koblenz/jgralab/impl/GraphElementImpl.java/left.java
+		if (!this.graph.isLoading() && this.graph.getECARuleManagerIfThere() != null) {
+||||||| /usr/src/app/output/jgralab/jgralab/9e10661f5de9a2260cc2cf184d92598a1285679c/src/de/uni_koblenz/jgralab/impl/GraphElementImpl.java/base.java
+		if (!this.graph.isLoading()) {
+=======
+		if (!graph.isLoading()) {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/9e10661f5de9a2260cc2cf184d92598a1285679c/src/de/uni_koblenz/jgralab/impl/GraphElementImpl.java/right.java
+			graph.getECARuleManagerIfThere().fireBeforeChangeAttributeEvents(
+					this, name, oldValue, newValue);
 		}
 	}
 
@@ -108,8 +114,14 @@ public abstract class GraphElementImpl implements GraphElementBase {
 	 */
 	public void ecaAttributeChanged(String name, Object oldValue,
 			Object newValue) {
-		if (!graph.isLoading() && graph.getECARuleManagerIfThere()!=null) {
-			graph.getECARuleManager().fireAfterChangeAttributeEvents(this,
+<<<<<<< /usr/src/app/output/jgralab/jgralab/9e10661f5de9a2260cc2cf184d92598a1285679c/src/de/uni_koblenz/jgralab/impl/GraphElementImpl.java/left.java
+		if (!this.graph.isLoading() && this.graph.getECARuleManagerIfThere()!=null) {
+||||||| /usr/src/app/output/jgralab/jgralab/9e10661f5de9a2260cc2cf184d92598a1285679c/src/de/uni_koblenz/jgralab/impl/GraphElementImpl.java/base.java
+		if (!this.graph.isLoading()) {
+=======
+		if (!graph.isLoading()) {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/9e10661f5de9a2260cc2cf184d92598a1285679c/src/de/uni_koblenz/jgralab/impl/GraphElementImpl.java/right.java
+			graph.getECARuleManagerIfThere().fireAfterChangeAttributeEvents(this,
 					name, oldValue, newValue);
 		}
 	}

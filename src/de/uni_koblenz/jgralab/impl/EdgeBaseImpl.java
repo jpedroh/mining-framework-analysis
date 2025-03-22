@@ -349,8 +349,14 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 		VertexBase oldAlpha = getIncidentVertex();
 
-		if (!graph.isLoading() && this.graph.getECARuleManagerIfThere() !=null) {
-			graph.getECARuleManager().fireBeforeChangeAlphaOfEdgeEvents(this,
+<<<<<<< /usr/src/app/output/jgralab/jgralab/9e10661f5de9a2260cc2cf184d92598a1285679c/src/de/uni_koblenz/jgralab/impl/EdgeBaseImpl.java/left.java
+		if (!this.graph.isLoading() && this.graph.getECARuleManagerIfThere() !=null) {
+||||||| /usr/src/app/output/jgralab/jgralab/9e10661f5de9a2260cc2cf184d92598a1285679c/src/de/uni_koblenz/jgralab/impl/EdgeBaseImpl.java/base.java
+		if (!this.graph.isLoading()) {
+=======
+		if (!graph.isLoading()) {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/9e10661f5de9a2260cc2cf184d92598a1285679c/src/de/uni_koblenz/jgralab/impl/EdgeBaseImpl.java/right.java
+			graph.getECARuleManagerIfThere().fireBeforeChangeAlphaOfEdgeEvents(this,
 					oldAlpha, alphaBase);
 		}
 
@@ -393,8 +399,14 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 		VertexBase oldOmgea = reversedEdge.getIncidentVertex();
 
-		if (!graph.isLoading() && this.graph.getECARuleManagerIfThere() != null) {
-			graph.getECARuleManager().fireBeforeChangeOmegaOfEdgeEvents(this,
+<<<<<<< /usr/src/app/output/jgralab/jgralab/9e10661f5de9a2260cc2cf184d92598a1285679c/src/de/uni_koblenz/jgralab/impl/EdgeBaseImpl.java/left.java
+		if (!this.graph.isLoading() && this.graph.getECARuleManagerIfThere() != null) {
+||||||| /usr/src/app/output/jgralab/jgralab/9e10661f5de9a2260cc2cf184d92598a1285679c/src/de/uni_koblenz/jgralab/impl/EdgeBaseImpl.java/base.java
+		if (!this.graph.isLoading()) {
+=======
+		if (!graph.isLoading()) {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/9e10661f5de9a2260cc2cf184d92598a1285679c/src/de/uni_koblenz/jgralab/impl/EdgeBaseImpl.java/right.java
+			graph.getECARuleManagerIfThere().fireBeforeChangeOmegaOfEdgeEvents(this,
 					oldOmgea, omegaBase);
 		}
 
