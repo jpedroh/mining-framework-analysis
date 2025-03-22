@@ -8,8 +8,9 @@ import java.util.Date;
  * @author xuxueli  2016-1-12 18:25:49
  */
 public class XxlJobInfo implements Serializable {
-	private Integer parentId;
 
+	private Integer parentId;
+	
 	private int id;				// 主键ID	    (JobKey.name)
 	
 	private int jobGroup;		// 执行器主键ID	(JobKey.group)
