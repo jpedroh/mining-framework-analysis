@@ -28,12 +28,23 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+<<<<<<< /usr/src/app/output/apache/avro/71ab06cde7354a95302c6f2eee659a7d53c322f1/lang/java/avro/src/main/java/org/apache/avro/SchemaNormalization.java/left.java
 /**
  * Collection of static methods for generating the parser canonical form of
  * schemas (see {@link #toParsingForm}), standard canonical form of schemas (see
  * {@link #toCanonicalForm(Schema)} or
  * {@link #toCanonicalForm(Schema, LinkedHashSet)}) with user defined properties
  * and fingerprints of canonical forms ({@link #fingerprint}).
+||||||| /usr/src/app/output/apache/avro/71ab06cde7354a95302c6f2eee659a7d53c322f1/lang/java/avro/src/main/java/org/apache/avro/SchemaNormalization.java/base.java
+/** Collection of static methods for generating the canonical form of
+ * schemas (see {@link #toParsingForm}) -- and fingerprints of canonical
+ * forms ({@link #fingerprint}).
+=======
+/** Collection of static methods for generating the parser canonical form of
+ * schemas (see {@link #toParsingForm}), standard canonical form of schemas
+ * (see {@link #toCanonicalForm(Schema)} or {@link #toCanonicalForm(Schema, LinkedHashSet)})
+ * with user defined properties and fingerprints of canonical forms ({@link #fingerprint}).
+>>>>>>> /usr/src/app/output/apache/avro/71ab06cde7354a95302c6f2eee659a7d53c322f1/lang/java/avro/src/main/java/org/apache/avro/SchemaNormalization.java/right.java
  */
 public class SchemaNormalization {
 
@@ -46,14 +57,12 @@ public class SchemaNormalization {
   public static String toParsingForm(Schema s) {
     return toNormalizedForm(s, true, new LinkedHashSet<>());
   }
-
   /**
    * Returns "Standard Canonical Form" of a schema as defined by Avro spec.
    */
   public static String toCanonicalForm(Schema s) {
     return toCanonicalForm(s, new LinkedHashSet<>());
   }
-
   /**
    * Returns "Standard Canonical Form" of a schema as defined by Avro spec with
    * additional user standard properties.
@@ -64,7 +73,6 @@ public class SchemaNormalization {
     properties.removeAll(reservedProperties);
     return toNormalizedForm(s, false, properties);
   }
-
   /**
    * Returns a fingerprint of a string of bytes. This string is presumed to
    * contain a canonical form of a schema. The algorithm used to compute the
@@ -93,7 +101,6 @@ public class SchemaNormalization {
     MessageDigest md = MessageDigest.getInstance(fpName);
     return md.digest(data);
   }
-
   /**
    * Returns the 64-bit Rabin Fingerprint (as recommended in the Avro spec) of a
    * byte string.
@@ -104,7 +111,6 @@ public class SchemaNormalization {
       result = (result >>> 8) ^ FP64.FP_TABLE[(int) (result ^ b) & 0xff];
     return result;
   }
-
   /**
    * Returns {@link #fingerprint} applied to the parsing canonical form of the
    * supplied schema.
@@ -112,7 +118,6 @@ public class SchemaNormalization {
   public static byte[] parsingFingerprint(String fpName, Schema s) throws NoSuchAlgorithmException {
     return fingerprint(fpName, toParsingForm(s).getBytes(StandardCharsets.UTF_8));
   }
-
   /**
    * Returns {@link #fingerprint64} applied to the parsing canonical form of the
    * supplied schema.
@@ -120,7 +125,6 @@ public class SchemaNormalization {
   public static long parsingFingerprint64(Schema s) {
     return fingerprint64(toParsingForm(s).getBytes(StandardCharsets.UTF_8));
   }
-
   private static String toNormalizedForm(Schema s, Boolean ps, LinkedHashSet<String> aps) {
     try {
       Map<String, String> env = new HashMap<>();
@@ -130,9 +134,14 @@ public class SchemaNormalization {
       throw new RuntimeException(e);
     }
   }
-
+<<<<<<< /usr/src/app/output/apache/avro/71ab06cde7354a95302c6f2eee659a7d53c322f1/lang/java/avro/src/main/java/org/apache/avro/SchemaNormalization.java/left.java
   private static Appendable build(Map<String, String> env, Schema s, Appendable o, Boolean ps,
       LinkedHashSet<String> aps) throws IOException {
+||||||| /usr/src/app/output/apache/avro/71ab06cde7354a95302c6f2eee659a7d53c322f1/lang/java/avro/src/main/java/org/apache/avro/SchemaNormalization.java/base.java
+  private static Appendable build(Map<String, String> env, Schema s, Appendable o) throws IOException {
+=======
+  private static Appendable build(Map<String, String> env, Schema s, Appendable o, Boolean ps, LinkedHashSet<String> aps) throws IOException {
+>>>>>>> /usr/src/app/output/apache/avro/71ab06cde7354a95302c6f2eee659a7d53c322f1/lang/java/avro/src/main/java/org/apache/avro/SchemaNormalization.java/right.java
     boolean firstTime = true;
     Schema.Type st = s.getType();
     LogicalType lt = null;
@@ -160,12 +169,23 @@ public class SchemaNormalization {
     case MAP:
       o.append("{\"type\":\"").append(st.getName()).append("\"");
       if (st == Schema.Type.ARRAY)
+<<<<<<< /usr/src/app/output/apache/avro/71ab06cde7354a95302c6f2eee659a7d53c322f1/lang/java/avro/src/main/java/org/apache/avro/SchemaNormalization.java/left.java
         build(env, s.getElementType(), o.append(",\"items\":"), ps, aps);
       else
         build(env, s.getValueType(), o.append(",\"values\":"), ps, aps);
       if (!ps)
         writeProps(o, s.getObjectProps(), aps); // adding the reserved property if not parser canonical schema
       return o.append("}");
+||||||| /usr/src/app/output/apache/avro/71ab06cde7354a95302c6f2eee659a7d53c322f1/lang/java/avro/src/main/java/org/apache/avro/SchemaNormalization.java/base.java
+        build(env, s.getElementType(), o.append(",\"items\":"));
+      else build(env, s.getValueType(), o.append(",\"values\":"));
+      return o.append("}");
+=======
+        build(env, s.getElementType(), o.append(",\"items\":"), ps, aps);
+      else build(env, s.getValueType(), o.append(",\"values\":"), ps, aps);
+      if(!ps) writeProps(o, s.getObjectProps(), aps); // adding the reserved property if not parser canonical schema
+        return o.append("}");
+>>>>>>> /usr/src/app/output/apache/avro/71ab06cde7354a95302c6f2eee659a7d53c322f1/lang/java/avro/src/main/java/org/apache/avro/SchemaNormalization.java/right.java
 
     case ENUM:
     case FIXED:
@@ -197,21 +217,33 @@ public class SchemaNormalization {
           else
             firstTime = false;
           o.append("{\"name\":\"").append(f.name()).append("\"");
+<<<<<<< /usr/src/app/output/apache/avro/71ab06cde7354a95302c6f2eee659a7d53c322f1/lang/java/avro/src/main/java/org/apache/avro/SchemaNormalization.java/left.java
           build(env, f.schema(), o.append(",\"type\":"), ps, aps);
           if (!ps)
             writeFieldProps(o, f, aps); // if standard canonical form then add reserved properties
           o.append("}");
+||||||| /usr/src/app/output/apache/avro/71ab06cde7354a95302c6f2eee659a7d53c322f1/lang/java/avro/src/main/java/org/apache/avro/SchemaNormalization.java/base.java
+          build(env, f.schema(), o.append(",\"type\":")).append("}");
+=======
+          build(env, f.schema(), o.append(",\"type\":"), ps, aps);
+          if (!ps) writeFieldProps(o, f, aps); // if standard canonical form then add reserved properties
+          o.append("}");
+>>>>>>> /usr/src/app/output/apache/avro/71ab06cde7354a95302c6f2eee659a7d53c322f1/lang/java/avro/src/main/java/org/apache/avro/SchemaNormalization.java/right.java
         }
         o.append("]");
       }
+<<<<<<< /usr/src/app/output/apache/avro/71ab06cde7354a95302c6f2eee659a7d53c322f1/lang/java/avro/src/main/java/org/apache/avro/SchemaNormalization.java/left.java
       if (!ps) {
         writeComplexProps(o, s);
         writeProps(o, s.getObjectProps(), aps);
       } // adding the reserved property if not parser canonical schema
+||||||| /usr/src/app/output/apache/avro/71ab06cde7354a95302c6f2eee659a7d53c322f1/lang/java/avro/src/main/java/org/apache/avro/SchemaNormalization.java/base.java
+=======
+      if(!ps) { writeComplexProps(o, s); writeProps(o, s.getObjectProps(), aps); }// adding the reserved property if not parser canonical schema
+>>>>>>> /usr/src/app/output/apache/avro/71ab06cde7354a95302c6f2eee659a7d53c322f1/lang/java/avro/src/main/java/org/apache/avro/SchemaNormalization.java/right.java
       return o.append("}");
     }
   }
-
   private static Appendable writeLogicalType(Schema s, LogicalType lt, Appendable o, LinkedHashSet<String> aps)
       throws IOException {
     o.append("{\"type\":\"").append(s.getType().getName()).append("\"");
@@ -226,7 +258,6 @@ public class SchemaNormalization {
     writeProps(o, s.getObjectProps(), aps);
     return o.append("}");
   }
-
   private static Appendable writeProps(Appendable o, Map<String, Object> schemaProps, LinkedHashSet<String> aps)
       throws IOException {
     for (String propKey : aps) {
@@ -237,7 +268,6 @@ public class SchemaNormalization {
     }
     return o;
   }
-
   private static Appendable writeComplexProps(Appendable o, Schema s) throws IOException {
     if (s.getDoc() != null && !s.getDoc().isEmpty())
       o.append(",\"doc\":\"").append(s.getDoc()).append("\"");
@@ -245,7 +275,6 @@ public class SchemaNormalization {
       o.append(",\"aliases\":").append(JacksonUtils.toJsonNode(new TreeSet<String>(s.getAliases())).toString());
     return o;
   }
-
   private static Appendable writeFieldProps(Appendable o, Schema.Field f, LinkedHashSet<String> aps)
       throws IOException {
     if (f.order() != null)
@@ -259,9 +288,12 @@ public class SchemaNormalization {
     writeProps(o, f.getObjectProps(), aps);
     return o;
   }
-
   final static long EMPTY64 = 0xc15d213aa4d7a795L;
-
+  /* An inner class ensures that FP_TABLE initialized only when needed. */
+  /** Returns "Standard Canonical Form" of a schema as defined by Avro
+    * spec. */
+  /** Returns "Standard Canonical Form" of a schema as defined by Avro
+    * spec with additional user standard properties. */
   /* An inner class ensures that FP_TABLE initialized only when needed. */
   private static class FP64 {
     private static final long[] FP_TABLE = new long[256];
