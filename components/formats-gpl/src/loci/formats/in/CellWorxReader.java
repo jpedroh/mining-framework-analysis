@@ -857,10 +857,20 @@ public class CellWorxReader extends FormatReader {
     throws FormatException, IOException
   {
     IFormatReader pnl = new DeltavisionReader();
+<<<<<<< /usr/src/app/output/openmicroscopy/bioformats/de27ec556b0541dd27592c012698684f174bf45d/components/formats-gpl/src/loci/formats/in/CellWorxReader.java/left.java
+    if (checkSuffix(file, "tif")) {
+      pnl = new MetamorphReader();
+    }
     pnl = Memoizer.wrap(getMetadataOptions(), pnl);
+||||||| /usr/src/app/output/openmicroscopy/bioformats/de27ec556b0541dd27592c012698684f174bf45d/components/formats-gpl/src/loci/formats/in/CellWorxReader.java/base.java
+    if (checkSuffix(file, "tif")) {
+      pnl = new MetamorphReader();
+    }
+=======
     initReader(pnl, file, omexml);
     return pnl;
   }
+>>>>>>> /usr/src/app/output/openmicroscopy/bioformats/de27ec556b0541dd27592c012698684f174bf45d/components/formats-gpl/src/loci/formats/in/CellWorxReader.java/right.java
 
   protected void initReader(IFormatReader reader, String file, boolean omexml)
     throws FormatException, IOException
