@@ -96,6 +96,14 @@ public class Core {
 		this.loginInfo = loginInfo;
 	}
 
+	public List<String> getGroupIdList() {
+		return groupIdList;
+	}
+
+	public void setGroupIdList(List<String> groupIdList) {
+		this.groupIdList = groupIdList;
+	}
+
 	public String getUuid() {
 		return uuid;
 	}
