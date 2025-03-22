@@ -1,231 +1,230 @@
-/**
- * Copyright (C) 2009-2013 Dell, Inc.
- * See annotations for authorship information
- *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
- */
-
 package org.dasein.cloud.compute;
-
 import java.io.Serializable;
 import java.util.Collection;
 
 public class ScalingGroup implements Serializable {
-    private static final long serialVersionUID = -5317003700769693511L;
-    
-    private int                   defaultCooldown;
-    private long                  creationTimestamp;
-    private String                description;
-    private int                   maxServers;
-    private int                   minServers;
-    private String                name;
-    private String[]              providerDataCenterIds;
-    private String                providerLaunchConfigurationId;
-    private String                providerOwnerId;
-    private String                providerRegionId;
-    private String                providerScalingGroupId;
-    private String[]              providerServerIds;
-    private int                   targetCapacity;
-    private String                autoScalingGroupARN;
-    private String[]              enabledMetrics;
-    private int                   healthCheckGracePeriod;
-    private String                healthCheckType;
-    private String[]              providerLoadBalancerNames;
-    private String                status;
-    private Collection<String[]>  suspendedProcesses;
-    private String[]              terminationPolicies;
-    // comma seperated list
-    private String                subnetIds;
+  private static final long serialVersionUID = -5317003700769693511L;
 
-    
-    public ScalingGroup() { }
+  private int defaultCooldown;
 
-    public String getAutoScalingGroupARN() {
-      return autoScalingGroupARN;
-    }
+  private long creationTimestamp;
 
-    public void setAutoScalingGroupARN(String arn) {
-      this.autoScalingGroupARN = arn;
-    }
+  private String description;
 
-    public String[] getEnabledMetrics() {
-      return enabledMetrics;
-    }
+  private int maxServers;
 
-    public void setEnabledMetrics(String[] metrics) {
-      this.enabledMetrics = metrics;
-    }
+  private int minServers;
 
-    public int getHealthCheckGracePeriod() {
-      return healthCheckGracePeriod;
-    }
+  private String name;
 
-    public void setHealthCheckGracePeriod(int healthCheckGracePeriod) {
-      this.healthCheckGracePeriod = healthCheckGracePeriod;
-    }
+  private String[] providerDataCenterIds;
 
-    public String getHealthCheckType() {
-      return healthCheckType;
-    }
+  private String providerLaunchConfigurationId;
 
-    public void setHealthCheckType(String healthCheckType) {
-      this.healthCheckType = healthCheckType;
-    }
+  private String providerOwnerId;
 
-    public String[] getProviderLoadBalancerNames() {
-      return providerLoadBalancerNames;
-    }
+  private String providerRegionId;
 
-    public void setProviderLoadBalancerNames(String[] providerLoadBalancerNames) {
-      this.providerLoadBalancerNames = providerLoadBalancerNames;
-    }
+  private String providerScalingGroupId;
 
-    public String getStatus() {
-      return status;
-    }
+  private String[] providerServerIds;
 
-    public void setStatus(String status) {
-      this.status = status;
-    }
+  private int targetCapacity;
 
-    public Collection<String[]> getSuspendedProcesses() {
-      return suspendedProcesses;
-    }
+  private String autoScalingGroupARN;
 
-    public void setSuspendedProcesses(Collection<String[]> suspendedProcesses) {
-      this.suspendedProcesses = suspendedProcesses;
-    }
+  private String[] enabledMetrics;
 
-    public String[] getTerminationPolicies() {
-      return terminationPolicies;
-    }
+  private int healthCheckGracePeriod;
 
-    public void setTerminationPolicies(String[] terminationPolicies) {
-      this.terminationPolicies = terminationPolicies;
-    }
+  private String healthCheckType;
 
-    public int getDefaultCoolcown() {
-        return defaultCooldown;
-    }
+  private String[] providerLoadBalancerNames;
 
-    public void setDefaultCoolcown(int cooldown) {
-        this.defaultCooldown = cooldown;
-    }
+  private String status;
 
-    public String getDescription() {
-        return description;
-    }
+  private Collection<String[]> suspendedProcesses;
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  private String[] terminationPolicies;
 
-    public int getMaxServers() {
-        return maxServers;
-    }
+  private String subnetIds;
 
-    public void setMaxServers(int maxServers) {
-        this.maxServers = maxServers;
-    }
+  public ScalingGroup() {
+  }
 
-    public int getMinServers() {
-        return minServers;
-    }
+  public String getAutoScalingGroupARN() {
+    return autoScalingGroupARN;
+  }
 
-    public void setMinServers(int minServers) {
-        this.minServers = minServers;
-    }
+  public void setAutoScalingGroupARN(String arn) {
+    this.autoScalingGroupARN = arn;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String[] getEnabledMetrics() {
+    return enabledMetrics;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setEnabledMetrics(String[] metrics) {
+    this.enabledMetrics = metrics;
+  }
 
-    public String[] getProviderDataCenterIds() {
-        return providerDataCenterIds;
-    }
+  public int getHealthCheckGracePeriod() {
+    return healthCheckGracePeriod;
+  }
 
-    public void setProviderDataCenterIds(String[] providerDataCenterIds) {
-        this.providerDataCenterIds = providerDataCenterIds;
-    }
+  public void setHealthCheckGracePeriod(int healthCheckGracePeriod) {
+    this.healthCheckGracePeriod = healthCheckGracePeriod;
+  }
 
-    public String getProviderLaunchConfigurationId() {
-        return providerLaunchConfigurationId;
-    }
+  public String getHealthCheckType() {
+    return healthCheckType;
+  }
 
-    public void setProviderLaunchConfigurationId(String providerLaunchConfigurationId) {
-        this.providerLaunchConfigurationId = providerLaunchConfigurationId;
-    }
+  public void setHealthCheckType(String healthCheckType) {
+    this.healthCheckType = healthCheckType;
+  }
 
-    public String getProviderOwnerId() {
-        return providerOwnerId;
-    }
+  public String[] getProviderLoadBalancerNames() {
+    return providerLoadBalancerNames;
+  }
 
-    public void setProviderOwnerId(String providerOwnerId) {
-        this.providerOwnerId = providerOwnerId;
-    }
+  public void setProviderLoadBalancerNames(String[] providerLoadBalancerNames) {
+    this.providerLoadBalancerNames = providerLoadBalancerNames;
+  }
 
-    public String getProviderRegionId() {
-        return providerRegionId;
-    }
+  public String getStatus() {
+    return status;
+  }
 
-    public void setProviderRegionId(String providerRegionId) {
-        this.providerRegionId = providerRegionId;
-    }
+  public void setStatus(String status) {
+    this.status = status;
+  }
 
-    public String getProviderScalingGroupId() {
-        return providerScalingGroupId;
-    }
+  public Collection<String[]> getSuspendedProcesses() {
+    return suspendedProcesses;
+  }
 
-    public void setProviderScalingGroupId(String providerScalingGroupId) {
-        this.providerScalingGroupId = providerScalingGroupId;
-    }
+  public void setSuspendedProcesses(Collection<String[]> suspendedProcesses) {
+    this.suspendedProcesses = suspendedProcesses;
+  }
 
-    public void setProviderServerIds(String[] providerServerIds) {
-        this.providerServerIds = providerServerIds;
-    }
+  public String[] getTerminationPolicies() {
+    return terminationPolicies;
+  }
 
-    public String[] getProviderServerIds() {
-        return providerServerIds;
-    }
+  public void setTerminationPolicies(String[] terminationPolicies) {
+    this.terminationPolicies = terminationPolicies;
+  }
 
-    public void setCreationTimestamp(long creationTimestamp) {
-        this.creationTimestamp = creationTimestamp;
-    }
+  public int getDefaultCoolcown() {
+    return defaultCooldown;
+  }
 
-    public long getCreationTimestamp() {
-        return creationTimestamp;
-    }
+  public void setDefaultCoolcown(int cooldown) {
+    this.defaultCooldown = cooldown;
+  }
 
-    public void setTargetCapacity(int targetCapacity) {
-        this.targetCapacity = targetCapacity;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public int getTargetCapacity() {
-        return targetCapacity;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public String getSubnetIds() {
-      return subnetIds;
-    }
+  public int getMaxServers() {
+    return maxServers;
+  }
 
-    public void setSubnetIds(String subnetIds) {
-      this.subnetIds = subnetIds;
-    }
-    
+  public void setMaxServers(int maxServers) {
+    this.maxServers = maxServers;
+  }
+
+  public int getMinServers() {
+    return minServers;
+  }
+
+  public void setMinServers(int minServers) {
+    this.minServers = minServers;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String[] getProviderDataCenterIds() {
+    return providerDataCenterIds;
+  }
+
+  public void setProviderDataCenterIds(String[] providerDataCenterIds) {
+    this.providerDataCenterIds = providerDataCenterIds;
+  }
+
+  public String getProviderLaunchConfigurationId() {
+    return providerLaunchConfigurationId;
+  }
+
+  public void setProviderLaunchConfigurationId(String providerLaunchConfigurationId) {
+    this.providerLaunchConfigurationId = providerLaunchConfigurationId;
+  }
+
+  public String getProviderOwnerId() {
+    return providerOwnerId;
+  }
+
+  public void setProviderOwnerId(String providerOwnerId) {
+    this.providerOwnerId = providerOwnerId;
+  }
+
+  public String getProviderRegionId() {
+    return providerRegionId;
+  }
+
+  public void setProviderRegionId(String providerRegionId) {
+    this.providerRegionId = providerRegionId;
+  }
+
+  public String getProviderScalingGroupId() {
+    return providerScalingGroupId;
+  }
+
+  public void setProviderScalingGroupId(String providerScalingGroupId) {
+    this.providerScalingGroupId = providerScalingGroupId;
+  }
+
+  public void setProviderServerIds(String[] providerServerIds) {
+    this.providerServerIds = providerServerIds;
+  }
+
+  public String[] getProviderServerIds() {
+    return providerServerIds;
+  }
+
+  public void setCreationTimestamp(long creationTimestamp) {
+    this.creationTimestamp = creationTimestamp;
+  }
+
+  public long getCreationTimestamp() {
+    return creationTimestamp;
+  }
+
+  public void setTargetCapacity(int targetCapacity) {
+    this.targetCapacity = targetCapacity;
+  }
+
+  public int getTargetCapacity() {
+    return targetCapacity;
+  }
+
+  public String getSubnetIds() {
+    return subnetIds;
+  }
+
+  public void setSubnetIds(String subnetIds) {
+    this.subnetIds = subnetIds;
+  }
 }

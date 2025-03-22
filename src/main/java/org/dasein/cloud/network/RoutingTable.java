@@ -1,26 +1,5 @@
-/**
- * Copyright (C) 2009-2013 Dell, Inc.
- * See annotations for authorship information
- *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
- */
-
 package org.dasein.cloud.network;
-
 import org.dasein.cloud.Taggable;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -34,112 +13,117 @@ import java.util.Map;
  * @version 2012.07 initial version
  */
 public class RoutingTable implements Networkable, Taggable {
-    private String  description;
-    private String  name;
-    private String  providerOwnerId;
-    private String  providerRegionId;
-    private String  providerRoutingTableId;
-    private String  providerVlanId;
-    private Route[] routes;
-    private Map<String,String> tags;
-    private String[] providerSubnetIds;
-    
-    public RoutingTable() { }
+  private String description;
 
-    @Override
-    public boolean equals(@Nullable Object other) {
-        if( other == null ) {
-            return false;
-        }
-        if( other == this ) {
-            return true;
-        }
-        if( other instanceof RoutingTable ) {
-            RoutingTable t = (RoutingTable)other;
+  private String name;
 
-            return (providerOwnerId.equals(t.providerOwnerId) && providerRegionId.equals(t.providerRegionId) && providerRoutingTableId.equals(t.providerRoutingTableId));
-        }
-        return false;
-    }
+  private String providerOwnerId;
 
-    public String getProviderOwnerId() {
-        return providerOwnerId;
-    }
+  private String providerRegionId;
 
-    public void setProviderOwnerId(String providerOwnerId) {
-        this.providerOwnerId = providerOwnerId;
-    }
+  private String providerRoutingTableId;
 
-    public String getProviderRegionId() {
-        return providerRegionId;
-    }
+  private String providerVlanId;
 
-    public void setProviderRegionId(String providerRegionId) {
-        this.providerRegionId = providerRegionId;
-    }
+  private Route[] routes;
 
-    public String getProviderRoutingTableId() {
-        return providerRoutingTableId;
-    }
+  private Map<String, String> tags;
 
-    public void setProviderRoutingTableId(String providerRoutingTableId) {
-        this.providerRoutingTableId = providerRoutingTableId;
-    }
+  private String[] providerSubnetIds;
 
-    public String getProviderVlanId() {
-        return providerVlanId;
-    }
+  public RoutingTable() {
+  }
 
-    public void setProviderVlanId(String providerVlanId) {
-        this.providerVlanId = providerVlanId;
+  @Override public boolean equals(@Nullable Object other) {
+    if (other == null) {
+      return false;
     }
+    if (other == this) {
+      return true;
+    }
+    if (other instanceof RoutingTable) {
+      RoutingTable t = (RoutingTable) other;
+      return (providerOwnerId.equals(t.providerOwnerId) && providerRegionId.equals(t.providerRegionId) && providerRoutingTableId.equals(t.providerRoutingTableId));
+    }
+    return false;
+  }
 
-    public String[] getProviderSubnetIds() {
-      return providerSubnetIds;
-    }
+  public String getProviderOwnerId() {
+    return providerOwnerId;
+  }
 
-    public void setProviderSubnetIds(String[] providerSubnetIds) {
-      this.providerSubnetIds = providerSubnetIds;
-    }
+  public void setProviderOwnerId(String providerOwnerId) {
+    this.providerOwnerId = providerOwnerId;
+  }
 
-    public Route[] getRoutes() {
-        return routes;
-    }
+  public String getProviderRegionId() {
+    return providerRegionId;
+  }
 
-    public void setRoutes(Route[] routes) {
-        this.routes = routes;
-    }
-    
-    public String toString() {
-        return providerRoutingTableId;
-    }
+  public void setProviderRegionId(String providerRegionId) {
+    this.providerRegionId = providerRegionId;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public String getProviderRoutingTableId() {
+    return providerRoutingTableId;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public void setProviderRoutingTableId(String providerRoutingTableId) {
+    this.providerRoutingTableId = providerRoutingTableId;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getProviderVlanId() {
+    return providerVlanId;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setProviderVlanId(String providerVlanId) {
+    this.providerVlanId = providerVlanId;
+  }
 
-    @Override
-    public @Nonnull Map<String, String> getTags() {
-        if( tags == null ) {
-            tags = new HashMap<String, String>();
-        }
-        return tags;
-    }
+  public String[] getProviderSubnetIds() {
+    return providerSubnetIds;
+  }
 
-    @Override
-    public void setTag(@Nonnull String key, @Nonnull String value) {
-        getTags().put(key, value);
+  public void setProviderSubnetIds(String[] providerSubnetIds) {
+    this.providerSubnetIds = providerSubnetIds;
+  }
+
+  public Route[] getRoutes() {
+    return routes;
+  }
+
+  public void setRoutes(Route[] routes) {
+    this.routes = routes;
+  }
+
+  public String toString() {
+    return providerRoutingTableId;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  @Override public @Nonnull Map<String, String> getTags() {
+    if (tags == null) {
+      tags = new HashMap<String, String>();
     }
+    return tags;
+  }
+
+  @Override public void setTag(@Nonnull String key, @Nonnull String value) {
+    getTags().put(key, value);
+  }
 }
