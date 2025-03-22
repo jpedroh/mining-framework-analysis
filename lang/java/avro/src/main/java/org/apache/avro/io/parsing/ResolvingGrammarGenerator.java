@@ -117,6 +117,22 @@ public class ResolvingGrammarGenerator extends ValidatingGrammarGenerator {
         i++;
       }
       return Symbol.seq(Symbol.alt(symbols, labels), Symbol.WRITER_UNION_ACTION);
+<<<<<<< /usr/src/app/output/apache/avro/ee88deaf22b35b2ba90b5d6231816c182b4d886e/lang/java/avro/src/main/java/org/apache/avro/io/parsing/ResolvingGrammarGenerator.java/left.java
+||||||| /usr/src/app/output/apache/avro/ee88deaf22b35b2ba90b5d6231816c182b4d886e/lang/java/avro/src/main/java/org/apache/avro/io/parsing/ResolvingGrammarGenerator.java/base.java
+
+    }
+    if (action instanceof Resolver.ReaderUnion) {
+      Resolver.ReaderUnion ru = (Resolver.ReaderUnion) action;
+      Symbol s = generate(ru.actualAction, seen);
+      return Symbol.seq(Symbol.unionAdjustAction(ru.firstMatch, s), Symbol.UNION);
+=======
+
+    } else if (action instanceof Resolver.ReaderUnion) {
+      Resolver.ReaderUnion ru = (Resolver.ReaderUnion) action;
+      Symbol s = generate(ru.actualAction, seen);
+      return Symbol.seq(Symbol.unionAdjustAction(ru.firstMatch, s), Symbol.UNION);
+>>>>>>> /usr/src/app/output/apache/avro/ee88deaf22b35b2ba90b5d6231816c182b4d886e/lang/java/avro/src/main/java/org/apache/avro/io/parsing/ResolvingGrammarGenerator.java/right.java
+
     } else if (action instanceof Resolver.EnumAdjust) {
       Resolver.EnumAdjust e = (Resolver.EnumAdjust) action;
       Object[] adjs = new Object[e.adjustments.length];
