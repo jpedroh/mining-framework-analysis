@@ -1,5 +1,4 @@
 package com.salesmanager.shop.mapper.catalog;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -14,24 +13,15 @@ import com.salesmanager.shop.mapper.Mapper;
 import com.salesmanager.shop.model.catalog.category.ReadableCategory;
 import com.salesmanager.shop.model.catalog.category.ReadableCategoryFull;
 
-@Component
-public class ReadableCategoryMapper implements Mapper<Category, ReadableCategory> {
-  
+@Component public class ReadableCategoryMapper implements Mapper<Category, ReadableCategory> {
   private static final Logger LOGGER = LoggerFactory.getLogger(ReadableCategoryMapper.class);
 
-  @Override
-  public ReadableCategory convert(Category source, MerchantStore store, Language language) {
+  @Override public ReadableCategory convert(Category source, MerchantStore store, Language language) {
     ReadableCategory target = category(language);
-    
     feedDescription(source, language, target);
-
-
-    Optional<com.salesmanager.shop.model.catalog.category.Category> parentCategory =
-        createParentCategory(source);
+    Optional<com.salesmanager.shop.model.catalog.category.Category> parentCategory = createParentCategory(source);
     parentCategory.ifPresent(target::setParent);
-
     Optional.ofNullable(source.getDepth()).ifPresent(target::setDepth);
-
     target.setLineage(source.getLineage());
     target.setStore(source.getMerchantStore().getCode());
     target.setCode(source.getCode());
@@ -44,29 +34,22 @@ public class ReadableCategoryMapper implements Mapper<Category, ReadableCategory
 
   private void feedDescription(Category source, Language language, ReadableCategory target) {
     List<com.salesmanager.shop.model.catalog.category.CategoryDescription> descriptions = new ArrayList<com.salesmanager.shop.model.catalog.category.CategoryDescription>();
-    for(CategoryDescription description : source.getDescriptions()) {
+    for (CategoryDescription description : source.getDescriptions()) {
       if (language == null) {
         descriptions.add(convertDescription(description));
       } else {
-        if(language.getId().intValue()==description.getLanguage().getId().intValue()) {
+        if (language.getId().intValue() == description.getLanguage().getId().intValue()) {
           target.setDescription(convertDescription(description));
         }
       }
     }
-    
-    
-    if(target instanceof ReadableCategoryFull) {
-      ((ReadableCategoryFull)target).setDescriptions(descriptions);
+    if (target instanceof ReadableCategoryFull) {
+      ((ReadableCategoryFull) target).setDescriptions(descriptions);
     }
-
   }
 
-
-  private com.salesmanager.shop.model.catalog.category.CategoryDescription convertDescription(
-      CategoryDescription description) {
-    final com.salesmanager.shop.model.catalog.category.CategoryDescription desc =
-        new com.salesmanager.shop.model.catalog.category.CategoryDescription();
-
+  private com.salesmanager.shop.model.catalog.category.CategoryDescription convertDescription(CategoryDescription description) {
+    final com.salesmanager.shop.model.catalog.category.CategoryDescription desc = new com.salesmanager.shop.model.catalog.category.CategoryDescription();
     desc.setFriendlyUrl(description.getSeUrl());
     desc.setName(description.getName());
     desc.setId(description.getId());
@@ -79,12 +62,9 @@ public class ReadableCategoryMapper implements Mapper<Category, ReadableCategory
     return desc;
   }
 
-
-  private Optional<com.salesmanager.shop.model.catalog.category.Category> createParentCategory(
-      Category source) {
-    return Optional.ofNullable(source.getParent()).map(parentValue -> {
-      final com.salesmanager.shop.model.catalog.category.Category parent =
-          new com.salesmanager.shop.model.catalog.category.Category();
+  private Optional<com.salesmanager.shop.model.catalog.category.Category> createParentCategory(Category source) {
+    return Optional.ofNullable(source.getParent()).map((parentValue) -> {
+      final com.salesmanager.shop.model.catalog.category.Category parent = new com.salesmanager.shop.model.catalog.category.Category();
       parent.setCode(source.getParent().getCode());
       parent.setId(source.getParent().getId());
       return parent;
@@ -92,18 +72,14 @@ public class ReadableCategoryMapper implements Mapper<Category, ReadableCategory
   }
 
   private ReadableCategory category(Language language) {
-
     if (language == null) {
       return new ReadableCategoryFull();
     } else {
       return new ReadableCategory();
     }
-
   }
 
-  @Override
-  public ReadableCategory convert(Category source, ReadableCategory destination,
-      MerchantStore store, Language language) {
+  @Override public ReadableCategory convert(Category source, ReadableCategory destination, MerchantStore store, Language language) {
     return destination;
   }
 }

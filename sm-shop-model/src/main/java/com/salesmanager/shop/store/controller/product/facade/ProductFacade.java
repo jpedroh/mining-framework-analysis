@@ -1,5 +1,4 @@
 package com.salesmanager.shop.store.controller.product.facade;
-
 import java.util.List;
 import com.salesmanager.core.model.catalog.category.Category;
 import com.salesmanager.core.model.catalog.product.Product;
@@ -7,12 +6,7 @@ import com.salesmanager.core.model.catalog.product.ProductCriteria;
 import com.salesmanager.core.model.catalog.product.review.ProductReview;
 import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.reference.language.Language;
-<<<<<<< HEAD
-=======
-import com.salesmanager.shop.model.catalog.manufacturer.PersistableManufacturer;
-import com.salesmanager.shop.model.catalog.manufacturer.ReadableManufacturer;
 import com.salesmanager.shop.model.catalog.manufacturer.ReadableManufacturerList;
->>>>>>> origin/sb2.2
 import com.salesmanager.shop.model.catalog.product.LightPersistableProduct;
 import com.salesmanager.shop.model.catalog.product.PersistableProduct;
 import com.salesmanager.shop.model.catalog.product.PersistableProductReview;
@@ -22,7 +16,6 @@ import com.salesmanager.shop.model.catalog.product.ReadableProductList;
 import com.salesmanager.shop.model.catalog.product.ReadableProductReview;
 
 public interface ProductFacade {
-
   /**
    * Create / Update product
    * @param store
@@ -30,9 +23,8 @@ public interface ProductFacade {
    * @param language
    * @return
    */
-  PersistableProduct saveProduct(MerchantStore store, PersistableProduct product,
-      Language language);
-  
+  PersistableProduct saveProduct(MerchantStore store, PersistableProduct product, Language language);
+
   /**
    * Update minimal product details
    * @param product
@@ -69,8 +61,7 @@ public interface ProductFacade {
    * @return
    * @throws Exception
    */
-  ReadableProduct getProductByCode(MerchantStore store, String uniqueCode, Language language)
-      throws Exception;
+  ReadableProduct getProductByCode(MerchantStore store, String uniqueCode, Language language) throws Exception;
 
   /**
    * Get a product by sku and store
@@ -92,8 +83,7 @@ public interface ProductFacade {
    * @return
    * @throws Exception
    */
-  ReadableProduct updateProductPrice(ReadableProduct product, ProductPriceEntity price,
-      Language language) throws Exception;
+  ReadableProduct updateProductPrice(ReadableProduct product, ProductPriceEntity price, Language language) throws Exception;
 
   /**
    * Sets a new price to an existing product
@@ -104,8 +94,7 @@ public interface ProductFacade {
    * @return
    * @throws Exception
    */
-  ReadableProduct updateProductQuantity(ReadableProduct product, int quantity, Language language)
-      throws Exception;
+  ReadableProduct updateProductQuantity(ReadableProduct product, int quantity, Language language) throws Exception;
 
   /**
    * Deletes a product for a given product id
@@ -114,7 +103,7 @@ public interface ProductFacade {
    * @throws Exception
    */
   void deleteProduct(Product product) throws Exception;
-  
+
   /**
    * Delete product
    * @param id
@@ -122,7 +111,6 @@ public interface ProductFacade {
    * @throws Exception
    */
   void deleteProduct(Long id, MerchantStore store);
-
 
   /**
    * Filters a list of product based on criteria
@@ -133,9 +121,7 @@ public interface ProductFacade {
    * @return
    * @throws Exception
    */
-  ReadableProductList getProductListsByCriterias(MerchantStore store, Language language,
-      ProductCriteria criterias) throws Exception;
-
+  ReadableProductList getProductListsByCriterias(MerchantStore store, Language language, ProductCriteria criterias) throws Exception;
 
   /**
    * Adds a product to a category
@@ -145,8 +131,7 @@ public interface ProductFacade {
    * @return
    * @throws Exception
    */
-  ReadableProduct addProductToCategory(Category category, Product product, Language language)
-      throws Exception;
+  ReadableProduct addProductToCategory(Category category, Product product, Language language) throws Exception;
 
   /**
    * Removes item from a category
@@ -157,9 +142,7 @@ public interface ProductFacade {
    * @return
    * @throws Exception
    */
-  ReadableProduct removeProductFromCategory(Category category, Product product, Language language)
-      throws Exception;
-
+  ReadableProduct removeProductFromCategory(Category category, Product product, Language language) throws Exception;
 
   /**
    * Saves or updates a Product review
@@ -168,8 +151,7 @@ public interface ProductFacade {
    * @param language
    * @throws Exception
    */
-  void saveOrUpdateReview(PersistableProductReview review, MerchantStore store, Language language)
-      throws Exception;
+  void saveOrUpdateReview(PersistableProductReview review, MerchantStore store, Language language) throws Exception;
 
   /**
    * Deletes a product review
@@ -190,9 +172,8 @@ public interface ProductFacade {
    * @return
    * @throws Exception
    */
-  List<ReadableProductReview> getProductReviews(Product product, MerchantStore store,
-      Language language) throws Exception;
-  
+  List<ReadableProductReview> getProductReviews(Product product, MerchantStore store, Language language) throws Exception;
+
   /**
    * validates if product exists
    * @param sku
@@ -200,8 +181,6 @@ public interface ProductFacade {
    * @return
    */
   public boolean exists(String sku, MerchantStore store);
-
-
 
   /**
    * Get related items
@@ -212,7 +191,5 @@ public interface ProductFacade {
    * @return
    * @throws Exception
    */
-  List<ReadableProduct> relatedItems(MerchantStore store, Product product, Language language)
-      throws Exception;
-
+  List<ReadableProduct> relatedItems(MerchantStore store, Product product, Language language) throws Exception;
 }

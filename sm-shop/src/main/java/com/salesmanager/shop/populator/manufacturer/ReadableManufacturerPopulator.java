@@ -1,5 +1,4 @@
 package com.salesmanager.shop.populator.manufacturer;
-
 import com.salesmanager.core.business.exception.ConversionException;
 import com.salesmanager.core.business.utils.AbstractDataPopulator;
 import com.salesmanager.core.model.catalog.product.manufacturer.ManufacturerDescription;
@@ -11,18 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class ReadableManufacturerPopulator extends
-    AbstractDataPopulator<com.salesmanager.core.model.catalog.product.manufacturer.Manufacturer, ReadableManufacturer> {
-
-
-
-  @Override
-  public ReadableManufacturer populate(
-      com.salesmanager.core.model.catalog.product.manufacturer.Manufacturer source,
-      ReadableManufacturer target, MerchantStore store, Language language)
-      throws ConversionException {
-
-
+public class ReadableManufacturerPopulator extends AbstractDataPopulator<com.salesmanager.core.model.catalog.product.manufacturer.Manufacturer, ReadableManufacturer> {
+  @Override public ReadableManufacturer populate(com.salesmanager.core.model.catalog.product.manufacturer.Manufacturer source, ReadableManufacturer target, MerchantStore store, Language language) throws ConversionException {
+    List<com.salesmanager.shop.model.catalog.manufacturer.ManufacturerDescription> fulldescriptions = new ArrayList<com.salesmanager.shop.model.catalog.manufacturer.ManufacturerDescription>();
     if (language == null) {
       target = new ReadableManufacturerFull();
     }
@@ -30,10 +20,7 @@ public class ReadableManufacturerPopulator extends
     target.setId(source.getId());
     target.setCode(source.getCode());
     if (source.getDescriptions() != null && source.getDescriptions().size() > 0) {
-
-      List<com.salesmanager.shop.model.catalog.manufacturer.ManufacturerDescription> fulldescriptions =
-          new ArrayList<com.salesmanager.shop.model.catalog.manufacturer.ManufacturerDescription>();
-
+      List<com.salesmanager.shop.model.catalog.manufacturer.ManufacturerDescription> fulldescriptions = new ArrayList<com.salesmanager.shop.model.catalog.manufacturer.ManufacturerDescription>();
       Set<ManufacturerDescription> descriptions = source.getDescriptions();
       ManufacturerDescription description = null;
       for (ManufacturerDescription desc : descriptions) {
@@ -44,38 +31,29 @@ public class ReadableManufacturerPopulator extends
           fulldescriptions.add(populateDescription(desc));
         }
       }
-
-
-
       if (description != null) {
-        com.salesmanager.shop.model.catalog.manufacturer.ManufacturerDescription d =
-            populateDescription(description);
+        com.salesmanager.shop.model.catalog.manufacturer.ManufacturerDescription d = populateDescription(description);
         target.setDescription(d);
       }
-
       if (target instanceof ReadableManufacturerFull) {
         ((ReadableManufacturerFull) target).setDescriptions(fulldescriptions);
       }
-
     }
-
-
-
+    if (target instanceof ReadableManufacturerFull) {
+      ((ReadableManufacturerFull) target).setDescriptions(fulldescriptions);
+    }
     return target;
   }
 
-  @Override
-  protected ReadableManufacturer createTarget() {
+  @Override protected ReadableManufacturer createTarget() {
     return null;
   }
 
-  com.salesmanager.shop.model.catalog.manufacturer.ManufacturerDescription populateDescription(
-      ManufacturerDescription description) {
+  com.salesmanager.shop.model.catalog.manufacturer.ManufacturerDescription populateDescription(ManufacturerDescription description) {
     if (description == null) {
       return null;
     }
-    com.salesmanager.shop.model.catalog.manufacturer.ManufacturerDescription d =
-        new com.salesmanager.shop.model.catalog.manufacturer.ManufacturerDescription();
+    com.salesmanager.shop.model.catalog.manufacturer.ManufacturerDescription d = new com.salesmanager.shop.model.catalog.manufacturer.ManufacturerDescription();
     d.setName(description.getName());
     d.setDescription(description.getDescription());
     d.setId(description.getId());
@@ -85,5 +63,4 @@ public class ReadableManufacturerPopulator extends
     }
     return d;
   }
-
 }

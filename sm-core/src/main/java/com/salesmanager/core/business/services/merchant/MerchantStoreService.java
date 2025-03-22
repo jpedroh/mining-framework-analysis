@@ -1,43 +1,37 @@
 package com.salesmanager.core.business.services.merchant;
-
 import java.util.List;
-<<<<<<< HEAD
 import java.util.Optional;
-
 import org.springframework.data.domain.Page;
-
-
-=======
->>>>>>> origin/sb2.2
 import com.salesmanager.core.business.exception.ServiceException;
 import com.salesmanager.core.business.services.common.generic.SalesManagerEntityService;
 import com.salesmanager.core.model.common.GenericEntityList;
 import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.merchant.MerchantStoreCriteria;
 
-public interface MerchantStoreService extends SalesManagerEntityService<Integer, MerchantStore>{
-	
+public interface MerchantStoreService extends SalesManagerEntityService<Integer, MerchantStore> {
+  MerchantStore getMerchantStore(String merchantStoreCode) throws ServiceException;
 
-	MerchantStore getMerchantStore(String merchantStoreCode)
-			throws ServiceException;
+  MerchantStore getByCode(String code) throws ServiceException;
 
-	MerchantStore getByCode(String code) throws ServiceException;
-	
-	List<MerchantStore> findAllStoreNames() throws ServiceException;
+  List<MerchantStore> findAllStoreNames() throws ServiceException;
 
-	List<MerchantStore> findAllStoreCodeNameEmail() throws ServiceException;
+  List<MerchantStore> findAllStoreCodeNameEmail() throws ServiceException;
 
-	Page<MerchantStore> listAll(Optional<String> storeName, int page, int count) throws ServiceException;
-	
-	Page<MerchantStore> listAllRetailers(Optional<String> storeName, int page, int count) throws ServiceException;
-	
-	Page<MerchantStore> listChildren(String code, int page, int count) throws ServiceException;
+  Page<MerchantStore> listAll(Optional<String> storeName, int page, int count) throws ServiceException;
+
+  Page<MerchantStore> listAllRetailers(Optional<String> storeName, int page, int count) throws ServiceException;
 
 
-	boolean existByCode(String code);
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-core/src/main/java/com/salesmanager/core/business/services/merchant/MerchantStoreService.java/left.java
+  Page
+=======
+  List
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-core/src/main/java/com/salesmanager/core/business/services/merchant/MerchantStoreService.java/right.java
+  <MerchantStore> listChildren(String code, int page, int count) throws ServiceException;
 
-	void saveOrUpdate(MerchantStore store) throws ServiceException;
-	
-	GenericEntityList<MerchantStore> getByCriteria(MerchantStoreCriteria criteria) throws ServiceException;
+  boolean existByCode(String code);
 
+  void saveOrUpdate(MerchantStore store) throws ServiceException;
+
+  GenericEntityList<MerchantStore> getByCriteria(MerchantStoreCriteria criteria) throws ServiceException;
 }

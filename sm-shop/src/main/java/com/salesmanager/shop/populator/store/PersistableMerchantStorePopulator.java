@@ -1,15 +1,11 @@
 package com.salesmanager.shop.populator.store;
-
 import java.util.Date;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Component;
-
 import com.salesmanager.core.business.constants.Constants;
 import com.salesmanager.core.business.exception.ConversionException;
 import com.salesmanager.core.business.exception.ServiceException;
@@ -28,164 +24,136 @@ import com.salesmanager.shop.model.references.PersistableAddress;
 import com.salesmanager.shop.model.store.PersistableMerchantStore;
 import com.salesmanager.shop.utils.DateUtil;
 
-@Component
-public class PersistableMerchantStorePopulator extends AbstractDataPopulator<PersistableMerchantStore, MerchantStore> {
+@Component public class PersistableMerchantStorePopulator extends AbstractDataPopulator<PersistableMerchantStore, MerchantStore> {
+  @Inject private CountryService countryService;
 
-	@Inject
-	private CountryService countryService;
-	@Inject
-	private ZoneService zoneService;
-	@Inject
-	private LanguageService languageService;
-	@Inject
-	private CurrencyService currencyService;
-	@Inject
-	private MerchantStoreService merchantStoreService;
-	
-	
-	@Override
-	public MerchantStore populate(PersistableMerchantStore source, MerchantStore target, MerchantStore store,
-			Language language) throws ConversionException {
+  @Inject private ZoneService zoneService;
 
-		Validate.notNull(source, "PersistableMerchantStore mst not be null");
-		
-		if(target == null) {
-			target = new MerchantStore();
-		}
-		
-		target.setCode(source.getCode());
-		if(source.getId()!=0) {
-			target.setId(source.getId());
-		}
-		
-		if(!StringUtils.isEmpty(source.getInBusinessSince())) {
-			try {
-				Date dt = DateUtil.getDate(source.getInBusinessSince());
-				target.setInBusinessSince(dt);
-			} catch(Exception e) {
-				throw new ConversionException("Cannot parse date [" + source.getInBusinessSince() + "]",e);
-			}
-		}
+  @Inject private LanguageService languageService;
 
-		if(source.getDimension()!=null) {
-		  target.setSeizeunitcode(source.getDimension().name());
-		}
-		if(source.getWeight()!=null) {
-		  target.setWeightunitcode(source.getWeight().name());
-		}
-		target.setCurrencyFormatNational(source.isCurrencyFormatNational());
-		target.setStorename(source.getName());
-		target.setStorephone(source.getPhone());
-		target.setStoreEmailAddress(source.getEmail());
-		target.setUseCache(source.isUseCache());
-		target.setRetailer(source.isRetailer());
-		
-		//get parent store
-		if(!StringUtils.isBlank(source.getRetailerStore())) {
-		  if(source.getRetailerStore().equals(source.getCode())) {
-		    throw new ConversionException("Parent store [" + source.getRetailerStore() + "] cannot be parent of current store");
-		  }
-		  try {
-            MerchantStore parent = merchantStoreService.getByCode(source.getRetailerStore());
-            if(parent == null) {
-              throw new ConversionException("Parent store [" + source.getRetailerStore() + "] does not exist");
-            }
-            target.setParent(parent);
-          } catch (ServiceException e) {
-              throw new ConversionException(e);
-          }
-		}
-		
-		
-		try {
-			
-			if(!StringUtils.isEmpty(source.getDefaultLanguage())) {
-				Language l = languageService.getByCode(source.getDefaultLanguage());
-				target.setDefaultLanguage(l);
-			}
-			
-			if(!StringUtils.isEmpty(source.getCurrency())) {
-				Currency c = currencyService.getByCode(source.getCurrency());
-				target.setCurrency(c);
-			} else {
-				target.setCurrency(currencyService.getByCode(Constants.DEFAULT_CURRENCY.getCurrencyCode()));
-			}
-			
-			List<String> languages = source.getSupportedLanguages();
-			if(!CollectionUtils.isEmpty(languages)) {
-				for(String lang : languages) {
-					Language ll = languageService.getByCode(lang);
-					target.getLanguages().add(ll);
-				}
-			}
-			
-		} catch(Exception e) {
-			throw new ConversionException(e);
-		}
-		
-		//address population
-		PersistableAddress address = source.getAddress();
-		if(address != null) {
-			Country country;
-			try {
-				country = countryService.getByCode(address.getCountry());
+  @Inject private CurrencyService currencyService;
 
-				Zone zone = zoneService.getByCode(address.getStateProvince());
-				if(zone != null) {
-					target.setZone(zone);
-				} else {
-					target.setStorestateprovince(address.getStateProvince());
-				}
-				
-				target.setStoreaddress(address.getAddress());
-				target.setStorecity(address.getCity());
-				target.setCountry(country);
-				target.setStorepostalcode(address.getPostalCode());
-				
-			} catch (ServiceException e) {
-				throw new ConversionException(e);
-			}
-		}
-		
-		return target;
-	}
+  @Inject private MerchantStoreService merchantStoreService;
 
-	@Override
-	protected MerchantStore createTarget() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+  @Override public MerchantStore populate(PersistableMerchantStore source, MerchantStore target, MerchantStore store, Language language) throws ConversionException {
+    Validate.notNull(source, "PersistableMerchantStore mst not be null");
+    if (target == null) {
+      target = new MerchantStore();
+    }
+    target.setCode(source.getCode());
+    if (source.getId() != 0) {
+      target.setId(source.getId());
+    }
+    if (!StringUtils.isEmpty(source.getInBusinessSince())) {
+      try {
+        Date dt = DateUtil.getDate(source.getInBusinessSince());
+        target.setInBusinessSince(dt);
+      } catch (Exception e) {
+        throw new ConversionException("Cannot parse date [" + source.getInBusinessSince() + "]", e);
+      }
+    }
+    if (source.getDimension() != null) {
+      target.setSeizeunitcode(source.getDimension().name());
+    }
+    if (source.getWeight() != null) {
+      target.setWeightunitcode(source.getWeight().name());
+    }
+    target.setCurrencyFormatNational(source.isCurrencyFormatNational());
+    target.setStorename(source.getName());
+    target.setStorephone(source.getPhone());
+    target.setStoreEmailAddress(source.getEmail());
+    target.setUseCache(source.isUseCache());
+    target.setRetailer(source.isRetailer());
+    if (!StringUtils.isBlank(source.getRetailerStore())) {
+      if (source.getRetailerStore().equals(source.getCode())) {
+        throw new ConversionException("Parent store [" + source.getRetailerStore() + "] cannot be parent of current store");
+      }
+      try {
+        MerchantStore parent = merchantStoreService.getByCode(source.getRetailerStore());
+        if (parent == null) {
+          throw new ConversionException("Parent store [" + source.getRetailerStore() + "] does not exist");
+        }
+        target.setParent(parent);
+      } catch (ServiceException e) {
+        throw new ConversionException(e);
+      }
+    }
+    try {
+      if (!StringUtils.isEmpty(source.getDefaultLanguage())) {
+        Language l = languageService.getByCode(source.getDefaultLanguage());
+        target.setDefaultLanguage(l);
+      }
+      if (!StringUtils.isEmpty(source.getCurrency())) {
+        Currency c = currencyService.getByCode(source.getCurrency());
+        target.setCurrency(c);
+      } else {
+        target.setCurrency(currencyService.getByCode(Constants.DEFAULT_CURRENCY.getCurrencyCode()));
+      }
+      List<String> languages = source.getSupportedLanguages();
+      if (!CollectionUtils.isEmpty(languages)) {
+        for (String lang : languages) {
+          Language ll = languageService.getByCode(lang);
+          target.getLanguages().add(ll);
+        }
+      }
+    } catch (Exception e) {
+      throw new ConversionException(e);
+    }
+    PersistableAddress address = source.getAddress();
+    if (address != null) {
+      Country country;
+      try {
+        country = countryService.getByCode(address.getCountry());
+        Zone zone = zoneService.getByCode(address.getStateProvince());
+        if (zone != null) {
+          target.setZone(zone);
+        } else {
+          target.setStorestateprovince(address.getStateProvince());
+        }
+        target.setStoreaddress(address.getAddress());
+        target.setStorecity(address.getCity());
+        target.setCountry(country);
+        target.setStorepostalcode(address.getPostalCode());
+      } catch (ServiceException e) {
+        throw new ConversionException(e);
+      }
+    }
+    return target;
+  }
 
-	public ZoneService getZoneService() {
-		return zoneService;
-	}
+  @Override protected MerchantStore createTarget() {
+    return null;
+  }
 
-	public void setZoneService(ZoneService zoneService) {
-		this.zoneService = zoneService;
-	}
-	public CountryService getCountryService() {
-		return countryService;
-	}
+  public ZoneService getZoneService() {
+    return zoneService;
+  }
 
-	public void setCountryService(CountryService countryService) {
-		this.countryService = countryService;
-	}
+  public void setZoneService(ZoneService zoneService) {
+    this.zoneService = zoneService;
+  }
 
-	public LanguageService getLanguageService() {
-		return languageService;
-	}
+  public CountryService getCountryService() {
+    return countryService;
+  }
 
-	public void setLanguageService(LanguageService languageService) {
-		this.languageService = languageService;
-	}
+  public void setCountryService(CountryService countryService) {
+    this.countryService = countryService;
+  }
 
-	public CurrencyService getCurrencyService() {
-		return currencyService;
-	}
+  public LanguageService getLanguageService() {
+    return languageService;
+  }
 
-	public void setCurrencyService(CurrencyService currencyService) {
-		this.currencyService = currencyService;
-	}
+  public void setLanguageService(LanguageService languageService) {
+    this.languageService = languageService;
+  }
 
+  public CurrencyService getCurrencyService() {
+    return currencyService;
+  }
 
+  public void setCurrencyService(CurrencyService currencyService) {
+    this.currencyService = currencyService;
+  }
 }

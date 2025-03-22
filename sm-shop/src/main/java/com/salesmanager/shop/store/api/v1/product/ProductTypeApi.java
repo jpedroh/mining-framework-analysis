@@ -1,5 +1,4 @@
 package com.salesmanager.shop.store.api.v1.product;
-
 import java.util.List;
 import javax.inject.Inject;
 import org.slf4j.Logger;
@@ -25,50 +24,20 @@ import springfox.documentation.annotations.ApiIgnore;
  *
  * @author Carl Samson
  */
-@RestController
-@RequestMapping("/api/v1")
-@Api(tags = {"Product type resource (Product Type Api)"})
-@SwaggerDefinition(tags = {
-    @Tag(name = "Product type resource", description = "Manage product types")
-})
-public class ProductTypeApi {
-
-
+@RestController @RequestMapping(value = "/api/v1") @Api(tags = { "Product type resource (Product Type Api)" }) @SwaggerDefinition(tags = { @Tag(name = "Product type resource", description = "Manage product types") }) public class ProductTypeApi {
   @Inject private ProductTypeFacade productTypeFacade;
 
-
   private static final Logger LOGGER = LoggerFactory.getLogger(ProductTypeApi.class);
-  
-  
-  @GetMapping(value = "/products/types", produces = MediaType.APPLICATION_JSON_VALUE)
-  @ApiOperation(httpMethod = "GET", value = "Get product types list",
-      notes = "", produces = "application/json", response = List.class)
-  @ApiImplicitParams({
-      @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
-      @ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en")})
-  public List<ReadableProductType> getTypes(
-      @ApiIgnore MerchantStore merchantStore,
-      @ApiIgnore Language language) {
-    
+
+  @GetMapping(value = "/products/types", produces = MediaType.APPLICATION_JSON_VALUE) @ApiOperation(httpMethod = "GET", value = "Get product types list", notes = "", produces = "application/json", response = List.class) @ApiImplicitParams(value = { @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"), @ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en") }) public List<ReadableProductType> getTypes(@ApiIgnore MerchantStore merchantStore, @ApiIgnore Language language) {
     return productTypeFacade.getByMerchant(merchantStore.getCode(), language);
-    
   }
-  
-/*  @GetMapping(value = "/products/type/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-  @ApiOperation(httpMethod = "GET", value = "Get product type",
-      notes = "", produces = "application/json", response = ReadableProductType.class)
-  @ApiImplicitParams({
-      @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
-      @ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en")})
-  public ReadableProductType get(
-      @ApiIgnore MerchantStore merchantStore,
-      @ApiIgnore Language language) {
-    
-    //return productTypeFacade.getByMerchant(merchantStore.getCode(), language);
+
+  @GetMapping(value = "/products/types", produces = MediaType.APPLICATION_JSON_VALUE) @ApiOperation(httpMethod = "GET", value = "Get product types list", notes = "", produces = "application/json", response = List.class) @ApiImplicitParams(value = { @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"), @ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en") }) public List<ReadableProductType> getContentPages(@ApiIgnore MerchantStore merchantStore, @ApiIgnore Language language) {
+    return productTypeFacade.getByMerchant(merchantStore.getCode(), language);
+  }
+
+  @GetMapping(value = "/products/type/{code}", produces = MediaType.APPLICATION_JSON_VALUE) @ApiOperation(httpMethod = "GET", value = "Get product type", notes = "", produces = "application/json", response = ReadableProductType.class) @ApiImplicitParams(value = { @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"), @ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en") }) public ReadableProductType get(@ApiIgnore MerchantStore merchantStore, @ApiIgnore Language language) {
     return null;
-    
-  }*/
-
-
-
+  }
 }

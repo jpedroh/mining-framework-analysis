@@ -1,7 +1,5 @@
 package com.salesmanager.shop.store.controller.user.facade;
-
 import java.util.List;
-
 import com.salesmanager.core.model.common.Criteria;
 import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.reference.language.Language;
@@ -18,7 +16,6 @@ import com.salesmanager.shop.model.user.UserPassword;
  *
  */
 public interface UserFacade {
-
   /**
    * Finds a User by userName
    * 
@@ -26,7 +23,7 @@ public interface UserFacade {
    * @throws Exception
    */
   ReadableUser findByUserName(String userName, String storeCode, Language lang);
-  
+
   /**
    * Find user by id
    * @param id
@@ -61,14 +58,14 @@ public interface UserFacade {
    * @throws Exception
    */
   boolean authorizedStore(String userName, String merchantStoreCode);
-  
+
   /**
    * Determines if a user is in a specific group
    * @param userName
    * @param groupName
    */
   void authorizedGroup(String userName, List<String> groupNames);
-  
+
   /**
    * Check if user is in specific list of roles
    * @param userName
@@ -76,21 +73,20 @@ public interface UserFacade {
    * @return
    */
   boolean userInRoles(String userName, List<String> groupNames);
-  
+
   /**
    * Retrieve authenticated user
    * @return
    */
   String authenticatedUser();
-  
+
   /**
    * Get by criteria
    * @param criteria
    * @return
    */
-  @Deprecated
-  ReadableUserList getByCriteria(Language language,String draw,Criteria criteria);
-  
+  @Deprecated ReadableUserList getByCriteria(Language language, String draw, Criteria criteria);
+
   /**
    * List users
    * @param criteria
@@ -99,20 +95,20 @@ public interface UserFacade {
    * @param language
    * @return
    */
-  ReadableUserList listByCriteria (Criteria criteria, int page, int count, Language language);
-  
+  ReadableUserList listByCriteria(Criteria criteria, int page, int count, Language language);
+
   /**
    * Delete user
    * @param id
    */
   void delete(Long id, String storeCode);
-  
+
   /**
    * Update User
    * @param user
    */
   ReadableUser update(Long id, String authenticatedUser, String storeCode, PersistableUser user);
-  
+
   /**
    * Change password request
    * @param userId
@@ -123,5 +119,4 @@ public interface UserFacade {
   void changePassword(Long userId, String authenticatedUser, UserPassword changePassword);
 
   void authorizedGroups(String authenticatedUser, PersistableUser user);
-
 }

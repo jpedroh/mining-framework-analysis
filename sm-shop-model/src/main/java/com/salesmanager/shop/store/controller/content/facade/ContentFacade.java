@@ -1,18 +1,13 @@
 package com.salesmanager.shop.store.controller.content.facade;
-
 import java.util.List;
 import java.util.Optional;
-
 import com.salesmanager.core.model.content.ContentType;
 import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.reference.language.Language;
 import com.salesmanager.shop.model.content.ContentFile;
 import com.salesmanager.shop.model.content.ContentFolder;
-<<<<<<< HEAD
 import com.salesmanager.shop.model.content.PersistableContentEntity;
-=======
 import com.salesmanager.shop.model.content.PersistableContent;
->>>>>>> origin/sb2.2
 import com.salesmanager.shop.model.content.PersistableContentPage;
 import com.salesmanager.shop.model.content.ReadableContentBox;
 import com.salesmanager.shop.model.content.ReadableContentEntity;
@@ -25,48 +20,47 @@ import com.salesmanager.shop.model.content.ReadableContentPage;
  *
  */
 public interface ContentFacade {
-	
-	
-	ContentFolder getContentFolder(String folder, MerchantStore store) throws Exception;
-	
-	/**
+  ContentFolder getContentFolder(String folder, MerchantStore store) throws Exception;
+
+  /**
 	 * File pth
 	 * @param store
 	 * @param file
 	 * @return
 	 */
-	String absolutePath(MerchantStore store, String file);
-	
-	/**
+  String absolutePath(MerchantStore store, String file);
+
+  /**
 	 * Deletes a file from CMS
 	 * @param store
 	 * @param fileName
 	 */
-	void delete(MerchantStore store, String fileName, String fileType);
-	
-	/**
+  void delete(MerchantStore store, String fileName, String fileType);
+
+  /**
 	 * Delete content page
 	 * @param store
 	 * @param id
 	 */
-<<<<<<< HEAD
-	void delete(MerchantStore store, Long id);
-=======
-	void deletePage(MerchantStore store, Long id);
->>>>>>> origin/sb2.2
-	
-	
-	/**
+  void delete(MerchantStore store, Long id);
+
+  /**
+	 * Delete content page
+	 * @param store
+	 * @param id
+	 */
+  void deletePage(MerchantStore store, Long id);
+
+  /**
 	 * Returns page names and urls configured for a given MerchantStore
 	 * @param store
 	 * @param language
 	 * @return
 	 * @throws Exception
 	 */
-	List<ReadableContentPage> getContentPage(MerchantStore store, Language language);
-	
-	
-	/**
+  List<ReadableContentPage> getContentPage(MerchantStore store, Language language);
+
+  /**
 	 * Returns page name by code
 	 * @param code
 	 * @param store
@@ -74,9 +68,9 @@ public interface ContentFacade {
 	 * @return
 	 * @throws Exception
 	 */
-	ReadableContentPage getContentPage(String code, MerchantStore store, Language language);
-	
-	/**
+  ReadableContentPage getContentPage(String code, MerchantStore store, Language language);
+
+  /**
 	 * Returns page by name
 	 * @param name
 	 * @param store
@@ -84,10 +78,9 @@ public interface ContentFacade {
 	 * @return
 	 * @throws Exception
 	 */
-	ReadableContentPage getContentPageByName(String name, MerchantStore store, Language language);
+  ReadableContentPage getContentPageByName(String name, MerchantStore store, Language language);
 
-	
-	/**
+  /**
 	 * Returns a content box for a given code and merchant store
 	 * @param code
 	 * @param store
@@ -95,10 +88,9 @@ public interface ContentFacade {
 	 * @return
 	 * @throws Exception
 	 */
-	ReadableContentBox getContentBox(String code, MerchantStore store, Language language);
-	
-	
-	/**
+  ReadableContentBox getContentBox(String code, MerchantStore store, Language language);
+
+  /**
 	 * Returns content boxes created with code prefix
 	 * for example return boxes with code starting with <code>_
 	 * @param store
@@ -106,38 +98,39 @@ public interface ContentFacade {
 	 * @return
 	 * @throws Exception
 	 */
-	List<ReadableContentBox> getContentBoxes(ContentType type, String codePrefix, MerchantStore store, Language language);
+  List<ReadableContentBox> getContentBoxes(ContentType type, String codePrefix, MerchantStore store, Language language);
 
-	void addContentFile(ContentFile file, String merchantStoreCode);
-	
-	/**
+  void addContentFile(ContentFile file, String merchantStoreCode);
+
+  /**
 	 * Add multiple files
 	 * @param file
 	 * @param merchantStoreCode
 	 */
-	void addContentFiles(List<ContentFile> file, String merchantStoreCode);
-	
-	/**
+  void addContentFiles(List<ContentFile> file, String merchantStoreCode);
+
+  /**
 	 * Save content page
 	 * @param page
 	 * @param merchantStore
 	 * @param language
 	 */
-<<<<<<< HEAD
-	void saveContentPage(PersistableContentEntity page, MerchantStore merchantStore, Language language);
-	
-	ReadableContentFull getContent(String code, MerchantStore store, Language language);
-	
-	/**
+  void saveContentPage(
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop-model/src/main/java/com/salesmanager/shop/store/controller/content/facade/ContentFacade.java/left.java
+  PersistableContentEntity
+=======
+  PersistableContent
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop-model/src/main/java/com/salesmanager/shop/store/controller/content/facade/ContentFacade.java/right.java
+   page, MerchantStore merchantStore, Language language);
+
+  ReadableContentFull getContent(String code, MerchantStore store, Language language);
+
+  /**
 	 * Get all content types
 	 * @param type
 	 * @param store
 	 * @param language
 	 * @return
 	 */
-	List<ReadableContentEntity> getContents(Optional<String> type, MerchantStore store, Language language);
-=======
-	void saveContentPage(PersistableContent page, MerchantStore merchantStore, Language language);
->>>>>>> origin/sb2.2
-
+  List<ReadableContentEntity> getContents(Optional<String> type, MerchantStore store, Language language);
 }
