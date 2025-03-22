@@ -35,6 +35,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -42,9 +43,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
-* @author Zheng Jie
-* @date 2019-03-25
-*/
+ * @author Zheng Jie
+ * @date 2019-03-25
+ */
 @Service
 @RequiredArgsConstructor
 @CacheConfig(cacheNames = "dept")
@@ -64,8 +65,11 @@ public class DeptServiceImpl implements DeptService {
             if(dataScopeType.equals(DataScopeEnum.ALL.getValue())){
                 criteria.setPidIsNull(true);
             }
-            List<Field> fields = QueryHelp.getAllFields(criteria.getClass(), new ArrayList<>());
-            List<String> fieldNames = new ArrayList<String>(){{ add("pidIsNull");add("enabled");}};
+            List<Field> fields = QueryHelp.getAllFields(criteria.getClass());
+            List<String> fieldNames = new ArrayList<String>() {{
+                add("pidIsNull");
+                add("enabled");
+            }};
             for (Field field : fields) {
                 //设置对象的访问权限，保证对private的属性的访问
                 field.setAccessible(true);
@@ -79,7 +83,7 @@ public class DeptServiceImpl implements DeptService {
                 }
             }
         }
-        List<DeptDto> list = deptMapper.toDto(deptRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root,criteria,criteriaBuilder),sort));
+        List<DeptDto> list = deptMapper.toDto(deptRepository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), sort));
         // 如果为空，就代表为自定义权限或者本级权限，就需要去重，不理解可以注释掉，看查询结果
         if(StringUtils.isBlank(dataScopeType)){
             return deduplication(list);
