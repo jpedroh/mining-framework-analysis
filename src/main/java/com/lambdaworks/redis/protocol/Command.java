@@ -21,9 +21,13 @@ public class Command<K, V, T> implements RedisCommand<K, V, T> {
     private final ProtocolKeyword type;
 
     protected CommandArgs<K, V> args;
+
     protected CommandOutput<K, V, T> output;
+
     protected Throwable exception;
+
     protected boolean cancelled = false;
+
     protected boolean completed = false;
 
     /**
@@ -33,32 +37,25 @@ public class Command<K, V, T> implements RedisCommand<K, V, T> {
      * @param output Command output.
      * @param args Command args, if any.
      */
+
     public Command(ProtocolKeyword type, CommandOutput<K, V, T> output, CommandArgs<K, V> args) {
         this.type = type;
         this.output = output;
         this.args = args;
     }
 
-    public void setMulti(boolean multi) {
-        this.latch = new CountDownLatch(multi ? 2 : 1);
-        this.multi = multi;
-    }
-
-    public boolean isMulti() {
-        return multi;
-    }
-
-
     /**
      * Get the object that holds this command's output.
      * 
      * @return The command output object.
      */
+
     @Override
     public CommandOutput<K, V, T> getOutput() {
         return output;
     }
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/89d0af927de4c4f0621247f7fede9cac81b25f15/src/main/java/com/lambdaworks/redis/protocol/Command.java/left.java
     @Override
     public boolean completeExceptionally(Throwable throwable) {
         if (output != null) {
@@ -68,22 +65,26 @@ public class Command<K, V, T> implements RedisCommand<K, V, T> {
         exception = throwable;
         return true;
     }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/89d0af927de4c4f0621247f7fede9cac81b25f15/src/main/java/com/lambdaworks/redis/protocol/Command.java/base.java
+=======
+    @Override
+    public boolean completeExceptionally(Throwable ex) {
+        boolean result = false;
+        if (latch.getCount() == 1) {
+            result = super.completeExceptionally(ex);
+        }
+        latch.countDown();
+        return result;
+    }
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/89d0af927de4c4f0621247f7fede9cac81b25f15/src/main/java/com/lambdaworks/redis/protocol/Command.java/right.java
 
     /**
      * Mark this command complete and notify all waiting threads.
      */
+
     @Override
     public void complete() {
-        latch.countDown();
-        if (latch.getCount() == 0) {
-            if (output == null) {
-                complete(null);
-            } else if (output.hasError()) {
-                completeExceptionally(new RedisCommandExecutionException(output.getError()));
-            } else {
-                complete(output.get());
-            }
-        }
+        completed = true;
     }
 
     @Override
@@ -97,6 +98,7 @@ public class Command<K, V, T> implements RedisCommand<K, V, T> {
      * 
      * @param buf Buffer to write to.
      */
+
     public void encode(ByteBuf buf) {
         buf.writeByte('*');
         writeInt(buf, 1 + (args != null ? args.count() : 0));
@@ -117,6 +119,7 @@ public class Command<K, V, T> implements RedisCommand<K, V, T> {
      * @param buf Buffer to write to.
      * @param value Value to write.
      */
+
     protected static void writeInt(ByteBuf buf, int value) {
         if (value < 10) {
             buf.writeByte('0' + value);
@@ -148,6 +151,7 @@ public class Command<K, V, T> implements RedisCommand<K, V, T> {
      *
      * @return the resut from the output.
      */
+
     public T get() {
         if (output != null) {
             return output.get();

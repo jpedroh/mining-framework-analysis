@@ -38,7 +38,6 @@ import com.lambdaworks.redis.RedisConnection;
 import com.lambdaworks.redis.RedisException;
 import com.lambdaworks.redis.RedisFuture;
 import com.lambdaworks.redis.RedisURI;
-import com.lambdaworks.redis.TestSettings;
 import com.lambdaworks.redis.api.StatefulRedisConnection;
 import com.lambdaworks.redis.cluster.models.partitions.ClusterPartitionParser;
 import com.lambdaworks.redis.cluster.models.partitions.Partitions;
@@ -57,13 +56,17 @@ public class RedisClusterClientTest extends AbstractClusterTest {
     protected RedisClusterAsyncConnection<String, String> redis1;
 
     protected RedisClusterConnection<String, String> redissync1;
+
     protected RedisClusterConnection<String, String> redissync2;
+
     protected RedisClusterConnection<String, String> redissync3;
+
     protected RedisClusterConnection<String, String> redissync4;
 
     protected RedisAdvancedClusterConnection<String, String> syncConnection;
 
     protected String key = "key";
+
     protected String value = "value";
 
     @Rule
@@ -73,8 +76,6 @@ public class RedisClusterClientTest extends AbstractClusterTest {
     public static void setupClient() throws Exception {
         setupClusterClient();
         client = new RedisClient(host, port1);
-        clusterClient = new RedisClusterClient(ImmutableList.of(RedisURI.Builder.redis(host, port1).build()));
-
     }
 
 
