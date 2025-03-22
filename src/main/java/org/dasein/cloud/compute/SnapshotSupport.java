@@ -353,6 +353,7 @@ public interface SnapshotSupport extends AccessControlledService {
      */
     public void updateTags(@Nonnull String[] snapshotIds, @Nonnull Tag... tags) throws CloudException, InternalException;
 
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/b7e64480fedc27c4fcd6f9b499c968413cfe9776/src/main/java/org/dasein/cloud/compute/SnapshotSupport.java/left.java
     /**
      * Updates meta-data for a snapshot with the new values. It will not overwrite any value that currently
      * exists unless it appears in the tags you submit.
@@ -374,7 +375,8 @@ public interface SnapshotSupport extends AccessControlledService {
      * @throws InternalException an error occurred within the Dasein Cloud API implementation
      */
     public void updateTags(@Nonnull String[] snapshotIds, boolean asynchronous, @Nonnull Tag... tags) throws CloudException, InternalException;
-
+||||||| /usr/src/app/output/greese/dasein-cloud-core/b7e64480fedc27c4fcd6f9b499c968413cfe9776/src/main/java/org/dasein/cloud/compute/SnapshotSupport.java/base.java
+=======
     /**
      * Set meta-data for a snapshot. Remove any tags that were not provided by the incoming tags, and add or
      * overwrite any new or pre-existing tags.
@@ -396,5 +398,5 @@ public interface SnapshotSupport extends AccessControlledService {
      * @throws InternalException an error occurred within the Dasein Cloud API implementation
      */
     public void setTags(@Nonnull String[] snapshotIds, @Nonnull Tag... tags) throws CloudException, InternalException;
-
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/b7e64480fedc27c4fcd6f9b499c968413cfe9776/src/main/java/org/dasein/cloud/compute/SnapshotSupport.java/right.java
 }

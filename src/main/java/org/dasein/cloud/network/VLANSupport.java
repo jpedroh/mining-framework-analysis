@@ -890,6 +890,7 @@ public interface VLANSupport extends AccessControlledService {
      */
     public abstract void updateInternetGatewayTags(@Nonnull String[] internetGatewayIds, @Nonnull Tag... tags) throws CloudException, InternalException;
 
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/b7e64480fedc27c4fcd6f9b499c968413cfe9776/src/main/java/org/dasein/cloud/network/VLANSupport.java/left.java
     /**
      * Updates meta-data for an internet gateway with the new values. It will not overwrite any value that currently
      * exists unless it appears in the tags you submit.
@@ -911,7 +912,8 @@ public interface VLANSupport extends AccessControlledService {
      * @throws InternalException an error occurred within the Dasein Cloud API implementation
      */
     public abstract void updateInternetGatewayTags(@Nonnull String[] internetGatewayIds, boolean asynchronous, @Nonnull Tag... tags) throws CloudException, InternalException;
-
+||||||| /usr/src/app/output/greese/dasein-cloud-core/b7e64480fedc27c4fcd6f9b499c968413cfe9776/src/main/java/org/dasein/cloud/network/VLANSupport.java/base.java
+=======
     /**
      * Set meta-data for a internet gateway. Remove any tags that were not provided by the incoming tags, and add or
      * overwrite any new or pre-existing tags.
@@ -933,5 +935,6 @@ public interface VLANSupport extends AccessControlledService {
      * @throws InternalException an error occurred within the Dasein Cloud API implementation
      */
     public void setInternetGatewayTags(@Nonnull String[] internetGatewayIds, @Nonnull Tag... tags) throws CloudException, InternalException;
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/b7e64480fedc27c4fcd6f9b499c968413cfe9776/src/main/java/org/dasein/cloud/network/VLANSupport.java/right.java
 
 }

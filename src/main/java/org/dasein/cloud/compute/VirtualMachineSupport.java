@@ -509,6 +509,7 @@ public interface VirtualMachineSupport extends AccessControlledService {
      */
     public void updateTags(@Nonnull String[] vmIds, @Nonnull Tag... tags) throws CloudException, InternalException;
 
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/b7e64480fedc27c4fcd6f9b499c968413cfe9776/src/main/java/org/dasein/cloud/compute/VirtualMachineSupport.java/left.java
     /**
      * Updates meta-data for a virtual machine with the new values. It will not overwrite any value that currently
      * exists unless it appears in the tags you submit.
@@ -532,7 +533,8 @@ public interface VirtualMachineSupport extends AccessControlledService {
      * @throws InternalException an error occurred within the Dasein Cloud API implementation
      */
     public void updateTags(@Nonnull String[] vmIds, boolean asynchronous, @Nonnull Tag... tags) throws CloudException, InternalException;
-
+||||||| /usr/src/app/output/greese/dasein-cloud-core/b7e64480fedc27c4fcd6f9b499c968413cfe9776/src/main/java/org/dasein/cloud/compute/VirtualMachineSupport.java/base.java
+=======
     /**
      * Set meta-data for a virtual machine. Remove any tags that were not provided by the incoming tags, and add or
      * overwrite any new or pre-existing tags.
@@ -554,17 +556,18 @@ public interface VirtualMachineSupport extends AccessControlledService {
      * @throws InternalException an error occurred within the Dasein Cloud API implementation
      */
     public void setTags(@Nonnull String[] vmIds, @Nonnull Tag... tags) throws CloudException, InternalException;
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/b7e64480fedc27c4fcd6f9b499c968413cfe9776/src/main/java/org/dasein/cloud/compute/VirtualMachineSupport.java/right.java
 
     /**
-     * Removes meta-data from a virtual machine. If tag values are set, their removal is dependent on underlying cloud
-     * provider behavior. They may be removed only if the tag value matches or they may be removed regardless of the
-     * value.
-     *
-     * @param vmId the virtual machine to update
-     * @param tags the meta-data tags to remove
-     * @throws CloudException    an error occurred within the cloud provider
-     * @throws InternalException an error occurred within the Dasein Cloud API implementation
-     */
+ * Removes meta-data from a virtual machine. If tag values are set, their removal is dependent on underlying cloud
+ * provider behavior. They may be removed only if the tag value matches or they may be removed regardless of the
+ * value.
+ *
+ * @param vmId the virtual machine to update
+ * @param tags the meta-data tags to remove
+ * @throws CloudException    an error occurred within the cloud provider
+ * @throws InternalException an error occurred within the Dasein Cloud API implementation
+ */
     public void removeTags(@Nonnull String vmId, @Nonnull Tag... tags) throws CloudException, InternalException;
 
     /**
