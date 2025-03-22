@@ -86,7 +86,8 @@ public class EdgeRenderer implements Renderer {
     public static final String EDGE_MIN_WEIGHT = "edge.min-weight";
     public static final String EDGE_MAX_WEIGHT = "edge.max-weight";
     /**
-     * @deprecated We now use circle arcs to draw curved edges. See ARC_CURVENESS instead.
+     * @deprecated
+     * We now use circle arcs to draw curved edges. See ARC_CURVENESS instead.
      */
     @Deprecated
     public static final String BEZIER_CURVENESS = "edge.bezier-curveness";
@@ -547,13 +548,49 @@ public class EdgeRenderer implements Renderer {
                     .appendChild(edgeElem);
             } else if (target instanceof PDFTarget) {
                 final PDFTarget pdfTarget = (PDFTarget) target;
-
-//                cb.arc(h.bbx, -h.bby, h.bbx+h.bbw, -(h.bby+h.bbh), h.astart, h.asweep);
-
+<<<<<<< /usr/src/app/output/gephi/gephi/e161809510d2c809c5d9c338bdf90fbe1c32a3ad/modules/PreviewPlugin/src/main/java/org/gephi/preview/plugin/renderers/EdgeRenderer.java/left.java
+                final PdfContentByte cb = pdfTarget.getContentByte();
+                // Arc
+                cb.arc(h.bbx, -h.bby, h.bbx+h.bbw, -(h.bby+h.bbh), h.astart, h.asweep);
+                cb.setRGBColorStroke(
+                    color.getRed(),
+                    color.getGreen(),
+                    color.getBlue());
+                cb.setLineWidth(getThickness(item));
+                if (color.getAlpha() < 255) {
+                    cb.saveState();
+                    final PdfGState gState = new PdfGState();
+                    gState.setStrokeOpacity(
+                        getAlpha(properties));
+                    cb.setGState(gState);
+                }
+                cb.stroke();
+                if (color.getAlpha() < 255) {
+                    cb.restoreState();
+||||||| /usr/src/app/output/gephi/gephi/e161809510d2c809c5d9c338bdf90fbe1c32a3ad/modules/PreviewPlugin/src/main/java/org/gephi/preview/plugin/renderers/EdgeRenderer.java/base.java
+                final PdfContentByte cb = pdfTarget.getContentByte();
+                cb.moveTo(h.x1, -h.y1);
+                cb.curveTo(h.v1.x, -h.v1.y, h.v2.x, -h.v2.y, h.x2, -h.y2);
+                cb.setRGBColorStroke(
+                    color.getRed(),
+                    color.getGreen(),
+                    color.getBlue());
+                cb.setLineWidth(getThickness(item));
+                if (color.getAlpha() < 255) {
+                    cb.saveState();
+                    final PdfGState gState = new PdfGState();
+                    gState.setStrokeOpacity(
+                        getAlpha(properties));
+                    cb.setGState(gState);
+                }
+                cb.stroke();
+                if (color.getAlpha() < 255) {
+                    cb.restoreState();
+=======
                 final PDPageContentStream cb = pdfTarget.getContentStream();
                 try {
                     cb.moveTo(h.x1, -h.y1);
-//                    cb.curveTo(h.v1.x, -h.v1.y, h.v2.x, -h.v2.y, h.x2, -h.y2);
+                    cb.curveTo(h.v1.x, -h.v1.y, h.v2.x, -h.v2.y, h.x2, -h.y2);
                     cb.setStrokingColor(color);
                     cb.setLineWidth(getThickness(item));
                     if (color.getAlpha() < 255) {
@@ -568,6 +605,7 @@ public class EdgeRenderer implements Renderer {
                     }
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
+>>>>>>> /usr/src/app/output/gephi/gephi/e161809510d2c809c5d9c338bdf90fbe1c32a3ad/modules/PreviewPlugin/src/main/java/org/gephi/preview/plugin/renderers/EdgeRenderer.java/right.java
                 }
             }
         }
@@ -627,10 +665,10 @@ public class EdgeRenderer implements Renderer {
 
                 // Arc bounding box (for Graphics2D)
                 // Formulas from https://math.stackexchange.com/questions/1781438/finding-the-center-of-a-circle-given-two-points-and-a-radius-algebraically
-                Double _xa = 0.5 * (x1 - x2);
-                Double _ya = 0.5 * (y1 - y2);
-                double _x0 = x2 + _xa;
-                double _y0 = y2 + _ya;
+                Double _xa = 0.5*(x1-x2);
+                Double _ya = 0.5*(y1-y2);
+                double _x0 = x2+_xa;
+                double _y0 = y2+_ya;
                 double _a = Math.sqrt(Math.pow(_xa, 2) + Math.pow(_ya, 2));
                 double _b = 0.;
                 if (_a < r) {
@@ -643,11 +681,11 @@ public class EdgeRenderer implements Renderer {
                 }
                 Double xc = _x0 + (_b * _ya) / _a;
                 Double yc = _y0 - (_b * _xa / _a);
-                double angle1 = Math.atan2(y1 - yc, x1 - xc);
-                double angle2 = Math.atan2(y2 - yc, x2 - xc);
+                double angle1 = Math.atan2(y1-yc, x1-xc);
+                double angle2 = Math.atan2(y2-yc, x2-xc);
 
-                while (angle2 < angle1) {
-                    angle2 += 2 * Math.PI;
+                while (angle2<angle1) {
+                    angle2 += 2*Math.PI;
                 }
 
                 // Target radius - to start at the base of the arrow
@@ -673,18 +711,18 @@ public class EdgeRenderer implements Renderer {
                     angle1 -= sourceOffset;
                 }
 
-                bbx = xc - r;
-                bby = yc - r;
-                bbw = 2 * r;
-                bbh = 2 * r;
-                astart = -180 * (angle1) / Math.PI;
-                if (0. < angle1 - angle2) {
+                bbx = xc-r;
+                bby = yc-r;
+                bbw = 2*r;
+                bbh = 2*r;
+                astart = -180*(angle1)/Math.PI;
+                if (0. < angle1-angle2) {
                     // This case corresponds to a negative length of the edge.
                     // It may happen because the arrow or the nodes are too big and "swallow" the edge.
                     // In that case we do not trace the edge (null length).
                     asweep = 0.;
                 } else {
-                    asweep = (180 * (angle1 - angle2) / Math.PI + 720) % 360 - 360;
+                    asweep = (180*(angle1-angle2)/Math.PI+720)%360 - 360;
                 }
             }
 
@@ -696,14 +734,14 @@ public class EdgeRenderer implements Renderer {
                 Double rt = truncature_length;
                 Double r = radius_curvature_edge;
                 double x;
-                if (r >= rt) {
+                if (r>=rt) {
                     x = Math.sqrt(Math.pow(r, 2) - Math.pow(rt / 2, 2));
                 } else {
                     // There is no solution to the problem
                     // (this edge case is dealt with somewhere else)
                     return 0.;
                 }
-                return 2 * Math.atan2(rt / 2, x);
+                return 2*Math.atan2(rt/2, x);
             }
 
             private Vector computeCtrlPoint(
