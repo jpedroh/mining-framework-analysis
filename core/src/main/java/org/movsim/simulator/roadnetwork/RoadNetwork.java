@@ -45,6 +45,7 @@ public class RoadNetwork implements SimulationTimeStep, Iterable<RoadSegment> {
      * Sets the name of the road network.
      * @param name
      */
+
     public final void setName(String name) {
         this.name = name;
     }
@@ -53,6 +54,7 @@ public class RoadNetwork implements SimulationTimeStep, Iterable<RoadSegment> {
      * Returns the name of the road network.
      * @return the name of the road network
      */
+
     public final String name() {
         return name;
     }
@@ -62,6 +64,7 @@ public class RoadNetwork implements SimulationTimeStep, Iterable<RoadSegment> {
      * @param id
      * @return the road segment with the given id
      */
+
     public RoadSegment findById(int id) {
         for (final RoadSegment roadSegment : roadSegments) {
             if (roadSegment.id() == id) {
@@ -76,6 +79,7 @@ public class RoadNetwork implements SimulationTimeStep, Iterable<RoadSegment> {
      * @param userId
      * @return the road segment with the given userId
      */
+
     @CheckForNull
     public RoadSegment findByUserId(String userId) {
         for (final RoadSegment roadSegment : roadSegments) {
@@ -87,13 +91,9 @@ public class RoadNetwork implements SimulationTimeStep, Iterable<RoadSegment> {
     }
 
     /**
-<<<<<<< HEAD
      * Clear the road network so that it is empty and ready to accept new RoadSegments, Vehicles, sources, sinks and junctions.
-=======
-     * Clear the road network so that it is empty and ready to accept new RoadSegmentUtils, Vehicles, sources, sinks and
-     * junctions.
->>>>>>> alternatives
      */
+
     public void clear() {
         name = null;
         // LaneChangeModel.resetCount();
@@ -107,20 +107,16 @@ public class RoadNetwork implements SimulationTimeStep, Iterable<RoadSegment> {
     /**
      * Called when the system is running low on memory, and would like actively running process to try to tighten their belts.
      */
+
     public void onLowMemory() {
         roadSegments.trimToSize();
     }
 
     /**
-<<<<<<< HEAD
      * Returns the number of RoadSegments in the road network.
      * @return the number of RoadSegments in the road network
-=======
-     * Returns the number of RoadSegmentUtils in the road network.
-     * 
-     * @return the number of RoadSegmentUtils in the road network
->>>>>>> alternatives
      */
+
     public final int size() {
         return roadSegments.size();
     }
@@ -130,6 +126,7 @@ public class RoadNetwork implements SimulationTimeStep, Iterable<RoadSegment> {
      * @param roadSegment
      * @return roadSegment for convenience
      */
+
     public RoadSegment add(RoadSegment roadSegment) {
         assert roadSegment != null;
         assert roadSegment.eachLaneIsSorted();
@@ -141,6 +138,7 @@ public class RoadNetwork implements SimulationTimeStep, Iterable<RoadSegment> {
      * Returns an iterator over all the road segments in the road network.
      * @return an iterator over all the road segments in the road network
      */
+
     @Override
     public Iterator<RoadSegment> iterator() {
         return roadSegments.iterator();
@@ -180,6 +178,7 @@ public class RoadNetwork implements SimulationTimeStep, Iterable<RoadSegment> {
      * @param simulationTime the current logical time in the simulation
      * @param iterationCount the counter of performed update steps
      */
+
     @Override
     public void timeStep(double dt, double simulationTime, long iterationCount) {
         // Make each type of update for each road segment, this avoids problems with vehicles
@@ -233,6 +232,7 @@ public class RoadNetwork implements SimulationTimeStep, Iterable<RoadSegment> {
      * Returns the number of vehicles on this road network.
      * @return the number of vehicles on this road network
      */
+
     public int vehicleCount() {
         int vehicleCount = 0;
         for (final RoadSegment roadSegment : roadSegments) {
@@ -269,6 +269,7 @@ public class RoadNetwork implements SimulationTimeStep, Iterable<RoadSegment> {
      * Returns the number of obstacles on this road network.
      * @return the number of obstacles on this road network
      */
+
     public int obstacleCount() {
         int obstacleCount = 0;
         for (final RoadSegment roadSegment : roadSegments) {
@@ -281,6 +282,7 @@ public class RoadNetwork implements SimulationTimeStep, Iterable<RoadSegment> {
      * Returns the number of obstacles for the given route.
      * @return the number of obstacles on the given route
      */
+
     public int obstacleCount(Route route) {
         int obstacleCount = 0;
         for (final RoadSegment roadSegment : roadSegments) {
@@ -292,6 +294,7 @@ public class RoadNetwork implements SimulationTimeStep, Iterable<RoadSegment> {
     /**
      * Asserts the road network's class invariant. Used for debugging.
      */
+
     public boolean assertInvariant() {
         for (final RoadSegment roadSegment : roadSegments) {
             assert roadSegment.assertInvariant();
@@ -303,20 +306,11 @@ public class RoadNetwork implements SimulationTimeStep, Iterable<RoadSegment> {
      * Returns the number of vehicles on route.
      * @return the number of vehicles on given route.
      */
-    public int vehicleCount(Route route) {
+
+    public static int vehicleCount(Route route) {
         int vehicleCount = 0;
         for (final RoadSegment roadSegment : route) {
             vehicleCount += roadSegment.getVehicleCount();
-        }
-        return vehicleCount;
-    }
-    
-    public int totalVehiclesRemoved() {
-        int totalVehiclesRemoved = 0;
-        for (RoadSegment roadSegment : roadSegments) {
-            if (roadSegment.sink() != null) {
-                totalVehiclesRemoved += roadSegment.sink().totalVehiclesRemoved();
-            }
         }
         return totalVehiclesRemoved;
     }
@@ -325,6 +319,7 @@ public class RoadNetwork implements SimulationTimeStep, Iterable<RoadSegment> {
      * Returns the total travel time of all vehicles on this road network, including those that have exited.
      * @return the total vehicle travel time
      */
+
     public double totalVehicleTravelTime() {
         double totalVehicleTravelTime = 0.0;
         for (RoadSegment roadSegment : roadSegments) {
@@ -341,6 +336,7 @@ public class RoadNetwork implements SimulationTimeStep, Iterable<RoadSegment> {
      * Returns the total travel distance of all vehicles on this road network, including those that have exited.
      * @return the total vehicle travel distance
      */
+
     public double totalVehicleTravelDistance() {
         double totalVehicleTravelDistance = 0.0;
         for (RoadSegment roadSegment : roadSegments) {
@@ -356,6 +352,7 @@ public class RoadNetwork implements SimulationTimeStep, Iterable<RoadSegment> {
      * Returns the total fuel used by all vehicles on this road network, including those that have exited.
      * @return the total vehicle fuel used
      */
+
     public double totalVehicleFuelUsedLiters() {
         double totalVehicleFuelUsedLiters = 0.0;
         for (RoadSegment roadSegment : roadSegments) {
@@ -370,6 +367,27 @@ public class RoadNetwork implements SimulationTimeStep, Iterable<RoadSegment> {
     public void setExternalVehicleController(ExternalVehiclesController externalVehicleController) {
         this.externalVehicleController = Preconditions.checkNotNull(externalVehicleController);
 
+    }
+
+    /**
+     * Clear the road network so that it is empty and ready to accept new RoadSegmentUtils, Vehicles, sources, sinks and
+     * junctions.
+     */
+
+    /**
+     * Returns the number of RoadSegmentUtils in the road network.
+     * 
+     * @return the number of RoadSegmentUtils in the road network
+     */
+
+    public int totalVehiclesRemoved() {
+        int totalVehiclesRemoved = 0;
+        for (RoadSegment roadSegment : roadSegments) {
+            if (roadSegment.sink() != null) {
+                totalVehiclesRemoved += roadSegment.sink().totalVehiclesRemoved();
+            }
+        }
+        return totalVehiclesRemoved;
     }
 
 }

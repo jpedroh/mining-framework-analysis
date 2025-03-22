@@ -306,12 +306,12 @@ public final class ProjectMetaData {
         Preconditions.checkArgument(!filename.isEmpty(), "filename=" + filename);
         return new File(getPathToProjectFile() + filename);
     }
-    
+
     public void setScanMode(boolean scanMode) {
-        this.scanMode = scanMode;
+	this.scanMode = scanMode;
     }
 
     public boolean isScanMode() {
-        return scanMode;
+	return scanMode;
     }
 }

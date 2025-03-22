@@ -11,6 +11,8 @@
  */
 package org.movsim.simulator;
 
+import generated.MovsimExternalVehicleControl;
+
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
@@ -36,10 +38,7 @@ import org.movsim.input.network.OpenDriveReader;
 import org.movsim.output.FileTrafficSinkData;
 import org.movsim.output.FileTrafficSourceData;
 import org.movsim.output.SimulationOutput;
-import org.movsim.shutdown.ShutdownHooks;
-import org.movsim.simulator.observer.ServiceProviders;
-import org.movsim.simulator.roadnetwork.LaneSegment;
-import org.movsim.simulator.roadnetwork.Lanes;
+import org.movsim.scenario.boundary.autogen.BoundaryConditionsType;
 import org.movsim.simulator.roadnetwork.RoadNetwork;
 import org.movsim.simulator.roadnetwork.RoadSegment;
 import org.movsim.simulator.roadnetwork.RoadTypeSpeeds;
@@ -64,6 +63,8 @@ import org.movsim.simulator.vehicles.Vehicle;
 import org.movsim.simulator.vehicles.VehicleFactory;
 import org.movsim.utilities.MyRandom;
 import org.movsim.xml.InputLoader;
+import org.movsim.shutdown.ShutdownHooks;
+import org.movsim.simulator.observer.ServiceProviders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -77,11 +78,10 @@ public class Simulator implements SimulationTimeStep, SimulationRun.CompletionCa
 
     private long startTimeMillis;
 
-    private final ProjectMetaData projectMetaData;
-
+    // private final ProjectMetaData.getInstance() ProjectMetaData.getInstance();
     private String projectName;
 
-    private Movsim movsimInput;
+    private final Movsim movsimInput;
 
     private VehicleFactory vehicleFactory;
 
@@ -114,10 +114,9 @@ public class Simulator implements SimulationTimeStep, SimulationRun.CompletionCa
      * @throws JAXBException
      */
     public Simulator(Movsim inputData) {
-        this.projectMetaData = ProjectMetaData.getInstance();
         ShutdownHooks.INSTANCE.clear(); // TODO move to better place
-        this.movsimInput = Preconditions.checkNotNull(inputData);
-        if (movsimInput.isSetRoadTypeSpeedMappings()) {
+        this.inputData = Preconditions.checkNotNull(inputData);
+        if (inputData.isSetRoadTypeSpeedMappings()) {
             RoadTypeSpeeds.INSTANCE.init(inputData.getRoadTypeSpeedMappings());
         }
         roadNetwork = new RoadNetwork();
@@ -128,9 +127,23 @@ public class Simulator implements SimulationTimeStep, SimulationRun.CompletionCa
     public void initialize() throws JAXBException, SAXException {
         LOG.info("Copyright '\u00A9' by Arne Kesting, Martin Treiber, Ralph Germ and Martin Budden (2011-2013)");
 
+<<<<<<< /usr/src/app/output/movsim/movsim/aba5102173958664af92232b0a401a4b7614a667/core/src/main/java/org/movsim/simulator/Simulator.java/left.java
         projectName = projectMetaData.getProjectName();
+        // TODO temporary handling of Variable Message Sign until added to XML
+        roadNetwork.setHasVariableMessageSign(projectName.startsWith("routing"));
+
         movsimInput = InputLoader.unmarshallMovsim(projectMetaData.getInputFile());
 
+||||||| /usr/src/app/output/movsim/movsim/aba5102173958664af92232b0a401a4b7614a667/core/src/main/java/org/movsim/simulator/Simulator.java/base.java
+        projectName = projectMetaData.getProjectName();
+        // TODO temporary handling of Variable Message Sign until added to XML
+        roadNetwork.setHasVariableMessageSign(projectName.startsWith("routing"));
+
+        inputData = MovsimInputLoader.getInputData(projectMetaData.getInputFile());
+
+=======
+        projectName = ProjectMetaData.getInstance().getProjectName();
+>>>>>>> /usr/src/app/output/movsim/movsim/aba5102173958664af92232b0a401a4b7614a667/core/src/main/java/org/movsim/simulator/Simulator.java/right.java
         timeOffsetMillis = 0;
         if (movsimInput.getScenario().getSimulation().isSetTimeOffset()) {
             DateTime dateTime = LocalDateTime.parse(movsimInput.getScenario().getSimulation().getTimeOffset(),
@@ -140,19 +153,41 @@ public class Simulator implements SimulationTimeStep, SimulationRun.CompletionCa
             ProjectMetaData.getInstance();
             ProjectMetaData.getInstance().setTimeOffsetMillis(timeOffsetMillis);
         }
+<<<<<<< /usr/src/app/output/movsim/movsim/aba5102173958664af92232b0a401a4b7614a667/core/src/main/java/org/movsim/simulator/Simulator.java/left.java
         projectMetaData.setXodrNetworkFilename(movsimInput.getScenario().getNetworkFilename()); // TODO
+||||||| /usr/src/app/output/movsim/movsim/aba5102173958664af92232b0a401a4b7614a667/core/src/main/java/org/movsim/simulator/Simulator.java/base.java
+        projectMetaData.setXodrNetworkFilename(inputData.getScenario().getNetworkFilename()); // TODO
+=======
+        ProjectMetaData.getInstance().setXodrNetworkFilename(inputData.getScenario().getNetworkFilename()); // TODO
+>>>>>>> /usr/src/app/output/movsim/movsim/aba5102173958664af92232b0a401a4b7614a667/core/src/main/java/org/movsim/simulator/Simulator.java/right.java
 
         Simulation simulationInput = movsimInput.getScenario().getSimulation();
 
+<<<<<<< /usr/src/app/output/movsim/movsim/aba5102173958664af92232b0a401a4b7614a667/core/src/main/java/org/movsim/simulator/Simulator.java/left.java
         parseOpenDriveXml(roadNetwork, projectMetaData);
         routing = new Routing(movsimInput.getScenario().getRoutes(), roadNetwork);
+||||||| /usr/src/app/output/movsim/movsim/aba5102173958664af92232b0a401a4b7614a667/core/src/main/java/org/movsim/simulator/Simulator.java/base.java
+        parseOpenDriveXml(roadNetwork, projectMetaData);
+        routing = new Routing(inputData.getScenario().getRoutes(), roadNetwork);
+=======
+        parseOpenDriveXml(roadNetwork, ProjectMetaData.getInstance());
+        routing = new Routing(inputData.getScenario().getRoutes(), roadNetwork);
+>>>>>>> /usr/src/app/output/movsim/movsim/aba5102173958664af92232b0a401a4b7614a667/core/src/main/java/org/movsim/simulator/Simulator.java/right.java
 
-        if (movsimInput.isSetServiceProviders()) {
-            serviceProviders = new ServiceProviders(movsimInput.getServiceProviders(), routing, roadNetwork);
-        }
-        
+<<<<<<< /usr/src/app/output/movsim/movsim/aba5102173958664af92232b0a401a4b7614a667/core/src/main/java/org/movsim/simulator/Simulator.java/left.java
         vehicleFactory = new VehicleFactory(simulationInput.getTimestep(), movsimInput.getVehiclePrototypes(),
-                movsimInput.getConsumption(), routing, serviceProviders);
+                movsimInput.getConsumption(), routing);
+||||||| /usr/src/app/output/movsim/movsim/aba5102173958664af92232b0a401a4b7614a667/core/src/main/java/org/movsim/simulator/Simulator.java/base.java
+        vehicleFactory = new VehicleFactory(simulationInput.getTimestep(), inputData.getVehiclePrototypes(),
+                inputData.getConsumption(), routing);
+=======
+        if (inputData.isSetServiceProviders()) {
+            serviceProviders = new ServiceProviders(inputData.getServiceProviders(), routing, roadNetwork);
+        }
+
+        vehicleFactory = new VehicleFactory(simulationInput.getTimestep(), inputData.getVehiclePrototypes(),
+                inputData.getConsumption(), routing, serviceProviders);
+>>>>>>> /usr/src/app/output/movsim/movsim/aba5102173958664af92232b0a401a4b7614a667/core/src/main/java/org/movsim/simulator/Simulator.java/right.java
 
         roadNetwork.setWithCrashExit(simulationInput.isCrashExit());
 
@@ -293,10 +328,26 @@ public class Simulator implements SimulationTimeStep, SimulationRun.CompletionCa
      */
     private static boolean parseOpenDriveXml(RoadNetwork roadNetwork, ProjectMetaData projectMetaData)
             throws JAXBException, SAXException {
+<<<<<<< /usr/src/app/output/movsim/movsim/aba5102173958664af92232b0a401a4b7614a667/core/src/main/java/org/movsim/simulator/Simulator.java/left.java
         File networkFile = projectMetaData.getFile(projectMetaData.getXodrNetworkFilename());
         LOG.info("try to load {}", networkFile);
         final boolean loaded = OpenDriveReader.loadRoadNetwork(roadNetwork, networkFile);
         LOG.info("done with parsing road network {}. Success: {}", networkFile, loaded);
+||||||| /usr/src/app/output/movsim/movsim/aba5102173958664af92232b0a401a4b7614a667/core/src/main/java/org/movsim/simulator/Simulator.java/base.java
+        final String xodrFileName = projectMetaData.getXodrNetworkFilename();
+        final String xodrPath = projectMetaData.getPathToProjectFile();
+        final String fullXodrFileName = xodrPath + xodrFileName;
+        LOG.info("try to load {}", fullXodrFileName);
+        final boolean loaded = OpenDriveReader.loadRoadNetwork(roadNetwork, fullXodrFileName);
+        LOG.info("done with parsing road network {}. Success: {}", fullXodrFileName, loaded);
+=======
+        final String xodrFileName = ProjectMetaData.getInstance().getXodrNetworkFilename();
+        final String xodrPath = ProjectMetaData.getInstance().getPathToProjectFile();
+        final String fullXodrFileName = xodrPath + xodrFileName;
+        LOG.info("try to load {}", fullXodrFileName);
+        final boolean loaded = OpenDriveReader.loadRoadNetwork(roadNetwork, fullXodrFileName);
+        LOG.info("done with parsing road network {}. Success: {}", fullXodrFileName, loaded);
+>>>>>>> /usr/src/app/output/movsim/movsim/aba5102173958664af92232b0a401a4b7614a667/core/src/main/java/org/movsim/simulator/Simulator.java/right.java
         return loaded;
     }
 
@@ -414,9 +465,9 @@ public class Simulator implements SimulationTimeStep, SimulationRun.CompletionCa
     public void reset() {
         simulationRunnable.reset();
         if (movsimInput.getScenario().isSetOutputConfiguration()) {
-            simOutput = new SimulationOutput(simulationRunnable.timeStep(),
-                    projectMetaData.isInstantaneousFileOutput(), movsimInput.getScenario().getOutputConfiguration(),
-                    roadNetwork, routing, vehicleFactory, serviceProviders);
+            simOutput = new SimulationOutput(simulationRunnable.timeStep(), ProjectMetaData.getInstance()
+                    .isInstantaneousFileOutput(), movsimInput.getScenario().getOutputConfiguration(), roadNetwork,
+                    routing, vehicleFactory, serviceProviders);
         }
         obstacleCount = roadNetwork.obstacleCount();
     }
@@ -494,7 +545,7 @@ public class Simulator implements SimulationTimeStep, SimulationRun.CompletionCa
         trafficLights.timeStep(dt, simulationTime, iterationCount);
         regulators.timeStep(dt, simulationTime, iterationCount);
         roadNetwork.timeStep(dt, simulationTime, iterationCount);
-
+        
         if (simOutput != null) {
             simOutput.timeStep(dt, simulationTime, iterationCount);
         }
