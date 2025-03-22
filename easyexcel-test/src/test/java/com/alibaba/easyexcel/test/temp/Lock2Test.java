@@ -28,10 +28,10 @@ import com.alibaba.fastjson.JSON;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
