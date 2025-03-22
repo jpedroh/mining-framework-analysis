@@ -133,9 +133,14 @@ public abstract class DefaultAbsSender extends AbsSender {
             HttpPost httppost = configuredHttpPost(url);
 
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+<<<<<<< /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/left.java
             builder.setCharset(StandardCharsets.UTF_8);
             builder.setLaxMode();
-            builder.addTextBody(SendDocument.CHATID_FIELD, sendDocument.getChatId(), TEXT_PLAIN_CONTENT_TYPE);
+||||||| /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/base.java
+=======
+            builder.setCharset(StandardCharsets.UTF_8);
+>>>>>>> /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/right.java
+            builder.addTextBody(SendDocument.CHATID_FIELD, sendDocument.getChatId());
             if (sendDocument.isNewDocument()) {
                 if (sendDocument.getNewDocumentFile() != null) {
                     builder.addBinaryBody(SendDocument.DOCUMENT_FIELD, sendDocument.getNewDocumentFile());
@@ -178,8 +183,13 @@ public abstract class DefaultAbsSender extends AbsSender {
             HttpPost httppost = configuredHttpPost(url);
 
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+<<<<<<< /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/left.java
             builder.setCharset(StandardCharsets.UTF_8);
             builder.setLaxMode();
+||||||| /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/base.java
+=======
+            builder.setCharset(StandardCharsets.UTF_8);
+>>>>>>> /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/right.java
             builder.addTextBody(SendPhoto.CHATID_FIELD, sendPhoto.getChatId(), TEXT_PLAIN_CONTENT_TYPE);
             if (sendPhoto.isNewPhoto()) {
                 if (sendPhoto.getNewPhotoFile() != null) {
@@ -223,8 +233,13 @@ public abstract class DefaultAbsSender extends AbsSender {
             HttpPost httppost = configuredHttpPost(url);
 
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+<<<<<<< /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/left.java
             builder.setCharset(StandardCharsets.UTF_8);
             builder.setLaxMode();
+||||||| /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/base.java
+=======
+            builder.setCharset(StandardCharsets.UTF_8);
+>>>>>>> /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/right.java
             builder.addTextBody(SendVideo.CHATID_FIELD, sendVideo.getChatId(), TEXT_PLAIN_CONTENT_TYPE);
             if (sendVideo.isNewVideo()) {
                 if (sendVideo.getNewVideoFile() != null) {
@@ -277,8 +292,13 @@ public abstract class DefaultAbsSender extends AbsSender {
             HttpPost httppost = configuredHttpPost(url);
 
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+<<<<<<< /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/left.java
             builder.setCharset(StandardCharsets.UTF_8);
             builder.setLaxMode();
+||||||| /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/base.java
+=======
+            builder.setCharset(StandardCharsets.UTF_8);
+>>>>>>> /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/right.java
             builder.addTextBody(SendVideoNote.CHATID_FIELD, sendVideoNote.getChatId(), TEXT_PLAIN_CONTENT_TYPE);
             if (sendVideoNote.isNewVideoNote()) {
                 if (sendVideoNote.getNewVideoNoteFile() != null) {
@@ -326,8 +346,13 @@ public abstract class DefaultAbsSender extends AbsSender {
             HttpPost httppost = configuredHttpPost(url);
 
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+<<<<<<< /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/left.java
             builder.setCharset(StandardCharsets.UTF_8);
             builder.setLaxMode();
+||||||| /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/base.java
+=======
+            builder.setCharset(StandardCharsets.UTF_8);
+>>>>>>> /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/right.java
             builder.addTextBody(SendSticker.CHATID_FIELD, sendSticker.getChatId(), TEXT_PLAIN_CONTENT_TYPE);
             if (sendSticker.isNewSticker()) {
                 if (sendSticker.getNewStickerFile() != null) {
@@ -372,8 +397,13 @@ public abstract class DefaultAbsSender extends AbsSender {
             String url = getBaseUrl() + SendAudio.PATH;
             HttpPost httppost = configuredHttpPost(url);
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+<<<<<<< /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/left.java
             builder.setCharset(StandardCharsets.UTF_8);
             builder.setLaxMode();
+||||||| /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/base.java
+=======
+            builder.setCharset(StandardCharsets.UTF_8);
+>>>>>>> /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/right.java
             builder.addTextBody(SendAudio.CHATID_FIELD, sendAudio.getChatId(), TEXT_PLAIN_CONTENT_TYPE);
             if (sendAudio.isNewAudio()) {
                 if (sendAudio.getNewAudioFile() != null) {
@@ -432,8 +462,13 @@ public abstract class DefaultAbsSender extends AbsSender {
             String url = getBaseUrl() + SendVoice.PATH;
             HttpPost httppost = configuredHttpPost(url);
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+<<<<<<< /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/left.java
             builder.setCharset(StandardCharsets.UTF_8);
             builder.setLaxMode();
+||||||| /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/base.java
+=======
+            builder.setCharset(StandardCharsets.UTF_8);
+>>>>>>> /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/right.java
             builder.addTextBody(SendVoice.CHATID_FIELD, sendVoice.getChatId(), TEXT_PLAIN_CONTENT_TYPE);
             if (sendVoice.isNewVoice()) {
                 if (sendVoice.getNewVoiceFile() != null) {
@@ -480,8 +515,13 @@ public abstract class DefaultAbsSender extends AbsSender {
             HttpPost httppost = configuredHttpPost(url);
 
             MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+<<<<<<< /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/left.java
             builder.setCharset(StandardCharsets.UTF_8);
             builder.setLaxMode();
+||||||| /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/base.java
+=======
+            builder.setCharset(StandardCharsets.UTF_8);
+>>>>>>> /usr/src/app/output/rubenlagus/telegrambots/c0e96d8afa38d4369f5789ab4f1f5c39ef28a516/telegrambots/src/main/java/org/telegram/telegrambots/bots/DefaultAbsSender.java/right.java
             builder.addTextBody(SetChatPhoto.CHATID_FIELD, setChatPhoto.getChatId(), TEXT_PLAIN_CONTENT_TYPE);
             if (setChatPhoto.getPhoto() != null) {
                 builder.addBinaryBody(SetChatPhoto.PHOTO_FIELD, setChatPhoto.getPhoto());
