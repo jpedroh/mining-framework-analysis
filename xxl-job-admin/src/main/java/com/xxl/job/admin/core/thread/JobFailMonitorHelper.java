@@ -64,7 +64,14 @@ public class JobFailMonitorHelper {
 									logger.info(">>>>>>>>>>> job monitor, job success, JobLogId:{}", jobLogId);
 								} else /*if (IJobHandler.FAIL.getCode() == log.getTriggerCode()
 										|| IJobHandler.FAIL.getCode() == log.getHandleCode()
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/c3c7ded5e057049c4b86f696ff4b0f842751827c/xxl-job-admin/src/main/java/com/xxl/job/admin/core/thread/JobFailMonitorHelper.java/left.java
+										|| IJobHandler.TIMEOUT.getCode() == log.getHandleCode()
+										|| IJobHandler.FAIL_RETRY.getCode() == log.getHandleCode() ) {
+||||||| /usr/src/app/output/xuxueli/xxl-job/c3c7ded5e057049c4b86f696ff4b0f842751827c/xxl-job-admin/src/main/java/com/xxl/job/admin/core/thread/JobFailMonitorHelper.java/base.java
+										|| IJobHandler.FAIL_RETRY.getCode() == log.getHandleCode() ) {
+=======
 										|| IJobHandler.FAIL_RETRY.getCode() == log.getHandleCode() )*/ {
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/c3c7ded5e057049c4b86f696ff4b0f842751827c/xxl-job-admin/src/main/java/com/xxl/job/admin/core/thread/JobFailMonitorHelper.java/right.java
 									// job fail,
 									failAlarm(log);
 									logger.info(">>>>>>>>>>> job monitor, job fail, JobLogId:{}", jobLogId);
