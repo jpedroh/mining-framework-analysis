@@ -34,7 +34,6 @@ import reactor.core.publisher.Mono;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.List;
-import java.util.Map;
 
 @Validated
 @Api(value = "fake", description = "the fake API")

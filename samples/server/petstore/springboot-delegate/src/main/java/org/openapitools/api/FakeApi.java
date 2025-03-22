@@ -31,7 +31,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.List;
-import java.util.Map;
 
 @Validated
 @Api(value = "fake", description = "the fake API")
