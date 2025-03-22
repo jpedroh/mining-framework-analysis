@@ -84,6 +84,7 @@ public class MerchantStoreServiceImpl extends SalesManagerEntityServiceImpl<Inte
 
 	@Override
 	public List<MerchantStore> findAllStoreCodeNameEmail() throws ServiceException {
+
 		return merchantRepository.findAllStoreCodeNameEmail();
 	}
 
@@ -96,30 +97,6 @@ public class MerchantStoreServiceImpl extends SalesManagerEntityServiceImpl<Inte
 		}
 		Pageable pageRequest = new PageRequest(page, count);
 		return pageableMerchantRepository.listAllRetailers(store, pageRequest);
-
-	}
-
-	@Override
-	public List<MerchantStore> findAllStoreNames() throws ServiceException {
-		return merchantRepository.findAllStoreNames();
-	}
-
-	/*	@Override
-	public void delete(MerchantStore merchant) throws ServiceException {
-		
-		merchant = this.getById(merchant.getId());
-		
-		
-		//reference
-		List<Manufacturer> manufacturers = manufacturerService.listByStore(merchant);
-		for(Manufacturer manufacturer : manufacturers) {
-			manufacturerService.delete(manufacturer);
-		}
-		
-		List<MerchantConfiguration> configurations = merchantConfigurationService.listByStore(merchant);
-		for(MerchantConfiguration configuration : configurations) {
-			merchantConfigurationService.delete(configuration);
-		}
 	}
 
 	@Override
@@ -128,6 +105,7 @@ public class MerchantStoreServiceImpl extends SalesManagerEntityServiceImpl<Inte
 		return merchantRepository.findAllStoreNames();
 	}
 
+	
 	/*
 	 * @Override public void delete(MerchantStore merchant) throws
 	 * ServiceException {

@@ -5,18 +5,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.*;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.salesmanager.core.business.constants.Constants;
 import com.salesmanager.core.model.catalog.product.Product;
 import com.salesmanager.core.model.catalog.product.ProductCriteria;
@@ -43,24 +38,20 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 		return this.get(productId, null);
 	}
 
-
 	@Override
 	public Product getProductWithOnlyMerchantStoreById(Long productId) {
-		final String hql = "select distinct p from Product as p " +
-				"join fetch p.merchantStore merch " +
-				"where p.id=:pid";
+		final String hql = "select distinct p from Product as p " + "join fetch p.merchantStore merch "
+				+ "where p.id=:pid";
 
 		final Query q = this.em.createQuery(hql);
 		q.setParameter("pid", productId);
 
 		try {
-			return (Product)q.getSingleResult();
+			return (Product) q.getSingleResult();
 		} catch (NoResultException ignored) {
 			return null;
 		}
-  }
-
-
+	}
 
 	private Product get(Long productId, MerchantStore merchant) {
 
@@ -238,14 +229,14 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
 	}
 
-	@Override
-	public List<Product> getProductsForLocale(MerchantStore store, Set<Long> categoryIds, Language language,
-			Locale locale) {
+    @Override
+    public List<Product> getProductsForLocale(MerchantStore store, Set<Long> categoryIds, Language language,
+    		Locale locale) {
 
-		ProductList products = this.getProductsListForLocale(store, categoryIds, language, locale, 0, -1);
+    	ProductList products = this.getProductsListForLocale(store, categoryIds, language, locale, 0, -1);
 
-		return products.getProducts();
-	}
+    	return products.getProducts();
+    }
 
 	@Override
 	public Product getProductForLocale(long productId, Language language, Locale locale) {
@@ -431,6 +422,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 	 * loaded, only the required objects so the listing page can display
 	 * everything related to all products
 	 */
+
 	@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
 	private ProductList getProductsListForLocale(MerchantStore store, Set categoryIds, Language language, Locale locale,
 			int first, int max) {
@@ -531,6 +523,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 	 * @param max
 	 * @return
 	 */
+
 	@Override
 	public ProductList listByStore(MerchantStore store, Language language, ProductCriteria criteria) {
 
