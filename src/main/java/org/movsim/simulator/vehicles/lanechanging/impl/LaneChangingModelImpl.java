@@ -36,6 +36,7 @@ import org.movsim.simulator.vehicles.lanechanging.LaneChangingModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class LaneChangingModelImpl.
  */
@@ -98,6 +99,9 @@ public class LaneChangingModelImpl implements LaneChangingModel {
         return isInitialized;
     }
 
+    /* (non-Javadoc)
+     * @see org.movsim.simulator.vehicles.lanechanging.LaneChangingModel#isMandatoryLaneChangeSafe(double, org.movsim.simulator.vehicles.VehicleContainer)
+     */
     @Override
     public boolean isMandatoryLaneChangeSafe(double dt, final VehicleContainer vehContainerTargetLane) {
         // works also for the "virtual" leader of me in considered lane
@@ -108,7 +112,13 @@ public class LaneChangingModelImpl implements LaneChangingModel {
         final boolean changeSafe = mandatoryWeavingChange(frontMain, backMain); // TODO
         return changeSafe;
     }
-
+    /**
+     * Mandatory weaving change.
+     *
+     * @param frontVeh the front veh
+     * @param backVeh the back veh
+     * @return true, if successful
+     */
     private boolean mandatoryWeavingChange(final Vehicle frontVeh, final Vehicle backVeh) {
 
         // safety incentive (in two steps)
@@ -141,8 +151,6 @@ public class LaneChangingModelImpl implements LaneChangingModel {
         }
         return (false);
     }
-
-    
     /**
      * Determine lane changing direction.
      *
@@ -179,8 +187,13 @@ public class LaneChangingModelImpl implements LaneChangingModel {
 
         return Constants.NO_CHANGE;
     }
-
-
+    /**
+     * Calc acceleration in new lane.
+     *
+     * @param ownLane the own lane
+     * @param newLane the new lane
+     * @return the double
+     */
 
     /**
      * Sets the mandatory change.

@@ -186,8 +186,9 @@ public class IDM extends AccelerationModelAbstract implements AccelerationModel 
 
     }
     
-    
-    
+    /* (non-Javadoc)
+     * @see org.movsim.simulator.vehicles.longmodel.accelerationmodels.AccelerationModel#calcAcc(org.movsim.simulator.vehicles.Vehicle, org.movsim.simulator.vehicles.Vehicle)
+     */
     @Override
     public double calcAcc(final Vehicle me, final Vehicle vehFront){
         // Local dynamical variables

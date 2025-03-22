@@ -96,7 +96,18 @@ public interface AccelerationModel {
      */
     double calcAcc(Vehicle me, VehicleContainer vehContainer, double alphaT, double alphaV0, double alphaA);
     
+<<<<<<< /usr/src/app/output/movsim/movsim/58cdfd9f12a7744b2e6720a9bb4870bd519d9159/src/main/java/org/movsim/simulator/vehicles/longmodel/accelerationmodels/AccelerationModel.java/left.java
+    /**
+     * Calc acc.
+     *
+     * @param me the me
+     * @param vehFront the veh front
+     * @return the double
+     */
+||||||| /usr/src/app/output/movsim/movsim/58cdfd9f12a7744b2e6720a9bb4870bd519d9159/src/main/java/org/movsim/simulator/vehicles/longmodel/accelerationmodels/AccelerationModel.java/base.java
+=======
     double calcAccEur(double vCritEur, Vehicle me, VehicleContainer vehContainer, VehicleContainer vehContainerLeftLane, double alphaT, double alphaV0, double alphaA);
+>>>>>>> /usr/src/app/output/movsim/movsim/58cdfd9f12a7744b2e6720a9bb4870bd519d9159/src/main/java/org/movsim/simulator/vehicles/longmodel/accelerationmodels/AccelerationModel.java/right.java
     
     double calcAcc(final Vehicle me, final Vehicle vehFront);
     

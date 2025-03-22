@@ -226,9 +226,13 @@ public class VehicleImpl implements Vehicle {
         return length;
     }
 
+    
+    /* (non-Javadoc)
+     * @see org.movsim.simulator.vehicles.Moveable#getWidth()
+     */
     @Override
     public double getWidth() {
-        return Constants.VEHICLE_WIDTH;
+        return Constants.VEHICLE_WIDTH; //TODO get width from xml
     }
 
     /*
@@ -581,6 +585,9 @@ public class VehicleImpl implements Vehicle {
         accelerationModel.removeObserver();
     }
 
+    /* (non-Javadoc)
+     * @see org.movsim.simulator.vehicles.Vehicle#getLaneChangingModel()
+     */
     @Override
     public LaneChangingModelImpl getLaneChangingModel() {
         return lcModel;
@@ -641,7 +648,10 @@ public class VehicleImpl implements Vehicle {
 
         return false;
     }
-
+    
+    /* (non-Javadoc)
+     * @see org.movsim.simulator.vehicles.Vehicle#initLaneChangeFromRamp(int)
+     */
     @Override
     public void initLaneChangeFromRamp(int oldLane) {
         laneOld = oldLane; // Constants.MOST_RIGHT_LANE + Constants.TO_RIGHT; //
@@ -738,7 +748,10 @@ public class VehicleImpl implements Vehicle {
     // ---------------------------------------------------------------------------------
     // converter for scaled quantities in cellular automata
     // ---------------------------------------------------------------------------------
-
+    
+    /* (non-Javadoc)
+     * @see org.movsim.simulator.vehicles.Moveable#physicalQuantities()
+     */
     @Override
     public PhysicalQuantities physicalQuantities() {
         return physQuantities;

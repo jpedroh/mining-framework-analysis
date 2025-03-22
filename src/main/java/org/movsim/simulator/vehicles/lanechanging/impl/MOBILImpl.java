@@ -32,12 +32,13 @@ import org.movsim.input.model.vehicle.laneChanging.LaneChangingMobilData;
 import org.movsim.simulator.Constants;
 import org.movsim.simulator.vehicles.Vehicle;
 import org.movsim.simulator.vehicles.VehicleContainer;
-import org.movsim.simulator.vehicles.impl.VehicleContainerImpl;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class MOBILImpl.
  */
+import org.movsim.simulator.vehicles.impl.VehicleContainerImpl;
+
 public class MOBILImpl {
 
     private double politeness; // politeness factor
@@ -88,6 +89,15 @@ public class MOBILImpl {
         pRef = politeness = lcMobilData.getPoliteness();
 
     }
+
+
+    /**
+     * Calc acceleration balance in new lane symmetric.
+     *
+     * @param ownLane the own lane
+     * @param newLane the new lane
+     * @return the double
+     */
 
     private boolean neigborsInProcessOfLaneChanging(final Vehicle v1, final Vehicle v2, final Vehicle v3) {
         // finite delay criterion also for neighboring vehicles
@@ -272,10 +282,21 @@ public class MOBILImpl {
     }
 
 
+    /**
+     * Gets the minimum gap.
+     *
+     * @return the minimum gap
+     */
     public double getMinimumGap() {
         return gapMin;
     }
 
+
+    /**
+     * Gets the safe deceleration.
+     *
+     * @return the safe deceleration
+     */
     public double getSafeDeceleration() {
         return bSafe;
     }
