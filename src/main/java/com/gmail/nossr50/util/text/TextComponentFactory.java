@@ -172,7 +172,8 @@ public class TextComponentFactory {
         return webTextComponent.build();
     }
 
-    private static Component getUrlHoverEvent(McMMOWebLinks webLinks) {
+    private static Component getUrlHoverEvent(McMMOWebLinks webLinks)
+    {
         TextComponent.Builder componentBuilder = Component.text().content(webLinks.getNiceTitle());
 
         switch (webLinks) {

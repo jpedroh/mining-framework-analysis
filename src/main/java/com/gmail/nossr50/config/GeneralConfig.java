@@ -1006,9 +1006,8 @@ public class GeneralConfig extends BukkitConfig {
         return config.getBoolean("Green_Thumb_Replanting_Crops." + StringUtils.getCapitalized(material.toString()), true);
     }
 
+    public boolean isMasterySystemEnabled() { return config.getBoolean( "General.PowerLevel.Skill_Mastery.Enabled"); }
     public boolean useVerboseLogging() {
         return config.getBoolean("General.Verbose_Logging", false);
     }
-
-    public boolean isMasterySystemEnabled() { return config.getBoolean( "General.PowerLevel.Skill_Mastery.Enabled"); }
 }

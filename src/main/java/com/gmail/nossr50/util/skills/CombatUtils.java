@@ -839,8 +839,7 @@ public final class CombatUtils {
                 EntityType type = target.getType();
                 baseXP = ExperienceConfig.getInstance().getAnimalsXP(type);
             }
-            else if (target instanceof Monster)
-            {
+            else if (target instanceof Monster) {
                 EntityType type = target.getType();
                 baseXP = ExperienceConfig.getInstance().getCombatXP(type);
             }
@@ -886,8 +885,16 @@ public final class CombatUtils {
 
         baseXP *= multiplier;
 
+<<<<<<< /usr/src/app/output/mcmmo-dev/mcmmo/c8dedfc980cfece65050f05b00a57d9d0d1e26f1/src/main/java/com/gmail/nossr50/util/skills/CombatUtils.java/left.java
         if (baseXP > 0) {
+            new AwardCombatXpTask(mcMMOPlayer, primarySkillType, baseXP, target, xpGainReason).runTaskLater(mcMMO.p, 0);
+||||||| /usr/src/app/output/mcmmo-dev/mcmmo/c8dedfc980cfece65050f05b00a57d9d0d1e26f1/src/main/java/com/gmail/nossr50/util/skills/CombatUtils.java/base.java
+        if (baseXP != 0) {
+            new AwardCombatXpTask(mcMMOPlayer, primarySkillType, baseXP, target, xpGainReason).runTaskLater(mcMMO.p, 0);
+=======
+        if (baseXP != 0) {
             mcMMO.p.getFoliaLib().getImpl().runAtEntity(mcMMOPlayer.getPlayer(), new AwardCombatXpTask(mcMMOPlayer, primarySkillType, baseXP, target, xpGainReason));
+>>>>>>> /usr/src/app/output/mcmmo-dev/mcmmo/c8dedfc980cfece65050f05b00a57d9d0d1e26f1/src/main/java/com/gmail/nossr50/util/skills/CombatUtils.java/right.java
         }
     }
 
