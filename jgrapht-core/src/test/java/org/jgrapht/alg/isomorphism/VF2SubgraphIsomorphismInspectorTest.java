@@ -116,6 +116,14 @@ public class VF2SubgraphIsomorphismInspectorTest {
                         (dg1,dg1);
         assertEquals("[1=1 2=2]", gt4.getMappings().next().toString());
 
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/3d942aa8341a7b21b0a2aed7fe990a3895f7cc26/jgrapht-core/src/test/java/org/jgrapht/alg/isomorphism/VF2SubgraphIsomorphismInspectorTest.java/left.java
+
+        VF2SubgraphIsomorphismInspector<Integer, DefaultEdge> vf6b =
+            new VF2SubgraphIsomorphismInspector<Integer, DefaultEdge>(g3, g6);
+||||||| /usr/src/app/output/jgrapht/jgrapht/3d942aa8341a7b21b0a2aed7fe990a3895f7cc26/jgrapht-core/src/test/java/org/jgrapht/alg/isomorphism/VF2SubgraphIsomorphismInspectorTest.java/base.java
+        VF2SubgraphIsomorphismInspector<Integer, DefaultEdge> vf6b =
+            new VF2SubgraphIsomorphismInspector<Integer, DefaultEdge>(g3, g6);
+=======
         /* GT-5: simple graph + multigraph */
         try {
             VF2SubgraphIsomorphismInspector<Integer, DefaultEdge> gt5 =
@@ -125,7 +133,13 @@ public class VF2SubgraphIsomorphismInspectorTest {
         } catch (UnsupportedOperationException ex){
             /* Expected Exception found */
         }
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/3d942aa8341a7b21b0a2aed7fe990a3895f7cc26/jgrapht-core/src/test/java/org/jgrapht/alg/isomorphism/VF2SubgraphIsomorphismInspectorTest.java/right.java
 
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/3d942aa8341a7b21b0a2aed7fe990a3895f7cc26/jgrapht-core/src/test/java/org/jgrapht/alg/isomorphism/VF2SubgraphIsomorphismInspectorTest.java/left.java
+        assertEquals(false, vf6b.isomorphismExists());
+||||||| /usr/src/app/output/jgrapht/jgrapht/3d942aa8341a7b21b0a2aed7fe990a3895f7cc26/jgrapht-core/src/test/java/org/jgrapht/alg/isomorphism/VF2SubgraphIsomorphismInspectorTest.java/base.java
+        assertEquals(false, vf6.isomorphismExists());
+=======
         /* GT-6: simple graph + pseudograph */
         try {
             VF2SubgraphIsomorphismInspector<Integer, DefaultEdge> gt6 =
@@ -135,6 +149,7 @@ public class VF2SubgraphIsomorphismInspectorTest {
         } catch (UnsupportedOperationException ex){
             /* Expected Exception found */
         }
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/3d942aa8341a7b21b0a2aed7fe990a3895f7cc26/jgrapht-core/src/test/java/org/jgrapht/alg/isomorphism/VF2SubgraphIsomorphismInspectorTest.java/right.java
 
         /* GT-7: directed graph + mulitgraph */
         try {
@@ -279,9 +294,106 @@ public class VF2SubgraphIsomorphismInspectorTest {
 
         assertEquals(false, vfs6.isomorphismExists());
 
-        /* ECS-7: graph and subgraph with vertices, but no edges */
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/3d942aa8341a7b21b0a2aed7fe990a3895f7cc26/jgrapht-core/src/test/java/org/jgrapht/alg/isomorphism/VF2SubgraphIsomorphismInspectorTest.java/left.java
 
+        VF2SubgraphIsomorphismInspector<Integer, DefaultEdge> vfs6b =
+            new VF2SubgraphIsomorphismInspector<Integer, DefaultEdge>(sg3, sg6);
+||||||| /usr/src/app/output/jgrapht/jgrapht/3d942aa8341a7b21b0a2aed7fe990a3895f7cc26/jgrapht-core/src/test/java/org/jgrapht/alg/isomorphism/VF2SubgraphIsomorphismInspectorTest.java/base.java
+        VF2SubgraphIsomorphismInspector<Integer, DefaultEdge> vfs6b =
+            new VF2SubgraphIsomorphismInspector<Integer, DefaultEdge>(sg3, sg6);
+=======
+        /* ECS-7: graph and subgraph with vertices, but no edges */
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/3d942aa8341a7b21b0a2aed7fe990a3895f7cc26/jgrapht-core/src/test/java/org/jgrapht/alg/isomorphism/VF2SubgraphIsomorphismInspectorTest.java/right.java
+
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/3d942aa8341a7b21b0a2aed7fe990a3895f7cc26/jgrapht-core/src/test/java/org/jgrapht/alg/isomorphism/VF2SubgraphIsomorphismInspectorTest.java/left.java
+        assertEquals(false, vfs6b.isomorphismExists());
+
+
+        /* graph no edges, subgraph contains edge */
+
+        SimpleGraph<Integer, DefaultEdge> sg7 =
+            new SimpleGraph<Integer, DefaultEdge>(DefaultEdge.class);
+
+        sg7.addVertex(5);
+        sg7.addVertex(6);
+
+        sg7.addEdge(5, 6);
+
+        VF2SubgraphIsomorphismInspector<Integer, DefaultEdge> vfs7 =
+            new VF2SubgraphIsomorphismInspector<Integer, DefaultEdge>(sg6, sg7);
+
+        assertEquals(false, vfs7.isomorphismExists());
+
+
+        /* complete graphs of different size */
+
+        SimpleGraph<Integer, DefaultEdge> sg8 =
+                    new SimpleGraph<Integer, DefaultEdge>(DefaultEdge.class);
+
+        sg8.addVertex(0);
+        sg8.addVertex(1);
+        sg8.addVertex(2);
+        sg8.addVertex(3);
+        sg8.addVertex(4);
+
+        sg8.addEdge(0,1);
+        sg8.addEdge(0,2);
+        sg8.addEdge(0,3);
+        sg8.addEdge(0,4);
+        sg8.addEdge(1,2);
+        sg8.addEdge(1,3);
+        sg8.addEdge(1,4);
+        sg8.addEdge(2,3);
+        sg8.addEdge(2,4);
+        sg8.addEdge(3,4);
+
+        SimpleGraph<Integer, DefaultEdge> sg9 =
+||||||| /usr/src/app/output/jgrapht/jgrapht/3d942aa8341a7b21b0a2aed7fe990a3895f7cc26/jgrapht-core/src/test/java/org/jgrapht/alg/isomorphism/VF2SubgraphIsomorphismInspectorTest.java/base.java
+        assertEquals(false, vfs6.isomorphismExists());
+
+
+        /* graph no edges, subgraph contains edge */
+
+        SimpleGraph<Integer, DefaultEdge> sg7 =
+            new SimpleGraph<Integer, DefaultEdge>(DefaultEdge.class);
+
+        sg7.addVertex(5);
+        sg7.addVertex(6);
+
+        sg7.addEdge(5, 6);
+
+        VF2SubgraphIsomorphismInspector<Integer, DefaultEdge> vfs7 =
+            new VF2SubgraphIsomorphismInspector<Integer, DefaultEdge>(sg6, sg7);
+
+        assertEquals(false, vfs7.isomorphismExists());
+
+
+        /* complete graphs of different size */
+
+        SimpleGraph<Integer, DefaultEdge> sg8 =
+                    new SimpleGraph<Integer, DefaultEdge>(DefaultEdge.class);
+
+        sg8.addVertex(0);
+        sg8.addVertex(1);
+        sg8.addVertex(2);
+        sg8.addVertex(3);
+        sg8.addVertex(4);
+
+        sg8.addEdge(0,1);
+        sg8.addEdge(0,2);
+        sg8.addEdge(0,3);
+        sg8.addEdge(0,4);
+        sg8.addEdge(1,2);
+        sg8.addEdge(1,3);
+        sg8.addEdge(1,4);
+        sg8.addEdge(2,3);
+        sg8.addEdge(2,4);
+        sg8.addEdge(3,4);
+
+        SimpleGraph<Integer, DefaultEdge> sg9 =
+=======
         SimpleGraph<Integer, DefaultEdge> sg2v0e =
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/3d942aa8341a7b21b0a2aed7fe990a3895f7cc26/jgrapht-core/src/test/java/org/jgrapht/alg/isomorphism/VF2SubgraphIsomorphismInspectorTest.java/right.java
                 new SimpleGraph<Integer, DefaultEdge>(DefaultEdge.class);
 
         sg2v0e.addVertex(1);
@@ -616,6 +728,7 @@ public class VF2SubgraphIsomorphismInspectorTest {
                         (dg0v, dg1v);
 
         assertEquals(false, vf5.isomorphismExists());
+
 
         /* ECD-6: subgraph with vertices, but no edges */
 
@@ -1135,7 +1248,13 @@ public class VF2SubgraphIsomorphismInspectorTest {
     * */
     @Test
     public void testHugeGraph() {
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/3d942aa8341a7b21b0a2aed7fe990a3895f7cc26/jgrapht-core/src/test/java/org/jgrapht/alg/isomorphism/VF2SubgraphIsomorphismInspectorTest.java/left.java
         int n = 700;
+||||||| /usr/src/app/output/jgrapht/jgrapht/3d942aa8341a7b21b0a2aed7fe990a3895f7cc26/jgrapht-core/src/test/java/org/jgrapht/alg/isomorphism/VF2SubgraphIsomorphismInspectorTest.java/base.java
+        int n = 1000;
+=======
+        int n = 800;
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/3d942aa8341a7b21b0a2aed7fe990a3895f7cc26/jgrapht-core/src/test/java/org/jgrapht/alg/isomorphism/VF2SubgraphIsomorphismInspectorTest.java/right.java
         long time = System.currentTimeMillis();
 
         DirectedGraph<Integer, DefaultEdge> g1 =
@@ -1147,6 +1266,7 @@ public class VF2SubgraphIsomorphismInspectorTest {
             new VF2SubgraphIsomorphismInspector<Integer, DefaultEdge>(g1, g2);
 
         assertEquals(true, vf2.isomorphismExists());
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/3d942aa8341a7b21b0a2aed7fe990a3895f7cc26/jgrapht-core/src/test/java/org/jgrapht/alg/isomorphism/VF2SubgraphIsomorphismInspectorTest.java/left.java
         
         SubgraphIsomorphismTestUtils.showLog(
                         "|V1| = " + g1.vertexSet().size() + 
@@ -1156,5 +1276,112 @@ public class VF2SubgraphIsomorphismInspectorTest {
                       " - " + (System.currentTimeMillis() - time) + "ms");
     }
     
+    @Test
+    public void testSemanticCheck() {
+        /*
+         *       a---<3>---b
+         *       |         |
+         * g1 = <4>       <1>   g2 = A---<6>---b---<5>---B
+         *       |         |
+         *       A---<2>---B
+         */
+        SimpleGraph<String, Integer> g1 =
+            new SimpleGraph<String, Integer>(Integer.class),
+                                     g2 =
+            new SimpleGraph<String, Integer>(Integer.class);
+                                          
+        g1.addVertex("a");
+        g1.addVertex("b");
+        g1.addVertex("A");
+        g1.addVertex("B");
+        
+        g1.addEdge("a", "b", 3);
+        g1.addEdge("b", "B", 1);
+        g1.addEdge("B", "A", 2);
+        g1.addEdge("A", "a", 4);
+
+        g2.addVertex("A");
+        g2.addVertex("b");
+        g2.addVertex("B");
+        
+        g2.addEdge("A", "b", 6);
+        g2.addEdge("b", "B", 5);
+
+        // test vertex and edge comparator
+        VF2SubgraphIsomorphismInspector<String, Integer> vf2 =
+            new VF2SubgraphIsomorphismInspector<String, Integer>(g1, g2,
+                            new VertexComp(),
+                            new EdgeComp());
+
+        Iterator<IsomorphicGraphMapping<String, Integer>> iter =
+            vf2.getMappings();
+
+        assertEquals("[A=A B=b a=~~ b=B]", iter.next().toString());
+        assertEquals(false, iter.hasNext());
+
+        // test vertex comparator
+        VF2SubgraphIsomorphismInspector<String, Integer> vf3 =
+            new VF2SubgraphIsomorphismInspector<String, Integer>(g1, g2,
+                            new VertexComp(),
+                            new DefaultComparator<Integer>());
+
+        Iterator<IsomorphicGraphMapping<String, Integer>> iter2 =
+            vf3.getMappings();
+
+        Set<String> mappings = 
+            new HashSet<String>(Arrays.asList("[A=A B=b a=~~ b=B]",
+                                              "[A=~~ B=B a=A b=b]"));
+        assertEquals(true, mappings.remove(iter2.next().toString()));
+        assertEquals(true, mappings.remove(iter2.next().toString()));
+        assertEquals(false, iter2.hasNext());
+
+        // test edge comparator
+        VF2SubgraphIsomorphismInspector<String, Integer> vf4 =
+            new VF2SubgraphIsomorphismInspector<String, Integer>(g1, g2,
+                            new DefaultComparator<String>(),
+                            new EdgeComp());
+
+        Iterator<IsomorphicGraphMapping<String, Integer>> iter3 =
+            vf4.getMappings();
+
+        Set<String> mappings2 = 
+            new HashSet<String>(Arrays.asList("[A=A B=b a=~~ b=B]",
+                                              "[A=A B=~~ a=b b=B]"));
+        assertEquals(true, mappings2.remove(iter3.next().toString()));
+        assertEquals(true, mappings2.remove(iter3.next().toString()));
+        assertEquals(false, iter3.hasNext());
+    }
+    
+    private class VertexComp implements Comparator<String>  {
+        @Override
+        public int compare(String o1, String o2) {
+            if (o1.toLowerCase().equals(o2.toLowerCase()))
+                return 0;
+            else
+                return 1;
+        }
+    }
+    
+    private class EdgeComp implements Comparator<Integer>   {
+        @Override
+        public int compare(Integer o1, Integer o2) {
+            return (o1 % 2) - (o2 % 2);
+        }
+||||||| /usr/src/app/output/jgrapht/jgrapht/3d942aa8341a7b21b0a2aed7fe990a3895f7cc26/jgrapht-core/src/test/java/org/jgrapht/alg/isomorphism/VF2SubgraphIsomorphismInspectorTest.java/base.java
+        
+        System.out.println("|V1| = " + g1.vertexSet().size() + 
+                         ", |E1| = " + g1.edgeSet().size() + 
+                         ", |V2| = " + g2.vertexSet().size() + 
+                         ", |E2| = " + g2.edgeSet().size() +
+                         " - " + (System.currentTimeMillis() - time) + "ms");
+=======
+
+        System.out.println("|V1| = " + g1.vertexSet().size() + 
+                         ", |E1| = " + g1.edgeSet().size() + 
+                         ", |V2| = " + g2.vertexSet().size() + 
+                         ", |E2| = " + g2.edgeSet().size() +
+                         " - " + (System.currentTimeMillis() - time) + "ms");
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/3d942aa8341a7b21b0a2aed7fe990a3895f7cc26/jgrapht-core/src/test/java/org/jgrapht/alg/isomorphism/VF2SubgraphIsomorphismInspectorTest.java/right.java
+    }
 }
 
