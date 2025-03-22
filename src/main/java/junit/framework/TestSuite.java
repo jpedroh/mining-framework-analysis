@@ -98,6 +98,7 @@ public class TestSuite implements Test {
         };
     }
 
+<<<<<<< /usr/src/app/output/junit-team/junit4/b0eaa831e8e9fdbfc14e0c5eb34da10c7ddbf4fd/src/main/java/junit/framework/TestSuite.java/left.java
     /**
      * Converts the stack trace into a string.
      */
@@ -108,6 +109,19 @@ public class TestSuite implements Test {
         return stringWriter.toString();
     }
 
+||||||| /usr/src/app/output/junit-team/junit4/b0eaa831e8e9fdbfc14e0c5eb34da10c7ddbf4fd/src/main/java/junit/framework/TestSuite.java/base.java
+    /**
+     * Converts the stack trace into a string
+     */
+    private static String exceptionToString(Throwable e) {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(stringWriter);
+        e.printStackTrace(writer);
+        return stringWriter.toString();
+    }
+
+=======
+>>>>>>> /usr/src/app/output/junit-team/junit4/b0eaa831e8e9fdbfc14e0c5eb34da10c7ddbf4fd/src/main/java/junit/framework/TestSuite.java/right.java
     private String fName;
 
     private Vector<Test> fTests = new Vector<Test>(10); // Cannot convert this to List because it is used directly by some test runners
