@@ -1,8 +1,6 @@
 package org.telegram.abilitybots.api.db;
-
 import org.telegram.abilitybots.api.bot.BaseAbilityBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
-
 import java.io.Closeable;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +10,7 @@ import java.util.Set;
  * This interface represents the high-level methods exposed to the user when handling an {@link Update}.
  * Example usage:
  * <p><code>Ability.builder().action(ctx -> {db.getSet(USERS); doSomething();})* </code></p>
- * {@link BaseAbilityBot} contains a handle on the <code>db</code> that the user can use inside his declared abilities.
+ * {@link AbilityBot} contains a handle on the <code>db</code> that the user can use inside his declared abilities.
  *
  * @author Abbas Abou Daya
  */
@@ -22,7 +20,7 @@ public interface DBContext extends Closeable {
    * @param <T>  the type that the List holds
    * @return the List with the specified name
    */
-  <T> List<T> getList(String name);
+  <T extends java.lang.Object> List<T> getList(String name);
 
   /**
    * @param name the unique name of the {@link Map}
@@ -30,21 +28,21 @@ public interface DBContext extends Closeable {
    * @param <V>  the type of the Map values
    * @return the Map with the specified name
    */
-  <K, V> Map<K, V> getMap(String name);
+  <K extends java.lang.Object, V extends java.lang.Object> Map<K, V> getMap(String name);
 
   /**
    * @param name the unique name of the {@link Set}
    * @param <T>  the type that the Set holds
    * @return the Set with the specified name
    */
-  <T> Set<T> getSet(String name);
+  <T extends java.lang.Object> Set<T> getSet(String name);
 
   /**
    * @param name the unique name of the {@link Var}
    * @param <T>  the type that the variable holds
    * @return the variable with the specified name
    */
-  <T> Var<T> getVar(String name);
+  <T extends java.lang.Object> Var<T> getVar(String name);
 
   /**
    * @return a high-level summary of the database structures (Sets, Lists, Maps, ...) present.
