@@ -809,9 +809,15 @@ public final class CombatUtils {
         XPGainReason xpGainReason;
 
         if (target instanceof Player defender) {
+<<<<<<< /usr/src/app/output/mcmmo-dev/mcmmo/fba6e8a961ff81b510b7893846e52822b7ffac80/src/main/java/com/gmail/nossr50/util/skills/CombatUtils.java/left.java
             if (!ExperienceConfig.getInstance().getExperienceGainsPlayerVersusPlayerEnabled()
-                    ||
+                    || PartyManager.inSameParty(mcMMOPlayer.getPlayer(), (Player) target)) {
+||||||| /usr/src/app/output/mcmmo-dev/mcmmo/fba6e8a961ff81b510b7893846e52822b7ffac80/src/main/java/com/gmail/nossr50/util/skills/CombatUtils.java/base.java
+            if (!ExperienceConfig.getInstance().getExperienceGainsPlayerVersusPlayerEnabled() || PartyManager.inSameParty(mcMMOPlayer.getPlayer(), (Player) target)) {
+=======
+            if (!ExperienceConfig.getInstance().getExperienceGainsPlayerVersusPlayerEnabled() ||
                     (mcMMO.p.getPartyConfig().isPartyEnabled() && mcMMO.p.getPartyManager().inSameParty(mcMMOPlayer.getPlayer(), (Player) target))) {
+>>>>>>> /usr/src/app/output/mcmmo-dev/mcmmo/fba6e8a961ff81b510b7893846e52822b7ffac80/src/main/java/com/gmail/nossr50/util/skills/CombatUtils.java/right.java
                 return;
             }
 
