@@ -35,7 +35,6 @@ public class LogstashEncoder extends EncoderBase<ILoggingEvent> {
     private static final ObjectMapper MAPPER = new ObjectMapper().configure(Feature.ESCAPE_NON_ASCII, true);
     private static final FastDateFormat ISO_DATETIME_TIME_ZONE_FORMAT_WITH_MILLIS = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
     private static final StackTraceElement DEFAULT_CALLER_DATA = new StackTraceElement("", "", "", 0);
-    
     private boolean immediateFlush = true;
 
     @Override
@@ -84,6 +83,13 @@ public class LogstashEncoder extends EncoderBase<ILoggingEvent> {
 
     }
 
+    private StackTraceElement extractCallerData(final ILoggingEvent event) {
+        final StackTraceElement[] ste = event.getCallerData();
+        if (ste == null || ste.length == 0) {
+            return DEFAULT_CALLER_DATA;
+        }
+        return ste[0];
+    }
     private void addPropertiesAsFields(final ObjectNode fieldsNode, final Map<String, String> properties) {
         if (properties != null) {
             for (Entry<String, String> entry : properties.entrySet()) {
@@ -92,14 +98,6 @@ public class LogstashEncoder extends EncoderBase<ILoggingEvent> {
                 fieldsNode.put(key, value);
             }
         }
-    }
-
-    private StackTraceElement extractCallerData(final ILoggingEvent event) {
-        final StackTraceElement[] ste = event.getCallerData();
-        if (ste == null || ste.length == 0) {
-            return DEFAULT_CALLER_DATA;
-        }
-        return ste[0];
     }
 
     @Override
