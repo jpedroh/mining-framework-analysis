@@ -111,8 +111,8 @@ public class LoadBalancer implements Networkable, Taggable {
     private int[]                   publicPorts;
     private IPVersion[]             supportedTraffic;
     private Map<String,String>      tags;
-    private String                  providerLBHealthCheckId;
     private String[]                providerFirewallIds;
+    private String                  providerLBHealthCheckId;
 
     /**
      * Constructs a load balancer object with no data.

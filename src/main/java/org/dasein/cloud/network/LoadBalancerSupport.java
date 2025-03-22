@@ -33,8 +33,6 @@ import org.dasein.cloud.identity.ServiceAction;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Locale;
 
 /**
  * Implements support for cloud load balancing services.
@@ -62,19 +60,23 @@ public interface LoadBalancerSupport extends AccessControlledService {
     static public final ServiceAction CREATE_SSL_CERTIFICATE    = new ServiceAction("LB:CREATE_SSL_CERTIFICATE");
     static public final ServiceAction DELETE_SSL_CERTIFICATE    = new ServiceAction("LB:DELETE_SSL_CERTIFICATE");
     static public final ServiceAction SET_LB_SSL_CERTIFICATE    = new ServiceAction("LB:SET_SSL_CERTIFICATE");
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/c66ef2d42d9fcce05c3c11e4f17e50a7b764b5e5/src/main/java/org/dasein/cloud/network/LoadBalancerSupport.java/left.java
     static public final ServiceAction SET_FIREWALLS        = new ServiceAction("LB:SET_FIREWALLS");
+||||||| /usr/src/app/output/greese/dasein-cloud-core/c66ef2d42d9fcce05c3c11e4f17e50a7b764b5e5/src/main/java/org/dasein/cloud/network/LoadBalancerSupport.java/base.java
+=======
     static public final ServiceAction ATTACH_LB_TO_SUBNETS    = new ServiceAction("LB:ATTACH_LB_TO_SUBNETS");
     static public final ServiceAction DETACH_LB_FROM_SUBNETS    = new ServiceAction("LB:DETACH_LB_FROM_SUBNETS");
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/c66ef2d42d9fcce05c3c11e4f17e50a7b764b5e5/src/main/java/org/dasein/cloud/network/LoadBalancerSupport.java/right.java
 
     /**
-     * Adds one or more data centers to the list of data centers associated with the specified load balancer. This method
-     * makes sense only if load balancers are not data center aware
-     * @param toLoadBalancerId the load balancer to which data centers are being added
-     * @param dataCenterIdsToAdd one or more data centers to add
-     * @throws CloudException an error occurred with the cloud provider while performing this action
-     * @throws InternalException an error occurred within the Dasein Cloud implementation while performing this action
-     * @throws OperationNotSupportedException this load balancer is not data-center aware
-     */
+ * Adds one or more data centers to the list of data centers associated with the specified load balancer. This method
+ * makes sense only if load balancers are not data center aware
+ * @param toLoadBalancerId the load balancer to which data centers are being added
+ * @param dataCenterIdsToAdd one or more data centers to add
+ * @throws CloudException an error occurred with the cloud provider while performing this action
+ * @throws InternalException an error occurred within the Dasein Cloud implementation while performing this action
+ * @throws OperationNotSupportedException this load balancer is not data-center aware
+ */
     public void addDataCenters(@Nonnull String toLoadBalancerId, @Nonnull String ... dataCenterIdsToAdd) throws CloudException, InternalException;
 
     /**
