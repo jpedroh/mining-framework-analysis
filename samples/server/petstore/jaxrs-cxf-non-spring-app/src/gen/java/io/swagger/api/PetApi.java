@@ -31,6 +31,7 @@ public interface PetApi  {
     @Produces({ "application/xml", "application/json" })
     @ApiOperation(value = "Add a new pet to the store", tags={ "pet",  })
     @ApiResponses(value = { 
+        @ApiResponse(code = 405, message = "Invalid input") }) @ApiResponses(value = { 
         @ApiResponse(code = 405, message = "Invalid input") })
     public void addPet(@Valid Pet body);
 

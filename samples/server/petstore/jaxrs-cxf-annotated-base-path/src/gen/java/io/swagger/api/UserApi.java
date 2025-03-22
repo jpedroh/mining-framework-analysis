@@ -5,7 +5,6 @@ import io.swagger.model.User;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 import java.util.Map;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -29,6 +28,7 @@ public interface UserApi  {
     @Produces({ "application/xml", "application/json" })
     @ApiOperation(value = "Create user", tags={ "user",  })
     @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "successful operation") }) @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "successful operation") })
     public void createUser(@Valid User body);
 
@@ -37,6 +37,7 @@ public interface UserApi  {
     @Produces({ "application/xml", "application/json" })
     @ApiOperation(value = "Creates list of users with given input array", tags={ "user",  })
     @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "successful operation") }) @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "successful operation") })
     public void createUsersWithArrayInput(@Valid List<User> body);
 
@@ -45,6 +46,7 @@ public interface UserApi  {
     @Produces({ "application/xml", "application/json" })
     @ApiOperation(value = "Creates list of users with given input array", tags={ "user",  })
     @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "successful operation") }) @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "successful operation") })
     public void createUsersWithListInput(@Valid List<User> body);
 
