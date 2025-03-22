@@ -8,89 +8,107 @@ package us.deathmarine.luyten;
  * default values into the field declarations.
  */
 public class LuytenPreferences {
-	public static final String THEME_XML_PATH = "/org/fife/ui/rsyntaxtextarea/themes/";
-	public static final String DEFAULT_THEME_XML = "eclipse.xml";
+  public static final String THEME_XML_PATH = "/org/fife/ui/rsyntaxtextarea/themes/";
 
-	private String themeXml = DEFAULT_THEME_XML;
-	private String fileOpenCurrentDirectory = "";
-	private String fileSaveCurrentDirectory = "";
-	private int font_size = 10;
+  public static final String DEFAULT_THEME_XML = "eclipse.xml";
 
-	private boolean isPackageExplorerStyle = true;
-	private boolean isFilterOutInnerClassEntries = true;
-	private boolean isSingleClickOpenEnabled = true;
-	private boolean isExitByEscEnabled = false;
-	private boolean isDiscordIntegrationEnabled = false;
+  private String themeXml = DEFAULT_THEME_XML;
 
-	public String getThemeXml() {
-		return themeXml;
-	}
+  private String fileOpenCurrentDirectory = "";
 
-	public void setThemeXml(String themeXml) {
-		this.themeXml = themeXml;
-	}
+  private String fileSaveCurrentDirectory = "";
 
-	public String getFileOpenCurrentDirectory() {
-		return fileOpenCurrentDirectory;
-	}
+  private boolean isPackageExplorerStyle = true;
 
-	public void setFileOpenCurrentDirectory(String fileOpenCurrentDirectory) {
-		this.fileOpenCurrentDirectory = fileOpenCurrentDirectory;
-	}
+  private 
+<<<<<<< /usr/src/app/output/deathmarine/luyten/fc86bc1229c69966e56c737e4d56f8c1fdcc4fd4/src/us/deathmarine/luyten/LuytenPreferences.java/left.java
+  boolean
+=======
+  int
+>>>>>>> /usr/src/app/output/deathmarine/luyten/fc86bc1229c69966e56c737e4d56f8c1fdcc4fd4/src/us/deathmarine/luyten/LuytenPreferences.java/right.java
+   
+<<<<<<< /usr/src/app/output/deathmarine/luyten/fc86bc1229c69966e56c737e4d56f8c1fdcc4fd4/src/us/deathmarine/luyten/LuytenPreferences.java/left.java
+  isDiscordIntegrationEnabled = false
+=======
+  font_size = 10
+>>>>>>> /usr/src/app/output/deathmarine/luyten/fc86bc1229c69966e56c737e4d56f8c1fdcc4fd4/src/us/deathmarine/luyten/LuytenPreferences.java/right.java
+  ;
 
-	public String getFileSaveCurrentDirectory() {
-		return fileSaveCurrentDirectory;
-	}
+  private boolean isFilterOutInnerClassEntries = true;
 
-	public void setFileSaveCurrentDirectory(String fileSaveCurrentDirectory) {
-		this.fileSaveCurrentDirectory = fileSaveCurrentDirectory;
-	}
+  private boolean isSingleClickOpenEnabled = true;
 
-	public boolean isPackageExplorerStyle() {
-		return isPackageExplorerStyle;
-	}
+  private boolean isExitByEscEnabled = false;
 
-	public void setPackageExplorerStyle(boolean isPackageExplorerStyle) {
-		this.isPackageExplorerStyle = isPackageExplorerStyle;
-	}
+  public String getThemeXml() {
+    return themeXml;
+  }
 
-	public void setDiscordIntegration(boolean isDiscordIntegrationEnabled) {
-		this.isDiscordIntegrationEnabled = isDiscordIntegrationEnabled;
-	}
+  public void setThemeXml(String themeXml) {
+    this.themeXml = themeXml;
+  }
 
-	public boolean isFilterOutInnerClassEntries() {
-		return isFilterOutInnerClassEntries;
-	}
+  public String getFileOpenCurrentDirectory() {
+    return fileOpenCurrentDirectory;
+  }
 
-	public void setFilterOutInnerClassEntries(boolean isFilterOutInnerClassEntries) {
-		this.isFilterOutInnerClassEntries = isFilterOutInnerClassEntries;
-	}
+  public void setFileOpenCurrentDirectory(String fileOpenCurrentDirectory) {
+    this.fileOpenCurrentDirectory = fileOpenCurrentDirectory;
+  }
 
-	public boolean isSingleClickOpenEnabled() {
-		return isSingleClickOpenEnabled;
-	}
+  public String getFileSaveCurrentDirectory() {
+    return fileSaveCurrentDirectory;
+  }
 
-	public void setSingleClickOpenEnabled(boolean isSingleClickOpenEnabled) {
-		this.isSingleClickOpenEnabled = isSingleClickOpenEnabled;
-	}
+  public void setFileSaveCurrentDirectory(String fileSaveCurrentDirectory) {
+    this.fileSaveCurrentDirectory = fileSaveCurrentDirectory;
+  }
 
-	public boolean isDiscordIntegrationEnabled() {
-		return isDiscordIntegrationEnabled;
-	}
+  public boolean isPackageExplorerStyle() {
+    return isPackageExplorerStyle;
+  }
 
-	public boolean isExitByEscEnabled() {
-		return isExitByEscEnabled;
-	}
+  public void setPackageExplorerStyle(boolean isPackageExplorerStyle) {
+    this.isPackageExplorerStyle = isPackageExplorerStyle;
+  }
 
-	public void setExitByEscEnabled(boolean isExitByEscEnabled) {
-		this.isExitByEscEnabled = isExitByEscEnabled;
-	}
+  public void setDiscordIntegration(boolean isDiscordIntegrationEnabled) {
+    this.isDiscordIntegrationEnabled = isDiscordIntegrationEnabled;
+  }
 
-	public int getFont_size() {
-		return font_size;
-	}
+  public boolean isFilterOutInnerClassEntries() {
+    return isFilterOutInnerClassEntries;
+  }
 
-	public void setFont_size(int font_size) {
-		this.font_size = font_size;
-	}
+  public void setFilterOutInnerClassEntries(boolean isFilterOutInnerClassEntries) {
+    this.isFilterOutInnerClassEntries = isFilterOutInnerClassEntries;
+  }
+
+  public boolean isSingleClickOpenEnabled() {
+    return isSingleClickOpenEnabled;
+  }
+
+  public void setSingleClickOpenEnabled(boolean isSingleClickOpenEnabled) {
+    this.isSingleClickOpenEnabled = isSingleClickOpenEnabled;
+  }
+
+  public boolean isDiscordIntegrationEnabled() {
+    return isDiscordIntegrationEnabled;
+  }
+
+  public boolean isExitByEscEnabled() {
+    return isExitByEscEnabled;
+  }
+
+  public void setExitByEscEnabled(boolean isExitByEscEnabled) {
+    this.isExitByEscEnabled = isExitByEscEnabled;
+  }
+
+  public int getFont_size() {
+    return font_size;
+  }
+
+  public void setFont_size(int font_size) {
+    this.font_size = font_size;
+  }
 }
