@@ -327,15 +327,17 @@ public class CategoryFacadeImpl implements CategoryFacade {
 	public ReadableCategory getCategoryByFriendlyUrl(MerchantStore store, String friendlyUrl, Language language) throws Exception {
 		Validate.notNull(friendlyUrl, "Category search friendly URL must not be null");
 
+
 		Category category = categoryService.getBySeUrl(store, friendlyUrl, language);
-		
+
 		if(category == null) {
 			throw new ResourceNotFoundException("Category with friendlyUrl [" + friendlyUrl + "] was not found");
 		}
 		
 		ReadableCategoryPopulator categoryPopulator = new ReadableCategoryPopulator();
 		ReadableCategory readableCategory = new ReadableCategory();
-
+		
+		
 		categoryPopulator.populate(category, readableCategory, store, language);
 
 		return readableCategory;
