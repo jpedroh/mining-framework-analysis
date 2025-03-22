@@ -137,7 +137,7 @@ public class Order   {
   **/
   @ApiModelProperty(value = "")
 
-  @Valid
+  @Valid @Valid
   public OffsetDateTime getShipDate() {
     return shipDate;
   }

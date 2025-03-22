@@ -280,7 +280,7 @@ public class FormatTest   {
   **/
   @ApiModelProperty(value = "")
 
-  @Valid
+  @Valid @Valid
   public OffsetDateTime getDateTime() {
     return dateTime;
   }
