@@ -90,6 +90,10 @@ public class MongoResource {
                         .artifactStore(artifactStore)
                         .build();
 
+<<<<<<< /usr/src/app/output/bguerout/jongo/ef3b9719963e125da4191c6917e6453edd04c410/src/test/java/org/jongo/util/MongoResource.java/left.java
+||||||| /usr/src/app/output/bguerout/jongo/ef3b9719963e125da4191c6917e6453edd04c410/src/test/java/org/jongo/util/MongoResource.java/base.java
+                Net network = new Net(port, Network.localhostIsIPv6());
+=======
                 Net network = new Net(port, Network.localhostIsIPv6());
                 Version version = getVersion();
 
@@ -99,10 +103,20 @@ public class MongoResource {
                     mongoCmdOptionsBuilder.useStorageEngine("ephemeralForTest");
                 }
 
+>>>>>>> /usr/src/app/output/bguerout/jongo/ef3b9719963e125da4191c6917e6453edd04c410/src/test/java/org/jongo/util/MongoResource.java/right.java
                 IMongodConfig mongodConfig = new MongodConfigBuilder()
+<<<<<<< /usr/src/app/output/bguerout/jongo/ef3b9719963e125da4191c6917e6453edd04c410/src/test/java/org/jongo/util/MongoResource.java/left.java
+                        .version(getVersion())
+                        .cmdOptions(new MongoCmdOptionsBuilder().useStorageEngine("ephemeralForTest").build())
+                        .net(new Net(port, Network.localhostIsIPv6()))
+||||||| /usr/src/app/output/bguerout/jongo/ef3b9719963e125da4191c6917e6453edd04c410/src/test/java/org/jongo/util/MongoResource.java/base.java
+                        .version(getVersion())
+                        .net(network)
+=======
                         .version(version)
                         .cmdOptions(mongoCmdOptionsBuilder.build())
                         .net(network)
+>>>>>>> /usr/src/app/output/bguerout/jongo/ef3b9719963e125da4191c6917e6453edd04c410/src/test/java/org/jongo/util/MongoResource.java/right.java
                         .build();
 
                 MongodStarter.getInstance(runtimeConfig).prepare(mongodConfig).start();
