@@ -839,10 +839,10 @@ final class ServiceControllerImpl<S> implements ServiceController<S>, Dependent 
     private void propagateTransitiveAvailability(final Dependent[][] dependentsSnapshot) {
         assert Thread.holdsLock(this);
         for (Dependent[] dependentArray : dependentsSnapshot) {
-            for (Dependent dependent : dependentArray) {
-                if (dependent != null) dependent.transitiveDependencyAvailable();
-            }
+        for (Dependent dependent : dependentArray) {
+            if (dependent != null) dependent.transitiveDependencyAvailable();
         }
+    }
     }
 
     @Override
