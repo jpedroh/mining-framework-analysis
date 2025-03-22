@@ -1,29 +1,27 @@
 package org.tdl.vireo.controller;
-
 import static edu.tamu.weaver.response.ApiStatus.ERROR;
 import static edu.tamu.weaver.response.ApiStatus.INVALID;
 import static edu.tamu.weaver.response.ApiStatus.SUCCESS;
-
-import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.tamu.weaver.auth.annotation.WeaverCredentials;
-import edu.tamu.weaver.auth.annotation.WeaverUser;
-import edu.tamu.weaver.auth.model.Credentials;
-import edu.tamu.weaver.data.model.ApiPage;
-import edu.tamu.weaver.response.ApiResponse;
-import edu.tamu.weaver.validation.results.ValidationResults;
 import java.io.ByteArrayOutputStream;
+import com.fasterxml.jackson.annotation.JsonView;
 import java.io.File;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
+import com.fasterxml.jackson.databind.JsonNode;
 import java.io.PrintWriter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
+import edu.tamu.weaver.auth.annotation.WeaverCredentials;
 import java.nio.file.Files;
+import edu.tamu.weaver.auth.annotation.WeaverUser;
 import java.nio.file.Path;
+import edu.tamu.weaver.auth.model.Credentials;
 import java.text.DateFormat;
+import edu.tamu.weaver.data.model.ApiPage;
 import java.text.ParseException;
+import edu.tamu.weaver.response.ApiResponse;
 import java.text.SimpleDateFormat;
+import edu.tamu.weaver.validation.results.ValidationResults;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -101,10 +99,7 @@ import org.tdl.vireo.utility.OrcidUtility;
 import org.tdl.vireo.utility.PackagerUtility;
 import org.tdl.vireo.utility.TemplateUtility;
 
-@RestController
-@RequestMapping("/submission")
-public class SubmissionController {
-
+@RestController @RequestMapping(value = "/submission") public class SubmissionController {
   private static final Logger LOG = LoggerFactory.getLogger(SubmissionController.class);
 
   private static final String STARTING_SUBMISSION_STATUS_NAME = "In Progress";
@@ -113,85 +108,57 @@ public class SubmissionController {
 
   private static final String CORRECTIONS_RECEIVED_SUBMISSION_STATUS_NAME = "Corrections Received";
 
-  @Autowired
-  private UserRepo userRepo;
+  @Autowired private UserRepo userRepo;
 
-  @Autowired
-  private SubmissionRepo submissionRepo;
+  @Autowired private SubmissionRepo submissionRepo;
 
-  @Autowired
-  private FieldValueRepo fieldValueRepo;
+  @Autowired private FieldValueRepo fieldValueRepo;
 
-  @Autowired
-  private SubmissionFieldProfileRepo submissionFieldProfileRepo;
+  @Autowired private SubmissionFieldProfileRepo submissionFieldProfileRepo;
 
-  @Autowired
-  private NamedSearchFilterGroupRepo namedSearchFilterGroupRepo;
+  @Autowired private NamedSearchFilterGroupRepo namedSearchFilterGroupRepo;
 
-  @Autowired
-  private OrganizationRepo organizationRepo;
+  @Autowired private OrganizationRepo organizationRepo;
 
-  @Autowired
-  private SubmissionStatusRepo submissionStatusRepo;
+  @Autowired private SubmissionStatusRepo submissionStatusRepo;
 
-  @Autowired
-  private CustomActionDefinitionRepo customActionDefinitionRepo;
+  @Autowired private CustomActionDefinitionRepo customActionDefinitionRepo;
 
-  @Autowired
-  private SubmissionEmailService submissionEmailService;
+  @Autowired private SubmissionEmailService submissionEmailService;
 
-  @Autowired
-  private TemplateUtility templateUtility;
+  @Autowired private TemplateUtility templateUtility;
 
-  @Autowired
-  private AssetService assetService;
+  @Autowired private AssetService assetService;
 
-  @Autowired
-  private ConfigurationRepo configurationRepo;
+  @Autowired private ConfigurationRepo configurationRepo;
 
-  @Autowired
-  private ActionLogRepo actionLogRepo;
+  @Autowired private ActionLogRepo actionLogRepo;
 
-  @Autowired
-  private DepositLocationRepo depositLocationRepo;
+  @Autowired private DepositLocationRepo depositLocationRepo;
 
-  @Autowired
-  private DepositorService depositorService;
+  @Autowired private DepositorService depositorService;
 
-  @Autowired
-  private PackagerUtility packagerUtility;
+  @Autowired private PackagerUtility packagerUtility;
 
-  @Autowired
-  private SimpMessagingTemplate simpMessagingTemplate;
+  @Autowired private SimpMessagingTemplate simpMessagingTemplate;
 
-  @Autowired
-  private ObjectMapper objectMapper;
+  @Autowired private ObjectMapper objectMapper;
 
-  @Autowired
-  private CustomActionValueRepo customActionValueRepo;
+  @Autowired private CustomActionValueRepo customActionValueRepo;
 
-  @Value("${app.document.folder:private}")
-  private String documentFolder;
+  @Value(value = "${app.document.folder:private}") private String documentFolder;
 
-  @Value("${app.documentType.rename:}")
-  private String documentTypesToRename;
+  @Value(value = "${app.documentType.rename:}") private String documentTypesToRename;
 
-  @RequestMapping("/all")
-  @PreAuthorize("hasRole('ADMIN')")
-  public ApiResponse getAll() {
+  @RequestMapping(value = "/all") @PreAuthorize(value = "hasRole(\'ADMIN\')") public ApiResponse getAll() {
     return new ApiResponse(SUCCESS, submissionRepo.findAll());
   }
 
-  @RequestMapping("/all-by-user")
-  @PreAuthorize("hasRole('STUDENT')")
-  public ApiResponse getAllByUser(@WeaverUser User user) {
+  @RequestMapping(value = "/all-by-user") @PreAuthorize(value = "hasRole(\'STUDENT\')") public ApiResponse getAllByUser(@WeaverUser User user) {
     return new ApiResponse(SUCCESS, submissionRepo.findAllBySubmitterId(user.getId()));
   }
 
-  @JsonView(Views.SubmissionIndividualActionLogs.class)
-  @RequestMapping("/get-one/{submissionId}")
-  @PreAuthorize("hasRole('STUDENT')")
-  public ApiResponse getOne(@WeaverUser User user, @PathVariable Long submissionId) {
+  @JsonView(value = Views.SubmissionIndividualActionLogs.class) @RequestMapping(value = "/get-one/{submissionId}") @PreAuthorize(value = "hasRole(\'STUDENT\')") public ApiResponse getOne(@WeaverUser User user, @PathVariable Long submissionId) {
     Submission submission = null;
     if (user.getRole().ordinal() <= Role.ROLE_REVIEWER.ordinal()) {
       submission = submissionRepo.read(submissionId);
@@ -204,915 +171,726 @@ public class SubmissionController {
     return new ApiResponse(SUCCESS, submission);
   }
 
-    @GetMapping("/get-one/{submissionId}/action-logs")
-    @PreAuthorize("hasRole('STUDENT')")
-    public ApiResponse getActionLogs(@WeaverUser User user, @PathVariable Long submissionId, @PageableDefault(direction = Direction.DESC, sort = { "action_date" }) Pageable pageable) {
-        return new ApiResponse(SUCCESS, actionLogRepo.getAllActionLogs(submissionId, false, pageable));
-    }
+  @GetMapping(value = "/get-one/{submissionId}/action-logs") @PreAuthorize(value = "hasRole(\'STUDENT\')") public ApiResponse getActionLogs(@WeaverUser User user, @PathVariable Long submissionId, @PageableDefault(direction = Direction.DESC, sort = { "action_date" }) Pageable pageable) {
+    return new ApiResponse(SUCCESS, actionLogRepo.getAllActionLogs(submissionId, false, pageable));
+  }
 
-    @JsonView(Views.SubmissionIndividual.class)
-    @RequestMapping("/advisor-review/{advisorAccessHash}")
-    public ApiResponse getOne(@PathVariable String advisorAccessHash) {
-        return new ApiResponse(SUCCESS, submissionRepo.findOneByAdvisorAccessHash(advisorAccessHash));
-    }
+  @JsonView(value = Views.SubmissionIndividual.class) @RequestMapping(value = "/advisor-review/{advisorAccessHash}") public ApiResponse getOne(@PathVariable String advisorAccessHash) {
+    return new ApiResponse(SUCCESS, submissionRepo.findOneByAdvisorAccessHash(advisorAccessHash));
+  }
 
-    @GetMapping("/advisor-review/{advisorAccessHash}/action-logs")
-    public ApiResponse getActionLogsForAdvisement(@PathVariable String advisorAccessHash, @PageableDefault(direction = Direction.DESC, sort = { "action_date" }) Pageable pageable) {
-        return new ApiResponse(SUCCESS, actionLogRepo.getAllActionLogs(advisorAccessHash, false, pageable));
-    }
+  @GetMapping(value = "/advisor-review/{advisorAccessHash}/action-logs") public ApiResponse getActionLogsForAdvisement(@PathVariable String advisorAccessHash, @PageableDefault(direction = Direction.DESC, sort = { "action_date" }) Pageable pageable) {
+    return new ApiResponse(SUCCESS, actionLogRepo.getAllActionLogs(advisorAccessHash, false, pageable));
+  }
 
-  @RequestMapping(value = "/create", method = RequestMethod.POST)
-  @PreAuthorize("hasRole('STUDENT')")
-  public ApiResponse createSubmission(@WeaverUser User user, @WeaverCredentials Credentials credentials,
-      @RequestBody Map<String, String> data) throws OrganizationDoesNotAcceptSubmissionsException {
-
-    Submission submission = submissionRepo.create(
-      user,
-      organizationRepo.read(Long.valueOf(data.get("organizationId"))),
-      submissionStatusRepo.findByName(STARTING_SUBMISSION_STATUS_NAME),
-      credentials,
-      customActionDefinitionRepo.findAll()
-    );
+  @RequestMapping(value = "/create", method = RequestMethod.POST) @PreAuthorize(value = "hasRole(\'STUDENT\')") public ApiResponse createSubmission(@WeaverUser User user, @WeaverCredentials Credentials credentials, @RequestBody Map<String, String> data) throws OrganizationDoesNotAcceptSubmissionsException {
+    Submission submission = submissionRepo.create(user, organizationRepo.read(Long.valueOf(data.get("organizationId"))), submissionStatusRepo.findByName(STARTING_SUBMISSION_STATUS_NAME), credentials, customActionDefinitionRepo.findAll());
     actionLogRepo.createPublicLog(submission, user, "Submission created.");
-
     return new ApiResponse(SUCCESS, submission);
   }
 
-  @Transactional
-  @RequestMapping("/delete/{submissionId}")
-  @PreAuthorize("hasRole('STUDENT')")
-  public ApiResponse deleteSubmission(@WeaverUser User user, @PathVariable Long submissionId) {
+  @Transactional @RequestMapping(value = "/delete/{submissionId}") @PreAuthorize(value = "hasRole(\'STUDENT\')") public ApiResponse deleteSubmission(@WeaverUser User user, @PathVariable Long submissionId) {
     Submission submissionToDelete = submissionRepo.read(submissionId);
-
     ApiResponse response = new ApiResponse(SUCCESS);
-    if (submissionToDelete.getSubmitter().getEmail().equals(user.getEmail())
-        || user.getRole().ordinal() <= Role.ROLE_MANAGER.ordinal()) {
+    if (submissionToDelete.getSubmitter().getEmail().equals(user.getEmail()) || user.getRole().ordinal() <= Role.ROLE_MANAGER.ordinal()) {
       submissionRepo.delete(submissionToDelete);
     } else {
       response = new ApiResponse(ERROR, "Insufficient permisions to delete this submission.");
     }
-
     return response;
   }
 
-  @RequestMapping(value = "/{submissionId}/add-comment", method = RequestMethod.POST)
-  @PreAuthorize("hasRole('STUDENT')")
-  public ApiResponse addComment(@WeaverUser User user, @PathVariable Long submissionId,
-      @RequestBody Map<String, Object> data) throws JsonProcessingException, IOException {
-
+  @RequestMapping(value = "/{submissionId}/add-comment", method = RequestMethod.POST) @PreAuthorize(value = "hasRole(\'STUDENT\')") public ApiResponse addComment(@WeaverUser User user, @PathVariable Long submissionId, @RequestBody Map<String, Object> data) throws JsonProcessingException, IOException {
     Submission submission = submissionRepo.read(submissionId);
-
     String commentVisibility = data.get("commentVisibility") != null ? (String) data.get("commentVisibility") : "public";
     Boolean sendEmailToRecipient = data.get("sendEmailToRecipient") != null ? (Boolean) data.get("sendEmailToRecipient") : true;
-
     data.forEach((key, value) -> System.out.println(key + ":" + value));
-
     if (commentVisibility.equals("public")) {
-        if (sendEmailToRecipient.equals(true)) {
-            submissionEmailService.sendAutomatedEmails(user, submission.getId(), data);
-        } else{
-            String subject = (String) data.get("subject");
-            String templatedMessage = templateUtility.compileString((String) data.get("message"), submission);
-            actionLogRepo.createPublicLog(submission, user, subject + ": " + templatedMessage);
-        }   
+      if (sendEmailToRecipient.equals(true)) {
+        submissionEmailService.sendAutomatedEmails(user, submission.getId(), data);
+      } else {
+        String subject = (String) data.get("subject");
+        String templatedMessage = templateUtility.compileString((String) data.get("message"), submission);
+        actionLogRepo.createPublicLog(submission, user, subject + ": " + templatedMessage);
+      }
     } else {
       String subject = (String) data.get("subject");
       String templatedMessage = templateUtility.compileString((String) data.get("message"), submission);
       actionLogRepo.createPrivateLog(submission, user, subject + ": " + templatedMessage);
     }
-
     return new ApiResponse(SUCCESS);
   }
 
-    @RequestMapping(value = "/{submissionId}/send-email", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('REVIEWER')")
-    public ApiResponse sendEmail(@WeaverUser User user, @PathVariable Long submissionId,
-        @RequestBody Map<String, Object> data) throws JsonProcessingException, IOException {
+  @RequestMapping(value = "/{submissionId}/send-email", method = RequestMethod.POST) @PreAuthorize(value = "hasRole(\'REVIEWER\')") public ApiResponse sendEmail(@WeaverUser User user, @PathVariable Long submissionId, @RequestBody Map<String, Object> data) throws JsonProcessingException, IOException {
+    submissionEmailService.sendAutomatedEmails(user, submissionId, data);
+    return new ApiResponse(SUCCESS);
+  }
 
-        submissionEmailService.sendAutomatedEmails(user, submissionId, data);
-        return new ApiResponse(SUCCESS);
-    }
-
-    @RequestMapping(value = "/batch-comment")
-    @PreAuthorize("hasRole('REVIEWER')")
-    public ApiResponse batchComment(@WeaverUser User user, @RequestBody Map<String, Object> data) {
-        submissionRepo.batchDynamicSubmissionQuery(user.getActiveFilter(), user.getSubmissionViewColumns()).forEach(sub -> {
-
-            String commentVisibility = data.get("commentVisibility") != null ? (String) data.get("commentVisibility") : "public";
-            Boolean sendEmailToRecipient = data.get("sendEmailToRecipient") != null ? (Boolean) data.get("sendEmailToRecipient") : true;
-
-            data.forEach((key, value) -> System.out.println(key + ":" + value));
-
-            if (commentVisibility.equals("public")) {
-                if (sendEmailToRecipient.equals(true)) {
-                    try {
-                        submissionEmailService.sendAutomatedEmails(user, sub.getId(), data);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    String subject = (String) data.get("subject");
-                    String templatedMessage = templateUtility.compileString((String) data.get("message"), sub);
-                    actionLogRepo.createPublicLog(sub, user, subject + ": " + templatedMessage);
-                }
-            } else {
-              String subject = (String) data.get("subject");
-              String templatedMessage = templateUtility.compileString((String) data.get("message"), sub);
-              actionLogRepo.createPrivateLog(sub, user, subject + ": " + templatedMessage);
-            }
-        });
-
-        return new ApiResponse(SUCCESS);
-    }
-
-    @RequestMapping(value = "/{submissionId}/update-field-value/{fieldProfileId}", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('STUDENT')")
-    public ApiResponse updateFieldValue(@WeaverUser User user, @PathVariable Long submissionId, @PathVariable String fieldProfileId, @RequestBody FieldValue fieldValue) {
-        ApiResponse apiResponse = null;
-        SubmissionFieldProfile submissionFieldProfile = submissionFieldProfileRepo.findById(Long.parseLong(fieldProfileId)).get();
-        ValidationResults validationResults = getValidationResults(submissionFieldProfile.getId().toString(), fieldValue);
-        if (validationResults.isValid()) {
-            Map<String, String> orcidErrors = new HashMap<String, String>();
-            if (isOrcidVerificationActive(submissionFieldProfile, fieldValue)) {
-                orcidErrors = OrcidUtility.verifyOrcid(user, fieldValue);
-            }
-            if (orcidErrors.isEmpty()) {
-                Submission submission = submissionRepo.read(submissionId);
-                if (fieldValue.getId() == null) {
-
-                    fieldValue = fieldValueRepo.save(fieldValue);
-                    submission.addFieldValue(fieldValue);
-                    submission = submissionRepo.save(submission);
-
-                    if (submissionFieldProfile.getLogged()) {
-                        actionLogRepo.createPublicLog(submission, user, submissionFieldProfile.getGloss() + " was set to " + fieldValue.getValue());
-                    }
-
-                } else {
-
-                    FieldValue oldFieldValue = fieldValueRepo.findById(fieldValue.getId()).get();
-                    String oldValue = oldFieldValue.getValue();
-                    fieldValue = fieldValueRepo.save(fieldValue);
-
-                    if (submissionFieldProfile.getLogged()) {
-                        actionLogRepo.createPublicLog(submission, user, submissionFieldProfile.getGloss() + " was changed from " + convertBoolean(oldValue) + " to " + convertBoolean(fieldValue.getValue()));
-                    }
-
-                }
-                apiResponse = new ApiResponse(SUCCESS, fieldValue);
-
-                simpMessagingTemplate.convertAndSend("/channel/submission/" + submission.getId() + "/field-values", apiResponse);
-
-            } else {
-                Map<String, Map<String, String>> orcidErrorsMap = new HashMap<String, Map<String, String>>();
-                orcidErrorsMap.put("value", orcidErrors);
-                apiResponse = new ApiResponse(INVALID, orcidErrorsMap);
-            }
+  @RequestMapping(value = "/batch-comment") @PreAuthorize(value = "hasRole(\'REVIEWER\')") public ApiResponse batchComment(@WeaverUser User user, @RequestBody Map<String, Object> data) {
+    submissionRepo.batchDynamicSubmissionQuery(user.getActiveFilter(), user.getSubmissionViewColumns()).forEach((sub) -> {
+      String commentVisibility = data.get("commentVisibility") != null ? (String) data.get("commentVisibility") : "public";
+      Boolean sendEmailToRecipient = data.get("sendEmailToRecipient") != null ? (Boolean) data.get("sendEmailToRecipient") : true;
+      data.forEach((key, value) -> System.out.println(key + ":" + value));
+      if (commentVisibility.equals("public")) {
+        if (sendEmailToRecipient.equals(true)) {
+          try {
+            submissionEmailService.sendAutomatedEmails(user, sub.getId(), data);
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
         } else {
-            apiResponse = new ApiResponse(INVALID, validationResults.getMessages());
+          String subject = (String) data.get("subject");
+          String templatedMessage = templateUtility.compileString((String) data.get("message"), sub);
+          actionLogRepo.createPublicLog(sub, user, subject + ": " + templatedMessage);
         }
+      } else {
+        String subject = (String) data.get("subject");
+        String templatedMessage = templateUtility.compileString((String) data.get("message"), sub);
+        actionLogRepo.createPrivateLog(sub, user, subject + ": " + templatedMessage);
+      }
+    });
+    return new ApiResponse(SUCCESS);
+  }
 
-        return apiResponse;
-    }
-
-    private String convertBoolean(final String value) {
-        String result = value;
-        if (result.equals("true")) {
-            result = "Yes";
-        } else if (result.equals("false")) {
-            result = "No";
-        }
-        return result;
-    }
-
-    @RequestMapping(value = "/{submissionId}/validate-field-value/{fieldProfileId}", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('STUDENT')")
-    public ApiResponse validateFieldValue(@WeaverUser User user, @PathVariable Long submissionId, @PathVariable String fieldProfileId, @RequestBody FieldValue fieldValue) {
-        ApiResponse apiResponse = null;
-        SubmissionFieldProfile submissionFieldProfile = submissionFieldProfileRepo.findById(Long.parseLong(fieldProfileId)).get();
-        ValidationResults validationResults = getValidationResults(submissionFieldProfile.getId().toString(), fieldValue);
-        if (validationResults.isValid()) {
-            apiResponse = new ApiResponse(SUCCESS, validationResults.getMessages());
-        } else {
-            apiResponse = new ApiResponse(INVALID, validationResults.getMessages());
-        }
-        return apiResponse;
-    }
-
-    private ValidationResults getValidationResults(String fieldProfileId, FieldValue fieldValue) {
-        fieldValue.setModelValidator(new FieldValueValidator(submissionFieldProfileRepo.findById(Long.parseLong(fieldProfileId)).get()));
-        return fieldValue.validate(fieldValue);
-    }
-
-    private boolean isOrcidVerificationActive(SubmissionFieldProfile submissionFieldProfile, FieldValue fieldValue) {
-        return submissionFieldProfile.getInputType().getName().equals("INPUT_ORCID") && configurationRepo.getByNameAndType("orcid_authentication", "orcid").getValue().toLowerCase().equals("true");
-    }
-
-    @RequestMapping(value = "/{submissionId}/update-custom-action-value", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('REVIEWER')")
-    public ApiResponse updateCustomActionValue(@WeaverUser User user, @PathVariable("submissionId") Long submissionId, @RequestBody CustomActionValue customActionValue) {
-        Submission submission = submissionRepo.findById(submissionId).get();
-        ApiResponse response = new ApiResponse(SUCCESS, customActionValueRepo.update(customActionValue));
-        actionLogRepo.createPublicLog(submission, user, "Custom action " + customActionValue.getDefinition().getLabel() + " " + (customActionValue.getValue() ? "set" : "unset"));
-        simpMessagingTemplate.convertAndSend("/channel/submission/" + submission.getId() + "/custom-action-values", response);
-        return response;
-    }
-
-    @RequestMapping("/{submissionId}/change-status/{submissionStatusName}")
-    @PreAuthorize("hasRole('STUDENT')")
-    public ApiResponse changeStatus(@WeaverUser User user, @PathVariable Long submissionId, @PathVariable String submissionStatusName) {
+  @RequestMapping(value = "/{submissionId}/update-field-value/{fieldProfileId}", method = RequestMethod.POST) @PreAuthorize(value = "hasRole(\'STUDENT\')") public ApiResponse updateFieldValue(@WeaverUser User user, @PathVariable Long submissionId, @PathVariable String fieldProfileId, @RequestBody FieldValue fieldValue) {
+    ApiResponse apiResponse = null;
+    SubmissionFieldProfile submissionFieldProfile = submissionFieldProfileRepo.findById(Long.parseLong(fieldProfileId)).get();
+    ValidationResults validationResults = getValidationResults(submissionFieldProfile.getId().toString(), fieldValue);
+    if (validationResults.isValid()) {
+      Map<String, String> orcidErrors = new HashMap<String, String>();
+      if (isOrcidVerificationActive(submissionFieldProfile, fieldValue)) {
+        orcidErrors = OrcidUtility.verifyOrcid(user, fieldValue);
+      }
+      if (orcidErrors.isEmpty()) {
         Submission submission = submissionRepo.read(submissionId);
-        ApiResponse response;
-        if (submission != null) {
-            SubmissionStatus submissionStatus = submissionStatusRepo.findByName(submissionStatusName);
-            if (submissionStatus != null) {
-                submission = submissionRepo.updateStatus(submission, submissionStatus, user);
-                response = new ApiResponse(SUCCESS, submission);
-            } else {
-                response = new ApiResponse(ERROR, "Could not find a submission status name " + submissionStatusName);
-            }
-            submissionEmailService.sendWorkflowEmails(user, submission.getId());
+        if (fieldValue.getId() == null) {
+          fieldValue = fieldValueRepo.save(fieldValue);
+          submission.addFieldValue(fieldValue);
+          submission = submissionRepo.save(submission);
+          if (submissionFieldProfile.getLogged()) {
+            actionLogRepo.createPublicLog(submission, user, submissionFieldProfile.getGloss() + " was set to " + fieldValue.getValue());
+          }
         } else {
-            response = new ApiResponse(ERROR, "Could not find a submission with ID " + submissionId);
+          FieldValue oldFieldValue = fieldValueRepo.findById(fieldValue.getId()).get();
+          String oldValue = oldFieldValue.getValue();
+          fieldValue = fieldValueRepo.save(fieldValue);
+          if (submissionFieldProfile.getLogged()) {
+            actionLogRepo.createPublicLog(submission, user, submissionFieldProfile.getGloss() + " was changed from " + convertBoolean(oldValue) + " to " + convertBoolean(fieldValue.getValue()));
+          }
         }
-
-        return response;
+        apiResponse = new ApiResponse(SUCCESS, fieldValue);
+        simpMessagingTemplate.convertAndSend("/channel/submission/" + submission.getId() + "/field-values", apiResponse);
+      } else {
+        Map<String, Map<String, String>> orcidErrorsMap = new HashMap<String, Map<String, String>>();
+        orcidErrorsMap.put("value", orcidErrors);
+        apiResponse = new ApiResponse(INVALID, orcidErrorsMap);
+      }
+    } else {
+      apiResponse = new ApiResponse(INVALID, validationResults.getMessages());
     }
+    return apiResponse;
+  }
 
-    @RequestMapping("/batch-update-status/{submissionStatusName}")
-    @PreAuthorize("hasRole('REVIEWER')")
-    public ApiResponse batchUpdateSubmissionStatuses(@WeaverUser User user, @PathVariable String submissionStatusName) {
-        submissionRepo.batchDynamicSubmissionQuery(user.getActiveFilter(), user.getSubmissionViewColumns()).forEach(submission -> {
-            SubmissionStatus submissionStatus = submissionStatusRepo.findByName(submissionStatusName);
+  private String convertBoolean(final String value) {
+    String result = value;
+    if (result.equals("true")) {
+      result = "Yes";
+    } else {
+      if (result.equals("false")) {
+        result = "No";
+      }
+    }
+    return result;
+  }
+
+  @RequestMapping(value = "/{submissionId}/validate-field-value/{fieldProfileId}", method = RequestMethod.POST) @PreAuthorize(value = "hasRole(\'STUDENT\')") public ApiResponse validateFieldValue(@WeaverUser User user, @PathVariable Long submissionId, @PathVariable String fieldProfileId, @RequestBody FieldValue fieldValue) {
+    ApiResponse apiResponse = null;
+    SubmissionFieldProfile submissionFieldProfile = submissionFieldProfileRepo.findById(Long.parseLong(fieldProfileId)).get();
+    ValidationResults validationResults = getValidationResults(submissionFieldProfile.getId().toString(), fieldValue);
+    if (validationResults.isValid()) {
+      apiResponse = new ApiResponse(SUCCESS, validationResults.getMessages());
+    } else {
+      apiResponse = new ApiResponse(INVALID, validationResults.getMessages());
+    }
+    return apiResponse;
+  }
+
+  private ValidationResults getValidationResults(String fieldProfileId, FieldValue fieldValue) {
+    fieldValue.setModelValidator(new FieldValueValidator(submissionFieldProfileRepo.findById(Long.parseLong(fieldProfileId)).get()));
+    return fieldValue.validate(fieldValue);
+  }
+
+  private boolean isOrcidVerificationActive(SubmissionFieldProfile submissionFieldProfile, FieldValue fieldValue) {
+    return submissionFieldProfile.getInputType().getName().equals("INPUT_ORCID") && configurationRepo.getByNameAndType("orcid_authentication", "orcid").getValue().toLowerCase().equals("true");
+  }
+
+  @RequestMapping(value = "/{submissionId}/update-custom-action-value", method = RequestMethod.POST) @PreAuthorize(value = "hasRole(\'REVIEWER\')") public ApiResponse updateCustomActionValue(@WeaverUser User user, @PathVariable(value = "submissionId") Long submissionId, @RequestBody CustomActionValue customActionValue) {
+    Submission submission = submissionRepo.findById(submissionId).get();
+    ApiResponse response = new ApiResponse(SUCCESS, customActionValueRepo.update(customActionValue));
+    actionLogRepo.createPublicLog(submission, user, "Custom action " + customActionValue.getDefinition().getLabel() + " " + (customActionValue.getValue() ? "set" : "unset"));
+    simpMessagingTemplate.convertAndSend("/channel/submission/" + submission.getId() + "/custom-action-values", response);
+    return response;
+  }
+
+  @RequestMapping(value = "/{submissionId}/change-status/{submissionStatusName}") @PreAuthorize(value = "hasRole(\'STUDENT\')") public ApiResponse changeStatus(@WeaverUser User user, @PathVariable Long submissionId, @PathVariable String submissionStatusName) {
+    Submission submission = submissionRepo.read(submissionId);
+    ApiResponse response;
+    if (submission != null) {
+      SubmissionStatus submissionStatus = submissionStatusRepo.findByName(submissionStatusName);
+      if (submissionStatus != null) {
+        submission = submissionRepo.updateStatus(submission, submissionStatus, user);
+        response = new ApiResponse(SUCCESS, submission);
+      } else {
+        response = new ApiResponse(ERROR, "Could not find a submission status name " + submissionStatusName);
+      }
+      submissionEmailService.sendWorkflowEmails(user, submission.getId());
+    } else {
+      response = new ApiResponse(ERROR, "Could not find a submission with ID " + submissionId);
+    }
+    return response;
+  }
+
+  @RequestMapping(value = "/batch-update-status/{submissionStatusName}") @PreAuthorize(value = "hasRole(\'REVIEWER\')") public ApiResponse batchUpdateSubmissionStatuses(@WeaverUser User user, @PathVariable String submissionStatusName) {
+    submissionRepo.batchDynamicSubmissionQuery(user.getActiveFilter(), user.getSubmissionViewColumns()).forEach((submission) -> {
+      SubmissionStatus submissionStatus = submissionStatusRepo.findByName(submissionStatusName);
+      submission = submissionRepo.updateStatus(submission, submissionStatus, user);
+      submissionEmailService.sendWorkflowEmails(user, submission.getId());
+    });
+    return new ApiResponse(SUCCESS);
+  }
+
+  @RequestMapping(value = "/{submissionId}/publish/{depositLocationId}") @PreAuthorize(value = "hasRole(\'REVIEWER\')") public ApiResponse publish(@WeaverUser User user, @PathVariable Long submissionId, @PathVariable Long depositLocationId) throws Exception {
+    Submission submission = submissionRepo.read(submissionId);
+    ApiResponse response;
+    if (submission != null) {
+      SubmissionStatus submissionStatus = submissionStatusRepo.findByName("Published");
+      if (submissionStatus != null) {
+        DepositLocation depositLocation = depositLocationRepo.findById(depositLocationId).get();
+        if (depositLocation != null) {
+          Depositor depositor = depositorService.getDepositor(depositLocation.getDepositorName());
+          if (depositor != null) {
+            ExportPackage exportPackage = packagerUtility.packageExport(depositLocation.getPackager(), submission);
+            String depositURL = depositor.deposit(depositLocation, exportPackage);
+            submission.setDepositURL(depositURL);
             submission = submissionRepo.updateStatus(submission, submissionStatus, user);
-            submissionEmailService.sendWorkflowEmails(user, submission.getId());
-        });
-        return new ApiResponse(SUCCESS);
-    }
-
-    @RequestMapping("/{submissionId}/publish/{depositLocationId}")
-    @PreAuthorize("hasRole('REVIEWER')")
-    public ApiResponse publish(@WeaverUser User user, @PathVariable Long submissionId, @PathVariable Long depositLocationId) throws Exception {
-        Submission submission = submissionRepo.read(submissionId);
-
-        ApiResponse response;
-        if (submission != null) {
-
-            SubmissionStatus submissionStatus = submissionStatusRepo.findByName("Published");
-            if (submissionStatus != null) {
-
-                DepositLocation depositLocation = depositLocationRepo.findById(depositLocationId).get();
-
-                if (depositLocation != null) {
-
-                    Depositor depositor = depositorService.getDepositor(depositLocation.getDepositorName());
-
-                    if (depositor != null) {
-                        ExportPackage exportPackage = packagerUtility.packageExport(depositLocation.getPackager(), submission);
-                        String depositURL = depositor.deposit(depositLocation, exportPackage);
-                        submission.setDepositURL(depositURL);
-                        submission = submissionRepo.updateStatus(submission, submissionStatus, user);
-                        response = new ApiResponse(SUCCESS, submission);
-                    } else {
-                        response = new ApiResponse(ERROR, "Could not find a depositor name " + depositLocation.getDepositorName());
-                    }
-                } else {
-                    response = new ApiResponse(ERROR, "Could not find a deposite location id " + depositLocationId);
-                }
-            } else {
-                response = new ApiResponse(ERROR, "Could not find a submission status name Published");
-            }
-
-            submissionEmailService.sendWorkflowEmails(user, submission.getId());
+            response = new ApiResponse(SUCCESS, submission);
+          } else {
+            response = new ApiResponse(ERROR, "Could not find a depositor name " + depositLocation.getDepositorName());
+          }
         } else {
-            response = new ApiResponse(ERROR, "Could not find a submission with ID " + submissionId);
+          response = new ApiResponse(ERROR, "Could not find a deposite location id " + depositLocationId);
         }
-
-        return response;
+      } else {
+        response = new ApiResponse(ERROR, "Could not find a submission status name Published");
+      }
+      submissionEmailService.sendWorkflowEmails(user, submission.getId());
+    } else {
+      response = new ApiResponse(ERROR, "Could not find a submission with ID " + submissionId);
     }
+    return response;
+  }
 
-    @PreAuthorize("hasRole('REVIEWER')")
-    @RequestMapping("/batch-export/{packagerName}/{filterId}")
-    public void batchExportWithFilter(HttpServletResponse response, @WeaverUser User user, @PathVariable String packagerName, @PathVariable Long filterId) throws IOException {
-        NamedSearchFilterGroup filter = namedSearchFilterGroupRepo.findById(filterId).get();
-        processBatchExport(response, user, packagerName, filter);
+  @PreAuthorize(value = "hasRole(\'REVIEWER\')") @RequestMapping(value = "/batch-export/{packagerName}/{filterId}") public void batchExportWithFilter(HttpServletResponse response, @WeaverUser User user, @PathVariable String packagerName, @PathVariable Long filterId) throws IOException {
+    NamedSearchFilterGroup filter = namedSearchFilterGroupRepo.findById(filterId).get();
+    processBatchExport(response, user, packagerName, filter);
+  }
+
+  @PreAuthorize(value = "hasRole(\'REVIEWER\')") @RequestMapping(value = "/batch-export/{packagerName}") public void batchExport(HttpServletResponse response, @WeaverUser User user, @PathVariable String packagerName) throws IOException {
+    NamedSearchFilterGroup activeFilter = user.getActiveFilter();
+    processBatchExport(response, user, packagerName, activeFilter);
+  }
+
+  @SuppressWarnings(value = { "unchecked" }) private void processBatchExport(HttpServletResponse response, User user, String packagerName, NamedSearchFilterGroup filter) throws IOException {
+    AbstractPackager<?> packager = packagerUtility.getPackager(packagerName);
+    List<SubmissionListColumn> columns = filter.getColumnsFlag() ? filter.getSavedColumns() : user.getSubmissionViewColumns();
+    switch (packagerName.trim()) {
+      case "Excel":
+      List<Submission> submissions = submissionRepo.batchDynamicSubmissionQuery(filter, columns);
+      HSSFWorkbook workbook = new HSSFWorkbook();
+      HSSFSheet worksheet = workbook.createSheet();
+      int rowCount = 0;
+      HSSFRow header = worksheet.createRow(rowCount++);
+      for (int i = 0; i < columns.size(); i++) {
+        SubmissionListColumn column = columns.get(i);
+        header.createCell(i).setCellValue(column.getTitle());
+      }
+      for (Submission submission : submissions) {
+        ExportPackage exportPackage = packagerUtility.packageExport(packager, submission, columns);
+        if (exportPackage.isMap()) {
+          Map<String, String> rowData = (Map<String, String>) exportPackage.getPayload();
+          HSSFRow row = worksheet.createRow(rowCount++);
+          for (int i = 0; i < columns.size(); i++) {
+            SubmissionListColumn column = columns.get(i);
+            row.createCell(i).setCellValue(rowData.get(column.getTitle()));
+          }
+        }
+      }
+      for (int i = 0; i < columns.size(); i++) {
+        worksheet.autoSizeColumn(i);
+      }
+      response.setContentType(packager.getMimeType());
+      response.setHeader("Content-Disposition", "inline; filename=" + packagerName + "." + packager.getFileExtension());
+      workbook.write(response.getOutputStream());
+      break;
+      case "MarcXML21":
+      case "Marc21":
+      ServletOutputStream sos = response.getOutputStream();
+      try {
+        ZipOutputStream zos = new ZipOutputStream(sos, StandardCharsets.UTF_8);
+        for (Submission submission : submissionRepo.batchDynamicSubmissionQuery(filter, columns)) {
+          StringBuilder contentsText = new StringBuilder();
+          ExportPackage exportPackage = packagerUtility.packageExport(packager, submission);
+          if (exportPackage.isMap()) {
+            for (Map.Entry<String, File> fileEntry : ((Map<String, File>) exportPackage.getPayload()).entrySet()) {
+              if (packagerName.equals("MarcXML21")) {
+                zos.putNextEntry(new ZipEntry("MarcXML21/" + fileEntry.getKey()));
+              } else {
+                zos.putNextEntry(new ZipEntry(fileEntry.getKey()));
+              }
+              contentsText.append("MD " + fileEntry.getKey() + "\n");
+              zos.write(Files.readAllBytes(fileEntry.getValue().toPath()));
+              zos.closeEntry();
+            }
+          }
+        }
+        zos.close();
+        response.setContentType(packager.getMimeType());
+        response.setHeader("Content-Disposition", "inline; filename=" + packagerName + "." + packager.getFileExtension());
+      } catch (Exception e) {
+        LOG.info("Error With Export", e);
+        response.setContentType("application/json");
+        ApiResponse apiResponse = new ApiResponse(ERROR, "Something went wrong with the export!");
+        sos.print(objectMapper.writeValueAsString(apiResponse));
+        sos.close();
+      }
+      break;
+      case "ProQuest":
+      ServletOutputStream sos_pq = response.getOutputStream();
+      try {
+        ZipOutputStream zos = new ZipOutputStream(sos_pq, StandardCharsets.UTF_8);
+        for (Submission submission : submissionRepo.batchDynamicSubmissionQuery(filter, columns)) {
+          List<FieldValue> fieldValues = submission.getFieldValuesByPredicateValue("first_name");
+          Optional<String> firstNameOpt = fieldValues.size() > 0 ? Optional.of(fieldValues.get(0).getValue()) : Optional.empty();
+          String firstName = firstNameOpt.isPresent() ? firstNameOpt.get() : "";
+          firstName = firstName.substring(0, 1).toUpperCase() + firstName.substring(1);
+          fieldValues = submission.getFieldValuesByPredicateValue("last_name");
+          Optional<String> lastNameOpt = fieldValues.size() > 0 ? Optional.of(fieldValues.get(0).getValue()) : Optional.empty();
+          String lastName = lastNameOpt.isPresent() ? lastNameOpt.get() : "";
+          lastName = lastName.substring(0, 1).toUpperCase() + lastName.substring(1);
+          String personName = lastName + "_" + firstName;
+          ByteArrayOutputStream baos = new ByteArrayOutputStream();
+          try (ZipOutputStream b = new ZipOutputStream(baos)) {
+            ExportPackage exportPackage = packagerUtility.packageExport(packager, submission);
+            if (exportPackage.isMap()) {
+              for (Map.Entry<String, File> fileEntry : ((Map<String, File>) exportPackage.getPayload()).entrySet()) {
+                b.putNextEntry(new ZipEntry(personName + "_DATA.xml"));
+                b.write(Files.readAllBytes(fileEntry.getValue().toPath()));
+                b.closeEntry();
+              }
+            }
+            for (FieldValue ldfv : submission.getLicenseDocumentFieldValues()) {
+              Path path = assetService.getAssetsAbsolutePath(ldfv.getValue());
+              byte[] fileBytes = Files.readAllBytes(path);
+              int sfxIndx;
+              String licFileName = ldfv.getFileName();
+              if ((sfxIndx = licFileName.indexOf(".")) > 0) {
+                licFileName = licFileName.substring(0, sfxIndx).toUpperCase() + licFileName.substring(sfxIndx);
+              }
+              b.putNextEntry(new ZipEntry(personName + "_permission/" + licFileName));
+              b.write(fileBytes);
+              b.closeEntry();
+            }
+            FieldValue primaryDoc = submission.getPrimaryDocumentFieldValue();
+            Path path = assetService.getAssetsAbsolutePath(primaryDoc.getValue());
+            byte[] fileBytes = Files.readAllBytes(path);
+            String fName = primaryDoc.getFileName();
+            int fNameIndx = fName.indexOf(".");
+            String fType = "";
+            if (fNameIndx > 0) {
+              fType = fName.substring(fNameIndx);
+            }
+            b.putNextEntry(new ZipEntry(personName + fType));
+            b.write(fileBytes);
+            b.closeEntry();
+          } catch (IOException ioe) {
+            ioe.printStackTrace();
+          }
+          zos.putNextEntry(new ZipEntry("upload_" + personName + ".zip"));
+          baos.close();
+          zos.write(baos.toByteArray());
+          zos.closeEntry();
+        }
+        zos.close();
+        response.setContentType(packager.getMimeType());
+        response.setHeader("Content-Disposition", "inline; filename=" + packagerName + "." + packager.getFileExtension());
+      } catch (Exception e) {
+        LOG.info("Error With Export", e);
+        response.setContentType("application/json");
+        ApiResponse apiResponse = new ApiResponse(ERROR, "Something went wrong with the export!");
+        sos_pq.print(objectMapper.writeValueAsString(apiResponse));
+        sos_pq.close();
+      }
+      break;
+      case "DSpaceMETS":
+      ServletOutputStream sos_mets = response.getOutputStream();
+      try {
+        ZipOutputStream zos = new ZipOutputStream(sos_mets);
+        for (Submission submission : submissionRepo.batchDynamicSubmissionQuery(filter, columns)) {
+          ExportPackage exportPackage = packagerUtility.packageExport(packager, submission);
+          File exportFile = (File) exportPackage.getPayload();
+          byte[] fileBytes = FileUtils.readFileToByteArray(exportFile);
+          zos.putNextEntry(new ZipEntry(exportFile.getName()));
+          zos.write(fileBytes);
+          zos.closeEntry();
+        }
+        zos.close();
+        response.setContentType(packager.getMimeType());
+        response.setHeader("Content-Disposition", "inline; filename=" + packagerName + "." + packager.getFileExtension());
+      } catch (Exception e) {
+        LOG.info("Error With Export", e);
+        response.setContentType("application/json");
+        ApiResponse apiResponse = new ApiResponse(ERROR, "Something went wrong with the export!");
+        sos_mets.print(objectMapper.writeValueAsString(apiResponse));
+        sos_mets.close();
+      }
+      break;
+      case "DSpaceSimple":
+      ServletOutputStream sosDss = response.getOutputStream();
+      try {
+        ZipOutputStream zos = new ZipOutputStream(sosDss);
+        for (Submission submission : submissionRepo.batchDynamicSubmissionQuery(filter, columns)) {
+          String submissionName = "submission_" + submission.getId() + "/";
+          zos.putNextEntry(new ZipEntry(submissionName));
+          StringBuilder contentsText = new StringBuilder();
+          ExportPackage exportPackage = packagerUtility.packageExport(packager, submission);
+          if (exportPackage.isMap()) {
+            for (Map.Entry<String, File> fileEntry : ((Map<String, File>) exportPackage.getPayload()).entrySet()) {
+              zos.putNextEntry(new ZipEntry(submissionName + fileEntry.getKey()));
+              contentsText.append(fileEntry.getKey() + "\n");
+              zos.write(Files.readAllBytes(fileEntry.getValue().toPath()));
+              zos.closeEntry();
+            }
+          }
+          for (FieldValue ldfv : submission.getLicenseDocumentFieldValues()) {
+            Path path = assetService.getAssetsAbsolutePath(ldfv.getValue());
+            byte[] fileBytes = Files.readAllBytes(path);
+            zos.putNextEntry(new ZipEntry(submissionName + ldfv.getFileName()));
+            contentsText.append(ldfv.getFileName() + "\tBUNDLE:LICENSE\n");
+            zos.write(fileBytes);
+            zos.closeEntry();
+          }
+          FieldValue primaryDoc = submission.getPrimaryDocumentFieldValue();
+          Path path = assetService.getAssetsAbsolutePath(primaryDoc.getValue());
+          byte[] fileBytes = Files.readAllBytes(path);
+          zos.putNextEntry(new ZipEntry(submissionName + primaryDoc.getFileName()));
+          contentsText.append(primaryDoc.getFileName() + "\tBUNDLE:CONTENT\tprimary:true\n");
+          zos.write(fileBytes);
+          zos.closeEntry();
+          List<FieldValue> supplDocs = submission.getSupplementalAndSourceDocumentFieldValues();
+          for (FieldValue supplDoc : supplDocs) {
+            Path supplPath = assetService.getAssetsAbsolutePath(supplDoc.getValue());
+            byte[] supplFileBytes = Files.readAllBytes(supplPath);
+            zos.putNextEntry(new ZipEntry(submissionName + supplDoc.getFileName()));
+            contentsText.append(supplDoc.getFileName() + "\tBUNDLE:CONTENT\n");
+            zos.write(supplFileBytes);
+            zos.closeEntry();
+          }
+          zos.putNextEntry(new ZipEntry(submissionName + "contents"));
+          zos.write(contentsText.toString().getBytes());
+          zos.closeEntry();
+          zos.closeEntry();
+        }
+        zos.close();
+        response.setContentType(packager.getMimeType());
+        response.setHeader("Content-Disposition", "inline; filename=" + packagerName + "." + packager.getFileExtension());
+      } catch (Exception e) {
+        LOG.info("Error With Export", e);
+        response.setContentType("application/json");
+        ApiResponse apiResponse = new ApiResponse(ERROR, "Something went wrong with the export!");
+        sosDss.print(objectMapper.writeValueAsString(apiResponse));
+        sosDss.close();
+      }
+      break;
+      default:
+      response.setContentType("application/json");
+      ApiResponse apiResponse = new ApiResponse(ERROR, "No packager " + packagerName + " found!");
+      PrintWriter out = response.getWriter();
+      out.print(objectMapper.writeValueAsString(apiResponse));
+      out.close();
     }
+    response.getOutputStream().close();
+  }
 
-    @PreAuthorize("hasRole('REVIEWER')")
-    @RequestMapping("/batch-export/{packagerName}")
-    public void batchExport(HttpServletResponse response, @WeaverUser User user, @PathVariable String packagerName) throws IOException {
-        NamedSearchFilterGroup activeFilter = user.getActiveFilter();
-        processBatchExport(response, user, packagerName, activeFilter);
-    }
+  @RequestMapping(value = "/batch-assign-to", method = RequestMethod.POST) @PreAuthorize(value = "hasRole(\'REVIEWER\')") public ApiResponse batchAssignTo(@WeaverUser User user, @RequestBody User assignee) {
+    submissionRepo.batchDynamicSubmissionQuery(user.getActiveFilter(), user.getSubmissionViewColumns()).forEach((sub) -> {
+      sub.setAssignee(assignee);
+      actionLogRepo.createPublicLog(sub, user, "Submission was assigned to " + assignee.getFirstName() + " " + assignee.getLastName() + "(" + assignee.getEmail() + ")");
+      submissionRepo.update(sub);
+    });
+    return new ApiResponse(SUCCESS);
+  }
 
-    @SuppressWarnings("unchecked")
-    private void processBatchExport(HttpServletResponse response, User user, String packagerName, NamedSearchFilterGroup filter) throws IOException {
-        AbstractPackager<?> packager = packagerUtility.getPackager(packagerName);
-
-        List<SubmissionListColumn> columns = filter.getColumnsFlag() ? filter.getSavedColumns() : user.getSubmissionViewColumns();
-        switch (packagerName.trim()) {
-        case "Excel":
-            List<Submission> submissions = submissionRepo.batchDynamicSubmissionQuery(filter, columns);
-
-            HSSFWorkbook workbook = new HSSFWorkbook();
-
-            HSSFSheet worksheet = workbook.createSheet();
-
-            int rowCount = 0;
-
-            HSSFRow header = worksheet.createRow(rowCount++);
-
-            for (int i = 0; i < columns.size(); i++) {
-                SubmissionListColumn column = columns.get(i);
-                header.createCell(i).setCellValue(column.getTitle());
-            }
-
-            for (Submission submission : submissions) {
-                ExportPackage exportPackage = packagerUtility.packageExport(packager, submission, columns);
-                if (exportPackage.isMap()) {
-                    Map<String, String> rowData = (Map<String, String>) exportPackage.getPayload();
-                    HSSFRow row = worksheet.createRow(rowCount++);
-                    for (int i = 0; i < columns.size(); i++) {
-                        SubmissionListColumn column = columns.get(i);
-                        row.createCell(i).setCellValue(rowData.get(column.getTitle()));
-                    }
-                }
-            }
-
-            for (int i = 0; i < columns.size(); i++) {
-                worksheet.autoSizeColumn(i);
-            }
-
-            response.setContentType(packager.getMimeType());
-            response.setHeader("Content-Disposition", "inline; filename=" + packagerName + "." + packager.getFileExtension());
-            workbook.write(response.getOutputStream());
-
-            break;
-        case "MarcXML21":
-        case "Marc21":
-            ServletOutputStream sos = response.getOutputStream();
-
+  @RequestMapping(value = "/batch-publish/{depositLocationId}") @PreAuthorize(value = "hasRole(\'REVIEWER\')") public ApiResponse batchPublish(@WeaverUser User user, @PathVariable Long depositLocationId) {
+    ApiResponse response = new ApiResponse(SUCCESS);
+    SubmissionStatus submissionStatus = submissionStatusRepo.findByName("Published");
+    if (submissionStatus != null) {
+      DepositLocation depositLocation = depositLocationRepo.findById(depositLocationId).get();
+      if (depositLocation != null) {
+        Depositor depositor = depositorService.getDepositor(depositLocation.getDepositorName());
+        if (depositor != null) {
+          for (Submission submission : submissionRepo.batchDynamicSubmissionQuery(user.getActiveFilter(), user.getSubmissionViewColumns())) {
             try {
-                ZipOutputStream zos = new ZipOutputStream(sos, StandardCharsets.UTF_8);
-
-                for (Submission submission : submissionRepo.batchDynamicSubmissionQuery(filter, columns)) {
-
-                    StringBuilder contentsText = new StringBuilder();
-                    ExportPackage exportPackage = packagerUtility.packageExport(packager, submission);
-                    if (exportPackage.isMap()) {
-                        for (Map.Entry<String, File> fileEntry : ((Map<String, File>) exportPackage.getPayload()).entrySet()) {
-                            if (packagerName.equals("MarcXML21")) {
-                                zos.putNextEntry(new ZipEntry("MarcXML21/" + fileEntry.getKey()));
-                            } else {
-                                zos.putNextEntry(new ZipEntry(fileEntry.getKey()));
-                            }
-                            contentsText.append("MD " + fileEntry.getKey() + "\n");
-                            zos.write(Files.readAllBytes(fileEntry.getValue().toPath()));
-                            zos.closeEntry();
-                        }
-                    }
-                }
-                zos.close();
-
-                response.setContentType(packager.getMimeType());
-                response.setHeader("Content-Disposition", "inline; filename=" + packagerName + "." + packager.getFileExtension());
+              ExportPackage exportPackage = packagerUtility.packageExport(depositLocation.getPackager(), submission);
+              String depositURL = depositor.deposit(depositLocation, exportPackage);
+              submission.setDepositURL(depositURL);
+              submission = submissionRepo.updateStatus(submission, submissionStatus, user);
             } catch (Exception e) {
-                LOG.info("Error With Export",e);
-                response.setContentType("application/json");
-                ApiResponse apiResponse = new ApiResponse(ERROR, "Something went wrong with the export!");
-                sos.print(objectMapper.writeValueAsString(apiResponse));
-                sos.close();
+              throw new DepositException("Failed package export on submission " + submission.getId());
             }
-            break;
-
-        case "ProQuest":
-            ServletOutputStream sos_pq = response.getOutputStream();
-
-            try {
-                ZipOutputStream zos = new ZipOutputStream(sos_pq, StandardCharsets.UTF_8);
-
-                for (Submission submission : submissionRepo.batchDynamicSubmissionQuery(filter, columns)) {
-                    List<FieldValue> fieldValues = submission.getFieldValuesByPredicateValue("first_name");
-                    Optional<String> firstNameOpt = fieldValues.size() > 0 ? Optional.of(fieldValues.get(0).getValue()) : Optional.empty();
-                    String firstName = firstNameOpt.isPresent() ? firstNameOpt.get() : "";
-                    firstName = firstName.substring(0,1).toUpperCase()+firstName.substring(1);
-                    fieldValues = submission.getFieldValuesByPredicateValue("last_name");
-                    Optional<String> lastNameOpt = fieldValues.size() > 0 ? Optional.of(fieldValues.get(0).getValue()) : Optional.empty();
-                    String lastName = lastNameOpt.isPresent() ? lastNameOpt.get() : "";
-                    lastName = lastName.substring(0,1).toUpperCase()+lastName.substring(1);
-                    String personName = lastName+"_"+firstName;
-
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    try (ZipOutputStream b = new ZipOutputStream(baos)){
-                        ExportPackage exportPackage = packagerUtility.packageExport(packager, submission);
-                        if (exportPackage.isMap()) {
-                            for (Map.Entry<String, File> fileEntry : ((Map<String, File>) exportPackage.getPayload()).entrySet()) {
-                                b.putNextEntry(new ZipEntry(personName+"_DATA.xml"));
-                                b.write(Files.readAllBytes(fileEntry.getValue().toPath()));
-                                b.closeEntry();
-                            }
-                        }
-                        // LICENSES
-                    	for (FieldValue ldfv : submission.getLicenseDocumentFieldValues()) {
-                        	Path path = assetService.getAssetsAbsolutePath(ldfv.getValue());
-                        	byte[] fileBytes = Files.readAllBytes(path);
-                            int sfxIndx;
-                            String licFileName = ldfv.getFileName();
-                            if((sfxIndx = licFileName.indexOf("."))>0){
-                                licFileName = licFileName.substring(0,sfxIndx).toUpperCase()+licFileName.substring(sfxIndx);
-                            }
-                        	b.putNextEntry(new ZipEntry(personName+"_permission/"+licFileName));
-                        	b.write(fileBytes);
-                            b.closeEntry();
-                        }
-                        // PRIMARY_DOC
-                        FieldValue primaryDoc = submission.getPrimaryDocumentFieldValue();
-                        Path path = assetService.getAssetsAbsolutePath(primaryDoc.getValue());
-                        byte[] fileBytes = Files.readAllBytes(path);
-                        String fName = primaryDoc.getFileName();
-                        int fNameIndx = fName.indexOf(".");
-                        String fType = "";//default
-                        if(fNameIndx>0){
-                            fType = fName.substring(fNameIndx);
-                        }
-                        b.putNextEntry(new ZipEntry(personName+fType));
-                        b.write(fileBytes);
-                        b.closeEntry();
-
-                    }catch(IOException ioe){
-                        ioe.printStackTrace();
-                    }
-                    zos.putNextEntry(new ZipEntry("upload_"+personName+".zip"));
-                    baos.close();
-                    zos.write(baos.toByteArray());
-                    zos.closeEntry();
-                }
-                zos.close();
-
-                response.setContentType(packager.getMimeType());
-                response.setHeader("Content-Disposition", "inline; filename=" + packagerName + "." + packager.getFileExtension());
-            } catch (Exception e) {
-                LOG.info("Error With Export",e);
-                response.setContentType("application/json");
-                ApiResponse apiResponse = new ApiResponse(ERROR, "Something went wrong with the export!");
-                sos_pq.print(objectMapper.writeValueAsString(apiResponse));
-                sos_pq.close();
-            }
-            break;
-        case "DSpaceMETS":
-            ServletOutputStream sos_mets = response.getOutputStream();
-
-            try {
-                ZipOutputStream zos = new ZipOutputStream(sos_mets);
-
-                for (Submission submission : submissionRepo.batchDynamicSubmissionQuery(filter, columns)) {
-                    ExportPackage exportPackage = packagerUtility.packageExport(packager, submission);
-                    File exportFile = (File) exportPackage.getPayload();
-                    byte[] fileBytes =  FileUtils.readFileToByteArray(exportFile);
-                    zos.putNextEntry(new ZipEntry(exportFile.getName()));
-                    zos.write(fileBytes);
-                    zos.closeEntry();
-                }
-                zos.close();
-
-                response.setContentType(packager.getMimeType());
-                response.setHeader("Content-Disposition", "inline; filename=" + packagerName + "." + packager.getFileExtension());
-            } catch (Exception e) {
-                LOG.info("Error With Export",e);
-                response.setContentType("application/json");
-                ApiResponse apiResponse = new ApiResponse(ERROR, "Something went wrong with the export!");
-                sos_mets.print(objectMapper.writeValueAsString(apiResponse));
-                sos_mets.close();
-            }
-            break;
-        case "DSpaceSimple":
-            ServletOutputStream sosDss = response.getOutputStream();
-            try {
-                ZipOutputStream zos = new ZipOutputStream(sosDss);
-                for (Submission submission : submissionRepo.batchDynamicSubmissionQuery(filter, columns)) {
-                    String submissionName = "submission_" + submission.getId() + "/";
-                    zos.putNextEntry(new ZipEntry(submissionName));
-
-                    StringBuilder contentsText = new StringBuilder();
-
-                    ExportPackage exportPackage = packagerUtility.packageExport(packager, submission);
-
-					//METADATA
-                    if (exportPackage.isMap()) {
-                        for (Map.Entry<String, File> fileEntry : ((Map<String, File>) exportPackage.getPayload()).entrySet()) {
-                            zos.putNextEntry(new ZipEntry(submissionName + fileEntry.getKey()));
-                            contentsText.append(fileEntry.getKey()+"\n");
-                            zos.write(Files.readAllBytes(fileEntry.getValue().toPath()));
-                            zos.closeEntry();
-                        }
-                    }
-
-                    // LICENSES
-                    for (FieldValue ldfv : submission.getLicenseDocumentFieldValues()) {
-                        Path path = assetService.getAssetsAbsolutePath(ldfv.getValue());
-                        byte[] fileBytes = Files.readAllBytes(path);
-                        zos.putNextEntry(new ZipEntry(submissionName + ldfv.getFileName()));
-                        contentsText.append(ldfv.getFileName()+"\tBUNDLE:LICENSE\n");
-                        zos.write(fileBytes);
-                        zos.closeEntry();
-                    }
-
-                    // PRIMARY_DOC
-                    FieldValue primaryDoc = submission.getPrimaryDocumentFieldValue();
-                    Path path = assetService.getAssetsAbsolutePath(primaryDoc.getValue());
-                    byte[] fileBytes = Files.readAllBytes(path);
-                    zos.putNextEntry(new ZipEntry(submissionName+primaryDoc.getFileName()));
-                    contentsText.append(primaryDoc.getFileName()+"\tBUNDLE:CONTENT\tprimary:true\n");
-                    zos.write(fileBytes);
-                    zos.closeEntry();
-
-                    // SUPPLEMENTAL_DOCS
-                    List<FieldValue> supplDocs = submission.getSupplementalAndSourceDocumentFieldValues();
-                    for (FieldValue supplDoc : supplDocs) {
-                        Path supplPath = assetService.getAssetsAbsolutePath(supplDoc.getValue());
-                        byte[] supplFileBytes = Files.readAllBytes(supplPath);
-                        zos.putNextEntry(new ZipEntry(submissionName+supplDoc.getFileName()));
-                        contentsText.append(supplDoc.getFileName()+"\tBUNDLE:CONTENT\n");
-                        zos.write(supplFileBytes);
-                        zos.closeEntry();
-                    }
-
-                    // CONTENTS_FILE
-                    zos.putNextEntry(new ZipEntry(submissionName + "contents"));
-                    zos.write(contentsText.toString().getBytes());
-                    zos.closeEntry();
-
-                    zos.closeEntry();
-
-                }
-                zos.close();
-
-                response.setContentType(packager.getMimeType());
-                response.setHeader("Content-Disposition", "inline; filename=" + packagerName + "." + packager.getFileExtension());
-            } catch (Exception e) {
-                LOG.info("Error With Export",e);
-                response.setContentType("application/json");
-                ApiResponse apiResponse = new ApiResponse(ERROR, "Something went wrong with the export!");
-                sosDss.print(objectMapper.writeValueAsString(apiResponse));
-                sosDss.close();
-            }
-            break;
-
-        default:
-            response.setContentType("application/json");
-
-            ApiResponse apiResponse = new ApiResponse(ERROR, "No packager " + packagerName + " found!");
-            PrintWriter out = response.getWriter();
-            out.print(objectMapper.writeValueAsString(apiResponse));
-            out.close();
-        }
-
-        response.getOutputStream().close();
-    }
-
-    @RequestMapping(value = "/batch-assign-to", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('REVIEWER')")
-    public ApiResponse batchAssignTo(@WeaverUser User user, @RequestBody User assignee) {
-        submissionRepo.batchDynamicSubmissionQuery(user.getActiveFilter(), user.getSubmissionViewColumns()).forEach(sub -> {
-            sub.setAssignee(assignee);
-            actionLogRepo.createPublicLog(sub, user, "Submission was assigned to " + assignee.getFirstName() + " " + assignee.getLastName() + "(" + assignee.getEmail() + ")");
-            submissionRepo.update(sub);
-        });
-        return new ApiResponse(SUCCESS);
-
-    }
-
-    @RequestMapping("/batch-publish/{depositLocationId}")
-    @PreAuthorize("hasRole('REVIEWER')")
-    public ApiResponse batchPublish(@WeaverUser User user, @PathVariable Long depositLocationId) {
-        ApiResponse response = new ApiResponse(SUCCESS);
-        SubmissionStatus submissionStatus = submissionStatusRepo.findByName("Published");
-        if (submissionStatus != null) {
-            DepositLocation depositLocation = depositLocationRepo.findById(depositLocationId).get();
-            if (depositLocation != null) {
-                Depositor depositor = depositorService.getDepositor(depositLocation.getDepositorName());
-                if (depositor != null) {
-                    for (Submission submission : submissionRepo.batchDynamicSubmissionQuery(user.getActiveFilter(), user.getSubmissionViewColumns())) {
-                        try {
-                            ExportPackage exportPackage = packagerUtility.packageExport(depositLocation.getPackager(), submission);
-                            String depositURL = depositor.deposit(depositLocation, exportPackage);
-                            submission.setDepositURL(depositURL);
-                            submission = submissionRepo.updateStatus(submission, submissionStatus, user);
-                        } catch (Exception e) {
-                            throw new DepositException("Failed package export on submission " + submission.getId());
-                        }
-                    }
-                } else {
-                    response = new ApiResponse(ERROR, "Could not find a depositor name " + depositLocation.getDepositorName());
-                }
-            } else {
-                response = new ApiResponse(ERROR, "Could not find a deposite location id " + depositLocationId);
-            }
+          }
         } else {
-            response = new ApiResponse(ERROR, "Could not find a submission status name Published");
+          response = new ApiResponse(ERROR, "Could not find a depositor name " + depositLocation.getDepositorName());
         }
-        return response;
+      } else {
+        response = new ApiResponse(ERROR, "Could not find a deposite location id " + depositLocationId);
+      }
+    } else {
+      response = new ApiResponse(ERROR, "Could not find a submission status name Published");
     }
+    return response;
+  }
 
-    @RequestMapping(value = "/{submissionId}/submit-date", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('REVIEWER')")
-    public ApiResponse submitDate(@WeaverUser User user, @PathVariable("submissionId") Long submissionId, @RequestBody String newDate) throws ParseException {
+  @RequestMapping(value = "/{submissionId}/submit-date", method = RequestMethod.POST) @PreAuthorize(value = "hasRole(\'REVIEWER\')") public ApiResponse submitDate(@WeaverUser User user, @PathVariable(value = "submissionId") Long submissionId, @RequestBody String newDate) throws ParseException {
+    Submission submission = submissionRepo.read(submissionId);
+    ApiResponse response = new ApiResponse(SUCCESS);
+    if (submission != null) {
+      String nd = newDate.replaceAll("[\"]", "");
+      DateFormat df = new SimpleDateFormat("yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'", Locale.US);
+      Calendar cal = Calendar.getInstance();
+      cal.setTime(df.parse(nd));
+      submission.setSubmissionDate(cal);
+      submission = submissionRepo.update(submission);
+      SimpleDateFormat logdf = new SimpleDateFormat("MM/dd/yyyy");
+      actionLogRepo.createPublicLog(submission, user, "Submission date set to: " + logdf.format(cal.getTime()));
+    } else {
+      response = new ApiResponse(ERROR, "Could not find a submission with ID " + submissionId);
+    }
+    return response;
+  }
 
-        Submission submission = submissionRepo.read(submissionId);
+  @RequestMapping(value = "/{submissionId}/assign-to", method = RequestMethod.POST) @PreAuthorize(value = "hasRole(\'REVIEWER\')") public ApiResponse assign(@WeaverUser User user, @PathVariable(value = "submissionId") Long submissionId, @RequestBody User assignee) {
+    Submission submission = submissionRepo.read(submissionId);
+    if (assignee != null) {
+      assignee = userRepo.findByEmail(assignee.getEmail());
+    }
+    ApiResponse response = new ApiResponse(SUCCESS);
+    if (submission != null) {
+      submission.setAssignee(assignee);
+      submission = submissionRepo.update(submission);
+      if (assignee == null) {
+        actionLogRepo.createPublicLog(submission, user, "Submission was unassigned");
+      } else {
+        actionLogRepo.createPublicLog(submission, user, "Submission was assigned to " + assignee.getFirstName() + " " + assignee.getLastName() + "(" + assignee.getEmail() + ")");
+      }
+    } else {
+      response = new ApiResponse(ERROR, "Could not find a submission with ID " + submissionId);
+    }
+    return response;
+  }
 
-        ApiResponse response = new ApiResponse(SUCCESS);
-        if (submission != null) {
-            String nd = newDate.replaceAll("[\"]", "");
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(df.parse(nd));
+  @RequestMapping(value = "/{submissionId}/remove-field-value", method = RequestMethod.POST) @PreAuthorize(value = "hasRole(\'STUDENT\')") public ApiResponse removeFieldValue(@PathVariable(value = "submissionId") Long submissionId, @RequestBody FieldValue fieldValue) {
+    Submission submission = submissionRepo.read(submissionId);
+    submission.removeFieldValue(fieldValue);
+    submission = submissionRepo.save(submission);
+    simpMessagingTemplate.convertAndSend("/channel/submission/" + submission.getId() + "/removed-field-value", new ApiResponse(SUCCESS, fieldValue));
+    return new ApiResponse(SUCCESS, submission);
+  }
 
-            submission.setSubmissionDate(cal);
-            submission = submissionRepo.update(submission);
+  @RequestMapping(value = "/{submissionId}/update-reviewer-notes", method = RequestMethod.POST) @PreAuthorize(value = "hasRole(\'REVIEWER\')") public ApiResponse updateReviewerNotes(@WeaverUser User user, @PathVariable(value = "submissionId") Long submissionId, @RequestBody Map<String, String> requestData) {
+    Submission submission = submissionRepo.read(submissionId);
+    String reviewerNotes = requestData.get("reviewerNotes");
+    submission.setReviewerNotes(reviewerNotes);
+    submission = submissionRepo.update(submission);
+    actionLogRepo.createPrivateLog(submission, user, "Submission notes changed to \"" + reviewerNotes + "\"");
+    return new ApiResponse(SUCCESS, submission);
+  }
 
-            SimpleDateFormat logdf = new SimpleDateFormat("MM/dd/yyyy");
-            actionLogRepo.createPublicLog(submission, user, "Submission date set to: " + logdf.format(cal.getTime()));
+  @RequestMapping(value = "/{submissionId}/needs-correction") @PreAuthorize(value = "hasRole(\'REVIEWER\')") public ApiResponse setSubmissionNeedsCorrection(@WeaverUser User user, @PathVariable Long submissionId) {
+    Submission submission = submissionRepo.read(submissionId);
+    SubmissionStatus needsCorrectionStatus = submissionStatusRepo.findByName(NEEDS_CORRECTION_SUBMISSION_STATUS_NAME);
+    String oldSubmissionStatusName = submission.getSubmissionStatus().getName();
+    submission.setSubmissionStatus(needsCorrectionStatus);
+    submission = submissionRepo.update(submission);
+    actionLogRepo.createPublicLog(submission, user, "Submission status was changed from " + oldSubmissionStatusName + " to " + NEEDS_CORRECTION_SUBMISSION_STATUS_NAME);
+    return new ApiResponse(SUCCESS, submission);
+  }
 
+  @RequestMapping(value = "/{submissionId}/submit-corrections") @PreAuthorize(value = "hasRole(\'STUDENT\')") public ApiResponse setSubmissionCorrectionsReceived(@WeaverUser User user, @PathVariable Long submissionId) {
+    Submission submission = submissionRepo.read(submissionId);
+    String oldSubmissionStatusName = submission.getSubmissionStatus().getName();
+    SubmissionStatus needsCorrectionStatus = submissionStatusRepo.findByName(CORRECTIONS_RECEIVED_SUBMISSION_STATUS_NAME);
+    submission.setSubmissionStatus(needsCorrectionStatus);
+    submission = submissionRepo.update(submission);
+    actionLogRepo.createPublicLog(submission, user, "Submission status was changed from " + oldSubmissionStatusName + " to " + CORRECTIONS_RECEIVED_SUBMISSION_STATUS_NAME);
+    return new ApiResponse(SUCCESS, submission);
+  }
+
+  @RequestMapping(value = "/{submissionId}/add-message", method = RequestMethod.POST) @PreAuthorize(value = "hasRole(\'STUDENT\')") public ApiResponse addMessage(@WeaverUser User user, @PathVariable Long submissionId, @RequestBody String message) {
+    Submission submission = submissionRepo.read(submissionId);
+    return new ApiResponse(SUCCESS, actionLogRepo.createPublicLog(submission, user, message));
+  }
+
+  @Transactional(readOnly = true) @JsonView(value = Views.SubmissionList.class) @RequestMapping(value = "/query/{page}/{size}", method = RequestMethod.POST) @PreAuthorize(value = "hasRole(\'REVIEWER\')") public ApiResponse querySubmission(@WeaverUser User user, @PathVariable Integer page, @PathVariable Integer size, @RequestBody List<SubmissionListColumn> submissionListColumns) throws ExecutionException {
+    long startTime = System.nanoTime();
+    NamedSearchFilterGroup activeFilter = user.getActiveFilter();
+    Page<Submission> submissions = submissionRepo.pageableDynamicSubmissionQuery(activeFilter, activeFilter.getColumnsFlag() ? activeFilter.getSavedColumns() : submissionListColumns, PageRequest.of(page, size));
+    long endTime = System.nanoTime();
+    long duration = (endTime - startTime);
+    LOG.info("Dynamic query took " + duration / 1000000000.0 + " seconds");
+    return new ApiResponse(SUCCESS, new ApiPage<Submission>(submissions));
+  }
+
+  @RequestMapping(value = "/file") public void submissionFile(HttpServletResponse response, @RequestHeader String uri) throws IOException {
+    response.addHeader("Content-Disposition", "attachment");
+    Path path = assetService.getAssetsAbsolutePath(uri);
+    Files.copy(path, response.getOutputStream());
+    response.getOutputStream().flush();
+  }
+
+  @RequestMapping(value = "/{submissionId}/file-info", method = RequestMethod.POST) public ApiResponse submissionFileInfo(@PathVariable Long submissionId, @RequestBody Map<String, String> requestData) throws IOException {
+    String uri = requestData.get("uri");
+    Submission submission = submissionRepo.read(submissionId);
+    return new ApiResponse(SUCCESS, assetService.getAssetFileInfo(uri, submission));
+  }
+
+  @RequestMapping(value = "/{submissionId}/{documentType}/upload-file", method = RequestMethod.POST) @PreAuthorize(value = "hasRole(\'STUDENT\')") public ApiResponse uploadFile(@WeaverUser User user, @PathVariable Long submissionId, @PathVariable String documentType, @RequestParam MultipartFile file) throws IOException {
+    Submission submission = submissionRepo.read(submissionId);
+    int hash = user.getEmail().hashCode();
+    String fileName = file.getOriginalFilename();
+    String fileExtension = FilenameUtils.getExtension(fileName).equals("pdf") ? FilenameUtils.getExtension(fileName) : "pdf";
+    if (documentTypesToRename.contains(documentType)) {
+      String lastName = submission.getSubmitter().getLastName().toUpperCase();
+      int year = Calendar.getInstance().get(Calendar.YEAR);
+      fileName = lastName + "-" + documentType + "-" + String.valueOf(year) + "." + fileExtension;
+    }
+    String uri = documentFolder + File.separator + hash + File.separator + System.currentTimeMillis() + "-" + fileName;
+    assetService.write(file.getBytes(), uri);
+    JsonNode fileInfo = assetService.getAssetFileInfo(uri, submission);
+    actionLogRepo.createPublicLog(submission, user, documentType + " file " + fileInfo.get("name").asText() + " (" + fileInfo.get("readableSize").asText() + ") uploaded");
+    return new ApiResponse(SUCCESS, uri);
+  }
+
+  @RequestMapping(value = "/{submissionId}/{documentType}/rename-file", method = RequestMethod.POST) @PreAuthorize(value = "hasRole(\'REVIEWER\')") public ApiResponse renameFile(@WeaverUser User user, @PathVariable Long submissionId, @PathVariable String documentType, @RequestBody Map<String, String> requestData) throws IOException {
+    Submission submission = submissionRepo.read(submissionId);
+    String newName = requestData.get("newName");
+    String oldUri = requestData.get("uri");
+    String newUri = oldUri.replace(oldUri.substring(oldUri.lastIndexOf(File.separator) + 1, oldUri.length()), System.currentTimeMillis() + "-" + newName);
+    assetService.rename(oldUri, newUri);
+    JsonNode fileInfo = assetService.getAssetFileInfo(newUri, submission);
+    actionLogRepo.createPublicLog(submission, user, documentType + " file " + fileInfo.get("name").asText() + " (" + fileInfo.get("readableSize").asText() + ") renamed");
+    return new ApiResponse(SUCCESS, newUri);
+  }
+
+  @RequestMapping(value = "/{submissionId}/{fieldValueId}/remove-file") @PreAuthorize(value = "hasRole(\'STUDENT\')") public ApiResponse removeFile(@WeaverUser User user, @PathVariable Long submissionId, @PathVariable Long fieldValueId) throws IOException {
+    Submission submission = submissionRepo.read(submissionId);
+    ApiResponse apiResponse = new ApiResponse(SUCCESS);
+    int hash = user.getEmail().hashCode();
+    FieldValue fileFieldValue = fieldValueRepo.findById(fieldValueId).get();
+    String documentType = fileFieldValue.getFieldPredicate().getValue();
+    String uri = fileFieldValue.getValue();
+    if (user.getRole().equals(Role.ROLE_STUDENT) && documentType.equals("_doctype_license")) {
+      apiResponse = new ApiResponse(ERROR, "You are not allowed to delete license files!");
+    } else {
+      if (user.getRole().equals(Role.ROLE_ADMIN) || user.getRole().equals(Role.ROLE_MANAGER) || uri.contains(String.valueOf(hash))) {
+        String fileName = "";
+        String fileSize = "file not found";
+        if (assetService.assetFileExists(uri)) {
+          JsonNode fileInfo = assetService.getAssetFileInfo(uri, submission);
+          fileName = fileInfo.get("name").asText();
+          fileSize = fileInfo.get("readableSize").asText();
         } else {
-            response = new ApiResponse(ERROR, "Could not find a submission with ID " + submissionId);
+          fileName = assetService.getAssetFileName(uri);
         }
-
-        return response;
+        assetService.delete(uri);
+        actionLogRepo.createPublicLog(submission, user, documentType.substring(9).toUpperCase() + " file " + fileName + " (" + fileSize + ") removed");
+      } else {
+        apiResponse = new ApiResponse(ERROR, "This is not your file to delete!");
+      }
     }
+    return apiResponse;
+  }
 
-    @RequestMapping(value = "/{submissionId}/assign-to", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('REVIEWER')")
-    public ApiResponse assign(@WeaverUser User user, @PathVariable("submissionId") Long submissionId, @RequestBody User assignee) {
-        Submission submission = submissionRepo.read(submissionId);
+  @RequestMapping(value = "/{submissionId}/{documentType}/archive-file", method = RequestMethod.POST) @PreAuthorize(value = "hasRole(\'STUDENT\')") public ApiResponse archiveFile(@WeaverUser User user, @PathVariable Long submissionId, @PathVariable String documentType, @RequestBody Map<String, String> requestData) throws IOException {
+    Submission submission = submissionRepo.read(submissionId);
+    String name = requestData.get("name");
+    String oldUri = requestData.get("uri");
+    String newUri = oldUri.replace(oldUri.substring(oldUri.lastIndexOf(File.separator) + 1, oldUri.length()), System.currentTimeMillis() + "-archived-" + name);
+    assetService.rename(oldUri, newUri);
+    JsonNode fileInfo = assetService.getAssetFileInfo(newUri, submission);
+    actionLogRepo.createPublicLog(submission, user, "ARCHIVE - " + documentType + " file " + fileInfo.get("name").asText() + " (" + fileInfo.get("readableSize").asText() + ") archived");
+    return new ApiResponse(SUCCESS, newUri);
+  }
 
-        if (assignee != null) {
-            assignee = userRepo.findByEmail(assignee.getEmail());
-        }
+  @RequestMapping(value = "/{submissionId}/send-advisor-email") @PreAuthorize(value = "hasRole(\'REVIEWER\')") public ApiResponse sendAdvisorEmail(@WeaverUser User user, @PathVariable Long submissionId) {
+    submissionEmailService.sendAdvisorEmails(user, submissionId);
+    return new ApiResponse(SUCCESS);
+  }
 
-        ApiResponse response = new ApiResponse(SUCCESS);
-
-        if (submission != null) {
-            submission.setAssignee(assignee);
-            submission = submissionRepo.update(submission);
-
-            if (assignee == null) {
-                actionLogRepo.createPublicLog(submission, user, "Submission was unassigned");
-            } else {
-                actionLogRepo.createPublicLog(submission, user, "Submission was assigned to " + assignee.getFirstName() + " " + assignee.getLastName() + "(" + assignee.getEmail() + ")");
-            }
-        } else {
-            response = new ApiResponse(ERROR, "Could not find a submission with ID " + submissionId);
-        }
-
-        return response;
+  @SuppressWarnings(value = { "unchecked" }) @RequestMapping(value = "/{submissionId}/update-advisor-approval", method = RequestMethod.POST) public ApiResponse updateAdvisorApproval(@PathVariable Long submissionId, @RequestBody Map<String, Object> data) {
+    Submission submission = submissionRepo.read(submissionId);
+    HashMap<String, Object> embargoData = (HashMap<String, Object>) data.get("embargo");
+    HashMap<String, Object> advisorData = (HashMap<String, Object>) data.get("advisor");
+    Boolean approveAdvisor = (Boolean) advisorData.get("approve");
+    Boolean approveEmbargo = (Boolean) embargoData.get("approve");
+    Boolean clearApproveEmbargo = (Boolean) embargoData.get("clearApproval");
+    Boolean clearApproveAdvisor = (Boolean) advisorData.get("clearApproval");
+    String message = (String) data.get("message");
+    if (approveAdvisor != null && !clearApproveAdvisor) {
+      processAdvisorAction("Application", approveAdvisor, submission);
+      submission.setApproveAdvisor(approveAdvisor);
+      submission.setApproveAdvisorDate(Calendar.getInstance());
     }
-
-    @RequestMapping(value = "/{submissionId}/remove-field-value", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('STUDENT')")
-    public ApiResponse removeFieldValue(@PathVariable("submissionId") Long submissionId, @RequestBody FieldValue fieldValue) {
-        Submission submission = submissionRepo.read(submissionId);
-        submission.removeFieldValue(fieldValue);
-        submission = submissionRepo.save(submission);
-        simpMessagingTemplate.convertAndSend("/channel/submission/" + submission.getId() + "/removed-field-value", new ApiResponse(SUCCESS, fieldValue));
-        return new ApiResponse(SUCCESS, submission);
+    if (clearApproveAdvisor != null && clearApproveAdvisor) {
+      processAdvisorStatusClear("Application", submission.getApproveAdvisor(), submission);
+      submission.clearApproveAdvisor();
     }
-
-    @RequestMapping(value = "/{submissionId}/update-reviewer-notes", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('REVIEWER')")
-    public ApiResponse updateReviewerNotes(@WeaverUser User user, @PathVariable("submissionId") Long submissionId, @RequestBody Map<String, String> requestData) {
-        Submission submission = submissionRepo.read(submissionId);
-        String reviewerNotes = requestData.get("reviewerNotes");
-        submission.setReviewerNotes(reviewerNotes);
-        submission = submissionRepo.update(submission);
-        actionLogRepo.createPrivateLog(submission, user, "Submission notes changed to \"" + reviewerNotes + "\"");
-        return new ApiResponse(SUCCESS, submission);
+    if (approveEmbargo != null && !clearApproveEmbargo) {
+      processAdvisorAction("Embargo", approveEmbargo, submission);
+      submission.setApproveEmbargo(approveEmbargo);
+      submission.setApproveEmbargoDate(Calendar.getInstance());
     }
-
-    @RequestMapping("/{submissionId}/needs-correction")
-    @PreAuthorize("hasRole('REVIEWER')")
-    public ApiResponse setSubmissionNeedsCorrection(@WeaverUser User user, @PathVariable Long submissionId) {
-        Submission submission = submissionRepo.read(submissionId);
-        SubmissionStatus needsCorrectionStatus = submissionStatusRepo.findByName(NEEDS_CORRECTION_SUBMISSION_STATUS_NAME);
-        String oldSubmissionStatusName = submission.getSubmissionStatus().getName();
-        submission.setSubmissionStatus(needsCorrectionStatus);
-        submission = submissionRepo.update(submission);
-        actionLogRepo.createPublicLog(submission, user, "Submission status was changed from " + oldSubmissionStatusName + " to " + NEEDS_CORRECTION_SUBMISSION_STATUS_NAME);
-        return new ApiResponse(SUCCESS, submission);
+    if (clearApproveEmbargo != null && clearApproveEmbargo) {
+      processAdvisorStatusClear("Embargo", submission.getApproveEmbargo(), submission);
+      submission.clearApproveEmbargo();
     }
-
-    @RequestMapping("/{submissionId}/submit-corrections")
-    @PreAuthorize("hasRole('STUDENT')")
-    public ApiResponse setSubmissionCorrectionsReceived(@WeaverUser User user, @PathVariable Long submissionId) {
-        Submission submission = submissionRepo.read(submissionId);
-        String oldSubmissionStatusName = submission.getSubmissionStatus().getName();
-        SubmissionStatus needsCorrectionStatus = submissionStatusRepo.findByName(CORRECTIONS_RECEIVED_SUBMISSION_STATUS_NAME);
-        submission.setSubmissionStatus(needsCorrectionStatus);
-        submission = submissionRepo.update(submission);
-        actionLogRepo.createPublicLog(submission, user, "Submission status was changed from " + oldSubmissionStatusName + " to " + CORRECTIONS_RECEIVED_SUBMISSION_STATUS_NAME);
-        return new ApiResponse(SUCCESS, submission);
+    if (message != null) {
+      actionLogRepo.createAdvisorPublicLog(submission, "Advisor comments : " + message);
     }
+    return new ApiResponse(SUCCESS, submission);
+  }
 
-    @RequestMapping(value = "/{submissionId}/add-message", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('STUDENT')")
-    public ApiResponse addMessage(@WeaverUser User user, @PathVariable Long submissionId, @RequestBody String message) {
-        Submission submission = submissionRepo.read(submissionId);
-        return new ApiResponse(SUCCESS, actionLogRepo.createPublicLog(submission, user, message));
+  private void processAdvisorAction(String type, Boolean approveStatus, Submission submission) {
+    String approveAdvisorMessage;
+    if (approveStatus == true) {
+      approveAdvisorMessage = "The committee approved the " + type + ".";
+    } else {
+      approveAdvisorMessage = "The committee rejected the " + type + ".";
     }
+    actionLogRepo.createAdvisorPublicLog(submission, approveAdvisorMessage);
+  }
 
-    @Transactional(readOnly = true)
-    @JsonView(Views.SubmissionList.class)
-    @RequestMapping(value = "/query/{page}/{size}", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('REVIEWER')")
-    public ApiResponse querySubmission(@WeaverUser User user, @PathVariable Integer page, @PathVariable Integer size, @RequestBody List<SubmissionListColumn> submissionListColumns) throws ExecutionException {
-        long startTime = System.nanoTime();
-        NamedSearchFilterGroup activeFilter = user.getActiveFilter();
-        Page<Submission> submissions = submissionRepo.pageableDynamicSubmissionQuery(activeFilter, activeFilter.getColumnsFlag() ? activeFilter.getSavedColumns() : submissionListColumns, PageRequest.of(page, size));
-        long endTime = System.nanoTime();
-        long duration = (endTime - startTime);
-        LOG.info("Dynamic query took " + duration / 1000000000.0 + " seconds");
-        return new ApiResponse(SUCCESS, new ApiPage<Submission>(submissions));
+  private void processAdvisorStatusClear(String type, Boolean approvalState, Submission submission) {
+    String clearAdvisorMessage = "The committee has withdrawn its " + type;
+    if (approvalState == true) {
+      clearAdvisorMessage += " Approval.";
+    } else {
+      clearAdvisorMessage += " Rejection.";
     }
+    actionLogRepo.createAdvisorPublicLog(submission, clearAdvisorMessage);
+  }
 
-    @RequestMapping("/file")
-    public void submissionFile(HttpServletResponse response, @RequestHeader String uri) throws IOException {
-        response.addHeader("Content-Disposition", "attachment");
-        Path path = assetService.getAssetsAbsolutePath(uri);
-        Files.copy(path, response.getOutputStream());
-        response.getOutputStream().flush();
-    }
-
-    @RequestMapping(value = "/{submissionId}/file-info", method = RequestMethod.POST)
-    public ApiResponse submissionFileInfo(@PathVariable Long submissionId, @RequestBody Map<String, String> requestData) throws IOException {
-        String uri = requestData.get("uri");
-        Submission submission = submissionRepo.read(submissionId);
-
-        return new ApiResponse(SUCCESS, assetService.getAssetFileInfo(uri, submission));
-    }
-
-    @RequestMapping(value = "/{submissionId}/{documentType}/upload-file", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('STUDENT')")
-    public ApiResponse uploadFile(@WeaverUser User user, @PathVariable Long submissionId, @PathVariable String documentType, @RequestParam MultipartFile file) throws IOException {
-        Submission submission = submissionRepo.read(submissionId);
-
-        int hash = user.getEmail().hashCode();
-
-        String fileName = file.getOriginalFilename();
-
-        String fileExtension = FilenameUtils.getExtension(fileName).equals("pdf") ? FilenameUtils.getExtension(fileName) : "pdf";
-
-        if (documentTypesToRename.contains(documentType)) {
-            String lastName = submission.getSubmitter().getLastName().toUpperCase();
-            int year = Calendar.getInstance().get(Calendar.YEAR);
-            fileName = lastName + "-" + documentType + "-" + String.valueOf(year) + "." + fileExtension;
-        }
-
-        String uri = documentFolder + File.separator + hash + File.separator + System.currentTimeMillis() + "-" + fileName;
-        assetService.write(file.getBytes(), uri);
-        JsonNode fileInfo = assetService.getAssetFileInfo(uri, submission);
-        actionLogRepo.createPublicLog(submission, user, documentType + " file " + fileInfo.get("name").asText() + " (" + fileInfo.get("readableSize").asText() + ") uploaded");
-        return new ApiResponse(SUCCESS, uri);
-    }
-
-    @RequestMapping(value = "/{submissionId}/{documentType}/rename-file", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('REVIEWER')")
-    public ApiResponse renameFile(@WeaverUser User user, @PathVariable Long submissionId, @PathVariable String documentType, @RequestBody Map<String, String> requestData) throws IOException {
-        Submission submission = submissionRepo.read(submissionId);
-
-        String newName = requestData.get("newName");
-        String oldUri = requestData.get("uri");
-        String newUri = oldUri.replace(oldUri.substring(oldUri.lastIndexOf(File.separator) + 1, oldUri.length()), System.currentTimeMillis() + "-" + newName);
-        assetService.rename(oldUri, newUri);
-        JsonNode fileInfo = assetService.getAssetFileInfo(newUri, submission);
-        actionLogRepo.createPublicLog(submission, user, documentType + " file " + fileInfo.get("name").asText() + " (" + fileInfo.get("readableSize").asText() + ") renamed");
-        return new ApiResponse(SUCCESS, newUri);
-    }
-
-    @RequestMapping("/{submissionId}/{fieldValueId}/remove-file")
-    @PreAuthorize("hasRole('STUDENT')")
-    public ApiResponse removeFile(@WeaverUser User user, @PathVariable Long submissionId, @PathVariable Long fieldValueId) throws IOException {
-        Submission submission = submissionRepo.read(submissionId);
-        ApiResponse apiResponse = new ApiResponse(SUCCESS);
-        int hash = user.getEmail().hashCode();
-        FieldValue fileFieldValue = fieldValueRepo.findById(fieldValueId).get();
-        String documentType = fileFieldValue.getFieldPredicate().getValue();
-        String uri = fileFieldValue.getValue();
-        if (user.getRole().equals(Role.ROLE_STUDENT) && documentType.equals("_doctype_license")) {
-            apiResponse = new ApiResponse(ERROR, "You are not allowed to delete license files!");
-        } else {
-            if (user.getRole().equals(Role.ROLE_ADMIN) || user.getRole().equals(Role.ROLE_MANAGER) || uri.contains(String.valueOf(hash))) {
-                String fileName = "";
-                String fileSize = "file not found";
-                if (assetService.assetFileExists(uri)) {
-                    JsonNode fileInfo = assetService.getAssetFileInfo(uri, submission);
-                    fileName = fileInfo.get("name").asText();
-                    fileSize = fileInfo.get("readableSize").asText();
-                } else {
-                    fileName = assetService.getAssetFileName(uri);
-                }
-
-                assetService.delete(uri);
-                actionLogRepo.createPublicLog(submission, user, documentType.substring(9).toUpperCase() + " file " + fileName + " (" + fileSize + ") removed");
-            } else {
-                apiResponse = new ApiResponse(ERROR, "This is not your file to delete!");
-            }
-        }
-        return apiResponse;
-    }
-
-    @RequestMapping(value = "/{submissionId}/{documentType}/archive-file", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('STUDENT')")
-    public ApiResponse archiveFile(@WeaverUser User user, @PathVariable Long submissionId, @PathVariable String documentType, @RequestBody Map<String, String> requestData) throws IOException {
-        Submission submission = submissionRepo.read(submissionId);
-        String name = requestData.get("name");
-        String oldUri = requestData.get("uri");
-        String newUri = oldUri.replace(oldUri.substring(oldUri.lastIndexOf(File.separator) + 1, oldUri.length()), System.currentTimeMillis() + "-archived-" + name);
-        assetService.rename(oldUri, newUri);
-        JsonNode fileInfo = assetService.getAssetFileInfo(newUri, submission);
-        actionLogRepo.createPublicLog(submission, user, "ARCHIVE - " + documentType + " file " + fileInfo.get("name").asText() + " (" + fileInfo.get("readableSize").asText() + ") archived");
-        return new ApiResponse(SUCCESS, newUri);
-    }
-
-    @RequestMapping("/{submissionId}/send-advisor-email")
-    @PreAuthorize("hasRole('REVIEWER')")
-    public ApiResponse sendAdvisorEmail(@WeaverUser User user, @PathVariable Long submissionId) {
-        submissionEmailService.sendAdvisorEmails(user, submissionId);
-        return new ApiResponse(SUCCESS);
-    }
-
-    // TODO: rework, anonymous endpoint for advisor approval, no user available for
-    // action log
-    @SuppressWarnings("unchecked")
-    @RequestMapping(value = "/{submissionId}/update-advisor-approval", method = RequestMethod.POST)
-    public ApiResponse updateAdvisorApproval(@PathVariable Long submissionId, @RequestBody Map<String, Object> data) {
-
-        Submission submission = submissionRepo.read(submissionId);
-        HashMap<String, Object> embargoData = (HashMap<String, Object>) data.get("embargo");
-        HashMap<String, Object> advisorData = (HashMap<String, Object>) data.get("advisor");
-
-        Boolean approveAdvisor = (Boolean) advisorData.get("approve");
-        Boolean approveEmbargo = (Boolean) embargoData.get("approve");
-
-        Boolean clearApproveEmbargo = (Boolean) embargoData.get("clearApproval");
-        Boolean clearApproveAdvisor = (Boolean) advisorData.get("clearApproval");
-
-        String message = (String) data.get("message");
-
-        if (approveAdvisor != null && !clearApproveAdvisor) {
-            processAdvisorAction("Application", approveAdvisor, submission);
-            submission.setApproveAdvisor(approveAdvisor);
-            submission.setApproveAdvisorDate(Calendar.getInstance());
-        }
-
-        if (clearApproveAdvisor != null && clearApproveAdvisor) {
-            processAdvisorStatusClear("Application", submission.getApproveAdvisor(), submission);
-            submission.clearApproveAdvisor();
-        }
-
-        if (approveEmbargo != null && !clearApproveEmbargo) {
-            processAdvisorAction("Embargo", approveEmbargo, submission);
-            submission.setApproveEmbargo(approveEmbargo);
-            submission.setApproveEmbargoDate(Calendar.getInstance());
-        }
-
-        if (clearApproveEmbargo != null && clearApproveEmbargo) {
-            processAdvisorStatusClear("Embargo", submission.getApproveEmbargo(), submission);
-            submission.clearApproveEmbargo();
-        }
-
-        if (message != null) {
-            actionLogRepo.createAdvisorPublicLog(submission, "Advisor comments : " + message);
-        }
-
-        return new ApiResponse(SUCCESS, submission);
-
-    }
-
-    private void processAdvisorAction(String type, Boolean approveStatus, Submission submission) {
-        String approveAdvisorMessage;
-        if (approveStatus == true) {
-            approveAdvisorMessage = "The committee approved the " + type + ".";
-        } else {
-            approveAdvisorMessage = "The committee rejected the " + type + ".";
-        }
-        actionLogRepo.createAdvisorPublicLog(submission, approveAdvisorMessage);
-    }
-
-    private void processAdvisorStatusClear(String type, Boolean approvalState, Submission submission) {
-        String clearAdvisorMessage = "The committee has withdrawn its " + type;
-        if (approvalState == true) {
-            clearAdvisorMessage += " Approval.";
-        } else {
-            clearAdvisorMessage += " Rejection.";
-        }
-        actionLogRepo.createAdvisorPublicLog(submission, clearAdvisorMessage);
-    }
-
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    @ResponseBody
-    public ApiResponse handleExceptions(Exception exception) {
-        LOG.error(exception.getMessage(), exception);
-        return new ApiResponse(ERROR, exception.getMessage());
-    }
-
+  @ExceptionHandler(value = Exception.class) @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR) @ResponseBody public ApiResponse handleExceptions(Exception exception) {
+    LOG.error(exception.getMessage(), exception);
+    return new ApiResponse(ERROR, exception.getMessage());
+  }
 }
