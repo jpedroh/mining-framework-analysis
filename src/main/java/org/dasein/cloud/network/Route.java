@@ -1,24 +1,4 @@
-/**
- * Copyright (C) 2009-2013 Dell, Inc.
- * See annotations for authorship information
- *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
- */
-
 package org.dasein.cloud.network;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -29,95 +9,96 @@ import javax.annotation.Nullable;
  * @since 2012.07
  * @version 2012.07 initial version
  */
-@SuppressWarnings("UnusedDeclaration")
-public class Route {
-    static public Route getRouteToAddress(@Nonnull IPVersion version, @Nonnull String destination, @Nonnull String gatewayAddress) {
-        Route r = new Route();
-        
-        r.version = version;
-        r.destinationCidr = destination;
-        r.gatewayAddress = gatewayAddress;
-        return r;
-    }
+@SuppressWarnings(value = { "UnusedDeclaration" }) public class Route {
+  static public Route getRouteToAddress(@Nonnull IPVersion version, @Nonnull String destination, @Nonnull String gatewayAddress) {
+    Route r = new Route();
+    r.version = version;
+    r.destinationCidr = destination;
+    r.gatewayAddress = gatewayAddress;
+    return r;
+  }
 
-    static public Route getRouteToGateway(@Nonnull IPVersion version, @Nonnull String destination, @Nonnull String gatewayId) {
-        Route r = new Route();
+  static public Route getRouteToGateway(@Nonnull IPVersion version, @Nonnull String destination, @Nonnull String gatewayId) {
+    Route r = new Route();
+    r.version = version;
+    r.destinationCidr = destination;
+    r.gatewayId = gatewayId;
+    return r;
+  }
 
-        r.version = version;
-        r.destinationCidr = destination;
-        r.gatewayId = gatewayId;
-        return r;
-    }
+  static public Route getRouteToNetworkInterface(@Nonnull IPVersion version, @Nonnull String destination, @Nonnull String nicId) {
+    Route r = new Route();
+    r.version = version;
+    r.destinationCidr = destination;
+    r.gatewayNetworkInterfaceId = nicId;
+    return r;
+  }
 
-    static public Route getRouteToNetworkInterface(@Nonnull IPVersion version, @Nonnull String destination, @Nonnull String nicId) {
-        Route r = new Route();
+  static public Route getRouteToVirtualMachine(@Nonnull IPVersion version, @Nonnull String destination, @Nonnull String ownerId, @Nonnull String vmId) {
+    Route r = new Route();
+    r.version = version;
+    r.destinationCidr = destination;
+    r.gatewayOwnerId = ownerId;
+    r.gatewayVirtualMachineId = vmId;
+    return r;
+  }
 
-        r.version = version;
-        r.destinationCidr = destination;
-        r.gatewayNetworkInterfaceId = nicId;
-        return r;
-    }
-    
-    static public Route getRouteToVirtualMachine(@Nonnull IPVersion version, @Nonnull String destination, @Nonnull String ownerId, @Nonnull String vmId) {
-        Route r = new Route();
+  static public Route getRouteToVirtualMachineAndNetworkInterface(@Nonnull IPVersion version, @Nonnull String destination, @Nonnull String ownerId, @Nonnull String vmId, @Nonnull String nicId) {
+    Route r = new Route();
+    r.version = version;
+    r.destinationCidr = destination;
+    r.gatewayOwnerId = ownerId;
+    r.gatewayVirtualMachineId = vmId;
+    r.gatewayNetworkInterfaceId = nicId;
+    return r;
+  }
 
-        r.version = version;
-        r.destinationCidr = destination;
-        r.gatewayOwnerId = ownerId;
-        r.gatewayVirtualMachineId = vmId;
-        return r;
-    }
+  private String destinationCidr;
 
-    static public Route getRouteToVirtualMachineAndNetworkInterface(@Nonnull IPVersion version, @Nonnull String destination, @Nonnull String ownerId, @Nonnull String vmId, @Nonnull String nicId) {
-        Route r = new Route();
+  private String gatewayAddress;
 
-        r.version = version;
-        r.destinationCidr = destination;
-        r.gatewayOwnerId = ownerId;
-        r.gatewayVirtualMachineId = vmId;
-        r.gatewayNetworkInterfaceId = nicId;
-        return r;
-    }
+  private String gatewayId;
 
-    private String    destinationCidr;
-    private String    gatewayAddress;
-    private String    gatewayId;
-    private String    gatewayOwnerId;
-    private String    gatewayNetworkInterfaceId;
-    private String    gatewayVirtualMachineId;
-    private IPVersion version;
-    
-    private Route() { }
+  private String gatewayOwnerId;
 
-    public @Nonnull String getDestinationCidr() {
-        return destinationCidr;
-    }
+  private String gatewayNetworkInterfaceId;
 
-    public @Nullable String getGatewayAddress() {
-        return gatewayAddress;
-    }
+  private String gatewayVirtualMachineId;
 
-    public @Nullable String getGatewayId() {
-        return gatewayId;
-    }
+  private IPVersion version;
 
-    public @Nullable String getGatewayNetworkInterfaceId() {
-        return gatewayNetworkInterfaceId;
-    }
-    
-    public @Nullable String getGatewayOwnerId() {
-        return gatewayOwnerId;
-    }
-    
-    public @Nullable String getGatewayVirtualMachineId() {
-        return gatewayVirtualMachineId;
-    }
+  private Route() {
+  }
 
-    public @Nonnull IPVersion getVersion() {
-        return version;
-    }
+  public @Nonnull String getDestinationCidr() {
+    return destinationCidr;
+  }
 
-    public String toString() {
-        return (destinationCidr + " [" + version + "] -> " + (gatewayId == null ? gatewayAddress : gatewayId));
-    }
+  public @Nullable String getGatewayAddress() {
+    return gatewayAddress;
+  }
+
+  public @Nullable String getGatewayId() {
+    return gatewayId;
+  }
+
+  public @Nullable String getGatewayNetworkInterfaceId() {
+    return gatewayNetworkInterfaceId;
+  }
+
+  public @Nullable String getGatewayOwnerId() {
+    return gatewayOwnerId;
+  }
+
+  public @Nullable String getGatewayVirtualMachineId() {
+    return gatewayVirtualMachineId;
+  }
+
+  public @Nonnull IPVersion getVersion() {
+    return version;
+  }
+
+  public String toString() {
+    return (destinationCidr + " [" + version + "] -> " + (gatewayId == null ? gatewayAddress : gatewayId));
+  }
 }
