@@ -211,7 +211,13 @@ public class ConnectivityInspector<V, E>
             Set<V> vertexSet = graph.vertexSet();
 
             if (vertexSet.size() > 0) {
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/eeb3686eb78c03308977f010b359938ed00d8e52/jgrapht-core/src/main/java/org/jgrapht/alg/ConnectivityInspector.java/left.java
                 BreadthFirstIterator<V, E> i = new BreadthFirstIterator<>(graph);
+||||||| /usr/src/app/output/jgrapht/jgrapht/eeb3686eb78c03308977f010b359938ed00d8e52/jgrapht-core/src/main/java/org/jgrapht/alg/ConnectivityInspector.java/base.java
+                BreadthFirstIterator<V, E> i = new BreadthFirstIterator<>(graph, null);
+=======
+                BreadthFirstIterator<V, E> i = new BreadthFirstIterator<>(graph, (V) null);
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/eeb3686eb78c03308977f010b359938ed00d8e52/jgrapht-core/src/main/java/org/jgrapht/alg/ConnectivityInspector.java/right.java
                 i.addTraversalListener(new MyTraversalListener());
 
                 while (i.hasNext()) {

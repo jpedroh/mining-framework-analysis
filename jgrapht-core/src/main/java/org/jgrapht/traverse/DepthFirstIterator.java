@@ -78,7 +78,13 @@ public class DepthFirstIterator<V, E>
      */
     public DepthFirstIterator(Graph<V, E> g)
     {
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/eeb3686eb78c03308977f010b359938ed00d8e52/jgrapht-core/src/main/java/org/jgrapht/traverse/DepthFirstIterator.java/left.java
         this(g, (V) null);
+||||||| /usr/src/app/output/jgrapht/jgrapht/eeb3686eb78c03308977f010b359938ed00d8e52/jgrapht-core/src/main/java/org/jgrapht/traverse/DepthFirstIterator.java/base.java
+        this(g, null);
+=======
+        this(g, g.vertexSet());
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/eeb3686eb78c03308977f010b359938ed00d8e52/jgrapht-core/src/main/java/org/jgrapht/traverse/DepthFirstIterator.java/right.java
     }
 
     /**
@@ -131,6 +137,20 @@ public class DepthFirstIterator<V, E>
             // This will pop corresponding vertex to be recorded as finished.
             recordFinish();
         }
+    }
+
+    /**
+     * Creates a new depth-first iterator for the specified graph. Iteration will start at the
+     * specified start vertices and will be limited to the connected component that includes those
+     * vertices. If the specified start vertices is <code>null</code>, iteration will start at an
+     * arbitrary vertex and will not be limited, that is, will be able to traverse all the graph.
+     *
+     * @param g the graph to be iterated.
+     * @param startVertices the vertices iteration to be started.
+     */
+    public DepthFirstIterator(Graph<V, E> g, Iterable<V> startVertices)
+    {
+        super(g, startVertices);
     }
 
     @Override

@@ -48,7 +48,13 @@ public class BreadthFirstIterator<V, E>
      */
     public BreadthFirstIterator(Graph<V, E> g)
     {
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/eeb3686eb78c03308977f010b359938ed00d8e52/jgrapht-core/src/main/java/org/jgrapht/traverse/BreadthFirstIterator.java/left.java
         this(g, (V) null);
+||||||| /usr/src/app/output/jgrapht/jgrapht/eeb3686eb78c03308977f010b359938ed00d8e52/jgrapht-core/src/main/java/org/jgrapht/traverse/BreadthFirstIterator.java/base.java
+        this(g, null);
+=======
+        this(g, g.vertexSet());
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/eeb3686eb78c03308977f010b359938ed00d8e52/jgrapht-core/src/main/java/org/jgrapht/traverse/BreadthFirstIterator.java/right.java
     }
 
     /**
