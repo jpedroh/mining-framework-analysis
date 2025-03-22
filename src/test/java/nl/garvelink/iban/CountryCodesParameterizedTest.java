@@ -79,12 +79,28 @@ public class CountryCodesParameterizedTest {
             str( "Cameroon",                 "false", "CM2110003001000500000605306",     null      , null      , "CM21 1000 3001 0005 0000 0605 306"),       //Nordea
             str( "Cape Verde",               "false", "CV64000300004547069110176",       null      , null      , "CV64 0003 0000 4547 0691 1017 6"),         //Nordea
             str( "Congo",                    "false", "CG5230011000202151234567890",     null      , null      , "CG52 3001 1000 2021 5123 4567 890"),       //Nordea
+<<<<<<< /usr/src/app/output/barend/java-iban/981e0311705b2f83cabb82c9c9e098952960b248/src/test/java/nl/garvelink/iban/CountryCodesParameterizedTest.java/left.java
             str( "Costa Rica",               "false", "CR05015202001026284066",          "0152"    , null      , "CR05 0152 0200 1026 2840 66"),             //SWIFT
             str( "Croatia",                  "true" , "HR1210010051863000160",           "1001005" , null      , "HR12 1001 0051 8630 0016 0" ),             //SWIFT
             str( "Cyprus",                   "true" , "CY17002001280000001200527600",    "002"     , "00128"   , "CY17 0020 0128 0000 0012 0052 7600" ),     //SWIFT
             str( "Czech Republic",           "true" , "CZ6508000000192000145399",        "0800"    , null      , "CZ65 0800 0000 1920 0014 5399" ),          //SWIFT
             str( "Denmark",                  "true" , "DK5000400440116243",              "0040"    , null      , "DK50 0040 0440 1162 43" ),                 //SWIFT
             str( "Dominican Republic",       "false", "DO28BAGR00000001212453611324",    "BAGR"    , null      , "DO28 BAGR 0000 0001 2124 5361 1324"),      //SWIFT
+||||||| /usr/src/app/output/barend/java-iban/981e0311705b2f83cabb82c9c9e098952960b248/src/test/java/nl/garvelink/iban/CountryCodesParameterizedTest.java/base.java
+            str( "Costa Rica",               "false", "CR0515202001026284066",           "152"     , null      , "CR05 1520 2001 0262 8406 6"),              //SWIFT, Nordea
+            str( "Croatia",                  "true" , "HR1210010051863000160",           "1001005" , null      , "HR12 1001 0051 8630 0016 0" ),             //SWIFT, ECBS, Nordea
+            str( "Cyprus",                   "true" , "CY17002001280000001200527600",    "002"     , "00128"   , "CY17 0020 0128 0000 0012 0052 7600" ),     //SWIFT, ECBS, Nordea
+            str( "Czech Republic",           "true" , "CZ6508000000192000145399",        "0800"    , null      , "CZ65 0800 0000 1920 0014 5399" ),          //SWIFT, ECBS, Nordea
+            str( "Denmark",                  "true" , "DK5000400440116243",              "0040"    , null      , "DK50 0040 0440 1162 43" ),                 //SWIFT, ECBS, Nordea
+            str( "Dominican Republic",       "false", "DO28BAGR00000001212453611324",    "BAGR"    , null      , "DO28 BAGR 0000 0001 2124 5361 1324"),      //SWIFT, Nordea
+=======
+            str( "Costa Rica",               "false", "CR05015202001026284066",          "0152"    , null      , "CR05 0152 0200 1026 2840 66"),              //SWIFT, Nordea
+            str( "Croatia",                  "true" , "HR1210010051863000160",           "1001005" , null      , "HR12 1001 0051 8630 0016 0" ),             //SWIFT, ECBS, Nordea
+            str( "Cyprus",                   "true" , "CY17002001280000001200527600",    "002"     , "00128"   , "CY17 0020 0128 0000 0012 0052 7600" ),     //SWIFT, ECBS, Nordea
+            str( "Czech Republic",           "true" , "CZ6508000000192000145399",        "0800"    , null      , "CZ65 0800 0000 1920 0014 5399" ),          //SWIFT, ECBS, Nordea
+            str( "Denmark",                  "true" , "DK5000400440116243",              "0040"    , null      , "DK50 0040 0440 1162 43" ),                 //SWIFT, ECBS, Nordea
+            str( "Dominican Republic",       "false", "DO28BAGR00000001212453611324",    "BAGR"    , null      , "DO28 BAGR 0000 0001 2124 5361 1324"),      //SWIFT, Nordea
+>>>>>>> /usr/src/app/output/barend/java-iban/981e0311705b2f83cabb82c9c9e098952960b248/src/test/java/nl/garvelink/iban/CountryCodesParameterizedTest.java/right.java
             str( "Egypt",                    "false", "EG1100006001880800100014553",     null      , null      , "EG11 0000 6001 8808 0010 0014 553" ),      //Nordea
             str( "El Salvador",              "false", "SV62CENR00000000000000700025",    "CENR"    , null      , "SV62 CENR 0000 0000 0000 0070 0025"),      //SWIFT
             str( "Estonia",                  "true" , "EE382200221020145685",            "22"      , null      , "EE38 2200 2210 2014 5685" ),               //SWIFT
@@ -101,10 +117,21 @@ public class CountryCodesParameterizedTest {
             str( "Hungary",                  "true" , "HU42117730161111101800000000",    "117"     , "7301"    , "HU42 1177 3016 1111 1018 0000 0000" ),     //SWIFT
             str( "Iceland",                  "true" , "IS140159260076545510730339",      "0159"    , null      , "IS14 0159 2600 7654 5510 7303 39" ),       //SWIFT
             str( "Iran",                     "false", "IR580540105180021273113007",      null      , null      , "IR58 0540 1051 8002 1273 1130 07"),        //Nordea
+<<<<<<< /usr/src/app/output/barend/java-iban/981e0311705b2f83cabb82c9c9e098952960b248/src/test/java/nl/garvelink/iban/CountryCodesParameterizedTest.java/left.java
             str( "Iraq",                     "false", "IQ98NBIQ850123456789012",         "NBIQ"    , "850"     , "IQ98 NBIQ 8501 2345 6789 012"),            //SWIFT
             str( "Ireland",                  "true" , "IE29AIBK93115212345678",          "AIBK"    , "931152"  , "IE29 AIBK 9311 5212 3456 78" ),            //SWIFT
             str( "Israel",                   "false", "IL620108000000099999999",         "010"     , "800"     , "IL62 0108 0000 0009 9999 999" ),           //SWIFT
             str( "Italy",                    "true" , "IT60X0542811101000000123456",     "05428"   , "11101"   , "IT60 X054 2811 1010 0000 0123 456" ),      //SWIFT
+||||||| /usr/src/app/output/barend/java-iban/981e0311705b2f83cabb82c9c9e098952960b248/src/test/java/nl/garvelink/iban/CountryCodesParameterizedTest.java/base.java
+            str( "Ireland",                  "true" , "IE29AIBK93115212345678",          "AIBK"    , "931152"  , "IE29 AIBK 9311 5212 3456 78" ),            //SWIFT, ECBS, Nordea
+            str( "Israel",                   "false", "IL620108000000099999999",         "010"     , "800"     , "IL62 0108 0000 0009 9999 999" ),           //SWIFT, ECBS, Nordea
+            str( "Italy",                    "true" , "IT60X0542811101000000123456",     "05428"   , "11101"   , "IT60 X054 2811 1010 0000 0123 456" ),      //SWIFT, ECBS, Nordea
+=======
+            str( "Iraq",                     "false", "IQ98NBIQ850123456789012",         "NBIQ"    , "850"     , "IQ98 NBIQ 8501 2345 6789 012"),            //SWIFT
+            str( "Ireland",                  "true" , "IE29AIBK93115212345678",          "AIBK"    , "931152"  , "IE29 AIBK 9311 5212 3456 78" ),            //SWIFT, ECBS, Nordea
+            str( "Israel",                   "false", "IL620108000000099999999",         "010"     , "800"     , "IL62 0108 0000 0009 9999 999" ),           //SWIFT, ECBS, Nordea
+            str( "Italy",                    "true" , "IT60X0542811101000000123456",     "05428"   , "11101"   , "IT60 X054 2811 1010 0000 0123 456" ),      //SWIFT, ECBS, Nordea
+>>>>>>> /usr/src/app/output/barend/java-iban/981e0311705b2f83cabb82c9c9e098952960b248/src/test/java/nl/garvelink/iban/CountryCodesParameterizedTest.java/right.java
             str( "Ivory Coast",              "false", "CI05A00060174100178530011852",    null      , null      , "CI05 A000 6017 4100 1785 3001 1852"),      //Nordea
             str( "Jordan",                   "false", "JO94CBJO0010000000000131000302",  "CBJO"    , null      , "JO94 CBJO 0010 0000 0000 0131 0003 02"),   //SWIFT
             str( "Kazakhstan",               "false", "KZ86125KZT5004100100",            "125"     , null      , "KZ86 125K ZT50 0410 0100"),                //SWIFT
