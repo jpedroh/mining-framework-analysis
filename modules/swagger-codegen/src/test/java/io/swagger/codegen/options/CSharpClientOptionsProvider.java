@@ -1,45 +1,33 @@
 package io.swagger.codegen.options;
-
 import io.swagger.codegen.CodegenConstants;
-
 import com.google.common.collect.ImmutableMap;
-
 import java.util.Map;
 
 public class CSharpClientOptionsProvider implements OptionsProvider {
-    public static final String PACKAGE_NAME_VALUE = "swagger_client_csharp";
-    public static final String PACKAGE_VERSION_VALUE = "1.0.0-SNAPSHOT";
-    public static final String SOURCE_FOLDER_VALUE = "src_csharp";
-    public static final String PACKAGE_GUID_VALUE = "{894EAEBB-649A-498C-A735-10D0BD7B73E0}";
-	
-    @Override
-    public String getLanguage() {
-        return "csharp";
-    }
+  public static final String PACKAGE_NAME_VALUE = "swagger_client_csharp";
 
-    @Override
-    public Map<String, String> createOptions() {
-        ImmutableMap.Builder<String, String> builder = new ImmutableMap.Builder<String, String>();
-        return builder.put(CodegenConstants.PACKAGE_NAME, PACKAGE_NAME_VALUE)
-                .put(CodegenConstants.PACKAGE_VERSION, PACKAGE_VERSION_VALUE)
-                .put(CodegenConstants.SORT_PARAMS_BY_REQUIRED_FLAG, "true")
-                .put(CodegenConstants.OPTIONAL_METHOD_ARGUMENT, "true")
-                .put(CodegenConstants.OPTIONAL_ASSEMBLY_INFO, "true")
-                .put(CodegenConstants.USE_DATETIME_OFFSET, "true")
-                .put(CodegenConstants.SOURCE_FOLDER, SOURCE_FOLDER_VALUE)
-                .put(CodegenConstants.USE_COLLECTION, "false")
-                .put(CodegenConstants.RETURN_ICOLLECTION, "false")
-                .put(CodegenConstants.OPTIONAL_PROJECT_FILE, "true")
-                .put(CodegenConstants.OPTIONAL_PROJECT_GUID, PACKAGE_GUID_VALUE)
-                .put(CodegenConstants.DOTNET_FRAMEWORK, "4.x")
-                .put(CodegenConstants.OPTIONAL_EMIT_DEFAULT_VALUES, "true")
-                .put(CodegenConstants.HIDE_GENERATION_TIMESTAMP, "true")
-                .put(CodegenConstants.GENERATE_PROPERTY_CHANGED, "true")
-                .build();
-    }
+  public static final String PACKAGE_VERSION_VALUE = "1.0.0-SNAPSHOT";
 
-    @Override
-    public boolean isServer() {
-        return false;
-    }
+  public static final String SOURCE_FOLDER_VALUE = "src_csharp";
+
+  public static final String PACKAGE_GUID_VALUE = "{894EAEBB-649A-498C-A735-10D0BD7B73E0}";
+
+  @Override public String getLanguage() {
+    return "csharp";
+  }
+
+  @Override public Map<String, String> createOptions() {
+    ImmutableMap.Builder<String, String> builder = new ImmutableMap.Builder<String, String>();
+    return builder.put(CodegenConstants.PACKAGE_NAME, PACKAGE_NAME_VALUE).put(CodegenConstants.PACKAGE_VERSION, PACKAGE_VERSION_VALUE).put(CodegenConstants.SORT_PARAMS_BY_REQUIRED_FLAG, "true").put(CodegenConstants.OPTIONAL_METHOD_ARGUMENT, "true").put(CodegenConstants.OPTIONAL_ASSEMBLY_INFO, "true").put(CodegenConstants.USE_DATETIME_OFFSET, "true").put(CodegenConstants.SOURCE_FOLDER, SOURCE_FOLDER_VALUE).put(CodegenConstants.USE_COLLECTION, "false").put(CodegenConstants.RETURN_ICOLLECTION, "false").put(CodegenConstants.OPTIONAL_PROJECT_FILE, "true").put(CodegenConstants.OPTIONAL_PROJECT_GUID, PACKAGE_GUID_VALUE).put(CodegenConstants.DOTNET_FRAMEWORK, "4.x").put(CodegenConstants.OPTIONAL_EMIT_DEFAULT_VALUES, "true").put(CodegenConstants.
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/154a73ad917ccf32a0b21aec534d12e3f4a3f594/modules/swagger-codegen/src/test/java/io/swagger/codegen/options/CSharpClientOptionsProvider.java/left.java
+    HIDE_GENERATION_TIMESTAMP
+=======
+    GENERATE_PROPERTY_CHANGED
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/154a73ad917ccf32a0b21aec534d12e3f4a3f594/modules/swagger-codegen/src/test/java/io/swagger/codegen/options/CSharpClientOptionsProvider.java/right.java
+    , "true").build();
+  }
+
+  @Override public boolean isServer() {
+    return false;
+  }
 }
