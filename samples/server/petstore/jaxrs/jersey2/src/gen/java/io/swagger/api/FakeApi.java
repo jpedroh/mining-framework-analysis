@@ -8,8 +8,8 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.jaxrs.*;
 
 import io.swagger.model.Client;
-import java.util.Date;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import java.util.List;
 import io.swagger.api.NotFoundException;
@@ -68,10 +68,9 @@ public class FakeApi  {
 ,@ApiParam(value = "None")  @FormParam("date")  Date date
 ,@ApiParam(value = "None")  @FormParam("dateTime")  Date dateTime
 ,@ApiParam(value = "None")  @FormParam("password")  String password
-,@ApiParam(value = "None")  @FormParam("callback")  String paramCallback
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.testEndpointParameters(number,_double,patternWithoutDelimiter,_byte,integer,int32,int64,_float,string,binary,date,dateTime,password,paramCallback,securityContext);
+        return delegate.testEndpointParameters(number,_double,patternWithoutDelimiter,_byte,integer,int32,int64,_float,string,binary,date,dateTime,password,securityContext);
     }
     @GET
     

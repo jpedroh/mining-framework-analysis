@@ -19,7 +19,6 @@ import io.swagger.api.NotFoundException;
 import java.io.InputStream;
 
 import com.sun.jersey.core.header.FormDataContentDisposition;
-import com.sun.jersey.multipart.FormDataParam;
 
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
