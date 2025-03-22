@@ -1,24 +1,7 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package tech.tablesaw.api;
-
 import static java.util.stream.Collectors.toList;
 import static tech.tablesaw.aggregate.AggregateFunctions.countMissing;
-import static tech.tablesaw.api.QuerySupport.not;
 import static tech.tablesaw.selection.Selection.selectNRowsAtRandom;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Streams;
 import com.google.common.primitives.Ints;
@@ -65,8 +48,8 @@ import tech.tablesaw.table.TableSliceGroup;
  * <p>Tables are the main data-type and primary focus of Airframe.
  */
 public class Table extends Relation implements Iterable<Row> {
-
   public static final ReaderRegistry defaultReaderRegistry = new ReaderRegistry();
+
   public static final WriterRegistry defaultWriterRegistry = new WriterRegistry();
 
   static {
@@ -75,11 +58,13 @@ public class Table extends Relation implements Iterable<Row> {
 
   /** The columns that hold the data in this table */
   private final List<Column<?>> columnList = new ArrayList<>();
+
   /** The name of the table */
   private String name;
 
   /** Returns a new table */
-  private Table() {}
+  private Table() {
+  }
 
   /** Returns a new table initialized with the given name */
   private Table(String name) {
@@ -109,8 +94,7 @@ public class Table extends Relation implements Iterable<Row> {
   }
 
   private static void autoRegisterReadersAndWriters() {
-    try (ScanResult scanResult =
-        new ClassGraph().enableAllInfo().whitelistPackages("tech.tablesaw.io").scan()) {
+    try (ScanResult scanResult = new ClassGraph().enableAllInfo().whitelistPackages("tech.tablesaw.io").scan()) {
       List<String> classes = new ArrayList<>();
       classes.addAll(scanResult.getClassesImplementing(DataWriter.class.getName()).getNames());
       classes.addAll(scanResult.getClassesImplementing(DataReader.class.getName()).getNames());
@@ -187,8 +171,7 @@ public class Table extends Relation implements Iterable<Row> {
   }
 
   /** Adds the given column to this table */
-  @Override
-  public Table addColumns(final Column<?>... cols) {
+  @Override public Table addColumns(final Column<?>... cols) {
     for (final Column<?> c : cols) {
       validateColumn(c);
       columnList.add(c);
@@ -201,18 +184,15 @@ public class Table extends Relation implements Iterable<Row> {
    * if the number of rows in the column does not match the number of rows in the table
    */
   private void validateColumn(final Column<?> newColumn) {
-    Preconditions.checkNotNull(
-        newColumn, "Attempted to add a null to the columns in table " + name);
+    Preconditions.checkNotNull(newColumn, "Attempted to add a null to the columns in table " + name);
     List<String> stringList = new ArrayList<>();
     for (String name : columnNames()) {
       stringList.add(name.toLowerCase());
     }
     if (stringList.contains(newColumn.name().toLowerCase())) {
-      String message =
-          String.format("Cannot add column with duplicate name %s to table %s", newColumn, name);
+      String message = String.format("Cannot add column with duplicate name %s to table %s", newColumn, name);
       throw new IllegalArgumentException(message);
     }
-
     checkColumnSize(newColumn);
   }
 
@@ -222,11 +202,7 @@ public class Table extends Relation implements Iterable<Row> {
    */
   private void checkColumnSize(Column<?> newColumn) {
     if (columnCount() != 0) {
-      Preconditions.checkArgument(
-          newColumn.size() == rowCount(),
-          "Column "
-              + newColumn.name()
-              + " does not have the same number of rows as the other columns in the table.");
+      Preconditions.checkArgument(newColumn.size() == rowCount(), "Column " + newColumn.name() + " does not have the same number of rows as the other columns in the table.");
     }
   }
 
@@ -265,8 +241,7 @@ public class Table extends Relation implements Iterable<Row> {
   }
 
   /** Sets the name of the table */
-  @Override
-  public Table setName(String name) {
+  @Override public Table setName(String name) {
     this.name = name;
     return this;
   }
@@ -276,31 +251,26 @@ public class Table extends Relation implements Iterable<Row> {
    *
    * @param columnIndex an integer at least 0 and less than number of columns in the table
    */
-  @Override
-  public Column<?> column(int columnIndex) {
+  @Override public Column<?> column(int columnIndex) {
     return columnList.get(columnIndex);
   }
 
   /** Returns the number of columns in the table */
-  @Override
-  public int columnCount() {
+  @Override public int columnCount() {
     return columnList.size();
   }
 
   /** Returns the number of rows in the table */
-  @Override
-  public int rowCount() {
+  @Override public int rowCount() {
     int result = 0;
     if (!columnList.isEmpty()) {
-      // all the columns have the same number of elements, so we can check any of them
       result = columnList.get(0).size();
     }
     return result;
   }
 
   /** Returns the list of columns */
-  @Override
-  public List<Column<?>> columns() {
+  @Override public List<Column<?>> columns() {
     return columnList;
   }
 
@@ -331,8 +301,7 @@ public class Table extends Relation implements Iterable<Row> {
       }
     }
     if (columnIndex == -1) {
-      throw new IllegalArgumentException(
-          String.format("Column %s is not present in table %s", columnName, name));
+      throw new IllegalArgumentException(String.format("Column %s is not present in table %s", columnName, name));
     }
     return columnIndex;
   }
@@ -353,15 +322,13 @@ public class Table extends Relation implements Iterable<Row> {
       }
     }
     if (columnIndex == -1) {
-      throw new IllegalArgumentException(
-          String.format("Column %s is not present in table %s", column.name(), name));
+      throw new IllegalArgumentException(String.format("Column %s is not present in table %s", column.name(), name));
     }
     return columnIndex;
   }
 
   /** Returns the name of the table */
-  @Override
-  public String name() {
+  @Override public String name() {
     return name;
   }
 
@@ -376,7 +343,6 @@ public class Table extends Relation implements Iterable<Row> {
     for (Column<?> column : columnList) {
       copy.addColumns(column.emptyCopy(rowCount()));
     }
-
     int[] rows = new int[rowCount()];
     for (int i = 0; i < rowCount(); i++) {
       rows[i] = i;
@@ -417,13 +383,11 @@ public class Table extends Relation implements Iterable<Row> {
   public Table[] sampleSplit(double table1Proportion) {
     Table[] tables = new Table[2];
     int table1Count = (int) Math.round(rowCount() * table1Proportion);
-
     Selection table2Selection = new BitmapBackedSelection();
     for (int i = 0; i < rowCount(); i++) {
       table2Selection.add(i);
     }
     Selection table1Selection = new BitmapBackedSelection();
-
     Selection table1Records = selectNRowsAtRandom(table1Count, rowCount());
     for (int table1Record : table1Records) {
       table1Selection.add(table1Record);
@@ -445,22 +409,15 @@ public class Table extends Relation implements Iterable<Row> {
    *     parameter, and the second table having the balance of the rows
    */
   public Table[] stratifiedSampleSplit(CategoricalColumn<?> column, double table1Proportion) {
-    Preconditions.checkArgument(
-        containsColumn(column),
-        "The categorical column must be part of the table, you can create a string column and add it to this table before sampling.");
+    Preconditions.checkArgument(containsColumn(column), "The categorical column must be part of the table, you can create a string column and add it to this table before sampling.");
     final Table first = emptyCopy();
     final Table second = emptyCopy();
-
-    splitOn(column)
-        .asTableList()
-        .forEach(
-            tab -> {
-              Table[] splits = tab.sampleSplit(table1Proportion);
-              first.append(splits[0]);
-              second.append(splits[1]);
-            });
-
-    return new Table[] {first, second};
+    splitOn(column).asTableList().forEach((tab) -> {
+      Table[] splits = tab.sampleSplit(table1Proportion);
+      first.append(splits[0]);
+      second.append(splits[1]);
+    });
+    return new Table[] { first, second };
   }
 
   /**
@@ -470,9 +427,7 @@ public class Table extends Relation implements Iterable<Row> {
    * @param proportion The proportion to go in the sample
    */
   public Table sampleX(double proportion) {
-    Preconditions.checkArgument(
-        proportion <= 1 && proportion >= 0, "The sample proportion must be between 0 and 1");
-
+    Preconditions.checkArgument(proportion <= 1 && proportion >= 0, "The sample proportion must be between 0 and 1");
     int tableSize = (int) Math.round(rowCount() * proportion);
     return where(selectNRowsAtRandom(tableSize, rowCount()));
   }
@@ -483,15 +438,12 @@ public class Table extends Relation implements Iterable<Row> {
    * @param nRows The number of rows to go in the sample
    */
   public Table sampleN(int nRows) {
-    Preconditions.checkArgument(
-        nRows > 0 && nRows < rowCount(),
-        "The number of rows sampled must be greater than 0 and less than the number of rows in the table.");
+    Preconditions.checkArgument(nRows > 0 && nRows < rowCount(), "The number of rows sampled must be greater than 0 and less than the number of rows in the table.");
     return where(selectNRowsAtRandom(nRows, rowCount()));
   }
 
   /** Clears all the data from this table */
-  @Override
-  public void clear() {
+  @Override public void clear() {
     columnList.forEach(Column::clear);
   }
 
@@ -530,24 +482,16 @@ public class Table extends Relation implements Iterable<Row> {
    * <p>if column name starts with - then sort that column descending otherwise sort ascending
    */
   public Table sortOn(String... columnNames) {
-
     Sort key = null;
     List<String> names = columnNames().stream().map(String::toUpperCase).collect(toList());
-
     for (String columnName : columnNames) {
       Sort.Order order = Sort.Order.ASCEND;
       if (!names.contains(columnName.toUpperCase())) {
-        // the column name has been annotated with a prefix.
-        // get the prefix which could be - or +
         String prefix = columnName.substring(0, 1);
-
-        // remove - prefix so provided name matches actual column name
         columnName = columnName.substring(1, columnName.length());
-
         order = getOrder(prefix);
       }
-
-      if (key == null) { // key will be null the first time through
+      if (key == null) {
         key = first(columnName, order);
       } else {
         key.next(columnName, order);
@@ -560,13 +504,13 @@ public class Table extends Relation implements Iterable<Row> {
     Sort.Order order;
     switch (prefix) {
       case "+":
-        order = Sort.Order.ASCEND;
-        break;
+      order = Sort.Order.ASCEND;
+      break;
       case "-":
-        order = Sort.Order.DESCEND;
-        break;
+      order = Sort.Order.DESCEND;
+      break;
       default:
-        throw new IllegalStateException("Column prefix: " + prefix + " is unknown.");
+      throw new IllegalStateException("Column prefix: " + prefix + " is unknown.");
     }
     return order;
   }
@@ -601,10 +545,8 @@ public class Table extends Relation implements Iterable<Row> {
   /** Returns a copy of this table sorted using the given comparator */
   private Table sortOn(IntComparator rowComparator) {
     Table newTable = emptyCopy(rowCount());
-
     int[] newRows = rows();
     IntArrays.parallelQuickSort(newRows, rowComparator);
-
     Rows.copyRowsToTable(newRows, this, newTable);
     return newTable;
   }
@@ -613,13 +555,11 @@ public class Table extends Relation implements Iterable<Row> {
   public Table sortOn(Comparator<Row> rowComparator) {
     Row row1 = new Row(this);
     Row row2 = new Row(this);
-    return sortOn(
-        (IntComparator)
-            (k1, k2) -> {
-              row1.at(k1);
-              row2.at(k2);
-              return rowComparator.compare(row1, row2);
-            });
+    return sortOn((IntComparator) (k1, k2) -> {
+      row1.at(k1);
+      row2.at(k2);
+      return rowComparator.compare(row1, row2);
+    });
   }
 
   /** Returns an array of ints of the same number of rows as the table */
@@ -706,13 +646,15 @@ public class Table extends Relation implements Iterable<Row> {
 
   public Table where(Function<Table, Selection> selection) {
     Table tempTable = where(selection.apply(this));
-    Table newTable = tempTable.emptyCopy(tempTable.rowCount());
+    Table newTable = 
+<<<<<<< /usr/src/app/output/jtablesaw/tablesaw/68f967133364244b0238c0ccf7c38f6357e490f1/core/src/main/java/tech/tablesaw/api/Table.java/left.java
+    this.emptyCopy(this.rowCount())
+=======
+    tempTable.emptyCopy(tempTable.rowCount())
+>>>>>>> /usr/src/app/output/jtablesaw/tablesaw/68f967133364244b0238c0ccf7c38f6357e490f1/core/src/main/java/tech/tablesaw/api/Table.java/right.java
+    ;
     Rows.copyRowsToTable(selection.apply(this), this, newTable);
     return newTable;
-  }
-
-  public Table dropWhere(Function<Table, Selection> selection) {
-    return where(not(selection));
   }
 
   public Table dropWhere(Selection selection) {
@@ -730,11 +672,7 @@ public class Table extends Relation implements Iterable<Row> {
    * of the cells in these new columns are the result of applying the given AggregateFunction to the
    * data in column3, grouped by the values of column1 and column2
    */
-  public Table pivot(
-      CategoricalColumn<?> column1,
-      CategoricalColumn<?> column2,
-      NumberColumn<?> column3,
-      AggregateFunction<?, ?> aggregateFunction) {
+  public Table pivot(CategoricalColumn<?> column1, CategoricalColumn<?> column2, NumberColumn<?> column3, AggregateFunction<?, ?> aggregateFunction) {
     return PivotTable.pivot(this, column1, column2, column3, aggregateFunction);
   }
 
@@ -744,16 +682,8 @@ public class Table extends Relation implements Iterable<Row> {
    * of the cells in these new columns are the result of applying the given AggregateFunction to the
    * data in column3, grouped by the values of column1 and column2
    */
-  public Table pivot(
-      String column1Name,
-      String column2Name,
-      String column3Name,
-      AggregateFunction<?, ?> aggregateFunction) {
-    return pivot(
-        categoricalColumn(column1Name),
-        categoricalColumn(column2Name),
-        numberColumn(column3Name),
-        aggregateFunction);
+  public Table pivot(String column1Name, String column2Name, String column3Name, AggregateFunction<?, ?> aggregateFunction) {
+    return pivot(categoricalColumn(column1Name), categoricalColumn(column2Name), numberColumn(column3Name), aggregateFunction);
   }
 
   /**
@@ -788,7 +718,6 @@ public class Table extends Relation implements Iterable<Row> {
 
   public Table structure() {
     Table t = new Table("Structure of " + name());
-
     IntColumn index = IntColumn.indexColumn("Index", columnCount(), 0);
     StringColumn columnName = StringColumn.create("Column Name", columnCount());
     StringColumn columnType = StringColumn.create("Column Type", columnCount());
@@ -805,10 +734,8 @@ public class Table extends Relation implements Iterable<Row> {
 
   /** Returns the unique records in this table Note: Uses a lot of memory for a sort */
   public Table dropDuplicateRows() {
-
     Table sorted = this.sortOn(columnNames().toArray(new String[columns().size()]));
     Table temp = emptyCopy();
-
     for (int row = 0; row < rowCount(); row++) {
       if (temp.isEmpty() || !Rows.compareRows(row, sorted, temp)) {
         Rows.appendRowToTable(row, sorted, temp);
@@ -819,9 +746,7 @@ public class Table extends Relation implements Iterable<Row> {
 
   /** Returns only those records in this table that have no columns with missing values */
   public Table dropRowsWithMissingValues() {
-
     Selection missing = new BitmapBackedSelection();
-
     for (int row = 0; row < rowCount(); row++) {
       for (int col = 0; col < columnCount(); col++) {
         Column<?> c = column(col);
@@ -847,15 +772,14 @@ public class Table extends Relation implements Iterable<Row> {
   }
 
   /** Removes the given columns */
-  @Override
-  public Table removeColumns(Column<?>... columns) {
+  @Override public Table removeColumns(Column<?>... columns) {
     columnList.removeAll(Arrays.asList(columns));
     return this;
   }
 
   /** Removes the given columns with missing values */
   public Table removeColumnsWithMissingValues() {
-    removeColumns(columnList.stream().filter(x -> x.countMissing() > 0).toArray(Column<?>[]::new));
+    removeColumns(columnList.stream().filter((x) -> x.countMissing() > 0).toArray(Column<?>[]::new));
     return this;
   }
 
@@ -875,8 +799,7 @@ public class Table extends Relation implements Iterable<Row> {
     return this;
   }
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  public Table append(Table tableToAppend) {
+  @SuppressWarnings(value = { "rawtypes", "unchecked" }) public Table append(Table tableToAppend) {
     for (final Column column : columnList) {
       final Column columnToAppend = tableToAppend.column(column.name());
       column.append(columnToAppend);
@@ -909,9 +832,7 @@ public class Table extends Relation implements Iterable<Row> {
    * @return This table
    */
   public Table concat(Table tableToConcatenate) {
-    Preconditions.checkArgument(
-        tableToConcatenate.rowCount() == this.rowCount(),
-        "Both tables must have the same number of rows to concatenate them.");
+    Preconditions.checkArgument(tableToConcatenate.rowCount() == this.rowCount(), "Both tables must have the same number of rows to concatenate them.");
     for (Column<?> column : tableToConcatenate.columns()) {
       this.addColumns(column);
     }
@@ -926,49 +847,31 @@ public class Table extends Relation implements Iterable<Row> {
     return new Summarizer(this, columnNames, functions);
   }
 
-  public Summarizer summarize(
-      String numericColumn1Name, String numericColumn2Name, AggregateFunction<?, ?>... functions) {
+  public Summarizer summarize(String numericColumn1Name, String numericColumn2Name, AggregateFunction<?, ?>... functions) {
     return summarize(column(numericColumn1Name), column(numericColumn2Name), functions);
   }
 
-  public Summarizer summarize(
-      String col1Name, String col2Name, String col3Name, AggregateFunction<?, ?>... functions) {
+  public Summarizer summarize(String col1Name, String col2Name, String col3Name, AggregateFunction<?, ?>... functions) {
     return summarize(column(col1Name), column(col2Name), column(col3Name), functions);
   }
 
-  public Summarizer summarize(
-      String col1Name,
-      String col2Name,
-      String col3Name,
-      String col4Name,
-      AggregateFunction<?, ?>... functions) {
-    return summarize(
-        column(col1Name), column(col2Name), column(col3Name), column(col4Name), functions);
+  public Summarizer summarize(String col1Name, String col2Name, String col3Name, String col4Name, AggregateFunction<?, ?>... functions) {
+    return summarize(column(col1Name), column(col2Name), column(col3Name), column(col4Name), functions);
   }
 
   public Summarizer summarize(Column<?> numberColumn, AggregateFunction<?, ?>... function) {
     return new Summarizer(this, numberColumn, function);
   }
 
-  public Summarizer summarize(
-      Column<?> column1, Column<?> column2, AggregateFunction<?, ?>... function) {
+  public Summarizer summarize(Column<?> column1, Column<?> column2, AggregateFunction<?, ?>... function) {
     return new Summarizer(this, column1, column2, function);
   }
 
-  public Summarizer summarize(
-      Column<?> column1,
-      Column<?> column2,
-      Column<?> column3,
-      AggregateFunction<?, ?>... function) {
+  public Summarizer summarize(Column<?> column1, Column<?> column2, Column<?> column3, AggregateFunction<?, ?>... function) {
     return new Summarizer(this, column1, column2, column3, function);
   }
 
-  public Summarizer summarize(
-      Column<?> column1,
-      Column<?> column2,
-      Column<?> column3,
-      Column<?> column4,
-      AggregateFunction<?, ?>... function) {
+  public Summarizer summarize(Column<?> column1, Column<?> column2, Column<?> column3, Column<?> column4, AggregateFunction<?, ?>... function) {
     return new Summarizer(this, column1, column2, column3, column4, function);
   }
 
@@ -1050,20 +953,15 @@ public class Table extends Relation implements Iterable<Row> {
     return summarize(columnNames(), countMissing).apply();
   }
 
-  @Override
-  public Iterator<Row> iterator() {
-
+  @Override public Iterator<Row> iterator() {
     return new Iterator<Row>() {
-
       private final Row row = new Row(Table.this);
 
-      @Override
-      public Row next() {
+      @Override public Row next() {
         return row.next();
       }
 
-      @Override
-      public boolean hasNext() {
+      @Override public boolean hasNext() {
         return row.hasNext();
       }
     };
@@ -1100,10 +998,8 @@ public class Table extends Relation implements Iterable<Row> {
     for (int i = 0; i < n; i++) {
       rows[i] = new Row(this);
     }
-
     int max = rowCount() / n;
-
-    for (int i = 0; i < max; i++) { // 0, 1
+    for (int i = 0; i < max; i++) {
       for (int r = 1; r <= n; r++) {
         int row = i * n + r - 1;
         rows[r - 1].at(row);
@@ -1155,7 +1051,6 @@ public class Table extends Relation implements Iterable<Row> {
     for (int i = 0; i < n; i++) {
       rows[i] = new Row(this);
     }
-
     int max = rowCount() - (n - 2);
     for (int i = 1; i < max; i++) {
       for (int r = 0; r < n; r++) {
@@ -1167,6 +1062,7 @@ public class Table extends Relation implements Iterable<Row> {
 
   public static class RowPair {
     private final Row first;
+
     private final Row second;
 
     public RowPair(Row first, Row second) {
@@ -1184,7 +1080,6 @@ public class Table extends Relation implements Iterable<Row> {
   }
 
   interface Pairs {
-
     void doWithPair(Row row1, Row row2);
 
     /**
