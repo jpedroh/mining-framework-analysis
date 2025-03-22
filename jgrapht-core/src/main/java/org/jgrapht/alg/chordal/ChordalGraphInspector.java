@@ -8,12 +8,28 @@ import java.util.*;
 
 /**
  * Implementation of the lexicographical breadth-first search algorithm for chordal graph recognition.
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/e2d8b14950e79d1653e6cb30a0f0c45a5b895d34/jgrapht-core/src/main/java/org/jgrapht/alg/chordal/ChordalGraphInspector.java/left.java
  * <p>
  * Chordal graph is defined as a graph, whose all induced cycles are of length &lt;= 3.
  * Induced cycles are also called chordless. In other words, every cycle of length &gt;= 4 in the graph
  * has at least one chord between the vertices on this cycle.
  * <p>
  * For more information on the topic see the following
+||||||| /usr/src/app/output/jgrapht/jgrapht/e2d8b14950e79d1653e6cb30a0f0c45a5b895d34/jgrapht-core/src/main/java/org/jgrapht/alg/chordal/ChordalGraphInspector.java/base.java
+ *
+ * <p>Chordal graph is defined as a graph, whose all induced cycles are of length &lt= 3.
+ * Induced cycles are also called chordless. In other words, every cycle of length &gt= 4 in the graph
+ * has at least one chord between the vertices on this cycle.</p>
+ *
+ * <p>For more information on the topic see the following
+=======
+ *
+ * <p>Chordal graph is defined as a graph, whose all induced cycles are of length &lt;= 3.
+ * Induced cycles are also called chordless. In other words, every cycle of length &gt;= 4 in the graph
+ * has at least one chord between the vertices on this cycle.</p>
+ *
+ * <p>For more information on the topic see the following
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/e2d8b14950e79d1653e6cb30a0f0c45a5b895d34/jgrapht-core/src/main/java/org/jgrapht/alg/chordal/ChordalGraphInspector.java/right.java
  * <a href="http://www.cse.iitd.ac.in/~naveen/courses/CSL851/uwaterloo.pdf">article</a>:
  * <i>"CS 762: Graph-theoretic algorithms.
  * Lecture notes of a graduate course. University of Waterloo. Fall 1999, Winter 2002, Winter 2004."</i>
