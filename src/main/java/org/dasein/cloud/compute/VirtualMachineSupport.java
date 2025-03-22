@@ -190,8 +190,222 @@ public interface VirtualMachineSupport extends AccessControlledService {
      * @throws CloudException an error occurred within the cloud provider
      */
     public abstract @Nullable Iterable<VirtualMachineStatus> getVMStatus(@Nullable String ... vmIds) throws InternalException, CloudException;
+
+    /**
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/ce4322379933212aa1effeb25514994ac2dde719/src/main/java/org/dasein/cloud/compute/VirtualMachineSupport.java/left.java
+||||||| /usr/src/app/output/greese/dasein-cloud-core/ce4322379933212aa1effeb25514994ac2dde719/src/main/java/org/dasein/cloud/compute/VirtualMachineSupport.java/base.java
+     * Identifies whether images of the specified image class are required for launching a VM. This method should
+     * always return {@link Requirement#REQUIRED} when the image class chosen is {@link ImageClass#MACHINE}.
+     * @param cls the desired image class
+     * @return the requirements level of support for this image class
+     * @throws CloudException an error occurred in the cloud identifying this requirement
+     * @throws InternalException an error occurred within the Dasein Cloud implementation identifying this requirement
+     */
+    public abstract @Nonnull Requirement identifyImageRequirement(@Nonnull ImageClass cls) throws CloudException, InternalException;
+
+    /**
+     * Indicates the degree to which specifying a user name and password at launch is required for a Unix operating system.
+     * @return the requirements level for specifying a user name and password at launch
+     * @throws CloudException an error occurred in the cloud identifying this requirement
+     * @throws InternalException an error occurred within the Dasein Cloud implementation identifying this requirement
+     * @deprecated Use {@link #identifyPasswordRequirement(Platform)}
+     */
+    @Deprecated
+    public abstract @Nonnull Requirement identifyPasswordRequirement() throws CloudException, InternalException;
+
+    /**
+     * Indicates the degree to which specifying a user name and password at launch is required.
+     * @param platform the platform for which password requirements are being sought
+     * @return the requirements level for specifying a user name and password at launch
+     * @throws CloudException an error occurred in the cloud identifying this requirement
+     * @throws InternalException an error occurred within the Dasein Cloud implementation identifying this requirement
+     */
+    public abstract @Nonnull Requirement identifyPasswordRequirement(Platform platform) throws CloudException, InternalException;
+
+    /**
+     * Indicates whether or not a root volume product must be specified when launching a virtual machine.
+     * @return the requirements level for a root volume product
+     * @throws CloudException an error occurred in the cloud identifying this requirement
+     * @throws InternalException an error occurred within the Dasein Cloud implementation identifying this requirement
+     */
+    public abstract @Nonnull Requirement identifyRootVolumeRequirement() throws CloudException, InternalException;
+
+    /**
+     * Indicates the degree to which specifying a shell key at launch is required for a Unix operating system.
+     * @return the requirements level for shell key support at launch
+     * @throws CloudException an error occurred in the cloud identifying this requirement
+     * @throws InternalException an error occurred within the Dasein Cloud implementation identifying this requirement
+     * @deprecated Use {@link #identifyShellKeyRequirement(Platform)}
+     */
+    @Deprecated
+    public abstract @Nonnull Requirement identifyShellKeyRequirement() throws CloudException, InternalException;
+
+    /**
+     * Indicates the degree to which specifying a shell key at launch is required.
+     * @param platform the target platform for which you are testing
+     * @return the requirements level for shell key support at launch
+     * @throws CloudException an error occurred in the cloud identifying this requirement
+     * @throws InternalException an error occurred within the Dasein Cloud implementation identifying this requirement
+     */
+    public abstract @Nonnull Requirement identifyShellKeyRequirement(Platform platform) throws CloudException, InternalException;
+
+    /**
+     * Indicates the degree to which static IP addresses are required when launching a VM.
+     * @return the requirements level for static IP on launch
+     * @throws CloudException an error occurred in the cloud identifying this requirement
+     * @throws InternalException an error occurred within the Dasein Cloud implementation identifying this requirement
+     */
+    public abstract @Nonnull Requirement identifyStaticIPRequirement() throws CloudException, InternalException;
+
+    /**
+     * Indicates whether or not specifying a VLAN in your VM launch options is required or optional.
+     * @return the requirements level for a VLAN during launch
+     * @throws CloudException an error occurred in the cloud identifying this requirement
+     * @throws InternalException an error occurred within the Dasein Cloud implementation identifying this requirement
+     */
+    public abstract @Nonnull Requirement identifyVlanRequirement() throws CloudException, InternalException;
+
+    /**
+     * Indicates that the ability to terminate the VM via API can be disabled.
+     * @return true if the cloud supports the ability to prevent API termination
+     * @throws CloudException an error occurred in the cloud while determining this capability
+     * @throws InternalException an error occurred in the Dasein Cloud implementation determining this capability
+     */
+    public abstract boolean isAPITerminationPreventable() throws CloudException, InternalException;
+
+    /**
+     * Indicates whether or not this cloud provider supports basic analytics. Basic analytics are analytics
+     * that are being gathered for every virtual machine without any intervention necessary to enable them. Extended
+     * analytics implies basic analytics, so this method should always be true if {@link #isExtendedAnalyticsSupported()} 
+     * is true (even if there are, in fact, only extended analytics).
+     * @return true if the cloud provider supports the gathering of extended analytics
+     * @throws CloudException an error occurred in the cloud provider determining extended analytics support
+     * @throws InternalException an error occurred within the Dasein Cloud implementation determining extended analytics support
+     */
+    public abstract boolean isBasicAnalyticsSupported() throws CloudException, InternalException;
     
     /**
+     * Indicates whether or not this cloud provider supports extended analytics. Extended analytics are analytics
+     * that must be specifically enabled above and beyond any basic analytics the cloud provider is gathering.
+     * @return true if the cloud provider supports the gathering of extended analytics
+     * @throws CloudException an error occurred in the cloud provider determining extended analytics support
+     * @throws InternalException an error occurred within the Dasein Cloud implementation determining extended analytics support
+     */
+    public abstract boolean isExtendedAnalyticsSupported() throws CloudException, InternalException;
+    
+    /**
+=======
+     * Lists all virtual machines status(es) matching the given {@link VmStatusFilterOptions) belonging to the account owner
+     * currently in the cloud. The filtering functionality is delegated to the cloud provider.
+     * @param filterOptions filter options
+     * @return the status(es) of the virtual machines
+     * @throws InternalException an error occurred within the Dasein Cloud API implementation
+     * @throws CloudException an error occurred within the cloud provider
+     */
+    public abstract @Nullable Iterable<VirtualMachineStatus> getVMStatus(@Nullable VmStatusFilterOptions filterOptions) throws InternalException, CloudException;
+
+    /**
+     * Identifies whether images of the specified image class are required for launching a VM. This method should
+     * always return {@link Requirement#REQUIRED} when the image class chosen is {@link ImageClass#MACHINE}.
+     * @param cls the desired image class
+     * @return the requirements level of support for this image class
+     * @throws CloudException an error occurred in the cloud identifying this requirement
+     * @throws InternalException an error occurred within the Dasein Cloud implementation identifying this requirement
+     */
+    public abstract @Nonnull Requirement identifyImageRequirement(@Nonnull ImageClass cls) throws CloudException, InternalException;
+
+    /**
+     * Indicates the degree to which specifying a user name and password at launch is required for a Unix operating system.
+     * @return the requirements level for specifying a user name and password at launch
+     * @throws CloudException an error occurred in the cloud identifying this requirement
+     * @throws InternalException an error occurred within the Dasein Cloud implementation identifying this requirement
+     * @deprecated Use {@link #identifyPasswordRequirement(Platform)}
+     */
+    @Deprecated
+    public abstract @Nonnull Requirement identifyPasswordRequirement() throws CloudException, InternalException;
+
+    /**
+     * Indicates the degree to which specifying a user name and password at launch is required.
+     * @param platform the platform for which password requirements are being sought
+     * @return the requirements level for specifying a user name and password at launch
+     * @throws CloudException an error occurred in the cloud identifying this requirement
+     * @throws InternalException an error occurred within the Dasein Cloud implementation identifying this requirement
+     */
+    public abstract @Nonnull Requirement identifyPasswordRequirement(Platform platform) throws CloudException, InternalException;
+
+    /**
+     * Indicates whether or not a root volume product must be specified when launching a virtual machine.
+     * @return the requirements level for a root volume product
+     * @throws CloudException an error occurred in the cloud identifying this requirement
+     * @throws InternalException an error occurred within the Dasein Cloud implementation identifying this requirement
+     */
+    public abstract @Nonnull Requirement identifyRootVolumeRequirement() throws CloudException, InternalException;
+
+    /**
+     * Indicates the degree to which specifying a shell key at launch is required for a Unix operating system.
+     * @return the requirements level for shell key support at launch
+     * @throws CloudException an error occurred in the cloud identifying this requirement
+     * @throws InternalException an error occurred within the Dasein Cloud implementation identifying this requirement
+     * @deprecated Use {@link #identifyShellKeyRequirement(Platform)}
+     */
+    @Deprecated
+    public abstract @Nonnull Requirement identifyShellKeyRequirement() throws CloudException, InternalException;
+
+    /**
+     * Indicates the degree to which specifying a shell key at launch is required.
+     * @param platform the target platform for which you are testing
+     * @return the requirements level for shell key support at launch
+     * @throws CloudException an error occurred in the cloud identifying this requirement
+     * @throws InternalException an error occurred within the Dasein Cloud implementation identifying this requirement
+     */
+    public abstract @Nonnull Requirement identifyShellKeyRequirement(Platform platform) throws CloudException, InternalException;
+
+    /**
+     * Indicates the degree to which static IP addresses are required when launching a VM.
+     * @return the requirements level for static IP on launch
+     * @throws CloudException an error occurred in the cloud identifying this requirement
+     * @throws InternalException an error occurred within the Dasein Cloud implementation identifying this requirement
+     */
+    public abstract @Nonnull Requirement identifyStaticIPRequirement() throws CloudException, InternalException;
+
+    /**
+     * Indicates whether or not specifying a VLAN in your VM launch options is required or optional.
+     * @return the requirements level for a VLAN during launch
+     * @throws CloudException an error occurred in the cloud identifying this requirement
+     * @throws InternalException an error occurred within the Dasein Cloud implementation identifying this requirement
+     */
+    public abstract @Nonnull Requirement identifyVlanRequirement() throws CloudException, InternalException;
+
+    /**
+     * Indicates that the ability to terminate the VM via API can be disabled.
+     * @return true if the cloud supports the ability to prevent API termination
+     * @throws CloudException an error occurred in the cloud while determining this capability
+     * @throws InternalException an error occurred in the Dasein Cloud implementation determining this capability
+     */
+    public abstract boolean isAPITerminationPreventable() throws CloudException, InternalException;
+
+    /**
+     * Indicates whether or not this cloud provider supports basic analytics. Basic analytics are analytics
+     * that are being gathered for every virtual machine without any intervention necessary to enable them. Extended
+     * analytics implies basic analytics, so this method should always be true if {@link #isExtendedAnalyticsSupported()} 
+     * is true (even if there are, in fact, only extended analytics).
+     * @return true if the cloud provider supports the gathering of extended analytics
+     * @throws CloudException an error occurred in the cloud provider determining extended analytics support
+     * @throws InternalException an error occurred within the Dasein Cloud implementation determining extended analytics support
+     */
+    public abstract boolean isBasicAnalyticsSupported() throws CloudException, InternalException;
+    
+    /**
+     * Indicates whether or not this cloud provider supports extended analytics. Extended analytics are analytics
+     * that must be specifically enabled above and beyond any basic analytics the cloud provider is gathering.
+     * @return true if the cloud provider supports the gathering of extended analytics
+     * @throws CloudException an error occurred in the cloud provider determining extended analytics support
+     * @throws InternalException an error occurred within the Dasein Cloud implementation determining extended analytics support
+     */
+    public abstract boolean isExtendedAnalyticsSupported() throws CloudException, InternalException;
+    
+    /**
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/ce4322379933212aa1effeb25514994ac2dde719/src/main/java/org/dasein/cloud/compute/VirtualMachineSupport.java/right.java
      * Indicates whether this account is subscribed to using virtual machines.
      * @return true if the subscription is valid for using virtual machines
      * @throws CloudException an error occurred querying the cloud for subscription info
