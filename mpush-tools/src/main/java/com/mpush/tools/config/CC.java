@@ -105,10 +105,12 @@ public interface CC {
                 return "udp".equals(gateway_server_net);
             }
 
+<<<<<<< /usr/src/app/output/mpusher/mpush/07fd8670acc7a57964abb915d5ca5f7ac52fc274/mpush-tools/src/main/java/com/mpush/tools/config/CC.java/left.java
             static boolean wsEnabled() {
                 return ws_server_port > 0;
             }
-
+||||||| /usr/src/app/output/mpusher/mpush/07fd8670acc7a57964abb915d5ca5f7ac52fc274/mpush-tools/src/main/java/com/mpush/tools/config/CC.java/base.java
+=======
             static boolean udtGateway() {
                 return "udt".equals(gateway_server_net);
             }
@@ -116,16 +118,17 @@ public interface CC {
             static boolean sctpGateway() {
                 return "sctp".equals(gateway_server_net);
             }
+>>>>>>> /usr/src/app/output/mpusher/mpush/07fd8670acc7a57964abb915d5ca5f7ac52fc274/mpush-tools/src/main/java/com/mpush/tools/config/CC.java/right.java
 
 
             interface public_ip_mapping {
 
-                Map<String, Object> mappings = net.cfg.getObject("public-host-mapping").unwrapped();
+            Map<String, Object> mappings = net.cfg.getObject("public-host-mapping").unwrapped();
 
-                static String getString(String localIp) {
-                    return (String) mappings.get(localIp);
-                }
+            static String getString(String localIp) {
+                return (String) mappings.get(localIp);
             }
+        }
 
             interface snd_buf {
                 Config cfg = net.cfg.getObject("snd_buf").toConfig();

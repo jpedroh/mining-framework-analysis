@@ -96,7 +96,13 @@ public final class BroadcastPushTask implements PushTask, ChannelFutureListener 
                             if (connection.getChannel().isWritable()) { //检测TCP缓冲区是否已满且写队列超过最高阀值
                                 PushMessage
                                         .build(connection)
-                                        .setContent(message.getContent())
+<<<<<<< /usr/src/app/output/mpusher/mpush/07fd8670acc7a57964abb915d5ca5f7ac52fc274/mpush-core/src/main/java/com/mpush/core/push/BroadcastPushTask.java/left.java
+                                        .setContent(message.content)
+||||||| /usr/src/app/output/mpusher/mpush/07fd8670acc7a57964abb915d5ca5f7ac52fc274/mpush-core/src/main/java/com/mpush/core/push/BroadcastPushTask.java/base.java
+                                        .setContent(message.content, connection)
+=======
+                                        .setContent(message.getContent(), connection)
+>>>>>>> /usr/src/app/output/mpusher/mpush/07fd8670acc7a57964abb915d5ca5f7ac52fc274/mpush-core/src/main/java/com/mpush/core/push/BroadcastPushTask.java/right.java
                                         .send(this);
                                 //4. 检测qps, 是否超过流控限制，如果超过则结束当前循环直接进入catch
                                 if (!flowControl.checkQps()) {

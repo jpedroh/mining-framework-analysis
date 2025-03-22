@@ -177,6 +177,30 @@ public abstract class NettyTCPServer extends BaseService implements Server {
     }
 
     private void createNioServer(Listener listener) {
+<<<<<<< /usr/src/app/output/mpusher/mpush/07fd8670acc7a57964abb915d5ca5f7ac52fc274/mpush-netty/src/main/java/com/mpush/netty/server/NettyTCPServer.java/left.java
+        EventLoopGroup bossGroup = getBossGroup();
+        EventLoopGroup workerGroup = getWorkerGroup();
+
+        if (bossGroup == null) {
+            NioEventLoopGroup nioEventLoopGroup = new NioEventLoopGroup(getBossThreadNum(), getBossThreadFactory());
+            nioEventLoopGroup.setIoRatio(100);
+            bossGroup = nioEventLoopGroup;
+        }
+
+        if (workerGroup == null) {
+            NioEventLoopGroup nioEventLoopGroup = new NioEventLoopGroup(getWorkThreadNum(), getWorkThreadFactory());
+            nioEventLoopGroup.setIoRatio(getIoRate());
+            workerGroup = nioEventLoopGroup;
+        }
+
+        createServer(listener, bossGroup, workerGroup, NioServerSocketChannel.class);
+||||||| /usr/src/app/output/mpusher/mpush/07fd8670acc7a57964abb915d5ca5f7ac52fc274/mpush-netty/src/main/java/com/mpush/netty/server/NettyTCPServer.java/base.java
+        NioEventLoopGroup bossGroup = new NioEventLoopGroup(getBossThreadNum(), getBossThreadFactory());
+        NioEventLoopGroup workerGroup = new NioEventLoopGroup(getWorkThreadNum(), getWorkThreadFactory());
+        bossGroup.setIoRatio(100);
+        workerGroup.setIoRatio(getIoRate());
+        createServer(listener, bossGroup, workerGroup, NioServerSocketChannel.class);
+=======
         EventLoopGroup bossGroup = getBossGroup();
         EventLoopGroup workerGroup = getWorkerGroup();
 
@@ -193,9 +217,33 @@ public abstract class NettyTCPServer extends BaseService implements Server {
         }
 
         createServer(listener, bossGroup, workerGroup, getChannelFactory());
+>>>>>>> /usr/src/app/output/mpusher/mpush/07fd8670acc7a57964abb915d5ca5f7ac52fc274/mpush-netty/src/main/java/com/mpush/netty/server/NettyTCPServer.java/right.java
     }
 
     private void createEpollServer(Listener listener) {
+<<<<<<< /usr/src/app/output/mpusher/mpush/07fd8670acc7a57964abb915d5ca5f7ac52fc274/mpush-netty/src/main/java/com/mpush/netty/server/NettyTCPServer.java/left.java
+        EventLoopGroup bossGroup = getBossGroup();
+        EventLoopGroup workerGroup = getWorkerGroup();
+
+        if (bossGroup == null) {
+            EpollEventLoopGroup epollEventLoopGroup = new EpollEventLoopGroup(getBossThreadNum(), getBossThreadFactory());
+            epollEventLoopGroup.setIoRatio(100);
+            bossGroup = epollEventLoopGroup;
+        }
+
+        if (workerGroup == null) {
+            EpollEventLoopGroup epollEventLoopGroup = new EpollEventLoopGroup(getWorkThreadNum(), getWorkThreadFactory());
+            epollEventLoopGroup.setIoRatio(getIoRate());
+            workerGroup = epollEventLoopGroup;
+        }
+
+        createServer(listener, bossGroup, workerGroup, EpollServerSocketChannel.class);
+||||||| /usr/src/app/output/mpusher/mpush/07fd8670acc7a57964abb915d5ca5f7ac52fc274/mpush-netty/src/main/java/com/mpush/netty/server/NettyTCPServer.java/base.java
+        EpollEventLoopGroup bossGroup = new EpollEventLoopGroup(getBossThreadNum(), getBossThreadFactory());
+        EpollEventLoopGroup workerGroup = new EpollEventLoopGroup(getWorkThreadNum(), getWorkThreadFactory());
+        workerGroup.setIoRatio(getIoRate());
+        createServer(listener, bossGroup, workerGroup, EpollServerSocketChannel.class);
+=======
         EventLoopGroup bossGroup = getBossGroup();
         EventLoopGroup workerGroup = getWorkerGroup();
 
@@ -212,6 +260,7 @@ public abstract class NettyTCPServer extends BaseService implements Server {
         }
 
         createServer(listener, bossGroup, workerGroup, EpollServerSocketChannel::new);
+>>>>>>> /usr/src/app/output/mpusher/mpush/07fd8670acc7a57964abb915d5ca5f7ac52fc274/mpush-netty/src/main/java/com/mpush/netty/server/NettyTCPServer.java/right.java
     }
 
     /***

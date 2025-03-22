@@ -119,9 +119,22 @@ public final class SingleUserPushTask implements PushTask {
         //4. 检测qps, 是否超过流控限制，如果超过则进队列延后发送
         if (flowControl.checkQps()) {
             //5.链接可用，直接下发消息到手机客户端
-            PushMessage pushMessage = PushMessage.build(connection).setContent(message.getContent());
+<<<<<<< /usr/src/app/output/mpusher/mpush/07fd8670acc7a57964abb915d5ca5f7ac52fc274/mpush-core/src/main/java/com/mpush/core/push/SingleUserPushTask.java/left.java
+            PushMessage pushMessage = PushMessage.build(connection).setContent(message.content);
+||||||| /usr/src/app/output/mpusher/mpush/07fd8670acc7a57964abb915d5ca5f7ac52fc274/mpush-core/src/main/java/com/mpush/core/push/SingleUserPushTask.java/base.java
+            PushMessage pushMessage = PushMessage.build(connection).setContent(message.content, connection);
+=======
+            PushMessage pushMessage = PushMessage.build(connection).setContent(message.getContent(), connection);
+>>>>>>> /usr/src/app/output/mpusher/mpush/07fd8670acc7a57964abb915d5ca5f7ac52fc274/mpush-core/src/main/java/com/mpush/core/push/SingleUserPushTask.java/right.java
             pushMessage.getPacket().addFlag(message.getFlags());
+<<<<<<< /usr/src/app/output/mpusher/mpush/07fd8670acc7a57964abb915d5ca5f7ac52fc274/mpush-core/src/main/java/com/mpush/core/push/SingleUserPushTask.java/left.java
+            pushMessage.getPacket().addFlag(message.getPacket().flags);
+||||||| /usr/src/app/output/mpusher/mpush/07fd8670acc7a57964abb915d5ca5f7ac52fc274/mpush-core/src/main/java/com/mpush/core/push/SingleUserPushTask.java/base.java
+            pushMessage.getPacket().flags = message.getPacket().flags;
+=======
             pushMessage.send(new PushFutureListener(message, pushMessage.getSessionId()));
+>>>>>>> /usr/src/app/output/mpusher/mpush/07fd8670acc7a57964abb915d5ca5f7ac52fc274/mpush-core/src/main/java/com/mpush/core/push/SingleUserPushTask.java/right.java
+
         } else {//超过流控限制, 进队列延后发送
             PushCenter.I.delayTask(flowControl.getDelay(), this);
         }
