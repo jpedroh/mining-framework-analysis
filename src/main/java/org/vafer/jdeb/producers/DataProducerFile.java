@@ -26,10 +26,22 @@ import org.vafer.jdeb.DataProducer;
 import org.vafer.jdeb.mapping.Mapper;
 
 /**
+<<<<<<< /usr/src/app/output/tcurdt/jdeb/9654c1b2d617e7bd98da540388059f490c4be931/src/main/java/org/vafer/jdeb/producers/DataProducerFile.java/left.java
  * DataProducer representing a single file
  * For cross-platform permissions and ownerships you probably want to use a Mapper, too.
  *
  * @author Torsten Curdt
+||||||| /usr/src/app/output/tcurdt/jdeb/9654c1b2d617e7bd98da540388059f490c4be931/src/main/java/org/vafer/jdeb/producers/DataProducerFile.java/base.java
+ * DataProducer representing a single file
+ * For cross-platform permissions and ownerships you probably want to use a Mapper, too.
+ *
+ * @author Torsten Curdt <tcurdt@vafer.org>
+=======
+ * DataProducer representing a single file For cross-platform permissions and ownerships you probably want to use a
+ * Mapper, too.
+ * 
+ * @author Torsten Curdt <tcurdt@vafer.org>
+>>>>>>> /usr/src/app/output/tcurdt/jdeb/9654c1b2d617e7bd98da540388059f490c4be931/src/main/java/org/vafer/jdeb/producers/DataProducerFile.java/right.java
  */
 public final class DataProducerFile extends AbstractDataProducer implements DataProducer {
 
@@ -43,6 +55,7 @@ public final class DataProducerFile extends AbstractDataProducer implements Data
         destinationName = pDestinationName;
     }
 
+    @Override
     public void produce( final DataConsumer pReceiver ) throws IOException {
         String fileName;
         if (destinationName != null && destinationName.trim().length() > 0) {
