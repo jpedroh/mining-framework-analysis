@@ -21,7 +21,6 @@ public class OAuth20Service extends OAuthService<OAuth2AccessToken> {
     private static final String VERSION = "2.0";
     private static final PKCEService PKCE_SERVICE = new PKCEService();
     private final DefaultApi20 api;
-
     /**
      * Default constructor
      *
@@ -32,45 +31,37 @@ public class OAuth20Service extends OAuthService<OAuth2AccessToken> {
         super(config);
         this.api = api;
     }
-
     //protected to facilitate mocking
     protected OAuth2AccessToken sendAccessTokenRequestSync(OAuthRequest request)
             throws IOException, InterruptedException, ExecutionException {
         return api.getAccessTokenExtractor().extract(execute(request));
     }
-
     //protected to facilitate mocking
     protected Future<OAuth2AccessToken> sendAccessTokenRequestAsync(OAuthRequest request) {
         return sendAccessTokenRequestAsync(request, null);
     }
-
     //protected to facilitate mocking
     protected Future<OAuth2AccessToken> sendAccessTokenRequestAsync(OAuthRequest request,
             OAuthAsyncRequestCallback<OAuth2AccessToken> callback) {
 
         return execute(request, callback, response -> getApi().getAccessTokenExtractor().extract(response));
     }
-
     public final Future<OAuth2AccessToken> getAccessTokenAsync(String code) {
         return getAccessToken(code, null, null);
     }
-
     public final Future<OAuth2AccessToken> getAccessTokenAsync(String code, String pkceCodeVerifier) {
         return getAccessToken(code, null, pkceCodeVerifier);
     }
-
     public final OAuth2AccessToken getAccessToken(String code)
             throws IOException, InterruptedException, ExecutionException {
         return getAccessToken(code, (String) null);
     }
-
     public final OAuth2AccessToken getAccessToken(String code, String pkceCodeVerifier)
             throws IOException, InterruptedException, ExecutionException {
         final OAuthRequest request = createAccessTokenRequest(code, pkceCodeVerifier);
 
         return sendAccessTokenRequestSync(request);
     }
-
     /**
      * Start the request to retrieve the access token. The optionally provided callback will be called with the Token
      * when it is available.
@@ -86,13 +77,11 @@ public class OAuth20Service extends OAuthService<OAuth2AccessToken> {
 
         return sendAccessTokenRequestAsync(request, callback);
     }
-
     public final Future<OAuth2AccessToken> getAccessToken(String code,
             OAuthAsyncRequestCallback<OAuth2AccessToken> callback) {
 
         return getAccessToken(code, callback, null);
     }
-
     protected OAuthRequest createAccessTokenRequest(String code) {
         final OAuthRequest request = new OAuthRequest(api.getAccessTokenVerb(), api.getAccessTokenEndpoint());
         final OAuthConfig config = getConfig();
@@ -108,7 +97,6 @@ public class OAuth20Service extends OAuthService<OAuth2AccessToken> {
         request.addParameter(OAuthConstants.GRANT_TYPE, OAuthConstants.AUTHORIZATION_CODE);
         return request;
     }
-
     protected OAuthRequest createAccessTokenRequest(String code, String pkceCodeVerifier) {
         final OAuthRequest request = createAccessTokenRequest(code);
         if (pkceCodeVerifier != null) {
@@ -116,25 +104,21 @@ public class OAuth20Service extends OAuthService<OAuth2AccessToken> {
         }
         return request;
     }
-
     public final Future<OAuth2AccessToken> refreshAccessTokenAsync(String refreshToken) {
         return refreshAccessToken(refreshToken, null);
     }
-
     public final OAuth2AccessToken refreshAccessToken(String refreshToken)
             throws IOException, InterruptedException, ExecutionException {
         final OAuthRequest request = createRefreshTokenRequest(refreshToken);
 
         return sendAccessTokenRequestSync(request);
     }
-
     public final Future<OAuth2AccessToken> refreshAccessToken(String refreshToken,
             OAuthAsyncRequestCallback<OAuth2AccessToken> callback) {
         final OAuthRequest request = createRefreshTokenRequest(refreshToken);
 
         return sendAccessTokenRequestAsync(request, callback);
     }
-
     protected OAuthRequest createRefreshTokenRequest(String refreshToken) {
         if (refreshToken == null || refreshToken.isEmpty()) {
             throw new IllegalArgumentException("The refreshToken cannot be null or empty");
@@ -147,18 +131,15 @@ public class OAuth20Service extends OAuthService<OAuth2AccessToken> {
         request.addParameter(OAuthConstants.GRANT_TYPE, OAuthConstants.REFRESH_TOKEN);
         return request;
     }
-
     public final OAuth2AccessToken getAccessTokenPasswordGrant(String uname, String password)
             throws IOException, InterruptedException, ExecutionException {
         final OAuthRequest request = createAccessTokenPasswordGrantRequest(uname, password);
 
         return sendAccessTokenRequestSync(request);
     }
-
     public final Future<OAuth2AccessToken> getAccessTokenPasswordGrantAsync(String uname, String password) {
         return getAccessTokenPasswordGrantAsync(uname, password, null);
     }
-
     /**
      * Request Access Token Password Grant async version
      *
@@ -173,7 +154,6 @@ public class OAuth20Service extends OAuthService<OAuth2AccessToken> {
 
         return sendAccessTokenRequestAsync(request, callback);
     }
-
     protected OAuthRequest createAccessTokenPasswordGrantRequest(String username, String password) {
         final OAuthRequest request = new OAuthRequest(api.getAccessTokenVerb(), api.getAccessTokenEndpoint());
         final OAuthConfig config = getConfig();
@@ -191,18 +171,66 @@ public class OAuth20Service extends OAuthService<OAuth2AccessToken> {
 
         return request;
     }
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getVersion() {
+        return VERSION;
+    }
+    @Override
+    public void signRequest(OAuth2AccessToken accessToken, OAuthRequest request) {
+        api.getSignatureType().signRequest(accessToken, request);
+    }
+    public final AuthorizationUrlWithPKCE getAuthorizationUrlWithPKCE() {
+        return getAuthorizationUrlWithPKCE(null);
+    }
+    public final AuthorizationUrlWithPKCE getAuthorizationUrlWithPKCE(Map<String, String> additionalParams) {
+        final PKCE pkce = PKCE_SERVICE.generatePKCE();
+        return new AuthorizationUrlWithPKCE(pkce, getAuthorizationUrl(additionalParams, pkce));
+    }
+    /**
+     * Returns the URL where you should redirect your users to authenticate your application.
+     *
+     * @return the URL where you should redirect your users
+     */
+    public final String getAuthorizationUrl() {
+        return getAuthorizationUrl(null, null);
+    }
+    /**
+     * Returns the URL where you should redirect your users to authenticate your application.
+     *
+     * @param additionalParams any additional GET params to add to the URL
+     * @return the URL where you should redirect your users
+     */
+    public final String getAuthorizationUrl(Map<String, String> additionalParams) {
+        return getAuthorizationUrl(additionalParams, null);
+    }
+    public final String getAuthorizationUrl(PKCE pkce) {
+        return getAuthorizationUrl(null, pkce);
+    }
+    public String getAuthorizationUrl(Map<String, String> additionalParams, PKCE pkce) {
+        final Map<String, String> params;
+        if (pkce == null) {
+            params = additionalParams;
+        } else {
+            params = additionalParams == null ? new HashMap<>() : new HashMap<>(additionalParams);
+            params.putAll(pkce.getAuthorizationUrlParams());
+        }
+        return api.getAuthorizationUrl(getConfig(), params);
+    }
+    //protected to facilitate mocking
+    //protected to facilitate mocking
+    //protected to facilitate mocking
     public final Future<OAuth2AccessToken> getAccessTokenClientCredentialsGrantAsync() {
         return getAccessTokenClientCredentialsGrant(null);
     }
-
     public final OAuth2AccessToken getAccessTokenClientCredentialsGrant()
             throws IOException, InterruptedException, ExecutionException {
         final OAuthRequest request = createAccessTokenClientCredentialsGrantRequest();
 
         return sendAccessTokenRequestSync(request);
     }
-
     /**
      * Start the request to retrieve the access token using client-credentials grant. The optionally provided callback
      * will be called with the Token when it is available.
@@ -216,7 +244,6 @@ public class OAuth20Service extends OAuthService<OAuth2AccessToken> {
 
         return sendAccessTokenRequestAsync(request, callback);
     }
-
     protected OAuthRequest createAccessTokenClientCredentialsGrantRequest() {
         final OAuthRequest request = new OAuthRequest(api.getAccessTokenVerb(), api.getAccessTokenEndpoint());
         final OAuthConfig config = getConfig();
@@ -231,62 +258,6 @@ public class OAuth20Service extends OAuthService<OAuth2AccessToken> {
         }
         request.addParameter(OAuthConstants.GRANT_TYPE, OAuthConstants.CLIENT_CREDENTIALS);
         return request;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getVersion() {
-        return VERSION;
-    }
-
-    @Override
-    public void signRequest(OAuth2AccessToken accessToken, OAuthRequest request) {
-        api.getSignatureType().signRequest(accessToken, request);
-    }
-
-    public final AuthorizationUrlWithPKCE getAuthorizationUrlWithPKCE() {
-        return getAuthorizationUrlWithPKCE(null);
-    }
-
-    public final AuthorizationUrlWithPKCE getAuthorizationUrlWithPKCE(Map<String, String> additionalParams) {
-        final PKCE pkce = PKCE_SERVICE.generatePKCE();
-        return new AuthorizationUrlWithPKCE(pkce, getAuthorizationUrl(additionalParams, pkce));
-    }
-
-    /**
-     * Returns the URL where you should redirect your users to authenticate your application.
-     *
-     * @return the URL where you should redirect your users
-     */
-    public final String getAuthorizationUrl() {
-        return getAuthorizationUrl(null, null);
-    }
-
-    /**
-     * Returns the URL where you should redirect your users to authenticate your application.
-     *
-     * @param additionalParams any additional GET params to add to the URL
-     * @return the URL where you should redirect your users
-     */
-    public final String getAuthorizationUrl(Map<String, String> additionalParams) {
-        return getAuthorizationUrl(additionalParams, null);
-    }
-
-    public final String getAuthorizationUrl(PKCE pkce) {
-        return getAuthorizationUrl(null, pkce);
-    }
-
-    public String getAuthorizationUrl(Map<String, String> additionalParams, PKCE pkce) {
-        final Map<String, String> params;
-        if (pkce == null) {
-            params = additionalParams;
-        } else {
-            params = additionalParams == null ? new HashMap<>() : new HashMap<>(additionalParams);
-            params.putAll(pkce.getAuthorizationUrlParams());
-        }
-        return api.getAuthorizationUrl(getConfig(), params);
     }
 
     public DefaultApi20 getApi() {
