@@ -1,25 +1,7 @@
-/*
- * (C) Copyright 2018-2018, by Assaf Mizrachi and Contributors.
- *
- * JGraphT : a free Java graph-theory library
- *
- * This program and the accompanying materials are dual-licensed under
- * either
- *
- * (a) the terms of the GNU Lesser General Public License version 2.1
- * as published by the Free Software Foundation, or (at your option) any
- * later version.
- *
- * or (per the licensee's choosing)
- *
- * (b) the terms of the Eclipse Public License v1.0 as published by
- * the Eclipse Foundation.
- */
 package org.jgrapht.alg.shortestpath;
-
 import java.util.*;
-
 import org.jgrapht.*;
+import org.jgrapht.alg.util.*;
 
 /**
  * An implementation of Bhandari algorithm for finding $K$ edge-<em>disjoint</em> shortest paths.
@@ -45,9 +27,8 @@ import org.jgrapht.*;
  * @author Assaf Mizrachi
  * @since February 12, 2018
  */
-public class BhandariKDisjointShortestPaths<V, E> extends BaseKDisjointShortestPathsAlgorithm<V, E>
-{
-    /**
+public class BhandariKDisjointShortestPaths<V extends java.lang.Object, E extends java.lang.Object> extends BaseKDisjointShortestPathsAlgorithm<V, E> {
+  /**
      * Creates a new instance of the algorithm.
      *
      * @param graph graph on which shortest paths are searched.
@@ -56,34 +37,55 @@ public class BhandariKDisjointShortestPaths<V, E> extends BaseKDisjointShortestP
      * @throws IllegalArgumentException if the graph is undirected.
      * @throws IllegalArgumentException if the graph is not simple.
      */
-    public BhandariKDisjointShortestPaths(Graph<V, E> graph)
-    {
-        super(graph);
+  public BhandariKDisjointShortestPaths(Graph<V, E> graph) {
+    super(graph);
+  }
+
+  @Override protected void prepare(List<E> previousPath) {
+    V source, target;
+    E reversedEdge;
+    for (E originalEdge : previousPath) {
+      source = workingGraph.getEdgeSource(originalEdge);
+      target = workingGraph.getEdgeTarget(originalEdge);
+      workingGraph.removeEdge(originalEdge);
+      reversedEdge = workingGraph.addEdge(target, source);
+      if (reversedEdge != null) {
+        workingGraph.setEdgeWeight(reversedEdge, -workingGraph.getEdgeWeight(originalEdge));
+      }
     }
+  }
 
-    @Override
-    protected void prepare(List<E> previousPath)
-    {
+  @Override protected GraphPath<V, E> calculateShortestPath(V startVertex, V endVertex) {
+    return new BellmanFordShortestPath<>(this.workingGraph).getPath(startVertex, endVertex);
+  }
 
-        V source, target;
-        E reversedEdge;
 
-        // replace previous path edges with reversed edges with negative weight
-        for (E originalEdge : previousPath) {
-            source = workingGraph.getEdgeSource(originalEdge);
-            target = workingGraph.getEdgeTarget(originalEdge);
-            workingGraph.removeEdge(originalEdge);
-            reversedEdge = workingGraph.addEdge(target, source);
-            if (reversedEdge != null) {
-                workingGraph.setEdgeWeight(reversedEdge, -workingGraph.getEdgeWeight(originalEdge));
-            }
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  /**
+     * Iterate over all paths to remove overlapping edges (i.e. those edges contained in more than 
+     * one path).
+     * Two edges are considered as overlapping in case both edges connect the same vertex pair, 
+     * disregarding direction.
+     * At the end of this method, each path contains unique edges but not necessarily connecting the
+     * start to end vertex.
+     * 
+     */
+  private void findOverlappingEdges() {
+    Map<UnorderedPair<V, V>, Integer> edgeOccurrenceCount = new HashMap<>();
+    for (List<E> path : pathList) {
+      for (E e : path) {
+        V v = this.workingGraph.getEdgeSource(e);
+        V u = this.workingGraph.getEdgeTarget(e);
+        UnorderedPair<V, V> edgePair = new UnorderedPair<>(v, u);
+        if (edgeOccurrenceCount.containsKey(edgePair)) {
+          edgeOccurrenceCount.put(edgePair, 2);
+        } else {
+          edgeOccurrenceCount.put(edgePair, 1);
         }
+      }
     }
-
-    @Override
-    protected GraphPath<V, E> calculateShortestPath(V startVertex, V endVertex)
-    {
-        return new BellmanFordShortestPath<>(this.workingGraph).getPath(startVertex, endVertex);
-    }
-    
+    this.overlappingEdges = pathList.stream().flatMap(List::stream).filter((e) -> edgeOccurrenceCount.get(new UnorderedPair<>(this.workingGraph.getEdgeSource(e), this.workingGraph.getEdgeTarget(e))) > 1).collect(Collectors.toSet());
+  }
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/1d1ee81e47c5d22b559dadc871138d181fd665d7/jgrapht-core/src/main/java/org/jgrapht/alg/shortestpath/BhandariKDisjointShortestPaths.java/right.java
 }
