@@ -35,6 +35,7 @@ import java.util.Set;
 import javax.annotation.CheckForNull;
 
 import org.jgrapht.graph.DefaultWeightedEdge;
+import org.movsim.SimulationScan;
 import org.movsim.roadmappings.RoadMapping;
 import org.movsim.simulator.roadnetwork.boundaries.AbstractTrafficSource;
 import org.movsim.simulator.roadnetwork.boundaries.SimpleRamp;
@@ -652,10 +653,11 @@ public class RoadSegment extends DefaultWeightedEdge implements Iterable<Vehicle
      *         empty and with assumed maximum travel time in standstill
      */
     public double instantaneousTravelTime() {
-        return calcInstantaneousTravelTime();
-        //return roadLength / meanSpeed();
-
+        //return calcInstantaneousTravelTime();
+        return roadLength / meanSpeed();
     }
+
+    int i = 0;
 
     public double calcInstantaneousTravelTime() {
 

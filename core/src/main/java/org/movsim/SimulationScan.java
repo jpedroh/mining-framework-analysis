@@ -36,14 +36,11 @@ import org.xml.sax.SAXException;
 
 public final class SimulationScan {
 
-    private SimulationScan() {
-        throw new IllegalStateException("do not instanciate");
-    }
+    public static void invokeSimulationScan() throws JAXBException, SAXException {
 
+        Movsim inputData = MovsimInputLoader.getInputData(ProjectMetaData.getInstance().getInputFile());
 
-    public static void invokeSimulationScan(final Movsim inputData) throws JAXBException, SAXException {
-
-        // TODO quick hack here
+        // TODO quick hack
         int uncertaintyMin = 0;
         int uncertaintyMax = 20;
         int uncertaintyStep = 2;
@@ -82,6 +79,10 @@ public final class SimulationScan {
         // inputData.getScenario().getSimulation().getTrafficComposition().getVehicleType().get(0).setFraction(0.0);
         // Simulator simRun = MovsimCoreMain.invokeSingleSimulation(inputData);
         // System.out.println("result = " + simRun.getRoadNetwork().totalVehicleTravelTime());
+    }
+
+    private SimulationScan() {
+        throw new IllegalStateException("do not instanciate");
     }
 
     public static void writeFile(String text, String outputFile) {
