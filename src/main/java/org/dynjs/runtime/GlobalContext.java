@@ -122,14 +122,14 @@ public class GlobalContext {
         // ----------------------------------------
 
         if (!runtime.getConfig().isSandbox()) {
-            defineGlobalProperty("Packages", new JavaPackage(this, null), true );
-            defineGlobalProperty("java",     new JavaPackage(this, "java"), true);
-            defineGlobalProperty("javax",    new JavaPackage(this, "javax"), true);
-            defineGlobalProperty("org",      new JavaPackage(this, "org"), true);
-            defineGlobalProperty("com",      new JavaPackage(this, "com"), true);
-            defineGlobalProperty("io",       new JavaPackage(this, "io"), true);
+            defineGlobalProperty("Packages", new JavaPackage(this, null), true);
+            defineGlobalProperty("java", new JavaPackage(this, "java"), true);
+            defineGlobalProperty("javax", new JavaPackage(this, "javax"), true);
+            defineGlobalProperty("org", new JavaPackage(this, "org"), true);
+            defineGlobalProperty("com", new JavaPackage(this, "com"), true);
+            defineGlobalProperty("io", new JavaPackage(this, "io"), true);
 
-            defineGlobalProperty("System",   System.class, true);
+            defineGlobalProperty("System", System.class, true);
         }
     }
 
