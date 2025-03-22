@@ -69,7 +69,13 @@ public class TopologicalOrderIterator<V, E>
      *
      * @param graph the directed graph to be iterated
      */
-    public TopologicalOrderIterator(Graph<V, E> graph)
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/d7d129c0f6880a29fc0e593f1f1c10226ef22182/jgrapht-core/src/main/java/org/jgrapht/traverse/TopologicalOrderIterator.java/left.java
+    public TopologicalOrderIterator(DirectedGraph<V, E> graph)
+||||||| /usr/src/app/output/jgrapht/jgrapht/d7d129c0f6880a29fc0e593f1f1c10226ef22182/jgrapht-core/src/main/java/org/jgrapht/traverse/TopologicalOrderIterator.java/base.java
+    public TopologicalOrderIterator(DirectedGraph<V, E> dg)
+=======
+    public TopologicalOrderIterator(Graph<V, E> dg)
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/d7d129c0f6880a29fc0e593f1f1c10226ef22182/jgrapht-core/src/main/java/org/jgrapht/traverse/TopologicalOrderIterator.java/right.java
     {
         this(graph, (Comparator<V>) null);
     }
@@ -86,24 +92,188 @@ public class TopologicalOrderIterator<V, E>
      * @param graph the directed graph to be iterated.
      * @param queue queue to use for tie-break in case of partial order (e.g. a PriorityQueue can be
      *        used to break ties according to vertex priority); must be initially empty
-     * @deprecated in favor of {@link #TopologicalOrderIterator(Graph, Comparator)}
+     * @deprecated in favor of {@link #TopologicalOrderIterator(DirectedGraph, Comparator)}
      */
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/d7d129c0f6880a29fc0e593f1f1c10226ef22182/jgrapht-core/src/main/java/org/jgrapht/traverse/TopologicalOrderIterator.java/left.java
     @Deprecated
-    public TopologicalOrderIterator(Graph<V, E> graph, Queue<V> queue)
+    public TopologicalOrderIterator(DirectedGraph<V, E> graph, Queue<V> queue)
+||||||| /usr/src/app/output/jgrapht/jgrapht/d7d129c0f6880a29fc0e593f1f1c10226ef22182/jgrapht-core/src/main/java/org/jgrapht/traverse/TopologicalOrderIterator.java/base.java
+    public TopologicalOrderIterator(DirectedGraph<V, E> dg, Queue<V> queue)
+=======
+    public TopologicalOrderIterator(Graph<V, E> dg, Queue<V> queue)
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/d7d129c0f6880a29fc0e593f1f1c10226ef22182/jgrapht-core/src/main/java/org/jgrapht/traverse/TopologicalOrderIterator.java/right.java
     {
         super(graph);
-        GraphTests.requireDirected(graph);
 
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/d7d129c0f6880a29fc0e593f1f1c10226ef22182/jgrapht-core/src/main/java/org/jgrapht/traverse/TopologicalOrderIterator.java/left.java
         this.queue = Objects.requireNonNull(queue, "Queue must not be null");
         if (!queue.isEmpty()) {
             throw new IllegalArgumentException("Queue must be empty");
+||||||| /usr/src/app/output/jgrapht/jgrapht/d7d129c0f6880a29fc0e593f1f1c10226ef22182/jgrapht-core/src/main/java/org/jgrapht/traverse/TopologicalOrderIterator.java/base.java
+    // NOTE: This is a hack to deal with the fact that CrossComponentIterator
+    // needs to know the start vertex in its constructor
+    private TopologicalOrderIterator(
+        DirectedGraph<V, E> dg, Queue<V> queue, Map<V, ModifiableInteger> inDegreeMap)
+    {
+        this(dg, initialize(dg, queue, inDegreeMap));
+        this.queue = queue;
+        this.inDegreeMap = inDegreeMap;
+
+        // empty queue for non-empty graph would indicate presence of
+        // cycles (no roots found)
+        assert dg.vertexSet().isEmpty() || !queue.isEmpty();
+    }
+
+    // NOTE: This is intentionally private, because starting the sort "in the
+    // middle" doesn't make sense.
+    private TopologicalOrderIterator(DirectedGraph<V, E> dg, V start)
+    {
+        super(dg, start);
+    }
+
+    /**
+     * @see CrossComponentIterator#isConnectedComponentExhausted()
+     */
+    @Override
+    protected boolean isConnectedComponentExhausted()
+    {
+        // FIXME jvs 25-Apr-2005: This isn't correct for a graph with more than
+        // one component. We will actually exhaust a connected component
+        // before the queue is empty, because initialize adds roots from all
+        // components to the queue.
+        return queue.isEmpty();
+    }
+
+    /**
+     * @see CrossComponentIterator#encounterVertex(Object, Object)
+     */
+    @Override
+    protected void encounterVertex(V vertex, E edge)
+    {
+        putSeenData(vertex, null);
+        decrementInDegree(vertex);
+    }
+
+    /**
+     * @see CrossComponentIterator#encounterVertexAgain(Object, Object)
+     */
+    @Override
+    protected void encounterVertexAgain(V vertex, E edge)
+    {
+        decrementInDegree(vertex);
+    }
+
+    /**
+     * @see CrossComponentIterator#provideNextVertex()
+     */
+    @Override
+    protected V provideNextVertex()
+    {
+        return queue.remove();
+    }
+
+    /**
+     * Decrements the in-degree of a vertex.
+     *
+     * @param vertex the vertex whose in-degree will be decremented.
+     */
+    private void decrementInDegree(V vertex)
+    {
+        ModifiableInteger inDegree = inDegreeMap.get(vertex);
+
+        if (inDegree.value > 0) {
+            inDegree.value--;
+
+            if (inDegree.value == 0) {
+                queue.offer(vertex);
+            }
+=======
+    // NOTE: This is a hack to deal with the fact that CrossComponentIterator
+    // needs to know the start vertex in its constructor
+    private TopologicalOrderIterator(
+        Graph<V, E> dg, Queue<V> queue, Map<V, ModifiableInteger> inDegreeMap)
+    {
+        this(dg, initialize(dg, queue, inDegreeMap));
+        this.queue = queue;
+        this.inDegreeMap = inDegreeMap;
+
+        // empty queue for non-empty graph would indicate presence of
+        // cycles (no roots found)
+        assert dg.vertexSet().isEmpty() || !queue.isEmpty();
+    }
+
+    // NOTE: This is intentionally private, because starting the sort "in the
+    // middle" doesn't make sense.
+    private TopologicalOrderIterator(Graph<V, E> dg, V start)
+    {
+        super(dg, start);
+    }
+
+    /**
+     * @see CrossComponentIterator#isConnectedComponentExhausted()
+     */
+    @Override
+    protected boolean isConnectedComponentExhausted()
+    {
+        // FIXME jvs 25-Apr-2005: This isn't correct for a graph with more than
+        // one component. We will actually exhaust a connected component
+        // before the queue is empty, because initialize adds roots from all
+        // components to the queue.
+        return queue.isEmpty();
+    }
+
+    /**
+     * @see CrossComponentIterator#encounterVertex(Object, Object)
+     */
+    @Override
+    protected void encounterVertex(V vertex, E edge)
+    {
+        putSeenData(vertex, null);
+        decrementInDegree(vertex);
+    }
+
+    /**
+     * @see CrossComponentIterator#encounterVertexAgain(Object, Object)
+     */
+    @Override
+    protected void encounterVertexAgain(V vertex, E edge)
+    {
+        decrementInDegree(vertex);
+    }
+
+    /**
+     * @see CrossComponentIterator#provideNextVertex()
+     */
+    @Override
+    protected V provideNextVertex()
+    {
+        return queue.remove();
+    }
+
+    /**
+     * Decrements the in-degree of a vertex.
+     *
+     * @param vertex the vertex whose in-degree will be decremented.
+     */
+    private void decrementInDegree(V vertex)
+    {
+        ModifiableInteger inDegree = inDegreeMap.get(vertex);
+
+        if (inDegree.value > 0) {
+            inDegree.value--;
+
+            if (inDegree.value == 0) {
+                queue.offer(vertex);
+            }
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/d7d129c0f6880a29fc0e593f1f1c10226ef22182/jgrapht-core/src/main/java/org/jgrapht/traverse/TopologicalOrderIterator.java/right.java
         }
 
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/d7d129c0f6880a29fc0e593f1f1c10226ef22182/jgrapht-core/src/main/java/org/jgrapht/traverse/TopologicalOrderIterator.java/left.java
         // count in-degrees
         this.inDegreeMap = new HashMap<>();
         for (V v : graph.vertexSet()) {
             int d = 0;
-            for (E e : graph.incomingEdgesOf(v)) {
+            for (E e : specifics.incomingEdgesOf(v)) {
                 V u = Graphs.getOppositeVertex(graph, e, v);
                 if (v.equals(u)) {
                     throw new IllegalArgumentException(GRAPH_IS_NOT_A_DAG);
@@ -113,6 +283,49 @@ public class TopologicalOrderIterator<V, E>
             inDegreeMap.put(v, new ModifiableInteger(d));
             if (d == 0) {
                 queue.offer(v);
+||||||| /usr/src/app/output/jgrapht/jgrapht/d7d129c0f6880a29fc0e593f1f1c10226ef22182/jgrapht-core/src/main/java/org/jgrapht/traverse/TopologicalOrderIterator.java/base.java
+    /**
+     * Initializes the internal traversal object structure. Sets up the internal queue with the
+     * directed graph vertices and creates the control structure for the in-degrees.
+     *
+     * @param dg the directed graph to be iterated.
+     * @param queue initializer for queue
+     * @param inDegreeMap initializer for inDegreeMap
+     *
+     * @return start vertex
+     */
+    private static <V, E> V initialize(
+        DirectedGraph<V, E> dg, Queue<V> queue, Map<V, ModifiableInteger> inDegreeMap)
+    {
+        for (V vertex : dg.vertexSet()) {
+            int inDegree = dg.inDegreeOf(vertex);
+            inDegreeMap.put(vertex, new ModifiableInteger(inDegree));
+
+            if (inDegree == 0) {
+                queue.offer(vertex);
+=======
+    /**
+     * Initializes the internal traversal object structure. Sets up the internal queue with the
+     * directed graph vertices and creates the control structure for the in-degrees.
+     *
+     * @param dg the directed graph to be iterated.
+     * @param queue initializer for queue
+     * @param inDegreeMap initializer for inDegreeMap
+     *
+     * @return start vertex
+     */
+    private static <V,
+        E> V initialize(Graph<V, E> dg, Queue<V> queue, Map<V, ModifiableInteger> inDegreeMap)
+    {
+        GraphTests.requireDirected(dg);
+
+        for (V vertex : dg.vertexSet()) {
+            int inDegree = dg.inDegreeOf(vertex);
+            inDegreeMap.put(vertex, new ModifiableInteger(inDegree));
+
+            if (inDegree == 0) {
+                queue.offer(vertex);
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/d7d129c0f6880a29fc0e593f1f1c10226ef22182/jgrapht-core/src/main/java/org/jgrapht/traverse/TopologicalOrderIterator.java/right.java
             }
         }
 
@@ -132,10 +345,9 @@ public class TopologicalOrderIterator<V, E>
      * @param graph the directed graph to be iterated
      * @param comparator comparator in order to break ties in case of partial order
      */
-    public TopologicalOrderIterator(Graph<V, E> graph, Comparator<V> comparator)
+    public TopologicalOrderIterator(DirectedGraph<V, E> graph, Comparator<V> comparator)
     {
         super(graph);
-        GraphTests.requireDirected(graph);
 
         // create queue
         if (comparator == null) {
@@ -148,7 +360,7 @@ public class TopologicalOrderIterator<V, E>
         this.inDegreeMap = new HashMap<>();
         for (V v : graph.vertexSet()) {
             int d = 0;
-            for (E e : graph.incomingEdgesOf(v)) {
+            for (E e : specifics.incomingEdgesOf(v)) {
                 V u = Graphs.getOppositeVertex(graph, e, v);
                 if (v.equals(u)) {
                     throw new IllegalArgumentException(GRAPH_IS_NOT_A_DAG);
@@ -209,7 +421,6 @@ public class TopologicalOrderIterator<V, E>
         if (!hasNext()) {
             throw new NoSuchElementException();
         }
-
         V result = cur;
         cur = null;
         if (nListeners != 0) {
@@ -223,7 +434,7 @@ public class TopologicalOrderIterator<V, E>
         V result = queue.poll();
 
         if (result != null) {
-            for (E e : graph.outgoingEdgesOf(result)) {
+            for (E e : specifics.edgesOf(result)) {
                 V other = Graphs.getOppositeVertex(graph, e, result);
 
                 ModifiableInteger inDegree = inDegreeMap.get(other);

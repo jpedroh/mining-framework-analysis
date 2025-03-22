@@ -19,7 +19,6 @@ package org.jgrapht.traverse;
 
 import java.util.*;
 
-import org.jgrapht.*;
 import org.jgrapht.event.*;
 
 /**
@@ -45,9 +44,9 @@ public abstract class AbstractGraphIterator<V, E>
     protected final FlyweightEdgeEvent<V, E> reusableEdgeEvent;
     protected final FlyweightVertexEvent<V> reusableVertexEvent;
     protected final Graph<V, E> graph;
+    protected final Specifics<V, E> specifics;
     protected boolean crossComponentTraversal;
     protected boolean reuseEvents;
-
     /**
      * Create a new iterator
      * 
@@ -56,12 +55,12 @@ public abstract class AbstractGraphIterator<V, E>
     public AbstractGraphIterator(Graph<V, E> graph)
     {
         this.graph = Objects.requireNonNull(graph, "graph must not be null");
+        this.specifics = createGraphSpecifics(graph);
         this.reusableEdgeEvent = new FlyweightEdgeEvent<>(this, null);
         this.reusableVertexEvent = new FlyweightVertexEvent<>(this, null);
         this.crossComponentTraversal = true;
         this.reuseEvents = false;
     }
-
     /**
      * Get the graph being traversed.
      * 
@@ -71,7 +70,6 @@ public abstract class AbstractGraphIterator<V, E>
     {
         return graph;
     }
-
     /**
      * Sets the cross component traversal flag - indicates whether to traverse the graph across
      * connected components.
@@ -82,7 +80,6 @@ public abstract class AbstractGraphIterator<V, E>
     {
         this.crossComponentTraversal = crossComponentTraversal;
     }
-
     /**
      * Test whether this iterator is set to traverse the graph across connected components.
      *
@@ -94,39 +91,33 @@ public abstract class AbstractGraphIterator<V, E>
     {
         return crossComponentTraversal;
     }
-
     @Override
     public void setReuseEvents(boolean reuseEvents)
     {
         this.reuseEvents = reuseEvents;
     }
-
     @Override
     public boolean isReuseEvents()
     {
         return reuseEvents;
     }
-
     @Override
     public void addTraversalListener(TraversalListener<V, E> l)
     {
         traversalListeners.add(l);
         nListeners = traversalListeners.size();
     }
-
     @Override
     public void remove()
     {
         throw new UnsupportedOperationException("remove");
     }
-
     @Override
     public void removeTraversalListener(TraversalListener<V, E> l)
     {
         traversalListeners.remove(l);
         nListeners = traversalListeners.size();
     }
-
     /**
      * Informs all listeners that the traversal of the current connected component finished.
      *
@@ -138,7 +129,6 @@ public abstract class AbstractGraphIterator<V, E>
             l.connectedComponentFinished(e);
         }
     }
-
     /**
      * Informs all listeners that a traversal of a new connected component has started.
      *
@@ -150,7 +140,6 @@ public abstract class AbstractGraphIterator<V, E>
             l.connectedComponentStarted(e);
         }
     }
-
     /**
      * Informs all listeners that a the specified edge was visited.
      *
@@ -162,7 +151,6 @@ public abstract class AbstractGraphIterator<V, E>
             l.edgeTraversed(e);
         }
     }
-
     /**
      * Informs all listeners that a the specified vertex was visited.
      *
@@ -174,7 +162,6 @@ public abstract class AbstractGraphIterator<V, E>
             l.vertexTraversed(e);
         }
     }
-
     /**
      * Informs all listeners that a the specified vertex was finished.
      *
@@ -186,7 +173,6 @@ public abstract class AbstractGraphIterator<V, E>
             l.vertexFinished(e);
         }
     }
-
     /**
      * Create a vertex traversal event.
      * 
@@ -202,7 +188,6 @@ public abstract class AbstractGraphIterator<V, E>
             return new VertexTraversalEvent<>(this, vertex);
         }
     }
-
     /**
      * Create an edge traversal event.
      * 
@@ -218,7 +203,6 @@ public abstract class AbstractGraphIterator<V, E>
             return new EdgeTraversalEvent<>(this, edge);
         }
     }
-
     /**
      * A reusable edge event.
      *
@@ -251,7 +235,6 @@ public abstract class AbstractGraphIterator<V, E>
             this.edge = edge;
         }
     }
-
     /**
      * A reusable vertex event.
      *
@@ -284,7 +267,87 @@ public abstract class AbstractGraphIterator<V, E>
             this.vertex = vertex;
         }
     }
+    // -------------------------------------------------------------------------
+    abstract static class Specifics<VV, EE>
+    {
+        /**
+         * Returns the edges outgoing from the specified vertex in case of directed graph, and the
+         * edge touching the specified vertex in case of undirected graph.
+         *
+         * @param vertex the vertex whose outgoing edges are to be returned.
+         *
+         * @return the edges outgoing from the specified vertex in case of directed graph, and the
+         *         edge touching the specified vertex in case of undirected graph.
+         */
+        public abstract Set<? extends EE> edgesOf(VV vertex);
 
+        /**
+         * Returns the edges incoming from the specified vertex in case of directed graph, and the
+         * edge touching the specified vertex in case of undirected graph.
+         *
+         * @param vertex the vertex whose incoming edges are to be returned.
+         *
+         * @return the edges incoming from the specified vertex in case of directed graph, and the
+         *         edge touching the specified vertex in case of undirected graph.
+         */
+        public abstract Set<? extends EE> incomingEdgesOf(VV vertex);
+    }
+    static class DirectedSpecifics<VV, EE>
+        extends Specifics<VV, EE>
+    {
+        private DirectedGraph<VV, EE> graph;
+
+        /**
+         * Creates a new DirectedSpecifics object.
+         *
+         * @param g the graph for which this specifics object to be created.
+         */
+        public DirectedSpecifics(DirectedGraph<VV, EE> g)
+        {
+            graph = g;
+        }
+
+        @Override
+        public Set<? extends EE> edgesOf(VV vertex)
+        {
+            return graph.outgoingEdgesOf(vertex);
+        }
+
+        @Override
+        public Set<? extends EE> incomingEdgesOf(VV vertex)
+        {
+            return graph.incomingEdgesOf(vertex);
+        }
+    }
+    static class UndirectedSpecifics<VV, EE>
+        extends Specifics<VV, EE>
+    {
+        private Graph<VV, EE> graph;
+
+        /**
+         * Creates a new UndirectedSpecifics object.
+         *
+         * @param g the graph for which this specifics object to be created.
+         */
+        public UndirectedSpecifics(Graph<VV, EE> g)
+        {
+            graph = g;
+        }
+
+        @Override
+        public Set<EE> edgesOf(VV vertex)
+        {
+            return graph.edgesOf(vertex);
+        }
+
+        @Override
+        public Set<EE> incomingEdgesOf(VV vertex)
+        {
+            return graph.edgesOf(vertex);
+        }
+    }
+    // TODO: support ConcurrentModificationException if graph modified
+    // during iteration.
 }
 
 // End AbstractGraphIterator.java

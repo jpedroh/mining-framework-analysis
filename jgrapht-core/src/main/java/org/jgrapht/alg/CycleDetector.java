@@ -48,7 +48,13 @@ public class CycleDetector<V, E>
      */
     public CycleDetector(Graph<V, E> graph)
     {
-        this.graph = GraphTests.requireDirected(graph);
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/d7d129c0f6880a29fc0e593f1f1c10226ef22182/jgrapht-core/src/main/java/org/jgrapht/alg/CycleDetector.java/left.java
+        this.graph = Objects.requireNonNull(graph, "Graph cannot be null");
+||||||| /usr/src/app/output/jgrapht/jgrapht/d7d129c0f6880a29fc0e593f1f1c10226ef22182/jgrapht-core/src/main/java/org/jgrapht/alg/CycleDetector.java/base.java
+        this.graph = graph;
+=======
+        this.graph = GraphTests.requireDirected(graph, "Graph must be directed");
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/d7d129c0f6880a29fc0e593f1f1c10226ef22182/jgrapht-core/src/main/java/org/jgrapht/alg/CycleDetector.java/right.java
     }
 
     /**
