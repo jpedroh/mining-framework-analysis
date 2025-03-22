@@ -16,8 +16,16 @@ public class ArrayComparisonFailure extends AssertionError {
 
     /*
      * We have to use the f prefix until the next major release to ensure
+<<<<<<< /usr/src/app/output/junit-team/junit4/ab7c961572adab958edf4c5cf1f5371b72117300/src/main/java/org/junit/internal/ArrayComparisonFailure.java/left.java
      * serialization compatibility.
      * See https://github.com/junit-team/junit4/issues/976
+||||||| /usr/src/app/output/junit-team/junit4/ab7c961572adab958edf4c5cf1f5371b72117300/src/main/java/org/junit/internal/ArrayComparisonFailure.java/base.java
+     * serialization compatibility. 
+     * See https://github.com/junit-team/junit/issues/976
+=======
+     * serialization compatibility. 
+     * See https://github.com/junit-team/junit4/issues/976
+>>>>>>> /usr/src/app/output/junit-team/junit4/ab7c961572adab958edf4c5cf1f5371b72117300/src/main/java/org/junit/internal/ArrayComparisonFailure.java/right.java
      */
     private final List<Integer> fIndices = new ArrayList<Integer>();
     private final String fMessage;
