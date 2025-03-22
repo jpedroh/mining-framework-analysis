@@ -1,28 +1,8 @@
-/**
- * Copyright (C) 2009-2012 enStratus Networks Inc.
- *
- * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ====================================================================
- */
-
 package org.dasein.cloud.compute;
-
 import org.dasein.cloud.Taggable;
 import org.dasein.cloud.network.Networkable;
 import org.dasein.util.uom.storage.Gigabyte;
 import org.dasein.util.uom.storage.Storage;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -35,282 +15,330 @@ import java.util.Map;
  * @version 2012-07 updated to match new volume enhancements, including UoM, type, and root volume awareness
  */
 public class Volume implements Networkable, Taggable {
-    private long        creationTimestamp;
-	private VolumeState currentState;
-    private String      providerDataCenterId;
-    private String      description;
-    private String      deviceId;
-    private VolumeFormat format;
-    private Platform    guestOperatingSystem;
-    private int         iops;
-    private String      mediaLink;
-    private String      name;
-    private String      providerProductId;
-    private String      providerVolumeId;
-    private String      providerRegionId;
-    private String      providerVirtualMachineId;
-    private String      providerVlanId;
-    private boolean     rootVolume;
-    private Storage<Gigabyte> size;
-    private String      providerSnapshotId;
-    private Map<String,String> tags;
-    private VolumeType  type;
+  private long creationTimestamp;
 
-    public Volume() { }
+  private VolumeState currentState;
 
-    public boolean equals(Object ob) {
-        if( ob == null ) {
-            return false;
-        }
-        if( ob == this ) {
-            return true;
-        }
-        if( !getClass().getName().equals(ob.getClass().getName()) ) {
-            return false;
-        }
-        Volume other = (Volume)ob;
-        
-        if( !providerRegionId.equals(other.providerRegionId) ) {
-            return false;
-        }
-        return providerVolumeId.equals(other.providerVolumeId);
+  private String providerDataCenterId;
+
+  private String description;
+
+  private String deviceId;
+
+  private VolumeFormat format;
+
+  private Platform guestOperatingSystem;
+
+  private int iops;
+
+  private String mediaLink;
+
+  private String name;
+
+  private String providerProductId;
+
+  private String providerVolumeId;
+
+  private String providerRegionId;
+
+  private String providerVirtualMachineId;
+
+  private String providerVlanId;
+
+  private boolean rootVolume;
+
+  private Storage<Gigabyte> size;
+
+  private String providerSnapshotId;
+
+  private Map<String, String> tags;
+
+  private VolumeType type;
+
+  public Volume() {
+  }
+
+  public boolean equals(Object ob) {
+    if (ob == null) {
+      return false;
     }
-    
-    /**
+    if (ob == this) {
+      return true;
+    }
+    if (!getClass().getName().equals(ob.getClass().getName())) {
+      return false;
+    }
+    Volume other = (Volume) ob;
+    if (!providerRegionId.equals(other.providerRegionId)) {
+      return false;
+    }
+    return providerVolumeId.equals(other.providerVolumeId);
+  }
+
+  /**
      * @deprecated Use {@link #getProviderSnapshotId()}
      */
-    public String getSnapshotId() {
-		return getProviderSnapshotId();
-	}
+  public String getSnapshotId() {
+    return getProviderSnapshotId();
+  }
 
-    public String getProviderSnapshotId() {
-        return providerSnapshotId;
-    }
-    
-    /**
+  public String getProviderSnapshotId() {
+    return providerSnapshotId;
+  }
+
+  /**
      * @deprecated use {@link #setProviderSnapshotId(String)}
      */
-	public void setSnapshotId(String snapshotId) {
-		this.providerSnapshotId = snapshotId;
-	}
+  public void setSnapshotId(String snapshotId) {
+    this.providerSnapshotId = snapshotId;
+  }
 
-	public void setProviderSnapshotId(String snapshotId) {
-	    this.providerSnapshotId = snapshotId;
-	}
+  public void setProviderSnapshotId(String snapshotId) {
+    this.providerSnapshotId = snapshotId;
+  }
 
-    public VolumeState getCurrentState() {
-        return currentState;
-    }
+  public VolumeState getCurrentState() {
+    return currentState;
+  }
 
-    /**
+  /**
      * @deprecated use {@link #getProviderDataCenterId()}
      */
-    public String getDataCenterId() {
-        return getProviderDataCenterId();
-    }
-    
-    public String getProviderDataCenterId() {
-        return providerDataCenterId;
-    }
+  public String getDataCenterId() {
+    return getProviderDataCenterId();
+  }
 
-    public String getDeviceId() {
-        return deviceId;
-    }
-    
-    public String getName() {
-        return name;
-    }
+  public String getProviderDataCenterId() {
+    return providerDataCenterId;
+  }
 
-    public String getProviderVolumeId() {
-        return providerVolumeId;
-    }
+  public String getDeviceId() {
+    return deviceId;
+  }
 
-    /**
+  public String getName() {
+    return name;
+  }
+
+  public String getProviderVolumeId() {
+    return providerVolumeId;
+  }
+
+  /**
      * @deprecated use {@link #getProviderRegionId()}
      */
-    public String getRegionId() {
-        return getProviderRegionId();
-    }
-    
-    public String getProviderRegionId() {
-        return providerRegionId;
-    }
+  public String getRegionId() {
+    return getProviderRegionId();
+  }
 
-    /**
+  public String getProviderRegionId() {
+    return providerRegionId;
+  }
+
+  /**
      * @deprecated use {@link #getProviderVirtualMachineId()}
      */
-    public String getServerId() {
-        return getProviderVirtualMachineId();
-    }
+  public String getServerId() {
+    return getProviderVirtualMachineId();
+  }
 
-    public String getProviderVirtualMachineId() {
-        return providerVirtualMachineId;
-    }
-    
-    public Storage<Gigabyte> getSize() {
-        return size;
-    }
-    
-    public void setSize(Storage<?> size) {
-        this.size = (Storage<Gigabyte>)size.convertTo(Storage.GIGABYTE);
-    }
-    
-    public int getSizeInGigabytes() {
-        return (size == null ? 0 : size.getQuantity().intValue());
-    }
+  public String getProviderVirtualMachineId() {
+    return providerVirtualMachineId;
+  }
 
-    public void setCurrentState(VolumeState currentState) {
-        this.currentState = currentState;
-    }
+  public Storage<Gigabyte> getSize() {
+    return size;
+  }
 
-    /**
+  public void setSize(Storage<?> size) {
+    this.size = (Storage<Gigabyte>) size.convertTo(Storage.GIGABYTE);
+  }
+
+  public int getSizeInGigabytes() {
+    return (size == null ? 0 : size.getQuantity().intValue());
+  }
+
+  public void setCurrentState(VolumeState currentState) {
+    this.currentState = currentState;
+  }
+
+  /**
      * @deprecated use {@link #setProviderDataCenterId(String)} 
      */
-    public void setDataCenterId(String dataCenterId) {
-        setProviderDataCenterId(dataCenterId);
-    }
-    
-    public void setProviderDataCenterId(String dataCenterId) {
-        this.providerDataCenterId = dataCenterId;
-    }
+  public void setDataCenterId(String dataCenterId) {
+    setProviderDataCenterId(dataCenterId);
+  }
 
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
-    }
-    
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setProviderDataCenterId(String dataCenterId) {
+    this.providerDataCenterId = dataCenterId;
+  }
 
-    public void setProviderVolumeId(String providerVolumeId) {
-        this.providerVolumeId = providerVolumeId;
-    }
+  public void setDeviceId(String deviceId) {
+    this.deviceId = deviceId;
+  }
 
-    /**
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setProviderVolumeId(String providerVolumeId) {
+    this.providerVolumeId = providerVolumeId;
+  }
+
+  /**
      * @deprecated use {@link #setProviderRegionId(String)}
      */
-    public void setRegionId(String regionId) {
-        setProviderRegionId(regionId);
-    }
-    
-    public void setProviderRegionId(String regionId) {
-        this.providerRegionId = regionId;
-    }
+  public void setRegionId(String regionId) {
+    setProviderRegionId(regionId);
+  }
 
-    /**
+  public void setProviderRegionId(String regionId) {
+    this.providerRegionId = regionId;
+  }
+
+  /**
      * @deprecated use {@link #setProviderVirtualMachineId(String)}
      */
-    public void setServerId(String serverId) {
-        setProviderVirtualMachineId(serverId);
-    }
-    
-    public void setProviderVirtualMachineId(String serverId) {
-        this.providerVirtualMachineId = serverId;
-    }
+  public void setServerId(String serverId) {
+    setProviderVirtualMachineId(serverId);
+  }
 
-	public long getCreationTimestamp() {
-		return creationTimestamp;
-	}
+  public void setProviderVirtualMachineId(String serverId) {
+    this.providerVirtualMachineId = serverId;
+  }
 
-	public void setCreationTimestamp(long creationTimestamp) {
-		this.creationTimestamp = creationTimestamp;
-	}
-	
-    public VolumeType getType() {
-        return type;
-    }
-    
-    public void setType(VolumeType t) {
-        type = t;
-    }
-    
-	public String toString() {
-	    return (name + " [" + providerVolumeId + "]");
-	}
+  public long getCreationTimestamp() {
+    return creationTimestamp;
+  }
 
-    public String getProviderProductId() {
-        return providerProductId;
-    }
+  public void setCreationTimestamp(long creationTimestamp) {
+    this.creationTimestamp = creationTimestamp;
+  }
 
-    public void setProviderProductId(String providerProductId) {
-        this.providerProductId = providerProductId;
-    }
+  public VolumeType getType() {
+    return type;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public void setType(VolumeType t) {
+    type = t;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public String toString() {
+    return (name + " [" + providerVolumeId + "]");
+  }
 
-    public boolean isRootVolume() {
-        return rootVolume;
-    }
+  public String getProviderProductId() {
+    return providerProductId;
+  }
 
-    public void setRootVolume(boolean rootVolume) {
-        this.rootVolume = rootVolume;
-    }
+  public void setProviderProductId(String providerProductId) {
+    this.providerProductId = providerProductId;
+  }
 
-    public String getMediaLink() {
-        return mediaLink;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public void setMediaLink(String mediaLink) {
-        this.mediaLink = mediaLink;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public Platform getGuestOperatingSystem() {
-        return guestOperatingSystem;
-    }
+  public boolean isRootVolume() {
+    return rootVolume;
+  }
 
-    public void setGuestOperatingSystem(Platform guestOperatingSystem) {
-        this.guestOperatingSystem = guestOperatingSystem;
-    }
+  public void setRootVolume(boolean rootVolume) {
+    this.rootVolume = rootVolume;
+  }
 
-    public int getIops() {
-        return iops;
-    }
+  public String getMediaLink() {
+    return mediaLink;
+  }
 
-    public void setIops(int iops) {
-        this.iops = iops;
-    }
+  public void setMediaLink(String mediaLink) {
+    this.mediaLink = mediaLink;
+  }
 
-    public boolean isAttached() {
-        return (providerVirtualMachineId != null);
-    }
+  public Platform getGuestOperatingSystem() {
+    return guestOperatingSystem;
+  }
 
-    public @Nonnull VolumeFormat getFormat() {
-        return (format == null ? VolumeFormat.BLOCK : format);
-    }
+  public void setGuestOperatingSystem(Platform guestOperatingSystem) {
+    this.guestOperatingSystem = guestOperatingSystem;
+  }
 
-    public void setFormat(@Nonnull VolumeFormat format) {
-        this.format = format;
-    }
+  public int getIops() {
+    return iops;
+  }
 
-    public String getProviderVlanId() {
-        return providerVlanId;
-    }
+  public void setIops(int iops) {
+    this.iops = iops;
+  }
 
-    public void setProviderVlanId(String providerVlanId) {
-        this.providerVlanId = providerVlanId;
-    }
+  public boolean isAttached() {
+    return (providerVirtualMachineId != null);
+  }
 
-    public synchronized void setTags(Map<String,String> properties) {
-        getTags().clear();
-        getTags().putAll(properties);
-    }
+  public @Nonnull VolumeFormat getFormat() {
+    return (format == null ? VolumeFormat.BLOCK : format);
+  }
 
-    @Override
-    public @Nonnull Map<String, String> getTags() {
-        if( tags == null ) {
-            tags = new HashMap<String, String>();
-        }
-        return tags;
-    }
+  public void setFormat(@Nonnull VolumeFormat format) {
+    this.format = format;
+  }
 
-    @Override
-    public void setTag(@Nonnull String key, @Nonnull String value) {
-        getTags().put(key, value);
+  public String getProviderVlanId() {
+    return providerVlanId;
+  }
+
+  public void setProviderVlanId(String providerVlanId) {
+    this.providerVlanId = providerVlanId;
+  }
+
+  public @Nullable 
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/1e1c2fdcee36c18925a6eeccd9f88750b47d9e39/src/main/java/org/dasein/cloud/compute/Volume.java/left.java
+  String
+=======
+  Object
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/1e1c2fdcee36c18925a6eeccd9f88750b47d9e39/src/main/java/org/dasein/cloud/compute/Volume.java/right.java
+   getTag(
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/1e1c2fdcee36c18925a6eeccd9f88750b47d9e39/src/main/java/org/dasein/cloud/compute/Volume.java/left.java
+  @Nonnull String key
+=======
+  String tag
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/1e1c2fdcee36c18925a6eeccd9f88750b47d9e39/src/main/java/org/dasein/cloud/compute/Volume.java/right.java
+  ) {
+    return getTags().get(
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/1e1c2fdcee36c18925a6eeccd9f88750b47d9e39/src/main/java/org/dasein/cloud/compute/Volume.java/left.java
+    key
+=======
+    tag
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/1e1c2fdcee36c18925a6eeccd9f88750b47d9e39/src/main/java/org/dasein/cloud/compute/Volume.java/right.java
+    );
+  }
+
+  @Override public @Nonnull synchronized Map<String, String> getTags() {
+    if (tags == null) {
+      tags = new HashMap<String, String>();
     }
+    return 
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/1e1c2fdcee36c18925a6eeccd9f88750b47d9e39/src/main/java/org/dasein/cloud/compute/Volume.java/left.java
+    (tags == null ? new HashMap<String, String>() : tags)
+=======
+    tags
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/1e1c2fdcee36c18925a6eeccd9f88750b47d9e39/src/main/java/org/dasein/cloud/compute/Volume.java/right.java
+    ;
+  }
+
+  @Override public void setTag(@Nonnull String key, @Nonnull String value) {
+    if (tags == null) {
+      tags = new HashMap<String, String>();
+    }
+    tags.put(key, value);
+  }
+
+  public synchronized void setTags(Map<String, String> properties) {
+    getTags().clear();
+    getTags().putAll(properties);
+  }
 }
