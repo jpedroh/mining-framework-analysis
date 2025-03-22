@@ -69,10 +69,14 @@ public class TravelTimeOnRoute extends OutputOnRouteBase {
 
         instantaneousTravelTime = RoadNetwork.instantaneousTravelTime(route);
 
-        // TODO check quantity
-        // totalTravelTime += numberOfVehicles * instantaneousTravelTime;
         // totalTravelTime += instantaneousTravelTime;
+<<<<<<< /usr/src/app/output/movsim/movsim/595efcbd3f7b4bc094c0d4ad566a97576e6564d0/core/src/main/java/org/movsim/output/route/TravelTimeOnRoute.java/left.java
+        totalTravelTime += numberOfVehicles * instantaneousTravelTime;
+||||||| /usr/src/app/output/movsim/movsim/595efcbd3f7b4bc094c0d4ad566a97576e6564d0/core/src/main/java/org/movsim/output/route/TravelTimeOnRoute.java/base.java
+        totalTravelTime += instantaneousTravelTime;
+=======
         totalTravelTime += dt * numberOfVehicles;
+>>>>>>> /usr/src/app/output/movsim/movsim/595efcbd3f7b4bc094c0d4ad566a97576e6564d0/core/src/main/java/org/movsim/output/route/TravelTimeOnRoute.java/right.java
 
         meanSpeed = route.getLength() / instantaneousTravelTime;
 
