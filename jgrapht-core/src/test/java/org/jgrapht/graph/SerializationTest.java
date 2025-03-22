@@ -23,8 +23,8 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.stream.Collectors;
-
 import static org.jgrapht.graph.SerializationTestUtils.*;
+import static org.jgrapht.graph.SerializationTestUtils.serializeAndDeserialize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
