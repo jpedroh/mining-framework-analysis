@@ -9,7 +9,7 @@ import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.model.Verifier;
-import com.github.scribejava.core.oauth.OAuth20Service;
+import com.github.scribejava.core.oauth.OAuth20ServiceImpl;
 
 public abstract class FacebookExample {
 
@@ -27,12 +27,30 @@ public abstract class FacebookExample {
         System.out.print(">>");
         final String clientSecret = in.nextLine();
         final String secretState = "state_" + new Random().nextInt(999_999);
-        final OAuth20Service service = new ServiceBuilder()
+<<<<<<< /usr/src/app/output/fernandezpablo85/scribe-java/b4e5895a364746923caa75cfbcaf05772b9fa927/scribejava-apis/src/test/java/com/github/scribejava/apis/examples/FacebookExample.java/left.java
+        final OAuth20ServiceImpl service = (OAuth20ServiceImpl)new ServiceBuilder()
+                .provider(FacebookApi.class)
+                .apiKey(clientId)
+                .apiSecret(clientSecret)
+                .state(secretState)
+                .callback("http://localhost")
+                .build();
+||||||| /usr/src/app/output/fernandezpablo85/scribe-java/b4e5895a364746923caa75cfbcaf05772b9fa927/scribejava-apis/src/test/java/com/github/scribejava/apis/examples/FacebookExample.java/base.java
+        final OAuth20ServiceImpl service = new ServiceBuilder()
+                .provider(FacebookApi.class)
                 .apiKey(clientId)
                 .apiSecret(clientSecret)
                 .state(secretState)
                 .callback("http://www.example.com/oauth_callback/")
-                .build(FacebookApi.instance());
+                .build();
+=======
+        final OAuth20ServiceImpl service = new ServiceBuilder()
+                .provider(FacebookApi.class)
+                .apiKey(clientId)
+                .apiSecret(clientSecret)
+                .state(secretState)
+                .callback("http://www.example.com/oauth_callback/");
+>>>>>>> /usr/src/app/output/fernandezpablo85/scribe-java/b4e5895a364746923caa75cfbcaf05772b9fa927/scribejava-apis/src/test/java/com/github/scribejava/apis/examples/FacebookExample.java/right.java
 
         System.out.println("=== " + NETWORK_NAME + "'s OAuth Workflow ===");
         System.out.println();

@@ -3,12 +3,16 @@ package com.github.scribejava.apis;
 import com.github.scribejava.core.builder.api.DefaultApi20;
 import com.github.scribejava.core.extractors.AccessTokenExtractor;
 import com.github.scribejava.core.extractors.OAuth2AccessTokenExtractorImpl;
+import com.github.scribejava.core.extractors.OAuth2JsonAccessTokenExtractor;
+import com.github.scribejava.core.model.AbstractRequest;
+import com.github.scribejava.core.model.AccessToken;
 import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.github.scribejava.core.model.OAuthConfig;
 import com.github.scribejava.core.model.OAuthConstants;
 import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;
-import com.github.scribejava.core.oauth.OAuth20Service;
+import com.github.scribejava.core.oauth.OAuth20ServiceImpl;
+import com.github.scribejava.core.oauth.OAuthService;
 import com.github.scribejava.core.utils.OAuthEncoder;
 import com.github.scribejava.core.utils.Preconditions;
 
@@ -54,11 +58,11 @@ public class FacebookApi extends DefaultApi20 {
     }
 
     @Override
-    public OAuth20Service createService(OAuthConfig config) {
+    public OAuthService createService(OAuthConfig config) {
         return new FacebookOAuth20ServiceImpl(this, config);
     }
     
-    private static class FacebookOAuth20ServiceImpl extends OAuth20Service {
+    private static class FacebookOAuth20ServiceImpl extends OAuth20ServiceImpl {
 
         public FacebookOAuth20ServiceImpl(DefaultApi20 api, OAuthConfig config) {
             super(api, config);
