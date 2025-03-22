@@ -483,7 +483,7 @@ public class ChosenImpl {
     }
 
     private String buildContainerId() {
-        String id;
+        String id = null;
         String selectElementId = selectElement.getId();
 
         if (selectElementId != null && selectElementId.length() > 0) {
@@ -1159,9 +1159,6 @@ public class ChosenImpl {
 
         dropdown.css(isRTL ? "right" : "left", HORIZONTAL_OFFSET + "px");
         dropdown.css("top", VERTICAL_OFFSET + "px");
-
-        container.removeClass(css.resultAbove());
-
         resultsShowing = false;
     }
 
@@ -1218,9 +1215,12 @@ public class ChosenImpl {
         searchField.val(searchField.val());
 
         winnowResults(true);
-
+<<<<<<< /usr/src/app/output/arcbees/gwtchosen/4880920540b125601a965c2260aacdd17dc9aeb9/plugin/src/main/java/com/arcbees/chosen/client/ChosenImpl.java/left.java
+    
         searchField.focus();
-
+||||||| /usr/src/app/output/arcbees/gwtchosen/4880920540b125601a965c2260aacdd17dc9aeb9/plugin/src/main/java/com/arcbees/chosen/client/ChosenImpl.java/base.java
+=======
+    
         int ddTop = calculateDropdownTop();
         if (ddTop < 0) {
             dropdown.prepend(searchResults);
@@ -1228,6 +1228,7 @@ public class ChosenImpl {
         dropdown.css("top", ddTop + "px").css(isRTL ? "right" : "left", "0");
 
         searchField.focus();
+>>>>>>> /usr/src/app/output/arcbees/gwtchosen/4880920540b125601a965c2260aacdd17dc9aeb9/plugin/src/main/java/com/arcbees/chosen/client/ChosenImpl.java/right.java
 
         return true;
     }
@@ -1235,8 +1236,13 @@ public class ChosenImpl {
     private int calculateDropdownTop() {
         int ddTop;
         DropdownPosition dropdownPosition = options.getDropdownPosition();
-
+        if (dropdownPosition == null) {
+            dropdownPosition = DropdownPosition.BELOW;
+        }
         switch (dropdownPosition) {
+            case BELOW:
+                ddTop = positionBelow();
+                break;
             case ABOVE:
                 ddTop = positionAbove();
                 break;
@@ -1247,7 +1253,6 @@ public class ChosenImpl {
                     ddTop = positionRelativeToBoundaries();
                 }
                 break;
-            case BELOW:
             default:
                 ddTop = positionBelow();
                 break;
@@ -1338,8 +1343,7 @@ public class ChosenImpl {
 
         searchField.css("width", w + "px");
 
-        // The height of the main input can have changed.
-        int ddTop = calculateDropdownTop();
+        int ddTop = container.height();
         dropdown.css("top", ddTop + "px");
     }
 
@@ -1592,12 +1596,6 @@ public class ChosenImpl {
         searchText = SafeHtmlUtils.htmlEscape(searchText);
 
         resultsFilter.filter(searchText, this, isShowing);
-
-        int ddTop = calculateDropdownTop();
-        if (ddTop < 0) {
-            dropdown.prepend(searchResults);
-        }
-        dropdown.css("top", ddTop + "px").css(isRTL ? "right" : "left", "0");
     }
 
     private void winnowResultsClear() {
