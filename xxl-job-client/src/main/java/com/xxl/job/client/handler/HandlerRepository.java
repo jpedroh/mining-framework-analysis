@@ -62,6 +62,7 @@ public class HandlerRepository {
 				callback.setMsg("Timestamp check failed.");
 				return JacksonUtil.writeValueAsString(callback);
 			}
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/d8f9c071e9c8b26b257c2131d4d24fd9d800a8f1/xxl-job-client/src/main/java/com/xxl/job/client/handler/HandlerRepository.java/left.java
 					
 			// push data to queue
 			String handler_name = _param.get(HandlerRepository.HANDLER_NAME);
@@ -126,6 +127,47 @@ public class HandlerRepository {
 		} else {
 			callback.setMsg("param[NAMESPACE] is not valid.");
 			return JacksonUtil.writeValueAsString(callback);
+||||||| /usr/src/app/output/xuxueli/xxl-job/d8f9c071e9c8b26b257c2131d4d24fd9d800a8f1/xxl-job-client/src/main/java/com/xxl/job/client/handler/HandlerRepository.java/base.java
+		}else{
+			callback.setMsg("param[HANDLER_NAME] can not be null.");
+=======
+					
+			// push data to queue
+			String handler_name = _param.get(HandlerRepository.HANDLER_NAME);
+			if (handler_name!=null && handler_name.trim().length()>0) {
+				HandlerThread handlerThread = handlerTreadMap.get(handler_name);
+				if (handlerThread != null) {
+					handlerThread.pushData(_param);
+					callback.setStatus(RemoteCallBack.SUCCESS);
+				} else {
+					callback.setMsg("handler[" + handler_name + "] not found.");
+				}
+			}else{
+				callback.setMsg("param[HANDLER_NAME] can not be null.");
+			}
+			
+		} else if (namespace.equals(HandlerRepository.NameSpaceEnum.LOG.name())) {
+			String trigger_log_id = _param.get(HandlerRepository.TRIGGER_LOG_ID);
+			String trigger_timestamp = _param.get(HandlerRepository.TRIGGER_TIMESTAMP);
+			if (trigger_log_id==null || trigger_timestamp==null) {
+				callback.setMsg("trigger_log_id | trigger_timestamp can not be null.");
+				return JacksonUtil.writeValueAsString(callback);
+			}
+			int logId = -1;
+			Date triggerDate = null;
+			try {
+				logId = Integer.valueOf(trigger_log_id);
+				triggerDate = new Date(Long.valueOf(trigger_timestamp));
+			} catch (Exception e) {
+			}
+			if (logId<=0 || triggerDate==null) {
+				callback.setMsg("trigger_log_id | trigger_timestamp is not parsed valid.");
+				return JacksonUtil.writeValueAsString(callback);
+			}
+			String logConteng = XxlJobFileAppender.readLog(triggerDate, trigger_log_id);
+			callback.setStatus(RemoteCallBack.SUCCESS);
+			callback.setMsg(logConteng);
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/d8f9c071e9c8b26b257c2131d4d24fd9d800a8f1/xxl-job-client/src/main/java/com/xxl/job/client/handler/HandlerRepository.java/right.java
 		}
 		
 		logger.info(">>>>>>>>>>> xxl-job service end, triggerData:{}", new Object[]{callback});
