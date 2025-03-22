@@ -115,6 +115,45 @@ final class MinimalEncoder {
   }
 
 
+  // List of encoders that potentially encode characters not in ISO-8859-1 in one byte.
+  private static final List<CharsetEncoder> ENCODERS = new ArrayList<>();
+  static {
+    final String[] names = { "ISO-8859-2",
+                             "ISO-8859-3",
+                             "ISO-8859-4",
+                             "ISO-8859-5",
+                             "ISO-8859-6",
+                             "ISO-8859-7",
+                             "ISO-8859-8",
+                             "ISO-8859-9",
+                             "ISO-8859-10",
+                             "ISO-8859-11",
+                             "ISO-8859-13",
+                             "ISO-8859-14",
+                             "ISO-8859-15",
+                             "ISO-8859-16",
+                             "windows-1250",
+                             "windows-1251",
+                             "windows-1252",
+                             "windows-1253",
+                             "windows-1254",
+                             "windows-1255",
+                             "windows-1256",
+                             "windows-1257",
+                             "windows-1258",
+                             "Shift_JIS" };
+    for (String name : names) {
+      if (CharacterSetECI.getCharacterSetECIByName(name) != null) {
+        try {
+          ENCODERS.add(Charset.forName(name).newEncoder());
+        } catch (UnsupportedCharsetException e) {
+          // continue
+        }
+      }
+    }
+  }
+
+
   private final String stringToEncode;
   private final boolean isGS1;
   private final CharsetEncoder[] encoders;
@@ -168,8 +207,29 @@ final class MinimalEncoder {
       }
     }
 
+<<<<<<< /usr/src/app/output/zxing/zxing/cc2821a2d26503508986d1d99c57e80ab74838da/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/left.java
+    if (neededEncoders.size() == 1 && !needUnicodeEncoder) {
+      encoders = new CharsetEncoder[1];
+      encoders[0] = neededEncoders.get(0);
+||||||| /usr/src/app/output/zxing/zxing/cc2821a2d26503508986d1d99c57e80ab74838da/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/base.java
+    int numberOfEncoders = 0;
+    for (int j = 0; j < 15; j++) {
+      if (isoEncoders[j] != null) {
+        if (CharacterSetECI.getCharacterSetECI(isoEncoders[j].charset()) != null) {
+          numberOfEncoders++;
+        } else {
+          needUnicodeEncoder = true;
+        }
+      }
+    }
+
+    if (numberOfEncoders == 1 && !needUnicodeEncoder) {
+      encoders = new CharsetEncoder[1];
+      encoders[0] = isoEncoders[0];
+=======
     if (neededEncoders.size() == 1 && !needUnicodeEncoder) {
       encoders = new CharsetEncoder[] { neededEncoders.get(0) };
+>>>>>>> /usr/src/app/output/zxing/zxing/cc2821a2d26503508986d1d99c57e80ab74838da/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/right.java
     } else {
       encoders = new CharsetEncoder[neededEncoders.size() + 2];
       int index = 0;
@@ -587,16 +647,49 @@ final class MinimalEncoder {
         }
 
         if (previous == null || previous.mode != current.mode || needECI) {
+<<<<<<< /usr/src/app/output/zxing/zxing/cc2821a2d26503508986d1d99c57e80ab74838da/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/left.java
+          add(0, new ResultNode(current.mode, current.fromPosition, current.charsetEncoderIndex, length));
+||||||| /usr/src/app/output/zxing/zxing/cc2821a2d26503508986d1d99c57e80ab74838da/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/base.java
+          add(0,new ResultNode(current.mode, current.fromPosition, current.charsetEncoderIndex, length));
+=======
           list.add(0, new ResultNode(current.mode, current.fromPosition, current.charsetEncoderIndex, length));
+>>>>>>> /usr/src/app/output/zxing/zxing/cc2821a2d26503508986d1d99c57e80ab74838da/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/right.java
           length = 0;
         }
 
         if (needECI) {
+<<<<<<< /usr/src/app/output/zxing/zxing/cc2821a2d26503508986d1d99c57e80ab74838da/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/left.java
+          add(0, new ResultNode(Mode.ECI, current.fromPosition, current.charsetEncoderIndex, 0));
+||||||| /usr/src/app/output/zxing/zxing/cc2821a2d26503508986d1d99c57e80ab74838da/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/base.java
+          add(0,new ResultNode(Mode.ECI, current.fromPosition, current.charsetEncoderIndex, 0));
+=======
           list.add(0, new ResultNode(Mode.ECI, current.fromPosition, current.charsetEncoderIndex, 0));
+>>>>>>> /usr/src/app/output/zxing/zxing/cc2821a2d26503508986d1d99c57e80ab74838da/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/right.java
         }
         current = previous;
       }
 
+<<<<<<< /usr/src/app/output/zxing/zxing/cc2821a2d26503508986d1d99c57e80ab74838da/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/left.java
+      // prepend FNC1 if needed. If the bits contain an ECI then the FNC1 must be preceeded by an ECI.
+      // If there is no ECI at the beginning then we put an ECI to the default charset (ISO-8859-1)
+      if (isGS1) {
+        ResultNode first = get(0);
+        if (first != null && first.mode != Mode.ECI && containsECI) {
+          // prepend a default character set ECI
+          add(0, new ResultNode(Mode.ECI, 0, 0, 0));
+        }
+        first = get(0);
+        // prepend or insert a FNC1_FIRST_POSITION after the ECI (if any)
+        add(first.mode != Mode.ECI ? 0 : 1, new ResultNode(Mode.FNC1_FIRST_POSITION, 0, 0, 0));
+||||||| /usr/src/app/output/zxing/zxing/cc2821a2d26503508986d1d99c57e80ab74838da/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/base.java
+    /**
+     * returns the size in bits
+     */
+    int getSize() {
+      int result = 0;
+      for (ResultNode resultNode : this) {
+        result += resultNode.getSize();
+=======
       // prepend FNC1 if needed. If the bits contain an ECI then the FNC1 must be preceeded by an ECI.
       // If there is no ECI at the beginning then we put an ECI to the default charset (ISO-8859-1)
       if (isGS1) {
@@ -608,9 +701,29 @@ final class MinimalEncoder {
         first = list.get(0);
         // prepend or insert a FNC1_FIRST_POSITION after the ECI (if any)
         list.add(first.mode != Mode.ECI ? 0 : 1, new ResultNode(Mode.FNC1_FIRST_POSITION, 0, 0, 0));
+>>>>>>> /usr/src/app/output/zxing/zxing/cc2821a2d26503508986d1d99c57e80ab74838da/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/right.java
       }
+<<<<<<< /usr/src/app/output/zxing/zxing/cc2821a2d26503508986d1d99c57e80ab74838da/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/left.java
+ 
+      // set version to smallest version into which the bits fit.
+||||||| /usr/src/app/output/zxing/zxing/cc2821a2d26503508986d1d99c57e80ab74838da/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/base.java
+      return result;
+    }
+
+    /**
+     * appends the bits
+     */
+    void getBits(BitArray bits) throws WriterException {
+      for (ResultNode resultNode : this) {
+        resultNode.getBits(bits);
+      }
+    }
+
+    Version getVersion() {
+=======
 
       // set version to smallest version into which the bits fit.
+>>>>>>> /usr/src/app/output/zxing/zxing/cc2821a2d26503508986d1d99c57e80ab74838da/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/right.java
       int versionNumber = version.getVersionNumber();
       int lowerLimit;
       int upperLimit;
@@ -640,6 +753,39 @@ final class MinimalEncoder {
         ecLevel)) {
         versionNumber--;
       }
+<<<<<<< /usr/src/app/output/zxing/zxing/cc2821a2d26503508986d1d99c57e80ab74838da/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/left.java
+      this.version = Version.getVersionForNumber(versionNumber);
+    }
+
+    /**
+     * returns the size in bits
+     */
+    int getSize() {
+      return getSize(version);
+    }
+
+    private int getSize(Version version) {
+      int result = 0;
+      for (ResultNode resultNode : this) {
+        result += resultNode.getSize(version);
+      }
+      return result;
+    }
+
+    /**
+     * appends the bits
+     */
+    void getBits(BitArray bits) throws WriterException {
+      for (ResultNode resultNode : this) {
+        resultNode.getBits(bits);
+      }
+    }
+
+    Version getVersion() {
+      return version;
+||||||| /usr/src/app/output/zxing/zxing/cc2821a2d26503508986d1d99c57e80ab74838da/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/base.java
+      return Version.getVersionForNumber(versionNumber);
+=======
       this.version = Version.getVersionForNumber(versionNumber);
     }
 
@@ -669,6 +815,7 @@ final class MinimalEncoder {
 
     Version getVersion() {
       return version;
+>>>>>>> /usr/src/app/output/zxing/zxing/cc2821a2d26503508986d1d99c57e80ab74838da/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/right.java
     }
 
     public String toString() {
