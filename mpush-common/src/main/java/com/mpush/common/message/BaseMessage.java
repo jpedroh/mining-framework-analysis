@@ -81,6 +81,7 @@ public abstract class BaseMessage implements Message {
 
     }
 
+<<<<<<< /usr/src/app/output/mpusher/mpush/0d7f9d343a62a0481cbc3ad4b1775bec26181295/mpush-common/src/main/java/com/mpush/common/message/BaseMessage.java/left.java
     private void decodeBinaryBody0() {
         //1.解密
         byte[] tmp = packet.body;
@@ -104,6 +105,32 @@ public abstract class BaseMessage implements Message {
         Profiler.release();
         packet.body = null;// 释放内存
     }
+||||||| /usr/src/app/output/mpusher/mpush/0d7f9d343a62a0481cbc3ad4b1775bec26181295/mpush-common/src/main/java/com/mpush/common/message/BaseMessage.java/base.java
+    private void decodeBinaryBody0() 
+=======
+    private void decodeBinaryBody0() {
+        //1.解密
+        byte[] tmp = packet.body;
+        if (packet.hasFlag(Packet.FLAG_CRYPTO)) {
+            if (connection.getSessionContext().cipher != null) {
+                tmp = connection.getSessionContext().cipher.decrypt(tmp);
+            }
+        }
+        //2.解压
+        if (packet.hasFlag(Packet.FLAG_COMPRESS)) {
+            tmp = IOUtils.decompress(tmp);
+        }
+
+        if (tmp.length == 0) {
+            throw new RuntimeException("message decode ex");
+        }
+
+        packet.body = tmp;
+        Profiler.enter("time cost on [body decode]");
+        decode(packet.body);
+        Profiler.release();
+    }
+>>>>>>> /usr/src/app/output/mpusher/mpush/0d7f9d343a62a0481cbc3ad4b1775bec26181295/mpush-common/src/main/java/com/mpush/common/message/BaseMessage.java/right.java
 
     private void encodeBinaryBody0() {
         Profiler.enter("time cost on [body encode]");

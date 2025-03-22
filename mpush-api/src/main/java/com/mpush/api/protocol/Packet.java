@@ -150,6 +150,7 @@ public class Packet {
         return packet;
     }
 
+<<<<<<< /usr/src/app/output/mpusher/mpush/0d7f9d343a62a0481cbc3ad4b1775bec26181295/mpush-api/src/main/java/com/mpush/api/protocol/Packet.java/left.java
     public static void encodePacket(Packet packet, ByteBuf out) {
         if (packet.cmd == Command.HEARTBEAT.cmd) {
             out.writeByte(Packet.HB_PACKET_BYTE);
@@ -166,6 +167,25 @@ public class Packet {
         }
         packet.body = null;
     }
+||||||| /usr/src/app/output/mpusher/mpush/0d7f9d343a62a0481cbc3ad4b1775bec26181295/mpush-api/src/main/java/com/mpush/api/protocol/Packet.java/base.java
+    public static void encodePacket(Packet packet, ByteBuf out) 
+=======
+    public static void encodePacket(Packet packet, ByteBuf out) {
+        if (packet.cmd == Command.HEARTBEAT.cmd) {
+            out.writeByte(Packet.HB_PACKET_BYTE);
+        } else {
+            out.writeInt(packet.getBodyLength());
+            out.writeByte(packet.cmd);
+            out.writeShort(packet.cc);
+            out.writeByte(packet.flags);
+            out.writeInt(packet.sessionId);
+            out.writeByte(packet.lrc);
+            if (packet.getBodyLength() > 0) {
+                out.writeBytes(packet.body);
+            }
+        }
+    }
+>>>>>>> /usr/src/app/output/mpusher/mpush/0d7f9d343a62a0481cbc3ad4b1775bec26181295/mpush-api/src/main/java/com/mpush/api/protocol/Packet.java/right.java
 
     @Override
     public String toString() {

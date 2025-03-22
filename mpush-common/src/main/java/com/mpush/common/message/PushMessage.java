@@ -26,7 +26,9 @@ import com.mpush.api.protocol.Packet;
 import io.netty.channel.ChannelFutureListener;
 
 import java.util.Collections;
+
 import java.util.HashMap;
+
 import java.util.Map;
 
 import static com.mpush.api.protocol.Command.PUSH;
@@ -98,6 +100,13 @@ public final class PushMessage extends BaseMessage {
         super.send(listener);
         this.content = null;//释放内存
     }
+
+    public PushMessage setContent(byte[] content) {
+        this.content = content;
+        return this;
+    }
+
+
 
     @Override
     public String toString() {
