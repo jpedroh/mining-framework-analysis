@@ -55,8 +55,7 @@ public class DirectedSimpleCyclesTest
         Function<Graph<Integer, DefaultEdge>,
             DirectedSimpleCycles<Integer, DefaultEdge>> algProvider)
     {
-        Graph<Integer, DefaultEdge> graph =
-            new DirectedGraph<>(new ClassBasedEdgeFactory<>(DefaultEdge.class));
+        Graph<Integer, DefaultEdge> graph = new DirectedGraph<>(DefaultEdge.class);
         for (int i = 0; i < 7; i++) {
             graph.addVertex(i);
         }
@@ -76,7 +75,7 @@ public class DirectedSimpleCyclesTest
         assertTrue(alg.findSimpleCycles().size() == 5);
 
         for (int size = 1; size <= MAX_SIZE; size++) {
-            graph = new DirectedGraph<>(new ClassBasedEdgeFactory<>(DefaultEdge.class));
+            graph = new DirectedGraph<>(DefaultEdge.class);
             for (int i = 0; i < size; i++) {
                 graph.addVertex(i);
             }
@@ -95,7 +94,7 @@ public class DirectedSimpleCyclesTest
             DirectedSimpleCycles<Integer, DefaultWeightedEdge>> algProvider)
     {
         Graph<Integer, DefaultWeightedEdge> graph =
-            new DirectedWeightedGraph<>(DefaultWeightedEdge.class);
+            new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
         for (int i = 0; i < 7; i++) {
             graph.addVertex(i);
         }
@@ -115,7 +114,7 @@ public class DirectedSimpleCyclesTest
         assertTrue(alg.findSimpleCycles().size() == 5);
 
         for (int size = 1; size <= MAX_SIZE; size++) {
-            graph = new DirectedWeightedGraph<>(DefaultWeightedEdge.class);
+            graph = new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
             for (int i = 0; i < size; i++) {
                 graph.addVertex(i);
             }
