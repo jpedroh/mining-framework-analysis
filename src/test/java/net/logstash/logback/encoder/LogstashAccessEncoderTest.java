@@ -24,11 +24,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
-
-import ch.qos.logback.access.spi.IAccessEvent;
-import ch.qos.logback.core.Context;
-import net.logstash.logback.Logback11Support;
-import net.logstash.logback.composite.FormattedTimestampJsonProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -36,6 +31,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import ch.qos.logback.access.spi.IAccessEvent;
+import ch.qos.logback.core.Context;
+import net.logstash.logback.Logback11Support;
+import net.logstash.logback.composite.FormattedTimestampJsonProvider;
 
 @ExtendWith(MockitoExtension.class)
 public class LogstashAccessEncoderTest {
