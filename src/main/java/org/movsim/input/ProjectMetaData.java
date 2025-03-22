@@ -50,14 +50,6 @@ public class ProjectMetaData{
 
     }
 
-    /**
-     * Gets the single instance of ProjectMetaData.
-     * 
-     * @return single instance of ProjectMetaData
-     */
-    static ProjectMetaData getInstance() {
-        return singleton;
-    }
 
     /*
      * (non-Javadoc)
@@ -206,4 +198,5 @@ public class ProjectMetaData{
     public void setXmlFromResources(boolean xmlFromResources) {
         this.xmlFromResources = xmlFromResources;
     }
+
 }
