@@ -16,13 +16,12 @@
  * SPDX-License-Identifier: EPL-2.0 OR LGPL-2.1-or-later
  */
 package org.jgrapht;
-
+import org.jgrapht.alg.interval.*;
 import org.jgrapht.alg.connectivity.*;
 import org.jgrapht.alg.cycle.*;
 import org.jgrapht.alg.interfaces.*;
 import org.jgrapht.alg.partition.*;
 import org.jgrapht.alg.planar.*;
-import org.jgrapht.alg.interval.*;
 
 import java.util.*;
 import java.util.stream.*;

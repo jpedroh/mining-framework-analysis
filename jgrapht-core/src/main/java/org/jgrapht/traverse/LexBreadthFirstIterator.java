@@ -49,10 +49,15 @@ import java.util.*;
  * @param <V> the graph vertex type.
  * @param <E> the graph edge type.
  * @author Timofey Chudakov
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/f8492e5cee829f64689c5dd8397f5529c1a7315b/jgrapht-core/src/main/java/org/jgrapht/traverse/LexBreadthFirstIterator.java/left.java
  * @author Oliver Feith
  * @author Dennis Fischer
  * @author Daniel Mock
  * @since March 2018
+||||||| /usr/src/app/output/jgrapht/jgrapht/f8492e5cee829f64689c5dd8397f5529c1a7315b/jgrapht-core/src/main/java/org/jgrapht/traverse/LexBreadthFirstIterator.java/base.java
+ * @since March 2018
+=======
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/f8492e5cee829f64689c5dd8397f5529c1a7315b/jgrapht-core/src/main/java/org/jgrapht/traverse/LexBreadthFirstIterator.java/right.java
  */
 public class LexBreadthFirstIterator<V, E>
         extends
@@ -409,7 +414,7 @@ public class LexBreadthFirstIterator<V, E>
         {
             head = new Bucket(verticesA, verticesB);
 
-            bucketMap = new HashMap<>(verticesA.size());
+            bucketMap = CollectionUtil.newHashMapWithExpectedSize(verticesA.size());
             for (V vertex : verticesA) {
                 bucketMap.put(vertex, head);
             }
