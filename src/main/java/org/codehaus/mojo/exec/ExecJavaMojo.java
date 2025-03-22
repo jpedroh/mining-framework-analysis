@@ -377,7 +377,6 @@ public class ExecJavaMojo
         }
         return combinedArray;
     }
-
     /**
      * To avoid the exec:java to consider common pool threads leaked, let's pre-create them.
      */
