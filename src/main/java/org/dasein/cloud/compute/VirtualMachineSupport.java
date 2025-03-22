@@ -71,6 +71,7 @@ public interface VirtualMachineSupport extends AccessControlledService {
     public VirtualMachine alterVirtualMachine(@Nonnull String vmId, @Nonnull VMScalingOptions options) throws InternalException, CloudException;
 
     /**
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/7c30c7433730d86dca8172197333c66ba14d7ce8/src/main/java/org/dasein/cloud/compute/VirtualMachineSupport.java/left.java
      * Allows certain properties of a virtual machine  to be changed in accordance with the specified  options.
      * @param vmId the virtual machine to scale
      * @param firewalls the options governing how the virtual machine is scaled
@@ -96,6 +97,24 @@ public interface VirtualMachineSupport extends AccessControlledService {
     public void cancelSpotInstanceRequest(String providerSpotInstanceRequestID) throws CloudException, InternalException;
 
     /**
+||||||| /usr/src/app/output/greese/dasein-cloud-core/7c30c7433730d86dca8172197333c66ba14d7ce8/src/main/java/org/dasein/cloud/compute/VirtualMachineSupport.java/base.java
+=======
+     * Cancels the data feed for Spot Instances
+     * @throws CloudException an error occurred in the cloud processing the request
+     * @throws InternalException an internal error occurred processing the request
+     */
+    public void cancelSpotDataFeedSubscription() throws CloudException, InternalException;
+
+    /**
+     * Cancels and removes a request for Spot Instances
+     * @param providerSpotInstanceRequestID the ID of the SpotInstanceRequest to be cancelled
+     * @throws CloudException an error occurred in the cloud processing the request
+     * @throws InternalException an internal error occurred processing the request
+     */
+    public void cancelSpotInstanceRequest(String providerSpotInstanceRequestID) throws CloudException, InternalException;
+
+    /**
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/7c30c7433730d86dca8172197333c66ba14d7ce8/src/main/java/org/dasein/cloud/compute/VirtualMachineSupport.java/right.java
      * Clones an existing virtual machine into a new copy.
      * @param vmId the ID of the server to be cloned
      * @param intoDcId the ID of the data center in which the new server will operate
@@ -108,6 +127,15 @@ public interface VirtualMachineSupport extends AccessControlledService {
      * @throws CloudException an error occurred in the cloud processing the request
      */
     public @Nonnull VirtualMachine clone(@Nonnull String vmId, @Nonnull String intoDcId, @Nonnull String name, @Nonnull String description, boolean powerOn, @Nullable String ... firewallIds) throws InternalException, CloudException;
+
+    /**
+     * Creates a SpotInstanceRequset fitting the options specified in the SIRequestCreateOptions
+     * @param options the configuration options for the spot instance request
+     * @return a newly created SpotInstanceRequest
+     * @throws CloudException an error occurred in the cloud processing the request
+     * @throws InternalException an internal error occurred processing the request
+     */
+    public @Nonnull SpotInstanceRequest createSpotInstanceRequest(SIRequestCreateOptions options) throws CloudException, InternalException;
 
     /**
      * Creates a SpotInstanceRequset fitting the options specified in the SIRequestCreateOptions
@@ -135,6 +163,14 @@ public interface VirtualMachineSupport extends AccessControlledService {
      * @throws CloudException an error occurred within the cloud provider
      */
     public void enableAnalytics(@Nonnull String vmId) throws InternalException, CloudException;
+
+    /**
+     * Creates the datafeed for Spot Instances, enabling you to view Spot Instance usage logs.
+     * @param s3BucketName the S3 bucket to which the logs will be written
+     * @throws CloudException an error occurred within the cloud provider
+     * @throws InternalException an error occurred within the Dasein Cloud API implementation
+     */
+    public void enableSpotDataFeedSubscription(String s3BucketName) throws CloudException, InternalException;
 
     /**
      * Creates the datafeed for Spot Instances, enabling you to view Spot Instance usage logs.
@@ -338,6 +374,7 @@ public interface VirtualMachineSupport extends AccessControlledService {
      * @throws CloudException an error occurred within the cloud provider
      */
     public Iterable<VirtualMachineProduct> listProducts(Architecture architecture) throws InternalException, CloudException;
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/7c30c7433730d86dca8172197333c66ba14d7ce8/src/main/java/org/dasein/cloud/compute/VirtualMachineSupport.java/left.java
     /*
      * @param dataCenterId the desired dataCenterId size offerings
      */
@@ -351,6 +388,18 @@ public interface VirtualMachineSupport extends AccessControlledService {
      * @throws InternalException
      */
     public Iterable<SpotPriceHistory> listSpotPriceHistories(SPHistoryFilterOptions options) throws CloudException, InternalException;
+||||||| /usr/src/app/output/greese/dasein-cloud-core/7c30c7433730d86dca8172197333c66ba14d7ce8/src/main/java/org/dasein/cloud/compute/VirtualMachineSupport.java/base.java
+=======
+
+    /**
+     * Provides a list of price history records for Spot Instances
+     * @param options filter options
+     * @return all price history entries that match the specified filter
+     * @throws CloudException
+     * @throws InternalException
+     */
+    public Iterable<SpotPriceHistory> listSpotPriceHistories(SPHistoryFilterOptions options) throws CloudException, InternalException;
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/7c30c7433730d86dca8172197333c66ba14d7ce8/src/main/java/org/dasein/cloud/compute/VirtualMachineSupport.java/right.java
 
     /**
      * Lists the status for all virtual machines in the current region.

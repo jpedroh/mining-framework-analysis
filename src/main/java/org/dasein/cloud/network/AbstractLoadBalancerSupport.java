@@ -95,6 +95,11 @@ public abstract class AbstractLoadBalancerSupport<T extends CloudProvider> imple
     }
 
     @Override
+    public @Nonnull String createLBWithHealthCheck(@Nonnull LoadBalancerCreateOptions lbOptions, @Nonnull HealthCheckOptions lbchOptions) throws CloudException, InternalException {
+        throw new OperationNotSupportedException("Health Checks have not been implemented in " + getProvider().getCloudName());
+    }
+
+    @Override
     public @Nonnull LoadBalancerAddressType getAddressType() throws CloudException, InternalException {
         return LoadBalancerAddressType.DNS;
     }
@@ -185,6 +190,7 @@ public abstract class AbstractLoadBalancerSupport<T extends CloudProvider> imple
         throw new OperationNotSupportedException("Getting server certificates is not implemented in " + getContext().getRegionId() + " of " + getProvider().getCloudName());
     }
 
+    @Deprecated
     @Deprecated
     public @Nonnull Requirement identifyEndpointsOnCreateRequirement() throws CloudException, InternalException {
         return getCapabilities().identifyEndpointsOnCreateRequirement();
@@ -355,7 +361,8 @@ public abstract class AbstractLoadBalancerSupport<T extends CloudProvider> imple
     }
 
     @Override
-    public void setSSLCertificate( @Nonnull SetLoadBalancerSSLCertificateOptions options ) throws CloudException, InternalException {
+    public
+    @Deprecated void setSSLCertificate( @Nonnull SetLoadBalancerSSLCertificateOptions options ) throws CloudException, InternalException {
         throw new OperationNotSupportedException("Setting SSL certificate is not implemented in " + getContext().getRegionId() + " of " + getProvider().getCloudName());
     }
 

@@ -84,12 +84,13 @@ public abstract class AbstractVMSupport<T extends CloudProvider> implements Virt
         throw new OperationNotSupportedException("Instance firewall modifications are not currently supported for " + getProvider().getCloudName());
     }
 
-    public void cancelSpotDataFeedSubscription() throws CloudException, InternalException{
+    @Override
+    public void cancelSpotInstanceRequest(String providerSpotInstanceRequestID) throws CloudException, InternalException{
         throw new OperationNotSupportedException("Spot Instances are not supported for " + getProvider().getCloudName());
     }
 
     @Override
-    public void cancelSpotInstanceRequest(String providerSpotInstanceRequestID) throws CloudException, InternalException{
+    public void cancelSpotDataFeedSubscription() throws CloudException, InternalException{
         throw new OperationNotSupportedException("Spot Instances are not supported for " + getProvider().getCloudName());
     }
 
@@ -659,6 +660,7 @@ public abstract class AbstractVMSupport<T extends CloudProvider> implements Virt
     public Iterable<SpotPriceHistory> listSpotPriceHistories(SPHistoryFilterOptions options) throws CloudException, InternalException{
         throw new OperationNotSupportedException("Spot Instances are not supported for " + getProvider().getCloudName());
     }
+
 
     @Override
     @Deprecated
