@@ -336,6 +336,23 @@ public class NamespacePrefixMappings implements NamespaceContext, org.apache.xml
     	}
     	
     	
+    	if (namespaceUri.equals("http://schemas.openxmlformats.org/schemaLibrary/2006/main")) {
+    		return "sl";
+    	}
+    	if (namespaceUri.equals("http://schemas.microsoft.com/office/2006/coverPageProps" )) {
+    		return "cppr";
+    	}
+    	if (namespaceUri.equals("http://schemas.openxmlformats.org/drawingml/2006/chartDrawing")) {
+    		return "cdr";
+    	}
+    	if (namespaceUri.equals("http://schemas.openxmlformats.org/drawingml/2006/compatibility" )) {
+    		return "comp";
+    	}
+    	if (namespaceUri.equals("http://schemas.openxmlformats.org/drawingml/2006/lockedCanvas")) {
+    		return "lc";
+    	}
+    	
+    	
     	return suggestion;
     }
     

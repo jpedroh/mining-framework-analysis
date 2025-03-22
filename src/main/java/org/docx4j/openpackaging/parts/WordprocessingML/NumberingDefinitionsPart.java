@@ -196,35 +196,6 @@ public final class NumberingDefinitionsPart extends JaxbXmlPartXPathAware<Number
     	
     	
     }
-    
-    /**
-     * For the given *concrete* list numId, restart the numbering on the specified
-     * level at value val.  This is done by creating a new list (ie &lt;w:num&gt;)
-     * which uses the existing w:abstractNum.
-     * @param numId
-     * @param ilvl
-     * @param val
-     * @return 
-     */
-    public long restart(long numId, long ilvl, long val) 
-    	throws InvalidOperationException {
-    	
-    	// Find the abstractNumId
-    	
-    	// (Ensure maps are initialised)
-    	if (em == null ) { 
-    		getEmulator();
-    	}
-    	
-    	ListNumberingDefinition existingLnd = instanceListDefinitions.get( Long.toString(numId) );
-    	if (existingLnd==null) {
-    		throw new InvalidOperationException("Concrete/instance list " + numId + " does not exist");
-    	}
-    	
-    	return restart(existingLnd.getNumNode(), ilvl, val);
-    }
-    
-
     private long restart(Num num, long ilvl, long val) 
     	throws InvalidOperationException {
 
@@ -270,9 +241,6 @@ public final class NumberingDefinitionsPart extends JaxbXmlPartXPathAware<Number
     	return newNumId;
     	
     }
-    
-	
-	
 	private Emulator em;
 //	public void setEmulator(Emulator em) {
 //		this.em = em;
@@ -281,8 +249,6 @@ public final class NumberingDefinitionsPart extends JaxbXmlPartXPathAware<Number
 		    	
 		return getEmulator(false);
 	}
-
-	
 	/**
 	 * @param reset
 	 * @return
@@ -298,7 +264,6 @@ public final class NumberingDefinitionsPart extends JaxbXmlPartXPathAware<Number
 		
 		return em;
 	}
-	
 	public Ind getInd(NumPr numPr) { //, StyleDefinitionsPart sdp, String styleId) {
 		
 		String ilvlString = "0";
@@ -314,7 +279,6 @@ public final class NumberingDefinitionsPart extends JaxbXmlPartXPathAware<Number
 			return getInd(numPr.getNumId().getVal().toString(), ilvlString );
 		}
 	}
-	
 	public Ind getInd(String numId, String ilvl) {
 
 		// Operating on the docx4j.listnumbering plane,
@@ -351,7 +315,6 @@ public final class NumberingDefinitionsPart extends JaxbXmlPartXPathAware<Number
 		
 		return ind;
 	}
-	
 	private Ind getIndFromLvl(Lvl lvl) {
 		
 		// If there is a style reference in the instance,
@@ -397,7 +360,6 @@ public final class NumberingDefinitionsPart extends JaxbXmlPartXPathAware<Number
 		return null;		
 		
 	}
-	
 	/**
 	 * Add the specified definition, allocating it a new w:abstractNumId.
 	 * 
@@ -456,7 +418,6 @@ public final class NumberingDefinitionsPart extends JaxbXmlPartXPathAware<Number
     	return num;
 		
 	}
-
 	public void addAbstractListNumberingDefinitionLevel(Numbering.AbstractNum abstractNum, Lvl lvl) {
 		
 		abstractNum.getLvl().add( lvl ); 
@@ -466,6 +427,35 @@ public final class NumberingDefinitionsPart extends JaxbXmlPartXPathAware<Number
 		absNumDef.readLevel(lvl);
 
 	}
+    /**
+     * For the given *concrete* list numId, restart the numbering on the specified
+     * level at value val.  This is done by creating a new list (ie &lt;w:num&gt;)
+     * which uses the existing w:abstractNum.
+     * @param numId
+     * @param ilvl
+     * @param val
+     * @return 
+     */
+    public long restart(long numId, long ilvl, long val) 
+    	throws InvalidOperationException {
+    	
+    	// Find the abstractNumId
+    	
+    	// (Ensure maps are initialised)
+    	if (em == null ) { 
+    		getEmulator();
+    	}
+    	
+    	ListNumberingDefinition existingLnd = instanceListDefinitions.get( Long.toString(numId) );
+    	if (existingLnd==null) {
+    		throw new InvalidOperationException("Concrete/instance list " + numId + " does not exist");
+    	}
+    	
+    	return restart(existingLnd.getNumNode(), ilvl, val);
+    }
+//	public void setEmulator(Emulator em) {
+//		this.em = em;
+//	}
 	
     public Numbering unmarshalDefaultNumbering() throws JAXBException {
     	    	    	 

@@ -135,10 +135,19 @@ public class ListNumberingDefinition {
     	this.numNode = numNode;
     	
         this.listNumberId =  numNode.getNumId().toString(); //getAttributeValue(numNode, "w:numId");
-//        if (log.isDebugEnabled()) {
+<<<<<<< /usr/src/app/output/plutext/docx4j/aa42a5b3f77c350916c1b790b26cb2633e9aa31c/src/main/java/org/docx4j/model/listnumbering/ListNumberingDefinition.java/left.java
+        if (log.isDebugEnabled()) {
+	    	log.debug("Constructing model for numId=" + listNumberId);
+	    	log.debug(XmlUtils.marshaltoString(numNode));
+        }
+||||||| /usr/src/app/output/plutext/docx4j/aa42a5b3f77c350916c1b790b26cb2633e9aa31c/src/main/java/org/docx4j/model/listnumbering/ListNumberingDefinition.java/base.java
+        log.debug("Constructing model for numId=" + listNumberId);
+=======
+        //        if (log.isDebugEnabled()) {
 //	    	log.debug("Constructing model for numId=" + listNumberId);
 //	    	log.debug(XmlUtils.marshaltoString(numNode));
 //        }
+>>>>>>> /usr/src/app/output/plutext/docx4j/aa42a5b3f77c350916c1b790b26cb2633e9aa31c/src/main/java/org/docx4j/model/listnumbering/ListNumberingDefinition.java/right.java
 
         //XmlNode abstractNumNode = numNode.SelectSingleNode("./w:abstractNumId", nsm);
         Numbering.Num.AbstractNumId abstractNumNode = numNode.getAbstractNumId();
@@ -151,92 +160,98 @@ public class ListNumberingDefinition {
             	log.warn("No abstractListDefinition for w:numId=" + listNumberId);  
             	return;
             }
-//            if (log.isDebugEnabled()) {
+<<<<<<< /usr/src/app/output/plutext/docx4j/aa42a5b3f77c350916c1b790b26cb2633e9aa31c/src/main/java/org/docx4j/model/listnumbering/ListNumberingDefinition.java/left.java
+            if (log.isDebugEnabled()) {
+            	log.debug(XmlUtils.marshaltoString(abstractListDefinition.getAbstractNumNode()));
+            }
+||||||| /usr/src/app/output/plutext/docx4j/aa42a5b3f77c350916c1b790b26cb2633e9aa31c/src/main/java/org/docx4j/model/listnumbering/ListNumberingDefinition.java/base.java
+=======
+            //            if (log.isDebugEnabled()) {
 //            	log.debug(XmlUtils.marshaltoString(abstractListDefinition.getAbstractNumNode()));
 //            }
-
+>>>>>>> /usr/src/app/output/plutext/docx4j/aa42a5b3f77c350916c1b790b26cb2633e9aa31c/src/main/java/org/docx4j/model/listnumbering/ListNumberingDefinition.java/right.java
             if (this.abstractListDefinition.getLevelCount()==0 
-            		&& this.abstractListDefinition.hasLinkedStyle()) {
-            	
-            	/* Something like:
-            	 * 
+        		&& this.abstractListDefinition.hasLinkedStyle()) {
+        	
+        	/* Something like:
+        	 * 
 					  <w:abstractNum w:abstractNumId="0">
 					    <w:nsid w:val="42FF6222"/>
 					    <w:multiLevelType w:val="multilevel"/>
 					    <w:tmpl w:val="0409001D"/>
 					    <w:numStyleLink w:val="MyListStyle"/>
 					  </w:abstractNum>
-            	 * 
-            	 * We need to go back to the style, which will point to a concrete numId
-            	 * which will in turn point to some *other* abstractNum!  
-            	 * Why M$ designed things this way defies logic!
-            	 * 
-            	 * This is done when NDP.resolveLinkedAbstractNum is invoked,
-            	 * typically by AbstractWmlConversionContext, prior to converting 
-            	 * the docx to HTML or PDF.
-            	 */
-            }
+        	 * 
+        	 * We need to go back to the style, which will point to a concrete numId
+        	 * which will in turn point to some *other* abstractNum!  
+        	 * Why M$ designed things this way defies logic!
+        	 * 
+        	 * This is done when NDP.resolveLinkedAbstractNum is invoked,
+        	 * typically by AbstractWmlConversionContext, prior to converting 
+        	 * the docx to HTML or PDF.
+        	 */
+        }
 
             this.levels = new HashMap<String, ListLevel>(this.abstractListDefinition.getLevelCount() );
 
             // initialize the levels to the same as the template ("abstract") list level
     		Iterator listLevelIterator = this.abstractListDefinition.getListLevels().entrySet().iterator();
     	    while (listLevelIterator.hasNext()) {
-    	        Map.Entry pairs = (Map.Entry)listLevelIterator.next();
-    	        this.levels.put( (String)pairs.getKey(), new ListLevel( (ListLevel)pairs.getValue() ) ); 
-    	        //log.debug("init'd level " + pairs.getKey());
-    	    }
+            Map.Entry pairs = (Map.Entry)listLevelIterator.next();
+            this.levels.put( (String)pairs.getKey(), new ListLevel( (ListLevel)pairs.getValue() ) ); 
+            //log.debug("init'd level " + pairs.getKey());
+        }
 
             // propagate the level overrides into the current list number level definition
             // XmlNodeList levelOverrideNodes = numNode.SelectNodes("./w:lvlOverride", nsm);
 
             List<Numbering.Num.LvlOverride> levelOverrideNodes = numNode.getLvlOverride(); 
 			if (levelOverrideNodes != null) {
-				/*
-				 * <w:lvlOverride w:ilvl="0"> 
-				 * 		<w:startOverride w:val="10"/>
-				 * </w:lvlOverride>
-				 */
-				for (Numbering.Num.LvlOverride overrideNode : levelOverrideNodes) {
+        	/*
+        	 * <w:lvlOverride w:ilvl="0"> 
+        	 * 		<w:startOverride w:val="10"/>
+        	 * </w:lvlOverride>
+        	 */
+        	for (Numbering.Num.LvlOverride overrideNode : levelOverrideNodes) {
                     if(log.isDebugEnabled()) {
                         log.debug("found LvlOverride "
                                 + XmlUtils.marshaltoString(overrideNode, true));
                     }
-					
-					if (overrideNode.getIlvl() == null) {
+        		
+        		if (overrideNode.getIlvl() == null) {
                         if(log.isWarnEnabled()) {
                             log.warn("Missing @w:ilvl! " + XmlUtils.marshaltoString(overrideNode, true));
                         }
-					} else {
-						String overrideLevelId = overrideNode.getIlvl().toString(); 
-						log.debug(".. " + overrideLevelId);
+        		} else {
+        			String overrideLevelId = overrideNode.getIlvl().toString(); 
+        			log.debug(".. " + overrideLevelId);
 
-						if (!overrideLevelId.equals("")) {
-							// Is there a w:startOverride?
-							// This is only given effect the first time the instance
-							// is encountered in the document
-							StartOverride startOverride = overrideNode.getStartOverride();
-							if (startOverride != null
-									&& startOverride.getVal() != null) {
-								
-								if (this.levels.get(overrideLevelId)==null) {
-									throw new RuntimeException(overrideLevelId + " level missing for abstractListDefinition " + abstractListDefinition.getID());
-								}
-								this.levels.get(overrideLevelId).setStartValue(
-										startOverride.getVal().subtract(BigInteger.ONE));
-								log.debug("level " + overrideLevelId + "starts at " + startOverride.getVal());
-							}
-						}
+        			if (!overrideLevelId.equals("")) {
+        				// Is there a w:startOverride?
+        				// This is only given effect the first time the instance
+        				// is encountered in the document
+        				StartOverride startOverride = overrideNode.getStartOverride();
+        				if (startOverride != null
+        						&& startOverride.getVal() != null) {
+        					
+        					if (this.levels.get(overrideLevelId)==null) {
+        						throw new RuntimeException(overrideLevelId + " level missing for abstractListDefinition " + abstractListDefinition.getID());
+        					}
+        					this.levels.get(overrideLevelId).setStartValue(
+        							startOverride.getVal().subtract(BigInteger.ONE));
+        					log.debug("level " + overrideLevelId + "starts at " + startOverride.getVal());
+        				}
+        			}
 
-						Lvl lvl = overrideNode.getLvl();
-						if (lvl != null && this.levels.get(overrideLevelId) != null) {
-							this.levels.get(overrideLevelId).SetOverrides(lvl);
-						}
-						
-					}
+        			Lvl lvl = overrideNode.getLvl();
+        			if (lvl != null && this.levels.get(overrideLevelId) != null) {
+        				this.levels.get(overrideLevelId).SetOverrides(lvl);
+        			}
+        			
+        		}
 
-				}
-			}
+        	}
+        }
         }
     }
 

@@ -140,6 +140,49 @@ public class Condition implements Evaluable {
 
 				count(/project[1]/phases[1]/phase[1][1]/finding[3][1]/examples[1]/example[1][1])>0
 			 */
+<<<<<<< /usr/src/app/output/plutext/docx4j/aa42a5b3f77c350916c1b790b26cb2633e9aa31c/src/main/java/org/opendope/conditions/Condition.java/left.java
+			if (xpath.startsWith("string") ) {
+
+				// maybe we can handle this
+				
+				// clean it
+				String tmpPath = xpath.replace("][1]", "]"); // replace segment eg phase[1][1] to match map
+				String path = extractPath(tmpPath);
+				
+				// can we re-assemble?
+				if (tmpPath.startsWith("string(" + path + ")='")) {
+					
+					String val = domToXPathMap.getPathMap().get(path);
+					boolean result = (tmpPath.equals("string(" + path + ")='"+val +"'"));
+					
+					if (result==false) {
+						// try again ignoring whitespace (treat it as insignificant, matching particle.evaluate
+						result = (tmpPath.equals("string(" + path + ")='"+val.trim() +"'"));
+					}
+					
+					if (this.id.startsWith("tVK") ||
+							log.isDebugEnabled()) {
+						boolean tmpCheck = particle.evaluate(pkg, customXmlDataStorageParts, conditionsMap, xpathsMap);
+					
+						if (result==tmpCheck) {
+			//							System.out.println("Manual string calc worked");
+						} else {
+							String message ="PANIC! Manual string calc doesn't match XPath eval!\n"
+							+ xpath
+							+ "\nstring(" + path + ")='"+val +"'\n";
+
+							log.error(message);
+							throw new RuntimeException(message);
+							
+						}
+					}
+					return result;
+				}
+				
+			} else if ( xpath.startsWith("count")) {
+||||||| /usr/src/app/output/plutext/docx4j/aa42a5b3f77c350916c1b790b26cb2633e9aa31c/src/main/java/org/opendope/conditions/Condition.java/base.java
+			if (xpath.startsWith("string") )  else if ( xpath.startsWith("count")) {
+=======
 			if (xpath.startsWith("string") ) {
 
 				// maybe we can handle this
@@ -169,12 +212,12 @@ public class Condition implements Evaluable {
 							boolean tmpCheck = particle.evaluate(pkg, customXmlDataStorageParts, conditionsMap, xpathsMap);
 						
 							if (result==tmpCheck) {
-	//							System.out.println("Manual string calc worked");
+				//							System.out.println("Manual string calc worked");
 							} else {
 								String message ="PANIC! Manual string calc doesn't match XPath eval!\n"
 								+ xpath
 								+ "\nstring(" + path + ")='"+val +"'\n";
-	
+				
 								log.error(message);
 								throw new RuntimeException(message);
 								
@@ -185,6 +228,7 @@ public class Condition implements Evaluable {
 				}
 				
 			} else if ( xpath.startsWith("count")) {
+>>>>>>> /usr/src/app/output/plutext/docx4j/aa42a5b3f77c350916c1b790b26cb2633e9aa31c/src/main/java/org/opendope/conditions/Condition.java/right.java
 				// maybe we can handle this; currently we handle >0
 				
 				// clean it

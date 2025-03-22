@@ -423,12 +423,19 @@ public class Docx4J {
 				// and does that whether or not we have an XPaths part
 				openDoPEHandler = new OpenDoPEHandler(wmlPackage);
 				openDoPEHandler.preprocess();
-				
-				DomToXPathMap domToXPathMap = openDoPEHandler.getDomToXPathMap();
+
+<<<<<<< /usr/src/app/output/plutext/docx4j/aa42a5b3f77c350916c1b790b26cb2633e9aa31c/src/main/java/org/docx4j/Docx4J.java/left.java
+			// since 3.3.2
+			OpenDoPEIntegrity odi = new OpenDoPEIntegrity();
+			odi.process(wmlPackage);
+||||||| /usr/src/app/output/plutext/docx4j/aa42a5b3f77c350916c1b790b26cb2633e9aa31c/src/main/java/org/docx4j/Docx4J.java/base.java
+=======
+			DomToXPathMap domToXPathMap = openDoPEHandler.getDomToXPathMap();
 				
 				// TODO: now null out openDoPEHandler
 
 			new EventFinished(startEvent).publish();
+>>>>>>> /usr/src/app/output/plutext/docx4j/aa42a5b3f77c350916c1b790b26cb2633e9aa31c/src/main/java/org/docx4j/Docx4J.java/right.java
 			
 			startEvent = new StartEvent( WellKnownJobTypes.BIND, wmlPackage, WellKnownProcessSteps.BIND_BIND_XML_OpenDoPEIntegrity );
 			startEvent.publish();

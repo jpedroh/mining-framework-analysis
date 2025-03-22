@@ -148,9 +148,9 @@ public class BindingTraverserXSLT extends BindingTraverserCommonImpl {
 
 					// INIT
 					//				Xpath xp = xpathsMap.values().iterator().next();
-	//				CustomXmlPart cxp  = pkg.getCustomXmlDataStorageParts().get(xp.getDataBinding().getStoreItemID().toLowerCase());
-	//				System.out.println("mycxp: " + cxp.getClass().getName());
-	//				org.docx4j.openpackaging.parts.CustomXmlDataStoragePart cdsp = (CustomXmlDataStoragePart)cxp;
+				//				CustomXmlPart cxp  = pkg.getCustomXmlDataStorageParts().get(xp.getDataBinding().getStoreItemID().toLowerCase());
+				//				System.out.println("mycxp: " + cxp.getClass().getName());
+				//				org.docx4j.openpackaging.parts.CustomXmlDataStoragePart cdsp = (CustomXmlDataStoragePart)cxp;
 					
 					// We're only caching the first one we encounter
 					// (even though, in principle, there could be multiple)
@@ -173,11 +173,17 @@ public class BindingTraverserXSLT extends BindingTraverserCommonImpl {
 						domToXPathMap.map();
 						long end = System.currentTimeMillis();
 						long time = end - start;
-			
+
 						log.debug("Mapped in " + time + "ms");
 						
 					}
 				}
+<<<<<<< /usr/src/app/output/plutext/docx4j/aa42a5b3f77c350916c1b790b26cb2633e9aa31c/src/main/java/org/docx4j/model/datastorage/BindingTraverserXSLT.java/left.java
+				Map<String, String> pathMap = domToXPathMap.getPathMap();
+				bindingTraverserState.setPathMap(pathMap);
+				
+||||||| /usr/src/app/output/plutext/docx4j/aa42a5b3f77c350916c1b790b26cb2633e9aa31c/src/main/java/org/docx4j/model/datastorage/BindingTraverserXSLT.java/base.java
+=======
 				
 				Map<String, String> pathMap = null; 
 				if (domToXPathMap!=null) {
@@ -185,6 +191,7 @@ public class BindingTraverserXSLT extends BindingTraverserCommonImpl {
 				}
 				bindingTraverserState.setPathMap(pathMap);
 				
+>>>>>>> /usr/src/app/output/plutext/docx4j/aa42a5b3f77c350916c1b790b26cb2633e9aa31c/src/main/java/org/docx4j/model/datastorage/BindingTraverserXSLT.java/right.java
 			}
 					
 			org.docx4j.XmlUtils.transform(doc, xslt, transformParameters, result);

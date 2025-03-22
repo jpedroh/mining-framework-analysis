@@ -115,6 +115,104 @@ public class TraversalUtil {
 				Object o2;
 				for (Object o : children) {
 					
+<<<<<<< /usr/src/app/output/plutext/docx4j/aa42a5b3f77c350916c1b790b26cb2633e9aa31c/src/main/java/org/docx4j/TraversalUtil.java/left.java
+					// In 3.3.4, we don't expect to do any parent fixes here.
+					if (o instanceof javax.xml.bind.JAXBElement) {
+						// get its value; this is ok, 
+						// provided the results of the Callback
+						// won't be marshalled
+						o2 = ((JAXBElement)o).getValue();
+						
+						if (o2 instanceof Child) {
+							
+							if (parent instanceof List){
+								// It shouldn't be (as ArrayListWml usually handles), but do nothing 
+								if (log.isDebugEnabled()) {
+									if ( ((Child)o2).getParent()==null) {
+										log.debug("Unknown parent for " + o2.getClass().getName());										
+									} else  {
+										log.debug("Parent of " + o2.getClass().getName()
+												+ " is currently " + ((Child)o2).getParent().getClass().getName());
+									}
+								}
+							} else {
+								
+								if (parent==((Child)o2).getParent()) {
+									// all good
+									
+								} else {
+									
+									// workaround for broken getParent in cases where ArrayListWml doesn't help
+									// (ie we're not in a content list)
+									if ( ((Child)o2).getParent()==null) {
+										
+										// 3.3.4: to setParent, or not?
+										// Yes, let's, since something is better than null.
+										// But note, we could be setting it to some other ancestor because of how getChildren works
+										// When does this ever happen? Log at warn level to find out..
+										// I think it would only ever happen if there was foo.setBar(JAXBElement z)
+										if (log.isWarnEnabled()) {
+											log.warn("Unknown parent for " + o2.getClass().getName());
+										}
+										((Child)o2).setParent(parent);
+										
+									} else  {
+										// If this happens, we need to understand why
+										if (log.isWarnEnabled()) {
+											log.warn("Parent of " + o2.getClass().getName()
+													+ " is currently " + ((Child)o2).getParent().getClass().getName());
+										}
+										// We don't things in this case
+										//((Child)o2).setParent(parent);									
+									}
+									if (log.isInfoEnabled()) {
+										log.info("setting to  " + parent.getClass().getName() );
+									}
+									
+								}
+								
+								
+||||||| /usr/src/app/output/plutext/docx4j/aa42a5b3f77c350916c1b790b26cb2633e9aa31c/src/main/java/org/docx4j/TraversalUtil.java/base.java
+					// if its wrapped in javax.xml.bind.JAXBElement, get its
+					// value; this is ok, provided the results of the Callback
+					// won't be marshalled
+					o = XmlUtils.unwrap(o);
+					
+					// workaround for broken getParent (since 3.0.0)
+					// In 3.3.1, this ought not be necessary for common cases in org.docx4j.wml package
+					if (o instanceof Child) {
+						if (parent instanceof SdtBlock) {
+							((Child)o).setParent( ((SdtBlock)parent).getSdtContent() );
+								/*
+								 * getParent on eg a P in a SdtBlock should return SdtContentBlock, as
+								 * illustrated by the following code:
+								 * 
+										SdtBlock sdtBloc = Context.getWmlObjectFactory().createSdtBlock();
+										SdtContentBlock sdtContentBloc = Context.getWmlObjectFactory().createSdtContentBlock();
+										sdtBloc.setSdtContent(sdtContentBloc);
+										P p = Context.getWmlObjectFactory().createP();
+										sdtContentBloc.getContent().add(p);
+										String result = XmlUtils.marshaltoString(sdtBloc, true);
+										System.out.println(result);
+										SdtBlock rtp = (SdtBlock)XmlUtils.unmarshalString(result, Context.jc, SdtBlock.class);
+										P rtr = (P)rtp.getSdtContent().getContent().get(0);
+										System.out.println(rtr.getParent().getClass().getName() );
+								 * 
+								 * Similarly, P is the parent of R; the p.getContent() list is not the parent
+								 * 
+										P p = Context.getWmlObjectFactory().createP();
+										R r = Context.getWmlObjectFactory().createR();
+										p.getContent().add(r);
+										String result = XmlUtils.marshaltoString(p, true);
+										P rtp = (P)XmlUtils.unmarshalString(result);
+										R rtr = (R)rtp.getContent().get(0);
+										System.out.println(rtr.getParent().getClass().getName() );
+								 */
+						} else if (parent instanceof List){
+							// Do nothing
+							if (log.isDebugEnabled()) {
+								log.debug("Unknown parent for " + o.getClass().getName());
+=======
 					// In 3.3.4, we don't expect to do any parent fixes here.
 					if (o instanceof javax.xml.bind.JAXBElement) {
 						// get its value; this is ok, 
@@ -172,6 +270,7 @@ public class TraversalUtil {
 								}
 								
 								
+>>>>>>> /usr/src/app/output/plutext/docx4j/aa42a5b3f77c350916c1b790b26cb2633e9aa31c/src/main/java/org/docx4j/TraversalUtil.java/right.java
 							}
 						}
 						
