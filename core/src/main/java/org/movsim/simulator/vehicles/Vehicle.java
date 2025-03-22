@@ -273,8 +273,8 @@ public class Vehicle {
         assert speed >= 0.0;
         id = nextId++;
         randomFix = MyRandom.nextDouble();
-        dimensions = new VehicleDimensions(length, width);
         randomAlternative = MyRandom.nextDouble();
+        dimensions = new VehicleDimensions(length, width);
         setRearPosition(rearPosition);
         this.speed = speed;
         this.lane = lane;
