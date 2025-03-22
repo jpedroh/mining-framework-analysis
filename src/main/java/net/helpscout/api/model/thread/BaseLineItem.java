@@ -5,6 +5,8 @@ import net.helpscout.api.model.ref.MailboxRef;
 import net.helpscout.api.model.ref.PersonRef;
 import net.helpscout.api.model.ref.UserRef;
 
+import java.util.Calendar;
+
 import java.util.Date;
 
 public class BaseLineItem implements LineItem {
@@ -12,6 +14,7 @@ public class BaseLineItem implements LineItem {
 	private Status status;
 	private PersonRef createdBy;
 	private Date createdAt;
+
 	private MailboxRef fromMailbox;
 
 	public boolean isAssigned() {

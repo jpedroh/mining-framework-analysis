@@ -38,8 +38,14 @@ public class ThreadsAdapater implements JsonDeserializer<LineItem> {
 			item = gson.create().fromJson(json, ForwardParent.class);
 		} else if (ThreadType.ForwardChild.getLabel().equals(theType)) {
 			item = gson.create().fromJson(json, ForwardChild.class);
+<<<<<<< /usr/src/app/output/helpscout/helpscout-api-java/1d75aac8e8656d8b7dfcff38087209a9c590ae80/src/main/java/net/helpscout/api/adapters/ThreadsAdapater.java/left.java
 		} else if (ThreadType.Chat.getLabel().equals(theType)) {
 			item = gson.create().fromJson(json, Chat.class);
+||||||| /usr/src/app/output/helpscout/helpscout-api-java/1d75aac8e8656d8b7dfcff38087209a9c590ae80/src/main/java/net/helpscout/api/adapters/ThreadsAdapater.java/base.java
+		} else if ("chat".equals(theType)) {
+			item = gson.create().fromJson(json, Chat.class);
+=======
+>>>>>>> /usr/src/app/output/helpscout/helpscout-api-java/1d75aac8e8656d8b7dfcff38087209a9c590ae80/src/main/java/net/helpscout/api/adapters/ThreadsAdapater.java/right.java
 		}
 
 		JsonThreadLocal.unset();

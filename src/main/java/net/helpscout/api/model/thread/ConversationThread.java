@@ -35,6 +35,7 @@ public interface ConversationThread {
 	public PersonRef getCreatedBy();
 	public Date getCreatedAt();
 	public MailboxRef getFromMailbox();
+<<<<<<< /usr/src/app/output/helpscout/helpscout-api-java/1d75aac8e8656d8b7dfcff38087209a9c590ae80/src/main/java/net/helpscout/api/model/thread/ConversationThread.java/left.java
 
 	public void setId(Long id);
 	public void setType(ThreadType type);
@@ -47,4 +48,8 @@ public interface ConversationThread {
 	public void setAttachments(List<Attachment> attachments);
 	public void setAssignedTo(UserRef assignedTo);
 	public void setCreatedBy(PersonRef person);
+||||||| /usr/src/app/output/helpscout/helpscout-api-java/1d75aac8e8656d8b7dfcff38087209a9c590ae80/src/main/java/net/helpscout/api/model/thread/ConversationThread.java/base.java
+	public void setType(ThreadType type);
+=======
+>>>>>>> /usr/src/app/output/helpscout/helpscout-api-java/1d75aac8e8656d8b7dfcff38087209a9c590ae80/src/main/java/net/helpscout/api/model/thread/ConversationThread.java/right.java
 }

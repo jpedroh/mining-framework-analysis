@@ -68,10 +68,6 @@ public class AbstractThread extends BaseLineItem implements ConversationThread {
 		this.id = id;
 	}
 
-	public void setType(ThreadType type) {
-		this.type = type;
-	}
-
 	public void setState(ThreadState state) {
 		this.state = state;
 	}
