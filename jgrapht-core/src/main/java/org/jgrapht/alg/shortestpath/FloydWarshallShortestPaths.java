@@ -16,12 +16,9 @@
  * the Eclipse Foundation.
  */
 package org.jgrapht.alg.shortestpath;
-
 import org.jgrapht.alg.util.VertexDegreeComparator;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
