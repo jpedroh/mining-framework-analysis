@@ -29,7 +29,7 @@ import br.com.digilabs.jqplot.elements.TickOptions;
  * 
  * @author inaiat
  */
-public class Axis implements Serializable {
+public abstract class Axis<T> implements Serializable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -5426777530263336010L;
@@ -66,35 +66,53 @@ public class Axis implements Serializable {
     
     /** The pad max. */
     private Float padMax;
-    
-    /** The min. */
-    private String min;
-    
-    /** The max. */
-    private String max;
-    
-    /** The tick interval. */
-    private String tickInterval;
-
-
+    private T min;
+    private T max;
+    private T tickInterval;
     /**
      * Gets the tick interval.
      *
      * @return the tick interval
      */
-    public String getTickInterval() {
+    public T getMin() {
+        return min;
+    }
+    /**
+     * 
+     * @param min 
+     */
+    public void setMin(T min) {
+        this.min = min;
+    }
+    /**
+     * 
+     * @return
+     */
+    public T getMax() {
+		return max;
+	}
+    /**
+     * 
+     * @param max
+     */
+	public void setMax(T max) {
+		this.max = max;
+	}
+	/**
+     * 
+     * @return 
+     */
+    public T getTickInterval() {
         return tickInterval;
     }
-
     /**
      * Sets the tick interval.
      *
      * @param tickInterval the new tick interval
      */
-    public void setTickInterval(String tickInterval) {
+    public void setTickInterval(T tickInterval) {
         this.tickInterval = tickInterval;
     }
-
     /**
      * Gets the pad min.
      *
@@ -103,7 +121,6 @@ public class Axis implements Serializable {
     public Float getPadMin() {
         return padMin;
     }
-
     /**
      * Sets the pad min.
      *
@@ -112,7 +129,6 @@ public class Axis implements Serializable {
     public void setPadMin(Float padMin) {
         this.padMin = padMin;
     }
-
     /**
      * Gets the pad max.
      *
@@ -121,7 +137,6 @@ public class Axis implements Serializable {
     public Float getPadMax() {
         return padMax;
     }
-
     /**
      * Sets the pad max.
      *
@@ -130,8 +145,6 @@ public class Axis implements Serializable {
     public void setPadMax(Float padMax) {
         this.padMax = padMax;
     }
-
-    
     /**
      * Gets the show.
      *
@@ -140,7 +153,6 @@ public class Axis implements Serializable {
     public Boolean getShow() {
         return show;
     }
-
     /**
      * Sets the show.
      *
@@ -149,7 +161,6 @@ public class Axis implements Serializable {
     public void setShow(Boolean show) {
         this.show = show;
     }
-
     /**
      * Gets the auto scale.
      *
@@ -158,7 +169,6 @@ public class Axis implements Serializable {
     public Boolean getAutoScale() {
         return autoScale;
     }
-
     /**
      * Sets the auto scale.
      *
@@ -167,7 +177,6 @@ public class Axis implements Serializable {
     public void setAutoScale(Boolean autoScale) {
         this.autoScale = autoScale;
     }
-
     /**
      * Gets the tick options.
      *
@@ -176,7 +185,6 @@ public class Axis implements Serializable {
     public TickOptions getTickOptions() {
         return tickOptions;
     }
-
     /**
      * Sets the tick options.
      *
@@ -185,7 +193,6 @@ public class Axis implements Serializable {
     public void setTickOptions(TickOptions tickOptions) {
         this.tickOptions = tickOptions;
     }
-
     /**
      * Gets the label renderer.
      *
@@ -194,7 +201,6 @@ public class Axis implements Serializable {
     public JqPlotResources getLabelRenderer() {
         return labelRenderer;
     }
-
     /**
      * Sets the label renderer.
      *
@@ -203,7 +209,6 @@ public class Axis implements Serializable {
     public void setLabelRenderer(JqPlotResources labelRenderer) {
         this.labelRenderer = labelRenderer;
     }
-
     /**
      * Gets the tick renderer.
      *
@@ -212,7 +217,6 @@ public class Axis implements Serializable {
     public JqPlotResources getTickRenderer() {
         return tickRenderer;
     }
-
     /**
      * Sets the tick renderer.
      *
@@ -221,7 +225,6 @@ public class Axis implements Serializable {
     public void setTickRenderer(JqPlotResources tickRenderer) {
         this.tickRenderer = tickRenderer;
     }
-
     /**
      * Gets the label.
      *
@@ -230,7 +233,6 @@ public class Axis implements Serializable {
     public String getLabel() {
         return label;
     }
-
     /**
      * Sets the label.
      *
@@ -239,7 +241,6 @@ public class Axis implements Serializable {
     public void setLabel(String label) {
         this.label = label;
     }
-
     /**
      * Gets the pad.
      *
@@ -248,7 +249,6 @@ public class Axis implements Serializable {
     public Float getPad() {
         return pad;
     }
-
     /**
      * Sets the pad.
      *
@@ -257,7 +257,6 @@ public class Axis implements Serializable {
     public void setPad(Float pad) {
         this.pad = pad;
     }
-
     /**
      * Gets the renderer.
      *
@@ -266,7 +265,6 @@ public class Axis implements Serializable {
     public JqPlotResources getRenderer() {
         return renderer;
     }
-
     /**
      * Sets the renderer.
      *
@@ -275,7 +273,6 @@ public class Axis implements Serializable {
     public void setRenderer(JqPlotResources renderer) {
         this.renderer = renderer;
     }
-
     /**
      * Gets the ticks.
      *
@@ -284,7 +281,6 @@ public class Axis implements Serializable {
     public String[] getTicks() {
         return ticks;
     }
-
     /**
      * Sets the ticks.
      *
@@ -293,41 +289,28 @@ public class Axis implements Serializable {
     public void setTicks(String[] ticks) {
         this.ticks = ticks;
     }
-
+    /** The min. */
+    /** The max. */
+    /** The tick interval. */
 	/**
 	 * Gets the min.
 	 *
 	 * @return the min
 	 */
-	public String getMin() {
-		return min;
-	}
-
 	/**
 	 * Sets the min.
 	 *
 	 * @param min the new min
 	 */
-	public void setMin(String min) {
-		this.min = min;
-	}
-
 	/**
 	 * Gets the max.
 	 *
 	 * @return the max
 	 */
-	public String getMax() {
-		return max;
-	}
-
 	/**
 	 * Sets the max.
 	 *
 	 * @param max the new max
 	 */
-	public void setMax(String max) {
-		this.max = max;
-	}
 
 }
