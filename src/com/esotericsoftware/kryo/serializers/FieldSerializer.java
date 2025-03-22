@@ -1,4 +1,3 @@
-
 package com.esotericsoftware.kryo.serializers;
 
 import java.lang.annotation.ElementType;
@@ -64,8 +63,6 @@ public class FieldSerializer<T> extends Serializer<T> implements Comparator<Fiel
 	private FieldSerializerUnsafeUtil unsafeUtil;
 
 	private FieldSerializerGenericsUtil genericsUtil;
-	
-	private FieldSerializerAnnotationsUtil annotationsUtil;
 
 	/** Concrete classes passed as values for type variables */
 	private Class[] generics;
@@ -129,7 +126,6 @@ public class FieldSerializer<T> extends Serializer<T> implements Comparator<Fiel
 		}
 		this.genericsUtil = new FieldSerializerGenericsUtil(this);
 		this.unsafeUtil = FieldSerializerUnsafeUtil.Factory.getInstance(this);
-		this.annotationsUtil = new FieldSerializerAnnotationsUtil(this);
 		rebuildCachedFields();
 	}
 
@@ -145,7 +141,6 @@ public class FieldSerializer<T> extends Serializer<T> implements Comparator<Fiel
 		}
 		this.genericsUtil = new FieldSerializerGenericsUtil(this);
 		this.unsafeUtil = FieldSerializerUnsafeUtil.Factory.getInstance(this);
-		this.annotationsUtil = new FieldSerializerAnnotationsUtil(this);
 		rebuildCachedFields();
 	}
 
@@ -232,7 +227,101 @@ public class FieldSerializer<T> extends Serializer<T> implements Comparator<Fiel
 		for (CachedField field : removedFields)
 			removeField(field);
 		
-		annotationsUtil.processAnnotatedFields(this);
+		processAnnotatedFields();
+	}
+
+	/**
+	 * Process annotated fields and set serializers according to the 
+	 * provided annotation.
+	 * 
+	 * @see BindKryoSerializer
+	 * @see CollectionSerializer.BindKryoSerializer
+	 * @see MapSerializer.BindKryoSerializer
+	 */
+	protected void processAnnotatedFields () {
+		for (int i = 0, n = fields.length; i < n; i++) {
+			Field field = fields[i].getField();
+
+			// Set a specific serializer for a particular field
+			if (field.isAnnotationPresent(FieldSerializer.BindKryoSerializer.class)) {
+				Class<? extends Serializer> serializerClass = field.getAnnotation(FieldSerializer.BindKryoSerializer.class).value();
+				Serializer s = ReflectionSerializerFactory.makeSerializer(this.getKryo(), serializerClass, field.getClass());
+				fields[i].setSerializer(s);
+			}
+
+			if (field.isAnnotationPresent(CollectionSerializer.BindKryoSerializer.class)
+				&& field.isAnnotationPresent(MapSerializer.BindKryoSerializer.class)) {
+
+			}
+			// Set a specific collection serializer for a particular field
+			if (field.isAnnotationPresent(CollectionSerializer.BindKryoSerializer.class)) {
+				if (fields[i].serializer != null)
+					throw new RuntimeException("CollectionSerialier.BindKryoSerializer cannot be used with field "
+						+ fields[i].getField().getDeclaringClass().getName() + "." + fields[i].getField().getName()
+						+ ", because it has a serializer already.");
+				CollectionSerializer.BindKryoSerializer annotation = field
+					.getAnnotation(CollectionSerializer.BindKryoSerializer.class);
+				if (Collection.class.isAssignableFrom(fields[i].field.getType())) {
+					Class<? extends Serializer> elementSerializerClass = annotation.elementSerializer();
+					if (elementSerializerClass == Serializer.class) elementSerializerClass = null;
+					Serializer elementSerializer = (elementSerializerClass == null) ? null : ReflectionSerializerFactory
+						.makeSerializer(this.getKryo(), elementSerializerClass, field.getClass());
+					boolean elementsCanBeNull = annotation.elementsCanBeNull();
+					Class<?> elementClass = annotation.elementClass();
+					if (elementClass == Object.class) elementClass = null;
+					CollectionSerializer serializer = new CollectionSerializer();
+					serializer.setElementsCanBeNull(elementsCanBeNull);
+					serializer.setElementClass(elementClass, elementSerializer);
+					fields[i].setSerializer(serializer);
+				} else {
+					throw new RuntimeException(
+						"CollectionSerialier.BindKryoSerializer should be used only with fields implementing java.util.Collection, but field "
+							+ fields[i].getField().getDeclaringClass().getName() + "." + fields[i].getField().getName()
+							+ " does not implement it.");
+				}
+			}
+
+			// Set a specific map serializer for a particular field
+			if (field.isAnnotationPresent(MapSerializer.BindKryoSerializer.class)) {
+				if (fields[i].serializer != null)
+					throw new RuntimeException("MapSerialier.BindKryoSerializer cannot be used with field "
+						+ fields[i].getField().getDeclaringClass().getName() + "." + fields[i].getField().getName()
+						+ ", because it has a serializer already.");
+				MapSerializer.BindKryoSerializer annotation = field.getAnnotation(MapSerializer.BindKryoSerializer.class);
+				if (Map.class.isAssignableFrom(fields[i].field.getType())) {
+					Class<? extends Serializer> valueSerializerClass = annotation.valueSerializer();
+					Class<? extends Serializer> keySerializerClass = annotation.keySerializer();
+
+					if (valueSerializerClass == Serializer.class) valueSerializerClass = null;
+					if (keySerializerClass == Serializer.class) keySerializerClass = null;
+
+					Serializer valueSerializer = (valueSerializerClass == null) ? null : ReflectionSerializerFactory.makeSerializer(
+						this.getKryo(), valueSerializerClass, field.getClass());
+					Serializer keySerializer = (keySerializerClass == null) ? null : ReflectionSerializerFactory.makeSerializer(
+						this.getKryo(), keySerializerClass, field.getClass());
+					boolean valuesCanBeNull = annotation.valuesCanBeNull();
+					boolean keysCanBeNull = annotation.keysCanBeNull();
+					Class<?> keyClass = annotation.keyClass();
+					Class<?> valueClass = annotation.valueClass();
+
+					if (keyClass == Object.class) keyClass = null;
+					if (valueClass == Object.class) valueClass = null;
+
+					MapSerializer serializer = new MapSerializer();
+					serializer.setKeysCanBeNull(keysCanBeNull);
+					serializer.setValuesCanBeNull(valuesCanBeNull);
+					serializer.setKeyClass(keyClass, keySerializer);
+					serializer.setValueClass(valueClass, valueSerializer);
+					fields[i].setSerializer(serializer);
+				} else {
+					throw new RuntimeException(
+						"MapSerialier.BindKryoSerializer should be used only with fields implementing java.util.Map, but field "
+							+ fields[i].getField().getDeclaringClass().getName() + "." + fields[i].getField().getName()
+							+ " does not implement it.");
+				}
+			}
+
+		}
 	}
 
 	private List<Field> buildValidFields (boolean transientFields, List<Field> allFields, ObjectMap context, IntArray useAsm) {
@@ -676,7 +765,7 @@ public class FieldSerializer<T> extends Serializer<T> implements Comparator<Fiel
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.FIELD)
-	public @interface Bind {
+	public @interface BindKryoSerializer {
 
 	    /**
 	     * Value.
