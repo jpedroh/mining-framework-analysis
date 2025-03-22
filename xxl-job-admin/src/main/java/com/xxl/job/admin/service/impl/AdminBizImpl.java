@@ -1,5 +1,4 @@
 package com.xxl.job.admin.service.impl;
-
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLog;
 import com.xxl.job.admin.core.thread.JobTriggerPoolHelper;
@@ -18,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import javax.annotation.Resource;
 import java.text.MessageFormat;
 import java.util.*;
@@ -27,271 +25,259 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author xuxueli 2017-07-27 21:54:20
  */
-@Service
-public class AdminBizImpl implements AdminBiz {
-    private static Logger logger = LoggerFactory.getLogger(AdminBizImpl.class);
+@Service public class AdminBizImpl implements AdminBiz {
+  private static Logger logger = LoggerFactory.getLogger(AdminBizImpl.class);
 
-    @Resource
-    public XxlJobLogDao xxlJobLogDao;
-    @Resource
-    private XxlJobInfoDao xxlJobInfoDao;
-    @Resource
-    private XxlJobRegistryDao xxlJobRegistryDao;
+  @Resource public XxlJobLogDao xxlJobLogDao;
 
+  @Resource private XxlJobInfoDao xxlJobInfoDao;
 
-    /**
+  @Resource private XxlJobRegistryDao xxlJobRegistryDao;
+
+  /**
      * 新增任务
      * @param jobInfo
      * @return
      */
-    public ReturnT<String> addJob(XxlJobInfo jobInfo){
-        return xxlJobService.add(jobInfo);
-    }
+  public ReturnT<String> addJob(XxlJobInfo jobInfo) {
+    return xxlJobService.add(jobInfo);
+  }
 
-
-    /**
+  /**
      * 批量新增，主要用于新增某个父任务下的子任务
      * @param jobInfos
      * @return
      */
-    public ReturnT<String> addJobs(List<XxlJobInfo> jobInfos){
-        List<Integer> parentIds=new ArrayList<>();
-        for(XxlJobInfo jobInfo:jobInfos){
-            if(jobInfo.getParentId()!=null && jobInfo.getParentId()!=0){
-                int size=xxlJobInfoDao.query(jobInfo.getParentId(),null,jobInfo.getExecutorParam()).size();
-                if(size>0){
-                    logger.info(String.format("已经存在，跳过[%s,%s]",jobInfo.getParentId(),jobInfo.getExecutorParam()));
-                    continue;
-                }
-                parentIds.add(jobInfo.getParentId());
-            }
-
-            xxlJobService.add(jobInfo);
+  public ReturnT<String> addJobs(List<XxlJobInfo> jobInfos) {
+    List<Integer> parentIds = new ArrayList<>();
+    for (XxlJobInfo jobInfo : jobInfos) {
+      if (jobInfo.getParentId() != null && jobInfo.getParentId() != 0) {
+        int size = xxlJobInfoDao.query(jobInfo.getParentId(), null, jobInfo.getExecutorParam()).size();
+        if (size > 0) {
+          logger.info(String.format("\u5df2\u7ecf\u5b58\u5728\uff0c\u8df3\u8fc7[%s,%s]", jobInfo.getParentId(), jobInfo.getExecutorParam()));
+          continue;
         }
-        for(Integer id:parentIds){
-            xxlJobService.updateChildIds(id);
-        }
-        return ReturnT.SUCCESS;
+        parentIds.add(jobInfo.getParentId());
+      }
+      xxlJobService.add(jobInfo);
     }
+    for (Integer id : parentIds) {
+      xxlJobService.updateChildIds(id);
+    }
+    return ReturnT.SUCCESS;
+  }
 
-    /**
+  /**
      * 批量更新
      * @param jobInfos
      * @return
      */
-    public ReturnT<String> updateJobs(List<XxlJobInfo> jobInfos){
-        for(XxlJobInfo jobInfo:jobInfos){
-            xxlJobService.update(jobInfo);
-        }
-        return ReturnT.SUCCESS;
+  public ReturnT<String> updateJobs(List<XxlJobInfo> jobInfos) {
+    for (XxlJobInfo jobInfo : jobInfos) {
+      xxlJobService.update(jobInfo);
     }
+    return ReturnT.SUCCESS;
+  }
 
+  public ReturnT<List<XxlJobInfo>> queryJobs(Integer parentId, String executorHandler, String paramKeyword) {
+    return new ReturnT<>(xxlJobInfoDao.query(parentId, executorHandler, paramKeyword));
+  }
 
-
-    public ReturnT<List<XxlJobInfo>> queryJobs(Integer parentId,String executorHandler,String paramKeyword){
-        return new ReturnT<>(xxlJobInfoDao.query(parentId,executorHandler,paramKeyword));
+  public ReturnT<String> updateLog(XxlJobLog xxlJobLog) {
+    logger.info(String.format("\u66f4\u65b0\u65e5\u5fd7\u7ed3\u679c:%d,%d[updateLog]", xxlJobLog.getId(), xxlJobLog.getHandleCode()));
+    xxlJobLogDao.updateChildSummary(xxlJobLog);
+    if (xxlJobLog.getHandleCode() > 0) {
+      XxlJobLog log = xxlJobLogDao.load(xxlJobLog.getId());
+      updateChildSummaryByParentId(log.getParentId(), new ArrayList<Integer>());
     }
+    return ReturnT.SUCCESS;
+  }
 
-    public ReturnT<String> updateLog(XxlJobLog xxlJobLog){
-        logger.info(String.format("更新日志结果:%d,%d[updateLog]",xxlJobLog.getId(),xxlJobLog.getHandleCode()));
-        xxlJobLogDao.updateChildSummary(xxlJobLog);
-        if(xxlJobLog.getHandleCode()>0){
-            XxlJobLog log=xxlJobLogDao.load(xxlJobLog.getId());
-            updateChildSummaryByParentId(log.getParentId(),new ArrayList<Integer>());
-        }
-        return ReturnT.SUCCESS;
+  public ReturnT<String> updateJob(XxlJobInfo jobInfo) {
+    return xxlJobService.update(jobInfo);
+  }
+
+  @Override public ReturnT<String> callback(List<HandleCallbackParam> callbackParamList) {
+    logger.info(String.format("callback receive:%s", callbackParamList));
+    for (HandleCallbackParam handleCallbackParam : callbackParamList) {
+      ReturnT<String> callbackResult = callback(handleCallbackParam);
+      logger.info(">>>>>>>>> JobApiController.callback {}, handleCallbackParam={}, callbackResult={}", (callbackResult.getCode() == IJobHandler.SUCCESS.getCode() ? "success" : "fail"), handleCallbackParam, callbackResult);
     }
+    return ReturnT.SUCCESS;
+  }
 
-    public ReturnT<String> updateJob(XxlJobInfo jobInfo){
-        return xxlJobService.update(jobInfo);
+  private ReturnT<String> callback(HandleCallbackParam handleCallbackParam) {
+    logger.info(String.format("%d callback\u524d1,%s", handleCallbackParam.getLogId(), handleCallbackParam));
+    XxlJobLog log = xxlJobLogDao.load(handleCallbackParam.getLogId());
+    if (log == null) {
+      return new ReturnT<String>(ReturnT.FAIL_CODE, "log item not found.");
     }
-
-
-    @Override
-    public ReturnT<String> callback(List<HandleCallbackParam> callbackParamList) {
-        logger.info(String.format("callback receive:%s",callbackParamList));
-        for (HandleCallbackParam handleCallbackParam: callbackParamList) {
-            ReturnT<String> callbackResult = callback(handleCallbackParam);
-            logger.info(">>>>>>>>> JobApiController.callback {}, handleCallbackParam={}, callbackResult={}",
-                    (callbackResult.getCode()==IJobHandler.SUCCESS.getCode()?"success":"fail"), handleCallbackParam, callbackResult);
-        }
-
-        return ReturnT.SUCCESS;
+    if (log.getHandleCode() > 0) {
+      return new ReturnT<String>(ReturnT.FAIL_CODE, "log repeate callback.");
     }
+    logger.info(String.format("%d callback\u524d%s", log.getId(), handleCallbackParam));
+    String callbackMsg = null;
+    int handleCode = handleCallbackParam.getExecuteResult().getCode();
+    if (IJobHandler.SUCCESS.getCode() == handleCode) {
+      XxlJobInfo xxlJobInfo = xxlJobInfoDao.loadById(log.getJobId());
+      if (xxlJobInfo != null && StringUtils.isNotBlank(xxlJobInfo.getChildJobId())) {
+        callbackMsg = "<br><br><span style=\"color:#00c0ef;\" > >>>>>>>>>>>" + I18nUtil.getString("jobconf_trigger_child_run") + "<<<<<<<<<<< </span><br>";
+        logger.info(String.format("%d\u89e6\u53d1\u7684\u5b50\u4efb\u52a1:%s", handleCallbackParam.getLogId(), xxlJobInfo.getChildJobId()));
+        String[] childJobIds = xxlJobInfo.getChildJobId().split(",");
+        for (int i = 0; i < childJobIds.length; i++) {
+          int childJobId = (StringUtils.isNotBlank(childJobIds[i]) && StringUtils.isNumeric(childJobIds[i])) ? Integer.valueOf(childJobIds[i]) : -1;
+          if (childJobId > 0) {
+            handleCode = 0;
 
-    private ReturnT<String> callback(HandleCallbackParam handleCallbackParam) {
-        logger.info(String.format("%d callback前1,%s",handleCallbackParam.getLogId(),handleCallbackParam));
-        // valid log item
-        XxlJobLog log = xxlJobLogDao.load(handleCallbackParam.getLogId());
-        if (log == null) {
-            return new ReturnT<String>(ReturnT.FAIL_CODE, "log item not found.");
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/c350052db6b1cc501dc09abc913df9113e6f2f5e/xxl-job-admin/src/main/java/com/xxl/job/admin/service/impl/AdminBizImpl.java/left.java
+            JobTriggerPoolHelper
+=======
+            JobUtils
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/c350052db6b1cc501dc09abc913df9113e6f2f5e/xxl-job-admin/src/main/java/com/xxl/job/admin/service/impl/AdminBizImpl.java/right.java
+            .
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/c350052db6b1cc501dc09abc913df9113e6f2f5e/xxl-job-admin/src/main/java/com/xxl/job/admin/service/impl/AdminBizImpl.java/left.java
+            trigger(childJobId, TriggerTypeEnum.PARENT, 0, null, null)
+=======
+            putParentId(childJobId, log.getId())
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/c350052db6b1cc501dc09abc913df9113e6f2f5e/xxl-job-admin/src/main/java/com/xxl/job/admin/service/impl/AdminBizImpl.java/right.java
+            ;
+            ReturnT<String> triggerChildResult = ReturnT.SUCCESS;
+            callbackMsg += MessageFormat.format(I18nUtil.getString("jobconf_callback_child_msg1"), (i + 1), childJobIds.length, childJobIds[i], (triggerChildResult.getCode() == ReturnT.SUCCESS_CODE ? I18nUtil.getString("system_success") : I18nUtil.getString("system_fail")), triggerChildResult.getMsg());
+          } else {
+            callbackMsg += MessageFormat.format(I18nUtil.getString("jobconf_callback_child_msg2"), (i + 1), childJobIds.length, childJobIds[i]);
+          }
         }
-        if (log.getHandleCode() > 0) {
-            return new ReturnT<String>(ReturnT.FAIL_CODE, "log repeate callback.");     // avoid repeat callback, trigger child job etc
-        }
+      }
+    } else {
 
-        logger.info(String.format("%d callback前%s",log.getId(),handleCallbackParam));
-        // trigger success, to trigger child job
-        String callbackMsg = null;
-        int handleCode = handleCallbackParam.getExecuteResult().getCode();
-        if (IJobHandler.SUCCESS.getCode() == handleCode) {
-            XxlJobInfo xxlJobInfo = xxlJobInfoDao.loadById(log.getJobId());
-            if (xxlJobInfo!=null && StringUtils.isNotBlank(xxlJobInfo.getChildJobId())) {
-                callbackMsg = "<br><br><span style=\"color:#00c0ef;\" > >>>>>>>>>>>"+ I18nUtil.getString("jobconf_trigger_child_run") +"<<<<<<<<<<< </span><br>";
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+      if (IJobHandler.FAIL_RETRY.getCode() == handleCode) {
+        ReturnT<String> retryTriggerResult = xxlJobService.triggerJob(log.getJobId());
+        callbackMsg = "<br><br><span style=\"color:#F39C12;\" > >>>>>>>>>>>" + I18nUtil.getString("jobconf_exe_fail_retry") + "<<<<<<<<<<< </span><br>";
+        callbackMsg += MessageFormat.format(I18nUtil.getString("jobconf_callback_msg1"), (retryTriggerResult.getCode() == ReturnT.SUCCESS_CODE ? I18nUtil.getString("system_success") : I18nUtil.getString("system_fail")), retryTriggerResult.getMsg());
+      }
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/c350052db6b1cc501dc09abc913df9113e6f2f5e/xxl-job-admin/src/main/java/com/xxl/job/admin/service/impl/AdminBizImpl.java/right.java
 
-                logger.info(String.format("%d触发的子任务:%s",handleCallbackParam.getLogId(),xxlJobInfo.getChildJobId()));
-                String[] childJobIds = xxlJobInfo.getChildJobId().split(",");
-                for (int i = 0; i < childJobIds.length; i++) {
-                    int childJobId = (StringUtils.isNotBlank(childJobIds[i]) && StringUtils.isNumeric(childJobIds[i]))?Integer.valueOf(childJobIds[i]):-1;
-                    if (childJobId > 0) {
-                        handleCode=0;
-                        JobUtils.putParentId(childJobId,log.getId());
-
-                        JobTriggerPoolHelper.trigger(childJobId, TriggerTypeEnum.PARENT, 0, null, null);
-                        ReturnT<String> triggerChildResult = ReturnT.SUCCESS;
-
-                        // add msg
-                        callbackMsg += MessageFormat.format(I18nUtil.getString("jobconf_callback_child_msg1"),
-                                (i+1),
-                                childJobIds.length,
-                                childJobIds[i],
-                                (triggerChildResult.getCode()==ReturnT.SUCCESS_CODE?I18nUtil.getString("system_success"):I18nUtil.getString("system_fail")),
-                                triggerChildResult.getMsg());
-                    } else {
-                        callbackMsg += MessageFormat.format(I18nUtil.getString("jobconf_callback_child_msg2"),
-                                (i+1),
-                                childJobIds.length,
-                                childJobIds[i]);
-                    }
-                }
-
-            }
-        }
-
-        logger.info(String.format("%d callback后1%s",log.getId(),handleCallbackParam));
-
-        // handle msg
-        StringBuffer handleMsg = new StringBuffer();
-        if (log.getHandleMsg()!=null) {
-            handleMsg.append(log.getHandleMsg()).append("<br>");
-        }
-        if (handleCallbackParam.getExecuteResult().getMsg() != null) {
-            handleMsg.append(handleCallbackParam.getExecuteResult().getMsg());
-        }
-        if (callbackMsg != null) {
-            handleMsg.append(callbackMsg);
-        }
-
-        // success, save log
-        log.setHandleTime(new Date());
-        logger.info(String.format("%d callback后2%s",log.getId(),handleCallbackParam));
-
-        log.setHandleCode(handleCode);
-        log.setHandleMsg(handleMsg.toString());
-        if(log.getHandleCode()==0 && StringUtils.isNotEmpty(handleCallbackParam.getExecuteResult().getContent())){//如果返回结果为进行中
-            log.setChildSummary(handleCallbackParam.getExecuteResult().getContent());
-        }
-        xxlJobLogDao.updateHandleInfo(log);
-        logger.info(String.format("更新日志结果:%d,%d[callback本身]",log.getId(),log.getHandleCode()));
-        logger.info(String.format("更新日志结果:%d[callback]",log.getParentId()));
-        updateChildSummary(log);
-
-        return ReturnT.SUCCESS;
     }
-
-    public void updateChildSummary(XxlJobLog log) {
-        XxlJobInfo xxlJobInfo = xxlJobInfoDao.loadById(log.getJobId());
-        if(xxlJobInfo!=null && xxlJobInfo.getParentId()!=null && xxlJobInfo.getParentId()!=0){
-            Integer parentId=log.getParentId();
-            if(JobUtils.removeChildId(parentId,xxlJobInfo.getId())){
-                updateChildSummaryByParentId(parentId);
-            }
-        }
+    logger.info(String.format("%d callback\u540e1%s", log.getId(), handleCallbackParam));
+    StringBuffer handleMsg = new StringBuffer();
+    if (log.getHandleMsg() != null) {
+      handleMsg.append(log.getHandleMsg()).append("<br>");
     }
+    if (handleCallbackParam.getExecuteResult().getMsg() != null) {
+      handleMsg.append(handleCallbackParam.getExecuteResult().getMsg());
+    }
+    if (callbackMsg != null) {
+      handleMsg.append(callbackMsg);
+    }
+    log.setHandleTime(new Date());
+    logger.info(String.format("%d callback\u540e2%s", log.getId(), handleCallbackParam));
+    log.setHandleCode(handleCode);
+    log.setHandleMsg(handleMsg.toString());
+    if (log.getHandleCode() == 0 && StringUtils.isNotEmpty(handleCallbackParam.getExecuteResult().getContent())) {
+      log.setChildSummary(handleCallbackParam.getExecuteResult().getContent());
+    }
+    xxlJobLogDao.updateHandleInfo(log);
+    logger.info(String.format("\u66f4\u65b0\u65e5\u5fd7\u7ed3\u679c:%d,%d[callback\u672c\u8eab]", log.getId(), log.getHandleCode()));
+    logger.info(String.format("\u66f4\u65b0\u65e5\u5fd7\u7ed3\u679c:%d[callback]", log.getParentId()));
+    updateChildSummary(log);
+    return ReturnT.SUCCESS;
+  }
 
-    /**
+  public void updateChildSummary(XxlJobLog log) {
+    XxlJobInfo xxlJobInfo = xxlJobInfoDao.loadById(log.getJobId());
+    if (xxlJobInfo != null && xxlJobInfo.getParentId() != null && xxlJobInfo.getParentId() != 0) {
+      Integer parentId = log.getParentId();
+      if (JobUtils.removeChildId(parentId, xxlJobInfo.getId())) {
+        updateChildSummaryByParentId(parentId);
+      }
+    }
+  }
+
+  /**
      * 根据任务的父id来更新其日志信息
      * @param parentId
      */
-    public void updateChildSummaryByParentId(Integer parentId) {
-        List<Integer> list= JobUtils.parentIdChildMap.get(parentId);
-        if(list==null){
-            return;
+  public void updateChildSummaryByParentId(Integer parentId) {
+    List<Integer> list = JobUtils.parentIdChildMap.get(parentId);
+    if (list == null) {
+      return;
+    }
+    updateChildSummaryByParentId(parentId, list);
+  }
+
+  private void updateChildSummaryByParentId(Integer parentId, List<Integer> list) {
+    synchronized (list) {
+      int left = list.size();
+      List<XxlJobLog> logs = xxlJobLogDao.pageList(0, 100, xxlJobLogDao.load(parentId).getJobGroup(), 0, null, null, -2, Arrays.asList(parentId));
+      int callSuccess = 0;
+      int callFails = 0;
+      int ignores = 0;
+      int triggerFails = 0;
+      int callSkips = 0;
+      for (XxlJobLog l : logs) {
+        if (l.getTriggerCode() == 200) {
+          if (l.getHandleCode() == 200) {
+            callSuccess++;
+          } else {
+            if (l.getHandleCode() == HandleCodeEnum.IGNORE.getCode()) {
+              callSkips++;
+            } else {
+              callFails++;
+            }
+          }
+        } else {
+          if (l.getTriggerCode() == ReturnT.IGNORE_CODE) {
+            ignores++;
+          } else {
+            triggerFails++;
+          }
         }
-        updateChildSummaryByParentId(parentId, list);
-    }
-
-    private void updateChildSummaryByParentId(Integer parentId, List<Integer> list) {
-        synchronized (list){
-            int left=list.size();
-
-            List<XxlJobLog> logs=xxlJobLogDao.pageList(0,100,xxlJobLogDao.load(parentId).getJobGroup(),0,null,null,-2, Arrays.asList(parentId));
-
-            int callSuccess=0;
-            int callFails=0;
-            int ignores=0;
-            int triggerFails=0;
-            int callSkips=0;
-            for(XxlJobLog l:logs){
-                if(l.getTriggerCode()==200){
-                    if(l.getHandleCode()==200){
-                        callSuccess++;
-                    }else if(l.getHandleCode()== HandleCodeEnum.IGNORE.getCode()){
-                        callSkips++;
-                    }else{
-                        callFails++;
-                    }
-                }else if(l.getTriggerCode()== ReturnT.IGNORE_CODE){
-                    ignores++;
-                }else{
-                    triggerFails++;
-                }
-                if(list.contains(l.getJobId())){
-                    left--;
-                }
-            }
-
-            XxlJobLog toUpdate=new XxlJobLog();
-            toUpdate.setId(parentId);
-            if(callSuccess==0 && callFails==0 && triggerFails==0 && left==0){//如果子任务的都是正常的跳过
-                toUpdate.setHandleCode(HandleCodeEnum.IGNORE.getCode());
-            }else if(left==0){
-                if(callSuccess>0 && callFails>0){
-                    toUpdate.setHandleCode(HandleCodeEnum.CONTAINS_SUCCESS.getCode());
-                }else if(callSuccess>0){
-                    toUpdate.setHandleCode(200);
-                }else {
-                    toUpdate.setHandleCode(500);
-                }
-            }
-            String childSummary=String.format("调度[跳过:%d,失败:%d],执行[失败:%d,成功:%d,跳过:%d]",ignores,triggerFails,callFails,callSuccess,callSkips);
-            if(left>0){
-                childSummary=String.format("运行中:%d,",left)+childSummary;
-            }
-            toUpdate.setChildSummary(childSummary);
-            xxlJobLogDao.updateChildSummary(toUpdate);
-
-            logger.info(String.format("更新日志结果:%d,%d[updateChildSummaryByParentId],%s",toUpdate.getId(),toUpdate.getHandleCode(),list));
-
-            if(left==0){
-                JobUtils.parentIdChildMap.remove(parentId);
-            }
+        if (list.contains(l.getJobId())) {
+          left--;
         }
-    }
-
-    @Override
-    public ReturnT<String> registry(RegistryParam registryParam) {
-        int ret = xxlJobRegistryDao.registryUpdate(registryParam.getRegistGroup(), registryParam.getRegistryKey(), registryParam.getRegistryValue());
-        if (ret < 1) {
-            xxlJobRegistryDao.registrySave(registryParam.getRegistGroup(), registryParam.getRegistryKey(), registryParam.getRegistryValue());
+      }
+      XxlJobLog toUpdate = new XxlJobLog();
+      toUpdate.setId(parentId);
+      if (callSuccess == 0 && callFails == 0 && triggerFails == 0 && left == 0) {
+        toUpdate.setHandleCode(HandleCodeEnum.IGNORE.getCode());
+      } else {
+        if (left == 0) {
+          if (callSuccess > 0 && callFails > 0) {
+            toUpdate.setHandleCode(HandleCodeEnum.CONTAINS_SUCCESS.getCode());
+          } else {
+            if (callSuccess > 0) {
+              toUpdate.setHandleCode(200);
+            } else {
+              toUpdate.setHandleCode(500);
+            }
+          }
         }
-        return ReturnT.SUCCESS;
+      }
+      String childSummary = String.format("\u8c03\u5ea6[\u8df3\u8fc7:%d,\u5931\u8d25:%d],\u6267\u884c[\u5931\u8d25:%d,\u6210\u529f:%d,\u8df3\u8fc7:%d]", ignores, triggerFails, callFails, callSuccess, callSkips);
+      if (left > 0) {
+        childSummary = String.format("\u8fd0\u884c\u4e2d:%d,", left) + childSummary;
+      }
+      toUpdate.setChildSummary(childSummary);
+      xxlJobLogDao.updateChildSummary(toUpdate);
+      logger.info(String.format("\u66f4\u65b0\u65e5\u5fd7\u7ed3\u679c:%d,%d[updateChildSummaryByParentId],%s", toUpdate.getId(), toUpdate.getHandleCode(), list));
+      if (left == 0) {
+        JobUtils.parentIdChildMap.remove(parentId);
+      }
     }
+  }
 
-    @Override
-    public ReturnT<String> registryRemove(RegistryParam registryParam) {
-        xxlJobRegistryDao.registryDelete(registryParam.getRegistGroup(), registryParam.getRegistryKey(), registryParam.getRegistryValue());
-        return ReturnT.SUCCESS;
+  @Override public ReturnT<String> registry(RegistryParam registryParam) {
+    int ret = xxlJobRegistryDao.registryUpdate(registryParam.getRegistGroup(), registryParam.getRegistryKey(), registryParam.getRegistryValue());
+    if (ret < 1) {
+      xxlJobRegistryDao.registrySave(registryParam.getRegistGroup(), registryParam.getRegistryKey(), registryParam.getRegistryValue());
     }
+    return ReturnT.SUCCESS;
+  }
 
+  @Override public ReturnT<String> registryRemove(RegistryParam registryParam) {
+    xxlJobRegistryDao.registryDelete(registryParam.getRegistGroup(), registryParam.getRegistryKey(), registryParam.getRegistryValue());
+    return ReturnT.SUCCESS;
+  }
 }

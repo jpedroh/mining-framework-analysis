@@ -1,5 +1,4 @@
 package com.xxl.job.admin.controller;
-
 import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.route.ExecutorRouteStrategyEnum;
@@ -18,7 +17,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
@@ -27,100 +25,66 @@ import java.util.Map;
  * index controller
  * @author xuxueli 2015-12-19 16:13:16
  */
-@Controller
-@RequestMapping("/jobinfo")
-public class JobInfoController {
+@Controller @RequestMapping(value = "/jobinfo") public class JobInfoController {
+  @Resource private XxlJobGroupDao xxlJobGroupDao;
 
-	@Resource
-	private XxlJobGroupDao xxlJobGroupDao;
-	@Resource
-	private XxlJobService xxlJobService;
-	
-	@RequestMapping
-	public String index(Model model, @RequestParam(required = false, defaultValue = "-1") int jobGroup) {
+  @Resource private XxlJobService xxlJobService;
 
-		// 枚举-字典
-		model.addAttribute("ExecutorRouteStrategyEnum", ExecutorRouteStrategyEnum.values());	// 路由策略-列表
-		model.addAttribute("GlueTypeEnum", GlueTypeEnum.values());								// Glue类型-字典
-		model.addAttribute("ExecutorBlockStrategyEnum", ExecutorBlockStrategyEnum.values());	// 阻塞处理策略-字典
+  @RequestMapping public String index(Model model, @RequestParam(required = false, defaultValue = "-1") int jobGroup) {
+    model.addAttribute("ExecutorRouteStrategyEnum", ExecutorRouteStrategyEnum.values());
+    model.addAttribute("GlueTypeEnum", GlueTypeEnum.values());
+    model.addAttribute("ExecutorBlockStrategyEnum", ExecutorBlockStrategyEnum.values());
+    List<XxlJobGroup> jobGroupList = xxlJobGroupDao.findAll();
+    model.addAttribute("JobGroupList", jobGroupList);
+    model.addAttribute("jobGroup", jobGroup);
+    return "jobinfo/jobinfo.index";
+  }
 
-		// 任务组
-		List<XxlJobGroup> jobGroupList =  xxlJobGroupDao.findAll();
-		model.addAttribute("JobGroupList", jobGroupList);
-		model.addAttribute("jobGroup", jobGroup);
+  @RequestMapping(value = "/pageList") @ResponseBody public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start, @RequestParam(required = false, defaultValue = "10") int length, int jobGroup, String jobDesc, String executorHandler, String filterTime, @RequestParam(required = false, defaultValue = "0") int parentId) {
+    return xxlJobService.pageList(start, length, jobGroup, jobDesc, executorHandler, filterTime, parentId);
+  }
 
-		return "jobinfo/jobinfo.index";
-	}
-	
-	@RequestMapping("/pageList")
-	@ResponseBody
-	public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start,  
-			@RequestParam(required = false, defaultValue = "10") int length,
-			int jobGroup, String jobDesc, String executorHandler, String filterTime,@RequestParam(required = false,defaultValue = "0") int parentId) {
-		return xxlJobService.pageList(start, length, jobGroup, jobDesc, executorHandler, filterTime,parentId);
-	}
-	
-	@RequestMapping("/add")
-	@ResponseBody
-	public ReturnT<String> add(XxlJobInfo jobInfo) {
-		return xxlJobService.add(jobInfo);
-	}
+  @RequestMapping(value = "/add") @ResponseBody public ReturnT<String> add(XxlJobInfo jobInfo) {
+    return xxlJobService.add(jobInfo);
+  }
 
-	@RequestMapping("/copy")
-	@ResponseBody
-	public ReturnT<String> copy(Integer id){
-		return xxlJobService.copy(id);
-	}
-	
-	@RequestMapping("/update")
-	@ResponseBody
-	public ReturnT<String> update(XxlJobInfo jobInfo) {
-		return xxlJobService.update(jobInfo);
-	}
-	
-	@RequestMapping("/remove")
-	@ResponseBody
-	public ReturnT<String> remove(int id) {
-		return xxlJobService.remove(id);
-	}
-	
-	@RequestMapping("/pause")
-	@ResponseBody
-	public ReturnT<String> pause(int id) {
-		return xxlJobService.pause(id);
-	}
-	
-	@RequestMapping("/resume")
-	@ResponseBody
-	public ReturnT<String> resume(int id) {
-		return xxlJobService.resume(id);
-	}
-	
-	@RequestMapping("/trigger")
-	@ResponseBody
-	//@PermessionLimit(limit = false)
-	public ReturnT<String> triggerJob(int id, String executorParam) {
-		// force cover job param
-		if (executorParam == null) {
-			executorParam = "";
-		}
+  @RequestMapping(value = "/copy") @ResponseBody public ReturnT<String> copy(Integer id) {
+    return xxlJobService.copy(id);
+  }
 
-		JobTriggerPoolHelper.trigger(id, TriggerTypeEnum.MANUAL, -1, null, executorParam);
-		return ReturnT.SUCCESS;
-	}
+  @RequestMapping(value = "/update") @ResponseBody public ReturnT<String> update(XxlJobInfo jobInfo) {
+    return xxlJobService.update(jobInfo);
+  }
 
-	@Resource
-	private XxlJobInfoDao xxlJobInfoDao;
+  @RequestMapping(value = "/remove") @ResponseBody public ReturnT<String> remove(int id) {
+    return xxlJobService.remove(id);
+  }
 
-	@RequestMapping("db2Job")
-	public ReturnT<String> db2Job(String ids) throws SchedulerException {
-		String[] idArr=ids.split(",");
-		for(String id:idArr){
-			XxlJobInfo xxlJobInfo=xxlJobInfoDao.loadById(Integer.parseInt(id));
-			XxlJobGroup xxlJobGroup=xxlJobGroupDao.load(xxlJobInfo.getJobGroup());
-			XxlJobDynamicScheduler.addJob(xxlJobInfo.getId()+"",xxlJobGroup.getId()+"",xxlJobInfo.getJobCron());
-		}
-		return ReturnT.SUCCESS;
-	}
+  @RequestMapping(value = "/pause") @ResponseBody public ReturnT<String> pause(int id) {
+    return xxlJobService.pause(id);
+  }
 
+  @RequestMapping(value = "/resume") @ResponseBody public ReturnT<String> resume(int id) {
+    return xxlJobService.resume(id);
+  }
+
+  @RequestMapping(value = "/trigger") @ResponseBody public ReturnT<String> triggerJob(int id, String executorParam) {
+    if (executorParam == null) {
+      executorParam = "";
+    }
+    JobTriggerPoolHelper.trigger(id, TriggerTypeEnum.MANUAL, -1, null, executorParam);
+    return ReturnT.SUCCESS;
+  }
+
+  @Resource private XxlJobInfoDao xxlJobInfoDao;
+
+  @RequestMapping(value = "db2Job") public ReturnT<String> db2Job(String ids) throws SchedulerException {
+    String[] idArr = ids.split(",");
+    for (String id : idArr) {
+      XxlJobInfo xxlJobInfo = xxlJobInfoDao.loadById(Integer.parseInt(id));
+      XxlJobGroup xxlJobGroup = xxlJobGroupDao.load(xxlJobInfo.getJobGroup());
+      XxlJobDynamicScheduler.addJob(xxlJobInfo.getId() + "", xxlJobGroup.getId() + "", xxlJobInfo.getJobCron());
+    }
+    return ReturnT.SUCCESS;
+  }
 }
