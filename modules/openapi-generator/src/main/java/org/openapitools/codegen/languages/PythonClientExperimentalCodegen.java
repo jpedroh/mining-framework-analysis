@@ -223,8 +223,10 @@ public class PythonClientExperimentalCodegen extends PythonClientCodegen {
         }
 
         // convert datetime and date enums if they exist
-        DateTimeFormatter iso8601Date = DateTimeFormatter.ISO_DATE;
-        DateTimeFormatter iso8601DateTime = DateTimeFormatter.ISO_DATE_TIME;
+        DateTimeFormatter iso8601Date = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ROOT);
+        DateTimeFormatter iso8601DateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.ROOT);
+        iso8601Date.withZone(ZoneOffset.UTC.normalized());
+        iso8601DateTime.withZone(ZoneOffset.UTC.normalized());
 
         if (ModelUtils.isDateSchema(p) || ModelUtils.isDateTimeSchema(p)) {
             List<Object> currentEnum = p.getEnum();
@@ -901,7 +903,13 @@ public class PythonClientExperimentalCodegen extends PythonClientCodegen {
      * Primitive types in the OAS specification are implemented in Python using the corresponding
      * Python primitive types.
      * Composed types (e.g. allAll, oneOf, anyOf) are represented in Python using list of types.
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/12ffeb0da503b794e9be7b5eda80f912a86e576a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/PythonClientExperimentalCodegen.java/left.java
+     *
+||||||| /usr/src/app/output/openapitools/openapi-generator/12ffeb0da503b794e9be7b5eda80f912a86e576a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/PythonClientExperimentalCodegen.java/base.java
+     * 
+=======
      * <p>
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/12ffeb0da503b794e9be7b5eda80f912a86e576a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/PythonClientExperimentalCodegen.java/right.java
      * The caller should set the prefix and suffix arguments to empty string, except when
      * getTypeString invokes itself recursively. A non-empty prefix/suffix may be specified
      * to wrap the return value in a python dict, list or tuple.
@@ -909,14 +917,28 @@ public class PythonClientExperimentalCodegen extends PythonClientCodegen {
      * Examples:
      * - "bool, date, float"  The data must be a bool, date or float.
      * - "[bool, date]"       The data must be an array, and the array items must be a bool or date.
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/12ffeb0da503b794e9be7b5eda80f912a86e576a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/PythonClientExperimentalCodegen.java/left.java
      *
-      * @param p                    The OAS schema.
-      * @param prefix               prepended to the returned value.
-      * @param suffix               appended to the returned value.
-      * @param referencedModelNames a list of models that are being referenced while generating the types,
-      * @return a comma-separated string representation of the Python types
+     * @param p The OAS schema.
+     * @param prefix prepended to the returned value.
+     * @param suffix appended to the returned value.
+||||||| /usr/src/app/output/openapitools/openapi-generator/12ffeb0da503b794e9be7b5eda80f912a86e576a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/PythonClientExperimentalCodegen.java/base.java
+     * 
+     * @param p The OAS schema.
+     * @param prefix prepended to the returned value.
+     * @param suffix appended to the returned value.
+=======
+     *
+     * @param p                    The OAS schema.
+     * @param prefix               prepended to the returned value.
+     * @param suffix               appended to the returned value.
+     * @param referencedModelNames a list of models that are being referenced while generating the types,
+     *                             may be used to generate imports.
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/12ffeb0da503b794e9be7b5eda80f912a86e576a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/PythonClientExperimentalCodegen.java/right.java
+     * @return a comma-separated string representation of the Python types
      */
     private String getTypeString(Schema p, String prefix, String suffix, List<String> referencedModelNames) {
+        // this is used to set dataType, which defines a python tuple of classes
         String fullSuffix = suffix;
         if (")".equals(suffix)) {
             fullSuffix = "," + suffix;
