@@ -669,163 +669,410 @@ public final class EncoderTestCase extends Assert {
     Encoder.encode(builder.toString(), ErrorCorrectionLevel.L);
   }
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder1() throws Exception {
     verifyMinimalEncoding("A", "ALPHANUMERIC(A),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder1() throws Exception {
+    verifyMinimalEncoding("A", "ALPHANUMERIC(A),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder2() throws Exception {
     verifyMinimalEncoding("AB", "ALPHANUMERIC(AB),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder2() throws Exception {
+    verifyMinimalEncoding("AB", "ALPHANUMERIC(AB),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder3() throws Exception {
     verifyMinimalEncoding("ABC", "ALPHANUMERIC(AB,C),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder3() throws Exception {
+    verifyMinimalEncoding("ABC", "ALPHANUMERIC(AB,C),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder4() throws Exception {
     verifyMinimalEncoding("ABCD", "ALPHANUMERIC(AB,CD),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder4() throws Exception {
+    verifyMinimalEncoding("ABCD", "ALPHANUMERIC(AB,CD),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder5() throws Exception {
     verifyMinimalEncoding("ABCDE", "ALPHANUMERIC(AB,CD,E),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder5() throws Exception {
+    verifyMinimalEncoding("ABCDE", "ALPHANUMERIC(AB,CD,E),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder6() throws Exception {
     verifyMinimalEncoding("ABCDEF", "ALPHANUMERIC(AB,CD,EF),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder6() throws Exception {
+    verifyMinimalEncoding("ABCDEF", "ALPHANUMERIC(AB,CD,EF),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
   @Test
   public void testMinimalEncoder7() throws Exception {
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
     verifyMinimalEncoding("ABCDEFG", "ALPHANUMERIC(AB,CD,EF,G),TERMINATO" +
         "R()", null, false);
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+    verifyMinimalEncoding;
+=======
+    verifyMinimalEncoding("ABCDEFG", "ALPHANUMERIC(AB,CD,EF,G),TERMINATO" +
+        "R()", false);
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
   }
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder8() throws Exception {
     verifyMinimalEncoding("1", "NUMERIC(1),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder8() throws Exception {
+    verifyMinimalEncoding("1", "NUMERIC(1),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder9() throws Exception {
     verifyMinimalEncoding("12", "NUMERIC(12),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder9() throws Exception {
+    verifyMinimalEncoding("12", "NUMERIC(12),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder10() throws Exception {
     verifyMinimalEncoding("123", "NUMERIC(123),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder10() throws Exception {
+    verifyMinimalEncoding("123", "NUMERIC(123),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder11() throws Exception {
     verifyMinimalEncoding("1234", "NUMERIC(123,4),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder11() throws Exception {
+    verifyMinimalEncoding("1234", "NUMERIC(123,4),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder12() throws Exception {
     verifyMinimalEncoding("12345", "NUMERIC(123,45),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder12() throws Exception {
+    verifyMinimalEncoding("12345", "NUMERIC(123,45),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder13() throws Exception {
     verifyMinimalEncoding("123456", "NUMERIC(123,456),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder13() throws Exception {
+    verifyMinimalEncoding("123456", "NUMERIC(123,456),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder14() throws Exception {
     verifyMinimalEncoding("123A", "ALPHANUMERIC(12,3A),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder14() throws Exception {
+    verifyMinimalEncoding("123A", "ALPHANUMERIC(12,3A),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder15() throws Exception {
     verifyMinimalEncoding("A1", "ALPHANUMERIC(A1),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder15() throws Exception {
+    verifyMinimalEncoding("A1", "ALPHANUMERIC(A1),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder16() throws Exception {
     verifyMinimalEncoding("A12", "ALPHANUMERIC(A1,2),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder16() throws Exception {
+    verifyMinimalEncoding("A12", "ALPHANUMERIC(A1,2),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder17() throws Exception {
     verifyMinimalEncoding("A123", "ALPHANUMERIC(A1,23),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder17() throws Exception {
+    verifyMinimalEncoding("A123", "ALPHANUMERIC(A1,23),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder18() throws Exception {
     verifyMinimalEncoding("A1234", "ALPHANUMERIC(A1,23,4),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder18() throws Exception {
+    verifyMinimalEncoding("A1234", "ALPHANUMERIC(A1,23,4),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder19() throws Exception {
     verifyMinimalEncoding("A12345", "ALPHANUMERIC(A1,23,45),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder19() throws Exception {
+    verifyMinimalEncoding("A12345", "ALPHANUMERIC(A1,23,45),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder20() throws Exception {
     verifyMinimalEncoding("A123456", "ALPHANUMERIC(A1,23,45,6),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder20() throws Exception {
+    verifyMinimalEncoding("A123456", "ALPHANUMERIC(A1,23,45,6),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder21() throws Exception {
     verifyMinimalEncoding("A1234567", "ALPHANUMERIC(A1,23,45,67),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder21() throws Exception {
+    verifyMinimalEncoding("A1234567", "ALPHANUMERIC(A1,23,45,67),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder22() throws Exception {
     verifyMinimalEncoding("A12345678", "BYTE(A),NUMERIC(123,456,78),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder22() throws Exception {
+    verifyMinimalEncoding("A12345678", "BYTE(A),NUMERIC(123,456,78),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder23() throws Exception {
     verifyMinimalEncoding("A123456789", "BYTE(A),NUMERIC(123,456,789),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder23() throws Exception {
+    verifyMinimalEncoding("A123456789", "BYTE(A),NUMERIC(123,456,789),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder24() throws Exception {
     verifyMinimalEncoding("A1234567890", "ALPHANUMERIC(A1),NUMERIC(234,567,890),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder24() throws Exception {
+    verifyMinimalEncoding("A1234567890", "ALPHANUMERIC(A1),NUMERIC(234,567,890),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder25() throws Exception {
     verifyMinimalEncoding("AB1", "ALPHANUMERIC(AB,1),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder25() throws Exception {
+    verifyMinimalEncoding("AB1", "ALPHANUMERIC(AB,1),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder26() throws Exception {
     verifyMinimalEncoding("AB12", "ALPHANUMERIC(AB,12),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder26() throws Exception {
+    verifyMinimalEncoding("AB12", "ALPHANUMERIC(AB,12),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder27() throws Exception {
     verifyMinimalEncoding("AB123", "ALPHANUMERIC(AB,12,3),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder27() throws Exception {
+    verifyMinimalEncoding("AB123", "ALPHANUMERIC(AB,12,3),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder28() throws Exception {
     verifyMinimalEncoding("AB1234", "ALPHANUMERIC(AB,12,34),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder28() throws Exception {
+    verifyMinimalEncoding("AB1234", "ALPHANUMERIC(AB,12,34),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder29() throws Exception {
     verifyMinimalEncoding("ABC1", "ALPHANUMERIC(AB,C1),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder29() throws Exception {
+    verifyMinimalEncoding("ABC1", "ALPHANUMERIC(AB,C1),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder30() throws Exception {
     verifyMinimalEncoding("ABC12", "ALPHANUMERIC(AB,C1,2),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder30() throws Exception {
+    verifyMinimalEncoding("ABC12", "ALPHANUMERIC(AB,C1,2),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
   @Test
   public void testMinimalEncoder31() throws Exception {
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
     verifyMinimalEncoding("ABC1234", "ALPHANUMERIC(AB,C1,23,4),TERMINA" +
         "TOR()", null, false);
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+    verifyMinimalEncoding;
+=======
+    verifyMinimalEncoding("ABC1234", "ALPHANUMERIC(AB,C1,23,4),TERMINA" +
+        "TOR()", false);
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
   }
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder32() throws Exception {
     verifyMinimalEncoding("http://foo.com", "BYTE(h,t,t,p,:,/,/,f,o,o,.,c,o,m)" +
@@ -839,28 +1086,6 @@ public final class EncoderTestCase extends Assert {
   }
 
   @Test
-  public void testMinimalEncoder34() throws Exception {
-    verifyMinimalEncoding("1001114670010%01201220%107211220%140045003267781", 
-        "NUMERIC(100,111,467,001,0),ALPHANUMERIC(%0,12,01,22,0%,10,72,11,22,0%),NUMERIC(140,045,003,267,781),TERMINA" +
-        "TOR()", null, false);
-  }
-
-  @Test
-  public void testMinimalEncoder35() throws Exception {
-    verifyMinimalEncoding("\u0150", "ECI(ISO-8859-2),BYTE(.),TERMINATOR()", null, false);
-  }
-
-  @Test
-  public void testMinimalEncoder36() throws Exception {
-    verifyMinimalEncoding("\u015C", "ECI(ISO-8859-3),BYTE(.),TERMINATOR()", null, false);
-  }
-
-  @Test
-  public void testMinimalEncoder37() throws Exception {
-    verifyMinimalEncoding("\u0150\u015C", "ECI(UTF-8),BYTE(.,.),TERMINATOR()", null, false);
-  }
-
-  @Test
   public void testMinimalEncoder38() throws Exception {
     verifyMinimalEncoding("\u0150\u0150\u015C\u015C", "ECI(ISO-8859-2),BYTE(.," +
         ".),ECI(ISO-8859-3),BYTE(.,.),TERMINATOR()", null, false);
@@ -871,20 +1096,143 @@ public final class EncoderTestCase extends Assert {
     verifyMinimalEncoding("abcdef\u0150ghij", "ECI(ISO-8859-2),BYTE(a,b,c,d,e," +
         "f,.,g,h,i,j),TERMINATOR()", null, false);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+  @Test
+  public void testMinimalEncoder26() throws WriterException {
+    assertEquals(MinimalEncoder.encode("http://foo.com", null, false).toString(), "BYTE(h,t,t,p,:,/,/,f,o,o,.,c,o,m)" +
+        ",TERMINATOR()");
+  }
 
   @Test
-  public void testMinimalEncoder40() throws Exception {
+  public void testMinimalEncoder27() throws WriterException {
+    assertEquals(MinimalEncoder.encode("HTTP://FOO.COM", null, false).toString(), "ALPHANUMERIC(HT,TP,:/,/F,OO,.C,OM" +
+        "),TERMINATOR()");
+  }
+
+  @Test
+  public void testMinimalEncoder32() throws WriterException {
+    assertEquals(MinimalEncoder.encode("\u0150\u0150\u015C\u015C", null, false).toString(), "ECI(ISO-8859-2),BYTE(.," +
+        ".),ECI(ISO-8859-3),BYTE(.,.),TERMINATOR()");
+  }
+
+  @Test
+  public void testMinimalEncoder33() throws WriterException {
+    assertEquals(MinimalEncoder.encode("abcdef\u0150ghij", null, false).toString(), "ECI(ISO-8859-2),BYTE(a,b,c,d,e," +
+        "f,.,g,h,i,j),TERMINATOR()");
+  }
+=======
+  @Test
+  public void testMinimalEncoder32() throws Exception {
+    verifyMinimalEncoding("http://foo.com", "BYTE(h,t,t,p,:,/,/,f,o,o,.,c,o,m)" +
+        ",TERMINATOR()", false);
+  }
+
+  @Test
+  public void testMinimalEncoder33() throws Exception {
+    verifyMinimalEncoding("HTTP://FOO.COM", "ALPHANUMERIC(HT,TP,:/,/F,OO,.C,OM" +
+        "),TERMINATOR()", false);
+  }
+
+  @Test
+  public void testMinimalEncoder38() throws Exception {
+    verifyMinimalEncoding("\u0150\u0150\u015C\u015C", "ECI(ISO-8859-2),BYTE(.," +
+        ".),ECI(ISO-8859-3),BYTE(.,.),TERMINATOR()", false);
+  }
+
+  @Test
+  public void testMinimalEncoder39() throws Exception {
+    verifyMinimalEncoding("abcdef\u0150ghij", "ECI(ISO-8859-2),BYTE(a,b,c,d,e," +
+        "f,.,g,h,i,j),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
+
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
+  @Test
+  public void testMinimalEncoder34() throws Exception {
+    verifyMinimalEncoding("1001114670010%01201220%107211220%140045003267781", 
+        "NUMERIC(100,111,467,001,0),ALPHANUMERIC(%0,12,01,22,0%,10,72,11,22,0%),NUMERIC(140,045,003,267,781),TERMINA" +
+        "TOR()", null, false);
+  }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder34() throws Exception {
+    verifyMinimalEncoding("1001114670010%01201220%107211220%140045003267781", 
+        "NUMERIC(100,111,467,001,0),ALPHANUMERIC(%0,12,01,22,0%,10,72,11,22,0%),NUMERIC(140,045,003,267,781),TERMINA" +
+        "TOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
+
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
+  @Test
+  public void testMinimalEncoder35() throws Exception {
+    verifyMinimalEncoding("\u0150", "ECI(ISO-8859-2),BYTE(.),TERMINATOR()", null, false);
+  }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder35() throws Exception {
+    verifyMinimalEncoding("\u0150", "ECI(ISO-8859-2),BYTE(.),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
+
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
+  @Test
+  public void testMinimalEncoder36() throws Exception {
+    verifyMinimalEncoding("\u015C", "ECI(ISO-8859-3),BYTE(.),TERMINATOR()", null, false);
+  }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder36() throws Exception {
+    verifyMinimalEncoding("\u015C", "ECI(ISO-8859-3),BYTE(.),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
+
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
+  @Test
+  public void testMinimalEncoder37() throws Exception {
+    verifyMinimalEncoding("\u0150\u015C", "ECI(UTF-8),BYTE(.,.),TERMINATOR()", null, false);
+  }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder37() throws Exception {
+    verifyMinimalEncoding("\u0150\u015C", "ECI(UTF-8),BYTE(.,.),TERMINATOR()", false);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
+
+  @Test
+  public
+  @Test void testMinimalEncoder40() throws Exception {
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
     verifyMinimalEncoding("2938928329832983\u01502938928329832983\u015C2938928329832983", 
         "NUMERIC(293,892,832,983,298,3),ECI(ISO-8859-2),BYTE(.),NUMERIC(293,892,832,983,298,3),ECI(ISO-8" +
         "859-3),BYTE(.),NUMERIC(293,892,832,983,298,3),TERMINATOR()", null, false);
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+    verifyMinimalEncoding;
+=======
+    verifyMinimalEncoding("2938928329832983\u01502938928329832983\u015C2938928329832983", 
+        "NUMERIC(293,892,832,983,298,3),ECI(ISO-8859-2),BYTE(.),NUMERIC(293,892,832,983,298,3),ECI(ISO-8" +
+        "859-3),BYTE(.),NUMERIC(293,892,832,983,298,3),TERMINATOR()", false);
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
   }
 
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/left.java
   @Test
   public void testMinimalEncoder41() throws Exception {
     verifyMinimalEncoding("1001114670010%01201220%107211220%140045003267781", "FNC1_FIRST_POSITION(),NUMERIC(100,111" +
         ",467,001,0),ALPHANUMERIC(%0,12,01,22,0%,10,72,11,22,0%),NUMERIC(140,045,003,267,781),TERMINATOR()", null, 
         true);
   }
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/base.java
+=======
+  @Test
+  public void testMinimalEncoder41() throws Exception {
+    verifyMinimalEncoding("1001114670010%01201220%107211220%140045003267781", "FNC1_FIRST_POSITION(),NUMERIC(100,111" +
+        ",467,001,0),ALPHANUMERIC(%0,12,01,22,0%,10,72,11,22,0%),NUMERIC(140,045,003,267,781),TERMINATOR()", true);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/test/java/com/google/zxing/qrcode/encoder/EncoderTestCase.java/right.java
 
   @Test
   public void testMinimalEncoder42() throws Exception {
@@ -915,6 +1263,11 @@ public final class EncoderTestCase extends Assert {
   static void verifyMinimalEncoding(String input, String expectedResult, Charset priorityCharset, boolean isGS1) 
       throws Exception {
     MinimalEncoder.ResultList result = MinimalEncoder.encode(input, null, priorityCharset, isGS1);
+    assertEquals(result.toString(), expectedResult);
+  }
+
+  static void verifyMinimalEncoding(String input, String expectedResult, boolean isGS1) throws Exception {
+    MinimalEncoder.ResultList result = MinimalEncoder.encode(input, null, isGS1);
     assertEquals(result.toString(), expectedResult);
   }
 

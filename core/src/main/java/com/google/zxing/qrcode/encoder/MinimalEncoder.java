@@ -101,6 +101,7 @@ final class MinimalEncoder {
   private final CharsetEncoder[] encoders;
   private final int priorityEncoderIndex;
 
+
   /**
    * Creates a MinimalEncoder
    *
@@ -115,6 +116,8 @@ final class MinimalEncoder {
    * @param isGS1 <code>true</code> if a FNC1 is to be prepended; <code>false</code> otherwise
    * @see ResultList#getVersion
    */
+
+
   MinimalEncoder(String stringToEncode, Version version, Charset priorityCharset, boolean isGS1) 
       throws WriterException {
 
@@ -202,10 +205,12 @@ final class MinimalEncoder {
     priorityEncoderIndex = priorityEncoderIndexValue;
   }
 
+
   static ResultList encode(String stringToEncode, Version version, Charset priorityCharset, boolean isGS1) 
       throws WriterException {
     return new MinimalEncoder(stringToEncode, version, priorityCharset, isGS1).encode();
   }
+
 
   ResultList encode() throws WriterException {
     if (version == null) { //compute minimal encoding trying the three version sizes.
@@ -218,10 +223,12 @@ final class MinimalEncoder {
     }
   }
 
+
   static VersionSize getVersionSize(Version version) {
     return version.getVersionNumber() <= 9 ? VersionSize.SMALL : version.getVersionNumber() <= 26 ?
       VersionSize.MEDIUM : VersionSize.LARGE;
   }
+
 
   static Version getVersion(VersionSize versionSize) {
     switch (versionSize) {
@@ -235,26 +242,33 @@ final class MinimalEncoder {
     }
   }
 
+
   static boolean isNumeric(char c) {
     return c >= '0' && c <= '9';
   }
+
 
   static boolean isDoubleByteKanji(char c) {
     return Encoder.isOnlyDoubleByteKanji(String.valueOf(c));
   }
 
+
   static boolean isAlphanumeric(char c) {
     return Encoder.getAlphanumericCode(c) != -1;
   }
+
 
   /**
    * Returns the maximum number of encodeable characters in the given mode for the given version. Example: in
    * Version 1, 2^10 digits or 2^8 bytes can be encoded. In Version 3 it is 2^14 digits and 2^16 bytes
    */
+
+
   static int getMaximumNumberOfEncodeableCharacters(Version version, Mode mode) {
     int count = mode.getCharacterCountBits(version);
     return count == 0 ? 0 : 1 << count;
   }
+
 
   boolean canEncode(Mode mode, char c) {
     switch (mode) {
@@ -267,6 +281,7 @@ final class MinimalEncoder {
         return false;
     }
   }
+
 
   static int getCompactedOrdinal(Mode mode) {
     if (mode == null) {
@@ -287,6 +302,7 @@ final class MinimalEncoder {
     }
   }
 
+
   static ResultList smallest(ResultList[] results) {
     ResultList smallestResult = null;
     for (ResultList result : results) {
@@ -296,6 +312,7 @@ final class MinimalEncoder {
     }
     return smallestResult;
   }
+
 
   ResultList postProcess(ResultList result) {
     if (isGS1) {
@@ -331,33 +348,34 @@ final class MinimalEncoder {
     return result;
   }
 
+
   int getEdgeCharsetEncoderIndex(ResultList edge) {
     ResultList.ResultNode last = edge.getLast();
-    assert last != null;
     return last.charsetEncoderIndex;
   }
 
+
   Mode getEdgeMode(ResultList edge) {
     ResultList.ResultNode last = edge.getLast();
-    assert last != null;
     return last.mode;
   }
+
 
   int getEdgePosition(ResultList edge) {
     // The algorithm appends an edge at some point (in the method addEdge() with a minimal solution.
     // This function works regardless if the concatenation has already taken place or not.
     ResultList.ResultNode last = edge.getLast();
-    assert last != null;
     return last.position;
   }
+
 
   int getEdgeLength(ResultList edge) {
     // The algorithm appends an edge at some point (in the method addEdge() with a minimal solution.
     // This function works regardless if the concatenation has already taken place or not.
     ResultList.ResultNode last = edge.getLast();
-    assert last != null;
     return last.getCharacterLength();
   }
+
 
   ResultList.ResultNode getEdgePrevious(ResultList edge) {
     Iterator<ResultList.ResultNode> it = edge.descendingIterator();
@@ -376,6 +394,7 @@ final class MinimalEncoder {
     return result;
   }
 
+
   void addEdge(ArrayList<ResultList>[][][] vertices, ResultList edge, ResultList previous) {
     int vertexIndex = getEdgePosition(edge) + getEdgeLength(edge);
     if (vertices[vertexIndex][getEdgeCharsetEncoderIndex(edge)][getCompactedOrdinal(getEdgeMode(edge))] == null) {
@@ -388,6 +407,7 @@ final class MinimalEncoder {
       edge.addFirst(previous);
     }
   }
+
 
   void addEdges(Version version, ArrayList<ResultList>[][][] vertices, int from, ResultList previous) {
     int start = 0;
@@ -433,6 +453,240 @@ final class MinimalEncoder {
       }
     }
   }
+
+
+//  String vertexToString(int position, ResultList rl) {
+
+
+//    return (position >= stringToEncode.length() ? "end vertex" : "vertex for character '" +
+
+
+//      stringToEncode.charAt(position) + "' at position " + position) + " with encoding " +
+
+
+//        encoders[getEdgeCharsetEncoderIndex(rl)].charset().name() + " and mode " + getEdgeMode(rl);
+
+
+//  }
+
+
+//  void printEdges(ArrayList<ResultList>[][][] vertices) {
+
+
+//
+
+
+//    final boolean showCompacted = true;
+
+
+//
+
+
+//    boolean willHaveECI = encoders.length > 1;
+
+
+//    ArrayList<String> edgeStrings = new ArrayList<String>();
+
+
+//    int inputLength = stringToEncode.length();
+
+
+//    for (int i = 1; i <= inputLength; i++) {
+
+
+//      for (int j = 0; j < encoders.length; j++) {
+
+
+//        for (int k = 0; k < 4; k++) {
+
+
+//          if (vertices[i][j][k] != null) {
+
+
+//            ArrayList<ResultList> edges = vertices[i][j][k];
+
+
+//            assert edges.size() > 0;
+
+
+//            if (edges.size() > 0) {
+
+
+//              ResultList edge = edges.get(0);
+
+
+//              String vertexKey = "" + i + "_" + getEdgeMode(edge) + (willHaveECI ? "_" +
+
+
+//                  encoders[getEdgeCharsetEncoderIndex(edge)].charset().name() : "");
+
+
+//              int fromPosition = getEdgePosition(edge);
+
+
+//              ResultList.ResultNode previous = getEdgePrevious(edge);
+
+
+//              String fromKey = previous == null ? "initial" : "" + fromPosition + "_" + previous.mode +
+
+
+//                  (willHaveECI ? "_" + encoders[previous.charsetEncoderIndex].charset().name() : "");
+
+
+//              int toPosition = fromPosition + getEdgeLength(edge);
+
+
+//              edgeStrings.add("(" + fromKey + ") -- " + getEdgeMode(edge) + (toPosition - 
+
+
+//                  fromPosition > 0 ? "(" + stringToEncode.substring(fromPosition, toPosition) + 
+
+
+//                  ")" : "") + " (" + edge.getSize() + ")" + " --> " + "(" + vertexKey + ")");
+
+
+//            }
+
+
+//          }
+
+
+//        }
+
+
+//      }
+
+
+//    }
+
+
+//
+
+
+//    if (showCompacted) {
+
+
+//      boolean modifiedSomething;
+
+
+//      do {
+
+
+//        modifiedSomething = false;
+
+
+//        for (Iterator<String> it = edgeStrings.iterator(); it.hasNext();) {
+
+
+//          String edge = it.next();
+
+
+//          if (edge.startsWith("(initial)")) {
+
+
+//            int pos = edge.lastIndexOf("--> (");
+
+
+//            String toKey = edge.substring(pos + 4);
+
+
+//            int cnt = 0;
+
+
+//            for (Iterator<String> it1 = edgeStrings.iterator(); it1.hasNext();) {
+
+
+//              String edge1 = it1.next();
+
+
+//              String fromKey = edge1.substring(0, edge1.indexOf(')') + 1);
+
+
+//              if (fromKey.equals(toKey)) {
+
+
+//                cnt++;
+
+
+//              }
+
+
+//            }
+
+
+//            for (Iterator<String> it1 = edgeStrings.iterator(); it1.hasNext();) {
+
+
+//              String edge1 = it1.next();
+
+
+//              String fromKey = edge1.substring(0, edge1.indexOf(')') + 1);
+
+
+//              if (fromKey.equals(toKey)) {
+
+
+//                modifiedSomething = true;
+
+
+//                if (cnt == 1) {
+
+
+//                  edgeStrings.remove(edgeStrings.indexOf(edge));
+
+
+//                }
+
+
+//                edgeStrings.remove(edgeStrings.indexOf(edge1));
+
+
+//                edgeStrings.add(edge.substring(0, pos + 4) + edge1);
+
+
+//                break;
+
+
+//              }
+
+
+//            }
+
+
+//            if (modifiedSomething) {
+
+
+//              break;
+
+
+//            }
+
+
+//          }
+
+
+//        }
+
+
+//      } while (modifiedSomething);
+
+
+//    }
+
+
+//  
+
+
+//    for (Iterator<String> it = edgeStrings.iterator(); it.hasNext();) {
+
+
+//      System.err.println("DEBUG " + it.next());
+
+
+//    }
+
+
+//  }
 
   ResultList encode(Version version) throws WriterException {
 
@@ -753,6 +1007,7 @@ final class MinimalEncoder {
       private final int length;
 
       ResultNode(Mode mode, int position, int charsetEncoderIndex, int length) {
+
         this.mode = mode;
         this.position = position;
         this.charsetEncoderIndex = charsetEncoderIndex;
@@ -825,9 +1080,30 @@ final class MinimalEncoder {
        * appends the bits
        */
       private void getBits(BitArray bits) throws WriterException {
+<<<<<<< /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/left.java
         if (mode == Mode.ECI) {
           bits.appendBits(getCharacterSetECIValue(), 8);
         } else if (getCharacterLength() > 0) {
+||||||| /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/base.java
+        if (declaresMode) {
+          // append mode
+          bits.appendBits(mode.getBits(), 4);
+          if (mode == Mode.ECI) {
+            bits.appendBits(CharacterSetECI.getCharacterSetECI(encoders[charsetEncoderIndex].charset()).getValue(), 8);
+          } else {
+            int characterLength = getCharacterCountIndicator();
+            if (characterLength > 0) {
+              // append length
+              bits.appendBits(characterLength, mode.getCharacterCountBits(version));
+            }
+          }
+        }
+        if (getCharacterLength() > 0) {
+=======
+        if (mode == Mode.ECI) {
+          bits.appendBits(CharacterSetECI.getCharacterSetECI(encoders[charsetEncoderIndex].charset()).getValue(), 8);
+        } else if (getCharacterLength() > 0) {
+>>>>>>> /usr/src/app/output/zxing/zxing/caf2fbe8ea918c4094ba76bef81763078050702f/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/right.java
           // append data
           Encoder.appendBytes(stringToEncode.substring(position, position + getCharacterLength()), mode, bits,
               encoders[charsetEncoderIndex].charset());
