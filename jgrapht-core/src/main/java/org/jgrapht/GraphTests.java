@@ -16,15 +16,14 @@
  * the Eclipse Foundation.
  */
 package org.jgrapht;
-
 import org.jgrapht.alg.connectivity.BiconnectivityInspector;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.alg.connectivity.KosarajuStrongConnectivityInspector;
-import org.jgrapht.alg.cycle.BergeGraphInspector;
 import org.jgrapht.alg.cycle.ChordalityInspector;
 import org.jgrapht.alg.cycle.HierholzerEulerianCycle;
-import org.jgrapht.alg.cycle.WeakChordalityInspector;
 import org.jgrapht.alg.interval.*;
+import org.jgrapht.alg.cycle.BergeGraphInspector;
+import org.jgrapht.alg.cycle.WeakChordalityInspector;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,8 +34,12 @@ import java.util.stream.Collectors;
  * @author Barak Naveh
  * @author Dimitrios Michail
  * @author Joris Kinable
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/14d2d690a33709f6724904504f12d727b19fa57c/jgrapht-core/src/main/java/org/jgrapht/GraphTests.java/left.java
  * @author Ira Justus Fesefeldt
+||||||| /usr/src/app/output/jgrapht/jgrapht/14d2d690a33709f6724904504f12d727b19fa57c/jgrapht-core/src/main/java/org/jgrapht/GraphTests.java/base.java
+=======
  * @author Alexandru Valeanu
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/14d2d690a33709f6724904504f12d727b19fa57c/jgrapht-core/src/main/java/org/jgrapht/GraphTests.java/right.java
  */
 public abstract class GraphTests
 {
