@@ -1,4 +1,5 @@
 /* Copyright (c) 2008-2020, Nathan Sweet
+ * Copyright (C) 2020, Oracle and/or its affiliates.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
@@ -84,7 +85,13 @@ class SerializationCompatTest extends KryoTestCase {
 		}
 	}
 	private static final int EXPECTED_DEFAULT_SERIALIZER_COUNT = JAVA_VERSION < 11
-			? 57 : JAVA_VERSION < 14 ? 67 : 68;  // Also change Kryo#defaultSerializers.
+<<<<<<< /usr/src/app/output/esotericsoftware/kryo/34fbe7de2236f093b3bc1a20f52a56a71e609132/test/com/esotericsoftware/kryo/SerializationCompatTest.java/left.java
+			? 58 : JAVA_VERSION < 14 ? 67 : 68;  // Also change Kryo#defaultSerializers.
+||||||| /usr/src/app/output/esotericsoftware/kryo/34fbe7de2236f093b3bc1a20f52a56a71e609132/test/com/esotericsoftware/kryo/SerializationCompatTest.java/base.java
+			? 58 : 67;  // Also change Kryo#defaultSerializers.
+=======
+			? 58 : 68;  // Also change Kryo#defaultSerializers.
+>>>>>>> /usr/src/app/output/esotericsoftware/kryo/34fbe7de2236f093b3bc1a20f52a56a71e609132/test/com/esotericsoftware/kryo/SerializationCompatTest.java/right.java
 	private static final List<TestDataDescription> TEST_DATAS = new ArrayList<>();
 
 	static {
