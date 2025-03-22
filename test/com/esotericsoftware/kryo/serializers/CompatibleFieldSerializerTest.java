@@ -697,47 +697,6 @@ public class CompatibleFieldSerializerTest extends KryoTestCase {
 		}
 	}
 
-    @Test
-    public void testLogWarningOnDuplicateFieldInClassHierarchy() {
-        kryo.setReferences(true);
-        CompatibleFieldSerializer serializer = new CompatibleFieldSerializer(kryo, ClassWithDuplicateField.class);
-        serializer.getCompatibleFieldSerializerConfig().setChunkedEncoding(true);
-        serializer.getCompatibleFieldSerializerConfig().setExtendedFieldNames(false);
-        serializer.updateFields();
-        kryo.register(ClassWithDuplicateField.class, serializer);
-
-        final ClassWithDuplicateField duplicateField = new ClassWithDuplicateField();
-        roundTrip(31, duplicateField);
-        assertEquals(1, log.messages.size());
-    }
-
-    static class ClassWithDuplicateField extends SuperClassWithDuplicateField {
-        private Boolean customNote = true;
-    }
-
-    static class SuperClassWithDuplicateField implements Serializable {
-        private Boolean customNote = false;
-
-        public SuperClassWithDuplicateField() {}
-
-        public SuperClassWithDuplicateField(Boolean customNote) {
-            this.customNote = customNote;
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            SuperClassWithDuplicateField other = (SuperClassWithDuplicateField)obj;
-            if (customNote != other.customNote)
-                return false;
-            return true;
-        }
-    }
-
 	public static class ClassWithObjectField {
 		Object value;
 
@@ -793,4 +752,45 @@ public class CompatibleFieldSerializerTest extends KryoTestCase {
 			return Objects.equals(value, that.value);
 		}
 	}
+
+    @Test
+    public void testLogWarningOnDuplicateFieldInClassHierarchy() {
+        kryo.setReferences(true);
+        CompatibleFieldSerializer serializer = new CompatibleFieldSerializer(kryo, ClassWithDuplicateField.class);
+        serializer.getCompatibleFieldSerializerConfig().setChunkedEncoding(true);
+        serializer.getCompatibleFieldSerializerConfig().setExtendedFieldNames(false);
+        serializer.updateFields();
+        kryo.register(ClassWithDuplicateField.class, serializer);
+
+        final ClassWithDuplicateField duplicateField = new ClassWithDuplicateField();
+        roundTrip(31, duplicateField);
+        assertEquals(1, log.messages.size());
+    }
+
+    static class ClassWithDuplicateField extends SuperClassWithDuplicateField {
+        private Boolean customNote = true;
+    }
+
+    static class SuperClassWithDuplicateField implements Serializable {
+        private Boolean customNote = false;
+
+        public SuperClassWithDuplicateField() {}
+
+        public SuperClassWithDuplicateField(Boolean customNote) {
+            this.customNote = customNote;
+        }
+
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            SuperClassWithDuplicateField other = (SuperClassWithDuplicateField)obj;
+            if (customNote != other.customNote)
+                return false;
+            return true;
+        }
+    }
 }
