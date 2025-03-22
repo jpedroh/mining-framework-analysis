@@ -32,17 +32,14 @@ public class ParserCornersTest extends ParserTst {
                 + "                TestInnerClassCallsOuterParent.super.toString();\n" + "            }\n"
                 + "        };\n" + "    }\n" + "}\n");
     }
-
     @Test
     public final void testGetFirstASTNameImageNull() throws Throwable {
         parseJava14(ABSTRACT_METHOD_LEVEL_CLASS_DECL);
     }
-
     @Test
     public final void testCastLookaheadProblem() throws Throwable {
         parseJava14(CAST_LOOKAHEAD_PROBLEM);
     }
-
     /**
      * Tests a specific generic notation for calling methods. See:
      * https://jira.codehaus.org/browse/MPMD-139
@@ -52,7 +49,6 @@ public class ParserCornersTest extends ParserTst {
         parseJava15(GENERICS_PROBLEM);
         parseJava17(GENERICS_PROBLEM);
     }
-
     @Test
     public void testParsersCases() {
         String test15 = readAsString("/net/sourceforge/pmd/ast/ParserCornerCases.java");
@@ -64,7 +60,6 @@ public class ParserCornersTest extends ParserTst {
         String test18 = readAsString("/net/sourceforge/pmd/ast/ParserCornerCases18.java");
         parseJava18(test18);
     }
-
     /**
      * Test for https://sourceforge.net/p/pmd/bugs/1333/
      */
@@ -86,7 +81,6 @@ public class ParserCornersTest extends ParserTst {
                 "    }\n" + 
                 "}");
     }
-
     @Test
     public void testMultipleExceptionCatching() {
         String code = "public class Foo { public void bar() { "
@@ -107,7 +101,6 @@ public class ParserCornersTest extends ParserTst {
             fail();
         }
     }
-
     private String readAsString(String resource) {
         InputStream in = ParserCornersTest.class.getResourceAsStream(resource);
         try {
@@ -118,15 +111,15 @@ public class ParserCornersTest extends ParserTst {
             IOUtils.closeQuietly(in);
         }
     }
-
     private static final String GENERICS_PROBLEM = "public class Test {" + PMD.EOL + " public void test() {" + PMD.EOL
             + "   String o = super.<String> doStuff(\"\");" + PMD.EOL + " }" + PMD.EOL + "}";
-
     private static final String ABSTRACT_METHOD_LEVEL_CLASS_DECL = "public class Test {" + PMD.EOL + "  void bar() {"
             + PMD.EOL + "   abstract class X { public abstract void f(); }" + PMD.EOL
             + "   class Y extends X { public void f() {" + PMD.EOL + "    new Y().f();" + PMD.EOL + "   }}" + PMD.EOL
             + "  }" + PMD.EOL + "}";
-
     private static final String CAST_LOOKAHEAD_PROBLEM = "public class BadClass {" + PMD.EOL + "  public Class foo() {"
             + PMD.EOL + "    return (byte[].class);" + PMD.EOL + "  }" + PMD.EOL + "}";
+    /**
+     * Test for https://sourceforge.net/p/pmd/bugs/1333/
+     */
 }
