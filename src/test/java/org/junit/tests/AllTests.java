@@ -1,10 +1,10 @@
 package org.junit.tests;
-
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import org.junit.AssumptionViolatedExceptionTest;
 import org.junit.internal.AllInternalTests;
 import org.junit.rules.AllRulesTests;
+import org.junit.internal.StackTracesTest;
 import org.junit.runner.AllRunnerTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.AllRunnersTests;
@@ -22,28 +22,8 @@ import org.junit.tests.running.AllRunningTests;
 import org.junit.tests.validation.AllValidationTests;
 import org.junit.validator.AllValidatorTests;
 
-@RunWith(Suite.class)
-@SuiteClasses({
-        AllAssertionTests.class,
-        AllDeprecatedTests.class,
-        AllDescriptionTests.class,
-        AllExperimentalTests.class,
-        AllInternalTests.class,
-        AllJUnit3CompatibilityTests.class,
-        AllListeningTests.class,
-        AllManipulationTests.class,
-        AllRulesTests.class,
-        AllRunnersTests.class,
-        AllRunnerTests.class,
-        AllRunningTests.class,
-        AllSamplesTests.class,
-        AllValidationTests.class,
-        AllValidatorTests.class,
-        AssumptionViolatedExceptionTest.class,
-        ObjectContractTest.class
-})
-public class AllTests {
-    public static Test suite() {
-        return new JUnit4TestAdapter(AllTests.class);
-    }
+@RunWith(value = Suite.class) @SuiteClasses(value = { AllAssertionTests.class, AllDeprecatedTests.class, AllDescriptionTests.class, AllExperimentalTests.class, AllInternalTests.class, AllJUnit3CompatibilityTests.class, AllListeningTests.class, AllManipulationTests.class, AllRulesTests.class, AllRunnersTests.class, AllRunnerTests.class, AllRunningTests.class, AllSamplesTests.class, AllValidationTests.class, AllValidatorTests.class, AssumptionViolatedExceptionTest.class, ObjectContractTest.class, StackTracesTest.class }) public class AllTests {
+  public static Test suite() {
+    return new JUnit4TestAdapter(AllTests.class);
+  }
 }
