@@ -28,7 +28,13 @@ public class ExecutorBizImpl implements ExecutorBiz {
     }
 
     @Override
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/c5c9325aee1204646605eee5e7cb212a9eb97028/xxl-job-core/src/main/java/com/xxl/job/core/biz/impl/ExecutorBizImpl.java/left.java
+    public ReturnT<String> idleBeat(long jobId) {
+||||||| /usr/src/app/output/xuxueli/xxl-job/c5c9325aee1204646605eee5e7cb212a9eb97028/xxl-job-core/src/main/java/com/xxl/job/core/biz/impl/ExecutorBizImpl.java/base.java
+    public ReturnT<String> idleBeat(int jobId) {
+=======
     public ReturnT<String> idleBeat(IdleBeatParam idleBeatParam) {
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/c5c9325aee1204646605eee5e7cb212a9eb97028/xxl-job-core/src/main/java/com/xxl/job/core/biz/impl/ExecutorBizImpl.java/right.java
 
         // isRunningOrHasQueue
         boolean isRunningOrHasQueue = false;
@@ -79,7 +85,7 @@ public class ExecutorBizImpl implements ExecutorBiz {
             // valid old jobThread
             if (jobThread != null &&
                     !(jobThread.getHandler() instanceof GlueJobHandler
-                            && ((GlueJobHandler) jobThread.getHandler()).getGlueUpdatetime()==triggerParam.getGlueUpdatetime() )) {
+                        && ((GlueJobHandler) jobThread.getHandler()).getGlueUpdatetime()==triggerParam.getGlueUpdatetime() )) {
                 // change handler or gluesource updated, need kill old thread
                 removeOldReason = "change job source or glue type, and terminate the old job thread.";
 
@@ -149,7 +155,13 @@ public class ExecutorBizImpl implements ExecutorBiz {
     }
 
     @Override
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/c5c9325aee1204646605eee5e7cb212a9eb97028/xxl-job-core/src/main/java/com/xxl/job/core/biz/impl/ExecutorBizImpl.java/left.java
+    public ReturnT<String> kill(long jobId) {
+||||||| /usr/src/app/output/xuxueli/xxl-job/c5c9325aee1204646605eee5e7cb212a9eb97028/xxl-job-core/src/main/java/com/xxl/job/core/biz/impl/ExecutorBizImpl.java/base.java
+    public ReturnT<String> kill(int jobId) {
+=======
     public ReturnT<String> kill(KillParam killParam) {
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/c5c9325aee1204646605eee5e7cb212a9eb97028/xxl-job-core/src/main/java/com/xxl/job/core/biz/impl/ExecutorBizImpl.java/right.java
         // kill handlerThread, and create new one
         JobThread jobThread = XxlJobExecutor.loadJobThread(killParam.getJobId());
         if (jobThread != null) {

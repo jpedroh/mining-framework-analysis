@@ -23,6 +23,8 @@ public class XxlJobGroup {
     private String appname;
     @Column(name = "title", nullable = false, length = 12)
     private String title;
+    @Column(name = "`order`", nullable = false, length = 11)
+    private int order;
     @Column(name = "address_type", nullable = false, length = 12)
     private int addressType;        // 执行器地址类型：0=自动注册、1=手动录入
     @Column(name = "address_list", length = 512)
@@ -31,8 +33,9 @@ public class XxlJobGroup {
     // registry list
     @Transient
     private List<String> registryList;  // 执行器地址列表(系统注册)
+
     public List<String> getRegistryList() {
-        if (addressList!=null && addressList.trim().length()>0) {
+        if (addressList != null && addressList.trim().length() > 0) {
             registryList = new ArrayList<String>(Arrays.asList(addressList.split(",")));
         }
         return registryList;

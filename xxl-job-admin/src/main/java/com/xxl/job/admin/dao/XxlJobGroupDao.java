@@ -37,4 +37,15 @@ public interface XxlJobGroupDao extends JpaRepository<XxlJobGroup, Long> {
 
     @Query("select g from XxlJobGroup g where g.id = :id")
     public XxlJobGroup load(@Param("id") long id);
+
+    public List<XxlJobGroup> pageList(@Param("offset") int offset,
+                                      @Param("pagesize") int pagesize,
+                                      @Param("appname") String appname,
+                                      @Param("title") String title);
+
+    public int pageListCount(@Param("offset") int offset,
+                             @Param("pagesize") int pagesize,
+                             @Param("appname") String appname,
+                             @Param("title") String title);
+
 }

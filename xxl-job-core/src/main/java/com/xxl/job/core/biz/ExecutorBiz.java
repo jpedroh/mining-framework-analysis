@@ -19,7 +19,13 @@ public interface ExecutorBiz {
      * @param idleBeatParam
      * @return
      */
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/c5c9325aee1204646605eee5e7cb212a9eb97028/xxl-job-core/src/main/java/com/xxl/job/core/biz/ExecutorBiz.java/left.java
+    public ReturnT<String> idleBeat(long jobId);
+||||||| /usr/src/app/output/xuxueli/xxl-job/c5c9325aee1204646605eee5e7cb212a9eb97028/xxl-job-core/src/main/java/com/xxl/job/core/biz/ExecutorBiz.java/base.java
+    public ReturnT<String> idleBeat(int jobId);
+=======
     public ReturnT<String> idleBeat(IdleBeatParam idleBeatParam);
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/c5c9325aee1204646605eee5e7cb212a9eb97028/xxl-job-core/src/main/java/com/xxl/job/core/biz/ExecutorBiz.java/right.java
 
     /**
      * run
@@ -33,7 +39,13 @@ public interface ExecutorBiz {
      * @param killParam
      * @return
      */
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/c5c9325aee1204646605eee5e7cb212a9eb97028/xxl-job-core/src/main/java/com/xxl/job/core/biz/ExecutorBiz.java/left.java
+    public ReturnT<String> kill(long jobId);
+||||||| /usr/src/app/output/xuxueli/xxl-job/c5c9325aee1204646605eee5e7cb212a9eb97028/xxl-job-core/src/main/java/com/xxl/job/core/biz/ExecutorBiz.java/base.java
+    public ReturnT<String> kill(int jobId);
+=======
     public ReturnT<String> kill(KillParam killParam);
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/c5c9325aee1204646605eee5e7cb212a9eb97028/xxl-job-core/src/main/java/com/xxl/job/core/biz/ExecutorBiz.java/right.java
 
     /**
      * log
