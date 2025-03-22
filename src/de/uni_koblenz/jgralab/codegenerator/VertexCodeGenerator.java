@@ -1,13 +1,30 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/left.java
+ * Copyright (C) 2006-2011 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/base.java
+ *               ist@uni-koblenz.de
+=======
  * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/right.java
  *
  * For bug reports, documentation and further information, visit
  *
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/left.java
+ *                         http://jgralab.uni-koblenz.de
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/base.java
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+=======
  *                         https://github.com/jgralab/jgralab
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/right.java
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -47,8 +64,15 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 /**
  * This class is used by the method Schema.commit() to generate the Java-classes
  * that implement the VertexClasses of a graph schema.
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/left.java
+ *
+ * @author ist@uni-koblenz.de
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/base.java
+ * 
+=======
  * 
  * @author ist@uni-koblenz.de
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/right.java
  */
 public class VertexCodeGenerator extends
 		AttributedElementCodeGenerator<VertexClass, Vertex> {
@@ -112,13 +136,37 @@ public class VertexCodeGenerator extends
 
 	/**
 	 * creates the methods <code>getFirstEdgeName()</code>
-	 * 
+	 *
 	 * @param createClass
 	 *            if set to true, the method bodies will also be created
 	 * @return the CodeBlock that contains the methods
 	 */
 	private CodeBlock createFirstIncidenceMethods() {
 		CodeList code = new CodeList();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/left.java
+		VertexClass vc = (VertexClass) aec;
+		Set<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
+		if (currentCycle.isStdOrDbImplOrTransImpl()) {
+			edgeClassSet.addAll(vc.getConnectedEdgeClasses());
+		}
+		if (currentCycle.isAbstract()) {
+			edgeClassSet.addAll(vc.getOwnConnectedEdgeClasses());
+			// if the current class is a direct subclass of vertex, all edges
+			// defined in the schema to start or end at a vertex
+			// need also to be considered in generation
+			if (vc.getAllSuperClasses().size() == 1) {
+				for (EdgeClass ec : vc.getConnectedEdgeClasses()) {
+					VertexClass dvc = vc.getGraphClass().getSchema()
+							.getDefaultVertexClass();
+					if ((ec.getTo().getVertexClass() == dvc)
+							|| (ec.getFrom().getVertexClass() == dvc)) {
+						edgeClassSet.add(ec);
+					}
+				}
+			}
+		}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/base.java
+=======
 		VertexClass vc = aec;
 		Set<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
 		if (currentCycle.isStdOrDbImplOrTransImpl()) {
@@ -140,24 +188,24 @@ public class VertexCodeGenerator extends
 				}
 			}
 		}
-
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/right.java
 		for (EdgeClass ec : edgeClassSet) {
-			if (ec.isInternal()) {
-				continue;
-			}
-			addImports("#jgPackage#.EdgeDirection");
-			if (config.hasTypeSpecificMethodsSupport()) {
-				code.addNoIndent(createFirstIncidenceMethod(ec, false));
-				code.addNoIndent(createFirstIncidenceMethod(ec, true));
-			}
+		if (ec.isInternal()) {
+			continue;
 		}
+		addImports("#jgPackage#.EdgeDirection");
+		if (config.hasTypeSpecificMethodsSupport()) {
+			code.addNoIndent(createFirstIncidenceMethod(ec, false));
+			code.addNoIndent(createFirstIncidenceMethod(ec, true));
+		}
+	}
 		return code;
 	}
 
 	/**
 	 * creates the method <code>getFirstEdgeName()</code> for the given
 	 * EdgeClass
-	 * 
+	 *
 	 * @param createClass
 	 *            if set to true, the method bodies will also be created
 	 * @param withOrientation
@@ -193,8 +241,16 @@ public class VertexCodeGenerator extends
 	}
 
 	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/left.java
+	 * Creates <code>getNextVertexClassName()</code> methods
+	 *
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/base.java
+	 * creates the <code>getNextVertexClassName()</code> methods
+	 * 
+=======
 	 * Creates <code>getNextVertexClassName()</code> methods
 	 * 
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/right.java
 	 * @param createClass
 	 *            if set to true, also the method bodies will be created
 	 * @return the CodeBlock that contains the methods
@@ -221,7 +277,7 @@ public class VertexCodeGenerator extends
 	/**
 	 * Creates <code>getNextVertexClassName()</code> method for given
 	 * VertexClass
-	 * 
+	 *
 	 * @param createClass
 	 *            if set to true, the method bodies will also be created
 	 * @return the CodeBlock that contains the method
@@ -250,16 +306,59 @@ public class VertexCodeGenerator extends
 	}
 
 	/**
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/left.java
+	 * Creates <code>getEdgeNameIncidences</code> methods.
+	 *
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/base.java
+	 * creates the <code>getEdgeNameIncidences</code> methods
+	 * 
+=======
 	 * Creates <code>getEdgeNameIncidences</code> methods.
 	 * 
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/right.java
 	 * @param createClass
 	 *            if set to true, also the method bodies will be created
 	 * @return the CodeBlock that contains the code for the
 	 *         getEdgeNameIncidences-methods
 	 */
 	private CodeBlock createIncidenceIteratorMethods() {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/left.java
+		VertexClass vc = (VertexClass) aec;
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/base.java
+		VertexClass vc = (VertexClass) aec;
+
+=======
 		VertexClass vc = aec;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/right.java
 		CodeList code = new CodeList();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/left.java
+		Set<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
+		if (currentCycle.isStdOrDbImplOrTransImpl()) {
+			edgeClassSet.addAll(vc.getConnectedEdgeClasses());
+		}
+		if (currentCycle.isAbstract()) {
+			edgeClassSet.addAll(vc.getOwnConnectedEdgeClasses());
+			// if the current class is a direct subclass of vertex, all edges
+			// defined in the schema to start or end at a vertex
+			// need also to be considered in generation
+			if (vc.getAllSuperClasses().size() == 1) {
+				for (EdgeClass ec : vc.getConnectedEdgeClasses()) {
+					VertexClass dvc = vc.getGraphClass().getSchema()
+							.getDefaultVertexClass();
+					if ((ec.getTo().getVertexClass() == dvc)
+							|| (ec.getFrom().getVertexClass() == dvc)) {
+						edgeClassSet.add(ec);
+					}
+				}
+			}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/base.java
+	
+		Set<EdgeClass> edgeClassSet = null;
+		if (createClass) {
+			edgeClassSet = vc.getEdgeClasses();
+		} else {
+			edgeClassSet = vc.getOwnEdgeClasses();
+=======
 		Set<EdgeClass> edgeClassSet = new HashSet<EdgeClass>();
 		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			edgeClassSet.addAll(vc.getConnectedEdgeClasses());
@@ -279,6 +378,7 @@ public class VertexCodeGenerator extends
 					}
 				}
 			}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/VertexCodeGenerator.java/right.java
 		}
 
 		for (EdgeClass ec : edgeClassSet) {

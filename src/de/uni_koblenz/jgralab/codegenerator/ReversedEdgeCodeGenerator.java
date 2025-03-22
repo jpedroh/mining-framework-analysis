@@ -1,6 +1,64 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
+ * Copyright (C) 2006-2011 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+ *
+ * For bug reports, documentation and further information, visit
+ *
+ *                         http://jgralab.uni-koblenz.de
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
+ *
+ * Additional permission under GNU GPL version 3 section 7
+ *
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
+ */
+
+package de.uni_koblenz.jgralab.codegenerator;
+
+import java.util.Set;
+
+import java.util.SortedSet;
+
+import java.util.TreeSet;
+
+import de.uni_koblenz.jgralab.schema.Attribute;
+
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+
+import de.uni_koblenz.jgralab.schema.VertexClass;
+
+/**
+ * TODO add comment
+ *
+ * @author ist@uni-koblenz.de
+ *
+ */
+
+/*
+ * JGraLab - The Java Graph Laboratory
+ *
  * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
@@ -33,16 +91,9 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab.codegenerator;
-
 import java.util.List;
-import java.util.TreeSet;
 
 import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.schema.Attribute;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
@@ -70,11 +121,6 @@ public class ReversedEdgeCodeGenerator extends
 		for (EdgeClass superClass : edgeClass.getDirectSuperClasses()) {
 			interfaces.add(superClass.getQualifiedName());
 		}
-	}
-
-	@Override
-	protected String getSchemaTypeName() {
-		return "EdgeClass";
 	}
 
 	@Override
@@ -117,6 +163,96 @@ public class ReversedEdgeCodeGenerator extends
 				"\tsuper(e, g);", "}");
 	}
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/ReversedEdgeCodeGenerator.java/left.java
+	private CodeBlock createGetAlphaOmegaOverrides() {
+		CodeSnippet b = new CodeSnippet();
+		EdgeClass ec = (EdgeClass) aec;
+		VertexClass from = ec.getFrom().getVertexClass();
+		VertexClass to = ec.getTo().getVertexClass();
+		b.setVariable("fromVertexClass", from.getSimpleName());
+		b.setVariable("toVertexClass", to.getSimpleName());
+		addImports(schemaRootPackageName + "." + from.getQualifiedName());
+		addImports(schemaRootPackageName + "." + to.getQualifiedName());
+		if (!currentCycle.isAbstract()) {
+			b.add("public #fromVertexClass# getAlpha() {");
+			b.add("\treturn (#fromVertexClass#) super.getAlpha();");
+			b.add("}");
+			b.add("public #toVertexClass# getOmega() {");
+			b.add("\treturn (#toVertexClass#) super.getOmega();");
+			b.add("}");
+		}
+		return b;
+	}
+
+	@Override
+	protected CodeBlock createReadAttributesFromStringMethod(
+			Set<Attribute> attrSet) {
+		CodeList code = new CodeList();
+		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public void readAttributeValueFromString(String attributeName, String value) throws GraphIOException {"));
+		code.add(new CodeSnippet(
+				"throw new GraphIOException(\"Can not call readAttributeValuesFromString for reversed Edges.\");"));
+		code.addNoIndent(new CodeSnippet("}"));
+		return code;
+	}
+
+	@Override
+	protected CodeBlock createWriteAttributeToStringMethod(
+			Set<Attribute> attrSet) {
+		CodeList code = new CodeList();
+		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public String writeAttributeValueToString(String _attributeName) throws IOException, GraphIOException {"));
+		code.add(new CodeSnippet(
+				"throw new GraphIOException(\"Can not call writeAttributeValueToString for reversed Edges.\");"));
+		code.addNoIndent(new CodeSnippet("}"));
+		return code;
+	}
+
+	@Override
+	protected CodeBlock createReadAttributesMethod(SortedSet<Attribute> attrSet) {
+		CodeList code = new CodeList();
+		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
+		code.addNoIndent(new CodeSnippet(true,
+				"public void readAttributeValues(GraphIO io) throws GraphIOException {"));
+		code.add(new CodeSnippet(
+				"throw new GraphIOException(\"Can not call readAttributeValues for reversed Edges.\");"));
+		code.addNoIndent(new CodeSnippet("}"));
+		return code;
+	}
+
+	@Override
+	protected CodeBlock createWriteAttributesMethod(Set<Attribute> attrSet) {
+		CodeList code = new CodeList();
+		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
+				"java.io.IOException");
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public void writeAttributeValues(GraphIO io) throws GraphIOException, IOException {"));
+		code.add(new CodeSnippet(
+				"throw new GraphIOException(\"Can not call writeAttributeValues for reversed Edges.\");"));
+		code.addNoIndent(new CodeSnippet("}"));
+		return code;
+	}
+
+	@Override
+	protected CodeBlock createGetVersionedAttributesMethod(
+			SortedSet<Attribute> attributeList) {
+		if (currentCycle.isTransImpl()) {
+			// delegate to attributes()-method in corresponding normalEdge
+			CodeSnippet code = new CodeSnippet();
+			code.add("protected java.util.Set<de.uni_koblenz.jgralab.trans.VersionedDataObject<?>> attributes() {");
+			code.add("\treturn ((EdgeImpl) normalEdge).attributes();");
+			code.add("}");
+			return code;
+		}
+		return null;
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/ReversedEdgeCodeGenerator.java/base.java
+=======
 	private CodeBlock createGetAlphaOmegaOverrides() {
 		CodeSnippet b = new CodeSnippet();
 		EdgeClass ec = aec;
@@ -136,6 +272,75 @@ public class ReversedEdgeCodeGenerator extends
 		}
 		return b;
 	}
+
+	@Override
+	protected CodeBlock createReadAttributesFromStringMethod(
+			List<Attribute> attributes) {
+		CodeList code = new CodeList();
+		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public void readAttributeValueFromString(String attributeName, String value) throws GraphIOException {"));
+		code.add(new CodeSnippet(
+				"throw new GraphIOException(\"Can not call readAttributeValuesFromString for reversed Edges.\");"));
+		code.addNoIndent(new CodeSnippet("}"));
+		return code;
+	}
+
+	@Override
+	protected CodeBlock createWriteAttributeToStringMethod(
+			List<Attribute> attributes) {
+		CodeList code = new CodeList();
+		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public String writeAttributeValueToString(String _attributeName) throws IOException, GraphIOException {"));
+		code.add(new CodeSnippet(
+				"throw new GraphIOException(\"Can not call writeAttributeValueToString for reversed Edges.\");"));
+		code.addNoIndent(new CodeSnippet("}"));
+		return code;
+	}
+
+	@Override
+	protected CodeBlock createReadAttributesMethod(List<Attribute> attributes) {
+		CodeList code = new CodeList();
+		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
+		code.addNoIndent(new CodeSnippet(true,
+				"public void readAttributeValues(GraphIO io) throws GraphIOException {"));
+		code.add(new CodeSnippet(
+				"throw new GraphIOException(\"Can not call readAttributeValues for reversed Edges.\");"));
+		code.addNoIndent(new CodeSnippet("}"));
+		return code;
+	}
+
+	@Override
+	protected CodeBlock createWriteAttributesMethod(List<Attribute> attributes) {
+		CodeList code = new CodeList();
+		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
+				"java.io.IOException");
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public void writeAttributeValues(GraphIO io) throws GraphIOException, IOException {"));
+		code.add(new CodeSnippet(
+				"throw new GraphIOException(\"Can not call writeAttributeValues for reversed Edges.\");"));
+		code.addNoIndent(new CodeSnippet("}"));
+		return code;
+	}
+
+	@Override
+	protected CodeBlock createGetVersionedAttributesMethod(
+			List<Attribute> attributes) {
+		if (currentCycle.isTransImpl()) {
+			// delegate to attributes()-method in corresponding normalEdge
+			CodeSnippet code = new CodeSnippet();
+			code.add("protected java.util.Set<de.uni_koblenz.jgralab.trans.VersionedDataObject<?>> attributes() {");
+			code.add("\treturn ((EdgeImpl) normalEdge).attributes();");
+			code.add("}");
+			return code;
+		}
+		return null;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/ReversedEdgeCodeGenerator.java/right.java
 
 	@Override
 	protected CodeBlock createGetter(Attribute a) {
@@ -177,12 +382,12 @@ public class ReversedEdgeCodeGenerator extends
 	}
 
 	@Override
-	protected CodeBlock createGenericGetter(List<Attribute> attributes) {
+	protected CodeBlock createGenericGetter(Set<Attribute> attrSet) {
 		return null;
 	}
 
 	@Override
-	protected CodeBlock createGenericSetter(List<Attribute> attributes) {
+	protected CodeBlock createGenericSetter(Set<Attribute> attrSet) {
 		return null;
 	}
 
@@ -261,80 +466,7 @@ public class ReversedEdgeCodeGenerator extends
 	}
 
 	@Override
-	protected CodeBlock createFields(List<Attribute> attributes) {
-		return null;
-	}
-
-	@Override
 	protected CodeBlock createGetSchemaClassMethod() {
-		return null;
-	}
-
-	@Override
-	protected CodeBlock createReadAttributesFromStringMethod(
-			List<Attribute> attributes) {
-		CodeList code = new CodeList();
-		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
-		code.addNoIndent(new CodeSnippet(
-				true,
-				"public void readAttributeValueFromString(String attributeName, String value) throws GraphIOException {"));
-		code.add(new CodeSnippet(
-				"throw new GraphIOException(\"Can not call readAttributeValuesFromString for reversed Edges.\");"));
-		code.addNoIndent(new CodeSnippet("}"));
-		return code;
-	}
-
-	@Override
-	protected CodeBlock createWriteAttributeToStringMethod(
-			List<Attribute> attributes) {
-		CodeList code = new CodeList();
-		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
-		code.addNoIndent(new CodeSnippet(
-				true,
-				"public String writeAttributeValueToString(String _attributeName) throws IOException, GraphIOException {"));
-		code.add(new CodeSnippet(
-				"throw new GraphIOException(\"Can not call writeAttributeValueToString for reversed Edges.\");"));
-		code.addNoIndent(new CodeSnippet("}"));
-		return code;
-	}
-
-	@Override
-	protected CodeBlock createReadAttributesMethod(List<Attribute> attributes) {
-		CodeList code = new CodeList();
-		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
-		code.addNoIndent(new CodeSnippet(true,
-				"public void readAttributeValues(GraphIO io) throws GraphIOException {"));
-		code.add(new CodeSnippet(
-				"throw new GraphIOException(\"Can not call readAttributeValues for reversed Edges.\");"));
-		code.addNoIndent(new CodeSnippet("}"));
-		return code;
-	}
-
-	@Override
-	protected CodeBlock createWriteAttributesMethod(List<Attribute> attributes) {
-		CodeList code = new CodeList();
-		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
-				"java.io.IOException");
-		code.addNoIndent(new CodeSnippet(
-				true,
-				"public void writeAttributeValues(GraphIO io) throws GraphIOException, IOException {"));
-		code.add(new CodeSnippet(
-				"throw new GraphIOException(\"Can not call writeAttributeValues for reversed Edges.\");"));
-		code.addNoIndent(new CodeSnippet("}"));
-		return code;
-	}
-
-	@Override
-	protected CodeBlock createGetVersionedAttributesMethod(
-			List<Attribute> attributes) {
-		if (currentCycle.isTransImpl()) {
-			// delegate to attributes()-method in corresponding normalEdge
-			CodeSnippet code = new CodeSnippet();
-			code.add("protected java.util.Set<de.uni_koblenz.jgralab.trans.VersionedDataObject<?>> attributes() {");
-			code.add("\treturn ((EdgeImpl) normalEdge).attributes();");
-			code.add("}");
-			return code;
-		}
 		return null;
 	}
 
@@ -351,4 +483,25 @@ public class ReversedEdgeCodeGenerator extends
 				"public final #jgSchemaPackage#.#schemaElementClass# getAttributedElementClass() {",
 				"\treturn getNormalEdge().getAttributedElementClass();", "}");
 	}
+
+	@Override
+	protected String getSchemaTypeName() {
+		return "EdgeClass";
+	}
+
+	@Override
+	protected CodeBlock createGenericGetter(List<Attribute> attributes) {
+		return null;
+	}
+
+	@Override
+	protected CodeBlock createGenericSetter(List<Attribute> attributes) {
+		return null;
+	}
+
+	@Override
+	protected CodeBlock createFields(List<Attribute> attributes) {
+		return null;
+	}
+
 }

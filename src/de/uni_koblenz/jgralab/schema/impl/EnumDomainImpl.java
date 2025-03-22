@@ -1,13 +1,30 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/EnumDomainImpl.java/left.java
+ * Copyright (C) 2006-2011 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/EnumDomainImpl.java/base.java
+ *               ist@uni-koblenz.de
+=======
  * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/EnumDomainImpl.java/right.java
  *
  * For bug reports, documentation and further information, visit
  *
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/EnumDomainImpl.java/left.java
+ *                         http://jgralab.uni-koblenz.de
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/EnumDomainImpl.java/base.java
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+=======
  *                         https://github.com/jgralab/jgralab
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/EnumDomainImpl.java/right.java
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -48,11 +65,12 @@ import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.Package;
+import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
 
-public class EnumDomainImpl extends DomainImpl implements EnumDomain {
+public final class EnumDomainImpl extends DomainImpl implements EnumDomain {
 
 	/**
 	 * holds a list of the components of the enumeration
@@ -70,26 +88,60 @@ public class EnumDomainImpl extends DomainImpl implements EnumDomain {
 	 * @param constants
 	 *            holds a list of the components of the enumeration
 	 */
-	protected EnumDomainImpl(String sn, PackageImpl pkg, List<String> constants) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/EnumDomainImpl.java/left.java
+	protected EnumDomainImpl(String sn, Package pkg, List<String> constants) {
 		super(sn, pkg);
 		for (String c : constants) {
 			addConst(c);
 		}
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/EnumDomainImpl.java/base.java
+=======
+	EnumDomainImpl(String sn, PackageImpl pkg, List<String> constants) {
+		super(sn, pkg);
+		for (String c : constants) {
+			addConst(c);
+		}
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/EnumDomainImpl.java/right.java
 
 	@Override
 	public void addConst(String aConst) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/EnumDomainImpl.java/left.java
+		if(((SchemaImpl)getSchema()).isFinished()){
+			throw new SchemaException("No changes to finished schema!");
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/EnumDomainImpl.java/base.java
+		if (constants.contains(aConst)) {
+			throw new SchemaException("Try to add duplicate constant '" + aConst + "' to EnumDomain" + getName());
+=======
 		SchemaImpl s = (SchemaImpl) getSchema();
 		s.assertNotFinished();
 		if (constants.contains(aConst)) {
 			throw new SchemaException("Try to add duplicate constant '"
 					+ aConst + "' to EnumDomain" + getQualifiedName());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/EnumDomainImpl.java/right.java
 		}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/EnumDomainImpl.java/left.java
+		if (constants.contains(aConst)) {
+			throw new InvalidNameException("Try to add duplicate constant '"
+					+ aConst + "' to EnumDomain" + getQualifiedName());
+		}
+		if (!getSchema().isValidEnumConstant(aConst)) {
+			throw new InvalidNameException(aConst
+					+ " is not a valid enumeration constant.");
+		}
+		constants = constants.plus(aConst);
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/EnumDomainImpl.java/base.java
+		if (!getSchema().isValidEnumConstant(aConst))
+			throw new SchemaException(aConst + " is not a valid enumeration constant.");
+		constants.add(aConst);
+=======
 		if (!s.isValidEnumConstant(aConst)) {
 			throw new SchemaException(aConst
 					+ " is not a valid enumeration constant.");
 		}
 		constants = constants.plus(aConst);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/EnumDomainImpl.java/right.java
 	}
 
 	@Override

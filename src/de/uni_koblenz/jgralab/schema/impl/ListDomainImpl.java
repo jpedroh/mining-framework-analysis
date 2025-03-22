@@ -1,4 +1,60 @@
 /*
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/left.java
+ * JGraLab - The Java Graph Laboratory
+ * 
+ * Copyright (C) 2006-2011 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+ * 
+ * For bug reports, documentation and further information, visit
+ * 
+ *                         http://jgralab.uni-koblenz.de
+ * 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
+ * 
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/base.java
+ * JGraLab - The Java graph laboratory
+ * (c) 2006-2008 Institute for Software Technology
+ *               University of Koblenz-Landau, Germany
+ *
+ *               ist@uni-koblenz.de
+ *
+ * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+=======
  * JGraLab - The Java Graph Laboratory
  *
  * Copyright (C) 2006-2012 Institute for Software Technology
@@ -31,6 +87,7 @@
  * permission to convey the resulting work.  Corresponding Source for a
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/right.java
  */
 
 package de.uni_koblenz.jgralab.schema.impl;
@@ -55,7 +112,7 @@ import de.uni_koblenz.jgralab.schema.ListDomain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
 
-public class ListDomainImpl extends CollectionDomainImpl implements
+public final class ListDomainImpl extends CollectionDomainImpl implements
 ListDomain {
 
 	/**
@@ -66,43 +123,90 @@ ListDomain {
 	public static Set<Object> toSet(List<Object> aList) {
 		return new HashSet<Object>(aList);
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/left.java
 	protected ListDomainImpl(Schema schema, Domain aBaseDomain) {
 		super(LISTDOMAIN_NAME + "<"
 				+ aBaseDomain.getTGTypeName(schema.getDefaultPackage()) + ">",
-				(PackageImpl) schema.getDefaultPackage(), aBaseDomain);	
-		}
-
+				schema.getDefaultPackage(), aBaseDomain);
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/base.java
+	public ListDomainImpl(Schema schema, Domain aBaseDomain) {
+		this(schema, new QualifiedName("List<"
+				+ aBaseDomain.getTGTypeName(schema.getDefaultPackage()) + ">"),
+				aBaseDomain);
+=======
+	ListDomainImpl(Schema schema, Domain aBaseDomain) {
+		super(LISTDOMAIN_NAME + "<"
+				+ aBaseDomain.getTGTypeName(schema.getDefaultPackage()) + ">",
+				(PackageImpl) schema.getDefaultPackage(), aBaseDomain);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/right.java
+	}
+	@Override
+	public Set<Domain> getAllComponentDomains() {
+		HashSet<Domain> componentDomainSet = new HashSet<Domain>(1);
+		componentDomainSet.add(this.baseDomain);
+		return componentDomainSet;
+	}
 	@Override
 	public String getJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
 		return LISTDOMAIN_TYPE + "<"
 				+ this.baseDomain.getJavaClassName(schemaRootPackagePrefix) + ">";
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/left.java
 	@Override
 	public String getTransactionJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
 		return this.getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/base.java
+=======
+	@Override
+	public String getTransactionJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix) {
+		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/left.java
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
 		return this.getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/base.java
+=======
+	@Override
+	public String getJavaClassName(String schemaRootPackagePrefix) {
+		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/left.java
 	@Override
 	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
 		return this.getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/base.java
+=======
+	@Override
+	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
+		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/left.java
 	@Override
 	public String getVersionedClass(String schemaRootPackagePrefix) {
 		return "de.uni_koblenz.jgralab.impl.trans.VersionedReferenceImpl<"
 				+ this.getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
 				+ ">";
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/base.java
+=======
+	@Override
+	public String getVersionedClass(String schemaRootPackagePrefix) {
+		return "de.uni_koblenz.jgralab.impl.trans.VersionedReferenceImpl<"
+				+ getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
+				+ ">";
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/left.java
 	@Override
 	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
 			String graphIoVariableName) {
@@ -113,12 +217,24 @@ ListDomain {
 
 		return code;
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/base.java
+=======
+	@Override
+	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
+			String graphIoVariableName) {
+		CodeList code = new CodeList();
+		code.setVariable("init", "");
+		internalGetReadMethod(code, schemaPrefix, variableName,
+				graphIoVariableName);
 
+		return code;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/right.java
 	@Override
 	public String getTGTypeName(Package pkg) {
 		return LISTDOMAIN_NAME + "<" + this.baseDomain.getTGTypeName(pkg) + ">";
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/left.java
 	@Override
 	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName) {
@@ -129,13 +245,33 @@ ListDomain {
 
 		return code;
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/base.java
+=======
+	@Override
+	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
+			String variableName, String graphIoVariableName) {
+		CodeList code = new CodeList();
+		code.setVariable("name", variableName);
+		internalGetWriteMethod(code, schemaRootPackagePrefix, variableName,
+				graphIoVariableName);
 
+		return code;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/left.java
 	@Override
 	public String toString() {
 		return "domain " + LISTDOMAIN_NAME + "<" + this.baseDomain.toString() + ">";
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/base.java
+=======
+	@Override
+	public String toString() {
+		return "domain " + LISTDOMAIN_NAME + "<" + baseDomain.toString() + ">";
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/right.java
 	private void internalGetReadMethod(CodeList code, String schemaPrefix,
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/left.java
 			String variableName, String graphIoVariableName) {
 		code.setVariable("name", variableName);
 		code.setVariable("empty", ListDomain.EMPTY_LIST);
@@ -166,9 +302,43 @@ ListDomain {
 		code.add(new CodeSnippet("#io#.match(); ", "#name# = null;"));
 		code.addNoIndent(new CodeSnippet("} else {", "\t#name# = null;", "}"));
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/base.java
+			String variableName, String graphIoVariableName) 
+=======
+			String variableName, String graphIoVariableName) {
+		code.setVariable("name", variableName);
+		code.setVariable("empty", ListDomain.EMPTY_LIST);
+		code.setVariable("basedom",
+				getBaseDomain().getJavaClassName(schemaPrefix));
+		code.setVariable("basetype", getBaseDomain()
+				.getJavaAttributeImplementationTypeName(schemaPrefix));
+		code.setVariable("io", graphIoVariableName);
 
+		code.addNoIndent(new CodeSnippet("#init#"));
+		code.addNoIndent(new CodeSnippet("if (#io#.isNextToken(\"[\")) {"));
+		code.add(new CodeSnippet(LISTDOMAIN_TYPE
+				+ "<#basedom#> $#name# = #empty#;", "#io#.match(\"[\");",
+				"while (!#io#.isNextToken(\"]\")) {"));
+		if (getBaseDomain().isComposite()) {
+			code.add(new CodeSnippet("\t#basetype# $#name#Element = null;"));
+		} else {
+			code.add(new CodeSnippet("\t#basetype# $#name#Element;"));
+		}
+		code.add(
+				getBaseDomain().getReadMethod(schemaPrefix,
+						"$" + variableName + "Element", graphIoVariableName), 1);
+		code.add(new CodeSnippet("\t$#name# = $#name#.plus($#name#Element);",
+				"}", "#io#.match(\"]\");", "#name# = $#name#;"));
+		code.addNoIndent(new CodeSnippet(
+				"} else if (#io#.isNextToken(GraphIO.NULL_LITERAL)) {"));
+
+		code.add(new CodeSnippet("#io#.match(); ", "#name# = null;"));
+		code.addNoIndent(new CodeSnippet("} else {", "\t#name# = null;", "}"));
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/right.java
 	private void internalGetWriteMethod(CodeList code,
 			String schemaRootPackagePrefix, String variableName,
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/left.java
 			String graphIoVariableName) {
 		code.setVariable("basedom",
 				this.getBaseDomain().getJavaClassName(schemaRootPackagePrefix));
@@ -195,7 +365,37 @@ ListDomain {
 				+ ".writeIdentifier(GraphIO.NULL_LITERAL);"));
 		code.addNoIndent(new CodeSnippet("}"));
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/base.java
+			String graphIoVariableName) 
+=======
+			String graphIoVariableName) {
+		code.setVariable("basedom",
+				getBaseDomain().getJavaClassName(schemaRootPackagePrefix));
+		code.setVariable(
+				"basetype",
+				getBaseDomain().getJavaAttributeImplementationTypeName(
+						schemaRootPackagePrefix));
+		code.setVariable("io", graphIoVariableName);
 
+		String element = variableName + "Element";
+		element = element.replace('(', '_');
+		element = element.replace(')', '_');
+		code.setVariable("element", element);
+
+		code.addNoIndent(new CodeSnippet("if (#name# != null) {"));
+		code.add(new CodeSnippet("#io#.writeSpace();", "#io#.write(\"[\");",
+				"#io#.noSpace();", "for (#basetype# #element# : #name#) {"));
+		code.add(
+				getBaseDomain().getWriteMethod(schemaRootPackagePrefix,
+						code.getVariable("element"), graphIoVariableName), 1);
+		code.add(new CodeSnippet("}", "#io#.write(\"]\");", "#io#.space();"));
+		code.addNoIndent(new CodeSnippet("} else {"));
+		code.add(new CodeSnippet(graphIoVariableName
+				+ ".writeIdentifier(GraphIO.NULL_LITERAL);"));
+		code.addNoIndent(new CodeSnippet("}"));
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/left.java
 	@Override
 	public CodeBlock getTransactionReadMethod(String schemaPrefix,
 			String variableName, String graphIoVariableName) {
@@ -205,7 +405,19 @@ ListDomain {
 				graphIoVariableName);
 		return code;
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/base.java
+=======
+	@Override
+	public CodeBlock getTransactionReadMethod(String schemaPrefix,
+			String variableName, String graphIoVariableName) {
+		CodeList code = new CodeList();
+		code.setVariable("init", LISTDOMAIN_TYPE + "<#basedom#> #name# = null;");
+		internalGetReadMethod(code, schemaPrefix, variableName,
+				graphIoVariableName);
+		return code;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/left.java
 	@Override
 	public CodeBlock getTransactionWriteMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName) {
@@ -216,12 +428,24 @@ ListDomain {
 				graphIoVariableName);
 		return code;
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/base.java
+=======
+	@Override
+	public CodeBlock getTransactionWriteMethod(String schemaRootPackagePrefix,
+			String variableName, String graphIoVariableName) {
+		CodeList code = new CodeList();
+		code.setVariable("name", "get" + CodeGenerator.camelCase(variableName)
+				+ "()");
+		internalGetWriteMethod(code, schemaRootPackagePrefix, variableName,
+				graphIoVariableName);
+		return code;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/right.java
 	@Override
 	public String getInitialValue() {
 		return "null";
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/left.java
 	@Override
 	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
 		if (io.isNextToken("[")) {
@@ -241,7 +465,28 @@ ListDomain {
 			return null;
 		}
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/base.java
+=======
+	@Override
+	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
+		if (io.isNextToken("[")) {
+			PVector<Object> result = JGraLab.vector();
+			io.match("[");
+			while (!io.isNextToken("]")) {
+				Object listElement = null;
+				listElement = getBaseDomain().parseGenericAttribute(io);
+				result = result.plus(listElement);
+			}
+			io.match("]");
+			return result;
+		} else if (io.isNextToken(GraphIO.NULL_LITERAL)) {
+			io.match();
+			return null;
+		} else {
+			return null;
+		}
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/right.java
 	@SuppressWarnings("unchecked")
 	@Override
 	public void serializeGenericAttribute(GraphIO io, Object data)
@@ -250,18 +495,25 @@ ListDomain {
 			io.writeSpace();
 			io.write("[");
 			io.noSpace();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/left.java
 			for (Object value : (PVector<Object>) data) {
 				this.getBaseDomain().serializeGenericAttribute(io, value);
 			}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/base.java
+=======
+			for (Object value : (PVector<Object>) data) {
+				getBaseDomain().serializeGenericAttribute(io, value);
+			}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/right.java
 			io.write("]");
 			io.space();
 		} else {
 			io.writeIdentifier(GraphIO.NULL_LITERAL);
 		}
 	}
-
 	@Override
-	public boolean isConformGenericValue(Object value) {
+	public
+	@Override boolean isConformGenericValue(Object value) {
 		boolean result = true;
 		if (value == null) {
 			return result;
@@ -271,9 +523,16 @@ ListDomain {
 			return false;
 		}
 		Iterator<?> iterator = ((PVector<?>) value).iterator();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/left.java
 		while (iterator.hasNext() && result) {
 			result &= this.getBaseDomain().isConformGenericValue(iterator.next());
 		}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/base.java
+=======
+		while (iterator.hasNext() && result) {
+			result &= getBaseDomain().isConformGenericValue(iterator.next());
+		}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/ListDomainImpl.java/right.java
 		assert (!iterator.hasNext());
 		return result;
 	}

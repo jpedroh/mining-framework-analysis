@@ -1,13 +1,30 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/left.java
+ * Copyright (C) 2006-2011 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/base.java
+ *               ist@uni-koblenz.de
+=======
  * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/right.java
  *
  * For bug reports, documentation and further information, visit
  *
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/left.java
+ *                         http://jgralab.uni-koblenz.de
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/base.java
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+=======
  *                         https://github.com/jgralab/jgralab
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/right.java
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -97,9 +114,15 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	@Override
 	protected CodeBlock createHeader() {
 		addImports("#jgSchemaImplPackage#.#baseClassName#");
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/left.java
+		addImports("#jgSchemaPackage#.VertexClass");
+		addImports("java.lang.ref.WeakReference");
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/base.java
+=======
 		addImports("#jgSchemaPackage#.VertexClass");
 		addImports("#jgSchemaPackage#.EdgeClass");
 		addImports("java.lang.ref.WeakReference");
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/right.java
 		CodeSnippet code = new CodeSnippet(
 				true,
 				"/**",
@@ -120,6 +143,19 @@ public class SchemaCodeGenerator extends CodeGenerator {
 			code.add(createGraphFactoryMethods());
 		}
 		return code;
+	}
+
+	@Override
+	protected CodeBlock createFooter() {
+		CodeList footer = new CodeList();
+		// override equals and hashCode methods
+		footer.add(new CodeSnippet("", "@Override",
+				"public boolean equals(Object o) {",
+				"\treturn super.equals(o);", "}"));
+		footer.add(new CodeSnippet("", "@Override", "public int hashCode() {",
+				"\treturn super.hashCode();", "}"));
+		footer.addNoIndent(super.createFooter());
+		return footer;
 	}
 
 	private CodeBlock createGetDefaultGraphFactoryMethod() {
@@ -287,6 +323,66 @@ public class SchemaCodeGenerator extends CodeGenerator {
 
 	private CodeBlock createConstructor() {
 		CodeList code = new CodeList();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/left.java
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"/**",
+				" * the weak reference to the singleton instance",
+				" */",
+				"static WeakReference<#simpleClassName#> theInstance = new WeakReference<#simpleClassName#>(null);",
+				"",
+				"/**",
+				" * @return the singleton instance of #simpleClassName#",
+				" */",
+				"public static #simpleClassName# instance() {",
+				"\t#simpleClassName# s = theInstance.get();",
+				"\tif (s != null) {",
+				"\t\treturn s;",
+				"\t}",
+				"\tsynchronized (#simpleClassName#.class) {",
+				"\t\ts = theInstance.get();",
+				"\t\tif (s != null) {",
+				"\t\t\treturn s;",
+				"\t\t}",
+				"\t\ts = new #simpleClassName#();",
+				"\t\ttheInstance = new WeakReference<#simpleClassName#>(s);",
+				"\t}",
+				"\treturn s;",
+				"}",
+				"",
+				"/**",
+				" * Creates a #simpleClassName# and builds its schema classes.",
+				" * This constructor is private. Use the <code>instance()</code> method",
+				" * to acess the schema.", " */",
+				"private #simpleClassName#() {",
+				"\tsuper(\"#simpleClassName#\", \"#schemaPackage#\");"));
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/base.java
+		addImports("#jgSchemaPackage#.QualifiedName");
+		code
+				.addNoIndent(new CodeSnippet(
+						true,
+						"/**",
+						" * the singleton instance",
+						" */",
+						"static #simpleClassName# theInstance = null;",
+						"",
+						"/**",
+						" * @return the singleton instance of #simpleClassName#",
+						" */",
+						"public static #simpleClassName# instance() {",
+						"\tif (theInstance == null) {",
+						"\t\ttheInstance = new #simpleClassName#();",
+						"\t}",
+						"\treturn theInstance;",
+						"}",
+						"",
+						"/**",
+						" * Creates a #simpleClassName# and builds its schema classes.",
+						" * This constructor is private. Use the <code>instance()</code> method",
+						" * to acess the schema.", " */",
+						"private #simpleClassName#() {",
+						"\tsuper(new QualifiedName(\"#schemaPackage#\", \"#simpleClassName#\"));"));
+=======
 		code.addNoIndent(new CodeSnippet(
 				true,
 				"/**",
@@ -313,6 +409,7 @@ public class SchemaCodeGenerator extends CodeGenerator {
 				" * to access the schema.", " */",
 				"private #simpleClassName#() {",
 				"\tsuper(\"#simpleClassName#\", \"#schemaPackage#\");"));
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/right.java
 
 		code.add(createEnumDomains());
 		code.add(createCompositeDomains());
@@ -365,12 +462,45 @@ public class SchemaCodeGenerator extends CodeGenerator {
 		code.setVariable("aecVariable", "gc");
 		code.setVariable("schemaVariable", gc.getVariableName());
 		code.setVariable("gcAbstract", gc.isAbstract() ? "true" : "false");
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/left.java
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"{",
+				"\tGraphClass #gcVariable# = #schemaVariable# = createGraphClass(\"#gcName#\");",
+				"\t#gcVariable#.setAbstract(#gcAbstract#);"));
+		for (GraphClass superClass : gc.getDirectSuperClasses()) {
+			if (superClass.isInternal()) {
+				continue;
+			}
+			CodeSnippet s = new CodeSnippet(
+					"#gcVariable#.addSuperClass(getGraphClass(\"#superClassName#\"));");
+			s.setVariable("superClassName", superClass.getQualifiedName());
+			code.add(s);
+		}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/base.java
+		code
+				.addNoIndent(new CodeSnippet(
+						true,
+						"{",
+						"\tGraphClass #gcVariable# = #schemaVariable# = createGraphClass(new QualifiedName(\"#gcName#\"));",
+						"\t#gcVariable#.setAbstract(#gcAbstract#);"));
+		for (AttributedElementClass superClass : gc.getDirectSuperClasses()) {
+			if (superClass.isInternal()) {
+				continue;
+			}
+			CodeSnippet s = new CodeSnippet(
+					"#gcVariable#.addSuperClass(getGraphClass(new QualifiedName(\"#superClassName#\")));");
+			s.setVariable("superClassName", superClass.getQualifiedName());
+			code.add(s);
+		}
+=======
 		code.addNoIndent(new CodeSnippet(
 				true,
 				"{",
 				"\tGraphClass #gcVariable# = #schemaVariable# = createGraphClass(\"#gcName#\");",
 				"\t#vcVariable# = #gcVariable#.getDefaultVertexClass();",
 				"\t#ecVariable# = #gcVariable#.getDefaultEdgeClass();"));
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/right.java
 		code.add(createAttributes(gc));
 		code.add(createConstraints(gc));
 		code.add(createComments("gc", gc));
@@ -410,7 +540,13 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	private CodeBlock createEdgeClasses(GraphClass gc) {
 		CodeList code = new CodeList();
 		for (EdgeClass ec : schema.getGraphClass().getEdgeClasses()) {
-			if (!ec.isInternal()) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/left.java
+			if (( ec.getGraphClass() == gc)) {
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/base.java
+			if (( !ec.isInternal() && ec.getGraphClass() == gc)) {
+=======
+			if (( !ec.isInternal())) {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/right.java
 				code.addNoIndent(createEdgeClass(ec));
 			}
 		}
@@ -484,7 +620,19 @@ public class SchemaCodeGenerator extends CodeGenerator {
 	private CodeBlock createVertexClasses(GraphClass gc) {
 		CodeList code = new CodeList();
 		for (VertexClass vc : schema.getVertexClasses()) {
-			if (!vc.isInternal()) {
+			if (vc.isInternal()) {
+				CodeSnippet s = new CodeSnippet();
+				s.setVariable("schemaVariable", vc.getVariableName());
+				s.add("@SuppressWarnings(\"unused\")");
+				s.add("VertexClass #schemaVariable# = getDefaultVertexClass();");
+				code.addNoIndent(s);
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/left.java
+			} else if ( vc.getGraphClass() == gc) {
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/base.java
+			} else if ( !vc.isInternal() && vc.getGraphClass() == gc) {
+=======
+			} else if ( !vc.isInternal()) {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/SchemaCodeGenerator.java/right.java
 				code.addNoIndent(createVertexClass(vc));
 			}
 		}

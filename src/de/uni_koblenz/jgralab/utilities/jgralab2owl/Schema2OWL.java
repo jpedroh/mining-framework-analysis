@@ -1,4 +1,60 @@
 /*
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/utilities/jgralab2owl/Schema2OWL.java/left.java
+ * JGraLab - The Java Graph Laboratory
+ * 
+ * Copyright (C) 2006-2011 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+ * 
+ * For bug reports, documentation and further information, visit
+ * 
+ *                         http://jgralab.uni-koblenz.de
+ * 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
+ * 
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/utilities/jgralab2owl/Schema2OWL.java/base.java
+ * JGraLab - The Java graph laboratory
+ * (c) 2006-2008 Institute for Software Technology
+ *               University of Koblenz-Landau, Germany
+ *
+ *               ist@uni-koblenz.de
+ *
+ * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+=======
  * JGraLab - The Java Graph Laboratory
  *
  * Copyright (C) 2006-2012 Institute for Software Technology
@@ -31,6 +87,7 @@
  * permission to convey the resulting work.  Corresponding Source for a
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/utilities/jgralab2owl/Schema2OWL.java/right.java
  */
 
 package de.uni_koblenz.jgralab.utilities.jgralab2owl;
@@ -524,6 +581,48 @@ class Schema2OWL {
 	 * @see #writeDefaultGECProperties()
 	 * @see #writeRoleElement(boolean from, String gecStringRep)
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/utilities/jgralab2owl/Schema2OWL.java/left.java
+	private void convertGraphClasses(Schema schema) throws XMLStreamException {
+		// create OWL class for Default GraphClass
+		GraphClass gc = schema.getDefaultGraphClass();
+		writeOwlClassStartElement(gc.getQualifiedName());
+
+		// if gc is abstract and has subclasses, create union of subclasses
+		if (gc.isAbstract() && !gc.getDirectSubClasses().isEmpty()) {
+			writeUnionOfSubclasses(gc);
+		}
+
+		writer.writeEndElement();
+
+		// create OWL class for "other" GraphClass
+		gc = schema.getGraphClass();
+		writeOwlClassStartElement(gc.getQualifiedName());
+
+		// create references to superclasses
+		for (GraphClass superGC : gc.getDirectSuperClasses()) {
+			writeRdfsSubClassOfEmptyElement("#" + superGC.getQualifiedName());
+		}
+
+		// if gc is abstract and has subclasses, create union of subclasses
+		if (gc.isAbstract() && !gc.getDirectSubClasses().isEmpty()) {
+			writeUnionOfSubclasses(gc);
+		}
+
+		writer.writeEndElement();
+
+		convertAttributes(gc);
+		convertVertexClasses(gc);
+		convertEdgeClasses(gc);
+
+		writeDefaultGECProperties();
+
+		if (!edgeClasses2Properties) {
+			writeRoleElement(true);
+			writeRoleElement(false);
+		}
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/utilities/jgralab2owl/Schema2OWL.java/base.java
+=======
 	private void convertGraphClasses(Schema schema) throws XMLStreamException {
 		// create OWL class for "other" GraphClass
 		GraphClass gc = schema.getGraphClass();
@@ -542,6 +641,7 @@ class Schema2OWL {
 			writeRoleElement(false);
 		}
 	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/utilities/jgralab2owl/Schema2OWL.java/right.java
 
 	/**
 	 * Converts all {@code VertexClass}es of the given {@code GraphClass gc}
@@ -607,6 +707,7 @@ class Schema2OWL {
 	 * 
 	 * @see #convertAttributes(AttributedElementClass aec)
 	 */
+
 	private void convertVertexClasses(GraphClass gc) throws XMLStreamException {
 		// for each VertexClass in gc
 		for (VertexClass vc : gc.getVertexClasses()) {
@@ -656,6 +757,7 @@ class Schema2OWL {
 	 * @see #convertEdgeClass2OWLProperty(EdgeClass ec)
 	 * @see #convertEdgeClass2OWLClass(EdgeClass ec)
 	 */
+
 	private void convertEdgeClasses(GraphClass gc) throws XMLStreamException {
 		// for each GraphElementClass gec contained in GraphClass "gc"
 		for (GraphElementClass<?, ?> gec : gc.getGraphElementClasses()) {
@@ -735,6 +837,7 @@ class Schema2OWL {
 	 * 
 	 * @see #writeMultiplicityElement(boolean from, EdgeClass ec)
 	 */
+
 	private void convertEdgeClass2OWLProperty(EdgeClass ec)
 			throws XMLStreamException {
 		// write normal property
@@ -912,6 +1015,7 @@ class Schema2OWL {
 	 * @see #writeAggregateElement()
 	 * @see #writeAggregateSubClassElement(Element elem)
 	 */
+
 	private void convertEdgeClass2OWLClass(EdgeClass ec)
 			throws XMLStreamException {
 		writeOwlClassStartElement(ec.getQualifiedName() + edgeClassNameSuffix);
@@ -978,6 +1082,7 @@ class Schema2OWL {
 	 *            The {@code EdgeClass} for which the Property shall be created.
 	 * @throws XMLStreamException
 	 */
+
 	private void writeIncidentVertexClassElement(boolean from, EdgeClass ec)
 			throws XMLStreamException {
 		String direction;
@@ -1032,6 +1137,7 @@ class Schema2OWL {
 	 *            be created.
 	 * @throws XMLStreamException
 	 */
+
 	private void writeMultiplicityElement(boolean from, EdgeClass ec)
 			throws XMLStreamException {
 		int lowerBound;
@@ -1097,6 +1203,7 @@ class Schema2OWL {
 	 * 
 	 * @throws XMLStreamException
 	 */
+
 	private void writeAggregateElement() throws XMLStreamException {
 		writeOwlObjectPropertyStartElement("aggregate");
 
@@ -1127,6 +1234,7 @@ class Schema2OWL {
 	 *            subclass restriction shall be created.
 	 * @throws XMLStreamException
 	 */
+
 	private void writeAggregateSubClassElement() throws XMLStreamException {
 		writeRdfsSubClassOfStartElement();
 		writeOwlRestrictionStartElement();
@@ -1169,6 +1277,7 @@ class Schema2OWL {
 	 *            converted.
 	 * @throws XMLStreamException
 	 */
+
 	private void convertAttributes(AttributedElementClass<?, ?> aec)
 			throws XMLStreamException {
 		String aecElemName;
@@ -1254,6 +1363,7 @@ class Schema2OWL {
 	 *            side or for the role name on the "to" side shall be created.
 	 * @throws XMLStreamException
 	 */
+
 	private void writeRoleElement(boolean from) throws XMLStreamException {
 		String direction;
 
@@ -1312,6 +1422,7 @@ class Schema2OWL {
 	 * 
 	 * @throws XMLStreamException
 	 */
+
 	private void writeDefaultGECProperties() throws XMLStreamException {
 		for (String gecName : defaultGECs) {
 			if (!(gecName.equals("Edge") && edgeClasses2Properties)) {
@@ -1387,6 +1498,7 @@ class Schema2OWL {
 	 *            The name of the {@code GraphElementClass}.
 	 * @throws XMLStreamException
 	 */
+
 	private void writeDefaultGECCardinality(String gecName)
 			throws XMLStreamException {
 		writeRdfsSubClassOfStartElement();
@@ -1418,7 +1530,39 @@ class Schema2OWL {
 	 *            element shall be created.
 	 * @throws XMLStreamException
 	 */
+
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/utilities/jgralab2owl/Schema2OWL.java/left.java
+	private void writeUnionOfSubclasses(AttributedElementClass<?, ?> aec)
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/utilities/jgralab2owl/Schema2OWL.java/base.java
+	private void writeUnionOfSubclasses
+=======
 	private void writeUnionOfSubclasses(GraphElementClass<?, ?> aec)
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/utilities/jgralab2owl/Schema2OWL.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/utilities/jgralab2owl/Schema2OWL.java/left.java
+			throws XMLStreamException {
+		// create unionOf element
+		writer.writeStartElement(JGraLab2OWL.owlNS, "unionOf");
+		writer.writeAttribute(JGraLab2OWL.rdfNS, "parseType", "Collection");
+
+		// create owl:Class element for every direct subclass of aec and build
+		// the subtree
+		for (AttributedElementClass<?, ?> subclass : aec.getDirectSubClasses()) {
+			writeOwlClassEmptyElement();
+
+			if (subclass instanceof EdgeClass) {
+				writer.writeAttribute(JGraLab2OWL.rdfNS, "about",
+						subclass.getQualifiedName() + edgeClassNameSuffix);
+			} else {
+				writer.writeAttribute(JGraLab2OWL.rdfNS, "about",
+						subclass.getQualifiedName());
+			}
+		}
+
+		writer.writeEndElement();
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/utilities/jgralab2owl/Schema2OWL.java/base.java
+			throws XMLStreamException 
+=======
 			throws XMLStreamException {
 		// create unionOf element
 		writer.writeStartElement(JGraLab2OWL.owlNS, "unionOf");
@@ -1440,12 +1584,14 @@ class Schema2OWL {
 
 		writer.writeEndElement();
 	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/utilities/jgralab2owl/Schema2OWL.java/right.java
 
 	/**
 	 * Writes an element {@code <owl:Class/>}.
 	 * 
 	 * @throws XMLStreamException
 	 */
+
 	private void writeOwlClassEmptyElement() throws XMLStreamException {
 		writer.writeEmptyElement(JGraLab2OWL.owlNS, "Class");
 	}
@@ -1457,6 +1603,7 @@ class Schema2OWL {
 	 *            The value for the {@code rdf:ID"} attribute.
 	 * @throws XMLStreamException
 	 */
+
 	private void writeOwlClassEmptyElement(String id) throws XMLStreamException {
 		writer.writeEmptyElement(JGraLab2OWL.owlNS, "Class");
 		writer.writeAttribute(JGraLab2OWL.rdfNS, "ID", id);
@@ -1469,6 +1616,7 @@ class Schema2OWL {
 	 *            The value for the {@code rdf:ID"} attribute.
 	 * @throws XMLStreamException
 	 */
+
 	private void writeOwlClassStartElement(String id) throws XMLStreamException {
 		writer.writeStartElement(JGraLab2OWL.owlNS, "Class");
 		writer.writeAttribute(JGraLab2OWL.rdfNS, "ID", id);
@@ -1479,6 +1627,7 @@ class Schema2OWL {
 	 * 
 	 * @throws XMLStreamException
 	 */
+
 	private void writeOwlObjectPropertyStartElement() throws XMLStreamException {
 		writer.writeStartElement(JGraLab2OWL.owlNS, "ObjectProperty");
 	}
@@ -1490,6 +1639,7 @@ class Schema2OWL {
 	 *            The value for the {@code rdf:ID} attribute.
 	 * @throws XMLStreamException
 	 */
+
 	private void writeOwlObjectPropertyStartElement(String id)
 			throws XMLStreamException {
 		writer.writeStartElement(JGraLab2OWL.owlNS, "ObjectProperty");
@@ -1504,6 +1654,7 @@ class Schema2OWL {
 	 *            The value for the {@code rdf:ID} attribute.
 	 * @throws XMLStreamException
 	 */
+
 	private void writeOwlDatatypePropertyStartElement(String id)
 			throws XMLStreamException {
 		writer.writeStartElement(JGraLab2OWL.owlNS, "DatatypeProperty");
@@ -1518,6 +1669,7 @@ class Schema2OWL {
 	 *            The value for the {@code rdf:resource} attribute.
 	 * @throws XMLStreamException
 	 */
+
 	private void writeRdfsDomainEmptyElement(String resource)
 			throws XMLStreamException {
 		writer.writeEmptyElement(JGraLab2OWL.rdfsNS, "domain");
@@ -1529,6 +1681,7 @@ class Schema2OWL {
 	 * 
 	 * @throws XMLStreamException
 	 */
+
 	private void writeRdfsRangeEmptyElement() throws XMLStreamException {
 		writer.writeEmptyElement(JGraLab2OWL.rdfsNS, "range");
 	}
@@ -1541,6 +1694,7 @@ class Schema2OWL {
 	 *            The value for the {@code rdf:resource} attribute.
 	 * @throws XMLStreamException
 	 */
+
 	private void writeRdfsRangeEmptyElement(String resource)
 			throws XMLStreamException {
 		writer.writeEmptyElement(JGraLab2OWL.rdfsNS, "range");
@@ -1555,6 +1709,7 @@ class Schema2OWL {
 	 *            The value for the {@code rdf:resource} attribute.
 	 * @throws XMLStreamException
 	 */
+
 	private void writeRdfTypeEmptyElement(String resource)
 			throws XMLStreamException {
 		writer.writeEmptyElement(JGraLab2OWL.rdfNS, "type");
@@ -1566,6 +1721,7 @@ class Schema2OWL {
 	 * 
 	 * @throws XMLStreamException
 	 */
+
 	private void writeRdfsSubClassOfStartElement() throws XMLStreamException {
 		writer.writeStartElement(JGraLab2OWL.rdfsNS, "subClassOf");
 	}
@@ -1578,6 +1734,7 @@ class Schema2OWL {
 	 *            The value for the {@code rdf:resource} attribute.
 	 * @throws XMLStreamException
 	 */
+
 	private void writeRdfsSubClassOfEmptyElement(String resource)
 			throws XMLStreamException {
 		writer.writeEmptyElement(JGraLab2OWL.rdfsNS, "subClassOf");
@@ -1592,6 +1749,7 @@ class Schema2OWL {
 	 *            The value for the {@code rdf:resource} attribute.
 	 * @throws XMLStreamException
 	 */
+
 	private void writeRdfsSubPropertyOfEmptyElement(String resource)
 			throws XMLStreamException {
 		writer.writeEmptyElement(JGraLab2OWL.rdfsNS, "subPropertyOf");
@@ -1603,6 +1761,7 @@ class Schema2OWL {
 	 * 
 	 * @throws XMLStreamException
 	 */
+
 	private void writeOwlRestrictionStartElement() throws XMLStreamException {
 		writer.writeStartElement(JGraLab2OWL.owlNS, "Restriction");
 	}
@@ -1615,6 +1774,7 @@ class Schema2OWL {
 	 *            The value for the {@code rdf:resource} attribute.
 	 * @throws XMLStreamException
 	 */
+
 	private void writeOwlOnPropertyEmptyElement(String resource)
 			throws XMLStreamException {
 		writer.writeEmptyElement(JGraLab2OWL.owlNS, "onProperty");
@@ -1629,6 +1789,7 @@ class Schema2OWL {
 	 *            The value for the {@code rdf:resource} attribute.
 	 * @throws XMLStreamException
 	 */
+
 	private void writeOwlInverseOfEmptyElement(String resource)
 			throws XMLStreamException {
 		writer.writeEmptyElement(JGraLab2OWL.owlNS, "inverseOf");
@@ -1641,6 +1802,7 @@ class Schema2OWL {
 	 * 
 	 * @throws XMLStreamException
 	 */
+
 	private void writeOwlCardinalityStartElement() throws XMLStreamException {
 		writer.writeStartElement(JGraLab2OWL.owlNS, "cardinality");
 		writer.writeAttribute(JGraLab2OWL.rdfNS, "datatype", JGraLab2OWL.xsdNS
@@ -1653,6 +1815,7 @@ class Schema2OWL {
 	 * 
 	 * @throws XMLStreamException
 	 */
+
 	private void writeOwlMaxCardinalityStartElement() throws XMLStreamException {
 		writer.writeStartElement(JGraLab2OWL.owlNS, "maxCardinality");
 		writer.writeAttribute(JGraLab2OWL.rdfNS, "datatype", JGraLab2OWL.xsdNS
@@ -1665,9 +1828,191 @@ class Schema2OWL {
 	 * 
 	 * @throws XMLStreamException
 	 */
+
 	private void writeOwlMinCardinalityStartElement() throws XMLStreamException {
 		writer.writeStartElement(JGraLab2OWL.owlNS, "minCardinality");
 		writer.writeAttribute(JGraLab2OWL.rdfNS, "datatype", JGraLab2OWL.xsdNS
 				+ "nonNegativeInteger");
 	}
+
+	/**
+	 * Writes a subclass restriction restricting the cardinality of the Property
+	 * <i>gecName</i>{@code ClassIsIn}<i>gcName</i> to 1. This means that every
+	 * {@code GraphElementClass} individual and individuals of its subclasses
+	 * only belong to one graph.<br>
+	 * <br>
+	 * XML-code written:<br>
+	 * 
+	 * <pre>
+	 *        &lt;rdfs:subClassOf&gt;
+	 *            &lt;owl:Restriction&gt;
+	 *                &lt;owl:onProperty rdf:resource=&quot;#&lt;i&gt;gecName&lt;/i&gt;ClassIsIn&lt;i&gt;gcName&lt;/i&gt;&quot;/&gt;
+	 *                &lt;owl:cardinality rdf:datatype=&quot;http://www.w3.org/2001/XMLSchema#nonNegativeInteger&quot;&gt;1&lt;/owl:cardinality&gt;
+	 *            &lt;/owl:Restriction&gt;
+	 *        &lt;/rdfs:subClassOf&gt;
+	 * </pre>
+	 * 
+	 * @param gecName
+	 *            The name of the {@code GraphElementClass}.
+	 * @throws XMLStreamException
+	 */
+
+	/**
+	 * Writes an owl:unionOf element which contains a child owl:Class element
+	 * for every direct subclass of the {@code AttributedElementClass aec}. This
+	 * is a representation for abstract {@code AttributedElementClasses} in OWL.
+	 * 
+	 * @param aec
+	 *            The {@code AttributedElementClass} for which the owl:unionOf
+	 *            element shall be created.
+	 * @throws XMLStreamException
+	 */
+
+	/**
+	 * Writes an element {@code <owl:Class/>}.
+	 * 
+	 * @throws XMLStreamException
+	 */
+
+	/**
+	 * Writes an element {@code <owl:Class rdf:ID = }<i>id</i> {@code />}
+	 * 
+	 * @param id
+	 *            The value for the {@code rdf:ID"} attribute.
+	 * @throws XMLStreamException
+	 */
+
+	/**
+	 * Writes an element {@code <owl:Class rdf:ID = }<i>id</i> {@code >}
+	 * 
+	 * @param id
+	 *            The value for the {@code rdf:ID"} attribute.
+	 * @throws XMLStreamException
+	 */
+
+	/**
+	 * Writes an element {@code <owl:ObjectProperty>}.
+	 * 
+	 * @throws XMLStreamException
+	 */
+
+	/**
+	 * Writes an element {@code <owl:ObjectProperty rdf:ID = } <i>id</i>{@code >}
+	 * 
+	 * @param id
+	 *            The value for the {@code rdf:ID} attribute.
+	 * @throws XMLStreamException
+	 */
+
+	/**
+	 * Writes an element {@code <owl:DatatypeProperty rdf:ID = } <i>id</i>
+	 * {@code >}
+	 * 
+	 * @param id
+	 *            The value for the {@code rdf:ID} attribute.
+	 * @throws XMLStreamException
+	 */
+
+	/**
+	 * Writes an element {@code <rdfs:domain rdf:resource = } <i>resource</i>
+	 * {@code />}
+	 * 
+	 * @param resource
+	 *            The value for the {@code rdf:resource} attribute.
+	 * @throws XMLStreamException
+	 */
+
+	/**
+	 * Writes an element {@code <rdfs:range/>}.
+	 * 
+	 * @throws XMLStreamException
+	 */
+
+	/**
+	 * Writes an element {@code <rdfs:range rdf:resource = } <i>resource</i>
+	 * {@code />}
+	 * 
+	 * @param resource
+	 *            The value for the {@code rdf:resource} attribute.
+	 * @throws XMLStreamException
+	 */
+
+	/**
+	 * Writes an element {@code <rdf:type rdf:resource = } <i>resource</i>
+	 * {@code />}
+	 * 
+	 * @param resource
+	 *            The value for the {@code rdf:resource} attribute.
+	 * @throws XMLStreamException
+	 */
+
+	/**
+	 * Writes an Element {@code <rdfs:subClassOf>}.
+	 * 
+	 * @throws XMLStreamException
+	 */
+
+	/**
+	 * Writes an Element {@code <rdfs:subClassOf rdf:resource = }
+	 * <i>resource</i>{@code />}
+	 * 
+	 * @param resource
+	 *            The value for the {@code rdf:resource} attribute.
+	 * @throws XMLStreamException
+	 */
+
+	/**
+	 * Writes an Element {@code <rdfs:subPropertyOf rdf:resource = * }
+	 * <i>resource</i>{@code />}
+	 * 
+	 * @param resource
+	 *            The value for the {@code rdf:resource} attribute.
+	 * @throws XMLStreamException
+	 */
+
+	/**
+	 * Writes an Element {@code <owl:Restriction>}.
+	 * 
+	 * @throws XMLStreamException
+	 */
+
+	/**
+	 * Writes an Element {@code <owl:onProperty rdf:resource = } <i>resource</i>
+	 * {@code />}
+	 * 
+	 * @param resource
+	 *            The value for the {@code rdf:resource} attribute.
+	 * @throws XMLStreamException
+	 */
+
+	/**
+	 * Writes an Element {@code <owl:inverseOf rdf:resource = } <i>resource</i>
+	 * {@code />}
+	 * 
+	 * @param resource
+	 *            The value for the {@code rdf:resource} attribute.
+	 * @throws XMLStreamException
+	 */
+
+	/**
+	 * Writes an Element {@code <owl:cardinality rdf:datatype =
+	 * "http://www.w3.org/2001/XMLSchema#nonNegativeInteger">}.
+	 * 
+	 * @throws XMLStreamException
+	 */
+
+	/**
+	 * Writes an Element {@code <owl:maxCardinality rdf:datatype =
+	 * "http://www.w3.org/2001/XMLSchema#nonNegativeInteger">}.
+	 * 
+	 * @throws XMLStreamException
+	 */
+
+	/**
+	 * Writes an Element {@code <owl:minCardinality rdf:datatype =
+	 * "http://www.w3.org/2001/XMLSchema#nonNegativeInteger">}.
+	 * 
+	 * @throws XMLStreamException
+	 */
+
 }

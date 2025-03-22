@@ -1,13 +1,30 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/left.java
+ * Copyright (C) 2006-2011 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/base.java
+ *               ist@uni-koblenz.de
+=======
  * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/right.java
  *
  * For bug reports, documentation and further information, visit
  *
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/left.java
+ *                         http://jgralab.uni-koblenz.de
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/base.java
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+=======
  *                         https://github.com/jgralab/jgralab
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/right.java
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -39,19 +56,26 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.schema.Attribute;
+import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.EnumDomain;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
-
+import de.uni_koblenz.jgralab.schema.VertexClass;
+/**
+ * TODO add comment
+ *
+ * @author ist@uni-koblenz.de
+ *
+ */
 /**
  * TODO add comment
  * 
  * @author ist@uni-koblenz.de
  * 
  */
-public abstract class AttributedElementCodeGenerator<SC extends AttributedElementClass<SC, IC>, IC extends AttributedElement<SC, IC>>
+public abstract abstract class AttributedElementCodeGenerator<SC extends AttributedElementClass<SC, IC>, IC extends AttributedElement<SC, IC>>
 		extends CodeGenerator {
 
 	/**
@@ -62,14 +86,31 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 	/**
 	 * the AttributedElementClass to generate code for
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/left.java
+	protected AttributedElementClass<?, ?> aec;
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/base.java
+=======
 	protected SC aec;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/right.java
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/left.java
+	protected AttributedElementCodeGenerator(AttributedElementClass<?, ?> attributedElementClass,
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/base.java
+	protected AttributedElementCodeGenerator(AttributedElementClass attributedElementClass,
+=======
 	protected AttributedElementCodeGenerator(SC attributedElementClass,
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/right.java
 			String schemaRootPackageName, CodeGeneratorConfiguration config) {
 		super(schemaRootPackageName, attributedElementClass.getPackageName(),
 				config);
 		aec = attributedElementClass;
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/left.java
+		rootBlock.setVariable("schemaTypeName", getSchemaTypeName(aec));
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/base.java
+		rootBlock.setVariable("ecName", aec.getSimpleName());
+=======
 		rootBlock.setVariable("schemaTypeName", getSchemaTypeName());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/right.java
 		rootBlock.setVariable("qualifiedClassName", aec.getQualifiedName());
 		rootBlock.setVariable("schemaName", aec.getSchema().getName());
 		rootBlock.setVariable("schemaVariableName", aec.getVariableName());
@@ -89,18 +130,45 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 		interfaces.add(aec.getQualifiedName());
 		rootBlock.setVariable("isAbstractClass", aec.isAbstract() ? "true"
 				: "false");
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/left.java
+		for (AttributedElementClass<?, ?> superClass : attributedElementClass
+				.getDirectSuperClasses()) {
+			interfaces.add(superClass.getQualifiedName());
+		}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/base.java
+		for (AttributedElementClass superClass : attributedElementClass
+				.getAllSuperClasses()) {
+			interfaces.add(superClass.getQualifiedName());
+		}
+		if (interfaces.contains("Aggregation")) {
+			interfaces.remove("Edge");
+		}
+		if (interfaces.contains("Composition")) {
+			interfaces.remove("Aggregation");
+		}
+=======
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/right.java
 	}
 
-	protected abstract String getSchemaTypeName();
+	private static String getSchemaTypeName(AttributedElementClass<?, ?> aec) {
+		if (aec instanceof VertexClass) {
+			return "VertexClass";
+		} else if (aec instanceof EdgeClass) {
+			return "EdgeClass";
+		} else {
+			return "GraphClass";
+		}
+	}
 
 	/**
 	 * Returns the absolute name of the given AttributdelementClass. The name is
 	 * composed of the package-prefix of the schema the class belongs to and the
 	 * qualified name of the class
-	 * 
+	 *
 	 * @param aec
 	 * @return
 	 */
+
 	protected String absoluteName(AttributedElementClass<?, ?> aec) {
 		return schemaRootPackageName + "." + aec.getQualifiedName();
 	}
@@ -205,6 +273,7 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 	 * @return true if at least one own or inherited attribute has a default
 	 *         value.
 	 */
+
 	protected boolean hasDefaultAttributeValues() {
 		for (Attribute attr : aec.getAttributeList()) {
 			if (attr.getDefaultValueAsString() != null) {
@@ -226,6 +295,23 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 
 	protected CodeBlock createGenericGetter(List<Attribute> attributes) {
 		CodeList code = new CodeList();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/left.java
+		addImports("#jgPackage#.NoSuchAttributeException");
+		CodeSnippet snip = new CodeSnippet(true);
+		code.addNoIndent(snip);
+		if (!attrSet.isEmpty()) {
+			snip.add("@SuppressWarnings(\"unchecked\")");
+		}
+		snip.add("public <T> T getAttribute(String attributeName) {");
+		for (Attribute attr : attrSet) {
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/base.java
+	
+		code
+				.addNoIndent(new CodeSnippet(
+						true,
+						"public Object getAttribute(String attributeName) throws NoSuchFieldException {"));
+		for (Attribute attr : attrSet) {
+=======
 		addImports("#jgPackage#.NoSuchAttributeException");
 		CodeSnippet snip = new CodeSnippet(true);
 		code.addNoIndent(snip);
@@ -234,6 +320,7 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 		}
 		snip.add("public <T> T getAttribute(String attributeName) {");
 		for (Attribute attr : attributes) {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/right.java
 			CodeSnippet s = new CodeSnippet();
 			if (attr.getDomain().isPrimitive()) {
 				s.setVariable(
@@ -331,6 +418,120 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 		return code;
 	}
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/left.java
+	protected CodeBlock createGettersAndSetters(Set<Attribute> attrSet) {
+		CodeList code = new CodeList();
+		for (Attribute attr : attrSet) {
+			code.addNoIndent(createGetter(attr));
+			code.addNoIndent(createSetter(attr));
+		}
+		return code;
+	}
+
+	protected CodeBlock createReadAttributesFromStringMethod(
+			Set<Attribute> attrSet) {
+		CodeList code = new CodeList();
+		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
+				"#jgPackage#.NoSuchAttributeException");
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public void readAttributeValueFromString(String attributeName, String value) throws GraphIOException {"));
+
+		if (attrSet != null) {
+			for (Attribute attribute : attrSet) {
+				CodeList a = new CodeList();
+				a.setVariable("variableName", attribute.getName());
+				a.setVariable("setterName", "set_" + attribute.getName());
+				a.addNoIndent(new CodeSnippet(
+						"if (attributeName.equals(\"#variableName#\")) {",
+						"\tGraphIO io = GraphIO.createStringReader(value, getSchema());"));
+				if (currentCycle.isTransImpl()) {
+					CodeSnippet readBlock = new CodeSnippet();
+					readBlock.setVariable("variableType", attribute.getDomain()
+							.getJavaClassName(schemaRootPackageName));
+					readBlock.add("#variableType# tmpVar = null;");
+					a.add(readBlock);
+					a.add(attribute.getDomain().getReadMethod(
+							schemaRootPackageName, "tmpVar", "io"));
+					a.addNoIndent(new CodeSnippet("\t#setterName#(tmpVar);",
+							"\treturn;", "}"));
+				}
+				if (currentCycle.isStdImpl() || currentCycle.isDbImpl()) {
+					a.add(attribute.getDomain().getReadMethod(
+							schemaRootPackageName, "_" + attribute.getName(),
+							"io"));
+					a.addNoIndent(new CodeSnippet(
+							"\t#setterName#(_#variableName#);", "\treturn;",
+							"}"));
+				}
+				code.add(a);
+			}
+		}
+		code.add(new CodeSnippet(
+				"throw new NoSuchAttributeException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
+		code.addNoIndent(new CodeSnippet("}"));
+		return code;
+	}
+	protected CodeBlock createWriteAttributeToStringMethod(
+			Set<Attribute> attrSet) {
+		CodeList code = new CodeList();
+		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
+				"#jgPackage#.NoSuchAttributeException");
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public String writeAttributeValueToString(String attributeName) throws IOException, GraphIOException {"));
+		if (attrSet != null) {
+			for (Attribute attribute : attrSet) {
+				CodeList a = new CodeList();
+				a.setVariable("variableName", attribute.getName());
+				a.setVariable("setterName", "set_" + attribute.getName());
+				a.addNoIndent(new CodeSnippet(
+						"if (attributeName.equals(\"#variableName#\")) {",
+						"\tGraphIO io = GraphIO.createStringWriter(getSchema());"));
+				if (currentCycle.isTransImpl()) {
+					a.add(attribute.getDomain().getTransactionWriteMethod(
+							schemaRootPackageName, "_" + attribute.getName(),
+							"io"));
+				}
+				if (currentCycle.isStdImpl() || currentCycle.isDbImpl()) {
+					a.add(attribute.getDomain().getWriteMethod(
+							schemaRootPackageName, "_" + attribute.getName(),
+							"io"));
+				}
+				a.addNoIndent(new CodeSnippet(
+						"\treturn io.getStringWriterResult();", "}"));
+				code.add(a);
+			}
+		}
+		code.add(new CodeSnippet(
+				"throw new NoSuchAttributeException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
+		code.addNoIndent(new CodeSnippet("}"));
+		return code;
+	}
+	protected CodeBlock createGetVersionedAttributesMethod(
+			SortedSet<Attribute> attributeList) {
+		CodeList code = new CodeList();
+		if (currentCycle.isTransImpl()) {
+			CodeSnippet codeSnippet = new CodeSnippet();
+			codeSnippet
+					.add("public java.util.Set<#jgTransPackage#.VersionedDataObject<?>> attributes() {");
+			codeSnippet
+					.add("\tjava.util.Set<#jgTransPackage#.VersionedDataObject<?>> attributes = "
+							+ "new java.util.HashSet<#jgTransPackage#.VersionedDataObject<?>>();");
+			code.addNoIndent(codeSnippet);
+			for (Attribute attribute : attributeList) {
+				codeSnippet = new CodeSnippet("\tattributes.add(_#aname#);");
+				codeSnippet.setVariable("aname", attribute.getName());
+				code.addNoIndent(codeSnippet);
+			}
+			code.addNoIndent(new CodeSnippet("\treturn attributes;"));
+			code.addNoIndent(new CodeSnippet("}"));
+			return code;
+		}
+		return code;
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/base.java
+=======
 	protected CodeBlock createGettersAndSetters(List<Attribute> attributes) {
 		CodeList code = new CodeList();
 		for (Attribute attr : attributes) {
@@ -339,6 +540,110 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 		}
 		return code;
 	}
+
+	protected CodeBlock createReadAttributesFromStringMethod(
+			List<Attribute> attributes) {
+		CodeList code = new CodeList();
+		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
+				"#jgPackage#.NoSuchAttributeException");
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public void readAttributeValueFromString(String attributeName, String value) throws GraphIOException {"));
+
+		if (attributes != null) {
+			for (Attribute attribute : attributes) {
+				CodeList a = new CodeList();
+				a.setVariable("variableName", attribute.getName());
+				a.setVariable("setterName", "set_" + attribute.getName());
+				a.addNoIndent(new CodeSnippet(
+						"if (attributeName.equals(\"#variableName#\")) {",
+						"\tGraphIO io = GraphIO.createStringReader(value, getSchema());"));
+				if (currentCycle.isTransImpl()) {
+					CodeSnippet readBlock = new CodeSnippet();
+					readBlock.setVariable("variableType", attribute.getDomain()
+							.getJavaClassName(schemaRootPackageName));
+					readBlock.add("#variableType# tmpVar = null;");
+					a.add(readBlock);
+					a.add(attribute.getDomain().getReadMethod(
+							schemaRootPackageName, "tmpVar", "io"));
+					a.addNoIndent(new CodeSnippet("\t#setterName#(tmpVar);",
+							"\treturn;", "}"));
+				}
+				if (currentCycle.isStdImpl() || currentCycle.isDbImpl()) {
+					a.add(attribute.getDomain().getReadMethod(
+							schemaRootPackageName, "_" + attribute.getName(),
+							"io"));
+					a.addNoIndent(new CodeSnippet(
+							"\t#setterName#(_#variableName#);", "\treturn;",
+							"}"));
+				}
+				code.add(a);
+			}
+		}
+		code.add(new CodeSnippet(
+				"throw new NoSuchAttributeException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
+		code.addNoIndent(new CodeSnippet("}"));
+		return code;
+	}
+	protected CodeBlock createWriteAttributeToStringMethod(
+			List<Attribute> attributes) {
+		CodeList code = new CodeList();
+		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
+				"#jgPackage#.NoSuchAttributeException");
+		code.addNoIndent(new CodeSnippet(
+				true,
+				"public String writeAttributeValueToString(String attributeName) throws IOException, GraphIOException {"));
+		if (attributes != null) {
+			for (Attribute attribute : attributes) {
+				CodeList a = new CodeList();
+				a.setVariable("variableName", attribute.getName());
+				a.setVariable("setterName", "set_" + attribute.getName());
+				a.addNoIndent(new CodeSnippet(
+						"if (attributeName.equals(\"#variableName#\")) {",
+						"\tGraphIO io = GraphIO.createStringWriter(getSchema());"));
+				if (currentCycle.isTransImpl()) {
+					a.add(attribute.getDomain().getTransactionWriteMethod(
+							schemaRootPackageName, "_" + attribute.getName(),
+							"io"));
+				}
+				if (currentCycle.isStdImpl() || currentCycle.isDbImpl()) {
+					a.add(attribute.getDomain().getWriteMethod(
+							schemaRootPackageName, "_" + attribute.getName(),
+							"io"));
+				}
+				a.addNoIndent(new CodeSnippet(
+						"\treturn io.getStringWriterResult();", "}"));
+				code.add(a);
+			}
+		}
+		code.add(new CodeSnippet(
+				"throw new NoSuchAttributeException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
+		code.addNoIndent(new CodeSnippet("}"));
+		return code;
+	}
+	protected CodeBlock createGetVersionedAttributesMethod(
+			List<Attribute> attributes) {
+		CodeList code = new CodeList();
+		if (currentCycle.isTransImpl()) {
+			CodeSnippet codeSnippet = new CodeSnippet();
+			codeSnippet
+					.add("public java.util.Set<#jgTransPackage#.VersionedDataObject<?>> attributes() {");
+			codeSnippet
+					.add("\tjava.util.Set<#jgTransPackage#.VersionedDataObject<?>> attributes = "
+							+ "new java.util.HashSet<#jgTransPackage#.VersionedDataObject<?>>();");
+			code.addNoIndent(codeSnippet);
+			for (Attribute attribute : attributes) {
+				codeSnippet = new CodeSnippet("\tattributes.add(_#aname#);");
+				codeSnippet.setVariable("aname", attribute.getName());
+				code.addNoIndent(codeSnippet);
+			}
+			code.addNoIndent(new CodeSnippet("\treturn attributes;"));
+			code.addNoIndent(new CodeSnippet("}"));
+			return code;
+		}
+		return code;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/right.java
 
 	protected CodeBlock createGetter(Attribute attr) {
 		CodeSnippet code = new CodeSnippet(true);
@@ -387,6 +692,58 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 				.getJavaAttributeImplementationTypeName(schemaRootPackageName));
 		code.setVariable("dname", attr.getDomain().getSimpleName());
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/left.java
+		switch (currentCycle) {
+		case ABSTRACT:
+			code.add("public void set_#name#(#type# _#name#);");
+			break;
+		case STDIMPL:
+			code.add(
+					"public void set_#name#(#type# _#name#) {",
+					"\tecaAttributeChanging(\"#name#\", this._#name#, _#name#);",
+					"\tObject oldValue = this._#name#;",
+					"\tthis._#name# = _#name#;", "\tgraphModified();",
+					"ecaAttributeChanged(\"#name#\", oldValue, _#name#);", "}");
+			break;
+		case DBIMPL:
+			code.add("public void set_#name#(#type# _#name#) {");
+			code.add("\tthis._#name# = _#name#;");
+			// code.add("\tif(this.isInitialized())");
+			// code.add("\t\tgraphModified();");
+			code.add("\tattributeChanged(\"#name#\");");
+			code.add("}");
+			break;
+		case TRANSIMPL:
+			// setter for transaction support
+			code.setVariable(
+					"ttype",
+					attr.getDomain()
+							.getTransactionJavaAttributeImplementationTypeName(
+									schemaRootPackageName));
+			code.setVariable("vclass",
+					attr.getDomain().getVersionedClass(schemaRootPackageName));
+
+			code.setVariable("initLoading",
+					"new #vclass#(this, _#name#, \"#name#\");");
+			code.setVariable("init", "new #vclass#(this, null, \"#name#\");");
+
+			code.add("public void set_#name#(#type# _#name#) {");
+			addCheckValidityCode(code);
+			code.add(
+					"\tif (#theGraph#.isLoading()) {",
+					"\t\tthis._#name# = #initLoading#",
+					"\t}",
+					"\tif (this._#name# == null) {",
+					"\t\tthis._#name# = #init#",
+					"\t}",
+					"\tthis._#name#.setValidValue((#ttype#) _#name#, #theGraph#.getCurrentTransaction());",
+					"\tattributeChanged(this._#name#);", "\tgraphModified();",
+					"}");
+			break;
+		}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/base.java
+		switch (currentCycle) 
+=======
 		switch (currentCycle) {
 		case ABSTRACT:
 			code.add("public void set_#name#(#type# _#name#);");
@@ -436,6 +793,7 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 					"}");
 			break;
 		}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/right.java
 		return code;
 	}
 
@@ -455,94 +813,19 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 		return code;
 	}
 
-	protected CodeBlock createReadAttributesFromStringMethod(
-			List<Attribute> attributes) {
-		CodeList code = new CodeList();
-		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
-				"#jgPackage#.NoSuchAttributeException");
-		code.addNoIndent(new CodeSnippet(
-				true,
-				"public void readAttributeValueFromString(String attributeName, String value) throws GraphIOException {"));
-
-		if (attributes != null) {
-			for (Attribute attribute : attributes) {
-				CodeList a = new CodeList();
-				a.setVariable("variableName", attribute.getName());
-				a.setVariable("setterName", "set_" + attribute.getName());
-				a.addNoIndent(new CodeSnippet(
-						"if (attributeName.equals(\"#variableName#\")) {",
-						"\tGraphIO io = GraphIO.createStringReader(value, getSchema());"));
-				if (currentCycle.isTransImpl()) {
-					CodeSnippet readBlock = new CodeSnippet();
-					readBlock.setVariable("variableType", attribute.getDomain()
-							.getJavaClassName(schemaRootPackageName));
-					readBlock.add("#variableType# tmpVar = null;");
-					a.add(readBlock);
-					a.add(attribute.getDomain().getReadMethod(
-							schemaRootPackageName, "tmpVar", "io"));
-					a.addNoIndent(new CodeSnippet("\t#setterName#(tmpVar);",
-							"\treturn;", "}"));
-				}
-				if (currentCycle.isStdImpl() || currentCycle.isDbImpl()) {
-					a.add(attribute.getDomain().getReadMethod(
-							schemaRootPackageName, "_" + attribute.getName(),
-							"io"));
-					a.addNoIndent(new CodeSnippet(
-							"\t#setterName#(_#variableName#);", "\treturn;",
-							"}"));
-				}
-				code.add(a);
-			}
-		}
-		code.add(new CodeSnippet(
-				"throw new NoSuchAttributeException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
-		code.addNoIndent(new CodeSnippet("}"));
-		return code;
-	}
-
 	/**
-	 * 
-	 * @param attributes
+	 *
+	 * @param attrSet
 	 * @return
 	 */
-	protected CodeBlock createWriteAttributeToStringMethod(
-			List<Attribute> attributes) {
-		CodeList code = new CodeList();
-		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException",
-				"#jgPackage#.NoSuchAttributeException");
-		code.addNoIndent(new CodeSnippet(
-				true,
-				"public String writeAttributeValueToString(String attributeName) throws IOException, GraphIOException {"));
-		if (attributes != null) {
-			for (Attribute attribute : attributes) {
-				CodeList a = new CodeList();
-				a.setVariable("variableName", attribute.getName());
-				a.setVariable("setterName", "set_" + attribute.getName());
-				a.addNoIndent(new CodeSnippet(
-						"if (attributeName.equals(\"#variableName#\")) {",
-						"\tGraphIO io = GraphIO.createStringWriter(getSchema());"));
-				if (currentCycle.isTransImpl()) {
-					a.add(attribute.getDomain().getTransactionWriteMethod(
-							schemaRootPackageName, "_" + attribute.getName(),
-							"io"));
-				}
-				if (currentCycle.isStdImpl() || currentCycle.isDbImpl()) {
-					a.add(attribute.getDomain().getWriteMethod(
-							schemaRootPackageName, "_" + attribute.getName(),
-							"io"));
-				}
-				a.addNoIndent(new CodeSnippet(
-						"\treturn io.getStringWriterResult();", "}"));
-				code.add(a);
-			}
-		}
-		code.add(new CodeSnippet(
-				"throw new NoSuchAttributeException(\"#qualifiedClassName# doesn't contain an attribute \" + attributeName);"));
-		code.addNoIndent(new CodeSnippet("}"));
-		return code;
-	}
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/left.java
+	protected CodeBlock createReadAttributesMethod(SortedSet<Attribute> attributes) {
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/base.java
+	protected CodeBlock createReadAttributesMethod(Set<Attribute> attributes) {
+=======
 	protected CodeBlock createReadAttributesMethod(List<Attribute> attributes) {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/right.java
 		CodeList code = new CodeList();
 
 		addImports("#jgPackage#.GraphIO", "#jgPackage#.GraphIOException");
@@ -581,8 +864,32 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 		code.addNoIndent(new CodeSnippet(
 				true,
 				"public void writeAttributeValues(GraphIO io) throws GraphIOException, IOException {"));
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/left.java
+		if ((attrSet != null) && !attrSet.isEmpty()) {
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/base.java
+		if (attrSet != null && !attrSet.isEmpty()) {
+=======
 		if ((attributes != null) && !attributes.isEmpty()) {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/right.java
 			code.add(new CodeSnippet("io.space();"));
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/left.java
+			for (Attribute attribute : attrSet) {
+				if (currentCycle.isStdImpl() || currentCycle.isDbImpl()) {
+					code.add(attribute.getDomain().getWriteMethod(
+							schemaRootPackageName, "_" + attribute.getName(),
+							"io"));
+				}
+				if (currentCycle.isTransImpl()) {
+					code.add(attribute.getDomain().getTransactionWriteMethod(
+							schemaRootPackageName, "_" + attribute.getName(),
+							"io"));
+				}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/base.java
+			for (Attribute attribute : attrSet) {
+				// addDomainImport(attribute);
+				code.add(attribute.getDomain().getWriteMethod(
+						schemaRootPackageName, attribute.getName(), "io"));
+=======
 			for (Attribute attribute : attributes) {
 				if (currentCycle.isStdImpl() || currentCycle.isDbImpl()) {
 					code.add(attribute.getDomain().getWriteMethod(
@@ -594,6 +901,7 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 							schemaRootPackageName, "_" + attribute.getName(),
 							"io"));
 				}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/right.java
 			}
 		}
 		code.addNoIndent(new CodeSnippet("}"));
@@ -603,30 +911,33 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 	/**
 	 * Generates method attributes() which returns a set of all versioned
 	 * attributes for an <code>AttributedElement</code>.
+	 *
+	 * @param attributeList
+	 * @return
+	 */
+
+	protected abstract String getSchemaTypeName();
+
+	/**
+	 * Returns the absolute name of the given AttributdelementClass. The name is
+	 * composed of the package-prefix of the schema the class belongs to and the
+	 * qualified name of the class
+	 * 
+	 * @param aec
+	 * @return
+	 */
+
+	/**
 	 * 
 	 * @param attributes
 	 * @return
 	 */
-	protected CodeBlock createGetVersionedAttributesMethod(
-			List<Attribute> attributes) {
-		CodeList code = new CodeList();
-		if (currentCycle.isTransImpl()) {
-			CodeSnippet codeSnippet = new CodeSnippet();
-			codeSnippet
-					.add("public java.util.Set<#jgTransPackage#.VersionedDataObject<?>> attributes() {");
-			codeSnippet
-					.add("\tjava.util.Set<#jgTransPackage#.VersionedDataObject<?>> attributes = "
-							+ "new java.util.HashSet<#jgTransPackage#.VersionedDataObject<?>>();");
-			code.addNoIndent(codeSnippet);
-			for (Attribute attribute : attributes) {
-				codeSnippet = new CodeSnippet("\tattributes.add(_#aname#);");
-				codeSnippet.setVariable("aname", attribute.getName());
-				code.addNoIndent(codeSnippet);
-			}
-			code.addNoIndent(new CodeSnippet("\treturn attributes;"));
-			code.addNoIndent(new CodeSnippet("}"));
-			return code;
-		}
-		return code;
-	}
+
+	/**
+	 * Generates method attributes() which returns a set of all versioned
+	 * attributes for an <code>AttributedElement</code>.
+	 * 
+	 * @param attributes
+	 * @return
+	 */
 }

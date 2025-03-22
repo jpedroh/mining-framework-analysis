@@ -1,13 +1,30 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/Greql2ExpressionEvaluator.java/left.java
+ * Copyright (C) 2006-2011 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/Greql2ExpressionEvaluator.java/base.java
+ *               ist@uni-koblenz.de
+=======
  * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/Greql2ExpressionEvaluator.java/right.java
  *
  * For bug reports, documentation and further information, visit
  *
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/Greql2ExpressionEvaluator.java/left.java
+ *                         http://jgralab.uni-koblenz.de
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/Greql2ExpressionEvaluator.java/base.java
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+=======
  *                         https://github.com/jgralab/jgralab
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/Greql2ExpressionEvaluator.java/right.java
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -51,11 +68,12 @@ import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
 import de.uni_koblenz.jgralab.greql2.schema.IsIdOf;
 import de.uni_koblenz.jgralab.greql2.schema.SourcePosition;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
 
 /**
  * Evaluates a Greql2Expression vertex in the GReQL-2 Syntaxgraph. A
@@ -130,6 +148,63 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 	 * sets the values of all bound variables and evaluates the queryexpression
 	 */
 	@Override
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/Greql2ExpressionEvaluator.java/left.java
+	public Object evaluate() {
+		if (boundVariablesChanged) {
+			initializeBoundVariables();
+			boundVariablesChanged = false;
+		}
+
+		if (vertex.get_importedTypes() != null && graph != null) {
+			Schema graphSchema = graph.getSchema();
+			for (String importedType : vertex.get_importedTypes()) {
+				if (importedType.endsWith(".*")) {
+					String packageName = importedType.substring(0,
+							importedType.length() - 2);
+					Package p = graphSchema.getPackage(packageName);
+					if (p == null) {
+						throw new UnknownTypeException(packageName,
+								new ArrayList<SourcePosition>());
+					}
+					// for (Domain elem : p.getDomains().values()) {
+					// greqlEvaluator.addKnownType(elem);
+					// }
+					for (VertexClass elem : p.getVertexClasses().values()) {
+						greqlEvaluator.addKnownType(elem);
+					}
+					for (EdgeClass elem : p.getEdgeClasses().values()) {
+						greqlEvaluator.addKnownType(elem);
+					}
+				} else {
+					AttributedElementClass<?, ?> elemClass = graphSchema
+							.getAttributedElementClass(importedType);
+					if (elemClass == null) {
+						throw new UnknownTypeException(importedType,
+								new ArrayList<SourcePosition>());
+					}
+					greqlEvaluator.addKnownType(elemClass);
+				}
+			}
+		}
+
+		Expression boundExpression = vertex.getFirstIsQueryExprOfIncidence(
+				EdgeDirection.IN).getAlpha();
+		VertexEvaluator eval = vertexEvalMarker.getMark(boundExpression);
+		Object result = eval.getResult();
+		// if the query contains a "store as " - clause, there is a
+		// "isIdOfInc"-Incidence connected with the Greql2Expression
+		IsIdOf storeInc = vertex.getFirstIsIdOfIncidence(EdgeDirection.IN);
+		if (storeInc != null) {
+			VertexEvaluator storeEval = vertexEvalMarker.getMark(storeInc
+					.getAlpha());
+			String varName = storeEval.getResult().toString();
+			boundVariables.put(varName, result);
+		}
+		return result;
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/Greql2ExpressionEvaluator.java/base.java
+	public Object evaluate() 
+=======
 	public Object evaluate() {
 		if (boundVariablesChanged) {
 			initializeBoundVariables();
@@ -183,6 +258,7 @@ public class Greql2ExpressionEvaluator extends VertexEvaluator {
 		}
 		return result;
 	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/greql2/evaluator/vertexeval/Greql2ExpressionEvaluator.java/right.java
 
 	@Override
 	public VertexCosts calculateSubtreeEvaluationCosts(GraphSize graphSize) {

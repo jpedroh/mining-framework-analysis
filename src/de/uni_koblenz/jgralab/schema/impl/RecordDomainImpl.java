@@ -1,13 +1,30 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/RecordDomainImpl.java/left.java
+ * Copyright (C) 2006-2011 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/RecordDomainImpl.java/base.java
+ *               ist@uni-koblenz.de
+=======
  * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/RecordDomainImpl.java/right.java
  *
  * For bug reports, documentation and further information, visit
  *
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/RecordDomainImpl.java/left.java
+ *                         http://jgralab.uni-koblenz.de
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/RecordDomainImpl.java/base.java
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+=======
  *                         https://github.com/jgralab/jgralab
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/RecordDomainImpl.java/right.java
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -37,25 +54,32 @@ package de.uni_koblenz.jgralab.schema.impl;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
-
 import de.uni_koblenz.jgralab.GraphIO;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.Record;
 import de.uni_koblenz.jgralab.codegenerator.CodeBlock;
 import de.uni_koblenz.jgralab.codegenerator.CodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.CodeSnippet;
+import de.uni_koblenz.jgralab.schema.CompositeDomain;
 import de.uni_koblenz.jgralab.schema.Domain;
 import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.RecordDomain;
-import de.uni_koblenz.jgralab.schema.exception.CycleException;
+import de.uni_koblenz.jgralab.schema.exception.DuplicateRecordComponentException;
+import de.uni_koblenz.jgralab.schema.exception.InvalidNameException;
+import de.uni_koblenz.jgralab.schema.exception.NoSuchRecordComponentException;
+import de.uni_koblenz.jgralab.schema.exception.RecordCycleException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaClassAccessException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
+import de.uni_koblenz.jgralab.schema.exception.WrongSchemaException;
 import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
+import de.uni_koblenz.jgralab.schema.exception.CycleException;
 
-public class RecordDomainImpl extends CompositeDomainImpl implements
+public final class RecordDomainImpl extends CompositeDomainImpl implements
 		RecordDomain {
 
 	/**
@@ -63,19 +87,18 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 	 * RecordDomain
 	 */
 	private Class<? extends Object> schemaClass;
-
 	/**
 	 * holds a list of the components of the record
 	 */
 	private final Map<String, RecordComponent> components = new TreeMap<String, RecordComponent>();
-
 	/**
 	 * @param qn
 	 *            the unique name of the record in the schema
 	 * @param components
 	 *            a list of the components of the record
 	 */
-	protected RecordDomainImpl(String sn, PackageImpl pkg,
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/RecordDomainImpl.java/left.java
+	protected RecordDomainImpl(String sn, Package pkg,
 			Collection<RecordComponent> components) {
 		super(sn, pkg);
 		if (components != null) {
@@ -84,7 +107,49 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 			}
 		}
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/RecordDomainImpl.java/base.java
+=======
+	RecordDomainImpl(String sn, PackageImpl pkg,
+			Collection<RecordComponent> components) {
+		super(sn, pkg);
+		if (components != null) {
+			for (RecordComponent c : components) {
+				addComponent(c.getName(), c.getDomain());
+			}
+		}
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/RecordDomainImpl.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/RecordDomainImpl.java/left.java
+	@Override
+	public void addComponent(String name, Domain domain) {
+		if(((SchemaImpl)getSchema()).isFinished()){
+			throw new SchemaException("No changes to finished schema!");
+		}
+		
+		if (name.isEmpty()) {
+			throw new InvalidNameException(
+					"Cannot create a record component with an empty name.");
+		}
+		if (components.containsKey(name)) {
+			throw new DuplicateRecordComponentException(name,
+					getQualifiedName());
+		}
+		if (parentPackage.getSchema().getDomain(domain.getQualifiedName()) != domain) {
+			throw new WrongSchemaException(domain.getQualifiedName()
+					+ " must be a domain of the schema "
+					+ parentPackage.getSchema().getQualifiedName());
+		}
+		if (!staysAcyclicAfterAdding(domain)) {
+			throw new RecordCycleException(
+					"The creation of a component, which has the type " + domain
+							+ ", would create a cycle of RecordDomains.");
+		}
+		RecordComponent c = new RecordComponent(name, domain);
+		components.put(name, c);
+		((SchemaImpl)parentPackage.getSchema()).getDomainsDag().createEdge(domain,this);
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/RecordDomainImpl.java/base.java
+=======
 	@Override
 	public void addComponent(String name, Domain domain) {
 		SchemaImpl s = (SchemaImpl) getSchema();
@@ -112,24 +177,36 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 		RecordComponent c = new RecordComponent(name, domain);
 		components.put(name, c);
 	}
-
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/RecordDomainImpl.java/right.java
+	@Override
+	public Set<Domain> getAllComponentDomains() {
+		Set<Domain> domains = new HashSet<Domain>();
+		for (RecordComponent c : components.values()) {
+			domains.add(c.getDomain());
+		}
+		return domains;
+	}
 	@Override
 	public Collection<RecordComponent> getComponents() {
 		return components.values();
 	}
-
+	@Override
+	public Domain getDomainOfComponent(String name) {
+		if (!components.containsKey(name)) {
+			throw new NoSuchRecordComponentException(getQualifiedName(), name);
+		}
+		return components.get(name).getDomain();
+	}
 	@Override
 	public String getJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
 		return schemaRootPackagePrefix + "." + getQualifiedName();
 	}
-
 	@Override
 	public String getJavaClassName(String schemaRootPackagePrefix) {
 		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 		// return getJavaAttributeTypeName(schemaRootPackagePrefix);
 	}
-
 	@Override
 	public Class<? extends Object> getSchemaClass() {
 		if (schemaClass == null) {
@@ -147,7 +224,6 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 		}
 		return schemaClass;
 	}
-
 	@Override
 	public CodeBlock getReadMethod(String schemaPrefix, String variableName,
 			String graphIoVariableName) {
@@ -159,12 +235,10 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 
 		return code;
 	}
-
 	@Override
 	public String getTGTypeName(Package pkg) {
 		return getQualifiedName(pkg);
 	}
-
 	@Override
 	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName) {
@@ -175,7 +249,27 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 
 		return code;
 	}
-
+	/**
+	 * @param d
+	 *            the component domain which should be checked
+	 * @return <code>true</code> if the addition of <code>d</code> wouldn't
+	 *         create an inclusion cycle, <code>false</code> otherwise
+	 */
+	private boolean staysAcyclicAfterAdding(Domain d) {
+		if (d == this) {
+			return false;
+		}
+		if (!(d instanceof CompositeDomain)) {
+			return true;
+		}
+		CompositeDomain c = (CompositeDomain) d;
+		for (CompositeDomain comp : c.getAllComponentCompositeDomains()) {
+			if (!staysAcyclicAfterAdding(comp)) {
+				return false;
+			}
+		}
+		return true;
+	}
 	@Override
 	public String toString() {
 		StringBuilder output = new StringBuilder("Record " + getQualifiedName());
@@ -190,8 +284,24 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 		output.append(")");
 		return output.toString();
 	}
-
 	private void internalGetReadMethod(CodeSnippet code, String schemaPrefix,
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/RecordDomainImpl.java/left.java
+			String variableName, String graphIoVariableName) {
+		code.add("#init#");
+		code.add("if (" + graphIoVariableName + ".isNextToken(\"(\")) {");
+		code.add("\t" + "#name# = new " + getSchema().getPackagePrefix() + "."
+				+ getQualifiedName() + "(io);");
+		code.add("} else if (" + graphIoVariableName
+				+ ".isNextToken(GraphIO.NULL_LITERAL)) {");
+		code.add("\t" + graphIoVariableName + ".match();");
+		code.add("\t" + variableName + " = null;");
+		code.add("} else {");
+		code.add("\tthrow new GraphIOException(\"This is no record!\");");
+		code.add("}");
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/RecordDomainImpl.java/base.java
+			String variableName, String graphIoVariableName) 
+=======
 			String variableName, String graphIoVariableName) {
 		code.add("#init#");
 		code.add("if (" + graphIoVariableName + ".isNextToken(\"(\")) {");
@@ -205,7 +315,7 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 		code.add("\tthrow new GraphIOException(\"Read record: '(' or 'n' expected\");");
 		code.add("}");
 	}
-
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/RecordDomainImpl.java/right.java
 	private void internalGetWriteMethod(CodeSnippet code,
 			String schemaRootPackagePrefix, String variableName,
 			String graphIoVariableName) {
@@ -217,7 +327,6 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 				+ ".writeIdentifier(GraphIO.NULL_LITERAL);");
 		code.add("}");
 	}
-
 	@Override
 	public CodeBlock getTransactionReadMethod(String schemaPrefix,
 			String variableName, String graphIoVariableName) {
@@ -230,7 +339,6 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 				graphIoVariableName);
 		return code;
 	}
-
 	@Override
 	public CodeBlock getTransactionWriteMethod(String schemaRootPackagePrefix,
 			String variableName, String graphIoVariableName) {
@@ -241,35 +349,65 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 				graphIoVariableName);
 		return code;
 	}
-
 	@Override
 	public String getTransactionJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
 		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
-
 	@Override
 	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
 		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
-
 	@Override
 	public String getVersionedClass(String schemaRootPackagePrefix) {
 		return "de.uni_koblenz.jgralab.impl.trans.VersionedReferenceImpl<"
 				+ getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
 				+ ">";
 	}
-
 	@Override
 	public String getInitialValue() {
 		return "null";
 	}
-
 	@Override
 	public Boolean hasComponent(String name) {
 		return components.containsKey(name);
 	}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/RecordDomainImpl.java/left.java
+	@Override
+	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
+		if (io.isNextToken("(")) {
+			de.uni_koblenz.jgralab.impl.RecordImpl result = de.uni_koblenz.jgralab.impl.RecordImpl
+					.empty();
+			io.match("(");
 
+			// Component values are expected in lexicographic order ->
+			// RecordDomainImpl uses a TreeMap for Components and provides
+			// the collection provided by getComponents() is backed by it.
+			// Iteration will be done in the order of Map's keys
+			// (Component-names)
+			Iterator<RecordDomain.RecordComponent> componentIterator = getComponents()
+					.iterator();
+			RecordComponent component = componentIterator.next();
+			while (!io.isNextToken(")")) {
+				Object componentValue = null;
+				componentValue = component.getDomain()
+						.parseGenericAttribute(io);
+				result = result.plus(component.getName(), componentValue);
+				component = componentIterator.hasNext() ? componentIterator
+						.next() : null;
+			}
+			assert (!componentIterator.hasNext());
+			io.match(")");
+			return result;
+		} else if (io.isNextToken(GraphIO.NULL_LITERAL)) {
+			io.match();
+			return null;
+		} else {
+			throw new GraphIOException("This is no record!");
+		}
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/RecordDomainImpl.java/base.java
+=======
 	@Override
 	public Object parseGenericAttribute(GraphIO io) throws GraphIOException {
 		if (io.isNextToken("(")) {
@@ -303,7 +441,7 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 			throw new GraphIOException("Read record: '(' or 'n' excpected");
 		}
 	}
-
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/RecordDomainImpl.java/right.java
 	@Override
 	public void serializeGenericAttribute(GraphIO io, Object data)
 			throws IOException {
@@ -325,7 +463,6 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 			io.writeIdentifier(GraphIO.NULL_LITERAL);
 		}
 	}
-
 	@Override
 	public boolean isConformGenericValue(Object value) {
 		boolean result = true;
@@ -348,4 +485,8 @@ public class RecordDomainImpl extends CompositeDomainImpl implements
 		assert (!iterator.hasNext());
 		return result;
 	}
+	/**
+	 * The class object representing the generated interface for this
+	 * RecordDomain
+	 */
 }

@@ -1,6 +1,165 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
+ * Copyright (C) 2006-2011 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+ *
+ * For bug reports, documentation and further information, visit
+ *
+ *                         http://jgralab.uni-koblenz.de
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
+ *
+ * Additional permission under GNU GPL version 3 section 7
+ *
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
+ */
+
+package de.uni_koblenz.jgralab;
+
+import java.io.BufferedInputStream;
+
+import java.io.BufferedOutputStream;
+
+import java.io.ByteArrayInputStream;
+
+import java.io.ByteArrayOutputStream;
+
+import java.io.Closeable;
+
+import java.io.DataOutputStream;
+
+import java.io.File;
+
+import java.io.FileInputStream;
+
+import java.io.FileOutputStream;
+
+import java.io.FilenameFilter;
+
+import java.io.IOException;
+
+import java.io.InputStream;
+
+import java.lang.reflect.Method;
+
+import java.nio.CharBuffer;
+
+import java.nio.charset.Charset;
+
+import java.sql.SQLException;
+
+import java.util.ArrayList;
+
+import java.util.HashMap;
+
+import java.util.HashSet;
+
+import java.util.Iterator;
+
+import java.util.LinkedList;
+
+import java.util.List;
+
+import java.util.Map;
+
+import java.util.Map.Entry;
+
+import java.util.Queue;
+
+import java.util.Set;
+
+import java.util.TreeMap;
+
+import java.util.TreeSet;
+
+import java.util.logging.Logger;
+
+import java.util.zip.GZIPInputStream;
+
+import java.util.zip.GZIPOutputStream;
+
+import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
+
+import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
+
+import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
+
+import de.uni_koblenz.jgralab.impl.InternalGraph;
+
+import de.uni_koblenz.jgralab.impl.db.GraphDatabase;
+
+import de.uni_koblenz.jgralab.impl.db.GraphDatabaseException;
+
+import de.uni_koblenz.jgralab.schema.AggregationKind;
+
+import de.uni_koblenz.jgralab.schema.Attribute;
+
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+
+import de.uni_koblenz.jgralab.schema.Constraint;
+
+import de.uni_koblenz.jgralab.schema.Domain;
+
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+
+import de.uni_koblenz.jgralab.schema.EnumDomain;
+
+import de.uni_koblenz.jgralab.schema.GraphClass;
+
+import de.uni_koblenz.jgralab.schema.GraphElementClass;
+
+import de.uni_koblenz.jgralab.schema.MapDomain;
+
+import de.uni_koblenz.jgralab.schema.NamedElement;
+
+import de.uni_koblenz.jgralab.schema.Package;
+
+import de.uni_koblenz.jgralab.schema.RecordDomain;
+
+import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
+
+import de.uni_koblenz.jgralab.schema.Schema;
+
+import de.uni_koblenz.jgralab.schema.VertexClass;
+
+import de.uni_koblenz.jgralab.schema.exception.SchemaException;
+
+import de.uni_koblenz.jgralab.schema.impl.BasicDomainImpl;
+
+import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
+
+import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
+
+import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
+
+/**
+ * class for loading and storing schema and graphs in tg format
+ * 
+ * @author ist@uni-koblenz.de
+ */
+
+/*
+ * JGraLab - The Java Graph Laboratory
+ *
  * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
@@ -33,67 +192,6 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Queue;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
-import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
-import de.uni_koblenz.jgralab.graphmarker.BooleanGraphMarker;
-import de.uni_koblenz.jgralab.impl.GraphBaseImpl;
-import de.uni_koblenz.jgralab.impl.InternalGraph;
-import de.uni_koblenz.jgralab.impl.db.GraphDatabase;
-import de.uni_koblenz.jgralab.impl.db.GraphDatabaseException;
-import de.uni_koblenz.jgralab.schema.AggregationKind;
-import de.uni_koblenz.jgralab.schema.Attribute;
-import de.uni_koblenz.jgralab.schema.AttributedElementClass;
-import de.uni_koblenz.jgralab.schema.Constraint;
-import de.uni_koblenz.jgralab.schema.Domain;
-import de.uni_koblenz.jgralab.schema.EdgeClass;
-import de.uni_koblenz.jgralab.schema.EnumDomain;
-import de.uni_koblenz.jgralab.schema.GraphClass;
-import de.uni_koblenz.jgralab.schema.GraphElementClass;
-import de.uni_koblenz.jgralab.schema.MapDomain;
-import de.uni_koblenz.jgralab.schema.NamedElement;
-import de.uni_koblenz.jgralab.schema.Package;
-import de.uni_koblenz.jgralab.schema.RecordDomain;
-import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
-import de.uni_koblenz.jgralab.schema.Schema;
-import de.uni_koblenz.jgralab.schema.VertexClass;
-import de.uni_koblenz.jgralab.schema.exception.SchemaException;
-import de.uni_koblenz.jgralab.schema.impl.BasicDomainImpl;
-import de.uni_koblenz.jgralab.schema.impl.ConstraintImpl;
-import de.uni_koblenz.jgralab.schema.impl.SchemaImpl;
-import de.uni_koblenz.jgralab.schema.impl.compilation.SchemaClassManager;
-
 /**
  * class for loading and storing schema and graphs in tg format
  * 
@@ -109,7 +207,6 @@ public class GraphIO {
 	public static final String FALSE_LITERAL = "f";
 	public static final String TGRAPH_FILE_EXTENSION = ".tg";
 	public static final String TGRAPH_COMPRESSED_FILE_EXTENSION = ".tg.gz";
-
 	/**
 	 * A {@link FilenameFilter} that accepts TG files.
 	 * 
@@ -135,6 +232,7 @@ public class GraphIO {
 		 * 
 		 * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
 		 */
+
 		@Override
 		public boolean accept(File dir, String name) {
 			if (name.matches(".+\\.[Tt][Gg](\\.[Gg][Zz])?$")) {
@@ -148,105 +246,107 @@ public class GraphIO {
 		 * 
 		 * @see java.io.FileFilter#accept(java.io.File)
 		 */
+
 		@Override
 		public boolean accept(File f) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 			return f.isDirectory() || this.accept(f, f.getName());
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+			return f.isDirectory() || ;
+=======
+			return f.isDirectory() || accept(f, f.getName());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 		}
 
 		@Override
 		public String getDescription() {
 			return "TG Files";
 		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.io.FilenameFilter#accept(java.io.File, java.lang.String)
+		 */
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.io.FileFilter#accept(java.io.File)
+		 */
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	protected static final int BUFFER_SIZE = 65536;
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private static final int BUFFER_SIZE = 65536;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	protected InputStream TGIn;
-
 	private DataOutputStream TGOut;
-
 	protected Schema schema;
-
 	/**
 	 * Maps domain names to the respective Domains.
 	 */
 	private final Map<String, Domain> domains;
-
 	/**
 	 * Maps GraphElementClasses to their containing GraphClasses
 	 */
-	protected final Map<GraphElementClass<?, ?>, GraphClass> GECsearch;
-
-	private int line; // line number
-
-	private int la; // lookahead character
-
-	private String lookAhead; // lookahead token
-
-	private boolean isUtfString; // lookahead is UTF string
-
-	private boolean writeSpace; // if true, a space is written in the next
+	protected final private Map<GraphElementClass<?, ?>, GraphClass> GECsearch;
+	private int line;
+// line number
+	private int la;
+// lookahead character
+	private String lookAhead;
+// lookahead token
+	private boolean isUtfString;
+// lookahead is UTF string
+	private boolean writeSpace;
+// if true, a space is written in the next
 	// writeXXX()
-
-	private String gcName; // GraphClass name of the currently loaded graph
-
+	private String gcName;
+// GraphClass name of the currently loaded graph
 	private final byte buffer[];
-
 	private int bufferPos;
-
 	private int bufferSize;
-
 	private Vertex edgeIn[], edgeOut[];
 	private int[] firstIncidence;
 	private int[] nextIncidence;
-
 	private int edgeOffset;
-
 	/**
 	 * Buffers the parsed data of enum domains prior to their creation in
 	 * JGraLab.
 	 */
 	private final Set<EnumDomainData> enumDomainBuffer;
-
 	/**
 	 * Buffers the parsed data of record domains prior to their creation in
 	 * JGraLab.
 	 */
 	private List<RecordDomainData> recordDomainBuffer;
-
 	/**
 	 * Buffers the parsed data of the graph class prior to its creation in
 	 * JGraLab.
 	 */
 	private GraphClassData graphClass;
-
 	/**
 	 * Buffers the parsed data of vertex classes prior to their creation in
 	 * JGraLab.
 	 */
 	private final Map<String, List<GraphElementClassData>> vertexClassBuffer;
-
 	/**
 	 * Buffers the parsed data of edge classes prior to their creation in
 	 * JGraLab.
 	 */
-	protected final Map<String, List<GraphElementClassData>> edgeClassBuffer;
-
+	protected final private Map<String, List<GraphElementClassData>> edgeClassBuffer;
 	private final Map<String, List<String>> commentData;
-
 	private int putBackChar;
-
 	private String currentPackageName;
-
 	private ByteArrayOutputStream BAOut;
-
 	// stringPool allows re-use string values, saves memory if
 	// multiple identical strings are used as attribute values
 	private final HashMap<String, String> stringPool;
 	private GraphFactory graphFactory;
-
-
 	protected GraphIO() {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 		this.domains = new TreeMap<String, Domain>();
 		this.GECsearch = new HashMap<GraphElementClass<?, ?>, GraphClass>();
 		this.buffer = new byte[BUFFER_SIZE];
@@ -259,8 +359,34 @@ public class GraphIO {
 		this.commentData = new HashMap<String, List<String>>();
 		this.stringPool = new HashMap<String, String>();
 		this.putBackChar = -1;
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+		domains = new TreeMap<QualifiedName, Domain>();
+		GECsearch = new HashMap<GraphElementClass, GraphClass>();
+		createMethods = new HashMap<QualifiedName, Method>();
+		buffer = new byte[65536];
+		bufferPos = 0;
+		enumDomainBuffer = new HashSet<EnumDomainData>();
+		recordDomainBuffer = new ArrayList<RecordDomainData>();
+		graphClass = null;
+		vertexClassBuffer = new TreeMap<QualifiedName, List<GraphElementClassData>>();
+		edgeClassBuffer = new TreeMap<QualifiedName, List<GraphElementClassData>>();
+		putBackChar = -1;
+		qualifiedNameMap = new HashMap<String, QualifiedName>();
+=======
+		domains = new TreeMap<String, Domain>();
+		GECsearch = new HashMap<GraphElementClass<?, ?>, GraphClass>();
+		buffer = new byte[BUFFER_SIZE];
+		bufferPos = 0;
+		enumDomainBuffer = new HashSet<EnumDomainData>();
+		recordDomainBuffer = new ArrayList<RecordDomainData>();
+		graphClass = null;
+		vertexClassBuffer = new TreeMap<String, List<GraphElementClassData>>();
+		edgeClassBuffer = new TreeMap<String, List<GraphElementClassData>>();
+		commentData = new HashMap<String, List<String>>();
+		stringPool = new HashMap<String, String>();
+		putBackChar = -1;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	}
-
 	public static Schema loadSchemaFromFile(String filename)
 			throws GraphIOException {
 		InputStream in = null;
@@ -280,7 +406,6 @@ public class GraphIO {
 			close(in);
 		}
 	}
-
 	public static Schema loadSchemaFromStream(InputStream in)
 			throws GraphIOException {
 		try {
@@ -293,7 +418,6 @@ public class GraphIO {
 			throw new GraphIOException("Exception while loading schema.", e);
 		}
 	}
-
 	public static Schema loadSchemaFromDatabase(GraphDatabase graphDatabase,
 			String packagePrefix, String schemaName) throws GraphIOException {
 		String definition = graphDatabase.getSchemaDefinition(packagePrefix,
@@ -301,14 +425,12 @@ public class GraphIO {
 		InputStream input = new ByteArrayInputStream(definition.getBytes());
 		return loadSchemaFromStream(input);
 	}
-
 	public static void loadSchemaIntoGraphDatabase(String filePath,
 			GraphDatabase graphDatabase) throws IOException, GraphIOException,
 			SQLException {
 		Schema schema = loadSchemaFromFile(filePath);
 		graphDatabase.insertSchema(schema);
 	}
-
 	/**
 	 * Saves the specified <code>schema</code> to the file named
 	 * <code>filename</code>. When the <code>filename</code> ends with
@@ -336,7 +458,6 @@ public class GraphIO {
 			close(out);
 		}
 	}
-
 	/**
 	 * Saves the specified <code>schema</code> to the stream <code>out</code>.
 	 * The stream is <em>not</em> closed.
@@ -360,7 +481,6 @@ public class GraphIO {
 			throw new GraphException("Exception while saving schema", e);
 		}
 	}
-
 	private void saveSchema(Schema s) throws IOException {
 		this.schema = s;
 		this.write("Schema");
@@ -376,7 +496,13 @@ public class GraphIO {
 		this.writeAttributes(null, gc);
 		this.writeConstraints(gc);
 		this.write(";\n");
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 		this.writeComments(gc, gc.getSimpleName());
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+		;
+=======
+		writeComments(gc, gc.getSimpleName());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 
 		Queue<de.uni_koblenz.jgralab.schema.Package> worklist = new LinkedList<de.uni_koblenz.jgralab.schema.Package>();
 		worklist.offer(s.getDefaultPackage());
@@ -396,36 +522,100 @@ public class GraphIO {
 			for (Domain dom : pkg.getDomains().values()) {
 				if (dom instanceof EnumDomain) {
 					EnumDomain ed = (EnumDomain) dom;
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 					this.write("EnumDomain");
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+					TGOut.writeBytes("EnumDomain");
+=======
+					write("EnumDomain");
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 					this.space();
 					this.writeIdentifier(ed.getSimpleName());
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 					this.write(" (");
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+					TGOut.writeBytes(" (");
+=======
+					write(" (");
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 					for (Iterator<String> eit = ed.getConsts().iterator(); eit
 							.hasNext();) {
 						this.space();
 						this.writeIdentifier(eit.next());
 						if (eit.hasNext()) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 							this.write(",");
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+							TGOut.writeBytes(",");
+=======
+							write(",");
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 						}
 					}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 					this.write(" );\n");
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+					TGOut.writeBytes(" );\n");
+=======
+					write(" );\n");
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 					this.writeComments(ed, ed.getSimpleName());
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+					;
+=======
+					writeComments(ed, ed.getSimpleName());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 				} else if (dom instanceof RecordDomain) {
 					RecordDomain rd = (RecordDomain) dom;
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 					this.write("RecordDomain");
 					this.space();
 					this.writeIdentifier(rd.getSimpleName());
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+					TGOut.writeBytes("RecordDomain");
+					space();
+					writeIdentifier((rd).getSimpleName());
+=======
+					write("RecordDomain");
+					space();
+					writeIdentifier(rd.getSimpleName());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 					String delim = " ( ";
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 					for (RecordComponent rdc : rd.getComponents()) {
 						this.write(delim);
 						this.noSpace();
 						this.writeIdentifier(rdc.getName());
 						this.write(": ");
 						this.write(rdc.getDomain().getTGTypeName(pkg));
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+					for (Map.Entry<String, Domain> rdc : (rd).getComponents()
+							.entrySet()) {
+						TGOut.writeBytes(delim);
+						noSpace();
+						writeIdentifier(rdc.getKey());
+						TGOut.writeBytes(": ");
+						TGOut.writeBytes(rdc.getValue().getTGTypeName(pkg));
+=======
+					for (RecordComponent rdc : rd.getComponents()) {
+						write(delim);
+						noSpace();
+						writeIdentifier(rdc.getName());
+						write(": ");
+						write(rdc.getDomain().getTGTypeName(pkg));
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 						delim = ", ";
 					}
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 					this.write(" );\n");
 					this.writeComments(rd, rd.getSimpleName());
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+					TGOut.writeBytes(" );\n");
+=======
+					write(" );\n");
+					writeComments(rd, rd.getSimpleName());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 				}
 			}
 
@@ -444,7 +634,13 @@ public class GraphIO {
 				this.writeAttributes(pkg, vc);
 				this.writeConstraints(vc);
 				this.write(";\n");
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 				this.writeComments(vc, vc.getSimpleName());
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+				;
+=======
+				writeComments(vc, vc.getSimpleName());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 			}
 
 			// write edge classes
@@ -461,22 +657,56 @@ public class GraphIO {
 				this.writeHierarchy(pkg, ec);
 
 				// from (min,max) rolename
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 				this.write(" from");
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+				TGOut.writeBytes(" from");
+=======
+				write(" from");
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 				this.space();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 				this.writeIdentifier(ec.getFrom().getVertexClass()
 						.getQualifiedName(pkg));
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+				;
+=======
+				writeIdentifier(ec.getFrom().getVertexClass()
+						.getQualifiedName(pkg));
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 				this.write(" (");
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 				this.write(ec.getFrom().getMin() + ",");
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+				;
+=======
+				write(ec.getFrom().getMin() + ",");
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 				if (ec.getFrom().getMax() == Integer.MAX_VALUE) {
 					this.write("*)");
 				} else {
 					this.write(ec.getFrom().getMax() + ")");
 				}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+				if (ec.getFrom().getMax() == Integer.MAX_VALUE) {
+					write("*)");
+				} else {
+					write(ec.getFrom().getMax() + ")");
+				}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 
 				if (!ec.getFrom().getRolename().equals("")) {
 					this.write(" role");
 					this.space();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 					this.writeIdentifier(ec.getFrom().getRolename());
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+					;
+=======
+					writeIdentifier(ec.getFrom().getRolename());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 					String delim = " redefines";
 					for (String redefinedRolename : ec.getFrom()
 							.getRedefinedRoles()) {
@@ -500,22 +730,56 @@ public class GraphIO {
 				}
 
 				// to (min,max) rolename
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 				this.write(" to");
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+				TGOut.writeBytes(" to");
+=======
+				write(" to");
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 				this.space();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 				this.writeIdentifier(ec.getTo().getVertexClass()
 						.getQualifiedName(pkg));
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+				;
+=======
+				writeIdentifier(ec.getTo().getVertexClass()
+						.getQualifiedName(pkg));
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 				this.write(" (");
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 				this.write(ec.getTo().getMin() + ",");
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+				;
+=======
+				write(ec.getTo().getMin() + ",");
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 				if (ec.getTo().getMax() == Integer.MAX_VALUE) {
 					this.write("*)");
 				} else {
 					this.write(ec.getTo().getMax() + ")");
 				}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+				if (ec.getTo().getMax() == Integer.MAX_VALUE) {
+					write("*)");
+				} else {
+					write(ec.getTo().getMax() + ")");
+				}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 
 				if (!ec.getTo().getRolename().equals("")) {
 					this.write(" role");
 					this.space();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 					this.writeIdentifier(ec.getTo().getRolename());
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+					;
+=======
+					writeIdentifier(ec.getTo().getRolename());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 					String delim = " redefines";
 					for (String redefinedRolename : ec.getTo()
 							.getRedefinedRoles()) {
@@ -541,14 +805,26 @@ public class GraphIO {
 				this.writeAttributes(pkg, ec);
 				this.writeConstraints(ec);
 				this.write(";\n");
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 				this.writeComments(ec, ec.getSimpleName());
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+				;
+=======
+				writeComments(ec, ec.getSimpleName());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 			}
 
 			// write package comments
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 			this.writeComments(pkg, "." + pkg.getQualifiedName());
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+			;
+=======
+			writeComments(pkg, "." + pkg.getQualifiedName());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 		}
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private void writeComments(NamedElement elem, String name)
 			throws IOException {
 		if (!elem.getComments().isEmpty()) {
@@ -562,8 +838,23 @@ public class GraphIO {
 			this.write(";\n");
 		}
 	}
-
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private void writeComments(NamedElement elem, String name)
+			throws IOException {
+		if (!elem.getComments().isEmpty()) {
+			write("Comment");
+			space();
+			writeIdentifier(name);
+			space();
+			for (String c : elem.getComments()) {
+				writeUtfString(c);
+			}
+			write(";\n");
+		}
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private void writeConstraints(AttributedElementClass<?, ?> aec)
 			throws IOException {
 		for (Constraint c : aec.getConstraints()) {
@@ -580,7 +871,25 @@ public class GraphIO {
 			this.space();
 		}
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private void writeConstraints(AttributedElementClass<?, ?> aec)
+			throws IOException {
+		for (Constraint c : aec.getConstraints()) {
+			writeSpace();
+			write("[");
+			noSpace();
+			writeUtfString(c.getMessage());
+			writeUtfString(c.getPredicate());
+			if (c.getOffendingElementsQuery() != null) {
+				writeUtfString(c.getOffendingElementsQuery());
+			}
+			noSpace();
+			write("]");
+			space();
+		}
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	/**
 	 * Saves the specified <code>graph</code> to the file named
 	 * <code>filename</code>. When the <code>filename</code> ends with
@@ -616,7 +925,6 @@ public class GraphIO {
 			close(out);
 		}
 	}
-
 	/**
 	 * Saves the marked <code>subGraph</code> to the file named
 	 * <code>filename</code>. A {@link ProgressFunction} <code>pf</code> can be
@@ -651,7 +959,6 @@ public class GraphIO {
 			close(out);
 		}
 	}
-
 	/**
 	 * Saves the specified <code>graph</code> to the stream <code>out</code>. A
 	 * {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
@@ -677,7 +984,6 @@ public class GraphIO {
 			throw new GraphIOException("Exception while saving graph", e);
 		}
 	}
-
 	/**
 	 * Saves the marked <code>subGraph</code> to the stream <code>out</code>. A
 	 * {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
@@ -704,7 +1010,7 @@ public class GraphIO {
 			throw new GraphIOException("Exception while saving graph", e);
 		}
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private void saveGraph(InternalGraph graph, ProgressFunction pf,
 			BooleanGraphMarker subGraph) throws IOException, GraphIOException {
 		TraversalContext tc = graph.setTraversalContext(null);
@@ -855,26 +1161,242 @@ public class GraphIO {
 			graph.setTraversalContext(tc);
 		}
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private void saveGraph(InternalGraph graph, ProgressFunction pf,
+			BooleanGraphMarker subGraph) throws IOException, GraphIOException {
+		TraversalContext tc = graph.setTraversalContext(null);
+		try {
+			// Write the jgralab version and license in a comment
+			saveHeader();
 
-	private void saveHeader() throws IOException {
-		this.write(JGraLab.getVersionInfo(true));
-		this.write("TGraph " + TGFILE_VERSION + ";\n");
+			schema = graph.getSchema();
+			saveSchema(schema);
+
+			long eId;
+			long vId;
+
+			// progress bar for graph
+			long graphElements = 0, currentCount = 0, interval = 1;
+			if (pf != null) {
+				if (subGraph != null) {
+					pf.init(subGraph.size());
+				} else {
+					pf.init(graph.getVCount() + graph.getECount());
+				}
+				interval = pf.getUpdateInterval();
+			}
+
+			space();
+			write("Graph " + toUtfString(graph.getId()) + " "
+					+ graph.getGraphVersion());
+			writeIdentifier(graph.getAttributedElementClass()
+					.getQualifiedName());
+			int vCount = graph.getVCount();
+			int eCount = graph.getECount();
+			// with a GraphMarker, v/eCount have to be restricted to the marked
+			// elements.
+			if (subGraph != null) {
+				vCount = 0;
+				eCount = 0;
+				for (AttributedElement<?, ?> ae : subGraph.getMarkedElements()) {
+					if (ae instanceof Vertex) {
+						vCount++;
+					} else if (ae instanceof Edge) {
+						eCount++;
+					}
+				}
+			}
+			write(" (" + graph.getMaxVCount() + " " + graph.getMaxECount()
+					+ " " + vCount + " " + eCount + ")");
+			space();
+			graph.writeAttributeValues(this);
+			write(";\n");
+
+			Package oldPackage = null;
+			// write vertices
+			// System.out.println("Writing vertices");
+			Vertex nextV = graph.getFirstVertex();
+			while (nextV != null) {
+				if ((subGraph != null) && !subGraph.isMarked(nextV)) {
+					nextV = nextV.getNextVertex();
+					continue;
+				}
+				vId = nextV.getId();
+				AttributedElementClass<?, ?> aec = nextV
+						.getAttributedElementClass();
+				Package currentPackage = aec.getPackage();
+				if (currentPackage != oldPackage) {
+					write("Package");
+					space();
+					writeIdentifier(currentPackage.getQualifiedName());
+					write(";\n");
+					oldPackage = currentPackage;
+				}
+				write(Long.toString(vId));
+				space();
+				writeIdentifier(aec.getSimpleName());
+				// write incident edges
+				Edge nextI = nextV.getFirstIncidence();
+				write(" <");
+				noSpace();
+				// System.out.print("  Writing incidences of vertex.");
+				while (nextI != null) {
+					if ((subGraph != null) && !subGraph.isMarked(nextI)) {
+						nextI = nextI.getNextIncidence();
+						continue;
+					}
+					writeLong(nextI.getId());
+					nextI = nextI.getNextIncidence();
+				}
+				write(">");
+				space();
+				nextV.writeAttributeValues(this);
+				write(";\n");
+				nextV = nextV.getNextVertex();
+
+				// update progress bar
+				if (pf != null) {
+					graphElements++;
+					currentCount++;
+					if (currentCount == interval) {
+						pf.progress(graphElements);
+						currentCount = 0;
+					}
+				}
+			}
+
+			// System.out.println("Writing edges");
+			// write edges
+			Edge nextE = graph.getFirstEdge();
+			while (nextE != null) {
+				if ((subGraph != null) && !subGraph.isMarked(nextE)) {
+					nextE = nextE.getNextEdge();
+					continue;
+				}
+				eId = nextE.getId();
+				AttributedElementClass<?, ?> aec = nextE
+						.getAttributedElementClass();
+				Package currentPackage = aec.getPackage();
+				if (currentPackage != oldPackage) {
+					write("Package");
+					space();
+					writeIdentifier(currentPackage.getQualifiedName());
+					write(";\n");
+					oldPackage = currentPackage;
+				}
+				write(Long.toString(eId));
+				space();
+				writeIdentifier(aec.getSimpleName());
+				space();
+				nextE.writeAttributeValues(this);
+				write(";\n");
+				nextE = nextE.getNextEdge();
+
+				// update progress bar
+				if (pf != null) {
+					graphElements++;
+					currentCount++;
+					if (currentCount == interval) {
+						pf.progress(graphElements);
+						currentCount = 0;
+					}
+				}
+
+			}
+			TGOut.flush();
+			// finish progress bar
+			if (pf != null) {
+				pf.finished();
+			}
+		} finally {
+			graph.setTraversalContext(tc);
+		}
 	}
-
-	private void writeHierarchy(Package pkg, GraphElementClass<?, ?> aec)
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+	private void saveHeader() throws IOException {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
+		this.write(JGraLab.getVersionInfo(true));
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+		;
+=======
+		write(JGraLab.getVersionInfo(true));
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
+		this.write("TGraph " + TGFILE_VERSION + ";\n");
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+		;
+=======
+		write("TGraph " + TGFILE_VERSION + ";\n");
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+	}
+	private void writeHierarchy(Package pkg, AttributedElementClass<?, ?> aec)
 			throws IOException {
 		String delim = ":";
-		for (GraphElementClass<?, ?> superClass : aec.getDirectSuperClasses()) {
+		for (AttributedElementClass<?, ?> superClass : aec
+				.getDirectSuperClasses()) {
 			if (!superClass.isInternal()) {
 				this.write(delim);
 				this.space();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 				this.writeIdentifier(superClass.getQualifiedName(pkg));
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+				;
+=======
+				writeIdentifier(superClass.getQualifiedName(pkg));
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 				delim = ",";
 			}
 		}
 	}
-
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
+	private void writeAttributes(Package pkg, AttributedElementClass<?, ?> aec)
+			throws IOException {
+		if (aec.hasOwnAttributes()) {
+			this.write(" {");
+		}
+		for (Iterator<Attribute> ait = aec.getOwnAttributeList().iterator(); ait
+				.hasNext();) {
+			Attribute a = ait.next();
+			this.space();
+			this.writeIdentifier(a.getName());
+			this.write(": ");
+			String domain = a.getDomain().getTGTypeName(pkg);
+			this.write(domain);
+			if ((a.getDefaultValueAsString() != null)
+					&& !a.getDefaultValueAsString().equals("n")) {
+				this.write(" = ");
+				this.writeUtfString(a.getDefaultValueAsString());
+			}
+			if (ait.hasNext()) {
+				this.write(", ");
+			} else {
+				this.write(" }");
+			}
+		}
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+	private void writeAttributes(Package pkg, AttributedElementClass aec)
+			throws IOException {
+		if (aec.hasOwnAttributes()) {
+			TGOut.writeBytes(" {");
+		}
+		for (Iterator<Attribute> ait = aec.getOwnAttributeList().iterator(); ait
+				.hasNext();) {
+			Attribute a = ait.next();
+			space();
+			writeIdentifier(a.getName());
+			TGOut.writeBytes(": ");
+			String domain = a.getDomain().getTGTypeName(pkg);
+			TGOut.writeBytes(domain);
+			if (ait.hasNext()) {
+				TGOut.writeBytes(", ");
+			} else {
+				TGOut.writeBytes(" }");
+			}
+		}
+	}
+=======
 	private void writeAttributes(Package pkg, AttributedElementClass<?, ?> aec)
 			throws IOException {
 		List<Attribute> attributes = aec.getOwnAttributeList();
@@ -889,65 +1411,79 @@ public class GraphIO {
 			writeIdentifier(a.getName());
 			write(": ");
 			String domain = a.getDomain().getTGTypeName(pkg);
-			this.write(domain);
+			write(domain);
 			if ((a.getDefaultValueAsString() != null)
 					&& !a.getDefaultValueAsString().equals("n")) {
-				this.write(" = ");
-				this.writeUtfString(a.getDefaultValueAsString());
+				write(" = ");
+				writeUtfString(a.getDefaultValueAsString());
 			}
 		}
 		write(" }");
 	}
-
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	public final void write(String s) throws IOException {
 		this.TGOut.writeBytes(s);
 	}
-
 	public final void noSpace() {
 		this.writeSpace = false;
 	}
-
 	public final void space() {
 		this.writeSpace = true;
 	}
-
 	public final void writeSpace() throws IOException {
 		if (this.writeSpace) {
 			this.TGOut.writeBytes(" ");
 		}
 		this.writeSpace = true;
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	public final void writeBoolean(boolean b) throws IOException {
 		this.writeSpace();
 		this.TGOut.writeBytes(b ? TRUE_LITERAL : FALSE_LITERAL);
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	public final void writeBoolean(boolean b) throws IOException {
+		writeSpace();
+		TGOut.writeBytes(b ? TRUE_LITERAL : FALSE_LITERAL);
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	public final void writeInteger(int i) throws IOException {
 		this.writeSpace();
 		this.TGOut.writeBytes(Integer.toString(i));
 	}
-
 	public final void writeLong(long l) throws IOException {
 		this.writeSpace();
 		this.TGOut.writeBytes(Long.toString(l));
 	}
-
 	public final void writeDouble(double d) throws IOException {
 		this.writeSpace();
 		this.TGOut.writeBytes(Double.toString(d));
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	public final void writeUtfString(String s) throws IOException {
 		this.writeSpace();
 		this.TGOut.writeBytes(s == null ? NULL_LITERAL : toUtfString(s));
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	public final void writeUtfString(String s) throws IOException {
+		writeSpace();
+		TGOut.writeBytes(s == null ? NULL_LITERAL : toUtfString(s));
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	public final void writeIdentifier(String s) throws IOException {
 		this.writeSpace();
 		this.TGOut.writeBytes(s);
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	public final void writeIdentifier(String s) throws IOException {
+		writeSpace();
+		TGOut.writeBytes(s);
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	public static GraphIO createStringReader(String input, Schema schema)
 			throws GraphIOException {
 		GraphIO io = new GraphIO();
@@ -959,7 +1495,6 @@ public class GraphIO {
 		io.match();
 		return io;
 	}
-
 	public static GraphIO createStringWriter(Schema schema) {
 		GraphIO io = new GraphIO();
 		io.BAOut = new ByteArrayOutputStream();
@@ -967,7 +1502,7 @@ public class GraphIO {
 		io.schema = schema;
 		return io;
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	public String getStringWriterResult() throws GraphIOException, IOException {
 		if (this.BAOut == null) {
 			throw new GraphIOException("GraphIO did not write to a String.");
@@ -985,14 +1520,31 @@ public class GraphIO {
 			close(this.BAOut);
 		}
 	}
-
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	public String getStringWriterResult() throws GraphIOException, IOException {
+		if (BAOut == null) {
+			throw new GraphIOException("GraphIO did not write to a String.");
+		}
+		try {
+			try {
+				TGOut.flush();
+				BAOut.flush();
+				String result = BAOut.toString("US-ASCII");
+				return result;
+			} finally {
+				close(TGOut);
+			}
+		} finally {
+			close(BAOut);
+		}
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	public static Graph loadGraphFromFile(String filename, ProgressFunction pf)
 			throws GraphIOException {
 		return loadGraphFromFile(filename, ImplementationType.STANDARD, pf);
 	}
-
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	public static Graph loadGraphFromFile(String filename,
 			ImplementationType implementationType, ProgressFunction pf)
 					throws GraphIOException {
@@ -1002,6 +1554,44 @@ public class GraphIO {
 					"ImplementationType must be != null and != DATABASE");
 		}
 
+		FileInputStream fileStream = null;
+		try {
+			logger.finer("Loading graph " + filename);
+			fileStream = new FileInputStream(filename);
+			InputStream inputStream = null;
+			try {
+				if (filename.toLowerCase().endsWith(".gz")) {
+					inputStream = new GZIPInputStream(fileStream, BUFFER_SIZE);
+				} else {
+					inputStream = new BufferedInputStream(fileStream,
+							BUFFER_SIZE);
+				}
+				return loadGraphFromStream(inputStream, null, null,
+						implementationType, pf);
+			} catch (IOException ex) {
+				throw new GraphIOException(
+						"Exception while loading graph from file " + filename,
+						ex);
+			} finally {
+				close(inputStream);
+			}
+		} catch (IOException ex) {
+			throw new GraphIOException(
+					"Exception while loading graph from file " + filename, ex);
+		} finally {
+			close(fileStream);
+		}
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	public static Graph loadGraphFromFile(String filename,
+			ImplementationType implementationType, ProgressFunction pf)
+			throws GraphIOException {
+		if (implementationType == null
+				|| implementationType == ImplementationType.DATABASE) {
+			throw new IllegalArgumentException(
+					"ImplementationType must be != null and != DATABASE");
+		}
 		FileInputStream fileStream = null;
 		try {
 			fileStream = new FileInputStream(filename);
@@ -1029,7 +1619,8 @@ public class GraphIO {
 			close(fileStream);
 		}
 	}
-
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	public static <G extends Graph> G loadGraphFromFile(String filename,
 			Schema schema, ImplementationType implementationType,
 			ProgressFunction pf) throws GraphIOException {
@@ -1045,7 +1636,25 @@ public class GraphIO {
 				.createDefaultGraphFactory(implementationType);
 		return loadGraphFromFile(filename, factory, pf);
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	public static <G extends Graph> G loadGraphFromFile(String filename,
+			Schema schema, ImplementationType implementationType,
+			ProgressFunction pf) throws GraphIOException {
+		if (schema == null) {
+			throw new IllegalArgumentException("Schema must be != null");
+		}
+		if (implementationType == null
+				|| implementationType == ImplementationType.DATABASE) {
+			throw new IllegalArgumentException(
+					"ImplementationType must be != null and != DATABASE");
+		}
+		GraphFactory factory = schema
+				.createDefaultGraphFactory(implementationType);
+		return loadGraphFromFile(filename, factory, pf);
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	public static <G extends Graph> G loadGraphFromFile(String filename,
 			GraphFactory factory, ProgressFunction pf) throws GraphIOException {
 		if (factory == null) {
@@ -1053,6 +1662,7 @@ public class GraphIO {
 		}
 		FileInputStream fileStream = null;
 		try {
+			logger.finer("Loading graph " + filename);
 			fileStream = new FileInputStream(filename);
 			InputStream inputStream = null;
 			try {
@@ -1079,25 +1689,6 @@ public class GraphIO {
 		}
 	}
 
-	public static <G extends Graph> G loadGraphFromDatabase(String id,
-			GraphDatabase graphDatabase) throws GraphDatabaseException {
-		if (graphDatabase != null) {
-			return graphDatabase.getGraph(id);
-		} else {
-			throw new GraphDatabaseException("No graph database given.");
-		}
-	}
-
-	protected static void close(Closeable stream) throws GraphIOException {
-		try {
-			if (stream != null) {
-				stream.close();
-			}
-		} catch (IOException ex) {
-			throw new GraphIOException("Exception while closing stream.", ex);
-		}
-	}
-
 
 	public static <G extends Graph> G loadGraphFromStream(InputStream in,
 			Schema schema, GraphFactory graphFactory,
@@ -1118,7 +1709,6 @@ public class GraphIO {
 							SchemaClassManager.instance(schemaQName));
 				} catch (ClassNotFoundException e) {
 					// schema class not found, try compile schema in-memory
-					io.schema.finish();
 					io.schema.compile(CodeGeneratorConfiguration.MINIMAL);
 					try {
 						schemaClass = Class.forName(schemaQName, true,
@@ -1167,6 +1757,173 @@ public class GraphIO {
 	}
 
 
+	protected EdgeClass createEdgeClass(GraphElementClassData ecd, GraphClass gc)
+			throws GraphIOException, SchemaException {
+		EdgeClass ec = gc.createEdgeClass(ecd.getQualifiedName(),
+				gc.getVertexClass(ecd.fromVertexClassName),
+				ecd.fromMultiplicity[0], ecd.fromMultiplicity[1],
+				ecd.fromRoleName, ecd.fromAggregation,
+				gc.getVertexClass(ecd.toVertexClassName),
+				ecd.toMultiplicity[0], ecd.toMultiplicity[1], ecd.toRoleName,
+				ecd.toAggregation);
+
+		this.addAttributes(ecd.attributes, ec);
+
+		for (Constraint constraint : ecd.constraints) {
+			ec.addConstraint(constraint);
+		}
+
+		ec.setAbstract(ecd.isAbstract);
+
+		this.GECsearch.put(ec, gc);
+		return ec;
+	}
+	private final String toQNameString(String[] qn) {
+		return this.toQNameString(qn[0], qn[1]);
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	public static <G extends Graph> G loadGraphFromFile(String filename,
+			GraphFactory factory, ProgressFunction pf) throws GraphIOException {
+		if (factory == null) {
+			throw new IllegalArgumentException("GraphFactory must be != null");
+		}
+		FileInputStream fileStream = null;
+		try {
+			fileStream = new FileInputStream(filename);
+			InputStream inputStream = null;
+			try {
+				if (filename.toLowerCase().endsWith(".gz")) {
+					inputStream = new GZIPInputStream(fileStream, BUFFER_SIZE);
+				} else {
+					inputStream = new BufferedInputStream(fileStream,
+							BUFFER_SIZE);
+				}
+				return loadGraphFromStream(inputStream, factory.getSchema(),
+						factory, factory.getImplementationType(), pf);
+			} catch (IOException ex) {
+				throw new GraphIOException(
+						"Exception while loading graph from file " + filename,
+						ex);
+			} finally {
+				close(inputStream);
+			}
+		} catch (IOException ex) {
+			throw new GraphIOException(
+					"Exception while loading graph from file " + filename, ex);
+		} finally {
+			close(fileStream);
+		}
+	}
+
+	public static <G extends Graph> G loadGraphFromStream(InputStream in,
+			Schema schema, GraphFactory graphFactory,
+			ImplementationType implementationType, ProgressFunction pf)
+			throws GraphIOException {
+		try {
+			GraphIO io = new GraphIO();
+			io.TGIn = in;
+			io.schema = schema;
+			io.tgfile();
+			if (implementationType != ImplementationType.GENERIC) {
+				// we have replace the schema by an instance of the compiled
+				// schema, try to load the schema class
+				String schemaQName = io.schema.getQualifiedName();
+				Class<?> schemaClass = null;
+				try {
+					schemaClass = Class.forName(schemaQName, true,
+							SchemaClassManager.instance(schemaQName));
+				} catch (ClassNotFoundException e) {
+					// schema class not found, try compile schema in-memory
+					io.schema.finish();
+					io.schema.compile(CodeGeneratorConfiguration.MINIMAL);
+					try {
+						schemaClass = Class.forName(schemaQName, true,
+								SchemaClassManager.instance(schemaQName));
+					} catch (ClassNotFoundException e1) {
+						throw new GraphIOException(
+								"Unable to load a graph which belongs to the schema because the Java-classes for this schema can not be created.",
+								e1);
+					}
+				}
+				// create an instance of the compiled schema class
+				Method instanceMethod = schemaClass.getMethod("instance",
+						(Class<?>[]) null);
+				io.schema = (Schema) instanceMethod.invoke(null, new Object[0]);
+			}
+			io.schema.finish();
+			if (graphFactory == null) {
+				graphFactory = io.schema
+						.createDefaultGraphFactory(implementationType);
+			}
+			if (graphFactory.getSchema() != io.schema) {
+				throw new GraphIOException(
+						"Incompatible in graph factory: Expected '"
+								+ io.schema.getQualifiedName() + "', found '"
+								+ graphFactory.getSchema().getQualifiedName()
+								+ "'.");
+			}
+			if (implementationType != null
+					&& graphFactory.getImplementationType() != implementationType) {
+				throw new GraphIOException(
+						"Graph factory has wrong implementation type: Expected '"
+								+ implementationType + "', found '"
+								+ graphFactory.getImplementationType() + "'.");
+			}
+			io.graphFactory = graphFactory;
+
+			@SuppressWarnings("unchecked")
+			G loadedGraph = (G) io.graph(pf);
+			return loadedGraph;
+		} catch (GraphIOException e1) {
+			throw e1;
+		} catch (Exception e2) {
+			throw new GraphIOException("Exception while loading graph.", e2);
+		}
+	}
+
+	private EdgeClass createEdgeClass(GraphElementClassData ecd, GraphClass gc)
+			throws GraphIOException, SchemaException {
+		EdgeClass ec = gc.createEdgeClass(ecd.getQualifiedName(),
+				gc.getVertexClass(ecd.fromVertexClassName),
+				ecd.fromMultiplicity[0], ecd.fromMultiplicity[1],
+				ecd.fromRoleName, ecd.fromAggregation,
+				gc.getVertexClass(ecd.toVertexClassName),
+				ecd.toMultiplicity[0], ecd.toMultiplicity[1], ecd.toRoleName,
+				ecd.toAggregation);
+
+		addAttributes(ecd.attributes, ec);
+
+		for (Constraint constraint : ecd.constraints) {
+			ec.addConstraint(constraint);
+		}
+
+		ec.setAbstract(ecd.isAbstract);
+
+		GECsearch.put(ec, gc);
+		return ec;
+	}
+	private final String toQNameString(String[] qn) {
+		return toQNameString(qn[0], qn[1]);
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+	public static <G extends Graph> G loadGraphFromDatabase(String id,
+			GraphDatabase graphDatabase) throws GraphDatabaseException {
+		if (graphDatabase != null) {
+			return graphDatabase.getGraph(id);
+		} else {
+			throw new GraphDatabaseException("No graph database given.");
+		}
+	}
+	protected static private void close(Closeable stream) throws GraphIOException {
+		try {
+			if (stream != null) {
+				stream.close();
+			}
+		} catch (IOException ex) {
+			throw new GraphIOException("Exception while closing stream.", ex);
+		}
+	}
 	protected void tgfile() throws GraphIOException, SchemaException, IOException {
 		this.line = 1;
 		this.la = this.read();
@@ -1179,13 +1936,13 @@ public class GraphIO {
 		throw new GraphIOException("Symbol '" + this.lookAhead
 				+ "' not recognized in line " + this.line, null);
 	}
-
 	/**
 	 * Reads TG File header and checks if the file version can be processed.
 	 * 
 	 * @throws GraphIOException
 	 *             if version number in file can not be processed
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private void header() throws GraphIOException {
 		this.match("TGraph");
 		int version = this.matchInteger();
@@ -1195,13 +1952,26 @@ public class GraphIO {
 		}
 		this.match(";");
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+	private void header() throws GraphIOException 
+=======
+	private void header() throws GraphIOException {
+		match("TGraph");
+		int version = matchInteger();
+		if (version != TGFILE_VERSION) {
+			throw new GraphIOException("Can't read TGFile version " + version
+					+ ". Expected version " + TGFILE_VERSION);
+		}
+		match(";");
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	/**
 	 * Reads a Schema together with its Domains, GraphClasses and
 	 * GraphElementClasses from a TG-file. Subsequently, the Schema is created.
 	 * 
 	 * @throws GraphIOException
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	protected void schema() throws GraphIOException, SchemaException {
 		this.currentPackageName = "";
 		this.match("Schema");
@@ -1265,20 +2035,82 @@ public class GraphIO {
 		this.buildHierarchy(); // build inheritance relationships
 		this.processComments();
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private void schema() throws GraphIOException, SchemaException {
+		currentPackageName = "";
+		match("Schema");
+		String[] qn = matchQualifiedName(true);
+		if (qn[0].equals("")) {
+			throw new GraphIOException("Invalid schema name '" + lookAhead
+					+ "', package prefix must not be empty in line " + line);
+		}
+		match(";");
 
+		if (schema != null) {
+			// We already have a schema, so we don't want to load the schema
+			// from the file
 
+			// but wait, check if the names match...
+			if (schema.getQualifiedName().equals(qn[0] + "." + qn[1])) {
+				// yes, everything is fine :-)
+				// skip schema part
+				//
+				// Beware: it's totally ok to have a VertexClass Graph, so
+				// lookAhead = Graph is a too weak check. So we test that before
+				// the Graph, the last token is a ;, too.
+				String prev = "";
+				while ((lookAhead.length() > 0)
+						&& !(prev.equals(";") && lookAhead.equals("Graph"))) {
+					prev = lookAhead;
+					match();
+				}
+				return;
+			} else {
+				throw new GraphIOException(
+						"Trying to load a graph with wrong schema. Expected: "
+								+ schema.getQualifiedName() + ", but found "
+								+ qn[0] + "." + qn[1]);
+			}
+		}
 
+		schema = new SchemaImpl(qn[1], qn[0]);
 
+		// read Domains and GraphClasses with contained GraphElementClasses
+		parseSchema();
+
+		// test for correct syntax, because otherwise, the following
+		// sorting/creation methods probably can't work.
+		if (!(lookAhead.equals("") || lookAhead.equals("Graph"))) {
+			throw new GraphIOException("Symbol '" + lookAhead
+					+ "' not recognized in line " + line, null);
+		}
+
+		// sort data of RecordDomains, GraphClasses and GraphElementClasses in
+		// topological order
+
+		checkFromToVertexClasses();
+
+		sortRecordDomains();
+		sortVertexClasses();
+		sortEdgeClasses();
+
+		domDef(); // create Domains
+		completeGraphClass(); // create GraphClasses with contained elements
+		buildHierarchy(); // build inheritance relationships
+		processComments();
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	protected Schema createSchema(String name, String prefix){
 		return new SchemaImpl(name,prefix);
 	}
-
 	/**
 	 * Adds comments collected during schema parsing to the annotated elements.
 	 * 
 	 * @throws GraphIOException
 	 */
 	private void processComments() throws GraphIOException {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 		for (Entry<String, List<String>> e : this.commentData.entrySet()) {
 			if (!this.schema.knows(e.getKey())) {
 				throw new GraphIOException("Annotated element '" + e.getKey()
@@ -1295,14 +2127,34 @@ public class GraphIO {
 				el.addComment(comment);
 			}
 		}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+		for (Entry<String, List<String>> e : ) 
+=======
+		for (Entry<String, List<String>> e : commentData.entrySet()) {
+			if (!schema.knows(e.getKey())) {
+				throw new GraphIOException("Annotated element '" + e.getKey()
+						+ "' not found in schema " + schema.getQualifiedName());
+			}
+			NamedElement el = schema.getNamedElement(e.getKey());
+			if ((el instanceof Domain)
+					&& !((el instanceof EnumDomain) || (el instanceof RecordDomain))) {
+				throw new GraphIOException(
+						"Default domains can not have comments. Offending domain is '"
+								+ e.getKey() + "'");
+			}
+			for (String comment : e.getValue()) {
+				el.addComment(comment);
+			}
+		}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	}
-
 	/**
 	 * Creates the Domains contained in a Schema.
 	 * 
 	 * @return A Map of the Domain names to the concrete Domain objects.
 	 * @throws GraphIOException
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private Map<String, Domain> domDef() throws GraphIOException,
 	SchemaException {
 		// basic domains are created automatically
@@ -1310,12 +2162,22 @@ public class GraphIO {
 		this.recordDomains(); // create RecordDomains
 		return this.domains;
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private Map<String, Domain> domDef() throws GraphIOException,
+			SchemaException {
+		// basic domains are created automatically
+		enumDomains(); // create EnumDomains
+		recordDomains(); // create RecordDomains
+		return domains;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	/**
 	 * Reads an EnumDomain, i.e. its name along with the enum constants.
 	 * 
 	 * @throws GraphIOException
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private void parseEnumDomain() throws GraphIOException {
 		this.match("EnumDomain");
 		String[] qn = this.matchQualifiedName(true);
@@ -1323,10 +2185,20 @@ public class GraphIO {
 				this.parseEnumConstants()));
 		this.match(";");
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private void parseEnumDomain() throws GraphIOException {
+		match("EnumDomain");
+		String[] qn = matchQualifiedName(true);
+		enumDomainBuffer.add(new EnumDomainData(qn[0], qn[1],
+				parseEnumConstants()));
+		match(";");
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	/**
 	 * Creates all EnumDomains whose data is stored in {@link enumDomainBuffer}
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private void enumDomains() {
 		Domain domain;
 
@@ -1338,12 +2210,26 @@ public class GraphIO {
 			this.domains.put(qName, domain);
 		}
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private void enumDomains() {
+		Domain domain;
 
+		for (EnumDomainData enumDomainData : enumDomainBuffer) {
+			String qName = toQNameString(enumDomainData.packageName,
+					enumDomainData.simpleName);
+			domain = schema.createEnumDomain(qName,
+					enumDomainData.enumConstants);
+			domains.put(qName, domain);
+		}
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	/**
 	 * Read a RecordDomain, i.e. its name along with the components.
 	 * 
 	 * @throws GraphIOException
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private void parseRecordDomain() throws GraphIOException {
 		this.match("RecordDomain");
 		String[] qn = this.matchQualifiedName(true);
@@ -1351,7 +2237,16 @@ public class GraphIO {
 				this.parseRecordComponents()));
 		this.match(";");
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private void parseRecordDomain() throws GraphIOException {
+		match("RecordDomain");
+		String[] qn = matchQualifiedName(true);
+		recordDomainBuffer.add(new RecordDomainData(qn[0], qn[1],
+				parseRecordComponents()));
+		match(";");
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	/**
 	 * Creates all RecordDomains whose data is stored in
 	 * {@link recordDomainBuffer} @
@@ -1359,6 +2254,7 @@ public class GraphIO {
 	private void recordDomains() throws GraphIOException, SchemaException {
 		Domain domain;
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 		for (RecordDomainData recordDomainData : this.recordDomainBuffer) {
 			String qName = this.toQNameString(recordDomainData.packageName,
 					recordDomainData.simpleName);
@@ -1366,8 +2262,18 @@ public class GraphIO {
 					this.getComponents(recordDomainData.components));
 			this.domains.put(qName, domain);
 		}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+		for (RecordDomainData recordDomainData : recordDomainBuffer) {
+			String qName = toQNameString(recordDomainData.packageName,
+					recordDomainData.simpleName);
+			domain = schema.createRecordDomain(qName,
+					getComponents(recordDomainData.components));
+			domains.put(qName, domain);
+		}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private List<RecordComponent> getComponents(
 			List<ComponentData> componentsData) throws GraphIOException {
 		List<RecordComponent> result = new ArrayList<RecordComponent>(
@@ -1380,7 +2286,21 @@ public class GraphIO {
 		}
 		return result;
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private List<RecordComponent> getComponents(
+			List<ComponentData> componentsData) throws GraphIOException {
+		List<RecordComponent> result = new ArrayList<RecordComponent>(
+				componentsData.size());
 
+		for (ComponentData ad : componentsData) {
+			RecordComponent c = new RecordComponent(ad.name,
+					attrDomain(ad.domainDescription));
+			result.add(c);
+		}
+		return result;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	/**
 	 * Reads Schema's Domains and GraphClasses with contained
 	 * GraphElementClasses from TG-file.
@@ -1411,7 +2331,7 @@ public class GraphIO {
 			}
 		}
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private void parseComment() throws GraphIOException {
 		this.match("Comment");
 		String qName = this.toQNameString(this.matchQualifiedName());
@@ -1427,7 +2347,25 @@ public class GraphIO {
 			this.commentData.put(qName, comments);
 		}
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private void parseComment() throws GraphIOException {
+		match("Comment");
+		String qName = toQNameString(matchQualifiedName());
+		List<String> comments = new ArrayList<String>();
+		comments.add(matchUtfString());
+		while (!lookAhead.equals(";")) {
+			comments.add(matchUtfString());
+		}
+		match(";");
+		if (commentData.containsKey(qName)) {
+			commentData.get(qName).addAll(comments);
+		} else {
+			commentData.put(qName, comments);
+		}
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private void parsePackage() throws GraphIOException {
 		this.match("Package");
 		this.currentPackageName = "";
@@ -1444,7 +2382,25 @@ public class GraphIO {
 		}
 		this.match(";");
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private void parsePackage() throws GraphIOException {
+		match("Package");
+		currentPackageName = "";
+		if (lookAhead.equals(";")) {
+			currentPackageName = "";
+		} else {
+			String[] qn = matchQualifiedName(false);
+			String qualifiedName = toQNameString(qn);
+			if (!isValidPackageName(qn[1])) {
+				throw new GraphIOException("Invalid package name '"
+						+ qualifiedName + "' in line " + line);
+			}
+			currentPackageName = qualifiedName;
+		}
+		match(";");
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	/**
 	 * Creates the GraphClass contained in the Schema along with its
 	 * GraphElementClasses.
@@ -1463,7 +2419,6 @@ public class GraphIO {
 			this.createEdgeClass(currentGraphElementClassData, currentGraphClass);
 		}
 	}
-
 	/**
 	 * Reads a GraphClass from a TG-file.
 	 * 
@@ -1494,7 +2449,6 @@ public class GraphIO {
 
 		return this.graphClass.name;
 	}
-
 	/**
 	 * Creates a GraphClass based on the given GraphClassData.
 	 * 
@@ -1510,7 +2464,13 @@ public class GraphIO {
 
 		gc.setAbstract(gcData.isAbstract);
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 		this.addAttributes(gcData.attributes, gc);
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+		attributes(gcData.attributes, gc);
+=======
+		addAttributes(gcData.attributes, gc);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 
 		for (Constraint constraint : gcData.constraints) {
 			gc.addConstraint(constraint);
@@ -1518,7 +2478,6 @@ public class GraphIO {
 
 		return gc;
 	}
-
 	/**
 	 * Reads the direct superclasses of a GraphClass or a GraphElementClass from
 	 * the TG-file.
@@ -1526,6 +2485,7 @@ public class GraphIO {
 	 * @return A list of the direct super classes.
 	 * @throws GraphIOException
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private List<String> parseHierarchy() throws GraphIOException {
 		List<String> hierarchy = new LinkedList<String>();
 		this.match(":");
@@ -1538,7 +2498,22 @@ public class GraphIO {
 		}
 		return hierarchy;
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private List<String> parseHierarchy() throws GraphIOException {
+		List<String> hierarchy = new LinkedList<String>();
+		match(":");
+		String[] qn = matchQualifiedName(true);
+		hierarchy.add(toQNameString(qn));
+		while (lookAhead.equals(",")) {
+			match();
+			qn = matchQualifiedName(true);
+			hierarchy.add(toQNameString(qn));
+		}
+		return hierarchy;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private List<AttributeData> parseAttributes() throws GraphIOException {
 		List<AttributeData> attributesData = new ArrayList<AttributeData>();
 		Set<String> names = new TreeSet<String>();
@@ -1575,7 +2550,46 @@ public class GraphIO {
 		this.match("}");
 		return attributesData;
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private List<AttributeData> parseAttributes() throws GraphIOException {
+		List<AttributeData> attributesData = new ArrayList<AttributeData>();
+		Set<String> names = new TreeSet<String>();
 
+		match("{");
+		AttributeData ad = new AttributeData();
+		ad.name = matchSimpleName(false);
+		match(":");
+		ad.domainDescription = parseAttrDomain();
+		if (lookAhead.equals("=")) {
+			match();
+			ad.defaultValue = matchUtfString();
+		}
+		attributesData.add(ad);
+		names.add(ad.name);
+
+		while (lookAhead.equals(",")) {
+			match(",");
+			ad = new AttributeData();
+			ad.name = matchSimpleName(false);
+			match(":");
+			ad.domainDescription = parseAttrDomain();
+			if (lookAhead.equals("=")) {
+				match();
+				ad.defaultValue = matchUtfString();
+			}
+			if (names.contains(ad.name)) {
+				throw new GraphIOException("Duplicate attribute name '"
+						+ ad.name + "' in line " + line);
+			}
+			attributesData.add(ad);
+			names.add(ad.name);
+		}
+		match("}");
+		return attributesData;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	protected void addAttributes(List<AttributeData> attributesData,
 			AttributedElementClass<?, ?> aec) throws GraphIOException {
 		for (AttributeData ad : attributesData) {
@@ -1584,13 +2598,30 @@ public class GraphIO {
 			//	ad.defaultValue);
 		}
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private void addAttributes(List<AttributeData> attributesData,
+			AttributedElementClass<?, ?> aec) throws GraphIOException {
+		for (AttributeData ad : attributesData) {
+			aec.addAttribute(ad.name, attrDomain(ad.domainDescription),
+					ad.defaultValue);
+		}
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private List<String> parseAttrDomain() throws GraphIOException {
 		List<String> result = new ArrayList<String>();
 		this.parseAttrDomain(result);
 		return result;
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private List<String> parseAttrDomain() throws GraphIOException {
+		List<String> result = new ArrayList<String>();
+		parseAttrDomain(result);
+		return result;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	/**
 	 * Reads an Attribute's domain from the TG-file and stores it in the list
 	 * given as argument.
@@ -1599,6 +2630,7 @@ public class GraphIO {
 	 *            The list to which an attribute's domain shall be added.
 	 * @throws GraphIOException
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private void parseAttrDomain(List<String> attrDomain)
 			throws GraphIOException {
 		if (this.lookAhead.matches("[.]?List")) {
@@ -1631,14 +2663,47 @@ public class GraphIO {
 			}
 		}
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private void parseAttrDomain(List<String> attrDomain)
+			throws GraphIOException {
+		if (lookAhead.matches("[.]?List")) {
+			match();
+			match("<");
+			attrDomain.add("List<");
+			parseAttrDomain(attrDomain);
+			match(">");
+		} else if (lookAhead.matches("[.]?Set")) {
+			match();
+			match("<");
+			attrDomain.add("Set<");
+			parseAttrDomain(attrDomain);
+			match(">");
+		} else if (lookAhead.matches("[.]?Map")) {
+			match();
+			match("<");
+			attrDomain.add("Map<");
+			parseAttrDomain(attrDomain);
+			match(",");
+			parseAttrDomain(attrDomain);
+			match(">");
+		} else {
+			if (isBasicDomainName(lookAhead)) {
+				attrDomain.add(lookAhead);
+				match();
+			} else {
+				String[] qn = matchQualifiedName(true);
+				attrDomain.add(toQNameString(qn));
+			}
+		}
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	private boolean isBasicDomainName(String s) {
 		// Basic domains may have a leading "." to indicate their membership in
 		// the default package.
 		return BasicDomainImpl.isBasicDomain(s.startsWith(".") ? s.substring(1)
 				: s);
 	}
-
 	/**
 	 * Creates a Domain corresponding to a list of domain names representing a,
 	 * probably composite, domain.
@@ -1648,6 +2713,7 @@ public class GraphIO {
 	 * @return The created Domain.
 	 * @throws GraphIOException
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private Domain attrDomain(List<String> domainNames) throws GraphIOException {
 		Iterator<String> it = domainNames.iterator();
 		String domainName;
@@ -1699,7 +2765,60 @@ public class GraphIO {
 		throw new GraphIOException("Couldn't create domain for '" + domainNames
 				+ "' in line " + this.line);
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private Domain attrDomain(List<String> domainNames) throws GraphIOException {
+		Iterator<String> it = domainNames.iterator();
+		String domainName;
+		while (it.hasNext()) {
+			domainName = it.next();
+			it.remove();
+			if (domainName.equals("List<")) {
+				try {
+					return schema.createListDomain(attrDomain(domainNames));
+				} catch (SchemaException e) {
+					throw new GraphIOException(
+							"Can't create list domain in line " + line, e);
+				}
+			} else if (domainName.equals("Set<")) {
+				try {
+					return schema.createSetDomain(attrDomain(domainNames));
+				} catch (SchemaException e) {
+					throw new GraphIOException(
+							"Can't create set domain in line " + line, e);
+				}
+			} else if (domainName.equals("Map<")) {
+				try {
+					Domain keyDomain = attrDomain(domainNames);
+					Domain valueDomain = attrDomain(domainNames);
+					if (keyDomain == null) {
+						throw new GraphIOException(
+								"Can't create map domain, because no key domain was given in line "
+										+ line);
+					}
+					MapDomain result = schema.createMapDomain(keyDomain,
+							valueDomain);
+					// System.out.println("result = Map<"
+					// + keyDomain.getQualifiedName() + ", "
+					// + valueDomain.getQualifiedName() + ">");
+					return result;
+				} catch (SchemaException e) {
+					throw new GraphIOException(
+							"Can't create map domain in line " + line, e);
+				}
+			} else {
+				Domain result = schema.getDomain(domainName);
+				if (result == null) {
+					throw new GraphIOException("Undefined domain '"
+							+ domainName + "' in line " + line);
+				}
+				return result;
+			}
+		}
+		throw new GraphIOException("Couldn't create domain for '" + domainNames
+				+ "' in line " + line);
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	public final String matchEnumConstant() throws GraphIOException {
 		if (this.schema.isValidEnumConstant(this.lookAhead)
 				|| this.lookAhead.equals(NULL_LITERAL)) {
@@ -1708,13 +2827,13 @@ public class GraphIO {
 		throw new GraphIOException("Invalid enumeration constant '" + this.lookAhead
 				+ "' in line " + this.line);
 	}
-
 	/**
 	 * Reads the a GraphElementClass of the GraphClass indicated by the given
 	 * name.
 	 * 
 	 * @throws GraphIOException
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private void parseGraphElementClass(String gcName) throws GraphIOException,
 	SchemaException {
 		GraphElementClassData graphElementClassData = new GraphElementClassData();
@@ -1772,7 +2891,67 @@ public class GraphIO {
 		}
 		this.match(";");
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private void parseGraphElementClass(String gcName) throws GraphIOException,
+			SchemaException {
+		GraphElementClassData graphElementClassData = new GraphElementClassData();
 
+		if (lookAhead.equals("abstract")) {
+			match();
+			graphElementClassData.isAbstract = true;
+		}
+
+		if (lookAhead.equals("VertexClass")) {
+			match("VertexClass");
+			String[] qn = matchQualifiedName(true);
+			graphElementClassData.packageName = qn[0];
+			graphElementClassData.simpleName = qn[1];
+			if (lookAhead.equals(":")) {
+				graphElementClassData.directSuperClasses = parseHierarchy();
+			}
+			vertexClassBuffer.get(gcName).add(graphElementClassData);
+		} else if (lookAhead.equals("EdgeClass")) {
+			match();
+			String[] qn = matchQualifiedName(true);
+			graphElementClassData.packageName = qn[0];
+			graphElementClassData.simpleName = qn[1];
+			if (lookAhead.equals(":")) {
+				graphElementClassData.directSuperClasses = parseHierarchy();
+			}
+			match("from");
+			String[] fqn = matchQualifiedName(true);
+			graphElementClassData.fromVertexClassName = toQNameString(fqn);
+			graphElementClassData.fromMultiplicity = parseMultiplicity();
+			graphElementClassData.fromRoleName = parseRoleName();
+			graphElementClassData.redefinedFromRoles = parseRolenameRedefinitions();
+			graphElementClassData.fromAggregation = parseAggregation();
+
+			match("to");
+			String[] tqn = matchQualifiedName(true);
+			graphElementClassData.toVertexClassName = toQNameString(tqn);
+			graphElementClassData.toMultiplicity = parseMultiplicity();
+			graphElementClassData.toRoleName = parseRoleName();
+			graphElementClassData.redefinedToRoles = parseRolenameRedefinitions();
+			graphElementClassData.toAggregation = parseAggregation();
+			edgeClassBuffer.get(gcName).add(graphElementClassData);
+		} else {
+			throw new SchemaException("Undefined keyword: " + lookAhead
+					+ " at position ");
+		}
+
+		if (lookAhead.equals("{")) {
+			graphElementClassData.attributes = parseAttributes();
+		}
+
+		if (lookAhead.equals("[")) {
+			// There are constraints
+			graphElementClassData.constraints = parseConstraints();
+		}
+		match(";");
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private Set<Constraint> parseConstraints() throws GraphIOException {
 		// constraints have the form: ["msg" "pred" "optGreql"] or ["msg"
 		// "pred"] and there may be as many as one wants...
@@ -1790,13 +2969,38 @@ public class GraphIO {
 		} while (this.lookAhead.equals("["));
 		return constraints;
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private Set<Constraint> parseConstraints() throws GraphIOException {
+		// constraints have the form: ["msg" "pred" "optGreql"] or ["msg"
+		// "pred"] and there may be as many as one wants...
+		HashSet<Constraint> constraints = new HashSet<Constraint>(1);
+		do {
+			match("[");
+			String msg = matchUtfString();
+			String pred = matchUtfString();
+			String greql = null;
+			if (!lookAhead.equals("]")) {
+				greql = matchUtfString();
+			}
+			constraints.add(new ConstraintImpl(msg, pred, greql));
+			match("]");
+		} while (lookAhead.equals("["));
+		return constraints;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	private VertexClass createVertexClass(GraphElementClassData vcd,
 			GraphClass gc) throws GraphIOException, SchemaException {
 		VertexClass vc = gc.createVertexClass(vcd.getQualifiedName());
 		vc.setAbstract(vcd.isAbstract);
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 		this.addAttributes(vcd.attributes, vc);
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+		attributes(vcd.attributes, vc);
+=======
+		addAttributes(vcd.attributes, vc);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 
 		for (Constraint constraint : vcd.constraints) {
 			vc.addConstraint(constraint);
@@ -1805,30 +3009,6 @@ public class GraphIO {
 		this.GECsearch.put(vc, gc);
 		return vc;
 	}
-
-
-	protected EdgeClass createEdgeClass(GraphElementClassData ecd, GraphClass gc)
-			throws GraphIOException, SchemaException {
-		EdgeClass ec = gc.createEdgeClass(ecd.getQualifiedName(),
-				gc.getVertexClass(ecd.fromVertexClassName),
-				ecd.fromMultiplicity[0], ecd.fromMultiplicity[1],
-				ecd.fromRoleName, ecd.fromAggregation,
-				gc.getVertexClass(ecd.toVertexClassName),
-				ecd.toMultiplicity[0], ecd.toMultiplicity[1], ecd.toRoleName,
-				ecd.toAggregation);
-
-		this.addAttributes(ecd.attributes, ec);
-
-		for (Constraint constraint : ecd.constraints) {
-			ec.addConstraint(constraint);
-		}
-
-		ec.setAbstract(ecd.isAbstract);
-
-		this.GECsearch.put(ec, gc);
-		return ec;
-	}
-
 	/**
 	 * Reads a multiplicity of an EdgeClass.
 	 * 
@@ -1863,7 +3043,6 @@ public class GraphIO {
 		multis[1] = max;
 		return multis;
 	}
-
 	/**
 	 * Reads a role name of an EdgeClass.
 	 * 
@@ -1878,7 +3057,6 @@ public class GraphIO {
 		}
 		return "";
 	}
-
 	/**
 	 * Reads the redefinition of a rolename of an EdgeClass
 	 * 
@@ -1901,7 +3079,7 @@ public class GraphIO {
 		}
 		return result;
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private AggregationKind parseAggregation() throws GraphIOException {
 		if (!this.lookAhead.equals("aggregation")) {
 			return AggregationKind.NONE;
@@ -1922,7 +3100,29 @@ public class GraphIO {
 							+ this.lookAhead + "' in line " + this.line);
 		}
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private AggregationKind parseAggregation() throws GraphIOException {
+		if (!lookAhead.equals("aggregation")) {
+			return AggregationKind.NONE;
+		}
+		match();
+		if (lookAhead.equals("none")) {
+			match();
+			return AggregationKind.NONE;
+		} else if (lookAhead.equals("shared")) {
+			match();
+			return AggregationKind.SHARED;
+		} else if (lookAhead.equals("composite")) {
+			match();
+			return AggregationKind.COMPOSITE;
+		} else {
+			throw new GraphIOException(
+					"Invalid aggregation: expected 'none', 'shared', or 'composite', but found '"
+							+ lookAhead + "' in line " + line);
+		}
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	private static boolean isValidPackageName(String s) {
 		if ((s == null) || (s.length() == 0)) {
 			return false;
@@ -1941,7 +3141,7 @@ public class GraphIO {
 		}
 		return true;
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private List<ComponentData> parseRecordComponents() throws GraphIOException {
 		List<ComponentData> componentsData = new ArrayList<ComponentData>();
 		Set<String> names = new TreeSet<String>();
@@ -1970,7 +3170,37 @@ public class GraphIO {
 		this.match(")");
 		return componentsData;
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private List<ComponentData> parseRecordComponents() throws GraphIOException {
+		List<ComponentData> componentsData = new ArrayList<ComponentData>();
+		Set<String> names = new TreeSet<String>();
 
+		match("(");
+		ComponentData cd = new ComponentData();
+		cd.name = matchSimpleName(false);
+		match(":");
+		cd.domainDescription = parseAttrDomain();
+		componentsData.add(cd);
+		names.add(cd.name);
+
+		while (lookAhead.equals(",")) {
+			match(",");
+			cd = new ComponentData();
+			cd.name = matchSimpleName(false);
+			match(":");
+			cd.domainDescription = parseAttrDomain();
+			if (names.contains(cd.name)) {
+				throw new GraphIOException("Duplicate record component name '"
+						+ cd.name + "' in line " + line);
+			}
+			componentsData.add(cd);
+			names.add(cd.name);
+		}
+		match(")");
+		return componentsData;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	/**
 	 * Reads the constants of an EnumDomain. Duplicate constant names are
 	 * rejected.
@@ -1996,7 +3226,7 @@ public class GraphIO {
 		this.match(")");
 		return enums;
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private void buildVertexClassHierarchy() throws GraphIOException,
 	SchemaException {
 		AttributedElementClass<?, ?> aec;
@@ -2027,7 +3257,41 @@ public class GraphIO {
 			}
 		}
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+	private void buildVertexClassHierarchy()  
+=======
+	private void buildVertexClassHierarchy() throws GraphIOException,
+			SchemaException {
+		AttributedElementClass<?, ?> aec;
+		VertexClass superClass;
 
+		for (Entry<String, List<GraphElementClassData>> gcElements : vertexClassBuffer
+				.entrySet()) {
+			for (GraphElementClassData vData : gcElements.getValue()) {
+				aec = schema
+						.getAttributedElementClass(vData.getQualifiedName());
+				if (aec == null) {
+					throw new GraphIOException(
+							"Undefined AttributedElementClass '"
+									+ vData.getQualifiedName() + "'");
+				}
+				if (aec instanceof VertexClass) {
+					for (String superClassName : vData.directSuperClasses) {
+						superClass = (VertexClass) GECsearch.get(aec)
+								.getGraphElementClass(superClassName);
+						if (superClass == null) {
+							throw new GraphIOException(
+									"Undefined VertexClass '" + superClassName
+											+ "'");
+						}
+						((VertexClass) aec).addSuperClass(superClass);
+					}
+				}
+			}
+		}
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private void buildEdgeClassHierarchy() throws GraphIOException,
 	SchemaException {
 		AttributedElementClass<?, ?> aec;
@@ -2063,12 +3327,49 @@ public class GraphIO {
 			}
 		}
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+	private void buildEdgeClassHierarchy()  
+=======
+	private void buildEdgeClassHierarchy() throws GraphIOException,
+			SchemaException {
+		AttributedElementClass<?, ?> aec;
+		EdgeClass superClass;
 
+		for (Entry<String, List<GraphElementClassData>> gcElements : edgeClassBuffer
+				.entrySet()) {
+			for (GraphElementClassData eData : gcElements.getValue()) {
+				aec = schema
+						.getAttributedElementClass(eData.getQualifiedName());
+				if (aec == null) {
+					throw new GraphIOException(
+							"Undefined AttributedElementClass '"
+									+ eData.getQualifiedName() + "'");
+				}
+				if (!(aec instanceof EdgeClass)) {
+					throw new GraphIOException("Expected EdgeClass '"
+							+ eData.getQualifiedName() + "', but it's a "
+							+ aec.getSchemaClass().getSimpleName());
+				}
+				EdgeClass ec = (EdgeClass) aec;
+				for (String superClassName : eData.directSuperClasses) {
+					superClass = (EdgeClass) GECsearch.get(aec)
+							.getGraphElementClass(superClassName);
+					if (superClass == null) {
+						throw new GraphIOException("Undefined EdgeClass '"
+								+ superClassName + "'");
+					}
+					ec.addSuperClass(superClass);
+				}
+				ec.getFrom().addRedefinedRoles(eData.redefinedFromRoles);
+				ec.getTo().addRedefinedRoles(eData.redefinedToRoles);
+			}
+		}
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	private void buildHierarchy() throws GraphIOException, SchemaException {
 		this.buildVertexClassHierarchy();
 		this.buildEdgeClassHierarchy();
 	}
-
 	private final String nextToken() throws GraphIOException {
 		StringBuilder out = new StringBuilder();
 		this.isUtfString = false;
@@ -2089,7 +3390,6 @@ public class GraphIO {
 		}
 		return out.toString();
 	}
-
 	private final int read() throws GraphIOException {
 		try {
 			if (this.putBackChar >= 0) {
@@ -2116,7 +3416,7 @@ public class GraphIO {
 					e);
 		}
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private final void readUtfString(StringBuilder out) throws GraphIOException {
 		int startLine = this.line;
 		this.la = this.read();
@@ -2189,17 +3489,89 @@ public class GraphIO {
 		}
 		this.la = this.read();
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private final void readUtfString(StringBuilder out) throws GraphIOException {
+		int startLine = line;
+		la = read();
+		LOOP: while ((la != -1) && (la != '"')) {
+			if ((la < 32) || (la > 127)) {
+				throw new GraphIOException("Invalid character '" + (char) la
+						+ "' in string in line " + line);
+			}
+			if (la == '\\') {
+				la = read();
+				if (la == -1) {
+					break LOOP;
+				}
+				switch (la) {
+				case '\\':
+					la = '\\';
+					break;
+				case '"':
+					la = '"';
+					break;
+				case 'n':
+					la = '\n';
+					break;
+				case 'r':
+					la = '\r';
+					break;
+				case 't':
+					la = '\t';
+					break;
+				case 'u':
+					la = read();
+					if (la == -1) {
+						break LOOP;
+					}
+					String unicode = "" + (char) la;
+					la = read();
+					if (la == -1) {
+						break LOOP;
+					}
+					unicode += (char) la;
+					la = read();
+					if (la == -1) {
+						break LOOP;
+					}
+					unicode += (char) la;
+					la = read();
+					if (la == -1) {
+						break LOOP;
+					}
+					unicode += (char) la;
+					try {
+						la = Integer.parseInt(unicode, 16);
+					} catch (NumberFormatException e) {
+						throw new GraphIOException(
+								"Invalid unicode escape sequence '\\u"
+										+ unicode + "' in line " + line);
+					}
+					break;
+				default:
+					throw new GraphIOException(
+							"Invalid escape sequence in string in line " + line);
+				}
+			}
+			out.append((char) la);
+			la = read();
+		}
+		if (la == -1) {
+			throw new GraphIOException("Unterminated string starting in line "
+					+ startLine + ".  lookAhead = '" + lookAhead + "'");
+		}
+		la = read();
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	private final static boolean isWs(int c) {
 		return (c == ' ') || (c == '\n') || (c == '\t') || (c == '\r');
 	}
-
 	private final static boolean isSeparator(int c) {
 		return (c == ';') || (c == '<') || (c == '>') || (c == '(')
 				|| (c == ')') || (c == '{') || (c == '}') || (c == ':')
 				|| (c == '[') || (c == ']') || (c == ',') || (c == '=');
 	}
-
 	private final void skipWs() throws GraphIOException {
 		// skip whitespace and consecutive single line comments
 		do {
@@ -2224,25 +3596,28 @@ public class GraphIO {
 			}
 		} while (isWs(this.la));
 	}
-
 	private final void putback(int ch) {
 		this.putBackChar = ch;
 	}
-
 	private final String matchAndNext() throws GraphIOException {
 		String result = this.lookAhead;
 		this.match();
 		return result;
 	}
-
 	public final boolean isNextToken(String token) {
 		return this.lookAhead.equals(token);
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	public final void match() throws GraphIOException {
 		this.lookAhead = this.nextToken();
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	public final void match() throws GraphIOException {
+		lookAhead = nextToken();
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	public final void match(String s) throws GraphIOException {
 		if (this.lookAhead.equals(s)) {
 			this.lookAhead = this.nextToken();
@@ -2254,7 +3629,21 @@ public class GraphIO {
 							+ "'") + " in line " + this.line, null);
 		}
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	public final void match(String s) throws GraphIOException {
+		if (lookAhead.equals(s)) {
+			lookAhead = nextToken();
+		} else {
+			throw new GraphIOException("Expected '"
+					+ s
+					+ "' but found "
+					+ (lookAhead.equals("") ? "end of file" : "'" + lookAhead
+							+ "'") + " in line " + line, null);
+		}
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	public final int matchInteger() throws GraphIOException {
 		try {
 			int result = Integer.parseInt(this.lookAhead);
@@ -2266,7 +3655,21 @@ public class GraphIO {
 							+ "'") + " in line " + this.line, e);
 		}
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	public final int matchInteger() throws GraphIOException {
+		try {
+			int result = Integer.parseInt(lookAhead);
+			match();
+			return result;
+		} catch (NumberFormatException e) {
+			throw new GraphIOException("Expected int number but found "
+					+ (lookAhead.equals("") ? "end of file" : "'" + lookAhead
+							+ "'") + " in line " + line, e);
+		}
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	public final long matchLong() throws GraphIOException {
 		try {
 			long result = Long.parseLong(this.lookAhead);
@@ -2278,7 +3681,20 @@ public class GraphIO {
 							+ "'") + " in line " + this.line, e);
 		}
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	public final long matchLong() throws GraphIOException {
+		try {
+			long result = Long.parseLong(lookAhead);
+			match();
+			return result;
+		} catch (NumberFormatException e) {
+			throw new GraphIOException("Expected long number but found "
+					+ (lookAhead.equals("") ? "end of file" : "'" + lookAhead
+							+ "'") + " in line " + line, e);
+		}
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	/**
 	 * Parses an identifier, checks it for validity and returns it.
 	 * 
@@ -2289,7 +3705,14 @@ public class GraphIO {
 	 */
 	public final String matchSimpleName(boolean isUpperCase)
 			throws GraphIOException {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 		String s = this.lookAhead;
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+		String s = (lookAhead.charAt(0) == '\'') ? lookAhead.substring(1)
+				: lookAhead;
+=======
+		String s = lookAhead;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 		boolean ok = isValidIdentifier(s)
 				&& ((isUpperCase && Character.isUpperCase(s.charAt(0))) || (!isUpperCase && Character
 						.isLowerCase(s.charAt(0))));
@@ -2301,7 +3724,6 @@ public class GraphIO {
 		this.match();
 		return s;
 	}
-
 	/**
 	 * Parses an identifier, checks it for validity and returns it.
 	 * 
@@ -2310,6 +3732,7 @@ public class GraphIO {
 	 * @return An array of the form {parentPackage, simpleName}
 	 * @throws GraphIOException
 	 */
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	public final String[] matchQualifiedName(boolean isUpperCase)
 			throws GraphIOException {
 
@@ -2339,7 +3762,39 @@ public class GraphIO {
 		this.match();
 		return result;
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	public final String[] matchQualifiedName(boolean isUpperCase)
+			throws GraphIOException {
 
+		String c = lookAhead.indexOf('.') >= 0 ? lookAhead : toQNameString(
+				currentPackageName, lookAhead);
+		String[] result = SchemaImpl.splitQualifiedName(c);
+
+		boolean ok = true;
+		if (result[0].length() > 0) {
+			String[] parts = result[0].split("\\.");
+			ok = ((parts.length == 1) && (parts[0].length() == 0))
+					|| isValidPackageName(parts[0]);
+			for (int i = 1; (i < parts.length) && ok; i++) {
+				ok = ok && isValidPackageName(parts[i]);
+			}
+		}
+
+		ok = ok
+				&& isValidIdentifier(result[1])
+				&& ((isUpperCase && Character.isUpperCase(result[1].charAt(0))) || (!isUpperCase && Character
+						.isLowerCase(result[1].charAt(0))));
+
+		if (!ok) {
+			throw new GraphIOException("Invalid qualified name '" + lookAhead
+					+ "' in line " + line);
+		}
+		match();
+		return result;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	public final String[] matchQualifiedName() throws GraphIOException {
 		String c = this.lookAhead.indexOf('.') >= 0 ? this.lookAhead : this.toQNameString(
 				this.currentPackageName, this.lookAhead);
@@ -2364,16 +3819,38 @@ public class GraphIO {
 		this.match();
 		return result;
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	public final String[] matchQualifiedName() throws GraphIOException {
+		String c = lookAhead.indexOf('.') >= 0 ? lookAhead : toQNameString(
+				currentPackageName, lookAhead);
+		String[] result = SchemaImpl.splitQualifiedName(c);
 
+		boolean ok = true;
+		if (result[0].length() > 0) {
+			String[] parts = result[0].split("\\.");
+			ok = ((parts.length == 1) && (parts[0].length() == 0))
+					|| isValidPackageName(parts[0]);
+			for (int i = 1; (i < parts.length) && ok; i++) {
+				ok = ok && isValidPackageName(parts[i]);
+			}
+		}
+
+		ok = ok && isValidIdentifier(result[1]);
+
+		if (!ok) {
+			throw new GraphIOException("Invalid qualified name '" + lookAhead
+					+ "' in line " + line);
+		}
+		match();
+		return result;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	/**
 	 * @param qn
 	 * @return a string representation of a qualified name specified as array
 	 *         (like returned by @{#matchQualifiedName}).
 	 */
-	private final String toQNameString(String[] qn) {
-		return this.toQNameString(qn[0], qn[1]);
-	}
-
 	/**
 	 * @param pn
 	 *            package name
@@ -2388,7 +3865,7 @@ public class GraphIO {
 		}
 		return pn + "." + sn;
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	public final String matchUtfString() throws GraphIOException {
 		if (!this.isUtfString && this.lookAhead.equals(NULL_LITERAL)) {
 			this.match();
@@ -2410,7 +3887,30 @@ public class GraphIO {
 						+ (this.lookAhead.equals("") ? "end of file" : "'"
 								+ this.lookAhead + "'") + " in line " + this.line);
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	public final String matchUtfString() throws GraphIOException {
+		if (!isUtfString && lookAhead.equals(NULL_LITERAL)) {
+			match();
+			return null;
+		}
+		if (isUtfString) {
+			String result = lookAhead;
+			match();
+			String s = stringPool.get(result);
+			if (s == null) {
+				stringPool.put(result, result);
+			} else {
+				result = s;
+			}
+			return result;
+		}
+		throw new GraphIOException(
+				"Expected a string constant but found "
+						+ (lookAhead.equals("") ? "end of file" : "'"
+								+ lookAhead + "'") + " in line " + line);
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	public final boolean matchBoolean() throws GraphIOException {
 		if (!this.lookAhead.equals("t") && !this.lookAhead.equals("f")) {
 			throw new GraphIOException(
@@ -2422,8 +3922,6 @@ public class GraphIO {
 		this.match();
 		return result;
 	}
-
-
 	private GraphBaseImpl graph(ProgressFunction pf) throws GraphIOException {
 		this.currentPackageName = "";
 		this.match("Graph");
@@ -2431,10 +3929,22 @@ public class GraphIO {
 		long graphVersion = this.matchLong();
 
 		this.gcName = this.matchAndNext();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 		assert !this.gcName.contains(".") && isValidIdentifier(this.gcName) : "illegal characters in graph class '"
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+		assert !s.contains(".") && isValidIdentifier(this.gcName) : "illegal characters in graph class '"
+=======
+		assert !gcName.contains(".") && isValidIdentifier(this.gcName) : "illegal characters in graph class '"
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 		+ this.gcName + "'";
 		// check if classname is known in the schema
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 		if (!this.schema.getGraphClass().getQualifiedName().equals(this.gcName)) {
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+		if (schema.getGraphClass(gcName) == null) {
+=======
+		if (!schema.getGraphClass().getQualifiedName().equals(gcName)) {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 			throw new GraphIOException("Graph Class " + this.gcName
 					+ "does not exist in " + this.schema.getQualifiedName());
 		}
@@ -2458,8 +3968,20 @@ public class GraphIO {
 		// adjust fields for incidences
 		this.edgeIn = new Vertex[maxE + 1];
 		this.edgeOut = new Vertex[maxE + 1];
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 		this.firstIncidence = new int[maxV + 1];
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+		;
+=======
+		firstIncidence = new int[maxV + 1];
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 		this.nextIncidence = new int[(2 * maxE) + 1];
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+		;
+=======
+		nextIncidence = new int[(2 * maxE) + 1];
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 		this.edgeOffset = maxE;
 
 		long graphElements = 0, currentCount = 0, interval = 1;
@@ -2522,19 +4044,25 @@ public class GraphIO {
 		graph.loadingCompleted();
 		return graph;
 	}
-
 	public final double matchDouble() throws GraphIOException {
 		try {
 			double result = Double.parseDouble(this.lookAhead);
 			this.match();
 			return result;
 		} catch (NumberFormatException e) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 			throw new GraphIOException("expected a double value but found '"
 					+ this.lookAhead + "' in line " + this.line, e);
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+			throw new GraphIOException("expected a double value but found '"
+					+ lookAhead + "'", e);
+=======
+			throw new GraphIOException("expected a double value but found '"
+					+ lookAhead + "' in line " + line, e);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 		}
 	}
-
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private void vertexDesc(Graph graph) throws GraphIOException {
 		int vId = this.vId();
 		String vcName = this.className();
@@ -2544,8 +4072,19 @@ public class GraphIO {
 		vertex.readAttributeValues(this);
 		this.match(";");
 	}
-
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private void vertexDesc(Graph graph) throws GraphIOException {
+		int vId = vId();
+		String vcName = className();
+		VertexClass vc = (VertexClass) schema.getAttributedElementClass(vcName);
+		Vertex vertex = graphFactory.createVertex(vc, vId, graph);
+		parseIncidentEdges(vertex);
+		vertex.readAttributeValues(this);
+		match(";");
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private void edgeDesc(Graph graph) throws GraphIOException {
 		int eId = this.eId();
 		String ecName = this.className();
@@ -2555,7 +4094,18 @@ public class GraphIO {
 		edge.readAttributeValues(this);
 		this.match(";");
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private void edgeDesc(Graph graph) throws GraphIOException {
+		int eId = eId();
+		String ecName = className();
+		EdgeClass ec = (EdgeClass) schema.getAttributedElementClass(ecName);
+		Edge edge = graphFactory.createEdge(ec, eId, graph, edgeOut[eId],
+				edgeIn[eId]);
+		edge.readAttributeValues(this);
+		match(";");
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	private int eId() throws GraphIOException {
 		int eId = this.matchInteger();
 		if (eId == 0) {
@@ -2563,12 +4113,18 @@ public class GraphIO {
 		}
 		return eId;
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private String className() throws GraphIOException {
 		String[] qn = this.matchQualifiedName(true);
 		return this.toQNameString(qn);
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private String className() throws GraphIOException {
+		String[] qn = matchQualifiedName(true);
+		return toQNameString(qn);
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	private int vId() throws GraphIOException {
 		int vId = this.matchInteger();
 		if (vId <= 0) {
@@ -2577,7 +4133,7 @@ public class GraphIO {
 			return vId;
 		}
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private void parseIncidentEdges(Vertex v) throws GraphIOException {
 		int eId = 0;
 		int prevId = 0;
@@ -2604,7 +4160,35 @@ public class GraphIO {
 		}
 		this.match();
 	}
-
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+	private void parseIncidentEdges(Vertex v) throws GraphIOException {
+		int eId = 0;
+		int prevId = 0;
+		int vId = v.getId();
+		match("<");
+		if (!lookAhead.equals(">")) {
+			eId = eId();
+			firstIncidence[vId] = eId;
+			if (eId < 0) {
+				edgeIn[-eId] = v;
+			} else {
+				edgeOut[eId] = v;
+			}
+		}
+		while (!lookAhead.equals(">")) {
+			prevId = eId;
+			eId = eId();
+			nextIncidence[edgeOffset + prevId] = eId;
+			if (eId < 0) {
+				edgeIn[-eId] = v;
+			} else {
+				edgeOut[eId] = v;
+			}
+		}
+		match();
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	/**
 	 * Converts a String value with arbitrary characters to a quoted string
 	 * value containing only ASCII characters and escaped unicode sequences as
@@ -2663,7 +4247,6 @@ public class GraphIO {
 		out.append("\"");
 		return out.toString();
 	}
-
 	private static boolean isValidIdentifier(String s) {
 		if ((s == null) || (s.length() == 0)) {
 			return false;
@@ -2680,7 +4263,7 @@ public class GraphIO {
 		}
 		return true;
 	}
-
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 	private void sortRecordDomains() throws GraphIOException {
 		List<RecordDomainData> orderedRdList = new ArrayList<RecordDomainData>();
 		boolean componentDomsInOrderedList = true;
@@ -2760,7 +4343,89 @@ public class GraphIO {
 		}
 		this.recordDomainBuffer = orderedRdList;
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+	private void sortRecordDomains() throws GraphIOException 
+=======
+	private void sortRecordDomains() throws GraphIOException {
+		List<RecordDomainData> orderedRdList = new ArrayList<RecordDomainData>();
+		boolean componentDomsInOrderedList = true;
+		RecordDomainData rd;
+		boolean definedRdName;
 
+		// iteratively add domains from recordDomainBuffer,
+		// whose component domains already are in topologicalOrderList,
+		// to topologicalOrderList
+		// the added domains are removed from recordDomainBuffer
+		while (!recordDomainBuffer.isEmpty()) {
+			for (Iterator<RecordDomainData> rdit = recordDomainBuffer
+					.iterator(); rdit.hasNext();) {
+				rd = rdit.next();
+				componentDomsInOrderedList = true;
+				for (ComponentData comp : rd.components) {
+					for (String componentDomain : comp.domainDescription) {
+						if (componentDomain.equals("String")
+								|| componentDomain.equals("Integer")
+								|| componentDomain.equals("Boolean")
+								|| componentDomain.equals("Long")
+								|| componentDomain.equals("Double")
+								|| componentDomain.equals("Set<")
+								|| componentDomain.equals("List<")
+								|| componentDomain.equals("Map<")) {
+							continue;
+						}
+						componentDomsInOrderedList = false;
+						for (RecordDomainData orderedRd : orderedRdList) {
+							String qName = toQNameString(orderedRd.packageName,
+									orderedRd.simpleName);
+							if (componentDomain.equals(qName)) {
+								componentDomsInOrderedList = true;
+								break;
+							}
+						}
+						for (EnumDomainData ed : enumDomainBuffer) {
+							String qName = toQNameString(ed.packageName,
+									ed.simpleName);
+							if (componentDomain.equals(qName)) {
+								componentDomsInOrderedList = true;
+								break;
+							}
+						}
+
+						/*
+						 * check if component domain exists among yet unsorted
+						 * domains
+						 */
+						if (!componentDomsInOrderedList) {
+							definedRdName = false;
+
+							for (RecordDomainData rd2 : recordDomainBuffer) {
+								String qName = toQNameString(rd2.packageName,
+										rd2.simpleName);
+								if (qName.equals(componentDomain)) {
+									definedRdName = true;
+									break;
+								}
+							}
+							if (!definedRdName) {
+								throw new GraphIOException("Domain "
+										+ componentDomain + " does not exist");
+							}
+							break;
+						}
+					}
+					if (!componentDomsInOrderedList) {
+						break;
+					}
+				}
+				if (componentDomsInOrderedList) {
+					orderedRdList.add(rd);
+					rdit.remove();
+				}
+			}
+		}
+		recordDomainBuffer = orderedRdList;
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 	private void sortVertexClasses() throws GraphIOException {
 		List<GraphElementClassData> orderedVcList, unorderedVcList;
 		Set<String> orderedVcNames = new TreeSet<String>();
@@ -2810,7 +4475,6 @@ public class GraphIO {
 		}
 		this.vertexClassBuffer.put(this.graphClass.name, orderedVcList);
 	}
-
 	private void sortEdgeClasses() throws GraphIOException {
 		List<GraphElementClassData> orderedEcList, unorderedEcList;
 		Set<String> orderedEcNames = new TreeSet<String>();
@@ -2860,7 +4524,6 @@ public class GraphIO {
 		}
 		this.edgeClassBuffer.put(this.graphClass.name, orderedEcList);
 	}
-
 	/**
 	 * checks if from- and to-VertexClasses given in EdgeClass definitions exist
 	 */
@@ -2874,7 +4537,13 @@ public class GraphIO {
 				existingFromVertexClass = false;
 				existingToVertexClass = false;
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 				for (Entry<String, List<GraphElementClassData>> graphClassVertex : this.vertexClassBuffer
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+				for (Entry<String, List<GraphElementClassData>> graphClassVertex : vertexClassBuffer
+=======
+				for (Entry<String, List<GraphElementClassData>> graphClassVertex : vertexClassBuffer
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 						.entrySet()) {
 					for (GraphElementClassData vc : graphClassVertex.getValue()) {
 						if (ec.fromVertexClassName
@@ -2907,7 +4576,6 @@ public class GraphIO {
 			}
 		}
 	}
-
 	/**
 	 * EnumDomainData contains the parsed data of an EnumDomain. This data is
 	 * used to create an EnumDomain.
@@ -2918,14 +4586,13 @@ public class GraphIO {
 
 		List<String> enumConstants;
 
-		EnumDomainData(String packageName, String simpleName,
+		EnumDomainData(String packageName,String simpleName,
 				List<String> enumConstants) {
 			this.packageName = packageName;
 			this.simpleName = simpleName;
 			this.enumConstants = enumConstants;
 		}
 	}
-
 	/**
 	 * RecordDomainData contains the parsed data of a RecordDomain. This data is
 	 * used to create a RecordDomain.
@@ -2942,18 +4609,15 @@ public class GraphIO {
 			this.components = components;
 		}
 	}
-
 	private static class ComponentData {
 		String name;
 		List<String> domainDescription;
 	}
-
 	private static class AttributeData {
 		String name;
 		List<String> domainDescription;
 		String defaultValue;
 	}
-
 	/**
 	 * GraphClassData contains the parsed data of a GraphClass. This data is
 	 * used to create a GraphClass.
@@ -2964,7 +4628,6 @@ public class GraphIO {
 		boolean isAbstract = false;
 		List<AttributeData> attributes = new ArrayList<AttributeData>();
 	}
-
 	/**
 	 * GraphElementClassData contains the parsed data of a GraphElementClass.
 	 * This data is used to create a GraphElementClass.
@@ -2979,7 +4642,20 @@ public class GraphIO {
 
 		public boolean isAbstract = false;
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
 		public List<String> directSuperClasses = new LinkedList<String>();
+
+		public List<AttributeData> attributes = new ArrayList<AttributeData>();
+
+		public Set<Constraint> constraints = new HashSet<Constraint>(1);
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+=======
+		List<String> directSuperClasses = new LinkedList<String>();
+
+		List<AttributeData> attributes = new ArrayList<AttributeData>();
+
+		Set<Constraint> constraints = new HashSet<Constraint>(1);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
 
 		public String fromVertexClassName;
 
@@ -3000,10 +4676,287 @@ public class GraphIO {
 		protected Set<String> redefinedToRoles = null;
 
 		public AggregationKind toAggregation;
-
-		public List<AttributeData> attributes = new ArrayList<AttributeData>();
-
-		public Set<Constraint> constraints = new HashSet<Constraint>(1);
 	}
-
+	/**
+	 * TG File Version this GraphIO recognizes.
+	 */
+	/**
+	 * A {@link FilenameFilter} that accepts TG files.
+	 * 
+	 * @author ist@uni-koblenz.de
+	 */
+// line number
+// lookahead character
+// lookahead token
+// lookahead is UTF string
+// if true, a space is written in the next
+	// writeXXX()
+// GraphClass name of the currently loaded graph
+	// stringPool allows re-use string values, saves memory if
+	// multiple identical strings are used as attribute values
+	/**
+	 * Saves the specified <code>schema</code> to the file named
+	 * <code>filename</code>. When the <code>filename</code> ends with
+	 * <code>.gz</code>, output will be GZIP compressed, otherwise uncompressed
+	 * plain text.
+	 * 
+	 * @param schema
+	 *            a schema
+	 * @param filename
+	 *            the name of the file
+	 * @throws GraphIOException
+	 *             if an IOException occurs
+	 */
+	/**
+	 * Saves the specified <code>schema</code> to the stream <code>out</code>.
+	 * The stream is <em>not</em> closed.
+	 * 
+	 * @param schema
+	 *            a schema
+	 * @param out
+	 *            a DataOutputStream
+	 * @throws GraphIOException
+	 *             if an IOException occurs
+	 */
+	/**
+	 * Saves the specified <code>graph</code> to the file named
+	 * <code>filename</code>. When the <code>filename</code> ends with
+	 * <code>.gz</code>, output will be GZIP compressed, otherwise uncompressed
+	 * plain text. A {@link ProgressFunction} <code>pf</code> can be used to
+	 * monitor progress.
+	 * 
+	 * @param graph
+	 *            a graph
+	 * @param filename
+	 *            the name of the TG file to be written
+	 * @param pf
+	 *            a {@link ProgressFunction}, may be <code>null</code>
+	 * @throws GraphIOException
+	 *             if an IOException occurs
+	 */
+	/**
+	 * Saves the marked <code>subGraph</code> to the file named
+	 * <code>filename</code>. A {@link ProgressFunction} <code>pf</code> can be
+	 * used to monitor progress. The stream is <em>not</em> closed. This method
+	 * does <i>not</i> check if the subgraph marker is complete.
+	 * 
+	 * @param subGraph
+	 *            a BooleanGraphMarker denoting the subgraph to be saved
+	 * @param filename
+	 *            a filename
+	 * @param pf
+	 *            a {@link ProgressFunction}, may be <code>null</code>
+	 * @throws GraphIOException
+	 *             if an IOException occurs
+	 */
+	/**
+	 * Saves the specified <code>graph</code> to the stream <code>out</code>. A
+	 * {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
+	 * The stream is <em>not</em> closed.
+	 * 
+	 * @param graph
+	 *            a graph
+	 * @param out
+	 *            a DataOutputStream
+	 * @param pf
+	 *            a {@link ProgressFunction}, may be <code>null</code>
+	 * @throws GraphIOException
+	 *             if an IOException occurs
+	 */
+	/**
+	 * Saves the marked <code>subGraph</code> to the stream <code>out</code>. A
+	 * {@link ProgressFunction} <code>pf</code> can be used to monitor progress.
+	 * The stream is <em>not</em> closed. This method does <i>not</i> check if
+	 * the subgraph marker is complete.
+	 * 
+	 * @param out
+	 *            a DataOutputStream
+	 * @param subGraph
+	 *            a BooleanGraphMarker denoting the subgraph to be saved
+	 * @param pf
+	 *            a {@link ProgressFunction}, may be <code>null</code>
+	 * @throws GraphIOException
+	 *             if an IOException occurs
+	 */
+	private void writeHierarchy(Package pkg, GraphElementClass<?, ?> aec)
+			throws IOException {
+		String delim = ":";
+		for (GraphElementClass<?, ?> superClass : aec
+				.getDirectSuperClasses()) {
+			if (!superClass.isInternal()) {
+				write(delim);
+				space();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/left.java
+				this.writeIdentifier(superClass.getQualifiedName(pkg));
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/base.java
+				;
+=======
+				writeIdentifier(superClass.getQualifiedName(pkg));
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/GraphIO.java/right.java
+				delim = ",";
+			}
+		}
+	}
+	/**
+	 * Reads TG File header and checks if the file version can be processed.
+	 * 
+	 * @throws GraphIOException
+	 *             if version number in file can not be processed
+	 */
+	/**
+	 * Reads a Schema together with its Domains, GraphClasses and
+	 * GraphElementClasses from a TG-file. Subsequently, the Schema is created.
+	 * 
+	 * @throws GraphIOException
+	 */
+	/**
+	 * Adds comments collected during schema parsing to the annotated elements.
+	 * 
+	 * @throws GraphIOException
+	 */
+	/**
+	 * Creates the Domains contained in a Schema.
+	 * 
+	 * @return A Map of the Domain names to the concrete Domain objects.
+	 * @throws GraphIOException
+	 */
+	/**
+	 * Reads an EnumDomain, i.e. its name along with the enum constants.
+	 * 
+	 * @throws GraphIOException
+	 */
+	/**
+	 * Creates all EnumDomains whose data is stored in {@link enumDomainBuffer}
+	 */
+	/**
+	 * Read a RecordDomain, i.e. its name along with the components.
+	 * 
+	 * @throws GraphIOException
+	 */
+	/**
+	 * Reads Schema's Domains and GraphClasses with contained
+	 * GraphElementClasses from TG-file.
+	 * 
+	 * @throws GraphIOException
+	 */
+	/**
+	 * Creates the GraphClass contained in the Schema along with its
+	 * GraphElementClasses.
+	 * 
+	 * @throws GraphIOException
+	 * @throws SchemaException
+	 */
+	/**
+	 * Reads a GraphClass from a TG-file.
+	 * 
+	 * @return The name of the read GraphClass.
+	 * @throws GraphIOException
+	 * @throws SchemaException
+	 */
+	/**
+	 * Creates a GraphClass based on the given GraphClassData.
+	 * 
+	 * @param gcData
+	 *            The GraphClassData used to create the GraphClass.
+	 * @return The created GraphClass.
+	 * @throws GraphIOException
+	 * @throws SchemaException
+	 */
+	/**
+	 * Reads the direct superclasses of a GraphClass or a GraphElementClass from
+	 * the TG-file.
+	 * 
+	 * @return A list of the direct super classes.
+	 * @throws GraphIOException
+	 */
+	/**
+	 * Reads an Attribute's domain from the TG-file and stores it in the list
+	 * given as argument.
+	 * 
+	 * @param attrDomain
+	 *            The list to which an attribute's domain shall be added.
+	 * @throws GraphIOException
+	 */
+	/**
+	 * Creates a Domain corresponding to a list of domain names representing a,
+	 * probably composite, domain.
+	 * 
+	 * @param domainNames
+	 *            The list containing the names of, probably composite, domains.
+	 * @return The created Domain.
+	 * @throws GraphIOException
+	 */
+	/**
+	 * Reads the a GraphElementClass of the GraphClass indicated by the given
+	 * name.
+	 * 
+	 * @throws GraphIOException
+	 */
+	/**
+	 * Reads a multiplicity of an EdgeClass.
+	 * 
+	 * @return An array with two elements. The first element represents the
+	 *         multiplicity's lower bound. The second element represents the
+	 *         upper bound.
+	 * @throws GraphIOException
+	 */
+	/**
+	 * Reads a role name of an EdgeClass.
+	 * 
+	 * @return A role name.
+	 * @throws GraphIOException
+	 */
+	/**
+	 * Reads the redefinition of a rolename of an EdgeClass
+	 * 
+	 * @return A Set<String> of redefined rolenames or <code>null</code> if no
+	 *         rolenames were redefined
+	 * @throw GraphIOException
+	 */
+	/**
+	 * Reads the constants of an EnumDomain. Duplicate constant names are
+	 * rejected.
+	 * 
+	 * @return A list of String containing the constants.
+	 * @throws GraphIOException
+	 *             if duplicate constant names are read.
+	 */
+	/**
+	 * Parses an identifier, checks it for validity and returns it.
+	 * 
+	 * @param isUpperCase
+	 *            If true, the identifier must begin with an uppercase character
+	 * @return the parsed identifier
+	 * @throws GraphIOException
+	 */
+	/**
+	 * Parses an identifier, checks it for validity and returns it.
+	 * 
+	 * @param isUpperCase
+	 *            If true, the identifier must begin with an uppercase character
+	 * @return An array of the form {parentPackage, simpleName}
+	 * @throws GraphIOException
+	 */
+	/**
+	 * @param qn
+	 * @return a string representation of a qualified name specified as array
+	 *         (like returned by @{#matchQualifiedName}).
+	 */
+	/**
+	 * @param pn
+	 *            package name
+	 * @param sn
+	 *            simple name
+	 * @return a string representation of a qualified name specified as package
+	 *         name and simple name.
+	 */
+	/**
+	 * Converts a String value with arbitrary characters to a quoted string
+	 * value containing only ASCII characters and escaped unicode sequences as
+	 * required by the TG file format.
+	 * 
+	 * @param value
+	 *            a string
+	 * @return a quoted string suitable for storage in TG files.
+	 */
 }

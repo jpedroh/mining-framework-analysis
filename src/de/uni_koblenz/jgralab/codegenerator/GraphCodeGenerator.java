@@ -1,13 +1,30 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/GraphCodeGenerator.java/left.java
+ * Copyright (C) 2006-2011 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/GraphCodeGenerator.java/base.java
+ *               ist@uni-koblenz.de
+=======
  * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/GraphCodeGenerator.java/right.java
  *
  * For bug reports, documentation and further information, visit
  *
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/GraphCodeGenerator.java/left.java
+ *                         http://jgralab.uni-koblenz.de
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/GraphCodeGenerator.java/base.java
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+=======
  *                         https://github.com/jgralab/jgralab
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/GraphCodeGenerator.java/right.java
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -39,12 +56,17 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
 import de.uni_koblenz.jgralab.schema.VertexClass;
-
+/**
+ * TODO add comment
+ *
+ * @author ist@uni-koblenz.de
+ *
+ */
+import de.uni_koblenz.jgralab.Graph;
 /**
  * TODO add comment
  * 
@@ -60,13 +82,13 @@ public class GraphCodeGenerator extends
 		rootBlock.setVariable("graphElementClass", "Graph");
 		rootBlock.setVariable("schemaElementClass", "GraphClass");
 		rootBlock.setVariable("schemaName", schemaName);
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/GraphCodeGenerator.java/left.java
+		rootBlock.setVariable("theGraph", "this");
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/GraphCodeGenerator.java/base.java
+=======
 		rootBlock.setVariable("theGraph", "this");
 		interfaces.add("Graph");
-	}
-
-	@Override
-	protected String getSchemaTypeName() {
-		return "GraphClass";
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/GraphCodeGenerator.java/right.java
 	}
 
 	@Override
@@ -185,6 +207,21 @@ public class GraphCodeGenerator extends
 	}
 
 	private CodeBlock createGraphElementClassMethods() {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/GraphCodeGenerator.java/left.java
+		CodeList code = new CodeList();
+
+		GraphClass gc = (GraphClass) aec;
+		TreeSet<GraphElementClass<?, ?>> sortedClasses = new TreeSet<GraphElementClass<?, ?>>();
+		sortedClasses.addAll(gc.getGraphElementClasses());
+		for (GraphElementClass<?, ?> gec : sortedClasses) {
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/GraphCodeGenerator.java/base.java
+		if (gec.getQualifiedName() != "Vertex" && gec.getQualifiedName() != "Edge"
+				&& gec.getQualifiedName() != "Aggregation"
+				&& gec.getQualifiedName() != "Composition") {
+			// if (createClass) {
+			// addImports("#schemaPackage#." + gec.getName());
+			// }
+=======
 		CodeList code = new CodeList();
 
 		GraphClass gc = aec;
@@ -194,6 +231,7 @@ public class GraphCodeGenerator extends
 			if (gec.isInternal()) {
 				continue;
 			}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/codegenerator/GraphCodeGenerator.java/right.java
 			CodeList gecCode = new CodeList();
 			code.addNoIndent(gecCode);
 
@@ -237,7 +275,8 @@ public class GraphCodeGenerator extends
 		if (currentCycle.isAbstract()) {
 			code.add("/**",
 					" * @return the first #ecSimpleName# #ecTypeInComment# in this graph");
-			code.add(" */", "public #ecJavaClassName# getFirst#ecCamelName#();");
+			code.add(" */",
+					"public #ecJavaClassName# getFirst#ecCamelName#();");
 		}
 		if (currentCycle.isStdOrDbImplOrTransImpl()) {
 			code.add(
@@ -419,4 +458,10 @@ public class GraphCodeGenerator extends
 				"public final #jgSchemaPackage#.#schemaElementClass# getAttributedElementClass() {",
 				"\treturn #javaClassName#.GC;", "}");
 	}
+
+	@Override
+	protected String getSchemaTypeName() {
+		return "GraphClass";
+	}
+
 }

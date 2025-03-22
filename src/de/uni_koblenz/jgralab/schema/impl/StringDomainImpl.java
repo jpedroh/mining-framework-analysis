@@ -1,13 +1,30 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/StringDomainImpl.java/left.java
+ * Copyright (C) 2006-2011 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/StringDomainImpl.java/base.java
+ *               ist@uni-koblenz.de
+=======
  * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/StringDomainImpl.java/right.java
  *
  * For bug reports, documentation and further information, visit
  *
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/StringDomainImpl.java/left.java
+ *                         http://jgralab.uni-koblenz.de
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/StringDomainImpl.java/base.java
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+=======
  *                         https://github.com/jgralab/jgralab
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/StringDomainImpl.java/right.java
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -46,11 +63,24 @@ import de.uni_koblenz.jgralab.schema.Package;
 import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.StringDomain;
 
-public class StringDomainImpl extends BasicDomainImpl implements
+public final class StringDomainImpl extends BasicDomainImpl implements
 StringDomain {
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/StringDomainImpl.java/left.java
 	protected StringDomainImpl(Schema schema) {
+		super(STRINGDOMAIN_NAME, schema.getDefaultPackage());
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/StringDomainImpl.java/base.java
+	public StringDomainImpl(Schema schema) throws SchemaException {
+		QualifiedName qName = new QualifiedName("String");
+		if (schema.getDomain(qName) != null)
+			throw new SchemaException(
+					"Cannot create another StringDomain for Schema "
+							+ schema.getQualifiedName());
+		initialize(schema, qName);
+=======
+	StringDomainImpl(Schema schema) {
 		super(STRINGDOMAIN_NAME, (PackageImpl) schema.getDefaultPackage());
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/StringDomainImpl.java/right.java
 	}
 
 	@Override
@@ -74,7 +104,9 @@ StringDomain {
 	@Override
 	public String getTGTypeName(Package pkg) {
 		return STRINGDOMAIN_NAME;
-	};
+	}
+
+;
 
 	@Override
 	public CodeBlock getWriteMethod(String schemaRootPackagePrefix,
@@ -83,6 +115,7 @@ StringDomain {
 				+ variableName + ");");
 	}
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/StringDomainImpl.java/left.java
 	@Override
 	public CodeBlock getTransactionReadMethod(String schemaPrefix,
 			String variableName, String graphIoVariableName) {
@@ -91,6 +124,17 @@ StringDomain {
 				+ variableName + " = " + graphIoVariableName
 				+ ".matchUtfString();");
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/StringDomainImpl.java/base.java
+=======
+	@Override
+	public CodeBlock getTransactionReadMethod(String schemaPrefix,
+			String variableName, String graphIoVariableName) {
+		return new CodeSnippet(
+				getJavaAttributeImplementationTypeName(schemaPrefix) + " "
+						+ variableName + " = " + graphIoVariableName
+						+ ".matchUtfString();");
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/StringDomainImpl.java/right.java
 
 	@Override
 	public CodeBlock getTransactionWriteMethod(String schemaRootPackagePrefix,
@@ -100,23 +144,42 @@ StringDomain {
 				graphIoVariableName);
 	}
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/StringDomainImpl.java/left.java
 	@Override
 	public String getTransactionJavaAttributeImplementationTypeName(
 			String schemaRootPackagePrefix) {
 		return this.getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/StringDomainImpl.java/base.java
+=======
+	@Override
+	public String getTransactionJavaAttributeImplementationTypeName(
+			String schemaRootPackagePrefix) {
+		return getJavaAttributeImplementationTypeName(schemaRootPackagePrefix);
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/StringDomainImpl.java/right.java
 
 	@Override
 	public String getTransactionJavaClassName(String schemaRootPackagePrefix) {
 		return "java.lang.String";
 	}
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/StringDomainImpl.java/left.java
 	@Override
 	public String getVersionedClass(String schemaRootPackagePrefix) {
 		return "de.uni_koblenz.jgralab.impl.trans.VersionedReferenceImpl<"
 		+ this.getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
 		+ ">";
 	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/StringDomainImpl.java/base.java
+=======
+	@Override
+	public String getVersionedClass(String schemaRootPackagePrefix) {
+		return "de.uni_koblenz.jgralab.impl.trans.VersionedReferenceImpl<"
+				+ getTransactionJavaAttributeImplementationTypeName(schemaRootPackagePrefix)
+				+ ">";
+	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/StringDomainImpl.java/right.java
 
 	@Override
 	public String getInitialValue() {

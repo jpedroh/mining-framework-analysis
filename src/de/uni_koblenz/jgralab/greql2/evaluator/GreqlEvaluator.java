@@ -1,5 +1,164 @@
 /*
  * JGraLab - The Java Graph Laboratory
+ * 
+ * Copyright (C) 2006-2011 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+ * 
+ * For bug reports, documentation and further information, visit
+ * 
+ *                         http://jgralab.uni-koblenz.de
+ * 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
+ * 
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
+ */
+
+package de.uni_koblenz.jgralab.greql2.evaluator;
+
+import java.io.BufferedReader;
+
+import java.io.File;
+
+import java.io.FileNotFoundException;
+
+import java.io.FileReader;
+
+import java.io.IOException;
+
+import java.lang.ref.SoftReference;
+
+import java.lang.reflect.InvocationTargetException;
+
+import java.lang.reflect.Method;
+
+import java.util.ArrayList;
+
+import java.util.HashMap;
+
+import java.util.HashSet;
+
+import java.util.LinkedHashMap;
+
+import java.util.List;
+
+import java.util.Map;
+
+import java.util.Map.Entry;
+
+import java.util.Set;
+
+import java.util.logging.Level;
+
+import java.util.logging.Logger;
+
+import org.pcollections.PCollection;
+
+import org.pcollections.PMap;
+
+import org.pcollections.POrderedSet;
+
+import org.pcollections.PSet;
+
+import org.pcollections.PVector;
+
+import de.uni_koblenz.jgralab.Edge;
+
+import de.uni_koblenz.jgralab.EdgeDirection;
+
+import de.uni_koblenz.jgralab.Graph;
+
+import de.uni_koblenz.jgralab.GraphIO;
+
+import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
+
+import de.uni_koblenz.jgralab.GraphIOException;
+
+import de.uni_koblenz.jgralab.JGraLab;
+
+import de.uni_koblenz.jgralab.ProgressFunction;
+
+import de.uni_koblenz.jgralab.Vertex;
+
+import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
+
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
+
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.DefaultCostModel;
+
+import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
+
+import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
+
+import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
+
+import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
+
+import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
+
+import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
+
+import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
+
+import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
+
+import de.uni_koblenz.jgralab.greql2.schema.Expression;
+
+import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
+
+import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
+
+import de.uni_koblenz.jgralab.greql2.schema.Greql2;
+
+import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
+
+import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
+
+import de.uni_koblenz.jgralab.greql2.schema.IsFunctionIdOf;
+
+import de.uni_koblenz.jgralab.greql2.schema.Variable;
+
+import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
+
+import de.uni_koblenz.jgralab.greql2.types.Undefined;
+
+import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
+
+import de.uni_koblenz.jgralab.schema.AttributedElementClass;
+
+import de.uni_koblenz.jgralab.utilities.tgmerge.TGMerge;
+
+/**
+ * This is the core class of the GReQL-2 Evaluator. It takes a GReQL-2 Query as
+ * String or Graph and a JGraLab-Datagraph and evaluates the Query on this
+ * graph. The result is a JValue-object, it can be accessed using the method
+ * <code>JValue getEvaluationResult()</code>.
+ * 
+ * @author ist@uni-koblenz.de
+ * 
+ */
+
+/*
+ * JGraLab - The Java Graph Laboratory
  *
  * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
@@ -33,66 +192,7 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab.greql2.evaluator;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.lang.ref.SoftReference;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.pcollections.PCollection;
-import org.pcollections.PMap;
-import org.pcollections.POrderedSet;
-import org.pcollections.PSet;
-import org.pcollections.PVector;
-
-import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Graph;
-import de.uni_koblenz.jgralab.GraphIO;
-import de.uni_koblenz.jgralab.GraphIO.TGFilenameFilter;
-import de.uni_koblenz.jgralab.GraphIOException;
-import de.uni_koblenz.jgralab.JGraLab;
-import de.uni_koblenz.jgralab.ProgressFunction;
-import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.graphmarker.GraphMarker;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.CostModel;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.DefaultCostModel;
-import de.uni_koblenz.jgralab.greql2.evaluator.costmodel.GraphSize;
-import de.uni_koblenz.jgralab.greql2.evaluator.vertexeval.VertexEvaluator;
-import de.uni_koblenz.jgralab.greql2.exception.GreqlException;
-import de.uni_koblenz.jgralab.greql2.exception.OptimizerException;
-import de.uni_koblenz.jgralab.greql2.funlib.FunLib;
-import de.uni_koblenz.jgralab.greql2.optimizer.DefaultOptimizer;
-import de.uni_koblenz.jgralab.greql2.optimizer.Optimizer;
-import de.uni_koblenz.jgralab.greql2.parser.GreqlParser;
-import de.uni_koblenz.jgralab.greql2.schema.Expression;
-import de.uni_koblenz.jgralab.greql2.schema.FunctionApplication;
-import de.uni_koblenz.jgralab.greql2.schema.FunctionId;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2;
-import de.uni_koblenz.jgralab.greql2.schema.Greql2Expression;
-import de.uni_koblenz.jgralab.greql2.schema.IsBoundVarOf;
-import de.uni_koblenz.jgralab.greql2.schema.IsFunctionIdOf;
-import de.uni_koblenz.jgralab.greql2.schema.Variable;
-import de.uni_koblenz.jgralab.greql2.serialising.GreqlSerializer;
-import de.uni_koblenz.jgralab.greql2.types.Undefined;
-import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
 import de.uni_koblenz.jgralab.schema.GraphElementClass;
-import de.uni_koblenz.jgralab.utilities.tgmerge.TGMerge;
 
 /**
  * This is the core class of the GReQL-2 Evaluator. It takes a GReQL-2 Query as
@@ -146,23 +246,27 @@ public class GreqlEvaluator {
 	 * edgeset expressions that need more than <code>indextimeBarrier</code> ms
 	 * to calculate are added
 	 */
+
 	private static final long INDEX_TIME_BARRIER = 10;
 
 	/**
 	 * Print the current value of each variable in a declaration layer during
 	 * evaluation.
 	 */
+
 	public static boolean DEBUG_DECLARATION_ITERATIONS = false;
 
 	/**
 	 * Print the text representation of the optimized query after optimization.
 	 */
+
 	public static boolean DEBUG_OPTIMIZATION = Boolean.parseBoolean(System
 			.getProperty("greqlDebugOptimization", "false"));
 
 	/**
 	 * toggles wether to use indexing for vertex sets or not
 	 */
+
 	public static final boolean VERTEX_INDEXING = true;
 
 	/**
@@ -172,12 +276,14 @@ public class GreqlEvaluator {
 	 * the graph. For a graph with 1.000.000 vertices, this array needs 4MB in
 	 * the memory.
 	 */
+
 	public static final int VERTEX_INDEX_SIZE = 50;
 
 	/**
 	 * stores the already optimized syntaxgraphs (query strings are the keys,
 	 * here).
 	 */
+
 	protected static Map<String, SoftReference<List<SyntaxGraphEntry>>> optimizedGraphs;
 
 	public static synchronized void resetOptimizedSyntaxGraphs() {
@@ -191,11 +297,13 @@ public class GreqlEvaluator {
 	/**
 	 * The directory where the GreqlEvaluator stores the optimized syntax graphs
 	 */
+
 	protected static File optimizedSyntaxGraphsDirectory = getTmpDirectory();
 
 	/**
 	 * stores the graph indizes (maps graphId values to GraphIndizes)
 	 */
+
 	protected static Map<Graph, SoftReference<GraphIndex>> graphIndizes;
 
 	public static synchronized void resetGraphIndizes() {
@@ -209,17 +317,25 @@ public class GreqlEvaluator {
 	/**
 	 * The GraphMarker that stores all vertex evaluators
 	 */
+
 	protected GraphMarker<VertexEvaluator> vertexEvalGraphMarker;
 
 	/**
 	 * The map of SimpleName to Type of types that is known in the evaluator by
 	 * import statements in the greql query
 	 */
+
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/greql2/evaluator/GreqlEvaluator.java/left.java
+	protected Map<String, AttributedElementClass<?, ?>> knownTypes = new HashMap<String, AttributedElementClass<?, ?>>();
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/greql2/evaluator/GreqlEvaluator.java/base.java
+=======
 	protected Map<String, GraphElementClass<?, ?>> knownTypes = new HashMap<String, GraphElementClass<?, ?>>();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/greql2/evaluator/GreqlEvaluator.java/right.java
 
 	/**
 	 * returns the vertexEvalGraph marker that is used
 	 */
+
 	public final GraphMarker<VertexEvaluator> getVertexEvaluatorGraphMarker() {
 		return vertexEvalGraphMarker;
 	}
@@ -228,6 +344,7 @@ public class GreqlEvaluator {
 	 * Creates the map of optimized syntaxgraphs as soon as the GreqlEvaluator
 	 * gets loaded
 	 */
+
 	static {
 		resetOptimizedSyntaxGraphs();
 		resetGraphIndizes();
@@ -246,6 +363,7 @@ public class GreqlEvaluator {
 	 * @return a JValueSet with the result of that queryPart or null if the
 	 *         query part is not yet indexed
 	 */
+
 	public static synchronized PSet<Vertex> getVertexIndex(Graph graph,
 			String queryPart) {
 		SoftReference<GraphIndex> ref = graphIndizes.get(graph);
@@ -268,6 +386,7 @@ public class GreqlEvaluator {
 	 * Adds the given vertex set as the result of the given queryPart to the
 	 * index of the given graph
 	 */
+
 	public static synchronized void addVertexIndex(Graph graph,
 			String queryPart, PSet<Vertex> vertexSet) {
 		SoftReference<GraphIndex> ref = graphIndizes.get(graph);
@@ -283,7 +402,8 @@ public class GreqlEvaluator {
 
 		if (index == null) {
 			index = new GraphIndex(graph);
-			graphIndizes.put(graph, new SoftReference<GraphIndex>(index));
+			graphIndizes.put(graph,
+					new SoftReference<GraphIndex>(index));
 		}
 		index.addVertexSet(queryPart, vertexSet);
 	}
@@ -291,6 +411,7 @@ public class GreqlEvaluator {
 	/**
 	 * @return th time barrier after which unused indices were removed
 	 */
+
 	public long getIndexTimeBarrier() {
 		return INDEX_TIME_BARRIER;
 	}
@@ -298,6 +419,7 @@ public class GreqlEvaluator {
 	/**
 	 * adds a optimized graph to the list of syntaxgraphs. Sets the used flag to
 	 */
+
 	protected static synchronized void addOptimizedSyntaxGraph(
 			String queryString, SyntaxGraphEntry entry) {
 		SoftReference<List<SyntaxGraphEntry>> ref = optimizedGraphs
@@ -310,10 +432,9 @@ public class GreqlEvaluator {
 				optimizedGraphs.remove(ref);
 			}
 		}
-
 		if (entryList == null) {
-			entryList = new ArrayList<SyntaxGraphEntry>();
-		}
+		entryList = new ArrayList<SyntaxGraphEntry>();
+	}
 		if (!entryList.contains(entry)) {
 			entryList.add(entry);
 		}
@@ -325,6 +446,7 @@ public class GreqlEvaluator {
 	/**
 	 * gets an unlocked syntaxgraph out of the optimzedGraph map and locks it
 	 */
+
 	protected static synchronized SyntaxGraphEntry getOptimizedSyntaxGraph(
 			String queryString, Optimizer optimizer, CostModel costModel) {
 		SoftReference<List<SyntaxGraphEntry>> ref = optimizedGraphs
@@ -365,6 +487,7 @@ public class GreqlEvaluator {
 	 * @see #setOptimizedSyntaxGraphsDirectory(File)
 	 * @see #getOptimizedSyntaxGraphsDirectory()
 	 */
+
 	public static synchronized void loadOptimizedSyntaxGraphs()
 			throws GraphIOException {
 		if (!(optimizedSyntaxGraphsDirectory.exists()
@@ -392,6 +515,7 @@ public class GreqlEvaluator {
 	 * Save all {@link SyntaxGraphEntry}s in optimizedGraphs to
 	 * optimizedSyntaxGraphDirectory.
 	 */
+
 	public static synchronized void saveOptimizedSyntaxGraphs() {
 		for (SoftReference<List<SyntaxGraphEntry>> ref : optimizedGraphs
 				.values()) {
@@ -412,6 +536,7 @@ public class GreqlEvaluator {
 	/**
 	 * This attribute holds the query-string
 	 */
+
 	protected String queryString = null;
 
 	public void setQuery(String queryString) {
@@ -452,6 +577,7 @@ public class GreqlEvaluator {
 	/**
 	 * Reset to before-start state, so that a new query can be evaluated.
 	 */
+
 	private void reset() {
 		queryGraph = null;
 		result = null;
@@ -463,82 +589,97 @@ public class GreqlEvaluator {
 	/**
 	 * This attribute holds the query-graph
 	 */
+
 	protected Greql2 queryGraph = null;
 
 	/**
 	 * This attribute holds the entry of the optimizedSyntaxGraph map that is
 	 * currently used
 	 */
+
 	protected SyntaxGraphEntry syntaxGraphEntry = null;
 
 	/**
 	 * This is the optimizer who optimizes the greql2 syntaxgraph
 	 */
+
 	private Optimizer optimizer = null;
 
 	/**
 	 * If set to <code>true</code>, then the query will be optimized before
 	 * evaluation. Otherwise it will be evaluated without any optimizations.
 	 */
+
 	private boolean optimize = true;
 
 	/**
 	 * If set to <code>true</code>, then a stored optimized syntaxgraph will be
 	 * used if <code>optimize == true</code> and such a graph exists.
 	 */
+
 	private boolean useSavedOptimizedSyntaxGraph = true;
 
 	/**
 	 * This attribute holds the datagraph
 	 */
+
 	protected Graph datagraph = null;
 
 	/**
 	 * This attribute holds the result of the evaluation
 	 */
+
 	protected Object result = null;
 
 	/**
 	 * This attribute holds the CostModel which estimates the evaluation costs
 	 */
+
 	protected CostModel costModel = null;
 
 	/**
 	 * The progress function this evaluator uses, may be null
 	 */
+
 	protected ProgressFunction progressFunction = null;
 
 	/**
 	 * holds the number of interpretetation steps that have been passed since
 	 * the last call of the progress function
 	 */
+
 	protected long progressStepsPassed = 0;
 
 	/**
 	 * the time the ovarall evaluation (parsing + optimization + evluation) took
 	 * in milliseconds
 	 */
+
 	protected long overallEvaluationTime = -1;
 
 	/**
 	 * The plain time needed for evaluation.
 	 */
+
 	protected long plainEvaluationTime = -1;
 
 	/**
 	 * The time needed for optimization.
 	 */
+
 	protected long optimizationTime = -1;
 
 	/**
 	 * The time needed for parsing the query.
 	 */
+
 	protected long parseTime = -1;
 
 	/**
 	 * @return the time the ovarall evaluation (parsing + optimization +
 	 *         evluation) took in milliseconds
 	 */
+
 	public long getOverallEvaluationTime() {
 		return overallEvaluationTime;
 	}
@@ -547,27 +688,32 @@ public class GreqlEvaluator {
 	 * This attribute is true if the evaluation has already been started, false
 	 * otherwise
 	 */
+
 	protected boolean started = false;
 
 	/**
 	 * Holds the variables that are defined via using, they are called bound or
 	 * free variables
 	 */
+
 	protected Map<String, Object> variableMap = null;
 
 	/**
 	 * Holds the greql subqueries that can be called like other greql functions.
 	 */
+
 	protected LinkedHashMap<String, Greql2> subQueryMap = null;
 
 	/**
 	 * Holds the estimated needed for evaluation time in abstract units
 	 */
+
 	protected long estimatedInterpretationSteps = 0;
 
 	/**
 	 * Holds the already passed time in abstract time units
 	 */
+
 	protected long passedInterpretationSteps = 0;
 
 	/**
@@ -575,6 +721,7 @@ public class GreqlEvaluator {
 	 * given value should be the ownEvaluationCosts of that VertexEvaluator.
 	 * Calls the progress()-Method of the progress function this evaluator uses
 	 */
+
 	public final void progress(long value) {
 		progressStepsPassed += value;
 		if (progressFunction != null) {
@@ -589,6 +736,7 @@ public class GreqlEvaluator {
 	/**
 	 * returns the changes variableMap
 	 */
+
 	public Map<String, Object> getVariables() {
 		return variableMap;
 	}
@@ -662,6 +810,7 @@ public class GreqlEvaluator {
 	/**
 	 * returns the result of the evaluation
 	 */
+
 	public Object getResult() {
 		return result;
 	}
@@ -689,6 +838,7 @@ public class GreqlEvaluator {
 	/**
 	 * @return the tmp directory of that system. On Unix/Linux this is /tmp.
 	 */
+
 	private static File getTmpDirectory() {
 		File tmpFile = null, tmpDir = null;
 		try {
@@ -705,6 +855,7 @@ public class GreqlEvaluator {
 	/**
 	 * returns the CostModel which is used to estimate the evaluation costs
 	 */
+
 	public CostModel getCostModel() {
 		return costModel;
 	}
@@ -712,6 +863,7 @@ public class GreqlEvaluator {
 	/**
 	 * sets the CostModel which is used to estimate the evaluation costs
 	 */
+
 	public void setCostModel(CostModel m) {
 		costModel = m;
 	}
@@ -719,6 +871,7 @@ public class GreqlEvaluator {
 	/**
 	 * returns the query syntaxgraph
 	 */
+
 	public Greql2 getSyntaxGraph() {
 		return queryGraph;
 	}
@@ -736,6 +889,7 @@ public class GreqlEvaluator {
 	 *            the ProgressFunction which indicates the progress, for
 	 *            instance display a progress bar etc.
 	 */
+
 	public GreqlEvaluator(String query, Graph datagraph,
 			Map<String, Object> variables, ProgressFunction progressFunction) {
 		this(datagraph, variables, progressFunction);
@@ -745,19 +899,26 @@ public class GreqlEvaluator {
 	private GreqlEvaluator(Graph datagraph, Map<String, Object> variables,
 			ProgressFunction progressFunction) {
 		this.datagraph = datagraph;
-		knownTypes = new HashMap<String, GraphElementClass<?, ?>>();
+		knownTypes = new HashMap<String, AttributedElementClass<?, ?>>();
 		variableMap = variables;
 		subQueryMap = new LinkedHashMap<String, Greql2>();
 		this.progressFunction = progressFunction;
 	}
 
-	public void addKnownType(GraphElementClass<?, ?> knownType) {
+	public void addKnownType(AttributedElementClass<?, ?> knownType) {
 		knownTypes.put(knownType.getSimpleName(), knownType);
 	}
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/greql2/evaluator/GreqlEvaluator.java/left.java
+	public AttributedElementClass<?, ?> getKnownType(String typeSimpleName) {
+		return knownTypes.get(typeSimpleName);
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/greql2/evaluator/GreqlEvaluator.java/base.java
+=======
 	public GraphElementClass<?, ?> getKnownType(String typeSimpleName) {
 		return knownTypes.get(typeSimpleName);
 	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/greql2/evaluator/GreqlEvaluator.java/right.java
 
 	/**
 	 * Creates a new GreqlEvaluator for the given Query and Datagraph
@@ -769,6 +930,7 @@ public class GreqlEvaluator {
 	 * @param variables
 	 *            a Map<String, JValue> of bound variables
 	 */
+
 	public GreqlEvaluator(String query, Graph datagraph,
 			Map<String, Object> variables) {
 		this(query, datagraph, variables, null);
@@ -788,6 +950,7 @@ public class GreqlEvaluator {
 	 *            the ProgressFunction which indicates the progress, for
 	 *            instance display a progress bar etc.
 	 */
+
 	public GreqlEvaluator(File queryFile, Graph datagraph,
 			Map<String, Object> variables, ProgressFunction progressFunction)
 			throws FileNotFoundException, IOException {
@@ -807,6 +970,7 @@ public class GreqlEvaluator {
 	 * @param variables
 	 *            a Map<String, JValue> of bound variables
 	 */
+
 	public GreqlEvaluator(File queryFile, Graph datagraph,
 			Map<String, Object> variables) throws FileNotFoundException,
 			IOException {
@@ -816,6 +980,7 @@ public class GreqlEvaluator {
 	/**
 	 * returns the datagraph
 	 */
+
 	public Graph getDatagraph() {
 		return datagraph;
 	}
@@ -823,6 +988,7 @@ public class GreqlEvaluator {
 	/**
 	 * Parses the given query-string and creates the query-graph out of it
 	 */
+
 	protected boolean parseQuery(String query) {
 		long parseStartTime = System.currentTimeMillis();
 		GreqlParser parser = new GreqlParser(query, subQueryMap.keySet());
@@ -922,6 +1088,7 @@ public class GreqlEvaluator {
 	/**
 	 * Creates the VertexEvaluator-Object at the vertices in the syntaxgraph
 	 */
+
 	public void createVertexEvaluators() {
 		if (queryGraph == null) {
 			return;
@@ -944,6 +1111,7 @@ public class GreqlEvaluator {
 	 * 
 	 * @param optimizer
 	 */
+
 	private void resetVertexEvaluators() {
 		Vertex currentVertex = queryGraph.getFirstVertex();
 		while (currentVertex != null) {
@@ -961,6 +1129,7 @@ public class GreqlEvaluator {
 	 * syntaxgraph, adds the VertexEvaluator object to the vertices of that
 	 * graph and stores this as attribute queryGraph.
 	 */
+
 	protected void createOptimizedSyntaxGraph() throws OptimizerException {
 		long optimizerStartTime = System.currentTimeMillis();
 		if (optimizer == null) {
@@ -1021,6 +1190,7 @@ public class GreqlEvaluator {
 	 * 
 	 * @return true on success, false otherwise
 	 */
+
 	public boolean startEvaluation() throws OptimizerException {
 		if (started) {
 			return result != null;
@@ -1152,6 +1322,7 @@ public class GreqlEvaluator {
 	 * @param optimizer
 	 *            the optimizer to use
 	 */
+
 	public void setOptimizer(Optimizer optimizer) {
 		this.optimizer = optimizer;
 	}
@@ -1159,6 +1330,7 @@ public class GreqlEvaluator {
 	/**
 	 * Sets the optimizer to optimize the syntaxgraph this evaluator evaluates
 	 */
+
 	public Optimizer getOptimizer() {
 		return optimizer;
 	}
@@ -1171,6 +1343,7 @@ public class GreqlEvaluator {
 	 * @return <code>true</code> if the query will be optimized before
 	 *         evaluation, <code>false</code> otherwise.
 	 */
+
 	public boolean isOptimize() {
 		return optimize;
 	}
@@ -1181,6 +1354,7 @@ public class GreqlEvaluator {
 	 *            evaluation. If <code>false</code> it will be evaluated without
 	 *            any optimizations.
 	 */
+
 	public void setOptimize(boolean optimize) {
 		this.optimize = optimize;
 	}
@@ -1189,6 +1363,7 @@ public class GreqlEvaluator {
 	 * @return the time needed for optimizing the query or -1 if no optimization
 	 *         was done.
 	 */
+
 	public long getOptimizationTime() {
 		return optimizationTime;
 	}
@@ -1196,6 +1371,7 @@ public class GreqlEvaluator {
 	/**
 	 * @return the time needed for parsing the query.
 	 */
+
 	public long getParseTime() {
 		return parseTime;
 	}
@@ -1203,6 +1379,7 @@ public class GreqlEvaluator {
 	/**
 	 * @return the time needed for plain evaluation.
 	 */
+
 	public long getPlainEvaluationTime() {
 		return plainEvaluationTime;
 	}
@@ -1234,6 +1411,148 @@ public class GreqlEvaluator {
 			File optimizedSyntaxGraphsDirectory) {
 		GreqlEvaluator.optimizedSyntaxGraphsDirectory = optimizedSyntaxGraphsDirectory;
 	}
+
+	/**
+	 * Print the current value of each variable in a declaration layer during
+	 * evaluation.
+	 */
+
+	/**
+	 * Print the text representation of the optimized query after optimization.
+	 */
+
+	/**
+	 * stores the already optimized syntaxgraphs (query strings are the keys,
+	 * here).
+	 */
+
+	/**
+	 * stores the graph indizes (maps graphId values to GraphIndizes)
+	 */
+
+	/**
+	 * The map of SimpleName to Type of types that is known in the evaluator by
+	 * import statements in the greql query
+	 */
+
+	/**
+	 * Gets a vertex index for a part of a query
+	 * 
+	 * @param graph
+	 *            the graph to get an index for
+	 * @param queryPart
+	 *            the query part to search for in the index structure
+	 * @return a JValueSet with the result of that queryPart or null if the
+	 *         query part is not yet indexed
+	 */
+
+	/**
+	 * Load all optimized {@link SyntaxGraphEntry}s in
+	 * optimizedSyntaxGraphsDirectory.
+	 * 
+	 * @throws GraphIOException
+	 *             if the optimizedGraphsDirectory is not accessible.
+	 * @see #setOptimizedSyntaxGraphsDirectory(File)
+	 * @see #getOptimizedSyntaxGraphsDirectory()
+	 */
+
+	/**
+	 * Reset to before-start state, so that a new query can be evaluated.
+	 */
+
+	/**
+	 * Holds the greql subqueries that can be called like other greql functions.
+	 */
+
+	/**
+	 * Creates a new GreqlEvaluator for the given Query and Datagraph
+	 * 
+	 * @param query
+	 *            the string-representation of the query to evaluate
+	 * @param datagraph
+	 *            the Datagraph on which the query gets evaluated
+	 * @param variables
+	 *            a Map<String, JValue> of bound variables
+	 * @param progressFunction
+	 *            the ProgressFunction which indicates the progress, for
+	 *            instance display a progress bar etc.
+	 */
+
+	private GreqlEvaluator(Graph datagraph, Map<String, Object> variables,
+			ProgressFunction progressFunction) {
+		this.datagraph = datagraph;
+		knownTypes = new HashMap<String, GraphElementClass<?, ?>>();
+		variableMap = variables;
+		subQueryMap = new LinkedHashMap<String, Greql2>();
+		this.progressFunction = progressFunction;
+	}
+
+	public void addKnownType(GraphElementClass<?, ?> knownType) {
+		knownTypes.put(knownType.getSimpleName(), knownType);
+	}
+
+	/**
+	 * Creates a new GreqlEvaluator for the given Query and Datagraph
+	 * 
+	 * @param query
+	 *            the string-representation of the query to evaluate
+	 * @param datagraph
+	 *            the Datagraph on which the query gets evaluated
+	 * @param variables
+	 *            a Map<String, JValue> of bound variables
+	 */
+
+	/**
+	 * Creates an new GreqlEvaluator for the query in the given file and the
+	 * given datagraph
+	 * 
+	 * @param queryFile
+	 *            the name of the file whehre the query to evaluate is stored in
+	 * @param datagraph
+	 *            the Datagraph on which the query gets evaluated
+	 * @param variables
+	 *            a Map<String, JValue> of bound variables
+	 * @param progressFunction
+	 *            the ProgressFunction which indicates the progress, for
+	 *            instance display a progress bar etc.
+	 */
+
+	/**
+	 * Creates an new GreqlEvaluator for the query in the given file and the
+	 * given datagraph
+	 * 
+	 * @param queryFile
+	 *            the name of the file whehre the query to evaluate is stored in
+	 * @param datagraph
+	 *            the Datagraph on which the query gets evaluated
+	 * @param variables
+	 *            a Map<String, JValue> of bound variables
+	 */
+
+	/**
+	 * clears the tempresults that are stored in the VertexEvaluators-Objects at
+	 * the syntaxgraph nodes
+	 * 
+	 * @param optimizer
+	 */
+
+	/**
+	 * Starts the evaluation. If the query is a store-query, modifies the bound
+	 * variables
+	 * 
+	 * @return true on success, false otherwise
+	 */
+
+	/**
+	 * Sets the optimizer to optimize the syntaxgraph this evaluator evaluates
+	 * 
+	 * @param optimizer
+	 *            the optimizer to use
+	 */
+
+	/**
+	 * @return the time needed for plain evaluation.
+	 */
 
 	public boolean isUseSavedOptimizedSyntaxGraph() {
 		return useSavedOptimizedSyntaxGraph;

@@ -1,4 +1,60 @@
 /*
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/PackageImpl.java/left.java
+ * JGraLab - The Java Graph Laboratory
+ * 
+ * Copyright (C) 2006-2011 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+ * 
+ * For bug reports, documentation and further information, visit
+ * 
+ *                         http://jgralab.uni-koblenz.de
+ * 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
+ * 
+ * Additional permission under GNU GPL version 3 section 7
+ * 
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/PackageImpl.java/base.java
+ * JGraLab - The Java graph laboratory
+ * (c) 2006-2008 Institute for Software Technology
+ *               University of Koblenz-Landau, Germany
+ *
+ *               ist@uni-koblenz.de
+ *
+ * Please report bugs to http://serres.uni-koblenz.de/bugzilla
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+=======
  * JGraLab - The Java Graph Laboratory
  *
  * Copyright (C) 2006-2012 Institute for Software Technology
@@ -31,6 +87,7 @@
  * permission to convey the resulting work.  Corresponding Source for a
  * non-source form of such a combination shall include the source code for
  * the parts of JGraLab used as well as that of the covered work.
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/PackageImpl.java/right.java
  */
 
 package de.uni_koblenz.jgralab.schema.impl;
@@ -46,13 +103,15 @@ import de.uni_koblenz.jgralab.schema.Schema;
 import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
-public class PackageImpl extends NamedElementImpl implements Package {
+public final class PackageImpl extends NamedElementImpl implements Package {
 
 	private final Map<String, Domain> domains = new TreeMap<String, Domain>();
 
 	private final Map<String, EdgeClass> edgeClasses = new TreeMap<String, EdgeClass>();
 
 	private final Map<String, GraphClass> graphClasses = new TreeMap<String, GraphClass>();
+
+	private final Schema schema;
 
 	private final Map<String, Package> subPackages = new TreeMap<String, Package>();
 
@@ -83,26 +142,48 @@ public class PackageImpl extends NamedElementImpl implements Package {
 	 *             if the <code>DefaultPackage</code> already exists in the
 	 *             given schema
 	 */
+
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/PackageImpl.java/left.java
+	static Package createDefaultPackage(Schema schema) {
+		assert schema.getDefaultPackage() == null : "DefaultPackage already created!";
+		return new PackageImpl(schema);
+	}
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/PackageImpl.java/base.java
+=======
 	static PackageImpl createDefaultPackage(Schema schema) {
 		assert schema.getDefaultPackage() == null : "DefaultPackage already created!";
 		return new PackageImpl((SchemaImpl) schema);
 	}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/PackageImpl.java/right.java
 
 	/**
 	 * Constructor for the default package
 	 * 
 	 * @param schema
 	 */
+
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/PackageImpl.java/left.java
+	private PackageImpl(Schema schema) {
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/PackageImpl.java/base.java
+	private PackageImpl {
+=======
 	private PackageImpl(SchemaImpl schema) {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/PackageImpl.java/right.java
 		this(Package.DEFAULTPACKAGE_NAME, null, schema);
 	}
 
-	protected PackageImpl(String simpleName, PackageImpl parentPackage, SchemaImpl schema) {
+	protected PackageImpl(String simpleName, Package parentPackage, Schema schema) {
 		super(simpleName, parentPackage, schema);
+		this.schema = schema;
+		register();
+	}
+
+	@Override
+	protected void register() {
 		if (parentPackage != null) {
-			parentPackage.addSubPackage(this);
+			((PackageImpl) parentPackage).addSubPackage(this);
 		}
-		schema.addPackage(this);
+		((SchemaImpl) schema).addPackage(this);
 	}
 
 	void addDomain(Domain dom) {
@@ -123,6 +204,7 @@ public class PackageImpl extends NamedElementImpl implements Package {
 	 * @param ec
 	 *            an EdgeClass
 	 */
+
 	void addEdgeClass(EdgeClass ec) {
 		assert ec.getPackage() == this : "The edge class '"
 				+ ec.getQualifiedName()
@@ -140,6 +222,7 @@ public class PackageImpl extends NamedElementImpl implements Package {
 	 * Adds the GraphClass gc to this Package. This action is only allowed, if
 	 * this package is the DefaultPackage.
 	 */
+
 	void addGraphClass(GraphClass gc) {
 		if (!isDefaultPackage()) {
 			throw new SchemaException(
@@ -160,6 +243,7 @@ public class PackageImpl extends NamedElementImpl implements Package {
 	 * @param subPkg
 	 *            a subpackage
 	 */
+
 	void addSubPackage(Package subPkg) {
 		assert subPkg.getPackage() == this : "The subpackage does not belong into the package '"
 				+ getQualifiedName()
@@ -179,6 +263,7 @@ public class PackageImpl extends NamedElementImpl implements Package {
 	 * @param vc
 	 *            a VertexClass
 	 */
+
 	void addVertexClass(VertexClass vc) {
 		assert vc.getPackage() == this : "The vertex class '"
 				+ vc.getQualifiedName()
@@ -193,10 +278,86 @@ public class PackageImpl extends NamedElementImpl implements Package {
 	}
 
 	@Override
-	public boolean containsNamedElement(String sn) {
+	public
+	@Override boolean containsNamedElement(String sn) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/PackageImpl.java/left.java
+		return domains.containsKey(sn)
+				|| edgeClasses.containsKey(sn)
+				|| (isDefaultPackage() && (schema.getDefaultGraphClass() != null))
+				|| vertexClasses.containsKey(sn) || subPackages.containsKey(sn);
+||||||| /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/PackageImpl.java/base.java
+		return  || subPackages.containsKey(sn);
+=======
 		return domains.containsKey(sn) || edgeClasses.containsKey(sn)
 				|| vertexClasses.containsKey(sn) || subPackages.containsKey(sn);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/8cef5d06ba740f3eaeac87876172c02a85a5819f/src/de/uni_koblenz/jgralab/schema/impl/PackageImpl.java/right.java
 	}
+
+	/**
+	 * Creates a new <code>DefaultPackage</code> in the given Schema.
+	 * 
+	 * <p>
+	 * <b>Pattern:</b>
+	 * <code>p = PackageImpl.createDefaultPackage(schema);</code>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Preconditions:</b> none<br/>
+	 * </p>
+	 * 
+	 * <p>
+	 * <b>Postconditions:</b> p is the newly created <code>DefaultPackage</code>
+	 * for this schema
+	 * </p>
+	 * 
+	 * @param schema
+	 *            the schema containing the new <code>DefaultPackage</code>
+	 * @return the newly created <code>DefaultPackage</code> for the given
+	 *         schema
+	 * @throws SchemaException
+	 *             if the <code>DefaultPackage</code> already exists in the
+	 *             given schema
+	 */
+
+	/**
+	 * Constructor for the default package
+	 * 
+	 * @param schema
+	 */
+
+	PackageImpl(String simpleName, PackageImpl parentPackage, SchemaImpl schema) {
+		super(simpleName, parentPackage, schema);
+		if (parentPackage != null) {
+			parentPackage.addSubPackage(this);
+		}
+		schema.addPackage(this);
+	}
+
+	/**
+	 * Adds the EdgeClass <code>ec</code> to this Package.
+	 * 
+	 * @param ec
+	 *            an EdgeClass
+	 */
+
+	/**
+	 * Adds the GraphClass gc to this Package. This action is only allowed, if
+	 * this package is the DefaultPackage.
+	 */
+
+	/**
+	 * Adds the subpackage <code>subPkg</code> to this Package.
+	 * 
+	 * @param subPkg
+	 *            a subpackage
+	 */
+
+	/**
+	 * Adds the VertexClass <code>vc</code> to this Package.
+	 * 
+	 * @param vc
+	 *            a VertexClass
+	 */
 
 	@Override
 	public Map<String, Domain> getDomains() {

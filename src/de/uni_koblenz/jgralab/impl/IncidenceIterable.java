@@ -1,6 +1,63 @@
 /*
  * JGraLab - The Java Graph Laboratory
  *
+ * Copyright (C) 2006-2011 Institute for Software Technology
+ *                         University of Koblenz-Landau, Germany
+ *                         ist@uni-koblenz.de
+ *
+ * For bug reports, documentation and further information, visit
+ *
+ *                         http://jgralab.uni-koblenz.de
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, see <http://www.gnu.org/licenses>.
+ *
+ * Additional permission under GNU GPL version 3 section 7
+ *
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with Eclipse (or a modified version of that program or an Eclipse
+ * plugin), containing parts covered by the terms of the Eclipse Public
+ * License (EPL), the licensors of this Program grant you additional
+ * permission to convey the resulting work.  Corresponding Source for a
+ * non-source form of such a combination shall include the source code for
+ * the parts of JGraLab used as well as that of the covered work.
+ */
+
+package de.uni_koblenz.jgralab.impl;
+
+import java.util.ConcurrentModificationException;
+
+import java.util.Iterator;
+
+import java.util.NoSuchElementException;
+
+import de.uni_koblenz.jgralab.Edge;
+
+import de.uni_koblenz.jgralab.EdgeDirection;
+
+import de.uni_koblenz.jgralab.Vertex;
+
+import de.uni_koblenz.jgralab.schema.EdgeClass;
+
+/**
+ * This class provides an Iterable for the Edges incident to a given vertex.
+ *
+ * @author ist@uni-koblenz.de
+ */
+
+/*
+ * JGraLab - The Java Graph Laboratory
+ *
  * Copyright (C) 2006-2012 Institute for Software Technology
  *                         University of Koblenz-Landau, Germany
  *                         ist@uni-koblenz.de
@@ -33,17 +90,6 @@
  * the parts of JGraLab used as well as that of the covered work.
  */
 
-package de.uni_koblenz.jgralab.impl;
-
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-
-import de.uni_koblenz.jgralab.Edge;
-import de.uni_koblenz.jgralab.EdgeDirection;
-import de.uni_koblenz.jgralab.Vertex;
-import de.uni_koblenz.jgralab.schema.EdgeClass;
-
 /**
  * This class provides an Iterable for the Edges incident to a given vertex.
  *
@@ -59,7 +105,6 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 	public IncidenceIterable(Vertex v) {
 		this(v, (EdgeClass) null, EdgeDirection.INOUT);
 	}
-
 	/**
 	 * Creates an Iterable for all incident edges of Vertex <code>v</code> with
 	 * the specified <code>orientation</code>.
@@ -72,7 +117,6 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 	public IncidenceIterable(Vertex v, EdgeDirection orientation) {
 		this(v, (EdgeClass) null, orientation);
 	}
-
 	/**
 	 * Creates an Iterable for all incident edges of Vertex <code>v</code> with
 	 * the specified edgeclass <code>ec</code>.
@@ -85,11 +129,9 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 	public IncidenceIterable(Vertex v, Class<? extends Edge> ec) {
 		this(v, ec, EdgeDirection.INOUT);
 	}
-
 	public IncidenceIterable(Vertex v, EdgeClass ec) {
 		this(v, ec, EdgeDirection.INOUT);
 	}
-
 	/**
 	 * Creates an Iterable for all incident edges of Vertex <code>v</code> with
 	 * the specified edgeclass <code>ec</code> and <code>orientation</code>.
@@ -106,12 +148,10 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 		assert v != null && v.isValid();
 		iter = new IncidenceIterator((InternalVertex) v, ec, orientation);
 	}
-
 	public IncidenceIterable(Vertex v, EdgeClass ec, EdgeDirection orientation) {
 		assert v != null && v.isValid();
 		iter = new IncidenceIterator((InternalVertex) v, ec, orientation);
 	}
-
 	class IncidenceIterator implements Iterator<E> {
 		protected E current = null;
 
@@ -185,10 +225,44 @@ public class IncidenceIterable<E extends Edge> implements Iterable<E> {
 		}
 
 	}
-
 	private IncidenceIterator iter = null;
+	/**
+	 * Creates an Iterable for all incident edges of Vertex <code>v</code>.
+	 *
+	 * @param v
+	 *            a Vertex
+	 */
+	/**
+	 * Creates an Iterable for all incident edges of Vertex <code>v</code> with
+	 * the specified <code>orientation</code>.
+	 *
+	 * @param v
+	 *            a Vertex
+	 * @param orientation
+	 *            desired orientation
+	 */
+	/**
+	 * Creates an Iterable for all incident edges of Vertex <code>v</code> with
+	 * the specified edgeclass <code>ec</code>.
+	 *
+	 * @param v
+	 *            a Vertex
+	 * @param ec
+	 *            restricts edges to that class or subclasses
+	 */
+	/**
+	 * Creates an Iterable for all incident edges of Vertex <code>v</code> with
+	 * the specified edgeclass <code>ec</code> and <code>orientation</code>.
+	 *
+	 * @param v
+	 *            a Vertex
+	 * @param ec
+	 *            restricts edges to that class or subclasses
+	 * @param orientation
+	 *            desired orientation
+	 */
 
-	@Override
+	@Override @Override
 	public Iterator<E> iterator() {
 		return iter;
 	}
