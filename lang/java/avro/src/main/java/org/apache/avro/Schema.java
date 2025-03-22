@@ -1410,13 +1410,19 @@ public abstract class Schema extends JsonProperties {
           return names.get(nameFromType);
         }
         throw new SchemaParseException("Type not supported: "+type);
+<<<<<<< /usr/src/app/output/apache/avro/fcd2c8a560148d5610a5bb7097992d1ce0e8291e/lang/java/avro/src/main/java/org/apache/avro/Schema.java/left.java
       }
+      Iterator<String> i = schema.getFieldNames();
+||||||| /usr/src/app/output/apache/avro/fcd2c8a560148d5610a5bb7097992d1ce0e8291e/lang/java/avro/src/main/java/org/apache/avro/Schema.java/base.java
+      Iterator<String> i = schema.getFieldNames();
+=======
       Iterator<String> i = schema.fieldNames();
 
       Set reserved = SCHEMA_RESERVED;
       if (type.equals("enum")) {
         reserved = ENUM_RESERVED;
       }
+>>>>>>> /usr/src/app/output/apache/avro/fcd2c8a560148d5610a5bb7097992d1ce0e8291e/lang/java/avro/src/main/java/org/apache/avro/Schema.java/right.java
       while (i.hasNext()) {                       // add properties
         String prop = i.next();
         if (!reserved.contains(prop))      // ignore reserved
