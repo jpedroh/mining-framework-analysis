@@ -1,18 +1,15 @@
 package org.telegram.abilitybots.api.util;
-
 import com.google.common.base.Strings;
 import org.telegram.abilitybots.api.db.DBContext;
 import org.telegram.abilitybots.api.objects.MessageContext;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.User;
-
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-
 import static java.util.ResourceBundle.Control.FORMAT_PROPERTIES;
 import static java.util.ResourceBundle.Control.getNoFallbackControl;
 import static java.util.ResourceBundle.getBundle;
@@ -23,7 +20,6 @@ import static org.telegram.abilitybots.api.objects.Flag.*;
  */
 public final class AbilityUtils {
   private AbilityUtils() {
-
   }
 
   /**
@@ -42,7 +38,7 @@ public final class AbilityUtils {
    * @return a lambda consumer that takes in a {@link MessageContext}, used in post actions for abilities
    */
   public static Consumer<MessageContext> commitTo(DBContext db) {
-    return ctx -> db.commit();
+    return (ctx) -> db.commit();
   }
 
   /**
@@ -55,20 +51,32 @@ public final class AbilityUtils {
   public static User getUser(Update update) {
     if (MESSAGE.test(update)) {
       return update.getMessage().getFrom();
-    } else if (CALLBACK_QUERY.test(update)) {
-      return update.getCallbackQuery().getFrom();
-    } else if (INLINE_QUERY.test(update)) {
-      return update.getInlineQuery().getFrom();
-    } else if (CHANNEL_POST.test(update)) {
-      return update.getChannelPost().getFrom();
-    } else if (EDITED_CHANNEL_POST.test(update)) {
-      return update.getEditedChannelPost().getFrom();
-    } else if (EDITED_MESSAGE.test(update)) {
-      return update.getEditedMessage().getFrom();
-    } else if (CHOSEN_INLINE_QUERY.test(update)) {
-      return update.getChosenInlineQuery().getFrom();
     } else {
-      throw new IllegalStateException("Could not retrieve originating user from update");
+      if (CALLBACK_QUERY.test(update)) {
+        return update.getCallbackQuery().getFrom();
+      } else {
+        if (INLINE_QUERY.test(update)) {
+          return update.getInlineQuery().getFrom();
+        } else {
+          if (CHANNEL_POST.test(update)) {
+            return update.getChannelPost().getFrom();
+          } else {
+            if (EDITED_CHANNEL_POST.test(update)) {
+              return update.getEditedChannelPost().getFrom();
+            } else {
+              if (EDITED_MESSAGE.test(update)) {
+                return update.getEditedMessage().getFrom();
+              } else {
+                if (CHOSEN_INLINE_QUERY.test(update)) {
+                  return update.getChosenInlineQuery().getFrom();
+                } else {
+                  throw new IllegalStateException("Could not retrieve originating user from update");
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 
@@ -81,16 +89,24 @@ public final class AbilityUtils {
   public static boolean isGroupUpdate(Update update) {
     if (MESSAGE.test(update)) {
       return update.getMessage().isGroupMessage();
-    } else if (CALLBACK_QUERY.test(update)) {
-      return update.getCallbackQuery().getMessage().isGroupMessage();
-    } else if (CHANNEL_POST.test(update)) {
-      return update.getChannelPost().isGroupMessage();
-    } else if (EDITED_CHANNEL_POST.test(update)) {
-      return update.getEditedChannelPost().isGroupMessage();
-    } else if (EDITED_MESSAGE.test(update)) {
-      return update.getEditedMessage().isGroupMessage();
     } else {
-      return false;
+      if (CALLBACK_QUERY.test(update)) {
+        return update.getCallbackQuery().getMessage().isGroupMessage();
+      } else {
+        if (CHANNEL_POST.test(update)) {
+          return update.getChannelPost().isGroupMessage();
+        } else {
+          if (EDITED_CHANNEL_POST.test(update)) {
+            return update.getEditedChannelPost().isGroupMessage();
+          } else {
+            if (EDITED_MESSAGE.test(update)) {
+              return update.getEditedMessage().isGroupMessage();
+            } else {
+              return false;
+            }
+          }
+        }
+      }
     }
   }
 
@@ -103,16 +119,24 @@ public final class AbilityUtils {
   public static boolean isSuperGroupUpdate(Update update) {
     if (MESSAGE.test(update)) {
       return update.getMessage().isSuperGroupMessage();
-    } else if (CALLBACK_QUERY.test(update)) {
-      return update.getCallbackQuery().getMessage().isSuperGroupMessage();
-    } else if (CHANNEL_POST.test(update)) {
-      return update.getChannelPost().isSuperGroupMessage();
-    } else if (EDITED_CHANNEL_POST.test(update)) {
-      return update.getEditedChannelPost().isSuperGroupMessage();
-    } else if (EDITED_MESSAGE.test(update)) {
-      return update.getEditedMessage().isSuperGroupMessage();
     } else {
-      return false;
+      if (CALLBACK_QUERY.test(update)) {
+        return update.getCallbackQuery().getMessage().isSuperGroupMessage();
+      } else {
+        if (CHANNEL_POST.test(update)) {
+          return update.getChannelPost().isSuperGroupMessage();
+        } else {
+          if (EDITED_CHANNEL_POST.test(update)) {
+            return update.getEditedChannelPost().isSuperGroupMessage();
+          } else {
+            if (EDITED_MESSAGE.test(update)) {
+              return update.getEditedMessage().isSuperGroupMessage();
+            } else {
+              return false;
+            }
+          }
+        }
+      }
     }
   }
 
@@ -126,20 +150,32 @@ public final class AbilityUtils {
   public static Long getChatId(Update update) {
     if (MESSAGE.test(update)) {
       return update.getMessage().getChatId();
-    } else if (CALLBACK_QUERY.test(update)) {
-      return update.getCallbackQuery().getMessage().getChatId();
-    } else if (INLINE_QUERY.test(update)) {
-      return (long) update.getInlineQuery().getFrom().getId();
-    } else if (CHANNEL_POST.test(update)) {
-      return update.getChannelPost().getChatId();
-    } else if (EDITED_CHANNEL_POST.test(update)) {
-      return update.getEditedChannelPost().getChatId();
-    } else if (EDITED_MESSAGE.test(update)) {
-      return update.getEditedMessage().getChatId();
-    } else if (CHOSEN_INLINE_QUERY.test(update)) {
-      return (long) update.getChosenInlineQuery().getFrom().getId();
     } else {
-      throw new IllegalStateException("Could not retrieve originating chat ID from update");
+      if (CALLBACK_QUERY.test(update)) {
+        return update.getCallbackQuery().getMessage().getChatId();
+      } else {
+        if (INLINE_QUERY.test(update)) {
+          return (long) update.getInlineQuery().getFrom().getId();
+        } else {
+          if (CHANNEL_POST.test(update)) {
+            return update.getChannelPost().getChatId();
+          } else {
+            if (EDITED_CHANNEL_POST.test(update)) {
+              return update.getEditedChannelPost().getChatId();
+            } else {
+              if (EDITED_MESSAGE.test(update)) {
+                return update.getEditedMessage().getChatId();
+              } else {
+                if (CHOSEN_INLINE_QUERY.test(update)) {
+                  return (long) update.getChosenInlineQuery().getFrom().getId();
+                } else {
+                  throw new IllegalStateException("Could not retrieve originating chat ID from update");
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 
@@ -150,18 +186,28 @@ public final class AbilityUtils {
   public static boolean isUserMessage(Update update) {
     if (MESSAGE.test(update)) {
       return update.getMessage().isUserMessage();
-    } else if (CALLBACK_QUERY.test(update)) {
-      return update.getCallbackQuery().getMessage().isUserMessage();
-    } else if (CHANNEL_POST.test(update)) {
-      return update.getChannelPost().isUserMessage();
-    } else if (EDITED_CHANNEL_POST.test(update)) {
-      return update.getEditedChannelPost().isUserMessage();
-    } else if (EDITED_MESSAGE.test(update)) {
-      return update.getEditedMessage().isUserMessage();
-    } else if (CHOSEN_INLINE_QUERY.test(update) || INLINE_QUERY.test(update)) {
-      return true;
     } else {
-      throw new IllegalStateException("Could not retrieve update context origin (user/group)");
+      if (CALLBACK_QUERY.test(update)) {
+        return update.getCallbackQuery().getMessage().isUserMessage();
+      } else {
+        if (CHANNEL_POST.test(update)) {
+          return update.getChannelPost().isUserMessage();
+        } else {
+          if (EDITED_CHANNEL_POST.test(update)) {
+            return update.getEditedChannelPost().isUserMessage();
+          } else {
+            if (EDITED_MESSAGE.test(update)) {
+              return update.getEditedMessage().isUserMessage();
+            } else {
+              if (CHOSEN_INLINE_QUERY.test(update) || INLINE_QUERY.test(update)) {
+                return true;
+              } else {
+                throw new IllegalStateException("Could not retrieve update context origin (user/group)");
+              }
+            }
+          }
+        }
+      }
     }
   }
 
@@ -178,19 +224,16 @@ public final class AbilityUtils {
    * @return a predicate that asserts that the update is a reply to the specified message.
    */
   public static Predicate<Update> isReplyTo(String msg) {
-    return update -> update.getMessage().getReplyToMessage().getText().equals(msg);
+    return (update) -> update.getMessage().getReplyToMessage().getText().equals(msg);
   }
 
-  public static String getLocalizedMessage(String messageCode, Locale locale, Object...arguments) {
+  public static String getLocalizedMessage(String messageCode, Locale locale, Object... arguments) {
     ResourceBundle bundle;
     if (locale == null) {
       bundle = getBundle("messages", Locale.ROOT);
     } else {
       try {
-        bundle = getBundle(
-                "messages",
-                locale,
-                getNoFallbackControl(FORMAT_PROPERTIES));
+        bundle = getBundle("messages", locale, getNoFallbackControl(FORMAT_PROPERTIES));
       } catch (MissingResourceException e) {
         bundle = getBundle("messages", Locale.ROOT);
       }
@@ -199,9 +242,8 @@ public final class AbilityUtils {
     return MessageFormat.format(message, arguments);
   }
 
-  public static String getLocalizedMessage(String messageCode, String languageCode, Object...arguments){
+  public static String getLocalizedMessage(String messageCode, String languageCode, Object... arguments) {
     Locale locale = Strings.isNullOrEmpty(languageCode) ? null : Locale.forLanguageTag(languageCode);
     return getLocalizedMessage(messageCode, locale, arguments);
   }
-
 }
