@@ -1,9 +1,6 @@
 package net.helpscout.api;
 
 import java.util.Date;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 import net.helpscout.api.adapters.*;
 import net.helpscout.api.cbo.*;
@@ -34,6 +31,7 @@ public final class Parser {
         builder.registerTypeAdapter(WorkflowType.class, new WorkflowTypeAdapter());
 		builder.registerTypeAdapter(PersonRef.class, new PersonRefAdapter(builder));
 		builder.registerTypeAdapter(LineItem.class, new ThreadsAdapater(builder));
+		
 		builder.registerTypeAdapter(DateAndCount.class, new DateAndCountDeserializer(builder));
 	}
 
@@ -61,10 +59,26 @@ public final class Parser {
 
 	public <T> T getObject(JsonElement item, Class<T> clazzType) {
 		JsonThreadLocal.set(item);
+<<<<<<< /usr/src/app/output/helpscout/helpscout-api-java/f606dc7048e32d8953594011ce7a80f8f325a5eb/src/main/java/net/helpscout/api/Parser.java/left.java
+	
+		T clazz = builder.create().fromJson(item, clazzType);
+
+		JsonThreadLocal.unset();
+
+		return clazz;
+||||||| /usr/src/app/output/helpscout/helpscout-api-java/f606dc7048e32d8953594011ce7a80f8f325a5eb/src/main/java/net/helpscout/api/Parser.java/base.java
+	
+		Object clazz = builder.create().fromJson(item, clazzType);
+
+		JsonThreadLocal.unset();
+
+		return clazz;
+=======
 		try {
 			return builder.create().fromJson(item, clazzType);
 		} finally {
 			JsonThreadLocal.unset();
 		}
+>>>>>>> /usr/src/app/output/helpscout/helpscout-api-java/f606dc7048e32d8953594011ce7a80f8f325a5eb/src/main/java/net/helpscout/api/Parser.java/right.java
 	}
 }
