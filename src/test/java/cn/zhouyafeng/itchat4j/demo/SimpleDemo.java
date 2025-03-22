@@ -1,11 +1,8 @@
 package cn.zhouyafeng.itchat4j.demo;
-
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import com.alibaba.fastjson.JSONObject;
-
 import cn.zhouyafeng.itchat4j.Wechat;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.DownloadTools;
@@ -20,51 +17,40 @@ import cn.zhouyafeng.itchat4j.utils.MsgType;
  *
  */
 public class SimpleDemo implements IMsgHandlerFace {
+  @Override public String textMsgHandle(JSONObject msg) {
+    String text = msg.getString("Text");
+    return text;
+  }
 
-	@Override
-	public String textMsgHandle(JSONObject msg) {
-		// String filePath = "D:/itchat4j/pic/test.jpg";
-		// String userId = msg.getString("FromUserName");
-		// MessageTools.sendPicMsgByNickName("yaphone", filePath);
-		// MessageTools.sendPicMsgByUserId(userId, filePath);
-		String text = msg.getString("Text");
-		return text;
-	}
+  @Override public String picMsgHandle(JSONObject msg) {
+    String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+    String picPath = "D://itchat4j/pic" + File.separator + fileName + ".jpg";
+    DownloadTools.getDownloadFn(msg, MsgType.PIC, picPath);
+    return "\u56fe\u7247\u4fdd\u5b58\u6210\u529f";
+  }
 
-	@Override
-	public String picMsgHandle(JSONObject msg) {
-		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
-		String picPath = "D://itchat4j/pic" + File.separator + fileName + ".jpg";
-		DownloadTools.getDownloadFn(msg, MsgType.PIC, picPath);
-		return "图片保存成功";
-	}
+  @Override public String voiceMsgHandle(JSONObject msg) {
+    String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+    String voicePath = "D://itchat4j/voice" + File.separator + fileName + ".mp3";
+    DownloadTools.getDownloadFn(msg, MsgType.VOICE, voicePath);
+    return "\u58f0\u97f3\u4fdd\u5b58\u6210\u529f";
+  }
 
-	@Override
-	public String voiceMsgHandle(JSONObject msg) {
-		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
-		String voicePath = "D://itchat4j/voice" + File.separator + fileName + ".mp3";
-		DownloadTools.getDownloadFn(msg, MsgType.VOICE, voicePath);
-		return "声音保存成功";
-	}
+  @Override public String viedoMsgHandle(JSONObject msg) {
+    System.out.println(msg);
+    String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+    String viedoPath = "D://itchat4j/viedo" + File.separator + fileName + ".mp4";
+    DownloadTools.getDownloadFn(msg, MsgType.VIEDO, viedoPath);
+    return "\u89c6\u9891\u4fdd\u5b58\u6210\u529f";
+  }
 
-	@Override
-	public String viedoMsgHandle(JSONObject msg) {
-		System.out.println(msg);
-		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
-		String viedoPath = "D://itchat4j/viedo" + File.separator + fileName + ".mp4";
-		DownloadTools.getDownloadFn(msg, MsgType.VIEDO, viedoPath);
-		return "视频保存成功";
-	}
+  @Override public String nameCardMsgHandle(JSONObject msg) {
+    return "\u6536\u5230\u540d\u7247\u6d88\u606f";
+  }
 
-	@Override
-	public String nameCardMsgHandle(JSONObject msg) {
-		return "收到名片消息";
-	}
-
-	public static void main(String[] args) {
-		IMsgHandlerFace msgHandler = new SimpleDemo();
-		Wechat wechat = new Wechat(msgHandler, "D://itchat4j/login");
-		wechat.start();
-	}
-
+  public static void main(String[] args) {
+    IMsgHandlerFace msgHandler = new SimpleDemo();
+    Wechat wechat = new Wechat(msgHandler, "D://itchat4j/login");
+    wechat.start();
+  }
 }
