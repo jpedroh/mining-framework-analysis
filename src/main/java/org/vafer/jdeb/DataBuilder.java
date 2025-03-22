@@ -161,7 +161,7 @@ class DataBuilder {
                 );
 
                 // append to file md5 list, two spaces to be compatible with GNU coreutils md5sum
-                checksums.append(md5).append("  ").append(fileEntry.getName()).append('\n');
+                checksums.append(md5).append("   ").append(fileEntry.getName()).append('\n');
             }
 
             public void onEachLink(TarArchiveEntry entry) throws IOException {
