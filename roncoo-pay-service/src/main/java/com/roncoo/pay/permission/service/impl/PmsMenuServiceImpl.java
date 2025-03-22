@@ -22,7 +22,6 @@ import com.roncoo.pay.permission.entity.PmsMenuRole;
 import com.roncoo.pay.permission.service.PmsMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +38,7 @@ public class PmsMenuServiceImpl implements PmsMenuService {
 	@Autowired
 	private PmsMenuDao pmsMenuDao;
 	@Autowired
-	private  PmsMenuRoleDao pmsMenuRoleDao;
+	private PmsMenuRoleDao pmsMenuRoleDao;
 
 	/**
 	 * 保存菜单PmsMenuDao

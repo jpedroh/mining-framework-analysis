@@ -15,6 +15,8 @@
  */
 package com.roncoo.pay.user.service.impl;
 
+import com.roncoo.pay.user.exception.PayBizException;
+
 import com.roncoo.pay.common.core.enums.PublicEnum;
 import com.roncoo.pay.common.core.enums.PublicStatusEnum;
 import com.roncoo.pay.common.core.page.PageBean;
@@ -24,7 +26,6 @@ import com.roncoo.pay.user.dao.RpPayProductDao;
 import com.roncoo.pay.user.entity.RpPayProduct;
 import com.roncoo.pay.user.entity.RpPayWay;
 import com.roncoo.pay.user.entity.RpUserPayConfig;
-import com.roncoo.pay.user.exception.PayBizException;
 import com.roncoo.pay.user.service.RpPayProductService;
 import com.roncoo.pay.user.service.RpPayWayService;
 import com.roncoo.pay.user.service.RpUserPayConfigService;

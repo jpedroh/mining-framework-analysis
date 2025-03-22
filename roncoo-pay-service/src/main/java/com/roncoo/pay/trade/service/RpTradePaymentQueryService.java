@@ -17,11 +17,10 @@ package com.roncoo.pay.trade.service;
 
 import com.roncoo.pay.common.core.page.PageBean;
 import com.roncoo.pay.common.core.page.PageParam;
-import com.roncoo.pay.trade.entity.RpTradePaymentOrder;
-import com.roncoo.pay.trade.entity.RpTradePaymentRecord;
 import com.roncoo.pay.trade.vo.OrderPayResultVo;
 import com.roncoo.pay.trade.vo.PaymentOrderQueryParam;
-
+import com.roncoo.pay.trade.entity.RpTradePaymentOrder;
+import com.roncoo.pay.trade.entity.RpTradePaymentRecord;
 import java.util.List;
 import java.util.Map;
 
@@ -76,7 +75,7 @@ public interface RpTradePaymentQueryService {
 	 * @param paymentOrderQueryParam
 	 * @return
 	 */
-	public PageBean<RpTradePaymentOrder> listPaymentOrderPage(PageParam pageParam, PaymentOrderQueryParam paymentOrderQueryParam);
+	public PageBean<RpTradePaymentOrder> listPaymentOrderPage(PageParam pageParam , PaymentOrderQueryParam paymentOrderQueryParam);
 
 	/**
 	 * 分页查询支付记录

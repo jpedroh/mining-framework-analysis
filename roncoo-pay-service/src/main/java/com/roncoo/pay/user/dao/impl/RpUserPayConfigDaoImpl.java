@@ -15,12 +15,11 @@
  */
 package com.roncoo.pay.user.dao.impl;
 
+import com.roncoo.pay.user.entity.RpUserPayConfig;
 import com.roncoo.pay.common.core.dao.impl.BaseDaoImpl;
 import com.roncoo.pay.common.core.enums.PublicStatusEnum;
 import com.roncoo.pay.user.dao.RpUserPayConfigDao;
-import com.roncoo.pay.user.entity.RpUserPayConfig;
 import org.springframework.stereotype.Repository;
-
 import java.util.HashMap;
 import java.util.Map;
 

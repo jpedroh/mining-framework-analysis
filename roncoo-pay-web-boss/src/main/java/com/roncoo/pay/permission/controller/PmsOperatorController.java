@@ -24,10 +24,10 @@ import com.roncoo.pay.controller.common.BaseController;
 import com.roncoo.pay.permission.entity.PmsOperator;
 import com.roncoo.pay.permission.entity.PmsOperatorRole;
 import com.roncoo.pay.permission.enums.OperatorTypeEnum;
-import com.roncoo.pay.permission.service.PmsOperatorRoleService;
 import com.roncoo.pay.permission.service.PmsOperatorService;
 import com.roncoo.pay.permission.service.PmsRoleService;
 import com.roncoo.pay.permission.utils.PasswordHelper;
+import com.roncoo.pay.permission.service.PmsOperatorRoleService;
 import com.roncoo.pay.permission.utils.ValidateUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -284,6 +284,7 @@ public class PmsOperatorController extends BaseController {
 	 * 
 	 * @return
 	 * */
+	@RequiresPermissions("pms:operator:delete")
 	@RequestMapping("/delete")
 	public String deleteOperatorStatus(HttpServletRequest req, Long id, Model model, DwzAjax dwz) {
 		pmsOperatorService.deleteOperatorById(id);

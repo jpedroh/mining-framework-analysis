@@ -25,7 +25,6 @@ import com.roncoo.pay.permission.service.PmsOperatorRoleService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 /**

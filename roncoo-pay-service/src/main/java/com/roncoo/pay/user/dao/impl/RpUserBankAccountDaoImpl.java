@@ -15,9 +15,9 @@
  */
 package com.roncoo.pay.user.dao.impl;
 
+import com.roncoo.pay.user.entity.RpUserBankAccount;
 import com.roncoo.pay.common.core.dao.impl.BaseDaoImpl;
 import com.roncoo.pay.user.dao.RpUserBankAccountDao;
-import com.roncoo.pay.user.entity.RpUserBankAccount;
 import org.springframework.stereotype.Repository;
 
 /**

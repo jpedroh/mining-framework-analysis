@@ -35,7 +35,7 @@ import java.util.Map;
  *
  * @company：广州领课网络科技有限公司（龙果学院 www.roncoo.com）.
  */
-public abstract class BaseDaoImpl<T extends BaseEntity> implements BaseDao<T> {
+public abstract class BaseDaoImpl<T extends BaseEntity>  implements BaseDao<T> {
 
     protected static final Log LOG = LogFactory.getLog(BaseDaoImpl.class);
 
@@ -70,6 +70,7 @@ public abstract class BaseDaoImpl<T extends BaseEntity> implements BaseDao<T> {
     public void setSessionTemplate(SqlSessionTemplate sessionTemplate) {
         this.sessionTemplate = sessionTemplate;
     }
+
 
     /**
      * 单条插入数据.

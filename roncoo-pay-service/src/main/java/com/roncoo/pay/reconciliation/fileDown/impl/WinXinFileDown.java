@@ -15,8 +15,9 @@
  */
 package com.roncoo.pay.reconciliation.fileDown.impl;
 
-import com.alibaba.druid.util.StringUtils;
 import com.roncoo.pay.reconciliation.fileDown.service.FileDown;
+
+import com.alibaba.druid.util.StringUtils;
 import com.roncoo.pay.reconciliation.utils.FileUtils;
 import com.roncoo.pay.reconciliation.utils.SignHelper;
 import com.roncoo.pay.reconciliation.utils.WeiXinBaseUtils;

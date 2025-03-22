@@ -14,32 +14,56 @@
  * limitations under the License.
  */
 package com.roncoo.pay.controller.pay;
+import com.roncoo.pay.user.service.RpUserBankAccountService;
+
+import com.roncoo.pay.user.service.RpUserInfoService;
+
+import com.roncoo.pay.user.service.RpUserPayConfigService;
+
+import com.roncoo.pay.user.service.RpUserPayInfoService;
 
 import com.roncoo.pay.common.core.dwz.DWZ;
+
 import com.roncoo.pay.common.core.dwz.DwzAjax;
+
 import com.roncoo.pay.common.core.enums.PayWayEnum;
+
 import com.roncoo.pay.common.core.enums.SecurityRatingEnum;
+
 import com.roncoo.pay.common.core.page.PageBean;
+
 import com.roncoo.pay.common.core.page.PageParam;
+
 import com.roncoo.pay.common.core.utils.StringUtil;
+
 import com.roncoo.pay.user.entity.RpUserBankAccount;
+
 import com.roncoo.pay.user.entity.RpUserInfo;
+
 import com.roncoo.pay.user.entity.RpUserPayConfig;
+
 import com.roncoo.pay.user.entity.RpUserPayInfo;
+
 import com.roncoo.pay.user.enums.BankAccountTypeEnum;
+
 import com.roncoo.pay.user.enums.BankCodeEnum;
+
 import com.roncoo.pay.user.enums.CardTypeEnum;
+
 import com.roncoo.pay.user.enums.FundInfoTypeEnum;
-import com.roncoo.pay.user.service.RpUserBankAccountService;
-import com.roncoo.pay.user.service.RpUserInfoService;
-import com.roncoo.pay.user.service.RpUserPayConfigService;
-import com.roncoo.pay.user.service.RpUserPayInfoService;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
+
 import org.springframework.ui.Model;
+
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import org.springframework.web.bind.annotation.RequestMethod;
+
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;

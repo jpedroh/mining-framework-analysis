@@ -19,7 +19,6 @@ import com.roncoo.pay.common.core.page.PageBean;
 import com.roncoo.pay.common.core.page.PageParam;
 import com.roncoo.pay.user.exception.PayBizException;
 import com.roncoo.pay.user.entity.RpPayWay;
-
 import java.util.List;
 
 /**

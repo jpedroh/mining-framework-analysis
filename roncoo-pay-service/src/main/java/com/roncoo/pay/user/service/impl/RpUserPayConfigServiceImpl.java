@@ -15,6 +15,10 @@
  */
 package com.roncoo.pay.user.service.impl;
 
+import com.roncoo.pay.user.exception.PayBizException;
+import com.roncoo.pay.user.service.RpPayWayService;
+import com.roncoo.pay.user.service.RpUserPayConfigService;
+import com.roncoo.pay.user.service.RpUserPayInfoService;
 import com.roncoo.pay.common.core.enums.PayWayEnum;
 import com.roncoo.pay.common.core.enums.PublicEnum;
 import com.roncoo.pay.common.core.enums.PublicStatusEnum;
@@ -26,15 +30,10 @@ import com.roncoo.pay.user.entity.RpPayProduct;
 import com.roncoo.pay.user.entity.RpPayWay;
 import com.roncoo.pay.user.entity.RpUserPayConfig;
 import com.roncoo.pay.user.entity.RpUserPayInfo;
-import com.roncoo.pay.user.exception.PayBizException;
 import com.roncoo.pay.user.service.RpPayProductService;
-import com.roncoo.pay.user.service.RpPayWayService;
-import com.roncoo.pay.user.service.RpUserPayConfigService;
-import com.roncoo.pay.user.service.RpUserPayInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +45,7 @@ import java.util.Map;
  * @author：zenghao
  */
 @Service("rpUserPayConfigService")
-public class RpUserPayConfigServiceImpl implements RpUserPayConfigService{
+public class RpUserPayConfigServiceImpl implements RpUserPayConfigService {
 
 	@Autowired
 	private RpUserPayConfigDao rpUserPayConfigDao;
@@ -137,7 +136,7 @@ public class RpUserPayConfigServiceImpl implements RpUserPayConfigService{
 	@Transactional(rollbackFor = Exception.class)
 	public void createUserPayConfig(String userNo, String userName, String productCode, String productName, Integer riskDay,
 			String fundIntoType, String isAutoSett, String appId, String merchantId, String partnerKey,
-			String ali_partner, String ali_sellerId, String ali_key, String ali_appid, String ali_rsaPrivateKey, String ali_rsaPublicKey)  throws PayBizException{
+			String ali_partner, String ali_sellerId, String ali_key, String ali_appid, String ali_rsaPrivateKey, String ali_rsaPublicKey)  throws PayBizException {
 
 		createUserPayConfig( userNo,  userName,  productCode,  productName, riskDay,
 				 fundIntoType,  isAutoSett,  appId,  merchantId,  partnerKey,

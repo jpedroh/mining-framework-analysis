@@ -15,6 +15,8 @@
  */
 package com.roncoo.pay.user.service.impl;
 
+import com.roncoo.pay.user.exception.PayBizException;
+
 import com.roncoo.pay.common.core.enums.PayTypeEnum;
 import com.roncoo.pay.common.core.enums.PayWayEnum;
 import com.roncoo.pay.common.core.enums.PublicEnum;
@@ -25,7 +27,6 @@ import com.roncoo.pay.common.core.utils.StringUtil;
 import com.roncoo.pay.user.dao.RpPayWayDao;
 import com.roncoo.pay.user.entity.RpPayProduct;
 import com.roncoo.pay.user.entity.RpPayWay;
-import com.roncoo.pay.user.exception.PayBizException;
 import com.roncoo.pay.user.service.RpPayProductService;
 import com.roncoo.pay.user.service.RpPayWayService;
 import org.springframework.beans.factory.annotation.Autowired;

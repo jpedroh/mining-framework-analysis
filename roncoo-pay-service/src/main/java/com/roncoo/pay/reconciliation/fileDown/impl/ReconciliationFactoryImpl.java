@@ -17,11 +17,10 @@ package com.roncoo.pay.reconciliation.fileDown.impl;
 
 import com.roncoo.pay.reconciliation.fileDown.service.FileDown;
 import com.roncoo.pay.reconciliation.fileDown.service.ReconciliationFactory;
-import com.roncoo.pay.reconciliation.utils.ReconciliationConfigUtil;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.stereotype.Service;
-
+import com.roncoo.pay.reconciliation.utils.ReconciliationConfigUtil;
 import java.io.File;
 import java.util.Date;
 

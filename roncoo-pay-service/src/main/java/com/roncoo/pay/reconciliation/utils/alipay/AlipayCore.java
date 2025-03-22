@@ -4,7 +4,6 @@ import com.roncoo.pay.trade.utils.AlipayConfigUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.httpclient.methods.multipart.FilePartSource;
 import org.apache.commons.httpclient.methods.multipart.PartSource;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;

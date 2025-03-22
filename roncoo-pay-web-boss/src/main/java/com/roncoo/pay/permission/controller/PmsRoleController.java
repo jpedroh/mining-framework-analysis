@@ -19,10 +19,10 @@ import com.roncoo.pay.common.core.dwz.DwzAjax;
 import com.roncoo.pay.common.core.page.PageBean;
 import com.roncoo.pay.common.core.page.PageParam;
 import com.roncoo.pay.controller.common.BaseController;
-import com.roncoo.pay.permission.entity.PmsOperator;
 import com.roncoo.pay.permission.entity.PmsPermission;
 import com.roncoo.pay.permission.entity.PmsRole;
 import com.roncoo.pay.permission.enums.OperatorTypeEnum;
+import com.roncoo.pay.permission.entity.PmsOperator;
 import com.roncoo.pay.permission.service.*;
 import com.roncoo.pay.permission.utils.ValidateUtils;
 import org.apache.commons.lang.StringUtils;
@@ -34,7 +34,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
@@ -304,6 +303,7 @@ public class PmsRoleController extends BaseController {
      * @return
      */
     @SuppressWarnings("unchecked")
+    @RequiresPermissions("pms:role:assignmenu")
     @RequestMapping("/assignMenuUI")
     public String assignMenuUI(HttpServletRequest req, Model model, Long roleId) {
         PmsRole role = pmsRoleService.getDataById(roleId);
@@ -329,6 +329,7 @@ public class PmsRoleController extends BaseController {
     /**
      * 分配角色菜单
      */
+    @RequiresPermissions("pms:role:assignmenu")
     @RequestMapping("/assignMenu")
     public String assignMenu(HttpServletRequest req, Model model, @RequestParam("roleId") Long roleId, DwzAjax dwz, @RequestParam("selectVal") String selectVal) {
         try {

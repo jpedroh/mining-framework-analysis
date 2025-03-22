@@ -24,6 +24,15 @@ import com.roncoo.pay.permission.entity.PmsPermission;
 import com.roncoo.pay.permission.entity.PmsRole;
 import com.roncoo.pay.permission.service.PmsPermissionService;
 import com.roncoo.pay.permission.service.PmsRoleService;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import com.roncoo.pay.permission.utils.ValidateUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
