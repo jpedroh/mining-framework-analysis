@@ -1,21 +1,5 @@
-/*
- * Copyright 2020 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
- */
-
 package com.google.googlejavaformat.java.java14;
-
 import static com.google.common.collect.ImmutableList.toImmutableList;
-
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.googlejavaformat.Op;
@@ -45,24 +29,20 @@ import javax.lang.model.element.Name;
  * Java 14.
  */
 public class Java14InputAstVisitor extends JavaInputAstVisitor {
-
   public Java14InputAstVisitor(OpsBuilder builder, int indentMultiplier) {
     super(builder, indentMultiplier);
   }
 
-  @Override
-  public Void visitBindingPattern(BindingPatternTree node, Void unused) {
+  @Override public Void visitBindingPattern(BindingPatternTree node, Void unused) {
     sync(node);
     try {
-      VariableTree variableTree =
-          (VariableTree) BindingPatternTree.class.getMethod("getVariable").invoke(node);
-      visitBindingPattern(
-          variableTree.getModifiers(), variableTree.getType(), variableTree.getName());
+      VariableTree variableTree = (VariableTree) BindingPatternTree.class.getMethod("getVariable").invoke(node);
+      visitBindingPattern(variableTree.getModifiers(), variableTree.getType(), variableTree.getName());
     } catch (ReflectiveOperationException e1) {
       try {
         Tree type = (Tree) BindingPatternTree.class.getMethod("getType").invoke(node);
         Name name = (Name) BindingPatternTree.class.getMethod("getBinding").invoke(node);
-        visitBindingPattern(/* modifiers= */ null, type, name);
+        visitBindingPattern(null, type, name);
       } catch (ReflectiveOperationException e2) {
         e2.addSuppressed(e1);
         throw new LinkageError(e2.getMessage(), e2);
@@ -80,8 +60,7 @@ public class Java14InputAstVisitor extends JavaInputAstVisitor {
     visit(name);
   }
 
-  @Override
-  public Void visitYield(YieldTree node, Void aVoid) {
+  @Override public Void visitYield(YieldTree node, Void aVoid) {
     sync(node);
     token("yield");
     builder.space();
@@ -90,42 +69,36 @@ public class Java14InputAstVisitor extends JavaInputAstVisitor {
     return null;
   }
 
-  @Override
-  public Void visitSwitchExpression(SwitchExpressionTree node, Void aVoid) {
+  @Override public Void visitSwitchExpression(SwitchExpressionTree node, Void aVoid) {
     sync(node);
     visitSwitch(node.getExpression(), node.getCases());
     return null;
   }
 
-  @Override
-  public Void visitClass(ClassTree tree, Void unused) {
+  @Override public Void visitClass(ClassTree tree, Void unused) {
     switch (tree.getKind()) {
       case ANNOTATION_TYPE:
-        visitAnnotationType(tree);
-        break;
+      visitAnnotationType(tree);
+      break;
       case CLASS:
       case INTERFACE:
-        visitClassDeclaration(tree);
-        break;
+      visitClassDeclaration(tree);
+      break;
       case ENUM:
-        visitEnumDeclaration(tree);
-        break;
+      visitEnumDeclaration(tree);
+      break;
       case RECORD:
-        visitRecordDeclaration(tree);
-        break;
+      visitRecordDeclaration(tree);
+      break;
       default:
-        throw new AssertionError(tree.getKind());
+      throw new AssertionError(tree.getKind());
     }
     return null;
   }
 
   public void visitRecordDeclaration(ClassTree node) {
     sync(node);
-    List<Op> breaks =
-        visitModifiers(
-            node.getModifiers(),
-            Direction.VERTICAL,
-            /* declarationAnnotationBreak= */ Optional.empty());
+    List<Op> breaks = visitModifiers(node.getModifiers(), Direction.VERTICAL, Optional.empty());
     Verify.verify(node.getExtendsClause() == null);
     boolean hasSuperInterfaceTypes = !node.getImplementsClause().isEmpty();
     builder.addAll(breaks);
@@ -143,11 +116,9 @@ public class Java14InputAstVisitor extends JavaInputAstVisitor {
       ImmutableList<JCVariableDecl> parameters = recordVariables(node);
       token("(");
       if (!parameters.isEmpty()) {
-        // Break before args.
         builder.breakToFill("");
       }
-      // record headers can't declare receiver parameters
-      visitFormals(/* receiver= */ Optional.empty(), parameters);
+      visitFormals(Optional.empty(), parameters);
       token(")");
       if (hasSuperInterfaceTypes) {
         builder.breakToFill(" ");
@@ -170,25 +141,17 @@ public class Java14InputAstVisitor extends JavaInputAstVisitor {
     if (node.getMembers() == null) {
       token(";");
     } else {
-      List<Tree> members =
-          node.getMembers().stream()
-              .filter(t -> (TreeInfo.flags((JCTree) t) & Flags.GENERATED_MEMBER) == 0)
-              .collect(toImmutableList());
+      List<Tree> members = node.getMembers().stream().filter((t) -> (TreeInfo.flags((JCTree) t) & Flags.GENERATED_MEMBER) == 0).collect(toImmutableList());
       addBodyDeclarations(members, BracesOrNot.YES, FirstDeclarationsOrNot.YES);
     }
     dropEmptyDeclarations();
   }
 
   private static ImmutableList<JCVariableDecl> recordVariables(ClassTree node) {
-    return node.getMembers().stream()
-        .filter(JCVariableDecl.class::isInstance)
-        .map(JCVariableDecl.class::cast)
-        .filter(m -> (m.mods.flags & RECORD) == RECORD)
-        .collect(toImmutableList());
+    return node.getMembers().stream().filter(JCVariableDecl.class::isInstance).map(JCVariableDecl.class::cast).filter((m) -> (m.mods.flags & RECORD) == RECORD).collect(toImmutableList());
   }
 
-  @Override
-  public Void visitInstanceOf(InstanceOfTree node, Void unused) {
+  @Override public Void visitInstanceOf(InstanceOfTree node, Void unused) {
     sync(node);
     builder.open(plusFour);
     scan(node.getExpression(), null);
@@ -206,8 +169,7 @@ public class Java14InputAstVisitor extends JavaInputAstVisitor {
     return null;
   }
 
-  @Override
-  public Void visitCase(CaseTree node, Void unused) {
+  @Override public Void visitCase(CaseTree node, Void unused) {
     sync(node);
     markForPartialFormat();
     builder.forcedBreak();
@@ -230,30 +192,25 @@ public class Java14InputAstVisitor extends JavaInputAstVisitor {
     }
     switch (node.getCaseKind()) {
       case STATEMENT:
-        token(":");
-        builder.open(plusTwo);
-        visitStatements(node.getStatements());
-        builder.close();
-        break;
+      token(":");
+      builder.open(plusTwo);
+      visitStatements(node.getStatements());
+      builder.close();
+      break;
       case RULE:
-        builder.space();
-        token("-");
-        token(">");
-        builder.space();
-        if (node.getBody().getKind() == Tree.Kind.BLOCK) {
-          // Explicit call with {@link CollapseEmptyOrNot.YES} to handle empty case blocks.
-          visitBlock(
-                (BlockTree) node.getBody(),
-                CollapseEmptyOrNot.YES,
-                AllowLeadingBlankLine.NO,
-                AllowTrailingBlankLine.NO);
-        } else {
-          scan(node.getBody(), null);
-        }
-        builder.guessToken(";");
-        break;
+      builder.space();
+      token("-");
+      token(">");
+      builder.space();
+      if (node.getBody().getKind() == Tree.Kind.BLOCK) {
+        visitBlock((BlockTree) node.getBody(), CollapseEmptyOrNot.YES, AllowLeadingBlankLine.NO, AllowTrailingBlankLine.NO);
+      } else {
+        scan(node.getBody(), null);
+      }
+      builder.guessToken(";");
+      break;
       default:
-        throw new AssertionError(node.getCaseKind());
+      throw new AssertionError(node.getCaseKind());
     }
     return null;
   }
