@@ -19,10 +19,6 @@
 
 package org.dasein.cloud.compute;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Callable;
-
 import org.dasein.cloud.Tag;
 import org.dasein.cloud.Taggable;
 import org.dasein.cloud.network.Networkable;
@@ -30,6 +26,9 @@ import org.dasein.cloud.network.RawAddress;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 /**
  * <p>
