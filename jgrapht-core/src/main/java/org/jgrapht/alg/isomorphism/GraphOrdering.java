@@ -49,9 +49,7 @@ class GraphOrdering<V, E>
      * </ul>
      */
     private byte[] adjMatrix;
-
     private boolean cacheEdges;
-
     /**
      * @param graph the graph to be ordered
      * @param orderByDegree should the vertices be ordered by their degree. This speeds up the VF2
@@ -87,7 +85,6 @@ class GraphOrdering<V, E>
             mapOrderToVertex.add(vertex);
         }
     }
-
     /**
      * @param graph the graph to be ordered
      */
@@ -95,7 +92,6 @@ class GraphOrdering<V, E>
     {
         this(graph, false, true);
     }
-
     /**
      * @return returns the number of vertices in the graph.
      */
@@ -103,7 +99,6 @@ class GraphOrdering<V, E>
     {
         return this.vertexCount;
     }
-
     /**
      * @param vertexNumber the number which identifies the vertex $v$ in this order.
      *
@@ -133,7 +128,6 @@ class GraphOrdering<V, E>
 
         return vertexArray;
     }
-
     /**
      * @param vertexNumber the number which identifies the vertex $v$ in this order.
      *
@@ -163,13 +157,13 @@ class GraphOrdering<V, E>
 
         return vertexArray;
     }
-
     /**
      * @param v1Number the number of the first vertex $v_1$
      * @param v2Number the number of the second vertex $v_2$
      *
      * @return exists the edge from $v_1$ to $v_2$
      */
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/f4240cd3eacf231177dc7d596d87546aab4ad0b2/jgrapht-core/src/main/java/org/jgrapht/alg/isomorphism/GraphOrdering.java/left.java
     public boolean hasEdge(int v1Number, int v2Number)
     {
         
@@ -203,7 +197,30 @@ class GraphOrdering<V, E>
 
         return containsEdge;
     }
+||||||| /usr/src/app/output/jgrapht/jgrapht/f4240cd3eacf231177dc7d596d87546aab4ad0b2/jgrapht-core/src/main/java/org/jgrapht/alg/isomorphism/GraphOrdering.java/base.java
+=======
+    public boolean hasEdge(int v1Number, int v2Number)
+    {
+        
+        int cacheIndex = 0;
+        if (cacheEdges) {
+            cacheIndex = v1Number*vertexCount+v2Number;
+            final byte cache = adjMatrix[cacheIndex];
+            if(cache != 0){
+                return cache > 0;
+            }
+        }
+        
+        V v1 = getVertex(v1Number);
+        V v2 = getVertex(v2Number);
+        boolean containsEdge = graph.containsEdge(v1, v2);
+        if(cacheEdges) {
+            adjMatrix[cacheIndex] = (byte) ((containsEdge) ? 1 : -1);
+        }
 
+        return containsEdge;
+    }
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/f4240cd3eacf231177dc7d596d87546aab4ad0b2/jgrapht-core/src/main/java/org/jgrapht/alg/isomorphism/GraphOrdering.java/right.java
     /**
      * be careful: there's no check against an invalid vertexNumber
      *
@@ -215,7 +232,6 @@ class GraphOrdering<V, E>
     {
         return mapOrderToVertex.get(vertexNumber);
     }
-
     /**
      * @param v1Number the number identifying the vertex $v_1$
      * @param v2Number the number identifying the vertex $v_2$
@@ -232,9 +248,9 @@ class GraphOrdering<V, E>
                 // edge cache has not been initialized yet for this element
                 hasEdge(v1Number, v2Number);
             }
-            final E edge = edgeCache[cacheIndex];
+            final E cache = edgeCache[cacheIndex];
 
-            return edge;
+            return cache;
         }
         
         V v1 = getVertex(v1Number), v2 = getVertex(v2Number);
@@ -243,6 +259,14 @@ class GraphOrdering<V, E>
         
         return edge;
     }
+    /**
+     * if caching is enabled, adjMatrix contains cached information on existing edges, valid values:
+     * <ul>
+     * <li>0 - no cached value</li>
+     * <li>1 - edge exists</li>
+     * <li>-1 - no edge exists</li>
+     * </ul>
+     */
 
     public int getVertexNumber(V v)
     {
