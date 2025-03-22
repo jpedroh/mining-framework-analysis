@@ -1,26 +1,8 @@
-/*
- *
- *  Copyright 2011 Netflix, Inc.
- *
- *     Licensed under the Apache License, Version 2.0 (the "License");
- *     you may not use this file except in compliance with the License.
- *     You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- *     Unless required by applicable law or agreed to in writing, software
- *     distributed under the License is distributed on an "AS IS" BASIS,
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *     See the License for the specific language governing permissions and
- *     limitations under the License.
- *
- */
-
 package com.netflix.exhibitor.application;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.netflix.exhibitor.core.Exhibitor;
+import com.sun.jersey.spi.container.servlet.ServletContainer;
 import com.netflix.exhibitor.core.ExhibitorArguments;
 import com.netflix.exhibitor.core.RemoteConnectionConfiguration;
 import com.netflix.exhibitor.core.backup.BackupProvider;
@@ -34,16 +16,18 @@ import com.sun.jersey.api.client.filter.ClientFilter;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import com.sun.jersey.api.client.filter.HTTPDigestAuthFilter;
 import com.sun.jersey.api.core.DefaultResourceConfig;
-import com.sun.jersey.spi.container.servlet.ServletContainer;
 import java.io.Closeable;
+import org.apache.curator.utils.CloseableUtils;
+import org.mortbay.jetty.bio.SocketConnector;
 import java.io.IOException;
+import org.slf4j.Logger;
 import java.net.URI;
 import java.net.URL;
+import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.servlet.ServletRequest;
-import org.apache.curator.utils.CloseableUtils;
 import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.Handler;
@@ -57,256 +41,232 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.webapp.WebXmlConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class ExhibitorMain implements Closeable
-{
-    private final Logger log = LoggerFactory.getLogger(getClass());
-    private final Server server;
-    private final AtomicBoolean isClosed = new AtomicBoolean(false);
-    private final Exhibitor exhibitor;
-    private final AtomicBoolean shutdownSignaled = new AtomicBoolean(false);
-    private final Map<String, String> users = Maps.newHashMap();
+public class ExhibitorMain implements Closeable {
+  private final Logger log = LoggerFactory.getLogger(getClass());
 
-    public static void main(String[] args) throws Exception
-    {
-        ExhibitorCreator creator;
-        try {
-            creator = new ExhibitorCreator(args);
-        }
-        catch (ExhibitorCreatorExit exit) {
-            if (exit.getError() != null) {
-                System.err.println(exit.getError());
-            }
+  private final Server server;
 
-            exit.getCli().printHelp();
-            return;
-        }
+  private final AtomicBoolean isClosed = new AtomicBoolean(false);
 
-        SecurityArguments securityArguments = new SecurityArguments(creator.getSecurityFile(), creator.getRealmSpec(), creator.getRemoteAuthSpec());
-        ExhibitorMain exhibitorMain = new ExhibitorMain
-        (
-            creator.getBackupProvider(),
-            creator.getConfigProvider(),
-            creator.getBuilder(),
-            creator.getHttpPort(),
-            creator.getListenAddress(),
-            securityArguments
-        );
-        setShutdown(exhibitorMain);
+  private final Exhibitor exhibitor;
 
-        try {exhibitorMain.start();
-        }
-        catch (Exception ex) {
-            ex.printStackTrace(System.err);
-            System.err.println(String.format("Failed to start HTTP server on address %s, port %d. Exiting", creator.getListenAddress(), creator.getHttpPort()));
-            Runtime.getRuntime().exit(1);
-        }
+  private final AtomicBoolean shutdownSignaled = new AtomicBoolean(false);
 
-        try
-        {
-            exhibitorMain.join();
-        }
-        finally {
-            exhibitorMain.close();
+  private final Map<String, String> users = Maps.newHashMap();
 
-            for (Closeable closeable : creator.getCloseables()) {
-                CloseableUtils.closeQuietly(closeable);
-            }
-        }
+  public static void main(String[] args) throws Exception {
+    ExhibitorCreator creator;
+    try {
+      creator = new ExhibitorCreator(args);
+    } catch (ExhibitorCreatorExit exit) {
+      if (exit.getError() != null) {
+        System.err.println(exit.getError());
+      }
+      exit.getCli().printHelp();
+      return;
     }
-
-    public ExhibitorMain(BackupProvider backupProvider, ConfigProvider configProvider, ExhibitorArguments.Builder builder, int httpPort, String listenAddress, SecurityArguments securityArguments) throws Exception
-    {
-        HashLoginService loginService = makeLoginService(securityArguments);
-
-        if (securityArguments.getRemoteAuthSpec() != null) {
-            addRemoteAuth(builder, securityArguments.getRemoteAuthSpec());
-        }
-
-        builder.shutdownProc(makeShutdownProc(this));
-        exhibitor = new Exhibitor(configProvider, null, backupProvider, builder.build());
-        exhibitor.start();
-
-        server = new Server();
-        SocketConnector http = new SocketConnector();
-        http.setHost(listenAddress);
-        http.setPort(httpPort);
-        server.addConnector(http);
-
-
-        // This is some magic to get path of root directory of the JAR
-        // see https://github.com/jetty-project/embedded-jetty-uber-jar/blob/master/src/main/java/jetty/uber/ServerMain.java
-        URL webRootLocation = ExhibitorMain.class.getClassLoader().getResource("index.html");
-        if (webRootLocation == null) {
-            throw new IllegalStateException("Unable to find resource directory");
-        }
-
-        URI webRootUri = URI.create(webRootLocation.toURI().toASCIIString().replaceFirst("/index.html$", "/"));
-        ServletContextHandler context = new ServletContextHandler();
-        context.setContextPath("/");
-
-        DefaultResourceConfig application = JerseySupport.newApplicationConfig(new UIContext(exhibitor));
-        ServletHolder jerseyServlet = new ServletHolder(new ServletContainer(application));
-        context.addServlet(jerseyServlet, "/exhibitor/*");
-
-        ResourceHandler resourceHandler = new ResourceHandler();
-        resourceHandler.setDirectoriesListed(false);
-        resourceHandler.setWelcomeFiles(new String[] {"index.html"});
-        resourceHandler.setResourceBase(webRootUri.toString());
-
-        HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[] {resourceHandler, context, new DefaultHandler()});
-        server.setHandler(handlers);
-
-        if (securityArguments.getSecurityFile() != null) {
-            addSecurityFile(loginService, securityArguments.getSecurityFile(), context);
-        }
+    SecurityArguments securityArguments = new SecurityArguments(creator.getSecurityFile(), creator.getRealmSpec(), creator.getRemoteAuthSpec());
+    ExhibitorMain exhibitorMain = new ExhibitorMain(creator.getBackupProvider(), creator.getConfigProvider(), creator.getBuilder(), creator.getHttpPort(), creator.getListenAddress(), securityArguments);
+    setShutdown(exhibitorMain);
+    try {
+      exhibitorMain.start();
+    } catch (Exception ex) {
+      ex.printStackTrace(System.err);
+      System.err.println(String.format("Failed to start HTTP server on address %s, port %d. Exiting", creator.getListenAddress(), creator.getHttpPort()));
+      Runtime.getRuntime().exit(1);
     }
-
-    private void addRemoteAuth(ExhibitorArguments.Builder builder, String remoteAuthSpec)
-    {
-        String[] parts = remoteAuthSpec.split(":");
-        Preconditions.checkArgument(parts.length == 2, "Badly formed remote client authorization: " + remoteAuthSpec);
-
-        String type = parts[0].trim();
-        String userName = parts[1].trim();
-
-        String password = Preconditions.checkNotNull(users.get(userName), "Realm user not found: " + userName);
-
-        ClientFilter filter;
-        if (type.equals("basic")) {
-            filter = new HTTPBasicAuthFilter(userName, password);
-        }
-        else if (type.equals("digest")) {
-            filter = new HTTPDigestAuthFilter(userName, password);
-        }
-        else {
-            throw new IllegalStateException("Unknown remote client authorization type: " + type);
-        }
-
-        builder.remoteConnectionConfiguration(new RemoteConnectionConfiguration(Arrays.asList(filter)));
+    try {
+      exhibitorMain.join();
+    }  finally {
+      exhibitorMain.close();
+      for (Closeable closeable : creator.getCloseables()) {
+        CloseableUtils.closeQuietly(closeable);
+      }
     }
+  }
 
-    public void start() throws Exception
-    {
-        server.start();
+  public ExhibitorMain(BackupProvider backupProvider, ConfigProvider configProvider, ExhibitorArguments.Builder builder, int httpPort, String listenAddress, SecurityArguments securityArguments) throws Exception {
+    HashLoginService loginService = makeLoginService(securityArguments);
+    if (securityArguments.getRemoteAuthSpec() != null) {
+      addRemoteAuth(builder, securityArguments.getRemoteAuthSpec());
     }
-
-    public void join()
-    {
-        try {
-            while (!shutdownSignaled.get() && !Thread.currentThread().isInterrupted()) {
-                Thread.sleep(5000);
-            }
-        }
-        catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+    builder.shutdownProc(makeShutdownProc(this));
+    exhibitor = new Exhibitor(configProvider, null, backupProvider, builder.build());
+    exhibitor.start();
+    server = new Server(httpPort);
+    URL webRootLocation = ExhibitorMain.class.getClassLoader().getResource("index.html");
+    if (webRootLocation == null) {
+      throw new IllegalStateException("Unable to find resource directory");
     }
+    URI webRootUri = URI.create(webRootLocation.toURI().toASCIIString().replaceFirst("/index.html$", "/"));
+    ServletContextHandler context = new ServletContextHandler();
+    context.setContextPath("/");
+    DefaultResourceConfig application = JerseySupport.newApplicationConfig(new UIContext(exhibitor));
+    ServletHolder jerseyServlet = new ServletHolder(new ServletContainer(application));
 
-    @Override
-    public void close() throws IOException
-    {
-        if (isClosed.compareAndSet(false, true)) {
-            log.info("Shutting down");
+<<<<<<< /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/left.java
+    context.addServlet(jerseyServlet, "/exhibitor/*")
+=======
+    server = new Server()
+>>>>>>> /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/right.java
+    ;
 
-            CloseableUtils.closeQuietly(exhibitor);
-            try {
-                server.stop();
-            }
-            catch (Exception e) {
-                log.error("Error shutting down Jetty", e);
-            }
-            server.destroy();
-        }
+<<<<<<< /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/left.java
+    ResourceHandler
+=======
+    SocketConnector
+>>>>>>> /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/right.java
+     
+<<<<<<< /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/left.java
+    resourceHandler = new ResourceHandler()
+=======
+    http = new SocketConnector()
+>>>>>>> /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/right.java
+    ;
+
+<<<<<<< /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/left.java
+    resourceHandler
+=======
+    http
+>>>>>>> /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/right.java
+    .
+<<<<<<< /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/left.java
+    setDirectoriesListed(false)
+=======
+    setHost(listenAddress)
+>>>>>>> /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/right.java
+    ;
+
+<<<<<<< /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/left.java
+    resourceHandler
+=======
+    http
+>>>>>>> /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/right.java
+    .
+<<<<<<< /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/left.java
+    setWelcomeFiles(new String[] { "index.html" })
+=======
+    setPort(httpPort)
+>>>>>>> /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/right.java
+    ;
+
+<<<<<<< /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/left.java
+    resourceHandler
+=======
+    server
+>>>>>>> /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/right.java
+    .
+<<<<<<< /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/left.java
+    setResourceBase(webRootUri.toString())
+=======
+    addConnector(http)
+>>>>>>> /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/right.java
+    ;
+    HandlerList handlers = new HandlerList();
+    handlers.setHandlers(new Handler[] { resourceHandler, context, new DefaultHandler() });
+    server.setHandler(handlers);
+    if (securityArguments.getSecurityFile() != null) {
+      addSecurityFile(loginService, securityArguments.getSecurityFile(), context);
     }
+  }
 
-    private static void setShutdown(final ExhibitorMain exhibitorMain)
-    {
-        Runtime.getRuntime().addShutdownHook
-            (
-                new Thread
-                    (
-                        makeShutdownProc(exhibitorMain)
-                    )
-            );
+  private void addRemoteAuth(ExhibitorArguments.Builder builder, String remoteAuthSpec) {
+    String[] parts = remoteAuthSpec.split(":");
+    Preconditions.checkArgument(parts.length == 2, "Badly formed remote client authorization: " + remoteAuthSpec);
+    String type = parts[0].trim();
+    String userName = parts[1].trim();
+    String password = Preconditions.checkNotNull(users.get(userName), "Realm user not found: " + userName);
+    ClientFilter filter;
+    if (type.equals("basic")) {
+      filter = new HTTPBasicAuthFilter(userName, password);
+    } else {
+      if (type.equals("digest")) {
+        filter = new HTTPDigestAuthFilter(userName, password);
+      } else {
+        throw new IllegalStateException("Unknown remote client authorization type: " + type);
+      }
     }
+    builder.remoteConnectionConfiguration(new RemoteConnectionConfiguration(Arrays.asList(filter)));
+  }
 
-    private static Runnable makeShutdownProc(final ExhibitorMain exhibitorMain)
-    {
-        return new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                exhibitorMain.shutdownSignaled.set(true);
-            }
-        };
+  public void start() throws Exception {
+    server.start();
+  }
+
+  public void join() {
+    try {
+      while (!shutdownSignaled.get() && !Thread.currentThread().isInterrupted()) {
+        Thread.sleep(5000);
+      }
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
     }
+  }
 
-    private void addSecurityFile(HashLoginService realm, String securityFile, ServletContextHandler root) throws Exception
-    {
-        // create a temp Jetty context to parse the security portion of the web.xml file
-
-        /*
-            TODO
-
-            This code assumes far too much internal knowledge of Jetty. I don't know
-            of simple way to parse the web.xml though and don't want to write it myself.
-         */
-
-        final URL url = new URL("file", null, securityFile);
-        final WebXmlConfiguration webXmlConfiguration = new WebXmlConfiguration();
-        WebAppContext context = new WebAppContext();
-        context.setDescriptor(url.getPath());
-        context.setServer(server);
-
-        ContextHandler contextHandler = new ContextHandler("/")
-        {
-            @Override
-            protected void startContext() throws Exception
-            {
-                super.startContext();
-                setServer(server);
-                webXmlConfiguration.configure(context);
-            }
-        };
-        try {
-            SecurityHandler securityHandler = context.getSecurityHandler();
-
-            if (realm != null) {
-                securityHandler.setLoginService(realm);
-            }
-
-            root.setSecurityHandler(securityHandler);
-            contextHandler.start();
-        }
-        finally {
-            contextHandler.stop();
-        }
+  @Override public void close() throws IOException {
+    if (isClosed.compareAndSet(false, true)) {
+      log.info("Shutting down");
+      CloseableUtils.closeQuietly(exhibitor);
+      try {
+        server.stop();
+      } catch (Exception e) {
+        log.error("Error shutting down Jetty", e);
+      }
+      server.destroy();
     }
+  }
 
-    private HashLoginService makeLoginService(SecurityArguments securityArguments) throws Exception
-    {
-        if (securityArguments.getRealmSpec() == null) {
-            return null;
-        }
+  private static void setShutdown(final ExhibitorMain exhibitorMain) {
+    Runtime.getRuntime().addShutdownHook(new Thread(makeShutdownProc(exhibitorMain)));
+  }
 
-        String[] parts = securityArguments.getRealmSpec().split(":");
-        if (parts.length != 2) {
-            throw new Exception("Bad realm spec: " + securityArguments.getRealmSpec());
-        }
+  private static Runnable makeShutdownProc(final ExhibitorMain exhibitorMain) {
+    return new Runnable() {
+      @Override public void run() {
+        exhibitorMain.shutdownSignaled.set(true);
+      }
+    };
+  }
 
-        return new HashLoginService(parts[0].trim(), parts[1].trim())
-        {
-            @Override
-            public UserIdentity login(final String username, final Object credentials, final ServletRequest request)
-            {
-                users.put(String.valueOf(username), String.valueOf(credentials));
-                return super.login(username, credentials, request);
-            }
-        };
+  private void addSecurityFile(HashLoginService realm, String securityFile, ServletContextHandler root) throws Exception {
+    final URL url = new URL("file", null, securityFile);
+    final WebXmlConfiguration webXmlConfiguration = new WebXmlConfiguration();
+    WebAppContext context = new WebAppContext();
+    context.setDescriptor(url.getPath());
+    context.setServer(server);
+    ContextHandler contextHandler = new ContextHandler("/") {
+      @Override protected void startContext() throws Exception {
+        super.startContext();
+        setServer(server);
+        webXmlConfiguration.configure(context);
+      }
+    };
+    try {
+      SecurityHandler securityHandler = context.getSecurityHandler();
+      if (realm != null) {
+        securityHandler.setLoginService(realm);
+      }
+      root.setSecurityHandler(securityHandler);
+      contextHandler.start();
+    }  finally {
+      contextHandler.stop();
     }
+  }
+
+  private HashLoginService makeLoginService(SecurityArguments securityArguments) throws Exception {
+    if (securityArguments.getRealmSpec() == null) {
+      return null;
+    }
+    String[] parts = securityArguments.getRealmSpec().split(":");
+    if (parts.length != 2) {
+      throw new Exception("Bad realm spec: " + securityArguments.getRealmSpec());
+    }
+    return new HashLoginService(parts[0].trim(), parts[1].trim()) {
+      @Override public UserIdentity login(final String username, final Object credentials, final ServletRequest request) {
+        users.put(String.valueOf(username), String.valueOf(credentials));
+        return super.login(username, credentials, request);
+      }
+    };
+  }
 }
