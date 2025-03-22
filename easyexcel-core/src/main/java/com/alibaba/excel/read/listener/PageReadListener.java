@@ -1,67 +1,64 @@
 package com.alibaba.excel.read.listener;
-
 import com.alibaba.excel.context.AnalysisContext;
+import java.util.List;
 import com.alibaba.excel.enums.CellExtraTypeEnum;
 import com.alibaba.excel.metadata.CellExtra;
 import com.alibaba.excel.util.ListUtils;
-import org.apache.commons.collections4.CollectionUtils;
-
-import java.util.List;
 import java.util.function.Consumer;
+import org.apache.commons.collections4.CollectionUtils;
 
 /**
  * page read listener
  *
  * @author Jiaju Zhuang
  */
-public class PageReadListener<T> implements ReadListener<T> {
-    /**
-     * Defuault single handle the amount of data
-     */
-    public static int BATCH_COUNT = 100;
-    /**
-     * Temporary storage of data
-     */
-    private List<T> cachedDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
-    /**
-     * consumer
-     */
-    private final Consumer<List<T>> consumer;
-
-    /**
+public class PageReadListener<T extends java.lang.Object> implements ReadListener<T> {
+  /**
      * Single handle the amount of data
      */
-    private final int batchCount;
+  public static int BATCH_COUNT = 100;
 
-    public PageReadListener(Consumer<List<T>> consumer) {
-        this(consumer, BATCH_COUNT);
-    }
+  /**
+     * Temporary storage of data
+     */
+  private List<T> cachedDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
 
-    public PageReadListener(Consumer<List<T>> consumer, int batchCount) {
-        this.consumer = consumer;
-        this.batchCount = batchCount;
-    }
+  /**
+     * consumer
+     */
+  private final Consumer<List<T>> consumer;
 
-    @Override
-    public void invoke(T data, AnalysisContext context) {
-        cachedDataList.add(data);
-        if (cachedDataList.size() >= batchCount) {
-            consumer.accept(cachedDataList);
-            cachedDataList = ListUtils.newArrayListWithExpectedSize(batchCount);
-        }
-    }
+  /**
+     * Single handle the amount of data
+     */
+  private final int batchCount;
 
-    @Override
-    public void doAfterAllAnalysed(AnalysisContext context) {
-        if (CollectionUtils.isNotEmpty(cachedDataList)) {
-            consumer.accept(cachedDataList);
-        }
-    }
+  public PageReadListener(Consumer<List<T>> consumer) {
+    this(consumer, BATCH_COUNT);
+  }
 
-    @Override
-    public void extra(CellExtra extra, AnalysisContext context) {
-        if (extra.getType() == CellExtraTypeEnum.MERGE) {
-            System.out.println(11);
-        }
+  public PageReadListener(Consumer<List<T>> consumer, int batchCount) {
+    this.consumer = consumer;
+    this.batchCount = batchCount;
+  }
+
+  @Override public void invoke(T data, AnalysisContext context) {
+    cachedDataList.add(data);
+    if (cachedDataList.size() >= batchCount) {
+      consumer.accept(cachedDataList);
+      cachedDataList = ListUtils.newArrayListWithExpectedSize(batchCount);
     }
+  }
+
+  @Override public void doAfterAllAnalysed(AnalysisContext context) {
+    if (CollectionUtils.isNotEmpty(cachedDataList)) {
+      consumer.accept(cachedDataList);
+    }
+  }
+
+  @Override public void extra(CellExtra extra, AnalysisContext context) {
+    if (extra.getType() == CellExtraTypeEnum.MERGE) {
+      System.out.println(11);
+    }
+  }
 }
