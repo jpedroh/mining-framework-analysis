@@ -124,7 +124,45 @@ public class XxlJobServiceImpl implements XxlJobService {
 			return new ReturnT<String>(ReturnT.FAIL_CODE, (I18nUtil.getString("jobinfo_field_add")+I18nUtil.getString("system_fail")) );
 		}
 
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/7665057567d00c851ab5832f1d87794926114f0e/xxl-job-admin/src/main/java/com/xxl/job/admin/service/impl/XxlJobServiceImpl.java/left.java
+		// add in quartz
+	        String qz_group = String.valueOf(jobInfo.getJobGroup());
+	        String qz_name = String.valueOf(jobInfo.getId());
+	        try {
+	            XxlJobDynamicScheduler.addJob(qz_name, qz_group, jobInfo.getJobCron(), jobInfo.getJobZone());
+	            //XxlJobDynamicScheduler.pauseJob(qz_name, qz_group);
+	            return ReturnT.SUCCESS;
+	        } catch (SchedulerException e) {
+	            logger.error(e.getMessage(), e);
+	            try {
+	                xxlJobInfoDao.delete(jobInfo.getId());
+	                XxlJobDynamicScheduler.removeJob(qz_name, qz_group);
+	            } catch (SchedulerException e1) {
+	                logger.error(e.getMessage(), e1);
+	            }
+	            return new ReturnT<String>(ReturnT.FAIL_CODE, (I18nUtil.getString("jobinfo_field_add")+I18nUtil.getString("system_fail"))+":" + e.getMessage());
+	        }
+||||||| /usr/src/app/output/xuxueli/xxl-job/7665057567d00c851ab5832f1d87794926114f0e/xxl-job-admin/src/main/java/com/xxl/job/admin/service/impl/XxlJobServiceImpl.java/base.java
+		// add in quartz
+	        String qz_group = String.valueOf(jobInfo.getJobGroup());
+	        String qz_name = String.valueOf(jobInfo.getId());
+	        try {
+	            XxlJobDynamicScheduler.addJob(qz_name, qz_group, jobInfo.getJobCron());
+	            //XxlJobDynamicScheduler.pauseJob(qz_name, qz_group);
+	            return ReturnT.SUCCESS;
+	        } catch (SchedulerException e) {
+	            logger.error(e.getMessage(), e);
+	            try {
+	                xxlJobInfoDao.delete(jobInfo.getId());
+	                XxlJobDynamicScheduler.removeJob(qz_name, qz_group);
+	            } catch (SchedulerException e1) {
+	                logger.error(e.getMessage(), e1);
+	            }
+	            return new ReturnT<String>(ReturnT.FAIL_CODE, (I18nUtil.getString("jobinfo_field_add")+I18nUtil.getString("system_fail"))+":" + e.getMessage());
+	        }
+=======
 		return new ReturnT<String>(String.valueOf(jobInfo.getId()));
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/7665057567d00c851ab5832f1d87794926114f0e/xxl-job-admin/src/main/java/com/xxl/job/admin/service/impl/XxlJobServiceImpl.java/right.java
 	}
 
 	@Override
@@ -191,11 +229,11 @@ public class XxlJobServiceImpl implements XxlJobService {
 		String qz_group = String.valueOf(exists_jobInfo.getJobGroup());
 		String qz_name = String.valueOf(exists_jobInfo.getId());
         try {
-            XxlJobDynamicScheduler.updateJobCron(qz_group, qz_name, exists_jobInfo.getJobCron(), exists_jobInfo.getJobZone());
-        } catch (SchedulerException e) {
-            logger.error(e.getMessage(), e);
+	     XxlJobDynamicScheduler.updateJobCron(qz_group, qz_name, exists_jobInfo.getJobCron(), exists_jobInfo.getJobZone());
+	} catch (SchedulerException e) {
+	    logger.error(e.getMessage(), e);
 			return ReturnT.FAIL;
-        }
+	}
 
 		return ReturnT.SUCCESS;
 	}
@@ -227,10 +265,9 @@ public class XxlJobServiceImpl implements XxlJobService {
 		String group = String.valueOf(xxlJobInfo.getJobGroup());
 		String name = String.valueOf(xxlJobInfo.getId());
 		String cronExpression = xxlJobInfo.getJobCron();
-		String timeZone = xxlJobInfo.getJobZone();
 
 		try {
-			boolean ret = XxlJobDynamicScheduler.addJob(name, group, cronExpression, timeZone);
+			boolean ret = XxlJobDynamicScheduler.addJob(name, group, cronExpression);
 			return ret?ReturnT.SUCCESS:ReturnT.FAIL;
 		} catch (SchedulerException e) {
 			logger.error(e.getMessage(), e);

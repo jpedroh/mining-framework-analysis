@@ -188,8 +188,16 @@ public final class XxlJobDynamicScheduler {
      * @return
      * @throws SchedulerException
      */
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/7665057567d00c851ab5832f1d87794926114f0e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/schedule/XxlJobDynamicScheduler.java/left.java
 	public static boolean addJob(String jobName, String jobGroup, String cronExpression, String zone) throws SchedulerException {
+    	// TriggerKey : name + group
+||||||| /usr/src/app/output/xuxueli/xxl-job/7665057567d00c851ab5832f1d87794926114f0e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/schedule/XxlJobDynamicScheduler.java/base.java
+	public static boolean addJob(String jobName, String jobGroup, String cronExpression) throws SchedulerException {
+    	// TriggerKey : name + group
+=======
+	public static boolean addJob(String jobName, String jobGroup, String cronExpression) throws SchedulerException {
     	// 1、job key
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/7665057567d00c851ab5832f1d87794926114f0e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/schedule/XxlJobDynamicScheduler.java/right.java
         TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
         JobKey jobKey = new JobKey(jobName, jobGroup);
 
@@ -197,9 +205,19 @@ public final class XxlJobDynamicScheduler {
         if (scheduler.checkExists(triggerKey)) {
             return true;    // PASS
         }
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/7665057567d00c851ab5832f1d87794926114f0e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/schedule/XxlJobDynamicScheduler.java/left.java
+        
+        // CronTrigger : TriggerKey + cronExpression	// withMisfireHandlingInstructionDoNothing 忽略掉调度终止过程中忽略的调度
+        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression).withMisfireHandlingInstructionDoNothing().inTimeZone(getTimeZone(zone));
+||||||| /usr/src/app/output/xuxueli/xxl-job/7665057567d00c851ab5832f1d87794926114f0e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/schedule/XxlJobDynamicScheduler.java/base.java
+        
+        // CronTrigger : TriggerKey + cronExpression	// withMisfireHandlingInstructionDoNothing 忽略掉调度终止过程中忽略的调度
+        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression).withMisfireHandlingInstructionDoNothing();
+=======
 
         // 3、corn trigger
-        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression).withMisfireHandlingInstructionDoNothing().inTimeZone(getTimeZone(zone));   // withMisfireHandlingInstructionDoNothing 忽略掉调度终止过程中忽略的调度
+        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression).withMisfireHandlingInstructionDoNothing();   // withMisfireHandlingInstructionDoNothing 忽略掉调度终止过程中忽略的调度
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/7665057567d00c851ab5832f1d87794926114f0e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/schedule/XxlJobDynamicScheduler.java/right.java
         CronTrigger cronTrigger = TriggerBuilder.newTrigger().withIdentity(triggerKey).withSchedule(cronScheduleBuilder).build();
 
         // 4、job detail
@@ -221,7 +239,131 @@ public final class XxlJobDynamicScheduler {
 
 
     /**
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/7665057567d00c851ab5832f1d87794926114f0e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/schedule/XxlJobDynamicScheduler.java/left.java
+     * rescheduleJob
+     *
+     * @param jobGroup
+     * @param jobName
+     * @param cronExpression
+     * @return
+     * @throws SchedulerException
+     */
+	public static boolean rescheduleJob(String jobGroup, String jobName, String cronExpression, String zone) throws SchedulerException {
+    	
+    	// TriggerKey valid if_exists
+        if (!checkExists(jobName, jobGroup)) {
+        	logger.info(">>>>>>>>>>> rescheduleJob fail, job not exists, JobGroup:{}, JobName:{}", jobGroup, jobName);
+            return false;
+        }
+        
+        // TriggerKey : name + group
+        TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
+        CronTrigger oldTrigger = (CronTrigger) scheduler.getTrigger(triggerKey);
+        TimeZone timeZone = getTimeZone(zone);
+
+        if (oldTrigger != null) {
+            // avoid repeat
+            String oldCron = oldTrigger.getCronExpression();
+            TimeZone oldZone = oldTrigger.getTimeZone();
+            if (oldCron.equals(cronExpression)){
+                if (oldZone==null && timeZone==null || oldZone!=null && oldZone.hasSameRules(timeZone)) {
+                    return true;
+                }
+            }
+
+            // CronTrigger : TriggerKey + cronExpression
+            CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression).withMisfireHandlingInstructionDoNothing().inTimeZone(timeZone);
+            oldTrigger = oldTrigger.getTriggerBuilder().withIdentity(triggerKey).withSchedule(cronScheduleBuilder).build();
+
+            // rescheduleJob
+            scheduler.rescheduleJob(triggerKey, oldTrigger);
+        } else {
+            // CronTrigger : TriggerKey + cronExpression
+            CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression).withMisfireHandlingInstructionDoNothing().inTimeZone(timeZone);
+            CronTrigger cronTrigger = TriggerBuilder.newTrigger().withIdentity(triggerKey).withSchedule(cronScheduleBuilder).build();
+
+            // JobDetail-JobDataMap fresh
+            JobKey jobKey = new JobKey(jobName, jobGroup);
+            JobDetail jobDetail = scheduler.getJobDetail(jobKey);
+            /*JobDataMap jobDataMap = jobDetail.getJobDataMap();
+            jobDataMap.clear();
+            jobDataMap.putAll(JacksonUtil.readValue(jobInfo.getJobData(), Map.class));*/
+
+            // Trigger fresh
+            HashSet<Trigger> triggerSet = new HashSet<Trigger>();
+            triggerSet.add(cronTrigger);
+
+            scheduler.scheduleJob(jobDetail, triggerSet, true);
+        }
+
+        logger.info(">>>>>>>>>>> resumeJob success, JobGroup:{}, JobName:{}", jobGroup, jobName);
+        return true;
+    }
+    
+    /**
+     * unscheduleJob
+||||||| /usr/src/app/output/xuxueli/xxl-job/7665057567d00c851ab5832f1d87794926114f0e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/schedule/XxlJobDynamicScheduler.java/base.java
+     * rescheduleJob
+     *
+     * @param jobGroup
+     * @param jobName
+     * @param cronExpression
+     * @return
+     * @throws SchedulerException
+     */
+	public static boolean rescheduleJob(String jobGroup, String jobName, String cronExpression) throws SchedulerException {
+    	
+    	// TriggerKey valid if_exists
+        if (!checkExists(jobName, jobGroup)) {
+        	logger.info(">>>>>>>>>>> rescheduleJob fail, job not exists, JobGroup:{}, JobName:{}", jobGroup, jobName);
+            return false;
+        }
+        
+        // TriggerKey : name + group
+        TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
+        CronTrigger oldTrigger = (CronTrigger) scheduler.getTrigger(triggerKey);
+
+        if (oldTrigger != null) {
+            // avoid repeat
+            String oldCron = oldTrigger.getCronExpression();
+            if (oldCron.equals(cronExpression)){
+                return true;
+            }
+
+            // CronTrigger : TriggerKey + cronExpression
+            CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression).withMisfireHandlingInstructionDoNothing();
+            oldTrigger = oldTrigger.getTriggerBuilder().withIdentity(triggerKey).withSchedule(cronScheduleBuilder).build();
+
+            // rescheduleJob
+            scheduler.rescheduleJob(triggerKey, oldTrigger);
+        } else {
+            // CronTrigger : TriggerKey + cronExpression
+            CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression).withMisfireHandlingInstructionDoNothing();
+            CronTrigger cronTrigger = TriggerBuilder.newTrigger().withIdentity(triggerKey).withSchedule(cronScheduleBuilder).build();
+
+            // JobDetail-JobDataMap fresh
+            JobKey jobKey = new JobKey(jobName, jobGroup);
+            JobDetail jobDetail = scheduler.getJobDetail(jobKey);
+            /*JobDataMap jobDataMap = jobDetail.getJobDataMap();
+            jobDataMap.clear();
+            jobDataMap.putAll(JacksonUtil.readValue(jobInfo.getJobData(), Map.class));*/
+
+            // Trigger fresh
+            HashSet<Trigger> triggerSet = new HashSet<Trigger>();
+            triggerSet.add(cronTrigger);
+
+            scheduler.scheduleJob(jobDetail, triggerSet, true);
+        }
+
+        logger.info(">>>>>>>>>>> resumeJob success, JobGroup:{}, JobName:{}", jobGroup, jobName);
+        return true;
+    }
+    
+    /**
+     * unscheduleJob
+=======
      * remove trigger + job
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/7665057567d00c851ab5832f1d87794926114f0e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/schedule/XxlJobDynamicScheduler.java/right.java
      *
      * @param jobName
      * @param jobGroup
@@ -250,7 +392,7 @@ public final class XxlJobDynamicScheduler {
      * @return
      * @throws SchedulerException
      */
-	public static boolean updateJobCron(String jobGroup, String jobName, String cronExpression, String zone) throws SchedulerException {
+	public static boolean updateJobCron(String jobGroup, String jobName, String cronExpression) throws SchedulerException {
 
         // 1、job key
         TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
@@ -261,19 +403,15 @@ public final class XxlJobDynamicScheduler {
         }
 
         CronTrigger oldTrigger = (CronTrigger) scheduler.getTrigger(triggerKey);
-        TimeZone newZone = getTimeZone(zone);
 
         // 3、avoid repeat cron
         String oldCron = oldTrigger.getCronExpression();
-        TimeZone oldZone = oldTrigger.getTimeZone();
         if (oldCron.equals(cronExpression)){
-            if (oldZone==null && newZone==null || oldZone!=null && oldZone.hasSameRules(newZone)) {
-                return true;    // PASS
-            }
+            return true;    // PASS
         }
 
         // 4、new cron trigger
-        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression).withMisfireHandlingInstructionDoNothing().inTimeZone(newZone);
+        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression).withMisfireHandlingInstructionDoNothing();
         oldTrigger = oldTrigger.getTriggerBuilder().withIdentity(triggerKey).withSchedule(cronScheduleBuilder).build();
 
         // 5、rescheduleJob
