@@ -96,6 +96,7 @@ public class DefaultSubjectRouter implements SubjectRouter {
     }
 
     private List<String> assignNewBrokers(SubjectInfo subjectInfo) {
+
         String subject = subjectInfo.getName();
         final List<String> brokerGroupNames = findAvailableBrokerGroupNames(subjectInfo.getTag());
         final List<String> loadBalanceSelect = loadBalance.select(subject, brokerGroupNames, minGroupNum);
