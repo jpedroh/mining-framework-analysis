@@ -1,21 +1,5 @@
-/*
- * Copyright 2015 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
- */
-
 package com.google.googlejavaformat.java;
-
 import static com.google.common.base.MoreObjects.firstNonNull;
-
 import com.google.common.base.CharMatcher;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.DiscreteDomain;
@@ -36,29 +20,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/*
- * Throughout this file, {@code i} is an index for input lines, {@code j} is an index for output
- * lines, {@code ij} is an index into either input or output lines, and {@code k} is an index for
- * toks.
- */
-
 /**
  * {@code JavaOutput} extends {@link Output Output} to represent a Java output document. It includes
  * methods to emit the output document.
  */
 public final class JavaOutput extends Output {
   private final String lineSeparator;
-  private final JavaInput javaInput; // Used to follow along while emitting the output.
-  private final CommentsHelper commentsHelper; // Used to re-flow comments.
-  private final Map<Integer, BlankLineWanted> blankLines = new HashMap<>(); // Info on blank lines.
+
+  private final JavaInput javaInput;
+
+  private final CommentsHelper commentsHelper;
+
+  private final Map<Integer, BlankLineWanted> blankLines = new HashMap<>();
+
   private final RangeSet<Integer> partialFormatRanges = TreeRangeSet.create();
 
   private final List<String> mutableLines = new ArrayList<>();
-  private final int kN; // The number of tokens or comments in the input, excluding the EOF.
-  private int iLine = 0; // Closest corresponding line number on input.
-  private int lastK = -1; // Last {@link Tok} index output.
+
+  private final int kN;
+
+  private int iLine = 0;
+
+  private int lastK = -1;
+
   private int spacesPending = 0;
+
   private int newlinesPending = 0;
+
   private StringBuilder lineBuilder = new StringBuilder();
 
   /**
@@ -74,8 +62,7 @@ public final class JavaOutput extends Output {
     kN = javaInput.getkN();
   }
 
-  @Override
-  public void blankLine(int k, BlankLineWanted wanted) {
+  @Override public void blankLine(int k, BlankLineWanted wanted) {
     if (blankLines.containsKey(k)) {
       blankLines.put(k, blankLines.get(k).merge(wanted));
     } else {
@@ -83,43 +70,28 @@ public final class JavaOutput extends Output {
     }
   }
 
-  @Override
-  public void markForPartialFormat(Token start, Token end) {
+  @Override public void markForPartialFormat(Token start, Token end) {
     int lo = JavaOutput.startTok(start).getIndex();
     int hi = JavaOutput.endTok(end).getIndex();
     partialFormatRanges.add(Range.closed(lo, hi));
   }
 
-  // TODO(jdd): Add invariant.
-  @Override
-  public void append(String text, Range<Integer> range) {
+  @Override public void append(String text, Range<Integer> range) {
     if (!range.isEmpty()) {
       boolean sawNewlines = false;
-      // Skip over input line we've passed.
       int iN = javaInput.getLineCount();
-      while (iLine < iN
-          && (javaInput.getRanges(iLine).isEmpty()
-              || javaInput.getRanges(iLine).upperEndpoint() <= range.lowerEndpoint())) {
+      while (iLine < iN && (javaInput.getRanges(iLine).isEmpty() || javaInput.getRanges(iLine).upperEndpoint() <= range.lowerEndpoint())) {
         if (javaInput.getRanges(iLine).isEmpty()) {
-          // Skipped over a blank line.
           sawNewlines = true;
         }
         ++iLine;
       }
-      /*
-       * Output blank line if we've called {@link OpsBuilder#blankLine}{@code (true)} here, or if
-       * there's a blank line here and it's a comment.
-       */
       BlankLineWanted wanted = firstNonNull(blankLines.get(lastK), BlankLineWanted.NO);
       if (isComment(text) ? sawNewlines : wanted.wanted().or(sawNewlines)) {
         ++newlinesPending;
       }
     }
     if (Newlines.isNewline(text)) {
-      /*
-       * Don't update range information, and swallow extra newlines. The case below for '\n' is for
-       * block comments.
-       */
       if (newlinesPending == 0) {
         ++newlinesPending;
       }
@@ -131,41 +103,39 @@ public final class JavaOutput extends Output {
         char c = text.charAt(i);
         switch (c) {
           case ' ':
-            ++spacesPending;
-            break;
+          ++spacesPending;
+          break;
           case '\r':
-            if (i + 1 < text.length() && text.charAt(i + 1) == '\n') {
-              i++;
-            }
-            // falls through
+          if (i + 1 < text.length() && text.charAt(i + 1) == '\n') {
+            i++;
+          }
           case '\n':
-            spacesPending = 0;
-            ++newlinesPending;
-            break;
+          spacesPending = 0;
+          ++newlinesPending;
+          break;
           default:
-            while (newlinesPending > 0) {
-              // drop leading blank lines
-              if (!mutableLines.isEmpty() || lineBuilder.length() > 0) {
-                mutableLines.add(lineBuilder.toString());
+          while (newlinesPending > 0) {
+            if (!mutableLines.isEmpty() || lineBuilder.length() > 0) {
+              mutableLines.add(lineBuilder.toString());
+            }
+            lineBuilder = new StringBuilder();
+            rangesSet = false;
+            --newlinesPending;
+          }
+          while (spacesPending > 0) {
+            lineBuilder.append(' ');
+            --spacesPending;
+          }
+          lineBuilder.append(c);
+          if (!range.isEmpty()) {
+            if (!rangesSet) {
+              while (ranges.size() <= mutableLines.size()) {
+                ranges.add(Formatter.EMPTY_RANGE);
               }
-              lineBuilder = new StringBuilder();
-              rangesSet = false;
-              --newlinesPending;
+              ranges.set(mutableLines.size(), union(ranges.get(mutableLines.size()), range));
+              rangesSet = true;
             }
-            while (spacesPending > 0) {
-              lineBuilder.append(' ');
-              --spacesPending;
-            }
-            lineBuilder.append(c);
-            if (!range.isEmpty()) {
-              if (!rangesSet) {
-                while (ranges.size() <= mutableLines.size()) {
-                  ranges.add(Formatter.EMPTY_RANGE);
-                }
-                ranges.set(mutableLines.size(), union(ranges.get(mutableLines.size()), range));
-                rangesSet = true;
-              }
-            }
+          }
         }
       }
     }
@@ -174,8 +144,7 @@ public final class JavaOutput extends Output {
     }
   }
 
-  @Override
-  public void indent(int indent) {
+  @Override public void indent(int indent) {
     spacesPending = indent;
   }
 
@@ -194,10 +163,7 @@ public final class JavaOutput extends Output {
     setLines(ImmutableList.copyOf(mutableLines));
   }
 
-  // The following methods can be used after the Output has been built.
-
-  @Override
-  public CommentsHelper getCommentsHelper() {
+  @Override public CommentsHelper getCommentsHelper() {
     return commentsHelper;
   }
 
@@ -209,30 +175,20 @@ public final class JavaOutput extends Output {
   public ImmutableList<Replacement> getFormatReplacements(RangeSet<Integer> iRangeSet0) {
     ImmutableList.Builder<Replacement> result = ImmutableList.builder();
     Map<Integer, Range<Integer>> kToJ = JavaOutput.makeKToIJ(this);
-
-    // Expand the token ranges to align with re-formattable boundaries.
     RangeSet<Integer> breakableRanges = TreeRangeSet.create();
     RangeSet<Integer> iRangeSet = iRangeSet0.subRangeSet(Range.closed(0, javaInput.getkN()));
     for (Range<Integer> iRange : iRangeSet.asRanges()) {
       Range<Integer> range = expandToBreakableRegions(iRange.canonical(DiscreteDomain.integers()));
       if (range.equals(EMPTY_RANGE)) {
-        // the range contains only whitespace
         continue;
       }
       breakableRanges.add(range);
     }
-
-    // Construct replacements for each reformatted region.
     for (Range<Integer> range : breakableRanges.asRanges()) {
-
       Input.Tok startTok = startTok(javaInput.getToken(range.lowerEndpoint()));
       Input.Tok endTok = endTok(javaInput.getToken(range.upperEndpoint() - 1));
-
-      // Add all output lines in the given token range to the replacement.
       StringBuilder replacement = new StringBuilder();
-
       int replaceFrom = startTok.getPosition();
-      // Replace leading whitespace in the input with the whitespace from the formatted file
       while (replaceFrom > 0) {
         char previous = javaInput.getText().charAt(replaceFrom - 1);
         if (!CharMatcher.whitespace().matches(previous)) {
@@ -240,17 +196,11 @@ public final class JavaOutput extends Output {
         }
         replaceFrom--;
       }
-
       int i = kToJ.get(startTok.getIndex()).lowerEndpoint();
-      // Include leading blank lines from the formatted output, unless the formatted range
-      // starts at the beginning of the file.
       while (i > 0 && getLine(i - 1).isEmpty()) {
         i--;
       }
-      // Write out the formatted range.
-      for (; i < kToJ.get(endTok.getIndex()).upperEndpoint(); i++) {
-        // It's possible to run out of output lines (e.g. if the input ended with
-        // multiple trailing newlines).
+      for ( ; i < kToJ.get(endTok.getIndex()).upperEndpoint(); i++) {
         if (i < getLineCount()) {
           if (i > 0) {
             replacement.append(lineSeparator);
@@ -258,18 +208,10 @@ public final class JavaOutput extends Output {
           replacement.append(getLine(i));
         }
       }
-
-      int replaceTo =
-          Math.min(endTok.getPosition() + endTok.length(), javaInput.getText().length());
-      // If the formatted ranged ended in the trailing trivia of the last token before EOF,
-      // format all the way up to EOF to deal with trailing whitespace correctly.
+      int replaceTo = Math.min(endTok.getPosition() + endTok.length(), javaInput.getText().length());
       if (endTok.getIndex() == javaInput.getkN() - 1) {
         replaceTo = javaInput.getText().length();
       }
-      // Replace trailing whitespace in the input with the whitespace from the formatted file.
-      // If the trailing whitespace in the input includes one or more line breaks, preserve the
-      // whitespace after the last newline to avoid re-indenting the line following the formatted
-      // line.
       int newline = -1;
       while (replaceTo < javaInput.getText().length()) {
         char next = javaInput.getText().charAt(replaceTo);
@@ -279,7 +221,6 @@ public final class JavaOutput extends Output {
         int newlineLength = Newlines.hasNewlineAt(javaInput.getText(), replaceTo);
         if (newlineLength != -1) {
           newline = replaceTo;
-          // Skip over the entire newline; don't count the second character of \r\n as a newline.
           replaceTo += newlineLength;
         } else {
           replaceTo++;
@@ -288,26 +229,21 @@ public final class JavaOutput extends Output {
       if (newline != -1) {
         replaceTo = newline;
       }
-
       if (newline == -1) {
-        // There wasn't an existing trailing newline; add one.
         replacement.append(lineSeparator);
       }
-      for (; i < getLineCount(); i++) {
+      for ( ; i < getLineCount(); i++) {
         String after = getLine(i);
         if (after.isEmpty()) {
-          // Write out trailing blank lines from the formatted output.
           replacement.append(lineSeparator);
         } else {
           if (newline == -1) {
-            // If there wasn't a trailing newline in the input, indent the next line.
             int idx = CharMatcher.whitespace().negate().indexIn(after);
             replacement.append(after.substring(0, idx));
           }
           break;
         }
       }
-
       result.add(Replacement.create(replaceFrom, replaceTo, replacement.toString()));
     }
     return result.build();
@@ -320,11 +256,8 @@ public final class JavaOutput extends Output {
    * @return the expanded token range
    */
   private Range<Integer> expandToBreakableRegions(Range<Integer> iRange) {
-    // The original line range.
     int loTok = iRange.lowerEndpoint();
     int hiTok = iRange.upperEndpoint() - 1;
-
-    // Expand the token indices to formattable boundaries (e.g. edges of statements).
     if (!partialFormatRanges.contains(loTok) || !partialFormatRanges.contains(hiTok)) {
       return EMPTY_RANGE;
     }
@@ -335,21 +268,14 @@ public final class JavaOutput extends Output {
 
   public static String applyReplacements(String input, List<Replacement> replacements) {
     replacements = new ArrayList<>(replacements);
-    Collections.sort(
-        replacements,
-        new Comparator<Replacement>() {
-          @Override
-          public int compare(Replacement o1, Replacement o2) {
-            return Integer.compare(
-                o2.getReplaceRange().lowerEndpoint(), o1.getReplaceRange().lowerEndpoint());
-          }
-        });
+    Collections.sort(replacements, new Comparator<Replacement>() {
+      @Override public int compare(Replacement o1, Replacement o2) {
+        return Integer.compare(o2.getReplaceRange().lowerEndpoint(), o1.getReplaceRange().lowerEndpoint());
+      }
+    });
     StringBuilder writer = new StringBuilder(input);
     for (Replacement replacement : replacements) {
-      writer.replace(
-          replacement.getReplaceRange().lowerEndpoint(),
-          replacement.getReplaceRange().upperEndpoint(),
-          replacement.getReplacementString());
+      writer.replace(replacement.getReplaceRange().lowerEndpoint(), replacement.getReplaceRange().upperEndpoint(), replacement.getReplacementString());
     }
     return writer.toString();
   }
@@ -392,15 +318,7 @@ public final class JavaOutput extends Output {
     return x.isEmpty() ? y : y.isEmpty() ? x : x.span(y).canonical(DiscreteDomain.integers());
   }
 
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("iLine", iLine)
-        .add("lastK", lastK)
-        .add("spacesPending", spacesPending)
-        .add("newlinesPending", newlinesPending)
-        .add("blankLines", blankLines)
-        .add("super", super.toString())
-        .toString();
+  @Override public String toString() {
+    return MoreObjects.toStringHelper(this).add("iLine", iLine).add("lastK", lastK).add("spacesPending", spacesPending).add("newlinesPending", newlinesPending).add("blankLines", blankLines).add("super", super.toString()).toString();
   }
 }

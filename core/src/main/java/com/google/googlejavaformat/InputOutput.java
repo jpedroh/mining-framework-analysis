@@ -1,19 +1,4 @@
-/*
- * Copyright 2015 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
- */
-
 package com.google.googlejavaformat;
-
 import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Range;
@@ -27,6 +12,7 @@ public abstract class InputOutput {
   private ImmutableList<String> lines = ImmutableList.of();
 
   protected static final Range<Integer> EMPTY_RANGE = Range.closedOpen(-1, -1);
+
   private static final DiscreteDomain<Integer> INTEGERS = DiscreteDomain.integers();
 
   /** Set the lines. */
@@ -75,6 +61,11 @@ public abstract class InputOutput {
         for (int i = lineI0; i <= lineI; i++) {
           addToRanges(ranges, i, k);
         }
+
+<<<<<<< /usr/src/app/output/google/google-java-format/48316cdcafbef41ab52e86d0a530324cf5384310/core/src/main/java/com/google/googlejavaformat/InputOutput.java/left.java
+        addToRanges(range1s, lineI, k);
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
       }
     }
   }
@@ -112,13 +103,7 @@ public abstract class InputOutput {
     return 0 <= lineI && lineI < ranges.size() ? ranges.get(lineI) : EMPTY_RANGE;
   }
 
-  @Override
-  public String toString() {
-    return "InputOutput{"
-        + "lines="
-        + lines
-        + ", ranges="
-        + ranges
-        + '}';
+  @Override public String toString() {
+    return "InputOutput{" + "lines=" + lines + ", ranges=" + ranges + '}';
   }
 }
