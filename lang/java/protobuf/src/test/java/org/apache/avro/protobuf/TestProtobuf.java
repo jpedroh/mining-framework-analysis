@@ -97,15 +97,6 @@ public class TestProtobuf {
   }
 
   @Test
-  public void testClassNamespaceInMultipleFiles() throws Exception {
-    Schema fooSchema = ProtobufData.get().getSchema(org.apache.avro.protobuf.multiplefiles.Foo.class);
-    assertEquals(org.apache.avro.protobuf.multiplefiles.Foo.class.getPackage().getName(), fooSchema.getNamespace());
-
-    Schema nSchema = ProtobufData.get().getSchema(org.apache.avro.protobuf.multiplefiles.M.N.class);
-    assertEquals(org.apache.avro.protobuf.multiplefiles.M.class.getName(), nSchema.getNamespace());
-  }
-
-  @Test
   public void testGetNonRepeatedSchemaWithLogicalType() throws Exception {
     ProtoConversions.TimestampMillisConversion conversion = new ProtoConversions.TimestampMillisConversion();
 
@@ -120,5 +111,13 @@ public class TestProtobuf {
     instance2.addSchemaConversion(com.google.protobuf.Timestamp.getDescriptor(), conversion.getRecommendedSchema());
     Schema s2 = instance2.getSchema(com.google.protobuf.Timestamp.class);
     assertEquals(conversion.getRecommendedSchema(), s2);
+  }
+  @Test
+  public void testClassNamespaceInMultipleFiles() throws Exception {
+    Schema fooSchema = ProtobufData.get().getSchema(org.apache.avro.protobuf.multiplefiles.Foo.class);
+    assertEquals(org.apache.avro.protobuf.multiplefiles.Foo.class.getPackage().getName(), fooSchema.getNamespace());
+
+    Schema nSchema = ProtobufData.get().getSchema(org.apache.avro.protobuf.multiplefiles.M.N.class);
+    assertEquals(org.apache.avro.protobuf.multiplefiles.M.class.getName(), nSchema.getNamespace());
   }
 }
