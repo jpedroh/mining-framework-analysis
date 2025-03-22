@@ -651,4 +651,5 @@ public class MachineImage implements Taggable {
         this.visibleScope = visibleScope;
     }
 
+
 }
