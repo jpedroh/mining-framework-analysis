@@ -15,8 +15,7 @@ import org.skyscreamer.yoga.util.NameUtil;
 import java.beans.PropertyDescriptor;
 
 /**
- * Created by IntelliJ IDEA.
- * User: corby
+ * Created by IntelliJ IDEA. User: corby Date: 4/21/11 Time: 3:07 PM
  */
 public class ResultTraverser
 {
@@ -31,29 +30,27 @@ public class ResultTraverser
       addProperties( instance, fieldSelector, model, instanceType, hrefSuffix );
    }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    protected void addExtraInfo( Object instance, Selector fieldSelector, HierarchicalModel model,
-        Class<?> instanceType, String hrefSuffix )
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    protected void addExtraInfo(Object instance, Selector fieldSelector,
+            HierarchicalModel model, Class<?> instanceType, String hrefSuffix)
     {
-        if ( instanceType.isAnnotationPresent( URITemplate.class ) )
-        {
-            String href = instanceType.getAnnotation( URITemplate.class ).value();
-            if ( hrefSuffix != null )
+        if (instanceType.isAnnotationPresent(URITemplate.class)) {
+            String href = instanceType.getAnnotation(URITemplate.class).value();
+            if (hrefSuffix != null)
                 href += "." + hrefSuffix;
-            model.addSimple( SelectorParser.HREF, getHref( href, instance ) );
+            model.addSimple(SelectorParser.HREF, getHref(href, instance ));
         }
 
-        if ( _fieldPopulatorRegistry != null )
-        {
-            FieldPopulator populator = _fieldPopulatorRegistry.getFieldPopulator( instanceType );
-            if ( populator != null )
-            {
-                populator.addExtraFields( fieldSelector, instance, this, model );
-            }
-        }
+       if ( _fieldPopulatorRegistry != null )
+       {
+           FieldPopulator populator = _fieldPopulatorRegistry.getFieldPopulator( instanceType );
+           if (populator != null) {
+               populator.addExtraFields(fieldSelector, instance, this, model);
+           }
+       }
     }
 
-    protected void addProperties(Object instance, Selector fieldSelector, HierarchicalModel model,
+   protected void addProperties(Object instance, Selector fieldSelector, HierarchicalModel model,
          Class<?> instanceType, String hrefSuffix)
    {
       for (PropertyDescriptor property : PropertyUtils.getPropertyDescriptors( instanceType ))
