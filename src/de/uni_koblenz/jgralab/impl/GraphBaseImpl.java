@@ -401,13 +401,30 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	 */
 	@Override
 	public boolean containsEdge(Edge e) {
-		return (e != null)
-				&& (e.getGraph() == this)
-				&& containsEdgeId(((EdgeBaseImpl) e.getNormalEdge()).id)
-				&& (getEdge(((EdgeBaseImpl) e.getNormalEdge()).id) == e
-						.getNormalEdge())
-				&& (traversalContext == null || traversalContext
-						.containsEdge(e));
+		if (e == null) {
+			return false;
+		}
+		if (e.getGraph() != this) {
+			return false;
+		}
+		if (!containsEdgeId(((EdgeBaseImpl) e.getNormalEdge()).id)) {
+			return false;
+		}
+		if (!(getEdge(((EdgeBaseImpl) e.getNormalEdge()).id) == e
+				.getNormalEdge())) {
+			return false;
+		}
+		return true;
+		// return (e != null)
+		// && (e.getGraph() == this)
+		// && containsEdgeId(((EdgeBaseImpl) e.getNormalEdge()).id)
+		// && (getEdge(((EdgeBaseImpl) e.getNormalEdge()).id) == e
+		// .getNormalEdge())
+
+		// && (traversalContext == null || traversalContext
+		// .containsEdge(e))
+		// ;
+
 	}
 
 	/**
@@ -422,8 +439,23 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		if (eId < 0) {
 			eId = -eId;
 		}
-		return (eId > 0) && (eId <= eMax) && (getEdge()[eId] != null)
-				&& (getRevEdge()[eId] != null);
+		if (!(eId > 0)) {
+			return false;
+		}
+		if (!(eId <= eMax)) {
+			return false;
+		}
+		EdgeBase[] edge = getEdge();
+		if (!(edge[eId] != null)) {
+			return false;
+		}
+		EdgeBase[] revEdge = getRevEdge();
+		if (!(revEdge[eId] != null)) {
+			return false;
+		}
+		return true;
+		// return (eId > 0) && (eId <= eMax) && (getEdge()[eId] != null)
+		// && (getRevEdge()[eId] != null);
 	}
 
 	/*
@@ -438,8 +470,9 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		return (v != null) && (v.getGraph() == this)
 				&& containsVertexId(((VertexBaseImpl) v).id)
 				&& (vertex[((VertexBaseImpl) v).id] == v)
-				&& (traversalContext == null || traversalContext
-						.containsVertex(v));
+		// && (traversalContext == null || traversalContext
+		// .containsVertex(v))
+		;
 	}
 
 	/**
@@ -873,11 +906,12 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		setGraphVersion(getGraphVersion() + 1);
 	}
 
-	/**
-	 * Triggers ECA-rules before an Attribute is changed
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param name
-	 *            of the changing Attribute
+	 * @see
+	 * de.uni_koblenz.jgralab.impl.InternalGraph#ecaAttributeChanging(java.lang
+	 * .String, java.lang.Object, java.lang.Object)
 	 */
 	public void ecaAttributeChanging(String name, Object oldValue,
 			Object newValue) {
@@ -887,11 +921,12 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 		}
 	}
 
-	/**
-	 * Triggers ECA-rule after an Attribute is changed
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param name
-	 *            of the changed Attribute
+	 * @see
+	 * de.uni_koblenz.jgralab.impl.InternalGraph#ecaAttributeChanged(java.lang
+	 * .String, java.lang.Object, java.lang.Object)
 	 */
 	public void ecaAttributeChanged(String name, Object oldValue,
 			Object newValue) {
@@ -910,9 +945,6 @@ public abstract class GraphBaseImpl implements Graph, GraphBase {
 	private void internalDeleteEdge(Edge edge) {
 		assert (edge != null) && edge.isValid() && containsEdge(edge);
 
-		getECARuleManager().fireBeforeDeleteEdgeEvents(edge);
-
-		EdgeBase e = (EdgeBase) edge.getNormalEdge();
 		if(this.getECARuleManagerIfThere() != null){
 			getECARuleManagerIfThere().fireBeforeDeleteEdgeEvents(edge);
 		}

@@ -108,7 +108,13 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	public Edge createEdge(Class<? extends Edge> edgeClass, int id, Graph g,
 			Vertex alpha, Vertex omega) {
 		try {
-			if (!((GraphBase) g).isLoading()&& g.getECARuleManagerIfThere()!=null) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/a8bafd4f90fa457bf483902bb3e12777124b605c/src/de/uni_koblenz/jgralab/impl/GraphFactoryImpl.java/left.java
+			if (!g.isLoading() && g.getECARuleManagerIfThere()!=null) {
+||||||| /usr/src/app/output/jgralab/jgralab/a8bafd4f90fa457bf483902bb3e12777124b605c/src/de/uni_koblenz/jgralab/impl/GraphFactoryImpl.java/base.java
+			if (!g.isLoading()) {
+=======
+			if (!((GraphBase) g).isLoading()) {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/a8bafd4f90fa457bf483902bb3e12777124b605c/src/de/uni_koblenz/jgralab/impl/GraphFactoryImpl.java/right.java
 				g.getECARuleManagerIfThere().fireBeforeCreateEdgeEvents(edgeClass);
 			}
 			Edge e = edgeMap.get(edgeClass).newInstance(id, g, alpha, omega);
@@ -150,7 +156,13 @@ public abstract class GraphFactoryImpl implements GraphFactory {
 	public Vertex createVertex(Class<? extends Vertex> vertexClass, int id,
 			Graph g) {
 		try {
-			if (!((GraphBase) g).isLoading()&& g.getECARuleManagerIfThere()!=null) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/a8bafd4f90fa457bf483902bb3e12777124b605c/src/de/uni_koblenz/jgralab/impl/GraphFactoryImpl.java/left.java
+			if (!g.isLoading() && g.getECARuleManagerIfThere()!=null) {
+||||||| /usr/src/app/output/jgralab/jgralab/a8bafd4f90fa457bf483902bb3e12777124b605c/src/de/uni_koblenz/jgralab/impl/GraphFactoryImpl.java/base.java
+			if (!g.isLoading()) {
+=======
+			if (!((GraphBase) g).isLoading()) {
+>>>>>>> /usr/src/app/output/jgralab/jgralab/a8bafd4f90fa457bf483902bb3e12777124b605c/src/de/uni_koblenz/jgralab/impl/GraphFactoryImpl.java/right.java
 				g.getECARuleManagerIfThere().fireBeforeCreateVertexEvents(vertexClass);
 			}
 			Vertex v = vertexMap.get(vertexClass).newInstance(id, g);
