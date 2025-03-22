@@ -477,7 +477,6 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         this(createLdapConfiguration(server, rootDN, userSearchBase, userSearch, groupSearchBase, groupSearchFilter, groupMembershipStrategy, managerDN, managerPasswordSecret, inhibitInferRootDN, environmentProperties, displayNameAttributeName, mailAddressAttributeName),
                 disableMailAddressResolver, cache, userIdStrategy, groupIdStrategy);
     }
-
     @DataBoundConstructor
     public LDAPSecurityRealm(List<LDAPConfiguration> configurations, boolean disableMailAddressResolver, CacheConfiguration cache, IdStrategy userIdStrategy, IdStrategy groupIdStrategy) {
         this.configurations = configurations;
@@ -486,7 +485,6 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         this.userIdStrategy = userIdStrategy;
         this.groupIdStrategy = groupIdStrategy;
     }
-
     private static List<LDAPConfiguration> createLdapConfiguration(String server, String rootDN, String userSearchBase, String userSearch, String groupSearchBase, String groupSearchFilter, LDAPGroupMembershipStrategy groupMembershipStrategy, String managerDN, Secret managerPasswordSecret, boolean inhibitInferRootDN, EnvironmentProperty[] environmentProperties, String displayNameAttributeName, String mailAddressAttributeName) {
         LDAPConfiguration conf = new LDAPConfiguration(server, rootDN, inhibitInferRootDN, managerDN, managerPasswordSecret);
         conf.setUserSearchBase(userSearchBase);
@@ -499,15 +497,12 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         conf.setMailAddressAttributeName(mailAddressAttributeName);
         return Collections.singletonList(conf);
     }
-
     public List<LDAPConfiguration> getConfigurations() {
         return configurations;
     }
-
     private boolean hasConfiguration() {
         return configurations != null && !configurations.isEmpty();
     }
-
     private Object readResolve() {
         if (managerPassword != null) {
             managerPasswordSecret = Secret.fromString(Scrambler.descramble(managerPassword));
@@ -545,84 +540,67 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         }
         return this;
     }
-
     @Deprecated @Restricted(DoNotUse.class)
     public String getServerUrl() {
         return hasConfiguration() ? configurations.get(0).getServerUrl() : null;
     }
-
     @Override
     public IdStrategy getUserIdStrategy() {
         return userIdStrategy == null ? IdStrategy.CASE_INSENSITIVE : userIdStrategy;
     }
-
     @Override
     public IdStrategy getGroupIdStrategy() {
         return groupIdStrategy == null ? IdStrategy.CASE_INSENSITIVE : groupIdStrategy;
     }
-
     public CacheConfiguration getCache() {
         return cache;
     }
-
     public Integer getCacheSize() {
         return cache == null ? null : cache.getSize();
     }
-
     public Integer getCacheTTL() {
         return cache == null ? null : cache.getTtl();
     }
-
     @Deprecated @Restricted(DoNotUse.class)
     public String getGroupMembershipFilter() {
         return hasConfiguration() ? configurations.get(0).getGroupSearchFilter() : null;
     }
-
     @Deprecated @Restricted(DoNotUse.class)
     public LDAPGroupMembershipStrategy getGroupMembershipStrategy() {
         return hasConfiguration() ? configurations.get(0).getGroupMembershipStrategy() : null;
     }
-
     @Deprecated @Restricted(DoNotUse.class)
     public String getGroupSearchFilter() {
         return hasConfiguration() ? configurations.get(0).getGroupSearchFilter() : null;
     }
-
     @Deprecated @Restricted(DoNotUse.class)
     public Map<String,String> getExtraEnvVars() {
         return hasConfiguration() ? configurations.get(0).getExtraEnvVars() : Collections.<String, String>emptyMap();
     }
-
     @Deprecated @Restricted(DoNotUse.class)
     public EnvironmentProperty[] getEnvironmentProperties() {
         return hasConfiguration() ? configurations.get(0).getEnvironmentProperties() : new EnvironmentProperty[0];
     }
-
     @Deprecated @Restricted(DoNotUse.class)
     public String getManagerPassword() {
         return hasConfiguration() ? configurations.get(0).getManagerPassword() : null;
     }
-
     @Deprecated @Restricted(DoNotUse.class)
     public Secret getManagerPasswordSecret() {
         return hasConfiguration() ? configurations.get(0).getManagerPasswordSecret() : null;
     }
-
     @Deprecated @Restricted(DoNotUse.class)
     public String getLDAPURL() {
         return hasConfiguration() ? configurations.get(0).getLDAPURL() : null;
     }
-
     @Deprecated @Restricted(DoNotUse.class)
     public String getDisplayNameAttributeName() {
         return hasConfiguration() ? configurations.get(0).getDisplayNameAttributeName() : DescriptorImpl.DEFAULT_DISPLAYNAME_ATTRIBUTE_NAME;
     }
-
     @Deprecated @Restricted(DoNotUse.class)
     public String getMailAddressAttributeName() {
         return hasConfiguration() ? configurations.get(0).getMailAddressAttributeName() : DescriptorImpl.DEFAULT_MAILADDRESS_ATTRIBUTE_NAME;
     }
-
     @CheckForNull @Restricted(NoExternalUse.class)
     public LDAPConfiguration getConfigurationFor(LdapUserDetails d) {
         if (d instanceof DelegatedLdapUserDetails) {
@@ -633,7 +611,6 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
             return null;
         }
     }
-
     @CheckForNull @Restricted(NoExternalUse.class)
     public LDAPConfiguration getConfigurationFor(String server) {
         for (LDAPConfiguration configuration : configurations) {
@@ -643,7 +620,6 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         }
         return null;
     }
-
     @Restricted(NoExternalUse.class)
     public static String toProviderUrl(String serverUrl, String rootDN) {
         StringBuilder buf = new StringBuilder();
@@ -659,7 +635,6 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         }
         return buf.toString();
     }
-
     private static String getProviderUrl(String server, String rootDN) {
         server = addPrefix(server);
         if (!server.endsWith("/")) {
@@ -678,7 +653,6 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         }
         return server;
     }
-
     /**
      * Creates security components.
      * @return Created {@link SecurityComponents}
@@ -695,7 +669,6 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         }
         return new SecurityComponents(manager, details);
     }
-
     /**
      * {@inheritDoc}
      */
@@ -704,7 +677,6 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         return updateUserDetails((UserDetails) getSecurityComponents().manager.authenticate(
                 new UsernamePasswordAuthenticationToken(fixUsername(username), password)).getPrincipal());
     }
-
     /**
      * {@inheritDoc}
      */
@@ -712,19 +684,16 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
         return updateUserDetails(getSecurityComponents().userDetails.loadUserByUsername(fixUsername(username)));
     }
-
     public Authentication updateUserDetails(Authentication authentication) {
         updateUserDetails((UserDetails) authentication.getPrincipal());
         return authentication;
     }
-
     public UserDetails updateUserDetails(UserDetails userDetails) {
         if (userDetails instanceof LdapUserDetails) {
             updateUserDetails((LdapUserDetails)userDetails);
         }
         return userDetails;
     }
-
     public LdapUserDetails updateUserDetails(LdapUserDetails d) {
         hudson.model.User u = hudson.model.User.get(fixUsername(d.getUsername()));
         LDAPConfiguration configuration = getConfigurationFor(d);
@@ -756,7 +725,6 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         }
         return d;
     }
-
     @Override
     public GroupDetails loadGroupByGroupname(String groupname) throws UsernameNotFoundException, DataAccessException {
         groupname = fixGroupname(groupname);
@@ -794,7 +762,6 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
 
         return new GroupDetailsImpl(fixGroupname(groups.iterator().next()));
     }
-
     private Set<String> searchForGroupName(String groupname) {
         Set<String> groups = new TreeSet<>();
         for (LDAPConfiguration conf : configurations) {
@@ -804,15 +771,12 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         }
         return groups;
     }
-
     private static String fixGroupname(String groupname) {
         return FORCE_GROUPNAME_LOWERCASE ? groupname.toLowerCase() : groupname;
     }
-
     private static String fixUsername(String username) {
         return FORCE_USERNAME_LOWERCASE ? username.toLowerCase() : username;
     }
-
     private static class GroupDetailsImpl extends GroupDetails {
 
         private String name;
@@ -825,7 +789,6 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
             return name;
         }
     }
-
     private class LDAPAuthenticationManager implements AuthenticationManager {
 
         private final List<AuthenticationManager> delegates;
@@ -855,7 +818,6 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
             }
         }
     }
-
     protected static class DelegatedLdapUserDetails implements LdapUserDetails, Serializable {
         private static final long serialVersionUID = 1L;
         private final LdapUserDetails userDetails;
@@ -924,7 +886,6 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
             return server;
         }
     }
-
     private static class DelegateLDAPUserDetailsService implements UserDetailsService {
         private final List<LDAPUserDetailsService> delegates;
 
@@ -964,7 +925,6 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
             }
         }
     }
-
     public static class LDAPUserDetailsService implements UserDetailsService {
         public final LdapUserSearch ldapSearch;
         public final LdapAuthoritiesPopulator authoritiesPopulator;
@@ -1082,7 +1042,6 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
             }
         }
     }
-
     /**
      * If the security realm is LDAP, try to pick up e-mail address from LDAP.
      */
@@ -1121,7 +1080,6 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
             }
         }
     }
-
     /**
      * {@link LdapAuthoritiesPopulator} that adds the automatic 'authenticated' role.
      */
@@ -1180,7 +1138,6 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
             return r;
         }
     }
-
     @Extension
     public static final class DescriptorImpl extends Descriptor<SecurityRealm> {
 
