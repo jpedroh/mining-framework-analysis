@@ -1021,8 +1021,8 @@ public class SubmissionRepoImpl extends AbstractWeaverRepoImpl<Submission, Submi
     private StringBuilder buildSubmissionDateFieldString(String column, String filter) {
         if (filter.contains("|")) {
             String[] dates = filter.split(Pattern.quote("|"));
-        return new StringBuilder()
-            .append("s.").append(column)
+            return new StringBuilder()
+                .append("s.").append(column)
                 .append(" BETWEEN CAST('").append(dates[0])
                 .append("' AS DATE) AND CAST('").append(dates[1])
                 .append("' AS DATE)");
