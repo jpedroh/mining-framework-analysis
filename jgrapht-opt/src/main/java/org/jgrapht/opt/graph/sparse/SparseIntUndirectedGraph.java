@@ -84,4 +84,58 @@ public class SparseIntUndirectedGraph
     {
         super(() -> new IncidenceMatrixSparseUndirectedSpecifics(numVertices, numEdges, edges));
     }
+
+    public SparseIntUndirectedGraph(
+        int numVertices, int numEdges, Supplier<Stream<Pair<Integer, Integer>>> edges)
+    {
+        if (sourceVertex < 0 || sourceVertex >= incidenceMatrix.rows()) {
+            return null;
+        }
+        if (targetVertex < 0 || targetVertex >= incidenceMatrix.rows()) {
+            return null;
+        }
+
+        Iterator<Integer> it = incidenceMatrix.nonZerosPositionIterator(sourceVertex);
+        while (it.hasNext()) {
+            int eId = it.next();
+
+            int v = getEdgeSource(eId);
+            int u = getEdgeTarget(eId);
+
+            if (v == sourceVertex.intValue() && u == targetVertex.intValue()
+                || v == targetVertex.intValue() && u == sourceVertex.intValue())
+            {
+                return eId;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Set<Integer> getAllEdges(Integer sourceVertex, Integer targetVertex)
+    {
+        if (sourceVertex < 0 || sourceVertex >= incidenceMatrix.rows()) {
+            return null;
+        }
+        if (targetVertex < 0 || targetVertex >= incidenceMatrix.rows()) {
+            return null;
+        }
+
+        Set<Integer> result = new LinkedHashSet<>();
+        Iterator<Integer> it = incidenceMatrix.nonZerosPositionIterator(sourceVertex);
+        while (it.hasNext()) {
+            int eId = it.next();
+
+            int v = getEdgeSource(eId);
+            int u = getEdgeTarget(eId);
+
+            if (v == sourceVertex.intValue() && u == targetVertex.intValue()
+                || v == targetVertex.intValue() && u == sourceVertex.intValue())
+            {
+                result.add(eId);
+            }
+        }
+        return result;
+    }
+
 }

@@ -74,7 +74,6 @@ public class SparseIntDirectedGraph
             numVertices, edges.size(), () -> edges.stream(),
             IncomingEdgesSupport.FULL_INCOMING_EDGES);
     }
-
     /**
      * Create a new graph from an edge list.
      * 
@@ -88,7 +87,6 @@ public class SparseIntDirectedGraph
     {
         this(numVertices, edges.size(), () -> edges.stream(), incomingEdgesSupport);
     }
-
     /**
      * Create a new graph from an edge stream.
      * 
@@ -114,6 +112,57 @@ public class SparseIntDirectedGraph
                 return new NoIncomingNoReindexSparseDirectedSpecifics(numVertices, numEdges, edges);
             }
         });
+    }
+    /**
+     * {@inheritDoc}
+     * 
+     * This operation costs $O(d)$ where $d$ is the out-degree of the source vertex.
+     */
+    @Override
+    public Integer getEdge(Integer sourceVertex, Integer targetVertex)
+    {
+        if (sourceVertex < 0 || sourceVertex >= outIncidenceMatrix.rows()) {
+            return null;
+        }
+        if (targetVertex < 0 || targetVertex >= outIncidenceMatrix.rows()) {
+            return null;
+        }
+
+        Iterator<Integer> it = outIncidenceMatrix.nonZerosPositionIterator(sourceVertex);
+        while (it.hasNext()) {
+            int eId = it.next();
+            if (getEdgeTarget(eId).equals(targetVertex)) {
+                return eId;
+            }
+        }
+        return null;
+    }
+    /**
+     * {@inheritDoc}
+     * 
+     * This operation costs $O(d)$ where $d$ is the out-degree of the source vertex.
+     */
+    @Override
+    public Set<Integer> getAllEdges(Integer sourceVertex, Integer targetVertex)
+    {
+        if (sourceVertex < 0 || sourceVertex >= outIncidenceMatrix.rows()) {
+            return null;
+        }
+        if (targetVertex < 0 || targetVertex >= outIncidenceMatrix.rows()) {
+            return null;
+        }
+
+        Set<Integer> result = new LinkedHashSet<>();
+
+        Iterator<Integer> it = outIncidenceMatrix.nonZerosPositionIterator(sourceVertex);
+        while (it.hasNext()) {
+            int eId = it.next();
+
+            if (getEdgeTarget(eId).equals(targetVertex)) {
+                result.add(eId);
+            }
+        }
+        return result;
     }
 
 }
