@@ -35,6 +35,7 @@ public class FluentAdapter implements FluentControl {
     /**
      * Creates a new fluent adapter.
      */
+
     public FluentAdapter() {
         this(new DefaultFluentControlContainer());
     }
@@ -44,6 +45,7 @@ public class FluentAdapter implements FluentControl {
      *
      * @param controlContainer control interface container
      */
+
     public FluentAdapter(FluentControlContainer controlContainer) {
         this.controlContainer = controlContainer;
         configuration = ConfigurationFactoryProvider.newConfiguration(getClass());
@@ -55,6 +57,7 @@ public class FluentAdapter implements FluentControl {
      * @param controlContainer control interface container
      * @param clazz class from which annotation configuration will be looked up
      */
+
     public FluentAdapter(FluentControlContainer controlContainer, Class clazz) {
         this.controlContainer = controlContainer;
         configuration = ConfigurationFactoryProvider.newConfiguration(clazz);
@@ -65,6 +68,7 @@ public class FluentAdapter implements FluentControl {
      *
      * @return configuration
      */
+
     @Delegate
     public Configuration getConfiguration() {
         return configuration;
@@ -87,7 +91,10 @@ public class FluentAdapter implements FluentControl {
      *
      * @return true if the fluent control interface is available, false otherwise
      */
-    /* default */ boolean isFluentControlAvailable() {
+
+    /* default */
+
+boolean isFluentControlAvailable() {
         return getControlContainer().getFluentControl() != null;
     }
 
@@ -105,6 +112,7 @@ public class FluentAdapter implements FluentControl {
      *
      * @return control interface container
      */
+
     protected FluentControlContainer getControlContainer() {
         return controlContainer;
     }
@@ -117,6 +125,7 @@ public class FluentAdapter implements FluentControl {
      * @param webDriver webDriver to use.
      * @throws IllegalStateException when trying to register a different webDriver that the current one.
      */
+
     public void initFluent(WebDriver webDriver) {
         if (webDriver == null) {
             releaseFluent();
@@ -143,6 +152,7 @@ public class FluentAdapter implements FluentControl {
      * <p>
      * This method should not be called by end user.
      */
+
     public void releaseFluent() {
         if (getFluentControl() != null) {
             ((FluentDriver) getFluentControl().getAdapterControl()).releaseFluent();
@@ -163,6 +173,7 @@ public class FluentAdapter implements FluentControl {
      * @return A new WebDriver instance.
      * @see #getDriver()
      */
+
     public WebDriver newWebDriver() {
         WebDriver webDriver = WebDrivers.INSTANCE.newWebDriver(getWebDriver(), getCapabilities(), this);
         if (Boolean.TRUE.equals(getEventsEnabled())) {
@@ -177,6 +188,7 @@ public class FluentAdapter implements FluentControl {
      * @param e - the exception to check is it defined in ignored exceptions set
      * @return boolean
      */
+
     boolean isIgnoredException(Throwable e) {
         if (e == null) {
             return false;
@@ -192,4 +204,11 @@ public class FluentAdapter implements FluentControl {
 
         return false;
     }
+
+    /**
+     * Creates a new fluent adapter, using given control interface container.
+     *
+     * @param controlContainer control interface container
+     * @param clazz class from which annotation configuration will be looked up
+     */
 }
