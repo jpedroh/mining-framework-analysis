@@ -17,7 +17,6 @@
  */
 package net.tridentsdk.api.entity;
 
-import net.tridentsdk.api.Block;
 import net.tridentsdk.api.entity.living.ProjectileSource;
 
 /**
@@ -38,12 +37,45 @@ public interface Projectile extends Entity {
      *
      * @param shooter the ProjectileSource of the Projectile
      */
+<<<<<<< /usr/src/app/output/tridentsdk/tridentsdk/3cb7c26d4f0ac4ec978f8b430a299dc0c48e3f09/src/main/java/net/tridentsdk/api/entity/Projectile.java/left.java
+    void setShooter(ProjectileSource shooter);
+    /**
+     * Represents the current tile (Block) that this Projectile is located in
+     *
+     * @return the current tile this Projectile is in
+     */
+    Block getCurrentTile();
+||||||| /usr/src/app/output/tridentsdk/tridentsdk/3cb7c26d4f0ac4ec978f8b430a299dc0c48e3f09/src/main/java/net/tridentsdk/api/entity/Projectile.java/base.java
+    void setShooter(ProjectileSource shooter);
+
+    /**
+     * Returns if the Projectile can bounce
+     *
+     * @return true if the Projectile can bounce, false if it cannot
+     */
+    boolean doesBounce();
+
+    /**
+     * Sets whether the Projectile can bounce
+     *
+     * @param bounce Boolean whether the Projectile can bounce
+     */
+    void setBounce(boolean bounce);
+
+    /**
+     * Represents the current tile (Block) that this Projectile is located in
+     *
+     * @return the current tile this Projectile is in
+     */
+    Block getCurrentTile();
+=======
     void setSource(ProjectileSource shooter);
+>>>>>>> /usr/src/app/output/tridentsdk/tridentsdk/3cb7c26d4f0ac4ec978f8b430a299dc0c48e3f09/src/main/java/net/tridentsdk/api/entity/Projectile.java/right.java
 
     /**
      * The projectile source
      *
      * @return gets the source of the projectile
      */
-    ProjectileSource getProjectileSource();
+    ProjectileSource getSource();
 }
