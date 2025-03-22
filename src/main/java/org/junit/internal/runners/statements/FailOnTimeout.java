@@ -21,8 +21,21 @@ public class FailOnTimeout extends Statement {
     private final TimeUnit timeUnit;
     private final long timeout;
     private final boolean lookForStuckThread;
-    private final String testName;
-
+    private String testName;
+    public FailOnTimeout(Statement originalStatement, long millis, String testName) {
+        this(originalStatement, millis, TimeUnit.MILLISECONDS, testName);
+    }
+    public FailOnTimeout(Statement originalStatement, long timeout, TimeUnit unit, String testName) {
+        this(originalStatement, timeout, unit, false, testName);
+    }
+    public FailOnTimeout(Statement originalStatement, long timeout, TimeUnit unit, boolean lookForStuckThread,
+                         String testName) {
+        this.originalStatement = originalStatement;
+        this.timeout = timeout;
+        timeUnit = unit;
+        this.lookForStuckThread = lookForStuckThread;
+        this.testName = testName;
+    }
     /**
      * Returns a new builder for building an instance.
      *
@@ -31,7 +44,6 @@ public class FailOnTimeout extends Statement {
     public static Builder builder() {
         return new Builder();
     }
-
     /**
      * Creates an instance wrapping the given statement with the given timeout in milliseconds.
      *
@@ -43,15 +55,12 @@ public class FailOnTimeout extends Statement {
     public FailOnTimeout(Statement statement, long timeoutMillis) {
         this(builder().withTimeout(timeoutMillis, TimeUnit.MILLISECONDS), statement);
     }
-
     private FailOnTimeout(Builder builder, Statement statement) {
         originalStatement = statement;
         timeout = builder.timeout;
         timeUnit = builder.unit;
         lookForStuckThread = builder.lookForStuckThread;
-        testName = builder.testName;
     }
-
     /**
      * Builder for {@link FailOnTimeout}.
      *
@@ -61,7 +70,6 @@ public class FailOnTimeout extends Statement {
         private boolean lookForStuckThread = false;
         private long timeout = 0;
         private TimeUnit unit = TimeUnit.SECONDS;
-        private String testName = "Time-limited test";
 
         private Builder() {
         }
@@ -102,18 +110,6 @@ public class FailOnTimeout extends Statement {
          */
         public Builder withLookingForStuckThread(boolean enable) {
             this.lookForStuckThread = enable;
-            return this;
-        }
-
-        /**
-         * Specifies the test name. If this is provided, the thread generated when
-         * evaluating this statement will be named with the given value.
-         *
-         * @param testName the name to be used for the generated thread
-         * @return {@code this} for method chaining.
-         */
-        public Builder withTestName(String testName) {
-            this.testName = testName;
             return this;
         }
 

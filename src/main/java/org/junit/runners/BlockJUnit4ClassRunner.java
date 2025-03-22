@@ -333,10 +333,15 @@ public class BlockJUnit4ClassRunner extends ParentRunner<FrameworkMethod> {
         if (timeout <= 0) {
             return next;
         }
+<<<<<<< /usr/src/app/output/junit-team/junit4/0546b36b9a793a959d45c64fc04bc1615f308de7/src/main/java/org/junit/runners/BlockJUnit4ClassRunner.java/left.java
+        return timeout > 0 ? new FailOnTimeout(next, timeout,method.getClass() + method.getName()) : next;
+||||||| /usr/src/app/output/junit-team/junit4/0546b36b9a793a959d45c64fc04bc1615f308de7/src/main/java/org/junit/runners/BlockJUnit4ClassRunner.java/base.java
+        return timeout > 0 ? new FailOnTimeout(next, timeout) : next;
+=======
         return FailOnTimeout.builder()
                .withTimeout(timeout, TimeUnit.MILLISECONDS)
-               .withTestName(method.getClass() + method.getName())
                .build(next);
+>>>>>>> /usr/src/app/output/junit-team/junit4/0546b36b9a793a959d45c64fc04bc1615f308de7/src/main/java/org/junit/runners/BlockJUnit4ClassRunner.java/right.java
     }
 
     /**

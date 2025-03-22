@@ -33,8 +33,14 @@ public class FailOnTimeoutTest {
 
     private final TestStatement statement = new TestStatement();
 
-    private final FailOnTimeout failOnTimeout =
-            builder().withTimeout(TIMEOUT, MILLISECONDS).withTestName("Test Name").build(statement);
+<<<<<<< /usr/src/app/output/junit-team/junit4/0546b36b9a793a959d45c64fc04bc1615f308de7/src/test/java/org/junit/tests/internal/runners/statements/FailOnTimeoutTest.java/left.java
+    private final FailOnTimeout failOnTimeout = new FailOnTimeout(statement,TIMEOUT, "Test Name");
+||||||| /usr/src/app/output/junit-team/junit4/0546b36b9a793a959d45c64fc04bc1615f308de7/src/test/java/org/junit/tests/internal/runners/statements/FailOnTimeoutTest.java/base.java
+    private final FailOnTimeout failOnTimeout = new FailOnTimeout(statement,
+            TIMEOUT);
+=======
+    private final FailOnTimeout failOnTimeout = builder().withTimeout(TIMEOUT, MILLISECONDS).build(statement);
+>>>>>>> /usr/src/app/output/junit-team/junit4/0546b36b9a793a959d45c64fc04bc1615f308de7/src/test/java/org/junit/tests/internal/runners/statements/FailOnTimeoutTest.java/right.java
 
     @Test
     public void throwsTestTimedOutException() throws Throwable {
@@ -115,8 +121,15 @@ public class FailOnTimeoutTest {
     @Test
     public void stopEndlessStatement() throws Throwable {
         InfiniteLoopStatement infiniteLoop = new InfiniteLoopStatement();
-        FailOnTimeout infiniteLoopTimeout =
-                builder().withTimeout(TIMEOUT, MILLISECONDS).withTestName("Test Name").build(infiniteLoop);
+<<<<<<< /usr/src/app/output/junit-team/junit4/0546b36b9a793a959d45c64fc04bc1615f308de7/src/test/java/org/junit/tests/internal/runners/statements/FailOnTimeoutTest.java/left.java
+        FailOnTimeout infiniteLoopTimeout = new FailOnTimeout(infiniteLoop,
+                TIMEOUT,"TestName");
+||||||| /usr/src/app/output/junit-team/junit4/0546b36b9a793a959d45c64fc04bc1615f308de7/src/test/java/org/junit/tests/internal/runners/statements/FailOnTimeoutTest.java/base.java
+        FailOnTimeout infiniteLoopTimeout = new FailOnTimeout(infiniteLoop,
+                TIMEOUT);
+=======
+        FailOnTimeout infiniteLoopTimeout = builder().withTimeout(TIMEOUT, MILLISECONDS).build(infiniteLoop);
+>>>>>>> /usr/src/app/output/junit-team/junit4/0546b36b9a793a959d45c64fc04bc1615f308de7/src/test/java/org/junit/tests/internal/runners/statements/FailOnTimeoutTest.java/right.java
         try {
             infiniteLoopTimeout.evaluate();
         } catch (Exception timeoutException) {
@@ -143,8 +156,13 @@ public class FailOnTimeoutTest {
     @Test
     public void stackTraceContainsRealCauseOfTimeout() throws Throwable {
         StuckStatement stuck = new StuckStatement();
-        FailOnTimeout stuckTimeout =
-                builder().withTimeout(TIMEOUT, MILLISECONDS).withTestName("Test Name").build(stuck);
+<<<<<<< /usr/src/app/output/junit-team/junit4/0546b36b9a793a959d45c64fc04bc1615f308de7/src/test/java/org/junit/tests/internal/runners/statements/FailOnTimeoutTest.java/left.java
+        FailOnTimeout stuckTimeout = new FailOnTimeout(stuck, TIMEOUT, "TestName");
+||||||| /usr/src/app/output/junit-team/junit4/0546b36b9a793a959d45c64fc04bc1615f308de7/src/test/java/org/junit/tests/internal/runners/statements/FailOnTimeoutTest.java/base.java
+        FailOnTimeout stuckTimeout = new FailOnTimeout(stuck, TIMEOUT);
+=======
+        FailOnTimeout stuckTimeout = builder().withTimeout(TIMEOUT, MILLISECONDS).build(stuck);
+>>>>>>> /usr/src/app/output/junit-team/junit4/0546b36b9a793a959d45c64fc04bc1615f308de7/src/test/java/org/junit/tests/internal/runners/statements/FailOnTimeoutTest.java/right.java
         try {
             stuckTimeout.evaluate();
             // We must not get here, we expect a timeout exception
@@ -174,8 +192,7 @@ public class FailOnTimeoutTest {
     @Test
     public void timeoutThreadNameTest() throws Throwable {
         Statement stuck = new InfiniteLoopStatement();
-        FailOnTimeout stuckTimeout =
-                builder().withTimeout(TIMEOUT, MILLISECONDS).withTestName("Test Name").build(stuck);
+        FailOnTimeout stuckTimeout = new FailOnTimeout(stuck, TIMEOUT, "TestName");
         try {
             stuckTimeout.evaluate();
             // We must not get here, we expect a timeout exception

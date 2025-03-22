@@ -143,17 +143,21 @@ public class Timeout implements TestRule {
      * @since 4.12
      */
     protected Statement createFailOnTimeoutStatement(
-            Statement statement, String testName) throws Exception {
+            Statement statement) throws Exception {
         return FailOnTimeout.builder()
             .withTimeout(timeout, timeUnit)
             .withLookingForStuckThread(lookForStuckThread)
-            .withTestName(testName)
             .build(statement);
     }
 
     public Statement apply(Statement base, Description description) {
+<<<<<<< /usr/src/app/output/junit-team/junit4/0546b36b9a793a959d45c64fc04bc1615f308de7/src/main/java/org/junit/rules/Timeout.java/left.java
+        return new FailOnTimeout(base, timeout, timeUnit, lookForStuckThread, description.getDisplayName());
+||||||| /usr/src/app/output/junit-team/junit4/0546b36b9a793a959d45c64fc04bc1615f308de7/src/main/java/org/junit/rules/Timeout.java/base.java
+        return new FailOnTimeout(base, timeout, timeUnit, lookForStuckThread);
+=======
         try {
-            return createFailOnTimeoutStatement(base, description.getDisplayName());
+            return createFailOnTimeoutStatement(base);
         } catch (final Exception e) {
             return new Statement() {
                 @Override public void evaluate() throws Throwable {
@@ -230,5 +234,6 @@ public class Timeout implements TestRule {
         public Timeout build() {
             return new Timeout(this);
         }
+>>>>>>> /usr/src/app/output/junit-team/junit4/0546b36b9a793a959d45c64fc04bc1615f308de7/src/main/java/org/junit/rules/Timeout.java/right.java
     }
 }
