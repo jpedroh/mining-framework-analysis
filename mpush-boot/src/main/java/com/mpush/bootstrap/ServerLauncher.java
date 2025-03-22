@@ -22,8 +22,10 @@ package com.mpush.bootstrap;
 
 import com.mpush.bootstrap.job.*;
 import com.mpush.core.server.*;
+import com.mpush.tools.config.CC;
 
-import static com.mpush.common.ServerNodes.*;
+import static com.mpush.common.ServerNodes.CS;
+import static com.mpush.common.ServerNodes.GS;
 import static com.mpush.tools.config.CC.mp.net.udpGateway;
 import static com.mpush.tools.config.CC.mp.net.wsEnabled;
 
@@ -41,7 +43,7 @@ public final class ServerLauncher {
                 .setNext(new ServiceRegistryBoot())//1.启动ZK节点数据变化监听
                 .setNext(new RedisBoot())//2.注册redis sever 到ZK
                 .setNext(new ServerBoot(ConnectionServer.I(), CS))//3.启动长连接服务
-                .setNext(() -> new ServerBoot(WebSocketServer.I(), WS), wsEnabled())//4.启动websocket连接服务
+                .setNext(() -> new ServerBoot(WebSocketServer.I(), WS_NODE), wsEnabled())//4.启动websocket连接服务
                 .setNext(new ServerBoot(udpGateway() ? GatewayUDPConnector.I() : GatewayServer.I(), GS))//4.启动网关服务
                 .setNext(new ServerBoot(AdminServer.I(), null))//5.启动控制台服务
                 .setNext(new PushCenterBoot())//6.启动http代理服务，解析dns
