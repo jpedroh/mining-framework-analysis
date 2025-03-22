@@ -106,11 +106,17 @@ public class CloneableBean implements Serializable, Cloneable {
      */
     public CloneableBean(final Object obj, final Set<String> ignoreProperties) {
         this.obj = obj;
+<<<<<<< /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/feed/impl/CloneableBean.java/left.java
+        this.ignoreProperties = ignoreProperties != null ? ignoreProperties : Collections.<String>emptySet();
+||||||| /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/feed/impl/CloneableBean.java/base.java
+        this.ignoreProperties = ignoreProperties != null ? ignoreProperties : Collections.EMPTY_SET;
+=======
         if (ignoreProperties == null) {
-            this.ignoreProperties = Collections.<String>emptySet();
+            this.ignoreProperties = Collections.emptySet();
         } else {
             this.ignoreProperties = ignoreProperties;
         }
+>>>>>>> /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/feed/impl/CloneableBean.java/right.java
     }
 
     /**

@@ -145,11 +145,17 @@ public class CopyFromHelper {
 
     private <T> Collection<T> doCopyCollection(final Collection<T> collection, final Class<?> baseInterface) throws Exception {
         // expecting SETs or LISTs only, going default implementation of them
+<<<<<<< /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/feed/impl/CopyFromHelper.java/left.java
+        final Collection<T> newColl = collection instanceof Set ? new HashSet<T>() : new ArrayList<T>();
+||||||| /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/feed/impl/CopyFromHelper.java/base.java
+        final Collection<T> newColl = collection instanceof Set ? (Collection) new HashSet() : (Collection) new ArrayList();
+=======
         final Collection<T> newColl;
+>>>>>>> /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/feed/impl/CopyFromHelper.java/right.java
         if (collection instanceof Set) {
-            newColl = new HashSet<T>();
+            newColl = new HashSet();
         } else {
-            newColl = new ArrayList<T>();
+            newColl = new ArrayList();
         }
         final Iterator<T> i = collection.iterator();
         while (i.hasNext()) {

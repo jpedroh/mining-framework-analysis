@@ -114,7 +114,13 @@ public class ToStringBean implements Serializable {
      */
     @Override
     public String toString() {
+<<<<<<< /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/feed/impl/ToStringBean.java/left.java
         final Stack<String[]> stack = PREFIX_TL.get();
+||||||| /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/feed/impl/ToStringBean.java/base.java
+        final Stack<String[]> stack = (Stack) PREFIX_TL.get();
+=======
+        final Stack<String[]> stack = (Stack<String[]>) PREFIX_TL.get();
+>>>>>>> /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/feed/impl/ToStringBean.java/right.java
         final String[] tsInfo;
         if (stack.isEmpty()) {
             tsInfo = null;
@@ -190,7 +196,12 @@ public class ToStringBean implements Serializable {
                     tsInfo[0] = ePrefix;
                     final Stack<String[]> stack = PREFIX_TL.get();
                     stack.push(tsInfo);
-                    final String s = eValue != null ? eValue.toString() : "null";
+                    final String s;
+                    if (eValue != null) {
+                        s = eValue.toString();
+                    } else {
+                        s = "null";
+                    }
                     stack.pop();
                     if (tsInfo[1] == null) {
                         sb.append(ePrefix).append("=").append(s).append("\n");
@@ -216,7 +227,12 @@ public class ToStringBean implements Serializable {
                     tsInfo[0] = cPrefix;
                     final Stack<String[]> stack = PREFIX_TL.get();
                     stack.push(tsInfo);
-                    final String s = cValue != null ? cValue.toString() : "null";
+                    final String s;
+                    if (cValue != null) {
+                        s = cValue.toString();
+                    } else {
+                        s = "null";
+                    }
                     stack.pop();
                     if (tsInfo[1] == null) {
                         sb.append(cPrefix).append("=").append(s).append("\n");

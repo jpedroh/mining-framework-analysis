@@ -156,7 +156,10 @@ public class Feed extends WireFeed {
      *         list if none.
      */
     public List<Link> getAlternateLinks() {
-        return alternateLinks == null ? (alternateLinks = new ArrayList<Link>()) : alternateLinks;
+        if (alternateLinks == null) {
+            alternateLinks = new ArrayList<Link>();
+        }
+        return alternateLinks;
     }
 
     /**
@@ -178,7 +181,10 @@ public class Feed extends WireFeed {
      *         ones), an empty list if none.
      */
     public List<Link> getOtherLinks() {
-        return otherLinks == null ? (otherLinks = new ArrayList<Link>()) : otherLinks;
+        if (otherLinks == null) {
+            otherLinks = new ArrayList<Link>();
+        }
+        return otherLinks;
     }
 
     /**
@@ -200,11 +206,19 @@ public class Feed extends WireFeed {
      * @return the feed author, <b>null</b> if none.
      * 
      */
+<<<<<<< /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/feed/atom/Feed.java/left.java
     public List<SyndPerson> getAuthors() {
+        return authors == null ? (authors = new ArrayList<SyndPerson>()) : authors;
+||||||| /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/feed/atom/Feed.java/base.java
+    public List<Person> getAuthors() {
+        return authors == null ? (authors = new ArrayList<Person>()) : authors;
+=======
+    public List<Person> getAuthors() {
         if (authors == null) {
-            authors = new ArrayList<SyndPerson>();
+            authors = new ArrayList<Person>();
         }
         return authors;
+>>>>>>> /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/feed/atom/Feed.java/right.java
     }
 
     /**
@@ -226,11 +240,19 @@ public class Feed extends WireFeed {
      *         list if none.
      * 
      */
+<<<<<<< /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/feed/atom/Feed.java/left.java
     public List<SyndPerson> getContributors() {
+        return contributors == null ? (contributors = new ArrayList<SyndPerson>()) : contributors;
+||||||| /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/feed/atom/Feed.java/base.java
+    public List<Person> getContributors() {
+        return contributors == null ? (contributors = new ArrayList<Person>()) : contributors;
+=======
+    public List<Person> getContributors() {
         if (contributors == null) {
-            contributors = new ArrayList<SyndPerson>();
+            contributors = new ArrayList<Person>();
         }
         return contributors;
+>>>>>>> /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/feed/atom/Feed.java/right.java
     }
 
     /**
@@ -381,7 +403,10 @@ public class Feed extends WireFeed {
      * 
      */
     public List<Entry> getEntries() {
-        return entries == null ? (entries = new ArrayList<Entry>()) : entries;
+        if (entries == null) {
+            entries = new ArrayList<Entry>();
+        }
+        return entries;
     }
 
     /**
@@ -406,7 +431,10 @@ public class Feed extends WireFeed {
      */
     @Override
     public List<Module> getModules() {
-        return modules == null ? (modules = new ArrayList<Module>()) : modules;
+        if (modules == null) {
+            modules = new ArrayList<Module>();
+        }
+        return modules;
     }
 
     /**
@@ -442,7 +470,10 @@ public class Feed extends WireFeed {
      * @since Atom 1.0
      */
     public List<Category> getCategories() {
-        return categories == null ? (categories = new ArrayList<Category>()) : categories;
+        if (categories == null) {
+            categories = new ArrayList<Category>();
+        }
+        return categories;
     }
 
     /**

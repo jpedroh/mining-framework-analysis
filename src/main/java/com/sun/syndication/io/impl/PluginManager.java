@@ -140,20 +140,27 @@ public abstract class PluginManager<T> {
      *             failure is ON.
      * 
      */
-    @SuppressWarnings("unchecked")
     private Class<T>[] getClasses() throws ClassNotFoundException {
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         final List<Class<T>> classes = new ArrayList<Class<T>>();
         final boolean useLoadClass = Boolean.valueOf(System.getProperty("rome.pluginmanager.useloadclass", "false")).booleanValue();
         for (final String propertyValue : propertyValues) {
+            @SuppressWarnings("unchecked")
+<<<<<<< /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/io/impl/PluginManager.java/left.java
+            final Class<T> mClass = (Class<T>) (useLoadClass ? classLoader.loadClass(_propertyValue) : Class.forName(_propertyValue, true, classLoader));
+||||||| /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/io/impl/PluginManager.java/base.java
+            final Class<T> mClass = useLoadClass ? classLoader.loadClass(_propertyValue) : Class.forName(_propertyValue, true, classLoader);
+=======
             final Class<T> mClass;
+>>>>>>> /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/io/impl/PluginManager.java/right.java
             if (useLoadClass) {
-                mClass = (Class<T>) classLoader.loadClass(propertyValue);
+                mClass = classLoader.loadClass(propertyValue);
             } else {
-                mClass = (Class<T>) Class.forName(propertyValue, true, classLoader);
+                mClass = Class.forName(propertyValue, true, classLoader);
             }
             classes.add(mClass);
         }
+        @SuppressWarnings("unchecked")
         final Class<T>[] array = (Class<T>[]) new Class[classes.size()];
         classes.toArray(array);
         return array;

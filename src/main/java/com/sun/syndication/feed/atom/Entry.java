@@ -109,11 +109,19 @@ public class Entry implements Cloneable, Serializable, Extendable {
      * @return the entry author, <b>null</b> if none.
      * 
      */
+<<<<<<< /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/feed/atom/Entry.java/left.java
     public List<SyndPerson> getAuthors() {
+        return authors == null ? (authors = new ArrayList<SyndPerson>()) : authors;
+||||||| /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/feed/atom/Entry.java/base.java
+    public List<Person> getAuthors() {
+        return authors == null ? (authors = new ArrayList<Person>()) : authors;
+=======
+    public List<Person> getAuthors() {
         if (authors == null) {
-            authors = new ArrayList<SyndPerson>();
+            authors = new ArrayList<Person>();
         }
         return authors;
+>>>>>>> /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/feed/atom/Entry.java/right.java
     }
 
     /**
@@ -186,11 +194,19 @@ public class Entry implements Cloneable, Serializable, Extendable {
      *         list if none.
      * 
      */
+<<<<<<< /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/feed/atom/Entry.java/left.java
     public List<SyndPerson> getContributors() {
+        return contributors == null ? (contributors = new ArrayList<SyndPerson>()) : contributors;
+||||||| /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/feed/atom/Entry.java/base.java
+    public List<Person> getContributors() {
+        return contributors == null ? (contributors = new ArrayList<Person>()) : contributors;
+=======
+    public List<Person> getContributors() {
         if (contributors == null) {
-            contributors = new ArrayList<SyndPerson>();
+            contributors = new ArrayList<Person>();
         }
         return contributors;
+>>>>>>> /usr/src/app/output/rometools/rome/648a1f04cf5a4c55a13bfff801389cfe93c6976e/src/main/java/com/sun/syndication/feed/atom/Entry.java/right.java
     }
 
     /**
