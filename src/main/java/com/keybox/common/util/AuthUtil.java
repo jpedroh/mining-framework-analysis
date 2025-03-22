@@ -31,7 +31,6 @@ public class AuthUtil {
     public static final String USER_ID = "userId";
     public static final String AUTH_TOKEN = "authToken";
     public static final String TIMEOUT = "timeout";
-
     private AuthUtil() {
     }
 
