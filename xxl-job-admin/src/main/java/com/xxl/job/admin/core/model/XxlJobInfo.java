@@ -1,5 +1,4 @@
 package com.xxl.job.admin.core.model;
-
 import java.io.Serializable;
 import java.util.Date;
 
@@ -8,194 +7,203 @@ import java.util.Date;
  * @author xuxueli  2016-1-12 18:25:49
  */
 public class XxlJobInfo implements Serializable {
-	private Integer parentId;
+  private Integer parentId;
 
-	private int id;				// 主键ID	    (JobKey.name)
-	
-	private int jobGroup;		// 执行器主键ID	(JobKey.group)
-	private String jobCron;		// 任务执行CRON表达式 【base on quartz】
-	private String jobDesc;
-	
-	private Date addTime;
-	private Date updateTime;
-	
-	private String author;		// 负责人
-	private String alarmEmail;	// 报警邮件
+  private int id;
 
-	private String executorRouteStrategy;	// 执行器路由策略
-	private String executorHandler;		    // 执行器，任务Handler名称
-	private String executorParam;		    // 执行器，任务参数
-	private String executorBlockStrategy;	// 阻塞处理策略
-	private String executorFailStrategy;	// 失败处理策略
-	
-	private String glueType;		// GLUE类型	#com.xxl.job.core.glue.GlueTypeEnum
-	private String glueSource;		// GLUE源代码
-	private String glueRemark;		// GLUE备注
-	private Date glueUpdatetime;	// GLUE更新时间
+  private int jobGroup;
 
-	private String childJobId;		// 子任务ID，多个逗号分隔
-	
-	// copy from quartz
-	private String jobStatus;		// 任务状态 【base on quartz】
+  private String jobCron;
 
-	public Integer getParentId() {
-		return parentId;
-	}
+  private String jobDesc;
 
-	public void setParentId(Integer parentId) {
-		this.parentId = parentId;
-	}
+  private Date addTime;
 
-	public int getId() {
-		return id;
-	}
+  private Date updateTime;
 
-	public void setId(int id) {
-		this.id = id;
-	}
+  private String author;
 
-	public int getJobGroup() {
-		return jobGroup;
-	}
+  private String alarmEmail;
 
-	public void setJobGroup(int jobGroup) {
-		this.jobGroup = jobGroup;
-	}
+  private String executorRouteStrategy;
 
-	public String getJobCron() {
-		return jobCron;
-	}
+  private String executorHandler;
 
-	public void setJobCron(String jobCron) {
-		this.jobCron = jobCron;
-	}
+  private String executorParam;
 
-	public String getJobDesc() {
-		return jobDesc;
-	}
+  private String executorBlockStrategy;
 
-	public void setJobDesc(String jobDesc) {
-		this.jobDesc = jobDesc;
-	}
+  private String executorFailStrategy;
 
-	public Date getAddTime() {
-		return addTime;
-	}
+  private String glueType;
 
-	public void setAddTime(Date addTime) {
-		this.addTime = addTime;
-	}
+  private String glueSource;
 
-	public Date getUpdateTime() {
-		return updateTime;
-	}
+  private String glueRemark;
 
-	public void setUpdateTime(Date updateTime) {
-		this.updateTime = updateTime;
-	}
+  private Date glueUpdatetime;
 
-	public String getAuthor() {
-		return author;
-	}
+  private String childJobId;
 
-	public void setAuthor(String author) {
-		this.author = author;
-	}
+  private String jobStatus;
 
-	public String getAlarmEmail() {
-		return alarmEmail;
-	}
+  public Integer getParentId() {
+    return parentId;
+  }
 
-	public void setAlarmEmail(String alarmEmail) {
-		this.alarmEmail = alarmEmail;
-	}
+  public void setParentId(Integer parentId) {
+    this.parentId = parentId;
+  }
 
-    public String getExecutorRouteStrategy() {
-        return executorRouteStrategy;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public void setExecutorRouteStrategy(String executorRouteStrategy) {
-        this.executorRouteStrategy = executorRouteStrategy;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public String getExecutorHandler() {
-		return executorHandler;
-	}
+  public int getJobGroup() {
+    return jobGroup;
+  }
 
-	public void setExecutorHandler(String executorHandler) {
-		this.executorHandler = executorHandler;
-	}
+  public void setJobGroup(int jobGroup) {
+    this.jobGroup = jobGroup;
+  }
 
-	public String getExecutorParam() {
-		return executorParam;
-	}
+  public String getJobCron() {
+    return jobCron;
+  }
 
-	public void setExecutorParam(String executorParam) {
-		this.executorParam = executorParam;
-	}
+  public void setJobCron(String jobCron) {
+    this.jobCron = jobCron;
+  }
 
-	public String getExecutorBlockStrategy() {
-		return executorBlockStrategy;
-	}
+  public String getJobDesc() {
+    return jobDesc;
+  }
 
-	public void setExecutorBlockStrategy(String executorBlockStrategy) {
-		this.executorBlockStrategy = executorBlockStrategy;
-	}
+  public void setJobDesc(String jobDesc) {
+    this.jobDesc = jobDesc;
+  }
 
-	public String getExecutorFailStrategy() {
-		return executorFailStrategy;
-	}
+  public Date getAddTime() {
+    return addTime;
+  }
 
-	public void setExecutorFailStrategy(String executorFailStrategy) {
-		this.executorFailStrategy = executorFailStrategy;
-	}
+  public void setAddTime(Date addTime) {
+    this.addTime = addTime;
+  }
 
-	public String getGlueType() {
-		return glueType;
-	}
+  public Date getUpdateTime() {
+    return updateTime;
+  }
 
-	public void setGlueType(String glueType) {
-		this.glueType = glueType;
-	}
+  public void setUpdateTime(Date updateTime) {
+    this.updateTime = updateTime;
+  }
 
-	public String getGlueSource() {
-		return glueSource;
-	}
+  public String getAuthor() {
+    return author;
+  }
 
-	public void setGlueSource(String glueSource) {
-		this.glueSource = glueSource;
-	}
+  public void setAuthor(String author) {
+    this.author = author;
+  }
 
-	public String getGlueRemark() {
-		return glueRemark;
-	}
+  public String getAlarmEmail() {
+    return alarmEmail;
+  }
 
-	public void setGlueRemark(String glueRemark) {
-		this.glueRemark = glueRemark;
-	}
+  public void setAlarmEmail(String alarmEmail) {
+    this.alarmEmail = alarmEmail;
+  }
 
-	public Date getGlueUpdatetime() {
-		return glueUpdatetime;
-	}
+  public String getExecutorRouteStrategy() {
+    return executorRouteStrategy;
+  }
 
-	public void setGlueUpdatetime(Date glueUpdatetime) {
-		this.glueUpdatetime = glueUpdatetime;
-	}
+  public void setExecutorRouteStrategy(String executorRouteStrategy) {
+    this.executorRouteStrategy = executorRouteStrategy;
+  }
 
-	public String getChildJobId() {
-		return childJobId;
-	}
+  public String getExecutorHandler() {
+    return executorHandler;
+  }
 
-	public void setChildJobId(String childJobId) {
-		this.childJobId = childJobId;
-	}
+  public void setExecutorHandler(String executorHandler) {
+    this.executorHandler = executorHandler;
+  }
 
-	public String getJobStatus() {
-		return jobStatus;
-	}
+  public String getExecutorParam() {
+    return executorParam;
+  }
 
-	public void setJobStatus(String jobStatus) {
-		this.jobStatus = jobStatus;
-	}
+  public void setExecutorParam(String executorParam) {
+    this.executorParam = executorParam;
+  }
 
+  public String getExecutorBlockStrategy() {
+    return executorBlockStrategy;
+  }
+
+  public void setExecutorBlockStrategy(String executorBlockStrategy) {
+    this.executorBlockStrategy = executorBlockStrategy;
+  }
+
+  public String getExecutorFailStrategy() {
+    return executorFailStrategy;
+  }
+
+  public void setExecutorFailStrategy(String executorFailStrategy) {
+    this.executorFailStrategy = executorFailStrategy;
+  }
+
+  public String getGlueType() {
+    return glueType;
+  }
+
+  public void setGlueType(String glueType) {
+    this.glueType = glueType;
+  }
+
+  public String getGlueSource() {
+    return glueSource;
+  }
+
+  public void setGlueSource(String glueSource) {
+    this.glueSource = glueSource;
+  }
+
+  public String getGlueRemark() {
+    return glueRemark;
+  }
+
+  public void setGlueRemark(String glueRemark) {
+    this.glueRemark = glueRemark;
+  }
+
+  public Date getGlueUpdatetime() {
+    return glueUpdatetime;
+  }
+
+  public void setGlueUpdatetime(Date glueUpdatetime) {
+    this.glueUpdatetime = glueUpdatetime;
+  }
+
+  public String getChildJobId() {
+    return childJobId;
+  }
+
+  public void setChildJobId(String childJobId) {
+    this.childJobId = childJobId;
+  }
+
+  public String getJobStatus() {
+    return jobStatus;
+  }
+
+  public void setJobStatus(String jobStatus) {
+    this.jobStatus = jobStatus;
+  }
 }
