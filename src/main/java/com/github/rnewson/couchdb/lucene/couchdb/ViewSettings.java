@@ -28,7 +28,13 @@ import com.github.rnewson.couchdb.lucene.util.Constants;
 public final class ViewSettings {
 
     public static ViewSettings getDefaultSettings() {
+<<<<<<< /usr/src/app/output/rnewson/couchdb-lucene/a26642d5ab84f52d51eca92ce9ee594420eb719e/src/main/java/com/github/rnewson/couchdb/lucene/couchdb/ViewSettings.java/left.java
         return new ViewSettings(Constants.DEFAULT_FIELD, "analyzed", "no", "string", "1.0", "no", null);
+||||||| /usr/src/app/output/rnewson/couchdb-lucene/a26642d5ab84f52d51eca92ce9ee594420eb719e/src/main/java/com/github/rnewson/couchdb/lucene/couchdb/ViewSettings.java/base.java
+        return new ViewSettings(Constants.DEFAULT_FIELD, "analyzed", "no", "string", null);
+=======
+        return new ViewSettings(Constants.DEFAULT_FIELD, "analyzed", "no", "string", "1.0", null);
+>>>>>>> /usr/src/app/output/rnewson/couchdb-lucene/a26642d5ab84f52d51eca92ce9ee594420eb719e/src/main/java/com/github/rnewson/couchdb/lucene/couchdb/ViewSettings.java/right.java
     }
 
     private final Index index;
@@ -37,32 +43,49 @@ public final class ViewSettings {
     private final FieldType type;
     private final float boost;
     private final TermVector termvector;
-
     public ViewSettings(final JSONObject json) {
         this(json, getDefaultSettings());
     }
-
     public ViewSettings(final JSONObject json, final ViewSettings defaults) {
+<<<<<<< /usr/src/app/output/rnewson/couchdb-lucene/a26642d5ab84f52d51eca92ce9ee594420eb719e/src/main/java/com/github/rnewson/couchdb/lucene/couchdb/ViewSettings.java/left.java
         this(json.optString("field", null), json.optString("index", null), json.optString("store", null), json.optString("type", null), json.optString("boost", null), json.optString("termvector", null), defaults);
+||||||| /usr/src/app/output/rnewson/couchdb-lucene/a26642d5ab84f52d51eca92ce9ee594420eb719e/src/main/java/com/github/rnewson/couchdb/lucene/couchdb/ViewSettings.java/base.java
+        this(json.optString("field", null), json.optString("index", null), json.optString("store", null), json.optString("type", null), defaults);
+=======
+        this(json.optString("field", null), json.optString("index", null), json.optString("store", null), json.optString("type", null), json.optString("boost", null), defaults);
+>>>>>>> /usr/src/app/output/rnewson/couchdb-lucene/a26642d5ab84f52d51eca92ce9ee594420eb719e/src/main/java/com/github/rnewson/couchdb/lucene/couchdb/ViewSettings.java/right.java
     }
-
     public ViewSettings(final NativeObject obj) {
         this(obj, getDefaultSettings());
     }
-
     public ViewSettings(final NativeObject obj, final ViewSettings defaults) {
+<<<<<<< /usr/src/app/output/rnewson/couchdb-lucene/a26642d5ab84f52d51eca92ce9ee594420eb719e/src/main/java/com/github/rnewson/couchdb/lucene/couchdb/ViewSettings.java/left.java
         this(get(obj, "field"), get(obj, "index"), get(obj, "store"), get(obj, "type"), get(obj, "boost"), get(obj, "termvector"), defaults);
+||||||| /usr/src/app/output/rnewson/couchdb-lucene/a26642d5ab84f52d51eca92ce9ee594420eb719e/src/main/java/com/github/rnewson/couchdb/lucene/couchdb/ViewSettings.java/base.java
+        this(get(obj, "field"), get(obj, "index"), get(obj, "store"), get(obj, "type"), defaults);
+=======
+        this(get(obj, "field"), get(obj, "index"), get(obj, "store"), get(obj, "type"), get(obj, "boost"), defaults);
+>>>>>>> /usr/src/app/output/rnewson/couchdb-lucene/a26642d5ab84f52d51eca92ce9ee594420eb719e/src/main/java/com/github/rnewson/couchdb/lucene/couchdb/ViewSettings.java/right.java
     }
-
+<<<<<<< /usr/src/app/output/rnewson/couchdb-lucene/a26642d5ab84f52d51eca92ce9ee594420eb719e/src/main/java/com/github/rnewson/couchdb/lucene/couchdb/ViewSettings.java/left.java
     private ViewSettings(final String field, final String index, final String store, final String type, final String boost, final String termvector, final ViewSettings defaults) {
+||||||| /usr/src/app/output/rnewson/couchdb-lucene/a26642d5ab84f52d51eca92ce9ee594420eb719e/src/main/java/com/github/rnewson/couchdb/lucene/couchdb/ViewSettings.java/base.java
+    private ViewSettings(final String field, final String index, final String store, final String type, final ViewSettings defaults) {
+=======
+    private ViewSettings(final String field, final String index, final String store, final String type, final String boost, final ViewSettings defaults) {
+>>>>>>> /usr/src/app/output/rnewson/couchdb-lucene/a26642d5ab84f52d51eca92ce9ee594420eb719e/src/main/java/com/github/rnewson/couchdb/lucene/couchdb/ViewSettings.java/right.java
         this.field = field != null ? field : defaults.getField();
         this.index = index != null ? Index.valueOf(index.toUpperCase()) : defaults.getIndex();
         this.store = store != null ? Store.valueOf(store.toUpperCase()) : defaults.getStore();
         this.type = type != null ? FieldType.valueOf(type.toUpperCase()) : defaults.getFieldType();
+<<<<<<< /usr/src/app/output/rnewson/couchdb-lucene/a26642d5ab84f52d51eca92ce9ee594420eb719e/src/main/java/com/github/rnewson/couchdb/lucene/couchdb/ViewSettings.java/left.java
         this.boost = boost != null ? Float.valueOf(boost) : defaults.getBoost();
         this.termvector = termvector != null? TermVector.valueOf(termvector.toUpperCase()) : defaults.getTermVector();
+||||||| /usr/src/app/output/rnewson/couchdb-lucene/a26642d5ab84f52d51eca92ce9ee594420eb719e/src/main/java/com/github/rnewson/couchdb/lucene/couchdb/ViewSettings.java/base.java
+=======
+        this.boost = boost != null ? Float.valueOf(boost) : defaults.getBoost();
+>>>>>>> /usr/src/app/output/rnewson/couchdb-lucene/a26642d5ab84f52d51eca92ce9ee594420eb719e/src/main/java/com/github/rnewson/couchdb/lucene/couchdb/ViewSettings.java/right.java
     }
-
     public float getBoost() {
         return boost;
     }
