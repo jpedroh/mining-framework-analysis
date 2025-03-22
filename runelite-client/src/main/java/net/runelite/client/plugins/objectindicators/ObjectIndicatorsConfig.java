@@ -106,7 +106,7 @@ public interface ObjectIndicatorsConfig extends Config
 
 	@Alpha
 	@ConfigItem(
-		position = 5,
+		position = 3,
 		keyName = "fillColor",
 		name = "Fill color",
 		description = "Configures the color of the marked object's fill",
@@ -117,8 +117,15 @@ public interface ObjectIndicatorsConfig extends Config
 		return new Color(0, 0, 0, 0);
 	}
 
+	
 	@ConfigItem(
-		position = 6,
+<<<<<<< /usr/src/app/output/runelite/runelite/ed283ec054fbf2617b24f5ddeecf32ab4a4cb8e5/runelite-client/src/main/java/net/runelite/client/plugins/objectindicators/ObjectIndicatorsConfig.java/left.java
+		position = 4,
+||||||| /usr/src/app/output/runelite/runelite/ed283ec054fbf2617b24f5ddeecf32ab4a4cb8e5/runelite-client/src/main/java/net/runelite/client/plugins/objectindicators/ObjectIndicatorsConfig.java/base.java
+		position = 3,
+=======
+		position = 5,
+>>>>>>> /usr/src/app/output/runelite/runelite/ed283ec054fbf2617b24f5ddeecf32ab4a4cb8e5/runelite-client/src/main/java/net/runelite/client/plugins/objectindicators/ObjectIndicatorsConfig.java/right.java
 		keyName = "borderWidth",
 		name = "Border Width",
 		description = "Width of the marked object border",
@@ -130,7 +137,13 @@ public interface ObjectIndicatorsConfig extends Config
 	}
 
 	@ConfigItem(
-		position = 7,
+<<<<<<< /usr/src/app/output/runelite/runelite/ed283ec054fbf2617b24f5ddeecf32ab4a4cb8e5/runelite-client/src/main/java/net/runelite/client/plugins/objectindicators/ObjectIndicatorsConfig.java/left.java
+		position = 5,
+||||||| /usr/src/app/output/runelite/runelite/ed283ec054fbf2617b24f5ddeecf32ab4a4cb8e5/runelite-client/src/main/java/net/runelite/client/plugins/objectindicators/ObjectIndicatorsConfig.java/base.java
+		position = 4,
+=======
+		position = 6,
+>>>>>>> /usr/src/app/output/runelite/runelite/ed283ec054fbf2617b24f5ddeecf32ab4a4cb8e5/runelite-client/src/main/java/net/runelite/client/plugins/objectindicators/ObjectIndicatorsConfig.java/right.java
 		keyName = "outlineFeather",
 		name = "Outline feather",
 		description = "Specify between 0-4 how much of the model outline should be faded",
@@ -146,7 +159,7 @@ public interface ObjectIndicatorsConfig extends Config
 	}
 
 	@ConfigItem(
-		position = 8,
+		position = 6,
 		keyName = "rememberObjectColors",
 		name = "Remember color per object",
 		description = "Color objects using the color from time of marking"
