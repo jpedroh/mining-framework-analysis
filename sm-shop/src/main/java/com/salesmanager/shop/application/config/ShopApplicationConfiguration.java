@@ -1,14 +1,14 @@
 package com.salesmanager.shop.application.config;
-
 import static org.springframework.http.MediaType.IMAGE_GIF;
 import static org.springframework.http.MediaType.IMAGE_JPEG;
 import static org.springframework.http.MediaType.IMAGE_PNG;
-
 import com.salesmanager.core.business.configuration.CoreApplicationConfiguration;
 import com.salesmanager.shop.filter.AdminFilter;
 import com.salesmanager.shop.filter.CorsFilter;
 import com.salesmanager.shop.filter.StoreFilter;
+import com.salesmanager.shop.utils.ImageFilePath;
 import com.salesmanager.shop.utils.LabelUtils;
+import com.salesmanager.shop.utils.LocalImageFilePathUtils;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -43,154 +43,117 @@ import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 import org.springframework.web.servlet.view.tiles3.TilesView;
 import org.springframework.web.servlet.view.tiles3.TilesViewResolver;
 
-@Configuration
-@ComponentScan({"com.salesmanager.shop", "com.salesmanager.core.business"})
-@Import({CoreApplicationConfiguration.class}) // import sm-core configurations
-@ImportResource({"classpath:/spring/shopizer-shop-context.xml"})
-@EnableWebSecurity
-public class ShopApplicationConfiguration extends WebMvcConfigurerAdapter {
-
+@Configuration @ComponentScan(value = { "com.salesmanager.shop", "com.salesmanager.core.business" }) @Import(value = { CoreApplicationConfiguration.class }) @ImportResource(value = { "classpath:/spring/shopizer-shop-context.xml" }) @EnableWebSecurity public class ShopApplicationConfiguration extends WebMvcConfigurerAdapter {
   protected final Log logger = LogFactory.getLog(getClass());
 
   @Inject private DataSource dataSource;
 
   @Inject private TextEncryptor textEncryptor;
+
   @Inject private MerchantStoreArgumentResolver merchantStoreArgumentResolver;
+
   @Inject private LanguageArgumentResolver languageArgumentResolver;
 
-  @EventListener(ApplicationReadyEvent.class)
-  public void applicationReadyCode() {
+  @EventListener(value = ApplicationReadyEvent.class) public void applicationReadyCode() {
     String workingDir = System.getProperty("user.dir");
     System.out.println("Current working directory : " + workingDir);
   }
 
   /** Configure TilesConfigurer. */
-  @Bean
-  public TilesConfigurer tilesConfigurer() {
+  @Bean public TilesConfigurer tilesConfigurer() {
     TilesConfigurer tilesConfigurer = new TilesConfigurer();
-    tilesConfigurer.setDefinitions(
-        "/WEB-INF/tiles/tiles-admin.xml",
-        "/WEB-INF/tiles/tiles-shop.xml");
+    tilesConfigurer.setDefinitions("/WEB-INF/tiles/tiles-admin.xml", "/WEB-INF/tiles/tiles-shop.xml");
     tilesConfigurer.setCheckRefresh(true);
     return tilesConfigurer;
   }
 
   /** Configure ViewResolvers to deliver preferred views. */
-  @Bean
-  public TilesViewResolver tilesViewResolver() {
+  @Bean public TilesViewResolver tilesViewResolver() {
     final TilesViewResolver resolver = new TilesViewResolver();
     resolver.setViewClass(TilesView.class);
     resolver.setOrder(0);
     return resolver;
   }
 
-  @Bean
-  public DeviceHandlerMethodArgumentResolver deviceHandlerMethodArgumentResolver() {
+  @Bean public DeviceHandlerMethodArgumentResolver deviceHandlerMethodArgumentResolver() {
     return new DeviceHandlerMethodArgumentResolver();
   }
 
-  @Override
-  public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+  @Override public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
     argumentResolvers.add(deviceHandlerMethodArgumentResolver());
     argumentResolvers.add(merchantStoreArgumentResolver);
     argumentResolvers.add(languageArgumentResolver);
   }
 
-  @Override
-  public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+  @Override public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
     converters.add(new MappingJackson2HttpMessageConverter());
   }
 
-  @Override
-  public void addViewControllers(ViewControllerRegistry registry) {
+  @Override public void addViewControllers(ViewControllerRegistry registry) {
     registry.addViewController("/").setViewName("shop");
   }
 
-  @Override
-  public void addInterceptors(InterceptorRegistry registry) {
-    // Changes the locale when a 'locale' request parameter is sent; e.g. /?locale=de
+  @Override public void addInterceptors(InterceptorRegistry registry) {
     registry.addInterceptor(localeChangeInterceptor());
-
-    registry
-        .addInterceptor(storeFilter())
-        // store web front filter
-        .addPathPatterns("/shop/**")
-        // customer section filter
-        .addPathPatterns("/customer/**");
-
-    registry
-        .addInterceptor(corsFilter())
-        // public services cors filter
-        .addPathPatterns("/services/**")
-        // REST api
-        .addPathPatterns("/api/**");
-
-    // admin panel filter
+    registry.addInterceptor(storeFilter()).addPathPatterns("/shop/**").addPathPatterns("/customer/**");
+    registry.addInterceptor(corsFilter()).addPathPatterns("/services/**").addPathPatterns("/api/**");
     registry.addInterceptor(adminFilter()).addPathPatterns("/admin/**");
   }
 
-  @Override
-  public void configureViewResolvers(ViewResolverRegistry registry) {
+  @Override public void configureViewResolvers(ViewResolverRegistry registry) {
     InternalResourceViewResolver internalResourceViewResolver = new InternalResourceViewResolver();
     internalResourceViewResolver.setPrefix("/WEB-INF/views/");
     internalResourceViewResolver.setSuffix(".jsp");
     registry.viewResolver(internalResourceViewResolver);
   }
 
-  @Bean
-  public ByteArrayHttpMessageConverter byteArrayHttpMessageConverter() {
+  @Bean public ByteArrayHttpMessageConverter byteArrayHttpMessageConverter() {
     List<MediaType> supportedMediaTypes = Arrays.asList(IMAGE_JPEG, IMAGE_GIF, IMAGE_PNG);
-
-    ByteArrayHttpMessageConverter byteArrayHttpMessageConverter =
-        new ByteArrayHttpMessageConverter();
+    ByteArrayHttpMessageConverter byteArrayHttpMessageConverter = new ByteArrayHttpMessageConverter();
     byteArrayHttpMessageConverter.setSupportedMediaTypes(supportedMediaTypes);
     return byteArrayHttpMessageConverter;
   }
 
-  @Bean
-  public LocaleChangeInterceptor localeChangeInterceptor() {
+  @Bean public LocaleChangeInterceptor localeChangeInterceptor() {
     return new LocaleChangeInterceptor();
   }
 
-  @Bean
-  public StoreFilter storeFilter() {
+  @Bean public StoreFilter storeFilter() {
     return new StoreFilter();
   }
 
-  @Bean
-  public CorsFilter corsFilter() {
+  @Bean public CorsFilter corsFilter() {
     return new CorsFilter();
   }
 
-  @Bean
-  public AdminFilter adminFilter() {
+  @Bean public AdminFilter adminFilter() {
     return new AdminFilter();
   }
 
-  @Bean
-  public SessionLocaleResolver localeResolver() {
+  @Bean public SessionLocaleResolver localeResolver() {
     SessionLocaleResolver slr = new SessionLocaleResolver();
     slr.setDefaultLocale(Locale.ENGLISH);
     return slr;
   }
 
-  @Bean
-  public ReloadableResourceBundleMessageSource messageSource() {
-    ReloadableResourceBundleMessageSource messageSource =
-        new ReloadableResourceBundleMessageSource();
-    messageSource.setBasenames(
-        "classpath:bundles/shopizer",
-        "classpath:bundles/messages",
-        "classpath:bundles/shipping",
-        "classpath:bundles/payment");
-
+  @Bean public ReloadableResourceBundleMessageSource messageSource() {
+    ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+    messageSource.setBasenames("classpath:bundles/shopizer", "classpath:bundles/messages", "classpath:bundles/shipping", "classpath:bundles/payment");
     messageSource.setDefaultEncoding("UTF-8");
     return messageSource;
   }
 
-  @Bean
-  public LabelUtils messages() {
+  @Bean public LabelUtils messages() {
     return new LabelUtils();
   }
 
+
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  @Bean public ImageFilePath img() {
+    LocalImageFilePathUtils localImageFilePathUtils = new LocalImageFilePathUtils();
+    localImageFilePathUtils.setBasePath("/static");
+    return localImageFilePathUtils;
+  }
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/d6c9e148840f85d4426ea278fdb832236d757ec9/sm-shop/src/main/java/com/salesmanager/shop/application/config/ShopApplicationConfiguration.java/right.java
 }
