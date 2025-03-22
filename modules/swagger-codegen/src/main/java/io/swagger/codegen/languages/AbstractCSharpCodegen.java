@@ -545,6 +545,11 @@ public abstract class AbstractCSharpCodegen extends DefaultCodegen implements Co
         this.sourceFolder = sourceFolder;
     }
 
+    public String testPackageName() {
+        return this.packageName + ".Test";
+    }
+
+    
     @Override
     public String toEnumVarName(String name, String datatype) {
         String enumName = sanitizeName(name);
@@ -593,8 +598,4 @@ public abstract class AbstractCSharpCodegen extends DefaultCodegen implements Co
         }
     }
     */
-
-    public String testPackageName() {
-        return this.packageName + ".Test";
-    }
 }
