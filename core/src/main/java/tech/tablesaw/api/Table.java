@@ -138,6 +138,9 @@ public class Table extends Relation implements Iterable<Row> {
     public static Table create() {
         return new Table();
     }
+    public static Table create(Column<?>... columns) {
+        return new Table(columns);
+    }
 
     /**
      * Returns a new, empty table (without rows or columns) with the given name
@@ -145,15 +148,15 @@ public class Table extends Relation implements Iterable<Row> {
     public static Table create(String tableName) {
         return new Table(tableName);
     }
+    public static Table create(String name, Column<?>... columns) {
+        return new Table(name, columns);
+    }
 
     /**
      * Returns a new table with the given columns
      *
      * @param columns one or more columns, all of the same @code{column.size()}
      */
-    public static Table create(Column<?>... columns) {
-        return new Table(columns);
-    }
 
     /**
      * Returns a new table with the given columns and given name
@@ -161,9 +164,6 @@ public class Table extends Relation implements Iterable<Row> {
      * @param name the name for this table 
      * @param columns one or more columns, all of the same @code{column.size()}
      */
-    public static Table create(String name, Column<?>... columns) {
-        return new Table(name, columns);
-    }
 
     /**
      * Returns a sort Key that can be used for simple or chained comparator sorting
@@ -464,7 +464,13 @@ public class Table extends Relation implements Iterable<Row> {
      * @return An array two tables, with the first table having the proportion specified in the method parameter,
      * and the second table having the balance of the rows
      */
+<<<<<<< /usr/src/app/output/jtablesaw/tablesaw/81525146a0c2c139a353f623350c7198264cb353/core/src/main/java/tech/tablesaw/api/Table.java/left.java
+    public Table[] stratifiedSampleSplit(CategoricalColumn column, double table1Proportion) {
+||||||| /usr/src/app/output/jtablesaw/tablesaw/81525146a0c2c139a353f623350c7198264cb353/core/src/main/java/tech/tablesaw/api/Table.java/base.java
+    public Table[] stratifiedSampleSplit {
+=======
     public Table[] stratifiedSampleSplit(CategoricalColumn<?> column, double table1Proportion) {
+>>>>>>> /usr/src/app/output/jtablesaw/tablesaw/81525146a0c2c139a353f623350c7198264cb353/core/src/main/java/tech/tablesaw/api/Table.java/right.java
         Preconditions.checkArgument(containsColumn(column),
                 "The categorical column must be part of the table, you can create a string column and add it to this table before sampling.");
         final Table first = emptyCopy();
@@ -478,6 +484,13 @@ public class Table extends Relation implements Iterable<Row> {
         
         return new Table[]{ first, second };
     }
+    /**
+     * Splits the table into two stratified samples, this uses the specified column to divide the table into groups, randomly assigning records to each according to the proportion given in trainingProportion. 
+     * @param column the column to be used for the stratified sampling
+     * @param table1Proportion The proportion to go in the first table
+     * @return An array two tables, with the first table having the proportion specified in the method parameter,
+     * and the second table having the balance of the rows
+     */
 
     /**
      * Returns a table consisting of randomly selected records from this table. The sample size is based on the
@@ -657,6 +670,11 @@ public class Table extends Relation implements Iterable<Row> {
         return rowIndexes;
     }
 
+    public Table rows(int... rowNumbers) {
+        Preconditions.checkArgument(Ints.max(rowNumbers) <= rowCount());
+        return where(Selection.with(rowNumbers));
+    }
+
     /**
      * Adds a single row to this table from sourceTable, copying every column in sourceTable
      *
@@ -679,11 +697,6 @@ public class Table extends Relation implements Iterable<Row> {
         Row row = new Row(Table.this);
         row.at(rowIndex);
         return row;
-    }
-
-    public Table rows(int... rowNumbers) {
-        Preconditions.checkArgument(Ints.max(rowNumbers) <= rowCount());
-        return where(Selection.with(rowNumbers));
     }
 
     public Table dropRows(int... rowNumbers) {
