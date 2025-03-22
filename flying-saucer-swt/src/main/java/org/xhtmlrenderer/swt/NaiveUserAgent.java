@@ -223,7 +223,7 @@ public class NaiveUserAgent implements UserAgentCallback {
             if (result.isAbsolute()) {
                 return result.toString();
             }
-            XRLog.load(uri + " is not a URL; may be relative. Testing using parent URL " + _baseURL);
+            XRLog.load(Level.FINE, uri + " is not a URL; may be relative. Testing using parent URL " + _baseURL);
             URI baseURI = new URI(_baseURL);
             if(!baseURI.isOpaque()) {
                 // uri.resolve(child) only works for opaque URIs.

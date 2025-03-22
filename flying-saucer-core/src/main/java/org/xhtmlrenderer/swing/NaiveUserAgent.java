@@ -35,6 +35,7 @@ import java.net.URLConnection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.logging.Level;
+
 import javax.imageio.ImageIO;
 
 import org.xhtmlrenderer.event.DocumentListener;
@@ -377,7 +378,7 @@ public class NaiveUserAgent implements UserAgentCallback, DocumentListener {
             }
         }
 
-       // _baseURL is guaranteed to be non-null at this point.
+        // _baseURL is guaranteed to be non-null at this point.
         // test if the URI is valid; if not, try to assign the base url as its parent
         Throwable t;
         try {
@@ -385,7 +386,7 @@ public class NaiveUserAgent implements UserAgentCallback, DocumentListener {
             if (result.isAbsolute()) {
                 return result.toString();
             }
-            XRLog.load(uri + " is not a URL; may be relative. Testing using parent URL " + _baseURL);
+            XRLog.load(Level.FINE, uri + " is not a URL; may be relative. Testing using parent URL " + _baseURL);
             URI baseURI = new URI(_baseURL);
             if(!baseURI.isOpaque()) {
                 // uri.resolve(child) only works for opaque URIs.
