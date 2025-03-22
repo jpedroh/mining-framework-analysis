@@ -1,6 +1,7 @@
 package tech.tablesaw.api;
-
+import java.util.HashMap;
 import com.google.common.base.Preconditions;
+import java.util.Map;
 import tech.tablesaw.columns.Column;
 import tech.tablesaw.columns.SkipColumnType;
 import tech.tablesaw.columns.StringParser;
@@ -14,57 +15,59 @@ import tech.tablesaw.columns.strings.StringColumnType;
 import tech.tablesaw.columns.times.TimeColumnType;
 import tech.tablesaw.io.csv.CsvReadOptions;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public interface ColumnType {
+  Map<String, ColumnType> values = new HashMap<>();
 
-    Map<String, ColumnType> values = new HashMap<>();
+  IntColumnType INTEGER = IntColumnType.INSTANCE;
 
-    // standard column types
-    IntColumnType INTEGER = IntColumnType.INSTANCE;
-    FloatColumnType FLOAT = FloatColumnType.INSTANCE;
-    BooleanColumnType BOOLEAN = BooleanColumnType.INSTANCE;
-    StringColumnType STRING = StringColumnType.INSTANCE;
-    DoubleColumnType DOUBLE = DoubleColumnType.INSTANCE;
-    DateColumnType LOCAL_DATE = DateColumnType.INSTANCE;
-    DateTimeColumnType LOCAL_DATE_TIME = DateTimeColumnType.INSTANCE;
-    TimeColumnType LOCAL_TIME = TimeColumnType.INSTANCE;
-    SkipColumnType SKIP = SkipColumnType.INSTANCE;
+  FloatColumnType FLOAT = FloatColumnType.INSTANCE;
 
-    static void register(ColumnType type) {
-        values.put(type.name(), type);
+  BooleanColumnType BOOLEAN = BooleanColumnType.INSTANCE;
+
+  StringColumnType STRING = StringColumnType.INSTANCE;
+
+  DoubleColumnType DOUBLE = DoubleColumnType.INSTANCE;
+
+  DateColumnType LOCAL_DATE = DateColumnType.INSTANCE;
+
+  DateTimeColumnType LOCAL_DATE_TIME = DateTimeColumnType.INSTANCE;
+
+  TimeColumnType LOCAL_TIME = TimeColumnType.INSTANCE;
+
+  SkipColumnType SKIP = SkipColumnType.INSTANCE;
+
+  static void register(ColumnType type) {
+    values.put(type.name(), type);
+  }
+
+  static ColumnType[] values() {
+    return values.values().toArray(new ColumnType[0]);
+  }
+
+  static ColumnType valueOf(String name) {
+    Preconditions.checkNotNull(name);
+    ColumnType result = values.get(name);
+    if (result == null) {
+      throw new IllegalArgumentException(name + " is not a registered column type.");
     }
+    return result;
+  }
 
-    static ColumnType[] values() {
-        return values.values().toArray(new ColumnType[0]);
-    }
+  Column<?> create(String name);
 
-    static ColumnType valueOf(String name) {
-        Preconditions.checkNotNull(name);
+  String name();
 
-        ColumnType result = values.get(name);
-        if (result == null) {
-            throw new IllegalArgumentException(name + " is not a registered column type.");
-        }
-        return result;
-    }
+  Comparable<?> getMissingValueIndicator();
 
-    Column<?> create(String name);
+  int byteSize();
 
-    String name();
+  String getPrinterFriendlyName();
 
-    Comparable<?> getMissingValueIndicator();
+  StringParser<?> defaultParser();
 
-    int byteSize();
+  StringParser<?> customParser(CsvReadOptions options);
 
-    String getPrinterFriendlyName();
-
-    StringParser<?> defaultParser();
-
-    StringParser<?> customParser(CsvReadOptions options);
-
-    default boolean compare(int rowNumber, Column<?> temp, Column<?> original) {
-        return original.get(rowNumber).equals(temp.get(temp.size() - 1));
-    }
+  default boolean compare(int rowNumber, Column<?> temp, Column<?> original) {
+    return original.get(rowNumber).equals(temp.get(temp.size() - 1));
+  }
 }
