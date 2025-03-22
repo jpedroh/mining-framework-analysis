@@ -38,7 +38,13 @@ public class ConfigTest {
     @Test
     public void testPathString() {
         Config cfg = Config.load(TEST_PATH);
+<<<<<<< /usr/src/app/output/tridentsdk/tridentsdk/b53a148ca59225dcbceb1fc65321f98a0c5c13f9/src/test/java/net/tridentsdk/config/ConfigTest.java/left.java
         assertNotNull(cfg);
+||||||| /usr/src/app/output/tridentsdk/tridentsdk/b53a148ca59225dcbceb1fc65321f98a0c5c13f9/src/test/java/net/tridentsdk/config/ConfigTest.java/base.java
+        assertNotNull(TEST_PATH, cfg.path().toString());
+=======
+        assertNotNull(TEST_PATH, cfg.getPath().toString());
+>>>>>>> /usr/src/app/output/tridentsdk/tridentsdk/b53a148ca59225dcbceb1fc65321f98a0c5c13f9/src/test/java/net/tridentsdk/config/ConfigTest.java/right.java
     }
 
     @Test
@@ -46,13 +52,25 @@ public class ConfigTest {
         // This is stupid
         Path path = Paths.get(TEST_PATH);
         Config cfg = Config.load(path);
+<<<<<<< /usr/src/app/output/tridentsdk/tridentsdk/b53a148ca59225dcbceb1fc65321f98a0c5c13f9/src/test/java/net/tridentsdk/config/ConfigTest.java/left.java
         assertNotNull(cfg);
+||||||| /usr/src/app/output/tridentsdk/tridentsdk/b53a148ca59225dcbceb1fc65321f98a0c5c13f9/src/test/java/net/tridentsdk/config/ConfigTest.java/base.java
+        assertNotNull(path, cfg.path());
+=======
+        assertNotNull(path, cfg.getPath());
+>>>>>>> /usr/src/app/output/tridentsdk/tridentsdk/b53a148ca59225dcbceb1fc65321f98a0c5c13f9/src/test/java/net/tridentsdk/config/ConfigTest.java/right.java
     }
 
     @Test
     public void testFile() {
         File file = new File(TEST_PATH);
         Config cfg = Config.load(file);
+<<<<<<< /usr/src/app/output/tridentsdk/tridentsdk/b53a148ca59225dcbceb1fc65321f98a0c5c13f9/src/test/java/net/tridentsdk/config/ConfigTest.java/left.java
         assertNotNull(cfg);
+||||||| /usr/src/app/output/tridentsdk/tridentsdk/b53a148ca59225dcbceb1fc65321f98a0c5c13f9/src/test/java/net/tridentsdk/config/ConfigTest.java/base.java
+        assertNotNull(file, cfg.file());
+=======
+        assertNotNull(file, cfg.getFile());
+>>>>>>> /usr/src/app/output/tridentsdk/tridentsdk/b53a148ca59225dcbceb1fc65321f98a0c5c13f9/src/test/java/net/tridentsdk/config/ConfigTest.java/right.java
     }
 }

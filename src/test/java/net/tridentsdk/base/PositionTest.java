@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
 
 public class PositionTest {
     private final World world = Mockito.mock(World.class);
-    
+
     @Test
     public void testWorld() {
         assertNotNull(new Position(this.world).world());
@@ -98,8 +98,26 @@ public class PositionTest {
         assertEquals(4, p0.getYaw(), 0);
         assertEquals(5, p0.getPitch(), 0);
 
+<<<<<<< /usr/src/app/output/tridentsdk/tridentsdk/b53a148ca59225dcbceb1fc65321f98a0c5c13f9/src/test/java/net/tridentsdk/base/PositionTest.java/left.java
+        assertEquals(p0.intX() / 16, p0.getChunkX());
+        assertEquals(p0.intZ() / 16, p0.getChunkZ());
+
+        p0.set(1D, 2D, 3D);
+        assertEquals(1, p0.x(), 0);
+        assertEquals(2, p0.y(), 0);
+        assertEquals(3, p0.z(), 0);
+        assertEquals(4, p0.yaw(), 0);
+        assertEquals(5, p0.pitch(), 0);
+
+        assertEquals(p0.intX() / 16, p0.getChunkX());
+        assertEquals(p0.intZ() / 16, p0.getChunkZ());
+||||||| /usr/src/app/output/tridentsdk/tridentsdk/b53a148ca59225dcbceb1fc65321f98a0c5c13f9/src/test/java/net/tridentsdk/base/PositionTest.java/base.java
+        assertEquals(p0.intX() / 16, p0.getChunkX());
+        assertEquals(p0.intZ() / 16, p0.getChunkZ());
+=======
         assertEquals(p0.getIntX() / 16, p0.getChunkX());
         assertEquals(p0.getIntZ() / 16, p0.getChunkZ());
+>>>>>>> /usr/src/app/output/tridentsdk/tridentsdk/b53a148ca59225dcbceb1fc65321f98a0c5c13f9/src/test/java/net/tridentsdk/base/PositionTest.java/right.java
     }
 
     @Test
