@@ -301,8 +301,24 @@ public class ProductApi {
 	 *                   <p>
 	 *                   /api/product/123
 	 */
-   
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/46758d35ec27b6bf4e9d907ed025d6950b3f4f11/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/product/ProductApi.java/left.java
 	@RequestMapping(value = {"/product/{id}","/products/{id}"}, method = RequestMethod.GET)
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/46758d35ec27b6bf4e9d907ed025d6950b3f4f11/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/product/ProductApi.java/base.java
+	@RequestMapping(value = "/product/{id}", method = RequestMethod.GET)
+=======
+	/**
+	 * use v2 api with product sku
+	 * @param id
+	 * @param lang
+	 * @param merchantStore
+	 * @param language
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
+	/**
+	@RequestMapping(value = "/product/{id}", method = RequestMethod.GET)
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/46758d35ec27b6bf4e9d907ed025d6950b3f4f11/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/product/ProductApi.java/right.java
 	@ApiOperation(httpMethod = "GET", value = "Get a product by id", notes = "For administration and shop purpose. Specifying ?merchant is required otherwise it falls back to DEFAULT")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Single product found", response = ReadableProduct.class) })
