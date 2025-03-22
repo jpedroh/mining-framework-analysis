@@ -52,7 +52,6 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 import de.uni_koblenz.jgralab.schema.exception.InheritanceException;
 import de.uni_koblenz.jgralab.schema.exception.SchemaException;
 
-
 public class GraphClassImpl extends
 		AttributedElementClassImpl<GraphClass, Graph> implements GraphClass {
 
