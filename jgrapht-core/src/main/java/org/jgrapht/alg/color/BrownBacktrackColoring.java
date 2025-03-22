@@ -51,7 +51,12 @@ public class BrownBacktrackColoring<V, E> implements VertexColoringAlgorithm<V>
      */
     public BrownBacktrackColoring(Graph<V, E> graph)
     {
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/e9c2ae5e4bc145c7cb69daed5efea1a772be815c/jgrapht-core/src/main/java/org/jgrapht/alg/color/BrownBacktrackColoring.java/left.java
+||||||| /usr/src/app/output/jgrapht/jgrapht/e9c2ae5e4bc145c7cb69daed5efea1a772be815c/jgrapht-core/src/main/java/org/jgrapht/alg/color/BrownBacktrackColoring.java/base.java
+        this.graph = Objects.requireNonNull(graph, "Graph cannot be null");
+=======
         Objects.requireNonNull(graph, "Graph cannot be null");
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/e9c2ae5e4bc145c7cb69daed5efea1a772be815c/jgrapht-core/src/main/java/org/jgrapht/alg/color/BrownBacktrackColoring.java/right.java
         final int numVertices = graph.vertexSet().size();
         vertexList = new ArrayList<>(numVertices);
         neighbors = new int[numVertices][];

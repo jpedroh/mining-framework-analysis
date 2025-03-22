@@ -53,7 +53,6 @@ public class ChordalGraphMaxCliqueFinder<V, E>
     CliqueAlgorithm<V>
 {
     private final Graph<V, E> graph;
-    private final ChordalityInspector.IterationOrder iterationOrder;
 
     private Clique<V> maximumClique;
     private boolean isChordal = true;
@@ -82,7 +81,13 @@ public class ChordalGraphMaxCliqueFinder<V, E>
         Graph<V, E> graph, ChordalityInspector.IterationOrder iterationOrder)
     {
         this.graph = Objects.requireNonNull(graph);
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/e9c2ae5e4bc145c7cb69daed5efea1a772be815c/jgrapht-core/src/main/java/org/jgrapht/alg/clique/ChordalGraphMaxCliqueFinder.java/left.java
+||||||| /usr/src/app/output/jgrapht/jgrapht/e9c2ae5e4bc145c7cb69daed5efea1a772be815c/jgrapht-core/src/main/java/org/jgrapht/alg/clique/ChordalGraphMaxCliqueFinder.java/base.java
+        chordalityInspector = new ChordalityInspector<>(graph, iterationOrder);
+        coloringAlgorithm = new ChordalGraphColoring<>(graph, iterationOrder);
+=======
         this.iterationOrder = Objects.requireNonNull(iterationOrder);
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/e9c2ae5e4bc145c7cb69daed5efea1a772be815c/jgrapht-core/src/main/java/org/jgrapht/alg/clique/ChordalGraphMaxCliqueFinder.java/right.java
     }
 
     /**
