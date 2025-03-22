@@ -82,6 +82,17 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 
 	// ------------- GRAPH VARIABLES -------------
 
+	@Override
+	public GraphClass getAttributedElementClass() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Class<? extends Graph> getSchemaClass() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	/**
 	 * the unique id of the graph in the schema

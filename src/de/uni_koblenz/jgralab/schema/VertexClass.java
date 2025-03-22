@@ -41,7 +41,7 @@ import de.uni_koblenz.jgralab.Vertex;
 
 /**
  * Represents a VertexClass in the Schema.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public interface VertexClass extends GraphElementClass<VertexClass, Vertex> {
@@ -51,10 +51,10 @@ public interface VertexClass extends GraphElementClass<VertexClass, Vertex> {
 	/**
 	 * adds a superclass to the list of superclasses, all attributes get
 	 * inherited from those classes
-	 * 
+	 *
 	 * @param superClass
 	 *            the vertex class to be added to the list of superclasses
-	 * 
+	 *
 	 */
 	public void addSuperClass(VertexClass superClass);
 
@@ -68,10 +68,23 @@ public interface VertexClass extends GraphElementClass<VertexClass, Vertex> {
 
 	public Set<IncidenceClass> getOwnAndInheritedFarIncidenceClasses();
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/7a018e9d43bc940e7e850dfd4c259a57166af59c/src/de/uni_koblenz/jgralab/schema/VertexClass.java/left.java
 	public boolean isValidFromFor(EdgeClass ec);
-
 	public boolean isValidToFor(EdgeClass ec);
 
+	@Override
+	public Class<? extends Vertex> getSchemaClass();
+
+||||||| /usr/src/app/output/jgralab/jgralab/7a018e9d43bc940e7e850dfd4c259a57166af59c/src/de/uni_koblenz/jgralab/schema/VertexClass.java/base.java
+	//public void addInIncidenceClass(IncidenceClass ic);
+
+	//public void addOutIncidenceClass(IncidenceClass ic);
+
+	@Override
+	public Class<? extends Vertex> getSchemaClass();
+
+=======
+>>>>>>> /usr/src/app/output/jgralab/jgralab/7a018e9d43bc940e7e850dfd4c259a57166af59c/src/de/uni_koblenz/jgralab/schema/VertexClass.java/right.java
 	public Set<EdgeClass> getValidToEdgeClasses();
 
 	public Set<EdgeClass> getValidFromEdgeClasses();

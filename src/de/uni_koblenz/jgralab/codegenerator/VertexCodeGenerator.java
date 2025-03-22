@@ -46,7 +46,7 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 /**
  * This class is used by the method Schema.commit() to generate the Java-classes
  * that implement the VertexClasses of a graph schema.
- * 
+ *
  * @author ist@uni-koblenz.de
  */
 public class VertexCodeGenerator extends AttributedElementCodeGenerator {
@@ -105,7 +105,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
 	/**
 	 * creates the methods <code>getFirstEdgeName()</code>
-	 * 
+	 *
 	 * @param createClass
 	 *            if set to true, the method bodies will also be created
 	 * @return the CodeBlock that contains the methods
@@ -150,7 +150,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	/**
 	 * creates the method <code>getFirstEdgeName()</code> for the given
 	 * EdgeClass
-	 * 
+	 *
 	 * @param createClass
 	 *            if set to true, the method bodies will also be created
 	 * @param withOrientation
@@ -187,7 +187,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
 	/**
 	 * Creates <code>getNextVertexClassName()</code> methods
-	 * 
+	 *
 	 * @param createClass
 	 *            if set to true, also the method bodies will be created
 	 * @return the CodeBlock that contains the methods
@@ -214,7 +214,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 	/**
 	 * Creates <code>getNextVertexClassName()</code> method for given
 	 * VertexClass
-	 * 
+	 *
 	 * @param createClass
 	 *            if set to true, the method bodies will also be created
 	 * @return the CodeBlock that contains the method
@@ -244,7 +244,7 @@ public class VertexCodeGenerator extends AttributedElementCodeGenerator {
 
 	/**
 	 * Creates <code>getEdgeNameIncidences</code> methods.
-	 * 
+	 *
 	 * @param createClass
 	 *            if set to true, also the method bodies will be created
 	 * @return the CodeBlock that contains the code for the
