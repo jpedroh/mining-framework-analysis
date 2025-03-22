@@ -1,6 +1,5 @@
 package com.xxl.job.admin.core.trigger;
 
-import com.xxl.job.admin.core.enums.ExecutorFailStrategyEnum;
 import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLog;
@@ -36,9 +35,18 @@ public class XxlJobTrigger {
      * 			<0: use param from job info config
      *
      */
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/ccb72d1146b56a19353422c5d2a1a56fe76aa4b3/xxl-job-admin/src/main/java/com/xxl/job/admin/core/trigger/XxlJobTrigger.java/left.java
+    public static void trigger(int jobId) {
+        // load data 获取执行器
+||||||| /usr/src/app/output/xuxueli/xxl-job/ccb72d1146b56a19353422c5d2a1a56fe76aa4b3/xxl-job-admin/src/main/java/com/xxl/job/admin/core/trigger/XxlJobTrigger.java/base.java
+    public static void trigger(int jobId) {
+
+        // load data
+=======
     public static void trigger(int jobId, int failRetryCount, TriggerTypeEnum triggerType) {
 
         // load data
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/ccb72d1146b56a19353422c5d2a1a56fe76aa4b3/xxl-job-admin/src/main/java/com/xxl/job/admin/core/trigger/XxlJobTrigger.java/right.java
         XxlJobInfo jobInfo = XxlJobDynamicScheduler.xxlJobInfoDao.loadById(jobId);              // job info
         if (jobInfo == null) {
             logger.warn(">>>>>>>>>>>> trigger fail, jobId invalid，jobId={}", jobId);
@@ -55,7 +63,7 @@ public class XxlJobTrigger {
         ExecutorRouteStrategyEnum executorRouteStrategyEnum = ExecutorRouteStrategyEnum.match(jobInfo.getExecutorRouteStrategy(), null);    // route strategy
         ArrayList<String> addressList = (ArrayList<String>) group.getRegistryList();
 
-        // broadcast
+        // broadcast 分片广播
         if (ExecutorRouteStrategyEnum.SHARDING_BROADCAST == executorRouteStrategyEnum && CollectionUtils.isNotEmpty(addressList)) {
             for (int i = 0; i < addressList.size(); i++) {
                 String address = addressList.get(i);
@@ -64,6 +72,7 @@ public class XxlJobTrigger {
                 XxlJobLog jobLog = new XxlJobLog();
                 jobLog.setJobGroup(jobInfo.getJobGroup());
                 jobLog.setJobId(jobInfo.getId());
+                //给jobLog分配Id
                 XxlJobDynamicScheduler.xxlJobLogDao.save(jobLog);
                 logger.debug(">>>>>>>>>>> xxl-job trigger start, jobId:{}", jobLog.getId());
 
@@ -106,7 +115,27 @@ public class XxlJobTrigger {
                 triggerResult = runExecutor(triggerParam, address);     // update03
                 triggerMsgSb.append("<br><br><span style=\"color:#00c0ef;\" > >>>>>>>>>>>"+ I18nUtil.getString("jobconf_trigger_run") +"<<<<<<<<<<< </span><br>").append(triggerResult.getMsg());
 
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/ccb72d1146b56a19353422c5d2a1a56fe76aa4b3/xxl-job-admin/src/main/java/com/xxl/job/admin/core/trigger/XxlJobTrigger.java/left.java
+                    // 4.3、trigger (fail retry)  调度失败后重试
+                    if (triggerResult.getCode()!=ReturnT.SUCCESS_CODE && failStrategy == ExecutorFailStrategyEnum.FAIL_TRIGGER_RETRY) {
+                        triggerResult = runExecutor(triggerParam, address);  // update04
+                        triggerMsgSb.append("<br><br><span style=\"color:#F39C12;\" > >>>>>>>>>>>"+ I18nUtil.getString("jobconf_fail_trigger_retry") +"<<<<<<<<<<< </span><br>").append(triggerResult.getMsg());
+                    }
+                }
+
+                // 5、save trigger-info
+||||||| /usr/src/app/output/xuxueli/xxl-job/ccb72d1146b56a19353422c5d2a1a56fe76aa4b3/xxl-job-admin/src/main/java/com/xxl/job/admin/core/trigger/XxlJobTrigger.java/base.java
+                    // 4.3、trigger (fail retry)
+                    if (triggerResult.getCode()!=ReturnT.SUCCESS_CODE && failStrategy == ExecutorFailStrategyEnum.FAIL_TRIGGER_RETRY) {
+                        triggerResult = runExecutor(triggerParam, address);  // update04
+                        triggerMsgSb.append("<br><br><span style=\"color:#F39C12;\" > >>>>>>>>>>>"+ I18nUtil.getString("jobconf_fail_trigger_retry") +"<<<<<<<<<<< </span><br>").append(triggerResult.getMsg());
+                    }
+                }
+
+                // 5、save trigger-info
+=======
                 // 4、save trigger-info
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/ccb72d1146b56a19353422c5d2a1a56fe76aa4b3/xxl-job-admin/src/main/java/com/xxl/job/admin/core/trigger/XxlJobTrigger.java/right.java
                 jobLog.setExecutorAddress(triggerResult.getContent());
                 jobLog.setTriggerCode(triggerResult.getCode());
                 jobLog.setTriggerMsg(triggerMsgSb.toString());
