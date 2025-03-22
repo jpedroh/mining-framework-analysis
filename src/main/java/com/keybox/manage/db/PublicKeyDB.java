@@ -18,6 +18,7 @@ package com.keybox.manage.db;
 import com.keybox.manage.model.PublicKey;
 import com.keybox.manage.model.SortedSet;
 import com.keybox.manage.util.DBUtils;
+import com.keybox.manage.util.EncryptionUtil;
 import com.keybox.manage.util.SSHUtil;
 import org.apache.commons.lang3.StringUtils;
 
@@ -39,12 +40,12 @@ public class PublicKeyDB {
 
     public static final String SORT_BY_KEY_NM = "key_nm";
     public static final String SORT_BY_PROFILE = "profile_id";
+    public static final String SORT_BY_KEY_TP = "key_tp";
+    public static final String SORT_BY_KEY_FP = "key_fp";
     public static final String SORT_BY_TYPE= "type";
     public static final String SORT_BY_FINGERPRINT= "fingerprint";
     public static final String SORT_BY_CREATE_DT= "create_dt";
     public static final String SORT_BY_USERNAME= "username";
-
-
     /**
      * disables SSH key
      *
@@ -67,7 +68,6 @@ public class PublicKeyDB {
         
          
     }
-
     /**
       * re-enables SSH key
       * 
@@ -89,7 +89,6 @@ public class PublicKeyDB {
         DBUtils.closeConn(con);
 
     }
-
     /**
      * checks fingerprint to determine if key is disabled
      * 
@@ -163,10 +162,14 @@ public class PublicKeyDB {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
+                String strTempPublicKey = rs.getString("public_key");
                 PublicKey publicKey = new PublicKey();
                 publicKey.setId(rs.getLong("id"));
                 publicKey.setKeyNm(rs.getString("key_nm"));
-                publicKey.setPublicKey(rs.getString("public_key"));
+                publicKey.setPublicKey(strTempPublicKey);
+                publicKey.setKeyTp(EncryptionUtil.generateKeyType(strTempPublicKey));
+                publicKey.setKeyFp(EncryptionUtil.generateFingerprint(strTempPublicKey));
+                
                 publicKey.setProfile(ProfileDB.getProfile(con, rs.getLong("profile_id")));
                 publicKey.setType(SSHUtil.getKeyType(publicKey.getPublicKey()));
                 publicKey.setFingerprint(SSHUtil.getFingerprint(publicKey.getPublicKey()));
@@ -215,10 +218,13 @@ public class PublicKeyDB {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
+                String strTempPublicKey = rs.getString("public_key");
                 PublicKey publicKey = new PublicKey();
                 publicKey.setId(rs.getLong("id"));
                 publicKey.setKeyNm(rs.getString("key_nm"));
-                publicKey.setPublicKey(rs.getString("public_key"));
+                publicKey.setPublicKey(strTempPublicKey);
+                publicKey.setKeyTp(EncryptionUtil.generateKeyType(strTempPublicKey));
+                publicKey.setKeyFp(EncryptionUtil.generateFingerprint(strTempPublicKey));
                 publicKey.setProfile(ProfileDB.getProfile(con, rs.getLong("profile_id")));
                 publicKey.setType(SSHUtil.getKeyType(publicKey.getPublicKey()));
                 publicKey.setFingerprint(SSHUtil.getFingerprint(publicKey.getPublicKey()));
@@ -278,10 +284,13 @@ public class PublicKeyDB {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
+                String strTempPublicKey = rs.getString("public_key");
                 publicKey = new PublicKey();
                 publicKey.setId(rs.getLong("id"));
                 publicKey.setKeyNm(rs.getString("key_nm"));
-                publicKey.setPublicKey(rs.getString("public_key"));
+                publicKey.setPublicKey(rs.getString(strTempPublicKey));
+                publicKey.setKeyTp(EncryptionUtil.generateKeyType(strTempPublicKey));
+                publicKey.setKeyFp(EncryptionUtil.generateFingerprint(strTempPublicKey));
                 publicKey.setProfile(ProfileDB.getProfile(con, rs.getLong("profile_id")));
                 publicKey.setType(rs.getString("type"));
                 publicKey.setFingerprint(rs.getString("fingerprint"));
@@ -308,16 +317,28 @@ public class PublicKeyDB {
         Connection con = null;
         try {
             con = DBUtils.getConn();
+<<<<<<< /usr/src/app/output/bastillion-io/bastillion/e6ae3604ccbbaf42827e6eb4749121a250b95571/src/main/java/com/keybox/manage/db/PublicKeyDB.java/left.java
+            PreparedStatement stmt = con.prepareStatement("insert into public_keys(key_nm, public_key, key_tp, key_fp, profile_id, user_id) values (?,?,?,?,?,?)");
+||||||| /usr/src/app/output/bastillion-io/bastillion/e6ae3604ccbbaf42827e6eb4749121a250b95571/src/main/java/com/keybox/manage/db/PublicKeyDB.java/base.java
+            PreparedStatement stmt = con.prepareStatement("insert into public_keys(key_nm, public_key, profile_id, user_id) values (?,?,?,?)");
+=======
             PreparedStatement stmt = con.prepareStatement("insert into public_keys(key_nm, type, fingerprint, public_key, profile_id, user_id) values (?,?,?,?,?,?)");
+>>>>>>> /usr/src/app/output/bastillion-io/bastillion/e6ae3604ccbbaf42827e6eb4749121a250b95571/src/main/java/com/keybox/manage/db/PublicKeyDB.java/right.java
             stmt.setString(1, publicKey.getKeyNm());
             stmt.setString(2, SSHUtil.getKeyType(publicKey.getPublicKey()));
+<<<<<<< /usr/src/app/output/bastillion-io/bastillion/e6ae3604ccbbaf42827e6eb4749121a250b95571/src/main/java/com/keybox/manage/db/PublicKeyDB.java/left.java
+            stmt.setString(3, publicKey.getKeyTp());
+            stmt.setString(4, publicKey.getKeyFp());
+||||||| /usr/src/app/output/bastillion-io/bastillion/e6ae3604ccbbaf42827e6eb4749121a250b95571/src/main/java/com/keybox/manage/db/PublicKeyDB.java/base.java
+=======
             stmt.setString(3, SSHUtil.getFingerprint(publicKey.getPublicKey()));
             stmt.setString(4, publicKey.getPublicKey().trim());
+>>>>>>> /usr/src/app/output/bastillion-io/bastillion/e6ae3604ccbbaf42827e6eb4749121a250b95571/src/main/java/com/keybox/manage/db/PublicKeyDB.java/right.java
             if (publicKey.getProfile() == null || publicKey.getProfile().getId() == null) {
-                stmt.setNull(5, Types.NULL);
-            } else {
-                stmt.setLong(5, publicKey.getProfile().getId());
-            }
+            stmt.setNull(5, Types.NULL);
+        } else {
+            stmt.setLong(5, publicKey.getProfile().getId());
+        }
             stmt.setLong(6, publicKey.getUserId());
             stmt.execute();
 
@@ -342,11 +363,25 @@ public class PublicKeyDB {
         Connection con = null;
         try {
             con = DBUtils.getConn();
+<<<<<<< /usr/src/app/output/bastillion-io/bastillion/e6ae3604ccbbaf42827e6eb4749121a250b95571/src/main/java/com/keybox/manage/db/PublicKeyDB.java/left.java
+            PreparedStatement stmt = con.prepareStatement("update public_keys set key_nm=?, public_key=?, key_tp=?, key_fp=?, profile_id=? where id=? and user_id=?");
+||||||| /usr/src/app/output/bastillion-io/bastillion/e6ae3604ccbbaf42827e6eb4749121a250b95571/src/main/java/com/keybox/manage/db/PublicKeyDB.java/base.java
+            PreparedStatement stmt = con.prepareStatement("update public_keys set key_nm=?, public_key=?, profile_id=? where id=? and user_id=?");
+=======
             PreparedStatement stmt = con.prepareStatement("update public_keys set key_nm=?, type=?, fingerprint=?, public_key=?, profile_id=? where id=? and user_id=? and enabled=true");
+>>>>>>> /usr/src/app/output/bastillion-io/bastillion/e6ae3604ccbbaf42827e6eb4749121a250b95571/src/main/java/com/keybox/manage/db/PublicKeyDB.java/right.java
             stmt.setString(1, publicKey.getKeyNm());
+<<<<<<< /usr/src/app/output/bastillion-io/bastillion/e6ae3604ccbbaf42827e6eb4749121a250b95571/src/main/java/com/keybox/manage/db/PublicKeyDB.java/left.java
+            stmt.setString(2, publicKey.getPublicKey());
+            stmt.setString(3, publicKey.getKeyTp());
+            stmt.setString(4, publicKey.getKeyFp());
+||||||| /usr/src/app/output/bastillion-io/bastillion/e6ae3604ccbbaf42827e6eb4749121a250b95571/src/main/java/com/keybox/manage/db/PublicKeyDB.java/base.java
+            stmt.setString(2, publicKey.getPublicKey());
+=======
             stmt.setString(2, SSHUtil.getKeyType(publicKey.getPublicKey()));
             stmt.setString(3, SSHUtil.getFingerprint(publicKey.getPublicKey()));
             stmt.setString(4, publicKey.getPublicKey().trim());
+>>>>>>> /usr/src/app/output/bastillion-io/bastillion/e6ae3604ccbbaf42827e6eb4749121a250b95571/src/main/java/com/keybox/manage/db/PublicKeyDB.java/right.java
             if (publicKey.getProfile() == null || publicKey.getProfile().getId() == null) {
                 stmt.setNull(5, Types.NULL);
             } else {

@@ -26,6 +26,8 @@ public class PublicKey {
     String username;
     String keyNm;
     String publicKey;
+    String keyTp;
+    String keyFp;
     String type;
     String fingerprint;
     boolean enabled;
@@ -47,6 +49,22 @@ public class PublicKey {
 
     public void setPublicKey(String publicKey) {
         this.publicKey = publicKey;
+    }
+    
+    public String getKeyTp() {
+        return keyTp;
+    }
+
+    public void setKeyTp(String keyTp) {
+        this.keyTp = keyTp;
+    }
+    
+    public String getKeyFp() {
+        return keyFp;
+    }
+
+    public void setKeyFp(String keyFp) {
+        this.keyFp = keyFp;
     }
 
     public Long getId() {
