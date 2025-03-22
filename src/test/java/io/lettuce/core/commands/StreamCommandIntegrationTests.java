@@ -426,7 +426,6 @@ public class StreamCommandIntegrationTests extends TestSupport {
     }
 
     @Test
-    @EnabledOnCommand("XAUTOCLAIM") // Redis 6.2
     void xpendingWithArgs() {
 
         redis.xgroupCreate(StreamOffset.latest(key), "group", XGroupCreateArgs.Builder.mkstream());
