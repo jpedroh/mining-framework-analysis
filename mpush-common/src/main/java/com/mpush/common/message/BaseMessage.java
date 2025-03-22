@@ -1,24 +1,4 @@
-/*
- * (C) Copyright 2015-2016 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * Contributors:
- *   ohun@live.cn (夜色)
- */
-
 package com.mpush.common.message;
-
 import com.mpush.api.Message;
 import com.mpush.api.connection.Connection;
 import com.mpush.api.connection.SessionContext;
@@ -27,7 +7,6 @@ import com.mpush.tools.common.IOUtils;
 import com.mpush.tools.common.Profiler;
 import com.mpush.tools.config.CC;
 import io.netty.channel.ChannelFutureListener;
-
 import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
@@ -39,187 +18,172 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author ohun@live.cn
  */
 public abstract class BaseMessage implements Message {
-    private static final byte STATUS_DECODED = 1;
-    private static final byte STATUS_ENCODED = 2;
-    private static final AtomicInteger ID_SEQ = new AtomicInteger();
-    transient protected Packet packet;
-    transient protected Connection connection;
-    transient private byte status = 0;
+  private static final byte STATUS_DECODED = 1;
 
-    public BaseMessage(Packet packet, Connection connection) {
-        this.packet = packet;
-        this.connection = connection;
-    }
+  private static final byte STATUS_ENCODED = 2;
 
-    @Override
-    public void decodeBody() {
-        if ((status & STATUS_DECODED) == 0) {
-            status |= STATUS_DECODED;
+  private static final AtomicInteger ID_SEQ = new AtomicInteger();
 
-            if (packet.getBodyLength() > 0) {
-                if (packet.hasFlag(Packet.FLAG_JSON_BODY)) {
-                    decodeJsonBody0();
-                } else {
-                    decodeBinaryBody0();
-                }
-            }
+  transient protected Packet packet;
 
+  transient protected Connection connection;
+
+  transient private byte status = 0;
+
+  public BaseMessage(Packet packet, Connection connection) {
+    this.packet = packet;
+    this.connection = connection;
+  }
+
+  @Override public void decodeBody() {
+    if ((status & STATUS_DECODED) == 0) {
+      status |= STATUS_DECODED;
+      if (packet.getBodyLength() > 0) {
+        if (packet.hasFlag(Packet.FLAG_JSON_BODY)) {
+          decodeJsonBody0();
+        } else {
+          decodeBinaryBody0();
         }
+      }
     }
+  }
 
-    @Override
-    public void encodeBody() {
-        if ((status & STATUS_ENCODED) == 0) {
-            status |= STATUS_ENCODED;
+  @Override public void encodeBody() {
+    if ((status & STATUS_ENCODED) == 0) {
+      status |= STATUS_ENCODED;
+      if (packet.hasFlag(Packet.FLAG_JSON_BODY)) {
+        encodeJsonBody0();
+      } else {
+        encodeBinaryBody0();
+      }
+    }
+  }
 
-            if (packet.hasFlag(Packet.FLAG_JSON_BODY)) {
-                encodeJsonBody0();
-            } else {
-                encodeBinaryBody0();
-            }
+  private void decodeBinaryBody0() {
+    byte[] tmp = packet.body;
+    if (packet.hasFlag(Packet.FLAG_CRYPTO)) {
+      if (connection.getSessionContext().cipher != null) {
+        tmp = connection.getSessionContext().cipher.decrypt(tmp);
+      }
+    }
+    if (packet.hasFlag(Packet.FLAG_COMPRESS)) {
+      tmp = IOUtils.decompress(tmp);
+    }
+    if (tmp.length == 0) {
+      throw new RuntimeException("message decode ex");
+    }
+    packet.body = tmp;
+    Profiler.enter("time cost on [body decode]");
+    decode(packet.body);
+    Profiler.release();
+    packet.body = null;
+  }
+
+  private void encodeBinaryBody0() {
+    Profiler.enter("time cost on [body encode]");
+    byte[] tmp = encode();
+    Profiler.release();
+    if (tmp != null && tmp.length > 0) {
+      if (tmp.length > CC.mp.core.compress_threshold) {
+        byte[] result = IOUtils.compress(tmp);
+        if (result.length > 0) {
+          tmp = result;
+          packet.addFlag(Packet.FLAG_COMPRESS);
         }
-
-    }
-
-    private void decodeBinaryBody0() {
-        //1.解密
-        byte[] tmp = packet.body;
-        if (packet.hasFlag(Packet.FLAG_CRYPTO)) {
-            if (connection.getSessionContext().cipher != null) {
-                tmp = connection.getSessionContext().cipher.decrypt(tmp);
-            }
+      }
+      SessionContext context = connection.getSessionContext();
+      if (context.cipher != null) {
+        byte[] result = context.cipher.encrypt(tmp);
+        if (result.length > 0) {
+          tmp = result;
+          packet.addFlag(Packet.FLAG_CRYPTO);
         }
-        //2.解压
-        if (packet.hasFlag(Packet.FLAG_COMPRESS)) {
-            tmp = IOUtils.decompress(tmp);
-        }
-
-        if (tmp.length == 0) {
-            throw new RuntimeException("message decode ex");
-        }
-
-        packet.body = tmp;
-        Profiler.enter("time cost on [body decode]");
-        decode(packet.body);
-        Profiler.release();
-        packet.body = null;// 释放内存
+      }
+      packet.body = tmp;
     }
+  }
 
-    private void encodeBinaryBody0() {
-        Profiler.enter("time cost on [body encode]");
-        byte[] tmp = encode();
-        Profiler.release();
-        if (tmp != null && tmp.length > 0) {
-            //1.压缩
-            if (tmp.length > CC.mp.core.compress_threshold) {
-                byte[] result = IOUtils.compress(tmp);
-                if (result.length > 0) {
-                    tmp = result;
-                    packet.addFlag(Packet.FLAG_COMPRESS);
-                }
-            }
+  private void decodeJsonBody0() {
+    Map<String, Object> body = packet.getBody();
+    decodeJsonBody(body);
+  }
 
-            //2.加密
-            SessionContext context = connection.getSessionContext();
-            if (context.cipher != null) {
-                byte[] result = context.cipher.encrypt(tmp);
-                if (result.length > 0) {
-                    tmp = result;
-                    packet.addFlag(Packet.FLAG_CRYPTO);
-                }
-            }
-            packet.body = tmp;
-        }
+  private void encodeJsonBody0() {
+    packet.setBody(encodeJsonBody());
+  }
+
+  private void encodeBodyRaw() {
+    if ((status & STATUS_ENCODED) == 0) {
+      status |= STATUS_ENCODED;
+      if (packet.hasFlag(Packet.FLAG_JSON_BODY)) {
+        encodeJsonBody0();
+      } else {
+        packet.body = encode();
+      }
     }
+  }
 
-    private void decodeJsonBody0() {
-        Map<String, Object> body = packet.getBody();
-        decodeJsonBody(body);
-    }
+  public abstract void decode(byte[] body);
 
-    private void encodeJsonBody0() {
-        packet.setBody(encodeJsonBody());
-    }
+  public abstract byte[] encode();
 
-    private void encodeBodyRaw() {
-        if ((status & STATUS_ENCODED) == 0) {
-            status |= STATUS_ENCODED;
+  protected void decodeJsonBody(Map<String, Object> body) {
+  }
 
-            if (packet.hasFlag(Packet.FLAG_JSON_BODY)) {
-                encodeJsonBody0();
-            } else {
-                packet.body = encode();
-            }
-        }
-    }
+  protected Map<String, Object> encodeJsonBody() {
+    return null;
+  }
 
-    public abstract void decode(byte[] body);
+  @Override public Packet getPacket() {
+    return packet;
+  }
 
-    public abstract byte[] encode();
+  @Override public Connection getConnection() {
+    return connection;
+  }
 
-    protected void decodeJsonBody(Map<String, Object> body) {
+  @Override public void send(ChannelFutureListener listener) {
+    encodeBody();
+    connection.send(packet, listener);
+  }
 
-    }
+  @Override public void sendRaw(ChannelFutureListener listener) {
+    encodeBodyRaw();
+    connection.send(packet, listener);
+  }
 
-    protected Map<String, Object> encodeJsonBody() {
-        return null;
-    }
+  public void send() {
+    send(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+  }
 
-    @Override
-    public Packet getPacket() {
-        return packet;
-    }
+  public void sendRaw() {
+    sendRaw(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+  }
 
-    @Override
-    public Connection getConnection() {
-        return connection;
-    }
+  public void close() {
+    send(ChannelFutureListener.CLOSE);
+  }
 
-    @Override
-    public void send(ChannelFutureListener listener) {
-        encodeBody();
-        connection.send(packet, listener);
-    }
+  protected static int genSessionId() {
+    return ID_SEQ.incrementAndGet();
+  }
 
-    @Override
-    public void sendRaw(ChannelFutureListener listener) {
-        encodeBodyRaw();
-        connection.send(packet, listener);
-    }
+  public int getSessionId() {
+    return packet.sessionId;
+  }
 
-    public void send() {
-        send(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-    }
+  public BaseMessage setRecipient(InetSocketAddress recipient) {
+    packet.setRecipient(recipient);
+    return this;
+  }
 
-    public void sendRaw() {
-        sendRaw(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-    }
+  public void setPacket(Packet packet) {
+    this.packet = packet;
+  }
 
-    public void close() {
-        send(ChannelFutureListener.CLOSE);
-    }
+  public void setConnection(Connection connection) {
+    this.connection = connection;
+  }
 
-    protected static int genSessionId() {
-        return ID_SEQ.incrementAndGet();
-    }
-
-    public int getSessionId() {
-        return packet.sessionId;
-    }
-
-    public BaseMessage setRecipient(InetSocketAddress recipient) {
-        packet.setRecipient(recipient);
-        return this;
-    }
-
-    public void setPacket(Packet packet) {
-        this.packet = packet;
-    }
-
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-    }
-
-    @Override
-    public abstract String toString();
+  @Override public abstract String toString();
 }
