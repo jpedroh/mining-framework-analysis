@@ -414,6 +414,23 @@ public class ApiBuilder {
      */
     public static void crud(@NotNull String path, @NotNull CrudHandler crudHandler, @NotNull Set<Role> permittedRoles) {
         path = path.startsWith("/") ? path : "/" + path;
+<<<<<<< /usr/src/app/output/tipsy/javalin/dd05152e7ad3a40e5cfe0410555a3c67de532872/src/main/java/io/javalin/apibuilder/ApiBuilder.java/left.java
+    
+        if(path.startsWith("/:")) {
+           throw new IllegalArgumentException("The provided path is missing an actual resource base, try something like '/users/:user-id'");
+        }
+
+        if(!path.contains("/:") || path.lastIndexOf("/") > path.lastIndexOf("/:")) {
+            throw new IllegalArgumentException("The path for the crud handler expects a path-parameter at the end of the provided path e.g. '/users/:user-id'");
+        }
+
+        final String SEPARATOR = "/:";
+        String resourceBase = path.substring(0, path.lastIndexOf(SEPARATOR));
+        String resourceId = path.substring(path.lastIndexOf(SEPARATOR) + SEPARATOR.length());
+||||||| /usr/src/app/output/tipsy/javalin/dd05152e7ad3a40e5cfe0410555a3c67de532872/src/main/java/io/javalin/apibuilder/ApiBuilder.java/base.java
+        String resourceBase = path.split("/")[1];
+        String resourceId = path.split("/")[2];
+=======
         if (path.startsWith("/:")) {
             throw new IllegalArgumentException("CrudHandler requires a resource base at the beginning of the provided path e.g. '/users/:user-id'");
         }
@@ -423,6 +440,7 @@ public class ApiBuilder {
         String SEPARATOR = "/:";
         String resourceBase = path.substring(0, path.lastIndexOf(SEPARATOR));
         String resourceId = path.substring(path.lastIndexOf(SEPARATOR) + SEPARATOR.length());
+>>>>>>> /usr/src/app/output/tipsy/javalin/dd05152e7ad3a40e5cfe0410555a3c67de532872/src/main/java/io/javalin/apibuilder/ApiBuilder.java/right.java
         staticInstance().get(prefixPath(path), ctx -> crudHandler.getOne(ctx, ctx.pathParam(resourceId)), permittedRoles);
         staticInstance().get(prefixPath(resourceBase), crudHandler::getAll, permittedRoles);
         staticInstance().post(prefixPath(resourceBase), crudHandler::create, permittedRoles);
