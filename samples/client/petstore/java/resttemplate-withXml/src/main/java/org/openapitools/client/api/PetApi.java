@@ -182,6 +182,7 @@ public class PetApi {
         }
         
 
+
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
         final HttpHeaders localVarHeaderParams = new HttpHeaders();
         final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();

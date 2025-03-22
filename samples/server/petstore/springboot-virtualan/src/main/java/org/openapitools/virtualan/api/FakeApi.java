@@ -37,7 +37,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import javax.annotation.Generated;
 
@@ -136,7 +135,7 @@ public interface FakeApi {
     default ResponseEntity<OuterComposite> fakeOuterCompositeSerialize(
         @Parameter(name = "body", description = "Input composite as post body") @Valid @RequestBody(required = false) OuterComposite body
     ) {
-        getRequest().ifPresent(request -> {
+                getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("*/*"))) {
                     String exampleString = "{ \"my_string\" : \"my_string\", \"my_number\" : 0.8008281904610115, \"my_boolean\" : true }";
@@ -294,7 +293,7 @@ public interface FakeApi {
     default ResponseEntity<Client> testClientModel(
         @Parameter(name = "body", description = "client model", required = true) @Valid @RequestBody Client body
     ) {
-        getRequest().ifPresent(request -> {
+                getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"client\" : \"client\" }";
@@ -577,7 +576,7 @@ public interface FakeApi {
         @Parameter(name = "requiredFile", description = "file to upload", required = true) @RequestPart(value = "requiredFile", required = true) MultipartFile requiredFile,
         @Parameter(name = "additionalMetadata", description = "Additional data to pass to server") @Valid @RequestParam(value = "additionalMetadata", required = false) String additionalMetadata
     ) {
-        getRequest().ifPresent(request -> {
+                getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"code\" : 0, \"type\" : \"type\", \"message\" : \"message\" }";

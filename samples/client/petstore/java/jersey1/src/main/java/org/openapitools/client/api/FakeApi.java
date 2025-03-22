@@ -765,7 +765,6 @@ if (param2 != null)
 	
     // create path and map variables
     String localVarPath = "/fake/test-query-parameters";
-
     // query params
     List<Pair> localVarQueryParams = new ArrayList<Pair>();
     List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();

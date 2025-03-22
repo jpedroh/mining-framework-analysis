@@ -124,6 +124,7 @@ public class FakeApi {
         Object localVarPostBody = body;
         
 
+
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
         final HttpHeaders localVarHeaderParams = new HttpHeaders();
         final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
@@ -247,6 +248,7 @@ public class FakeApi {
         Object localVarPostBody = body;
         
 
+
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
         final HttpHeaders localVarHeaderParams = new HttpHeaders();
         final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
@@ -291,6 +293,7 @@ public class FakeApi {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'body' when calling testBodyWithFileSchema");
         }
         
+
 
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
         final HttpHeaders localVarHeaderParams = new HttpHeaders();
@@ -391,6 +394,7 @@ public class FakeApi {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'body' when calling testClientModel");
         }
         
+
 
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
         final HttpHeaders localVarHeaderParams = new HttpHeaders();
@@ -752,6 +756,7 @@ public class FakeApi {
         }
         
 
+
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
         final HttpHeaders localVarHeaderParams = new HttpHeaders();
         final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
@@ -829,6 +834,7 @@ public class FakeApi {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'context' when calling testQueryParameterCollectionFormat");
         }
         
+
 
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
         final HttpHeaders localVarHeaderParams = new HttpHeaders();

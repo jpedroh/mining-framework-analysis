@@ -72,7 +72,7 @@ public interface FakeClassnameTestApi {
     default ResponseEntity<Client> testClassname(
         @Parameter(name = "body", description = "client model", required = true) @Valid @RequestBody Client body
     ) {
-        getRequest().ifPresent(request -> {
+                getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"client\" : \"client\" }";

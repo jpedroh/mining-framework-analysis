@@ -149,6 +149,7 @@ public class JavaMSF4JServerCodegen extends AbstractJavaJAXRSServerCodegen {
         }
     }
 
+    @Override
     public ModelsMap postProcessModelsEnum(ModelsMap objs) {
         objs = super.postProcessModelsEnum(objs);
 

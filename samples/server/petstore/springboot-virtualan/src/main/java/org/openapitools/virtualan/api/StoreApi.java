@@ -28,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import javax.annotation.Generated;
 
@@ -137,7 +136,7 @@ public interface StoreApi {
     default ResponseEntity<Order> getOrderById(
         @Min(1L) @Max(5L) @Parameter(name = "order_id", description = "ID of pet that needs to be fetched", required = true) @PathVariable("order_id") Long orderId
     ) {
-        getRequest().ifPresent(request -> {
+                getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"petId\" : 6, \"quantity\" : 1, \"id\" : 0, \"shipDate\" : \"2000-01-23T04:56:07.000+00:00\", \"complete\" : false, \"status\" : \"placed\" }";
@@ -184,7 +183,7 @@ public interface StoreApi {
     default ResponseEntity<Order> placeOrder(
         @Parameter(name = "body", description = "order placed for purchasing the pet", required = true) @Valid @RequestBody Order body
     ) {
-        getRequest().ifPresent(request -> {
+                getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
                     String exampleString = "{ \"petId\" : 6, \"quantity\" : 1, \"id\" : 0, \"shipDate\" : \"2000-01-23T04:56:07.000+00:00\", \"complete\" : false, \"status\" : \"placed\" }";

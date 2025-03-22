@@ -162,6 +162,7 @@ public class UserApi {
         }
         
 
+
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
         final HttpHeaders localVarHeaderParams = new HttpHeaders();
         final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
@@ -206,6 +207,7 @@ public class UserApi {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'username' when calling deleteUser");
         }
         
+
         // create path and map variables
         final Map<String, Object> uriVariables = new HashMap<String, Object>();
         uriVariables.put("username", username);
@@ -257,6 +259,7 @@ public class UserApi {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'username' when calling getUserByName");
         }
         
+
         // create path and map variables
         final Map<String, Object> uriVariables = new HashMap<String, Object>();
         uriVariables.put("username", username);
@@ -357,6 +360,7 @@ public class UserApi {
         Object localVarPostBody = null;
         
 
+
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
         final HttpHeaders localVarHeaderParams = new HttpHeaders();
         final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
@@ -408,6 +412,7 @@ public class UserApi {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'body' when calling updateUser");
         }
         
+
         // create path and map variables
         final Map<String, Object> uriVariables = new HashMap<String, Object>();
         uriVariables.put("username", username);

@@ -118,6 +118,7 @@ public class StoreApi {
         Object localVarPostBody = null;
         
 
+
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
         final HttpHeaders localVarHeaderParams = new HttpHeaders();
         final MultiValueMap<String, String> localVarCookieParams = new LinkedMultiValueMap<String, String>();
@@ -219,6 +220,7 @@ public class StoreApi {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'body' when calling placeOrder");
         }
         
+
 
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
         final HttpHeaders localVarHeaderParams = new HttpHeaders();

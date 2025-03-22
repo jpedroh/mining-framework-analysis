@@ -76,6 +76,7 @@ public class StoreApi {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'orderId' when calling deleteOrder");
         }
         
+
         // create path and map variables
         final Map<String, Object> uriVariables = new HashMap<String, Object>();
         uriVariables.put("order_id", orderId);
@@ -116,6 +117,7 @@ public class StoreApi {
     public ResponseEntity<Map<String, Integer>> getInventoryWithHttpInfo() throws RestClientException {
         Object localVarPostBody = null;
         
+
 
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
         final HttpHeaders localVarHeaderParams = new HttpHeaders();
@@ -166,6 +168,7 @@ public class StoreApi {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'orderId' when calling getOrderById");
         }
         
+
         // create path and map variables
         final Map<String, Object> uriVariables = new HashMap<String, Object>();
         uriVariables.put("order_id", orderId);
@@ -217,6 +220,7 @@ public class StoreApi {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'body' when calling placeOrder");
         }
         
+
 
         final MultiValueMap<String, String> localVarQueryParams = new LinkedMultiValueMap<String, String>();
         final HttpHeaders localVarHeaderParams = new HttpHeaders();
