@@ -172,12 +172,13 @@ public interface VirtualMachineSupport extends AccessControlledService {
 
     /**
      * Provides the userData as stored by the cloud provider (encrypted)
+     *
      * @param vmId the unique ID of the target server
      * @return the current userData of the virtual machine as stored by the provider
      * @throws InternalException an error occurred within the Dasein Cloud API implementation
-     * @throws CloudException an error occurred within the cloud provider
+     * @throws CloudException    an error occurred within the cloud provider
      */
-    public @Nullable String getUserData(@Nonnull String vmId) throws InternalException, CloudException;
+    public @Nullable String getUserData( @Nonnull String vmId ) throws InternalException, CloudException;
 
     /**
      * Provides all output from the console of the target server since the specified Unix time.

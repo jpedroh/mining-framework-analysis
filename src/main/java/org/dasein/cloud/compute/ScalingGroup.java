@@ -24,206 +24,163 @@ import java.util.*;
 
 public class ScalingGroup implements Serializable {
     private static final long serialVersionUID = -5317003700769693511L;
-    
-    private int                   defaultCooldown;
-    private long                  creationTimestamp;
-    private String                description;
-    private int                   maxServers;
-    private int                   minServers;
-    private String                name;
-    private String[]              providerDataCenterIds;
-    private String                providerLaunchConfigurationId;
-    private String                providerOwnerId;
-    private String                providerRegionId;
-    private String                providerScalingGroupId;
-    private String[]              providerServerIds;
-    private int                   targetCapacity;
-    private String                id;
-    private String[]              enabledMetrics;
-    private int                   healthCheckGracePeriod;
-    private String                healthCheckType;
-    private String[]              providerLoadBalancerNames;
-    private String                status;
-    private Collection<String[]>  suspendedProcesses;
-    private String[]              terminationPolicies;
-    private AutoScalingTag[]      tags;
+
+    private int                  defaultCooldown;
+    private long                 creationTimestamp;
+    private String               description;
+    private int                  maxServers;
+    private int                  minServers;
+    private String               name;
+    private String[]             providerDataCenterIds;
+    private String               providerLaunchConfigurationId;
+    private String               providerOwnerId;
+    private String               providerRegionId;
+    private String               providerScalingGroupId;
+    private String[]             providerServerIds;
+    private int                  targetCapacity;
+    private String               id;
+    private String[]             enabledMetrics;
+    private int                  healthCheckGracePeriod;
+    private String               healthCheckType;
+    private String[]             providerLoadBalancerNames;
+    private String               status;
+    private Collection<String[]> suspendedProcesses;
+    private String[]             terminationPolicies;
+    private AutoScalingTag[]     tags;
     // comma separated list
     private String[]              subnets;
-
     public ScalingGroup() { }
-
+    public ScalingGroup() {
+    }
     public String getId() {
         return id;
     }
-
     public void setId( String id ) {
         this.id = id;
     }
-
     public String[] getEnabledMetrics() {
         return enabledMetrics;
     }
-
     public void setEnabledMetrics( String[] metrics ) {
         this.enabledMetrics = metrics;
     }
-
     public int getHealthCheckGracePeriod() {
         return healthCheckGracePeriod;
     }
-
     public void setHealthCheckGracePeriod( int healthCheckGracePeriod ) {
         this.healthCheckGracePeriod = healthCheckGracePeriod;
     }
-
     public String getHealthCheckType() {
         return healthCheckType;
     }
-
     public void setHealthCheckType( String healthCheckType ) {
         this.healthCheckType = healthCheckType;
     }
-
     public String[] getProviderLoadBalancerNames() {
         return providerLoadBalancerNames;
     }
-
     public void setProviderLoadBalancerNames( String[] providerLoadBalancerNames ) {
         this.providerLoadBalancerNames = providerLoadBalancerNames;
     }
-
     public String getStatus() {
         return status;
     }
-
     public void setStatus( String status ) {
         this.status = status;
     }
-
     public Collection<String[]> getSuspendedProcesses() {
         return suspendedProcesses;
     }
-
     public void setSuspendedProcesses( Collection<String[]> suspendedProcesses ) {
         this.suspendedProcesses = suspendedProcesses;
     }
-
     public String[] getTerminationPolicies() {
         return terminationPolicies;
     }
-
     public void setTerminationPolicies( String[] terminationPolicies ) {
         this.terminationPolicies = terminationPolicies;
     }
-
     public int getDefaultCooldown() {
         return defaultCooldown;
     }
-
     public void setDefaultCooldown( int cooldown ) {
         this.defaultCooldown = cooldown;
     }
-
     public String getDescription() {
         return description;
     }
-
     public void setDescription( String description ) {
         this.description = description;
     }
-
     public int getMaxServers() {
         return maxServers;
     }
-
     public void setMaxServers( int maxServers ) {
         this.maxServers = maxServers;
     }
-
     public int getMinServers() {
         return minServers;
     }
-
     public void setMinServers( int minServers ) {
         this.minServers = minServers;
     }
-
     public String getName() {
         return name;
     }
-
     public void setName( String name ) {
         this.name = name;
     }
-
     public String[] getProviderDataCenterIds() {
         return providerDataCenterIds;
     }
-
     public void setProviderDataCenterIds( String[] providerDataCenterIds ) {
         this.providerDataCenterIds = providerDataCenterIds;
     }
-
     public String getProviderLaunchConfigurationId() {
         return providerLaunchConfigurationId;
     }
-
     public void setProviderLaunchConfigurationId( String providerLaunchConfigurationId ) {
         this.providerLaunchConfigurationId = providerLaunchConfigurationId;
     }
-
     public String getProviderOwnerId() {
         return providerOwnerId;
     }
-
     public void setProviderOwnerId( String providerOwnerId ) {
         this.providerOwnerId = providerOwnerId;
     }
-
     public String getProviderRegionId() {
         return providerRegionId;
     }
-
     public void setProviderRegionId( String providerRegionId ) {
         this.providerRegionId = providerRegionId;
     }
-
     public String getProviderScalingGroupId() {
         return providerScalingGroupId;
     }
-
     public void setProviderScalingGroupId( String providerScalingGroupId ) {
         this.providerScalingGroupId = providerScalingGroupId;
     }
-
     public void setProviderServerIds( String[] providerServerIds ) {
         this.providerServerIds = providerServerIds;
     }
-
     public String[] getProviderServerIds() {
         return providerServerIds;
     }
-
     public void setCreationTimestamp( long creationTimestamp ) {
         this.creationTimestamp = creationTimestamp;
     }
-
     public long getCreationTimestamp() {
         return creationTimestamp;
     }
-
     public void setTargetCapacity( int targetCapacity ) {
         this.targetCapacity = targetCapacity;
     }
-
     public int getTargetCapacity() {
         return targetCapacity;
     }
-
     public AutoScalingTag[] getTags() {
         return tags;
     }
-
     public Map<String, String> getTagsAsMap() {
         Map<String, String> tagsAsMap = new HashMap<String, String>();
         if( tags != null ) {
@@ -233,11 +190,9 @@ public class ScalingGroup implements Serializable {
         }
         return tagsAsMap;
     }
-
     public void setTags( AutoScalingTag[] tags ) {
         this.tags = tags;
     }
-
     @Deprecated
     public String getSubnetIds() {
         if(this.subnets == null || this.subnets.length == 0){
@@ -249,12 +204,10 @@ public class ScalingGroup implements Serializable {
         }
         return sb.deleteCharAt(sb.length()-1).toString();
     }
-
     @Deprecated
-    public void setSubnetIds(String subnetIds) { this.subnets = (subnetIds == null) ? new String[0] : subnetIds.split("\\s*,\\s*"); }
-
+    public void setSubnetIds( String subnetIds ) { this.subnets = (subnetIds == null) ? new String[0] : subnetIds.split("\\s*,\\s*"); }
     public String[] getSubnets() { return (this.subnets == null) ? new String[0] : this.subnets; }
-
     public void setSubnets(String[] subnets) {  this.subnets = subnets;  }
-
+    // comma separated list
+    
 }

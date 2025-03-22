@@ -551,6 +551,10 @@ public abstract class AbstractVLANSupport<T extends CloudProvider> implements VL
             updateInternetGatewayTags(internetGatewayId, asynchronous, tags);
         }
     }
+    @Override
+    public void updateInternetGatewayTags(@Nonnull String internetGatewayId, @Nonnull Tag... tags) throws CloudException, InternalException{
+        throw new OperationNotSupportedException("Internet Gateway tags are not supported in " + provider.getCloudName());
+    }
 
     @Override
     public void updateInternetGatewayTags(@Nonnull String[] internetGatewayIds, @Nonnull Tag... tags) throws CloudException, InternalException {
@@ -590,6 +594,31 @@ public abstract class AbstractVLANSupport<T extends CloudProvider> implements VL
         for (String internetGatewayId : internetGatewayIds) {
             removeInternetGatewayTags(internetGatewayId, tags);
         }
+    }
+
+    @Override
+    public void removeRoutingTableTags(@Nonnull String routingTableId, @Nonnull Tag... tags) throws CloudException, InternalException{
+        throw new OperationNotSupportedException("Routing table tags are not supported in " + provider.getCloudName());
+    }
+
+    @Override
+    public void removeInternetGatewayById( @Nonnull String id ) throws CloudException, InternalException {
+        throw new OperationNotSupportedException("Internet gateways are not currently implemented for " + getProvider().getCloudName());
+    }
+
+    @Override
+    public @Nonnull Collection<InternetGateway> listInternetGateways( @Nullable String vlanId ) throws CloudException, InternalException {
+        throw new OperationNotSupportedException("Internet gateways are not currently implemented for " + getProvider().getCloudName());
+    }
+
+    @Override
+    public @Nullable InternetGateway getInternetGatewayById( @Nonnull String gatewayId ) throws CloudException, InternalException {
+        throw new OperationNotSupportedException("Internet gateways are not currently implemented for " + getProvider().getCloudName());
+    }
+
+    @Override
+    public @Nullable String getAttachedInternetGatewayId( @Nonnull String vlanId ) throws CloudException, InternalException {
+        throw new OperationNotSupportedException("Internet gateways are not currently implemented for " + getProvider().getCloudName());
     }
 
     @Override
@@ -647,27 +676,4 @@ public abstract class AbstractVLANSupport<T extends CloudProvider> implements VL
         setInternetGatewayTags(new String[]{internetGatewayId}, tags);
     }
 
-    public void removeRoutingTableTags(@Nonnull String routingTableId, @Nonnull Tag... tags) throws CloudException, InternalException{
-        throw new OperationNotSupportedException("Routing table tags are not supported in " + provider.getCloudName());
-    }
-
-    @Override
-    public void removeInternetGatewayById( @Nonnull String id ) throws CloudException, InternalException {
-        throw new OperationNotSupportedException("Internet gateways are not currently implemented for " + getProvider().getCloudName());
-    }
-
-    @Override
-    public @Nonnull Collection<InternetGateway> listInternetGateways( @Nullable String vlanId ) throws CloudException, InternalException {
-        throw new OperationNotSupportedException("Internet gateways are not currently implemented for " + getProvider().getCloudName());
-    }
-
-    @Override
-    public @Nullable InternetGateway getInternetGatewayById( @Nonnull String gatewayId ) throws CloudException, InternalException {
-        throw new OperationNotSupportedException("Internet gateways are not currently implemented for " + getProvider().getCloudName());
-    }
-
-    @Override
-    public @Nullable String getAttachedInternetGatewayId( @Nonnull String vlanId ) throws CloudException, InternalException {
-        throw new OperationNotSupportedException("Internet gateways are not currently implemented for " + getProvider().getCloudName());
-    }
 }

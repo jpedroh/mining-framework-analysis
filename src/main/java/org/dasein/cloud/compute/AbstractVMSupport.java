@@ -151,7 +151,7 @@ public abstract class AbstractVMSupport<T extends CloudProvider> implements Virt
     }
 
     @Override
-    public @Nullable String getUserData( @Nonnull String vmId ) throws InternalException, CloudException {
+    public @Nullable String getUserData(@Nonnull String vmId) throws InternalException, CloudException {
         return null;
     }
 
@@ -532,11 +532,7 @@ public abstract class AbstractVMSupport<T extends CloudProvider> implements Virt
     }
 
     @Override
-    public @Nonnull Iterable<VirtualMachineProduct> listProducts(@Nonnull Architecture architecture) throws InternalException, CloudException {
-        return listProducts(architecture, null);
-    }
-
-    public @Nonnull Iterable<VirtualMachineProduct> listProducts(@Nonnull Architecture architecture, String preferedDataCenterId) throws InternalException, CloudException {
+    public @Nonnull Iterable<VirtualMachineProduct> listProducts( @Nonnull Architecture architecture ) throws InternalException, CloudException {
         APITrace.begin(getProvider(), "VM.listProducts");
         try {
             Cache<VirtualMachineProduct> cache = Cache.getInstance(getProvider(), "products" + architecture.name(), VirtualMachineProduct.class, CacheLevel.REGION_ACCOUNT, new TimePeriod<Day>(1, TimePeriod.DAY));
@@ -872,7 +868,7 @@ public abstract class AbstractVMSupport<T extends CloudProvider> implements Virt
     }
 
     @Override
-    public void removeTags(@Nonnull String vmId, @Nonnull Tag... tags) throws CloudException, InternalException {
+    public void removeTags( @Nonnull String vmId, @Nonnull Tag... tags ) throws CloudException, InternalException {
         // NO-OP
     }
 
@@ -902,7 +898,7 @@ public abstract class AbstractVMSupport<T extends CloudProvider> implements Virt
     }
 
     @Override
-    public @Nonnull String[] mapServiceAction(@Nonnull ServiceAction action) {
+    public @Nonnull String[] mapServiceAction( @Nonnull ServiceAction action ) {
         return new String[0];
     }
 

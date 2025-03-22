@@ -370,6 +370,7 @@ public interface LoadBalancerSupport extends AccessControlledService {
      */
     public void detachLoadBalancerFromSubnets(@Nonnull String fromLoadBalancerId, @Nonnull String ... subnetIdsToDelete) throws CloudException, InternalException;
 
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/146b8610ea9ba9a580381f7cff6a8230f04a7a81/src/main/java/org/dasein/cloud/network/LoadBalancerSupport.java/left.java
     /**
      * Modifies the attributes of a specified load balancer
      * @param id firewall id
@@ -387,13 +388,15 @@ public interface LoadBalancerSupport extends AccessControlledService {
      * @throws InternalException
      */
     public LbAttributesOptions getLoadBalancerAttributes(@Nonnull String id) throws CloudException, InternalException;
-
-    /**
+||||||| /usr/src/app/output/greese/dasein-cloud-core/146b8610ea9ba9a580381f7cff6a8230f04a7a81/src/main/java/org/dasein/cloud/network/LoadBalancerSupport.java/base.java
+=======
+    /*
      * Detach named healthCheck from named loadBalancer without deleting either.
      * @throws CloudException an error occurred with the cloud provider while performing this action
      * @throws InternalException an error occurred within the Dasein Cloud implementation while performing this action
      */
     public void detatchHealthCheck(String loadBalancerId, String heathcheckId) throws CloudException, InternalException;
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/146b8610ea9ba9a580381f7cff6a8230f04a7a81/src/main/java/org/dasein/cloud/network/LoadBalancerSupport.java/right.java
 
     /********************************** DEPRECATED METHODS *************************************/
 
