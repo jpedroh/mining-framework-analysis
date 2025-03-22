@@ -249,12 +249,20 @@ public class Page<T> {
 					+ "下一页 &#187;</a></li>\n");
 		}
 
+<<<<<<< /usr/src/app/output/thinkgem/jeesite/618aafef63176f57f1b37ce8ed27900defad488d/src/main/java/com/thinkgem/jeesite/common/persistence/Page.java/left.java
 		sb.append("<li class=\"disabled\"><a href=\"javascript:\" style=\"border:0;padding-top:1px;\">当前 ");
 		sb.append("<input type=\"text\" value=\""+pageNo+"\" style=\"width:30px;padding:0;margin:0 2px 3px 2px;text-align:center;\" ");
 		sb.append("onkeypress=\"if(window.event.keyCode==13) "+funcName+"(this.value,"+pageSize+");\"/> / ");
 		sb.append("<input type=\"text\" value=\""+pageSize+"\" style=\"width:30px;padding:0;margin:0 2px 3px 2px;text-align:center;\" ");
 		sb.append("onkeypress=\"if(window.event.keyCode==13) "+funcName+"("+pageNo+",this.value);\"/> 条，");
 		sb.append("共 " + count + " 条</a><li>\n");
+||||||| /usr/src/app/output/thinkgem/jeesite/618aafef63176f57f1b37ce8ed27900defad488d/src/main/java/com/thinkgem/jeesite/common/persistence/Page.java/base.java
+		sb.insert(0,"<ul>\n").append("</ul>\n");
+=======
+		sb.append("<li class=\"disabled\"><a href=\"javascript:\" style=\"border:0;padding-top:1px;\">每页<input type=\"text\" value=\""+
+				pageSize+"\" style=\"width:30px;padding:0;margin:0 2px 3px 2px;text-align:center;\" " +
+				"onkeypress=\"if(window.event.keyCode==13) "+funcName+"("+pageNo+",this.value);\"/>条，共 " + count + " 条</a><li>\n");
+>>>>>>> /usr/src/app/output/thinkgem/jeesite/618aafef63176f57f1b37ce8ed27900defad488d/src/main/java/com/thinkgem/jeesite/common/persistence/Page.java/right.java
 
 		sb.insert(0,"<ul>\n").append("</ul>\n");
 		
