@@ -57,8 +57,11 @@ public class DataFrameJoiner {
     private static final String TABLE_ALIAS = "T";
 
     private final Table table;
+
     private final String[] joinColumnNames;
+
     private final List<Integer> joinColumnIndexes;
+
     private final AtomicInteger joinTableId = new AtomicInteger(2);
 
     /**
@@ -67,6 +70,7 @@ public class DataFrameJoiner {
      * @param table The table to join on.
      * @param joinColumnNames The join column names to join on.
      */
+
     public DataFrameJoiner(Table table, String... joinColumnNames) {
         this.table = table;
         this.joinColumnNames = joinColumnNames;
@@ -82,6 +86,7 @@ public class DataFrameJoiner {
      * @param columnNames the column names to find indexes of.
      * @return a list of column indexes within the table.
      */
+
     private List<Integer> getJoinIndexes(Table table, String[] columnNames) {
         return Arrays.stream(columnNames).map(table::columnIndex).collect(Collectors.toList());
     }
@@ -91,6 +96,7 @@ public class DataFrameJoiner {
      *
      * @param tables The tables to join with
      */
+
     public Table inner(Table... tables) {
         return inner(false, tables);
     }
@@ -102,6 +108,7 @@ public class DataFrameJoiner {
      * have the same name if {@code true} the join will succeed and duplicate columns are renamed*
      * @param tables The tables to join with
      */
+
     public Table inner(boolean allowDuplicateColumnNames, Table... tables) {
         Table joined = table;
 
@@ -119,9 +126,10 @@ public class DataFrameJoiner {
      * rounding to integers.
      * @return The resulting table
      */
-    public Table inner(Table table2, String col2Name) {
-        return inner(table2, false, col2Name);
-    }
+
+     public Table inner(Table table2, String col2Name) {
+         return inner(table2, false, col2Name);
+     }
 
     /**
      * Joins the joiner to the table2, using the given columns for the second table and returns the resulting table
@@ -131,6 +139,7 @@ public class DataFrameJoiner {
      * rounding to integers.
      * @return The resulting table
      */
+
     public Table inner(Table table2, String[] col2Names) {
         return inner(table2, false, col2Names);
     }
@@ -145,6 +154,7 @@ public class DataFrameJoiner {
      * have the same name if {@code true} the join will succeed and duplicate columns are renamed*
      * @return The resulting table
      */
+
     public Table inner(Table table2, String col2Name, boolean allowDuplicateColumnNames) {
         return inner(table2, allowDuplicateColumnNames, col2Name);
     }
@@ -159,6 +169,7 @@ public class DataFrameJoiner {
      * rounding to integers.
      * @return The resulting table
      */
+
     public Table inner(Table table2, boolean allowDuplicateColumnNames, String... col2Names) {
         Table joinedTable;
         joinedTable = joinInternal(table, table2, JoinType.INNER, allowDuplicateColumnNames, col2Names);
@@ -176,6 +187,7 @@ public class DataFrameJoiner {
      * rounding to integers.
      * @return The resulting table
      */
+
     @Deprecated
     public Table inner(Table table2, boolean outer, boolean allowDuplicateColumnNames, String... col2Names) {
         JoinType joinType = JoinType.INNER;
@@ -198,6 +210,7 @@ public class DataFrameJoiner {
      * same name if {@code true} the join will succeed and duplicate columns are renamed*
      * @param table2JoinColumnNames The names of the columns in table2 to join on.
      */
+
     private Table joinInternal(Table table1, Table table2, JoinType joinType, boolean allowDuplicates,
         String... table2JoinColumnNames) {
         List<Integer> table2JoinColumnIndexes = getJoinIndexes(table2, table2JoinColumnNames);
@@ -254,6 +267,7 @@ public class DataFrameJoiner {
     /*
     Create an reverse index for a given column.
      */
+
     private Index indexFor(Table table, int colIndex) {
         ColumnType type = table.column(colIndex).type();
         if (type instanceof DateColumnType) {
@@ -297,6 +311,7 @@ public class DataFrameJoiner {
     Given a reverse index find a selection of rows that have the same
     value as the the supplied column does in the given row index.
      */
+
     private Selection selectionForColumn(
         Column<?> valueColumn,
         int rowIndex,
@@ -370,6 +385,7 @@ public class DataFrameJoiner {
     /*
     Create a big multicolumn selection for all join columns in the given table.
      */
+
     private Selection createMultiColSelection(Table table1, int ri, List<Index> indexes, int selectionSize) {
         Selection multiColSelection = Selection.withRange(0, selectionSize);
         int i = 0;
@@ -393,6 +409,7 @@ public class DataFrameJoiner {
      * @param tables The tables to join with
      * @return The resulting table
      */
+
     public Table fullOuter(Table... tables) {
         return fullOuter(false, tables);
     }
@@ -405,6 +422,7 @@ public class DataFrameJoiner {
      * @param tables The tables to join with
      * @return The resulting table
      */
+
     public Table fullOuter(boolean allowDuplicateColumnNames, Table... tables) {
         Table joined = table;
 
@@ -423,6 +441,7 @@ public class DataFrameJoiner {
      * rounding to integers.
      * @return The resulting table
      */
+
     public Table fullOuter(Table table2, String col2Name) {
         return joinInternal(table, table2, JoinType.FULL_OUTER, false, col2Name);
     }
@@ -434,6 +453,7 @@ public class DataFrameJoiner {
      * @param tables The tables to join with
      * @return The resulting table
      */
+
     public Table leftOuter(Table... tables) {
         return leftOuter(false, tables);
     }
@@ -446,6 +466,7 @@ public class DataFrameJoiner {
      * @param tables The tables to join with
      * @return The resulting table
      */
+
     public Table leftOuter(boolean allowDuplicateColumnNames, Table... tables) {
         Table joined = table;
         for (Table table2 : tables) {
@@ -462,6 +483,7 @@ public class DataFrameJoiner {
      * rounding to integers.
      * @return The resulting table
      */
+
     public Table leftOuter(Table table2, String[] col2Names) {
         return leftOuter(table2, false, col2Names);
     }
@@ -474,6 +496,7 @@ public class DataFrameJoiner {
      * rounding to integers.
      * @return The resulting table
      */
+
     public Table leftOuter(Table table2, String col2Name) {
         return leftOuter(table2, false, col2Name);
     }
@@ -488,6 +511,7 @@ public class DataFrameJoiner {
      * rounding to integers.
      * @return The resulting table
      */
+
     public Table leftOuter(Table table2, boolean allowDuplicateColumnNames, String... col2Names) {
         return joinInternal(table, table2, JoinType.LEFT_OUTER, allowDuplicateColumnNames, col2Names);
     }
@@ -498,6 +522,7 @@ public class DataFrameJoiner {
      * @param tables The tables to join with
      * @return The resulting table
      */
+
     public Table rightOuter(Table... tables) {
         return rightOuter(false, tables);
     }
@@ -510,6 +535,7 @@ public class DataFrameJoiner {
      * @param tables The tables to join with
      * @return The resulting table
      */
+
     public Table rightOuter(boolean allowDuplicateColumnNames, Table... tables) {
         Table joined = table;
         for (Table table2 : tables) {
@@ -526,6 +552,7 @@ public class DataFrameJoiner {
      * rounding to integers.
      * @return The resulting table
      */
+
     public Table rightOuter(Table table2, String col2Name) {
         return rightOuter(table2, false, col2Name);
     }
@@ -538,6 +565,7 @@ public class DataFrameJoiner {
      * rounding to integers.
      * @return The resulting table
      */
+
     public Table rightOuter(Table table2, String[] col2Names) {
         return rightOuter(table2, false, col2Names);
     }
@@ -552,6 +580,7 @@ public class DataFrameJoiner {
      * rounding to integers.
      * @return The resulting table
      */
+
     public Table rightOuter(Table table2, boolean allowDuplicateColumnNames, String... col2Names) {
         return joinInternal(table, table2, JoinType.RIGHT_OUTER, allowDuplicateColumnNames, col2Names);
     }
@@ -572,6 +601,7 @@ public class DataFrameJoiner {
      * @param table2JoinColumnIndexes the index locations of the table2 join columns.
      * @return A
      */
+
     private Set<Integer> emptyTableFromColumns(Table destination, Table table1, Table table2, JoinType joinType,
         boolean allowDuplicates, List<Integer> table2JoinColumnIndexes) {
 
@@ -624,9 +654,17 @@ public class DataFrameJoiner {
      * @param table2Rows the selection of rows in table2.
      * @param ignoreColumns a set of column indexes in the result to ignore. They are redundant join columns.
      */
+
     @SuppressWarnings({"rawtypes", "unchecked"})
+<<<<<<< /usr/src/app/output/jtablesaw/tablesaw/880dfde1c707100336de1c52e326a9087c9eacff/core/src/main/java/tech/tablesaw/joining/DataFrameJoiner.java/left.java
     private void crossProduct(Table destination, Table table1, Table table2,
         Selection table1Rows, Selection table2Rows, Set<Integer> ignoreColumns) {
+||||||| /usr/src/app/output/jtablesaw/tablesaw/880dfde1c707100336de1c52e326a9087c9eacff/core/src/main/java/tech/tablesaw/joining/DataFrameJoiner.java/base.java
+    private void crossProduct(Table destination, Table table1, Table table2) {
+=======
+    private void crossProduct(Table destination, Table table1, Table table2, String[] col2Names) {
+>>>>>>> /usr/src/app/output/jtablesaw/tablesaw/880dfde1c707100336de1c52e326a9087c9eacff/core/src/main/java/tech/tablesaw/joining/DataFrameJoiner.java/right.java
+<<<<<<< /usr/src/app/output/jtablesaw/tablesaw/880dfde1c707100336de1c52e326a9087c9eacff/core/src/main/java/tech/tablesaw/joining/DataFrameJoiner.java/left.java
         for (int c = 0; c < table1.columnCount() + table2.columnCount(); c++) {
             if (ignoreColumns.contains(c)) {
                 continue;
@@ -642,6 +680,23 @@ public class DataFrameJoiner {
                         destination.column(c).append(t2Col, r2);
                     }
                 }
+||||||| /usr/src/app/output/jtablesaw/tablesaw/880dfde1c707100336de1c52e326a9087c9eacff/core/src/main/java/tech/tablesaw/joining/DataFrameJoiner.java/base.java
+        for (int r2 = 0; r2 < table2.rowCount(); r2++) {
+            if (c < table1.columnCount()) {
+                Column t1Col = table1.column(c);
+                destination.column(c).append(t1Col, r1);
+            } else {
+                Column t2Col = table2.column(c - table1.columnCount());
+                destination.column(c).append(t2Col, r2);
+=======
+        for (int r2 = 0; r2 < table2RowCount; r2++) {
+            if (c < table1.columnCount()) {
+                Column t1Col = table1.column(c);
+                destination.column(c).append(t1Col, r1);
+            } else {
+                Column t2Col = table2.column(c - table1.columnCount());
+                destination.column(c).append(t2Col, r2);
+>>>>>>> /usr/src/app/output/jtablesaw/tablesaw/880dfde1c707100336de1c52e326a9087c9eacff/core/src/main/java/tech/tablesaw/joining/DataFrameJoiner.java/right.java
             }
         }
     }
@@ -649,6 +704,7 @@ public class DataFrameJoiner {
     /**
      * Adds rows to destination for each row in table1, with the columns from table2 added as missing values.
      */
+
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void withMissingLeftJoin(Table destination, Table table1, Set<Integer> ignoreColumns) {
         for (int c = 0; c < destination.columnCount(); c++) {
@@ -669,6 +725,7 @@ public class DataFrameJoiner {
     /**
      * Adds rows to destination for each row in table2, with the columns from table1 added as missing values.
      */
+
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void withMissingRight(Table destination, int table1ColCount, Table table2,
         JoinType joinType, List<Integer> col2Indexes, Set<Integer> skipColumns) {
@@ -695,5 +752,73 @@ public class DataFrameJoiner {
             }
         }
     }
+
+    /**
+     * Joins the joiner to the table2, using the given column for the second table and returns the resulting table
+     *
+     * @param table2   The table to join with
+     * @param col2Name The column to join on. If col2Name refers to a double column, the join is performed after
+     *                 rounding to integers.
+     * @return The resulting table
+     */
+
+    /**
+     * Joins the joiner to the table2, using the given columns for the second table and returns the resulting table
+     *
+     * @param table2    The table to join with
+     * @param col2Names The columns to join on. If a name refers to a double column, the join is performed after
+     *                  rounding to integers.
+     * @return The resulting table
+     */
+
+    /**
+     * Joins to the given tables assuming that they have a column of the name we're joining on
+     *
+     * @param tables The tables to join with
+     * @return The resulting table
+     */
+
+    /**
+     * Joins the joiner to the table2, using the given columns for the second table and returns the resulting table
+     *
+     * @param table2    The table to join with
+     * @param col2Names The columns to join on. If a name refers to a double column, the join is performed after
+     *                  rounding to integers.
+     * @return The resulting table
+     */
+
+    /**
+     * Joins the joiner to the table2, using the given column for the second table and returns the resulting table
+     *
+     * @param table2   The table to join with
+     * @param col2Name The column to join on. If col2Name refers to a double column, the join is performed after
+     *                 rounding to integers.
+     * @return The resulting table
+     */
+
+    /**
+     * Joins to the given tables assuming that they have a column of the name we're joining on
+     *
+     * @param tables The tables to join with
+     * @return The resulting table
+     */
+
+    /**
+     * Joins the joiner to the table2, using the given column for the second table and returns the resulting table
+     *
+     * @param table2   The table to join with
+     * @param col2Name The column to join on. If col2Name refers to a double column, the join is performed after
+     *                 rounding to integers.
+     * @return The resulting table
+     */
+
+    /**
+     * Joins the joiner to the table2, using the given columns for the second table and returns the resulting table
+     *
+     * @param table2    The table to join with
+     * @param col2Names The columns to join on. If a name refers to a double column, the join is performed after
+     *                  rounding to integers.
+     * @return The resulting table
+     */
 
 }
