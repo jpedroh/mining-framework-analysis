@@ -177,9 +177,19 @@ public class FlameGraph {
     }
 
     private int frameType(String title) {
+<<<<<<< /usr/src/app/output/jvm-profiling-tools/async-profiler/6a261d7422c4c63902245a640696215453e83978/src/converter/FlameGraph.java/left.java
         if (highlightStacksPattern != null && highlightStacksPattern.matcher(title).matches()) {
-            return 6;
+            return 5;
         } else if (title.endsWith("_[j]")) {
+            return 0;
+        } else if (title.endsWith("_[i]")) {
+||||||| /usr/src/app/output/jvm-profiling-tools/async-profiler/6a261d7422c4c63902245a640696215453e83978/src/converter/FlameGraph.java/base.java
+        if (title.endsWith("_[j]")) {
+            return 0;
+        } else if (title.endsWith("_[i]")) {
+=======
+        if (title.endsWith("_[j]")) {
+>>>>>>> /usr/src/app/output/jvm-profiling-tools/async-profiler/6a261d7422c4c63902245a640696215453e83978/src/converter/FlameGraph.java/right.java
             return 1;
         } else if (title.endsWith("_[i]")) {
             return 2;
@@ -292,9 +302,13 @@ public class FlameGraph {
             "\t\t[0x50e150, 30, 30, 30],\n" +
             "\t\t[0x50cccc, 30, 30, 30],\n" +
             "\t\t[0xe15a5a, 30, 40, 40],\n" +
+<<<<<<< /usr/src/app/output/jvm-profiling-tools/async-profiler/6a261d7422c4c63902245a640696215453e83978/src/converter/FlameGraph.java/left.java
+            "\t\t[0x9f8bd9, 30, 30, 30],\n" +
+||||||| /usr/src/app/output/jvm-profiling-tools/async-profiler/6a261d7422c4c63902245a640696215453e83978/src/converter/FlameGraph.java/base.java
+=======
             "\t\t[0xc8c83c, 30, 30, 10],\n" +
             "\t\t[0xe17d00, 30, 30,  0],\n" +
-            "\t\t[0x9f8bd9, 30, 30, 30],\n" +
+>>>>>>> /usr/src/app/output/jvm-profiling-tools/async-profiler/6a261d7422c4c63902245a640696215453e83978/src/converter/FlameGraph.java/right.java
             "\t];\n" +
             "\n" +
             "\tfunction getColor(p) {\n" +
