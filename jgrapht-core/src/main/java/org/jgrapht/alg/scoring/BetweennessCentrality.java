@@ -86,7 +86,24 @@ public class BetweennessCentrality<V, E>
      * Strategy for overflow when counting paths.
      */
     private OverflowStrategy overflowStrategy;
-
+    /**
+     * Strategy followed when counting paths.
+     */
+    public enum OverflowStrategy
+    {
+        /**
+         * Not check for overflow in counters. This means that on certain instances the results
+         * might wrong due to counters being too large to fit in a long.
+         */
+        IGNORE_OVERFLOW,
+        /**
+         * An exception is thrown if an overflow in counters is detected.
+         */
+        THROW_EXCEPTION_ON_OVERFLOW,
+    }
+    /**
+     * Strategy for overflow when counting paths.
+     */
     /**
      * Strategy followed when counting paths.
      */
