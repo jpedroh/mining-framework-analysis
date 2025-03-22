@@ -287,7 +287,6 @@ public class MockFileDatabase implements MockDataProvider {
                 if (rowString.startsWith("@ rows:")) {
                     rows = Integer.parseInt(rowString.substring(7).trim());
                 }
-
                 return new MockResult(rows,
                     nullLiteral == null
                     ? create.fetchFromTXT(currentResult.toString())
