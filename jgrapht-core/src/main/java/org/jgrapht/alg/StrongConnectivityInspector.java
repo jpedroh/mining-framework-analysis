@@ -40,6 +40,7 @@ package org.jgrapht.alg;
 import java.util.*;
 
 import org.jgrapht.*;
+import org.jgrapht.alg.interfaces.StrongConnectivityAlgorithm;
 import org.jgrapht.graph.*;
 
 
@@ -58,7 +59,7 @@ import org.jgrapht.graph.*;
  * @author Christian Hammer
  * @since Feb 2, 2005
  */
-public class StrongConnectivityInspector<V, E>
+public class StrongConnectivityInspector<V, E> implements StrongConnectivityAlgorithm<V,E>
 {
     
 

@@ -91,8 +91,12 @@ public final class AllAlgTests
         suite.addTest(new TestSuite(MinSourceSinkCutTest.class));
         suite.addTest(new TestSuite(HopcroftKarpBipartiteMatchingTest.class));
         suite.addTest(new TestSuite(KuhnMunkresMinimalWeightBipartitePerfectMatchingTest.class));
-        suite.addTest(new TestSuite(TarjanLowestCommonAncestorTest.class));
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/25b41a1ec2a192c2523a53c3b75dd01495fb9d86/jgrapht-core/src/test/java/org/jgrapht/alg/AllAlgTests.java/left.java
         suite.addTest(new TestSuite(GabowSCCTest.class));
+||||||| /usr/src/app/output/jgrapht/jgrapht/25b41a1ec2a192c2523a53c3b75dd01495fb9d86/jgrapht-core/src/test/java/org/jgrapht/alg/AllAlgTests.java/base.java
+=======
+        suite.addTest(new TestSuite(TarjanLowestCommonAncestorTest.class));
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/25b41a1ec2a192c2523a53c3b75dd01495fb9d86/jgrapht-core/src/test/java/org/jgrapht/alg/AllAlgTests.java/right.java
         
         // $JUnit-END$
         return suite;

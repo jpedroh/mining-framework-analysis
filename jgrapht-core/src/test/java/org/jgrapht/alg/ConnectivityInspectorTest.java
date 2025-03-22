@@ -42,6 +42,7 @@ import java.util.*;
 import junit.framework.*;
 
 import org.jgrapht.*;
+import org.jgrapht.alg.GabowSCC;
 import org.jgrapht.generate.*;
 import org.jgrapht.graph.*;
 
@@ -369,6 +370,9 @@ public class ConnectivityInspectorTest
             expected,
             new HashSet<Set<Integer>>(sc.stronglyConnectedSets()));
     }
+    
+   
 }
+
 
 // End ConnectivityInspectorTest.java
