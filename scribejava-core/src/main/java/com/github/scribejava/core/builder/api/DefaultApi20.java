@@ -1,5 +1,4 @@
 package com.github.scribejava.core.builder.api;
-
 import com.github.scribejava.core.extractors.AccessTokenExtractor;
 import com.github.scribejava.core.extractors.OAuth2AccessTokenExtractorImpl;
 import com.github.scribejava.core.model.OAuthConfig;
@@ -20,45 +19,43 @@ import com.github.scribejava.core.oauth.OAuth20Service;
  *
  */
 public abstract class DefaultApi20 implements Api {
-
-    /**
+  /**
      * Returns the access token extractor.
      *
      * @return access token extractor
      */
-    public AccessTokenExtractor getAccessTokenExtractor() {
-        return new OAuth2AccessTokenExtractorImpl();
-    }
+  public AccessTokenExtractor getAccessTokenExtractor() {
+    return new OAuth2AccessTokenExtractorImpl();
+  }
 
-    /**
+  /**
      * Returns the verb for the access token endpoint (defaults to GET)
      *
      * @return access token endpoint verb
      */
-    public Verb getAccessTokenVerb() {
-        return Verb.GET;
-    }
+  public Verb getAccessTokenVerb() {
+    return Verb.GET;
+  }
 
-    /**
+  /**
      * Returns the URL that receives the access token requests.
      *
      * @return access token URL
      */
-    public abstract String getAccessTokenEndpoint();
+  public abstract String getAccessTokenEndpoint();
 
-    /**
+  /**
      * Returns the URL where you should redirect your users to authenticate your application.
      *
      * @param config OAuth 2.0 configuration param object
      * @return the URL where you should redirect your users
      */
-    public abstract String getAuthorizationUrl(OAuthConfig config);
+  public abstract String getAuthorizationUrl(OAuthConfig config);
 
-    /**
+  /**
      * {@inheritDoc}
      */
-    @Override
-    public OAuth20Service createService(final OAuthConfig config) {
-        return new OAuth20Service(this, config);
-    }
+  @Override public OAuth20Service createService(final OAuthConfig config) {
+    return new OAuth20Service(this, config);
+  }
 }

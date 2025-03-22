@@ -1,5 +1,4 @@
 package com.github.scribejava.apis.service;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Map;
@@ -16,48 +15,43 @@ import com.github.scribejava.core.model.Verifier;
 import com.github.scribejava.core.oauth.OAuth20Service;
 
 public class MailruOAuthServiceImpl extends OAuth20Service {
+  public MailruOAuthServiceImpl(final DefaultApi20 api, final OAuthConfig config) {
+    super(api, config);
+  }
 
-    public MailruOAuthServiceImpl(final DefaultApi20 api, final OAuthConfig config) {
-        super(api, config);
-    }
-
-    @Override
-    public void signRequest(final AccessToken accessToken, final AbstractRequest request) {
-        // sig = md5(params + secret_key)
-        request.addQuerystringParameter("session_key", accessToken.getToken());
-        request.addQuerystringParameter("app_id", getConfig().getApiKey());
-        final String completeUrl = request.getCompleteUrl();
-
-        try {
-            final String clientSecret = getConfig().getApiSecret();
-            final int queryIndex = completeUrl.indexOf('?');
-            if (queryIndex != -1) {
-                final String urlPart = completeUrl.substring(queryIndex + 1);
-                final Map<String, String> map = new TreeMap<>();
-                for (final String param : urlPart.split("&")) {
-                    final String[] parts = param.split("=");
-                    map.put(parts[0], (parts.length == 1) ? "" : parts[1]);
-                }
-                final StringBuilder urlNew = new StringBuilder();
-                for (final Map.Entry<String, String> entry : map.entrySet()) {
-                    urlNew.append(entry.getKey());
-                    urlNew.append('=');
-                    urlNew.append(entry.getValue());
-                }
-                final String sigSource = URLDecoder.decode(urlNew.toString(), CharEncoding.UTF_8) + clientSecret;
-                request.addQuerystringParameter("sig", md5Hex(sigSource));
-            }
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException(e);
+  @Override public void signRequest(final AccessToken accessToken, final AbstractRequest request) {
+    request.addQuerystringParameter("session_key", accessToken.getToken());
+    request.addQuerystringParameter("app_id", getConfig().getApiKey());
+    final String completeUrl = request.getCompleteUrl();
+    try {
+      final String clientSecret = getConfig().getApiSecret();
+      final int queryIndex = completeUrl.indexOf('?');
+      if (queryIndex != -1) {
+        final String urlPart = completeUrl.substring(queryIndex + 1);
+        final Map<String, String> map = new TreeMap<>();
+        for (final String param : urlPart.split("&")) {
+          final String[] parts = param.split("=");
+          map.put(parts[0], (parts.length == 1) ? "" : parts[1]);
         }
-    }
-
-    @Override
-    protected <T extends AbstractRequest> T createAccessTokenRequest(final Verifier verifier, final T request) {
-        super.createAccessTokenRequest(verifier, request);
-        if (!getConfig().hasGrantType()) {
-            request.addParameter(OAuthConstants.GRANT_TYPE, "authorization_code");
+        final StringBuilder urlNew = new StringBuilder();
+        for (final Map.Entry<String, String> entry : map.entrySet()) {
+          urlNew.append(entry.getKey());
+          urlNew.append('=');
+          urlNew.append(entry.getValue());
         }
-        return request;
+        final String sigSource = URLDecoder.decode(urlNew.toString(), CharEncoding.UTF_8) + clientSecret;
+        request.addQuerystringParameter("sig", md5Hex(sigSource));
+      }
+    } catch (UnsupportedEncodingException e) {
+      throw new IllegalStateException(e);
     }
+  }
+
+  @Override protected <T extends AbstractRequest> T createAccessTokenRequest(final Verifier verifier, final T request) {
+    super.createAccessTokenRequest(verifier, request);
+    if (!getConfig().hasGrantType()) {
+      request.addParameter(OAuthConstants.GRANT_TYPE, "authorization_code");
+    }
+    return request;
+  }
 }

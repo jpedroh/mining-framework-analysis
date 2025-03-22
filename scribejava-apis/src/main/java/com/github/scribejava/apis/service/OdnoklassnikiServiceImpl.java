@@ -1,5 +1,4 @@
 package com.github.scribejava.apis.service;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import org.apache.commons.codec.CharEncoding;
@@ -12,27 +11,22 @@ import com.github.scribejava.core.model.Token;
 import com.github.scribejava.core.oauth.OAuth20Service;
 
 public class OdnoklassnikiServiceImpl extends OAuth20Service {
+  public OdnoklassnikiServiceImpl(final DefaultApi20 api, final OAuthConfig config) {
+    super(api, config);
+  }
 
-    public OdnoklassnikiServiceImpl(final DefaultApi20 api, final OAuthConfig config) {
-        super(api, config);
+  @Override public void signRequest(final AccessToken accessToken, final AbstractRequest request) {
+    try {
+      final String tokenDigest = md5Hex((accessToken.getToken() + getConfig().getApiSecret()));
+      final String completeUrl = request.getCompleteUrl();
+      final int queryIndex = completeUrl.indexOf('?');
+      if (queryIndex != -1) {
+        final String sigSource = URLDecoder.decode(completeUrl.substring(queryIndex + 1).replace("&", ""), CharEncoding.UTF_8) + tokenDigest;
+        request.addQuerystringParameter("sig", md5Hex(sigSource));
+      }
+      super.signRequest(accessToken, request);
+    } catch (UnsupportedEncodingException unex) {
+      throw new IllegalStateException(unex);
     }
-
-    @Override
-    public void signRequest(final AccessToken accessToken, final AbstractRequest request) {
-        // sig = md5( request_params_composed_string+ md5(access_token + application_secret_key)  )
-        try {
-            final String tokenDigest = md5Hex((accessToken.getToken() + getConfig().getApiSecret()));
-
-            final String completeUrl = request.getCompleteUrl();
-            final int queryIndex = completeUrl.indexOf('?');
-            if (queryIndex != -1) {
-                final String sigSource = URLDecoder.decode(completeUrl.substring(queryIndex + 1).replace("&", ""), CharEncoding.UTF_8) + tokenDigest;
-                request.addQuerystringParameter("sig", md5Hex(sigSource));
-            }
-
-            super.signRequest(accessToken, request);
-        } catch (UnsupportedEncodingException unex) {
-            throw new IllegalStateException(unex);
-        }
-    }
+  }
 }
