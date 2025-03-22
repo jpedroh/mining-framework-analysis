@@ -1,40 +1,4 @@
-/*
- * JGraLab - The Java Graph Laboratory
- * 
- * Copyright (C) 2006-2011 Institute for Software Technology
- *                         University of Koblenz-Landau, Germany
- *                         ist@uni-koblenz.de
- * 
- * For bug reports, documentation and further information, visit
- * 
- *                         http://jgralab.uni-koblenz.de
- * 
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the
- * Free Software Foundation; either version 3 of the License, or (at your
- * option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, see <http://www.gnu.org/licenses>.
- * 
- * Additional permission under GNU GPL version 3 section 7
- * 
- * If you modify this Program, or any covered work, by linking or combining
- * it with Eclipse (or a modified version of that program or an Eclipse
- * plugin), containing parts covered by the terms of the Eclipse Public
- * License (EPL), the licensors of this Program grant you additional
- * permission to convey the resulting work.  Corresponding Source for a
- * non-source form of such a combination shall include the source code for
- * the parts of JGraLab used as well as that of the covered work.
- */
-
 package de.uni_koblenz.jgralab.impl;
-
 import de.uni_koblenz.jgralab.Graph;
 import de.uni_koblenz.jgralab.GraphIOException;
 import de.uni_koblenz.jgralab.schema.Attribute;
@@ -48,98 +12,108 @@ import de.uni_koblenz.jgralab.schema.Schema;
  * 
  */
 public abstract class GraphElementImpl implements GraphElementBase {
-	protected int id;
+  protected int id;
 
-	protected GraphElementImpl(Graph graph) {
-		assert graph != null;
-		this.graph = (GraphBaseImpl) graph;
-	}
+  protected GraphElementImpl(Graph graph) {
+    assert graph != null;
+    this.graph = (GraphBaseImpl) graph;
+  }
 
-	protected GraphBaseImpl graph;
+  protected GraphBaseImpl graph;
 
-	@Override
-	public Graph getGraph() {
-		return graph;
-	}
+  @Override public Graph getGraph() {
+    return graph;
+  }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.uni_koblenz.jgralab.AttributedElement#getGraphClass()
+  @Override public GraphClass getGraphClass() {
+    return (GraphClass) graph.getAttributedElementClass();
+  }
+
+  @Override public Schema getSchema() {
+    return graph.getSchema();
+  }
+
+  /**
+	 * Changes the graph version of the graph this element belongs to. Should be
+	 * called whenever the graph is changed, all changes like adding, creating
+	 * and reordering of edges and vertices or changes of attributes of the
+	 * graph, an edge or a vertex are treated as a change.
 	 */
-	@Override
-	public GraphClass getGraphClass() {
-		return (GraphClass) graph.getAttributedElementClass();
-	}
+  public void graphModified() {
+    graph.graphModified();
+  }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jgralab.AttributedElement#getSchema()
-	 */
-	@Override
-	public Schema getSchema() {
-		return graph.getSchema();
-	}
-
-	public void graphModified() {
-		graph.graphModified();
-	}
-
-	/**
+  /**
 	 * Triggers ECA-rules before an Attribute is changed
 	 * 
 	 * @param name
 	 *            of the changing Attribute
 	 */
-	public void ecaAttributeChanging(String name, Object oldValue,
-			Object newValue) {
-		if (!graph.isLoading() && graph.getECARuleManagerIfThere() != null) {
-			graph.getECARuleManager().fireBeforeChangeAttributeEvents(this,
-					name, oldValue, newValue);
-		}
-	}
+  public void ecaAttributeChanging(String name, Object oldValue, Object newValue) {
+    if (
+<<<<<<< /usr/src/app/output/jgralab/jgralab/a8bafd4f90fa457bf483902bb3e12777124b605c/src/de/uni_koblenz/jgralab/impl/GraphElementImpl.java/left.java
+    !this.graph.isLoading() && this.graph.getECARuleManagerIfThere() != null
+=======
+    !graph.isLoading()
+>>>>>>> /usr/src/app/output/jgralab/jgralab/a8bafd4f90fa457bf483902bb3e12777124b605c/src/de/uni_koblenz/jgralab/impl/GraphElementImpl.java/right.java
+    ) {
+      graph.getECARuleManager().
+<<<<<<< /usr/src/app/output/jgralab/jgralab/a8bafd4f90fa457bf483902bb3e12777124b605c/src/de/uni_koblenz/jgralab/impl/GraphElementImpl.java/left.java
+      getECARuleManagerIfThere().fireBeforeChangeAttributeEvents(this, name, oldValue, newValue)
+=======
+      fireBeforeChangeAttributeEvents(this, name, oldValue, newValue)
+>>>>>>> /usr/src/app/output/jgralab/jgralab/a8bafd4f90fa457bf483902bb3e12777124b605c/src/de/uni_koblenz/jgralab/impl/GraphElementImpl.java/right.java
+      ;
+    }
+  }
 
-	/**
+  /**
 	 * Triggers ECA-rule after an Attribute is changed
 	 * 
 	 * @param name
 	 *            of the changed Attribute
 	 */
-	public void ecaAttributeChanged(String name, Object oldValue,
-			Object newValue) {
-		if (!graph.isLoading() && graph.getECARuleManagerIfThere()!=null) {
-			graph.getECARuleManager().fireAfterChangeAttributeEvents(this,
-					name, oldValue, newValue);
-		}
-	}
+  public void ecaAttributeChanged(String name, Object oldValue, Object newValue) {
+    if (
+<<<<<<< /usr/src/app/output/jgralab/jgralab/a8bafd4f90fa457bf483902bb3e12777124b605c/src/de/uni_koblenz/jgralab/impl/GraphElementImpl.java/left.java
+    !this.graph.isLoading() && this.graph.getECARuleManagerIfThere() != null
+=======
+    !graph.isLoading()
+>>>>>>> /usr/src/app/output/jgralab/jgralab/a8bafd4f90fa457bf483902bb3e12777124b605c/src/de/uni_koblenz/jgralab/impl/GraphElementImpl.java/right.java
+    ) {
+      graph.getECARuleManager().
+<<<<<<< /usr/src/app/output/jgralab/jgralab/a8bafd4f90fa457bf483902bb3e12777124b605c/src/de/uni_koblenz/jgralab/impl/GraphElementImpl.java/left.java
+      getECARuleManagerIfThere().fireAfterChangeAttributeEvents(this, name, oldValue, newValue)
+=======
+      fireAfterChangeAttributeEvents(this, name, oldValue, newValue)
+>>>>>>> /usr/src/app/output/jgralab/jgralab/a8bafd4f90fa457bf483902bb3e12777124b605c/src/de/uni_koblenz/jgralab/impl/GraphElementImpl.java/right.java
+      ;
+    }
+  }
 
-	/*
-	 * (non-Javadoc)
+  @Override public int getId() {
+    return id;
+  }
+
+  @Override public void initializeAttributesWithDefaultValues() {
+    for (Attribute attr : getAttributedElementClass().getAttributeList()) {
+      if (attr.getDefaultValueAsString() == null) {
+        continue;
+      }
+      try {
+        internalSetDefaultValue(attr);
+      } catch (GraphIOException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  /**
 	 * 
-	 * @see de.uni_koblenz.jgralab.GraphElement#getId()
+	 * @param attr
+	 * @throws GraphIOException
 	 */
-	@Override
-	public int getId() {
-		return id;
-	}
-
-	@Override
-	public void initializeAttributesWithDefaultValues() {
-		for (Attribute attr : getAttributedElementClass().getAttributeList()) {
-			if (attr.getDefaultValueAsString() == null) {
-				continue;
-			}
-			try {
-				internalSetDefaultValue(attr);
-			} catch (GraphIOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void internalSetDefaultValue(Attribute attr) throws GraphIOException {
-		attr.setDefaultValue(this);
-	}
+  public void internalSetDefaultValue(Attribute attr) throws GraphIOException {
+    attr.setDefaultValue(this);
+  }
 }
