@@ -23,11 +23,11 @@ import com.mpush.api.Constants;
 import com.mpush.api.connection.Connection;
 import com.mpush.api.protocol.JsonPacket;
 import com.mpush.api.protocol.Packet;
-import io.netty.channel.ChannelFutureListener;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import io.netty.channel.ChannelFutureListener;
 
 import static com.mpush.api.protocol.Command.PUSH;
 
@@ -86,18 +86,18 @@ public final class PushMessage extends BaseMessage {
         return packet.hasFlag(Packet.FLAG_BIZ_ACK) || packet.hasFlag(Packet.FLAG_AUTO_ACK);
     }
 
+    @Override
+    public void send(ChannelFutureListener listener) {
+        super.send(listener);
+        this.content = null;//释放内存
+    }
+
     public PushMessage setContent(byte[] content) {
         this.content = content;
         return this;
     }
 
 
-
-    @Override
-    public void send(ChannelFutureListener listener) {
-        super.send(listener);
-        this.content = null;//释放内存
-    }
 
     @Override
     public String toString() {

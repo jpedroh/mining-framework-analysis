@@ -41,6 +41,59 @@ public final class PacketEncoder extends MessageToByteEncoder<Packet> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Packet packet, ByteBuf out) throws Exception {
+<<<<<<< /usr/src/app/output/mpusher/mpush/a3245a12b622f3a2ab1a2f434a3e405e2e6f5a4d/mpush-netty/src/main/java/com/mpush/netty/codec/PacketEncoder.java/left.java
         encodePacket(packet, out);
+||||||| /usr/src/app/output/mpusher/mpush/a3245a12b622f3a2ab1a2f434a3e405e2e6f5a4d/mpush-netty/src/main/java/com/mpush/netty/codec/PacketEncoder.java/base.java
+        encodeFrame(packet, out);
+    }
+
+    public static ByteBuf encode(Channel channel, Packet packet) {
+        int capacity = packet.cmd == Command.HEARTBEAT.cmd ? 1 : Packet.HEADER_LEN + packet.getBodyLength();
+        ByteBuf out = channel.alloc().buffer(capacity, capacity);
+        encodeFrame(packet, out);
+        return out;
+    }
+
+    public static void encodeFrame(Packet packet, ByteBuf out) {
+        if (packet.cmd == Command.HEARTBEAT.cmd) {
+            out.writeByte(Packet.HB_PACKET_BYTE);
+        } else {
+            out.writeInt(packet.getBodyLength());
+            out.writeByte(packet.cmd);
+            out.writeShort(packet.cc);
+            out.writeByte(packet.flags);
+            out.writeInt(packet.sessionId);
+            out.writeByte(packet.lrc);
+            if (packet.getBodyLength() > 0) {
+                out.writeBytes(packet.body);
+            }
+        }
+=======
+        encodeFrame(packet, out);
+    }
+
+    public static ByteBuf encode(Channel channel, Packet packet) {
+        int capacity = packet.cmd == Command.HEARTBEAT.cmd ? 1 : Packet.HEADER_LEN + packet.getBodyLength();
+        ByteBuf out = channel.alloc().buffer(capacity, capacity);
+        encodeFrame(packet, out);
+        return out;
+    }
+
+    public static void encodeFrame(Packet packet, ByteBuf out) {
+        if (packet.cmd == Command.HEARTBEAT.cmd) {
+            out.writeByte(Packet.HB_PACKET_BYTE);
+        } else {
+            out.writeInt(packet.getBodyLength());
+            out.writeByte(packet.cmd);
+            out.writeShort(packet.cc);
+            out.writeByte(packet.flags);
+            out.writeInt(packet.sessionId);
+            out.writeByte(packet.lrc);
+            if (packet.getBodyLength() > 0) {
+                out.writeBytes(packet.body);
+            }
+        }
+        packet.body = null;
+>>>>>>> /usr/src/app/output/mpusher/mpush/a3245a12b622f3a2ab1a2f434a3e405e2e6f5a4d/mpush-netty/src/main/java/com/mpush/netty/codec/PacketEncoder.java/right.java
     }
 }
