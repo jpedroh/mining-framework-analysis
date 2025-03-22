@@ -179,7 +179,12 @@ public enum Quest
 	THE_FREMENNIK_EXILES(718, "The Fremennik Exiles"),
 	SINS_OF_THE_FATHER(1276, "Sins of the Father"),
 	A_PORCINE_OF_INTEREST(1690, "A Porcine of Interest"),
+<<<<<<< /usr/src/app/output/runelite/runelite/31bfaca36a5a58061d0775cf9a9be784ba908dc6/runelite-api/src/main/java/net/runelite/api/Quest.java/left.java
 	GETTING_AHEAD(752, "Getting Ahead"),
+||||||| /usr/src/app/output/runelite/runelite/31bfaca36a5a58061d0775cf9a9be784ba908dc6/runelite-api/src/main/java/net/runelite/api/Quest.java/base.java
+=======
+	GETTING_AHEAD(1691, "Getting Ahead"),
+>>>>>>> /usr/src/app/output/runelite/runelite/31bfaca36a5a58061d0775cf9a9be784ba908dc6/runelite-api/src/main/java/net/runelite/api/Quest.java/right.java
 
 	//Miniquests
 	ENTER_THE_ABYSS(319, "Enter the Abyss"),
