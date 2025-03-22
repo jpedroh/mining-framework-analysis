@@ -98,38 +98,78 @@ public class AlternatorQueryTest extends AlternatorTest {
 		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey2, createStringAttribute("Range3"), "attr1", "value13", "attr2", "value23")).withTableName(tableName));
 		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey2, createStringAttribute("Range4"), "attr1", "value14", "attr2", "value24")).withTableName(tableName));
 
+        getClient().putItem(new PutItemRequest().withItem(createGenericItem()).withTableName(tableName));
+		getClient().putItem(new PutItemRequest().withItem(createGenericItem()).withTableName(tableName));
+
         return hashKey1;
     }
 
+<<<<<<< /usr/src/app/output/mboudreau/alternator/e98877f87081708e446b278c812eb504565ff5f9/src/test/java/com/michelboudreau/test/AlternatorQueryTest.java/left.java
     private AttributeValue setupNumericRangeTableWithSeveralItems() {
-		KeySchema schema = new KeySchema()
+    		KeySchema schema = new KeySchema()
                 .withHashKeyElement(new KeySchemaElement().withAttributeName("id").withAttributeType(ScalarAttributeType.S))
                 .withRangeKeyElement(new KeySchemaElement().withAttributeName("range").withAttributeType(ScalarAttributeType.N))
                 ;
-		createTable(tableName, schema);
+    		createTable(tableName, schema);
 
-		AttributeValue hashKey1 = createStringAttribute();
-		AttributeValue hashKey2 = createStringAttribute();
+    		AttributeValue hashKey1 = createStringAttribute();
+    		AttributeValue hashKey2 = createStringAttribute();
 
-		getClient().putItem(new PutItemRequest().withItem(createGenericItem()).withTableName(tableName));
-		getClient().putItem(new PutItemRequest().withItem(createGenericItem(createStringAttribute(), createNumberAttribute())).withTableName(tableName));
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem()).withTableName(tableName));
 
         getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey1, createNumberAttribute(4), "attr1", "value14", "attr2", "value24")).withTableName(tableName));
-		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey1, createNumberAttribute(3), "attr1", "value13", "attr2", "value23")).withTableName(tableName));
-		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey1, createNumberAttribute(2), "attr1", "value12", "attr2", "value22")).withTableName(tableName));
-		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey1, createNumberAttribute(1), "attr1", "value11", "attr2", "value21")).withTableName(tableName));
-		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey1, createNumberAttribute(11), "attr1", "value11", "attr2", "value21")).withTableName(tableName));
-		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey1, createNumberAttribute(51), "attr1", "value19", "attr2", "value29")).withTableName(tableName));
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey1, createNumberAttribute(3), "attr1", "value13", "attr2", "value23")).withTableName(tableName));
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey1, createNumberAttribute(2), "attr1", "value12", "attr2", "value22")).withTableName(tableName));
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey1, createNumberAttribute(1), "attr1", "value11", "attr2", "value21")).withTableName(tableName));
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey1, createNumberAttribute(11), "attr1", "value11", "attr2", "value21")).withTableName(tableName));
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey1, createNumberAttribute(51), "attr1", "value19", "attr2", "value29")).withTableName(tableName));
 
-		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey2, createNumberAttribute(51), "attr1", "value19", "attr2", "value29")).withTableName(tableName));
-		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey2, createNumberAttribute(11), "attr1", "value19", "attr2", "value29")).withTableName(tableName));
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey2, createNumberAttribute(51), "attr1", "value19", "attr2", "value29")).withTableName(tableName));
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey2, createNumberAttribute(11), "attr1", "value19", "attr2", "value29")).withTableName(tableName));
         getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey2, createNumberAttribute(1), "attr1", "value11", "attr2", "value21")).withTableName(tableName));
-		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey2, createNumberAttribute(2), "attr1", "value12", "attr2", "value22")).withTableName(tableName));
-		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey2, createNumberAttribute(3), "attr1", "value13", "attr2", "value23")).withTableName(tableName));
-		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey2, createNumberAttribute(4), "attr1", "value14", "attr2", "value24")).withTableName(tableName));
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey2, createNumberAttribute(2), "attr1", "value12", "attr2", "value22")).withTableName(tableName));
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey2, createNumberAttribute(3), "attr1", "value13", "attr2", "value23")).withTableName(tableName));
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey2, createNumberAttribute(4), "attr1", "value14", "attr2", "value24")).withTableName(tableName));
+
+        getClient().putItem(new PutItemRequest().withItem(createGenericItem()).withTableName(tableName));
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem()).withTableName(tableName));
 
         return hashKey1;
     }
+||||||| /usr/src/app/output/mboudreau/alternator/e98877f87081708e446b278c812eb504565ff5f9/src/test/java/com/michelboudreau/test/AlternatorQueryTest.java/base.java
+=======
+    private AttributeValue setupNumericRangeTableWithSeveralItems() {
+    		KeySchema schema = new KeySchema()
+                .withHashKeyElement(new KeySchemaElement().withAttributeName("id").withAttributeType(ScalarAttributeType.S))
+                .withRangeKeyElement(new KeySchemaElement().withAttributeName("range").withAttributeType(ScalarAttributeType.N))
+                ;
+    		createTable(tableName, schema);
+
+    		AttributeValue hashKey1 = createStringAttribute();
+    		AttributeValue hashKey2 = createStringAttribute();
+
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(createStringAttribute(), createNumberAttribute())).withTableName(tableName));
+
+        getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey1, createNumberAttribute(4), "attr1", "value14", "attr2", "value24")).withTableName(tableName));
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey1, createNumberAttribute(3), "attr1", "value13", "attr2", "value23")).withTableName(tableName));
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey1, createNumberAttribute(2), "attr1", "value12", "attr2", "value22")).withTableName(tableName));
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey1, createNumberAttribute(1), "attr1", "value11", "attr2", "value21")).withTableName(tableName));
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey1, createNumberAttribute(11), "attr1", "value11", "attr2", "value21")).withTableName(tableName));
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey1, createNumberAttribute(51), "attr1", "value19", "attr2", "value29")).withTableName(tableName));
+
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey2, createNumberAttribute(51), "attr1", "value19", "attr2", "value29")).withTableName(tableName));
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey2, createNumberAttribute(11), "attr1", "value19", "attr2", "value29")).withTableName(tableName));
+        getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey2, createNumberAttribute(1), "attr1", "value11", "attr2", "value21")).withTableName(tableName));
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey2, createNumberAttribute(2), "attr1", "value12", "attr2", "value22")).withTableName(tableName));
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey2, createNumberAttribute(3), "attr1", "value13", "attr2", "value23")).withTableName(tableName));
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(hashKey2, createNumberAttribute(4), "attr1", "value14", "attr2", "value24")).withTableName(tableName));
+
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(createStringAttribute(), createNumberAttribute())).withTableName(tableName));
+    		getClient().putItem(new PutItemRequest().withItem(createGenericItem(createStringAttribute(), createNumberAttribute())).withTableName(tableName));
+
+        return hashKey1;
+    }
+>>>>>>> /usr/src/app/output/mboudreau/alternator/e98877f87081708e446b278c812eb504565ff5f9/src/test/java/com/michelboudreau/test/AlternatorQueryTest.java/right.java
 
     @Test
 	public void queryWithHashKeyAndAttributesToGetTest() {
