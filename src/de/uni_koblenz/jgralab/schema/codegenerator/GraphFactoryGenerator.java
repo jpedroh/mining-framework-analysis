@@ -35,6 +35,7 @@
 
 package de.uni_koblenz.jgralab.schema.codegenerator;
 
+import de.uni_koblenz.jgralab.impl.diskv2.ReversedEdgeImpl;
 import de.uni_koblenz.jgralab.schema.EdgeClass;
 import de.uni_koblenz.jgralab.schema.GraphClass;
 import de.uni_koblenz.jgralab.schema.Schema;

@@ -356,11 +356,16 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 			code.add("public #type# #isOrGet#_#name#() {", "\treturn _#name#;",
 					"}");
 			break;
+<<<<<<< /usr/src/app/output/jgralab/jgralab/00f790a8e86ecd1765a5ea9bbd0426397803b9e8/src/de/uni_koblenz/jgralab/schema/codegenerator/AttributedElementCodeGenerator.java/left.java
 		case DISKV2IMPL:
 			code.add("public #type# #isOrGet#_#name#() {", "\treturn _#name#;",
 					"}");
+			break;
+||||||| /usr/src/app/output/jgralab/jgralab/00f790a8e86ecd1765a5ea9bbd0426397803b9e8/src/de/uni_koblenz/jgralab/schema/codegenerator/AttributedElementCodeGenerator.java/base.java
+=======
 		case CLASSONLY:
 			break;
+>>>>>>> /usr/src/app/output/jgralab/jgralab/00f790a8e86ecd1765a5ea9bbd0426397803b9e8/src/de/uni_koblenz/jgralab/schema/codegenerator/AttributedElementCodeGenerator.java/right.java
 		}
 		return code;
 	}
@@ -391,6 +396,8 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 					"\tecaAttributeChanged(\"#name#\", oldValue, _#name#);",
 					"}");
 			break;
+		case CLASSONLY:
+			break;
 		case DISKV2IMPL:
 			code.add(
 					"public void set_#name#(#type# _#name#) {",
@@ -400,7 +407,6 @@ public abstract class AttributedElementCodeGenerator<SC extends AttributedElemen
 					"\tecaAttributeChanged(\"#name#\", oldValue, _#name#);",
 					"\tattributeChanged();",
 					"}");
-		case CLASSONLY:
 			break;
 		}
 		return code;
