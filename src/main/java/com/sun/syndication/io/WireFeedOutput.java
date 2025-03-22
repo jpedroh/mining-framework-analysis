@@ -1,21 +1,4 @@
-/*
- * Copyright 2004 Sun Microsystems, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
 package com.sun.syndication.io;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -23,13 +6,11 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
-
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.output.DOMOutputter;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-
 import com.sun.syndication.feed.WireFeed;
 import com.sun.syndication.io.impl.FeedGenerators;
 
@@ -46,20 +27,20 @@ import com.sun.syndication.io.impl.FeedGenerators;
  * 
  */
 public class WireFeedOutput {
-    private static Map<ClassLoader, FeedGenerators> clMap = new WeakHashMap<ClassLoader, FeedGenerators>();
+  private static Map<ClassLoader, FeedGenerators> clMap = new WeakHashMap<ClassLoader, FeedGenerators>();
 
-    private static FeedGenerators getFeedGenerators() {
-        synchronized (WireFeedOutput.class) {
-            FeedGenerators generators = (FeedGenerators) clMap.get(Thread.currentThread().getContextClassLoader());
-            if (generators == null) {
-                generators = new FeedGenerators();
-                clMap.put(Thread.currentThread().getContextClassLoader(), generators);
-            }
-            return generators;
-        }
+  private static FeedGenerators getFeedGenerators() {
+    synchronized (WireFeedOutput.class) {
+      FeedGenerators generators = (FeedGenerators) clMap.get(Thread.currentThread().getContextClassLoader());
+      if (generators == null) {
+        generators = new FeedGenerators();
+        clMap.put(Thread.currentThread().getContextClassLoader(), generators);
+      }
+      return generators;
     }
+  }
 
-    /**
+  /**
      * Returns the list of supported output feed types.
      * <p>
      * 
@@ -68,19 +49,19 @@ public class WireFeedOutput {
      * @return a list of String elements with the supported output feed types.
      * 
      */
-    public static List<String> getSupportedFeedTypes() {
-        return getFeedGenerators().getSupportedFeedTypes();
-    }
+  public static List<String> getSupportedFeedTypes() {
+    return getFeedGenerators().getSupportedFeedTypes();
+  }
 
-    /**
+  /**
      * Creates a FeedOuput instance.
      * <p>
      * 
      */
-    public WireFeedOutput() {
-    }
+  public WireFeedOutput() {
+  }
 
-    /**
+  /**
      * Creates a String with the XML representation for the given WireFeed.
      * <p>
      * If the feed encoding is not NULL, it will be used in the XML prolog
@@ -102,11 +83,11 @@ public class WireFeedOutput {
      *             not be created.
      * 
      */
-    public String outputString(final WireFeed feed) throws IllegalArgumentException, FeedException {
-        return this.outputString(feed, true);
-    }
+  public String outputString(final WireFeed feed) throws IllegalArgumentException, FeedException {
+    return this.outputString(feed, true);
+  }
 
-    /**
+  /**
      * Creates a String with the XML representation for the given WireFeed.
      * <p>
      * If the feed encoding is not NULL, it will be used in the XML prolog
@@ -129,23 +110,23 @@ public class WireFeedOutput {
      *             not be created.
      * 
      */
-    public String outputString(final WireFeed feed, final boolean prettyPrint) throws IllegalArgumentException, FeedException {
-        final Document doc = outputJDom(feed);
-        final String encoding = feed.getEncoding();
-        Format format;
-        if (prettyPrint) {
-            format = Format.getPrettyFormat();
-        } else {
-            format = Format.getCompactFormat();
-        }
-        if (encoding != null) {
-            format.setEncoding(encoding);
-        }
-        final XMLOutputter outputter = new XMLOutputter(format);
-        return outputter.outputString(doc);
+  public String outputString(final WireFeed feed, final boolean prettyPrint) throws IllegalArgumentException, FeedException {
+    final Document doc = outputJDom(feed);
+    final String encoding = feed.getEncoding();
+    Format format;
+    if (prettyPrint) {
+      format = Format.getPrettyFormat();
+    } else {
+      format = Format.getCompactFormat();
     }
+    if (encoding != null) {
+      format.setEncoding(encoding);
+    }
+    final XMLOutputter outputter = new XMLOutputter(format);
+    return outputter.outputString(doc);
+  }
 
-    /**
+  /**
      * Creates a File containing with the XML representation for the given
      * WireFeed.
      * <p>
@@ -170,11 +151,11 @@ public class WireFeedOutput {
      *             not be created.
      * 
      */
-    public void output(final WireFeed feed, final File file) throws IllegalArgumentException, IOException, FeedException {
-        this.output(feed, file, true);
-    }
+  public void output(final WireFeed feed, final File file) throws IllegalArgumentException, IOException, FeedException {
+    this.output(feed, file, true);
+  }
 
-    /**
+  /**
      * Creates a File containing with the XML representation for the given
      * WireFeed.
      * <p>
@@ -200,13 +181,13 @@ public class WireFeedOutput {
      *             not be created.
      * 
      */
-    public void output(final WireFeed feed, final File file, final boolean prettyPrint) throws IllegalArgumentException, IOException, FeedException {
-        final Writer writer = new FileWriter(file);
-        this.output(feed, writer, prettyPrint);
-        writer.close();
-    }
+  public void output(final WireFeed feed, final File file, final boolean prettyPrint) throws IllegalArgumentException, IOException, FeedException {
+    final Writer writer = new FileWriter(file);
+    this.output(feed, writer, prettyPrint);
+    writer.close();
+  }
 
-    /**
+  /**
      * Writes to an Writer the XML representation for the given WireFeed.
      * <p>
      * If the feed encoding is not NULL, it will be used in the XML prolog
@@ -230,11 +211,11 @@ public class WireFeedOutput {
      *             not be created.
      * 
      */
-    public void output(final WireFeed feed, final Writer writer) throws IllegalArgumentException, IOException, FeedException {
-        this.output(feed, writer, true);
-    }
+  public void output(final WireFeed feed, final Writer writer) throws IllegalArgumentException, IOException, FeedException {
+    this.output(feed, writer, true);
+  }
 
-    /**
+  /**
      * Writes to an Writer the XML representation for the given WireFeed.
      * <p>
      * If the feed encoding is not NULL, it will be used in the XML prolog
@@ -259,23 +240,23 @@ public class WireFeedOutput {
      *             not be created.
      * 
      */
-    public void output(final WireFeed feed, final Writer writer, final boolean prettyPrint) throws IllegalArgumentException, IOException, FeedException {
-        final Document doc = outputJDom(feed);
-        final String encoding = feed.getEncoding();
-        Format format;
-        if (prettyPrint) {
-            format = Format.getPrettyFormat();
-        } else {
-            format = Format.getCompactFormat();
-        }
-        if (encoding != null) {
-            format.setEncoding(encoding);
-        }
-        final XMLOutputter outputter = new XMLOutputter(format);
-        outputter.output(doc, writer);
+  public void output(final WireFeed feed, final Writer writer, final boolean prettyPrint) throws IllegalArgumentException, IOException, FeedException {
+    final Document doc = outputJDom(feed);
+    final String encoding = feed.getEncoding();
+    Format format;
+    if (prettyPrint) {
+      format = Format.getPrettyFormat();
+    } else {
+      format = Format.getCompactFormat();
     }
+    if (encoding != null) {
+      format.setEncoding(encoding);
+    }
+    final XMLOutputter outputter = new XMLOutputter(format);
+    outputter.output(doc, writer);
+  }
 
-    /**
+  /**
      * Creates a W3C DOM document for the given WireFeed.
      * <p>
      * This method does not use the feed encoding property.
@@ -294,17 +275,17 @@ public class WireFeedOutput {
      *             not be created.
      * 
      */
-    public org.w3c.dom.Document outputW3CDom(final WireFeed feed) throws IllegalArgumentException, FeedException {
-        final Document doc = outputJDom(feed);
-        final DOMOutputter outputter = new DOMOutputter();
-        try {
-            return outputter.output(doc);
-        } catch (final JDOMException jdomEx) {
-            throw new FeedException("Could not create DOM", jdomEx);
-        }
+  public org.w3c.dom.Document outputW3CDom(final WireFeed feed) throws IllegalArgumentException, FeedException {
+    final Document doc = outputJDom(feed);
+    final DOMOutputter outputter = new DOMOutputter();
+    try {
+      return outputter.output(doc);
+    } catch (final JDOMException jdomEx) {
+      throw new FeedException("Could not create DOM", jdomEx);
     }
+  }
 
-    /**
+  /**
      * Creates a JDOM document for the given WireFeed.
      * <p>
      * This method does not use the feed encoding property.
@@ -322,17 +303,15 @@ public class WireFeedOutput {
      *             be created.
      * 
      */
-    public Document outputJDom(final WireFeed feed) throws IllegalArgumentException, FeedException {
-        final String type = feed.getFeedType();
-        final WireFeedGenerator generator = getFeedGenerators().getGenerator(type);
-        if (generator == null) {
-            throw new IllegalArgumentException("Invalid feed type [" + type + "]");
-        }
-
-        if (!generator.getType().equals(type)) {
-            throw new IllegalArgumentException("WireFeedOutput type[" + type + "] and WireFeed type [" + type + "] don't match");
-        }
-        return generator.generate(feed);
+  public Document outputJDom(final WireFeed feed) throws IllegalArgumentException, FeedException {
+    final String type = feed.getFeedType();
+    final WireFeedGenerator generator = getFeedGenerators().getGenerator(type);
+    if (generator == null) {
+      throw new IllegalArgumentException("Invalid feed type [" + type + "]");
     }
-
+    if (!generator.getType().equals(type)) {
+      throw new IllegalArgumentException("WireFeedOutput type[" + type + "] and WireFeed type [" + type + "] don\'t match");
+    }
+    return generator.generate(feed);
+  }
 }

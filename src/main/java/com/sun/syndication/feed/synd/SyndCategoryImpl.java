@@ -1,27 +1,8 @@
-/*
- * Copyright 2004 Sun Microsystems, Inc.
- * Copyright 2011 ROME Team
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
 package com.sun.syndication.feed.synd;
-
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.sun.syndication.feed.impl.ObjectBean;
 import com.sun.syndication.feed.module.DCSubject;
 import com.sun.syndication.feed.module.DCSubjectImpl;
@@ -34,23 +15,25 @@ import com.sun.syndication.feed.module.DCSubjectImpl;
  * 
  */
 public class SyndCategoryImpl implements Serializable, SyndCategory {
-    private static final long serialVersionUID = -2151815243404151131L;
-    private final ObjectBean objBean;
-    private final DCSubject subject;
+  private static final long serialVersionUID = -2151815243404151131L;
 
-    /**
+  private final ObjectBean objBean;
+
+  private final DCSubject subject;
+
+  /**
      * For implementations extending SyndContentImpl to be able to use the
      * ObjectBean functionality with extended interfaces.
      * <p>
      * 
      * @param subject the DC subject to wrap.
      */
-    SyndCategoryImpl(final DCSubject subject) {
-        objBean = new ObjectBean(SyndCategory.class, this);
-        this.subject = subject;
-    }
+  SyndCategoryImpl(final DCSubject subject) {
+    objBean = new ObjectBean(SyndCategory.class, this);
+    this.subject = subject;
+  }
 
-    /**
+  /**
      * Creates a deep 'bean' clone of the object.
      * <p>
      * 
@@ -59,12 +42,11 @@ public class SyndCategoryImpl implements Serializable, SyndCategory {
      *             cannot be cloned.
      * 
      */
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return objBean.clone();
-    }
+  @Override public Object clone() throws CloneNotSupportedException {
+    return objBean.clone();
+  }
 
-    /**
+  /**
      * Indicates whether some other object is "equal to" this one as defined by
      * the Object equals() method.
      * <p>
@@ -73,15 +55,14 @@ public class SyndCategoryImpl implements Serializable, SyndCategory {
      * @return <b>true</b> if 'this' object is equal to the 'other' object.
      * 
      */
-    @Override
-    public boolean equals(final Object other) {
-        if (!(other instanceof SyndCategoryImpl)) {
-            return false;
-        }
-        return objBean.equals(other);
+  @Override public boolean equals(final Object other) {
+    if (!(other instanceof SyndCategoryImpl)) {
+      return false;
     }
+    return objBean.equals(other);
+  }
 
-    /**
+  /**
      * Returns a hashcode value for the object.
      * <p>
      * It follows the contract defined by the Object hashCode() method.
@@ -90,91 +71,84 @@ public class SyndCategoryImpl implements Serializable, SyndCategory {
      * @return the hashcode of the bean object.
      * 
      */
-    @Override
-    public int hashCode() {
-        return objBean.hashCode();
-    }
+  @Override public int hashCode() {
+    return objBean.hashCode();
+  }
 
-    /**
+  /**
      * Returns the String representation for the object.
      * <p>
      * 
      * @return String representation for the object.
      * 
      */
-    @Override
-    public String toString() {
-        return objBean.toString();
-    }
+  @Override public String toString() {
+    return objBean.toString();
+  }
 
-    /**
+  /**
      * Package private constructor, used by SyndCategoryListFacade.
      * <p>
      * 
      * @return the DC subject being wrapped.
      * 
      */
-    DCSubject getSubject() {
-        return subject;
-    }
+  DCSubject getSubject() {
+    return subject;
+  }
 
-    /**
+  /**
      * Default constructor. All properties are set to <b>null</b>.
      * <p>
      * 
      */
-    public SyndCategoryImpl() {
-        this(new DCSubjectImpl());
-    }
+  public SyndCategoryImpl() {
+    this(new DCSubjectImpl());
+  }
 
-    /**
+  /**
      * Returns the category name.
      * <p>
      * 
      * @return the category name, <b>null</b> if none.
      * 
      */
-    @Override
-    public String getName() {
-        return subject.getValue();
-    }
+  @Override public String getName() {
+    return subject.getValue();
+  }
 
-    /**
+  /**
      * Sets the category name.
      * <p>
      * 
      * @param name the category name to set, <b>null</b> if none.
      * 
      */
-    @Override
-    public void setName(final String name) {
-        subject.setValue(name);
-    }
+  @Override public void setName(final String name) {
+    subject.setValue(name);
+  }
 
-    /**
+  /**
      * Returns the category taxonomy URI.
      * <p>
      * 
      * @return the category taxonomy URI, <b>null</b> if none.
      * 
      */
-    @Override
-    public String getTaxonomyUri() {
-        return subject.getTaxonomyUri();
-    }
+  @Override public String getTaxonomyUri() {
+    return subject.getTaxonomyUri();
+  }
 
-    /**
+  /**
      * Sets the category taxonomy URI.
      * <p>
      * 
      * @param taxonomyUri the category taxonomy URI to set, <b>null</b> if none.
      * 
      */
-    @Override
-    public void setTaxonomyUri(final String taxonomyUri) {
-        subject.setTaxonomyUri(taxonomyUri);
-    }
-
+  @Override public void setTaxonomyUri(final String taxonomyUri) {
+    subject.setTaxonomyUri(taxonomyUri);
+  }
 }
 
 /**
@@ -196,27 +170,27 @@ public class SyndCategoryImpl implements Serializable, SyndCategory {
  * 
  */
 class SyndCategoryListFacade extends AbstractList<SyndCategory> {
-    private final List<DCSubject> subjects;
+  private final List<DCSubject> subjects;
 
-    /**
+  /**
      * Default constructor. Creates and empty list.
      */
-    public SyndCategoryListFacade() {
-        this(new ArrayList<DCSubject>());
-    }
+  public SyndCategoryListFacade() {
+    this(new ArrayList<DCSubject>());
+  }
 
-    /**
+  /**
      * Creates a facade list of categories on top the given subject list.
      * <P>
      * 
      * @param subjects the list of subjects to create the facade.
      * 
      */
-    public SyndCategoryListFacade(final List<DCSubject> subjects) {
-        this.subjects = subjects;
-    }
+  public SyndCategoryListFacade(final List<DCSubject> subjects) {
+    this.subjects = subjects;
+  }
 
-    /**
+  /**
      * Gets the category by index.
      * <p>
      * 
@@ -224,24 +198,22 @@ class SyndCategoryListFacade extends AbstractList<SyndCategory> {
      * @return the SyndCategoryImpl in position index, <b>null</b> if none.
      * 
      */
-    @Override
-    public SyndCategory get(final int index) {
-        return new SyndCategoryImpl(subjects.get(index));
-    }
+  @Override public SyndCategory get(final int index) {
+    return new SyndCategoryImpl(subjects.get(index));
+  }
 
-    /**
+  /**
      * Returns the size of the list.
      * <p>
      * 
      * @return the size of the list.
      * 
      */
-    @Override
-    public int size() {
-        return subjects.size();
-    }
+  @Override public int size() {
+    return subjects.size();
+  }
 
-    /**
+  /**
      * Sets a category in an existing position in the list.
      * <p>
      * 
@@ -251,24 +223,23 @@ class SyndCategoryListFacade extends AbstractList<SyndCategory> {
      *         if none.
      * 
      */
-    @Override
-    public SyndCategory set(final int index, final SyndCategory obj) {
-        final SyndCategoryImpl sCat = (SyndCategoryImpl) obj;
-        DCSubject subject;
-        if (sCat != null) {
-            subject = sCat.getSubject();
-        } else {
-            subject = null;
-        }
-        subject = subjects.set(index, subject);
-        if (subject != null) {
-            return new SyndCategoryImpl(subject);
-        } else {
-            return null;
-        }
+  @Override public SyndCategory set(final int index, final SyndCategory obj) {
+    final SyndCategoryImpl sCat = (SyndCategoryImpl) obj;
+    DCSubject subject;
+    if (sCat != null) {
+      subject = sCat.getSubject();
+    } else {
+      subject = null;
     }
+    subject = subjects.set(index, subject);
+    if (subject != null) {
+      return new SyndCategoryImpl(subject);
+    } else {
+      return null;
+    }
+  }
 
-    /**
+  /**
      * Adds a category to the list.
      * <p>
      * 
@@ -276,19 +247,18 @@ class SyndCategoryListFacade extends AbstractList<SyndCategory> {
      * @param obj the SyndCategoryImpl object to add.
      * 
      */
-    @Override
-    public void add(final int index, final SyndCategory obj) {
-        final SyndCategoryImpl sCat = (SyndCategoryImpl) obj;
-        DCSubject subject;
-        if (sCat != null) {
-            subject = sCat.getSubject();
-        } else {
-            subject = null;
-        }
-        subjects.add(index, subject);
+  @Override public void add(final int index, final SyndCategory obj) {
+    final SyndCategoryImpl sCat = (SyndCategoryImpl) obj;
+    DCSubject subject;
+    if (sCat != null) {
+      subject = sCat.getSubject();
+    } else {
+      subject = null;
     }
+    subjects.add(index, subject);
+  }
 
-    /**
+  /**
      * Removes a category element from a specific position.
      * <p>
      * 
@@ -297,17 +267,16 @@ class SyndCategoryListFacade extends AbstractList<SyndCategory> {
      *         <b>null</b> if none.
      * 
      */
-    @Override
-    public SyndCategory remove(final int index) {
-        final DCSubject subject = subjects.remove(index);
-        if (subject != null) {
-            return new SyndCategoryImpl(subject);
-        } else {
-            return null;
-        }
+  @Override public SyndCategory remove(final int index) {
+    final DCSubject subject = subjects.remove(index);
+    if (subject != null) {
+      return new SyndCategoryImpl(subject);
+    } else {
+      return null;
     }
+  }
 
-    /**
+  /**
      * Returns a list with the DCSubject elements of the SyndCategoryImpl list
      * facade. To be used by the SyndFeedImpl class only.
      * <p>
@@ -318,20 +287,19 @@ class SyndCategoryListFacade extends AbstractList<SyndCategory> {
      *         the given list.
      * 
      */
-    public static List<DCSubject> convertElementsSyndCategoryToSubject(final List<SyndCategory> cList) {
-        List<DCSubject> sList = null;
-        if (cList != null) {
-            sList = new ArrayList<DCSubject>();
-            for (int i = 0; i < cList.size(); i++) {
-                final SyndCategoryImpl sCat = (SyndCategoryImpl) cList.get(i);
-                DCSubject subject = null;
-                if (sCat != null) {
-                    subject = sCat.getSubject();
-                }
-                sList.add(subject);
-            }
+  public static List<DCSubject> convertElementsSyndCategoryToSubject(final List<SyndCategory> cList) {
+    List<DCSubject> sList = null;
+    if (cList != null) {
+      sList = new ArrayList<DCSubject>();
+      for (int i = 0; i < cList.size(); i++) {
+        final SyndCategoryImpl sCat = (SyndCategoryImpl) cList.get(i);
+        DCSubject subject = null;
+        if (sCat != null) {
+          subject = sCat.getSubject();
         }
-        return sList;
+        sList.add(subject);
+      }
     }
-
+    return sList;
+  }
 }

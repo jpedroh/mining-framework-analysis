@@ -1,21 +1,4 @@
-/*
- * Copyright 2004 Sun Microsystems, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
 package com.sun.syndication.feed.synd;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,9 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.jdom2.Element;
-
 import com.sun.syndication.feed.CopyFrom;
 import com.sun.syndication.feed.impl.CopyFromHelper;
 import com.sun.syndication.feed.impl.ObjectBean;
@@ -47,44 +28,57 @@ import com.sun.syndication.feed.synd.impl.URINormalizer;
  * 
  */
 public class SyndEntryImpl implements Serializable, SyndEntry {
-    private static final long serialVersionUID = 1944144041409866698L;
-    private final ObjectBean objBean;
-    private String uri;
-    private String link;
-    private Date updatedDate;
-    private SyndContent title;
-    private SyndContent description;
-    private List<SyndLink> links;
-    private List<SyndContent> contents; // deprecated by Atom 1.0
-    private List<Module> modules;
-    private List<SyndEnclosure> enclosures;
-    private List<SyndPerson> authors;
-    private List<SyndPerson> contributors;
-    private SyndFeed source;
-    private List<Element> foreignMarkup;
-    private Object wireEntry; // com.sun.syndication.feed.atom.Entry or
-                              // com.sun.syndication.feed.rss.Item
+  private static final long serialVersionUID = 1944144041409866698L;
 
-    // ISSUE: some converters assume this is never null
-    private List<SyndCategory> categories = new ArrayList<SyndCategory>();
+  private final ObjectBean objBean;
 
-    private static final Set<String> IGNORE_PROPERTIES = new HashSet<String>();
+  private String uri;
 
-    /**
+  private String link;
+
+  private Date updatedDate;
+
+  private SyndContent title;
+
+  private SyndContent description;
+
+  private List<SyndLink> links;
+
+  private List<SyndContent> contents;
+
+  private List<Module> modules;
+
+  private List<SyndEnclosure> enclosures;
+
+  private List<SyndPerson> authors;
+
+  private List<SyndPerson> contributors;
+
+  private SyndFeed source;
+
+  private List<Element> foreignMarkup;
+
+  private Object wireEntry;
+
+  private List<SyndCategory> categories = new ArrayList<SyndCategory>();
+
+  private static final Set<String> IGNORE_PROPERTIES = new HashSet<String>();
+
+  /**
      * Unmodifiable Set containing the convenience properties of this class.
      * <p>
      * Convenience properties are mapped to Modules, for cloning the convenience
      * properties can be ignored as the will be copied as part of the module
      * cloning.
      */
-    public static final Set<String> CONVENIENCE_PROPERTIES = Collections.unmodifiableSet(IGNORE_PROPERTIES);
+  public static final Set<String> CONVENIENCE_PROPERTIES = Collections.unmodifiableSet(IGNORE_PROPERTIES);
 
-    static {
-        IGNORE_PROPERTIES.add("publishedDate");
-        IGNORE_PROPERTIES.add("author");
-    }
+  static {
+    IGNORE_PROPERTIES.add("publishedDate");
+    IGNORE_PROPERTIES.add("author");
+  }
 
-    /**
+  /**
      * For implementations extending SyndEntryImpl to be able to use the
      * ObjectBean functionality with extended interfaces.
      * <p>
@@ -95,20 +89,20 @@ public class SyndEntryImpl implements Serializable, SyndEntry {
      *            CloneableBean for details).
      * 
      */
-    protected SyndEntryImpl(final Class<?> beanClass, final Set<String> convenienceProperties) {
-        objBean = new ObjectBean(beanClass, this, convenienceProperties);
-    }
+  protected SyndEntryImpl(final Class<?> beanClass, final Set<String> convenienceProperties) {
+    objBean = new ObjectBean(beanClass, this, convenienceProperties);
+  }
 
-    /**
+  /**
      * Default constructor. All properties are set to <b>null</b>.
      * <p>
      * 
      */
-    public SyndEntryImpl() {
-        this(SyndEntry.class, IGNORE_PROPERTIES);
-    }
+  public SyndEntryImpl() {
+    this(SyndEntry.class, IGNORE_PROPERTIES);
+  }
 
-    /**
+  /**
      * Creates a deep 'bean' clone of the object.
      * <p>
      * 
@@ -117,12 +111,11 @@ public class SyndEntryImpl implements Serializable, SyndEntry {
      *             cannot be cloned.
      * 
      */
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return objBean.clone();
-    }
+  @Override public Object clone() throws CloneNotSupportedException {
+    return objBean.clone();
+  }
 
-    /**
+  /**
      * Indicates whether some other object is "equal to" this one as defined by
      * the Object equals() method.
      * <p>
@@ -131,27 +124,21 @@ public class SyndEntryImpl implements Serializable, SyndEntry {
      * @return <b>true</b> if 'this' object is equal to the 'other' object.
      * 
      */
-    @Override
-    public boolean equals(final Object other) {
-        if (other == null) {
-            return false;
-        }
-        // while ObjectBean does this check this method does a cast to obtain
-        // the foreign markup
-        // so we need to check before doing so.
-        if (!(other instanceof SyndEntryImpl)) {
-            return false;
-        }
-        // can't use foreign markup in equals, due to JDOM equals impl
-        final List<Element> fm = getForeignMarkup();
-        setForeignMarkup(((SyndEntryImpl) other).getForeignMarkup());
-        final boolean ret = objBean.equals(other);
-        // restore foreign markup
-        setForeignMarkup(fm);
-        return ret;
+  @Override public boolean equals(final Object other) {
+    if (other == null) {
+      return false;
     }
+    if (!(other instanceof SyndEntryImpl)) {
+      return false;
+    }
+    final List<Element> fm = getForeignMarkup();
+    setForeignMarkup(((SyndEntryImpl) other).getForeignMarkup());
+    final boolean ret = objBean.equals(other);
+    setForeignMarkup(fm);
+    return ret;
+  }
 
-    /**
+  /**
      * Returns a hashcode value for the object.
      * <p>
      * It follows the contract defined by the Object hashCode() method.
@@ -160,24 +147,22 @@ public class SyndEntryImpl implements Serializable, SyndEntry {
      * @return the hashcode of the bean object.
      * 
      */
-    @Override
-    public int hashCode() {
-        return objBean.hashCode();
-    }
+  @Override public int hashCode() {
+    return objBean.hashCode();
+  }
 
-    /**
+  /**
      * Returns the String representation for the object.
      * <p>
      * 
      * @return String representation for the object.
      * 
      */
-    @Override
-    public String toString() {
-        return objBean.toString();
-    }
+  @Override public String toString() {
+    return objBean.toString();
+  }
 
-    /**
+  /**
      * Returns the entry URI.
      * <p>
      * How the entry URI maps to a concrete feed type (RSS or Atom) depends on
@@ -192,12 +177,11 @@ public class SyndEntryImpl implements Serializable, SyndEntry {
      * @return the entry URI, <b>null</b> if none.
      * 
      */
-    @Override
-    public String getUri() {
-        return uri;
-    }
+  @Override public String getUri() {
+    return uri;
+  }
 
-    /**
+  /**
      * Sets the entry URI.
      * <p>
      * How the entry URI maps to a concrete feed type (RSS or Atom) depends on
@@ -210,114 +194,105 @@ public class SyndEntryImpl implements Serializable, SyndEntry {
      * @param uri the entry URI to set, <b>null</b> if none.
      * 
      */
-    @Override
-    public void setUri(final String uri) {
-        this.uri = URINormalizer.normalize(uri);
-    }
+  @Override public void setUri(final String uri) {
+    this.uri = URINormalizer.normalize(uri);
+  }
 
-    /**
+  /**
      * Returns the entry title.
      * <p>
      * 
      * @return the entry title, <b>null</b> if none.
      * 
      */
-    @Override
-    public String getTitle() {
-        if (title != null) {
-            return title.getValue();
-        }
-        return null;
+  @Override public String getTitle() {
+    if (title != null) {
+      return title.getValue();
     }
+    return null;
+  }
 
-    /**
+  /**
      * Sets the entry title.
      * <p>
      * 
      * @param title the entry title to set, <b>null</b> if none.
      * 
      */
-    @Override
-    public void setTitle(final String title) {
-        if (this.title == null) {
-            this.title = new SyndContentImpl();
-        }
-        this.title.setValue(title);
+  @Override public void setTitle(final String title) {
+    if (this.title == null) {
+      this.title = new SyndContentImpl();
     }
+    this.title.setValue(title);
+  }
 
-    /**
+  /**
      * Returns the entry title as a text construct.
      * <p>
      * 
      * @return the entry title, <b>null</b> if none.
      * 
      */
-    @Override
-    public SyndContent getTitleEx() {
-        return title;
-    }
+  @Override public SyndContent getTitleEx() {
+    return title;
+  }
 
-    /**
+  /**
      * Sets the entry title as a text construct.
      * <p>
      * 
      * @param title the entry title to set, <b>null</b> if none.
      * 
      */
-    @Override
-    public void setTitleEx(final SyndContent title) {
-        this.title = title;
-    }
+  @Override public void setTitleEx(final SyndContent title) {
+    this.title = title;
+  }
 
-    /**
+  /**
      * Returns the entry link.
      * <p>
      * 
      * @return the entry link, <b>null</b> if none.
      * 
      */
-    @Override
-    public String getLink() {
-        return link;
-    }
+  @Override public String getLink() {
+    return link;
+  }
 
-    /**
+  /**
      * Sets the entry link.
      * <p>
      * 
      * @param link the entry link to set, <b>null</b> if none.
      * 
      */
-    @Override
-    public void setLink(final String link) {
-        this.link = link;
-    }
+  @Override public void setLink(final String link) {
+    this.link = link;
+  }
 
-    /**
+  /**
      * Returns the entry description.
      * <p>
      * 
      * @return the entry description, <b>null</b> if none.
      * 
      */
-    @Override
-    public SyndContent getDescription() {
-        return description;
-    }
+  @Override public SyndContent getDescription() {
+    return description;
+  }
 
-    /**
+  /**
      * Sets the entry description.
      * <p>
      * 
      * @param description the entry description to set, <b>null</b> if none.
      * 
      */
-    @Override
-    public void setDescription(final SyndContent description) {
-        this.description = description;
-    }
+  @Override public void setDescription(final SyndContent description) {
+    this.description = description;
+  }
 
-    /**
+  /**
      * Returns the entry contents.
      * <p>
      * 
@@ -325,15 +300,14 @@ public class SyndEntryImpl implements Serializable, SyndEntry {
      *         empty list if none.
      * 
      */
-    @Override
-    public List<SyndContent> getContents() {
-        if (contents == null) {
-            contents = new ArrayList<SyndContent>();
-        }
-        return contents;
+  @Override public List<SyndContent> getContents() {
+    if (contents == null) {
+      contents = new ArrayList<SyndContent>();
     }
+    return contents;
+  }
 
-    /**
+  /**
      * Sets the entry contents.
      * <p>
      * 
@@ -341,12 +315,11 @@ public class SyndEntryImpl implements Serializable, SyndEntry {
      *            contents to set, an empty list or <b>null</b> if none.
      * 
      */
-    @Override
-    public void setContents(final List<SyndContent> contents) {
-        this.contents = contents;
-    }
+  @Override public void setContents(final List<SyndContent> contents) {
+    this.contents = contents;
+  }
 
-    /**
+  /**
      * Returns the entry enclosures.
      * <p>
      * 
@@ -354,15 +327,14 @@ public class SyndEntryImpl implements Serializable, SyndEntry {
      *         empty list if none.
      * 
      */
-    @Override
-    public List<SyndEnclosure> getEnclosures() {
-        if (enclosures == null) {
-            enclosures = new ArrayList<SyndEnclosure>();
-        }
-        return enclosures;
+  @Override public List<SyndEnclosure> getEnclosures() {
+    if (enclosures == null) {
+      enclosures = new ArrayList<SyndEnclosure>();
     }
+    return enclosures;
+  }
 
-    /**
+  /**
      * Sets the entry enclosures.
      * <p>
      * 
@@ -370,12 +342,11 @@ public class SyndEntryImpl implements Serializable, SyndEntry {
      *            enclosures to set, an empty list or <b>null</b> if none.
      * 
      */
-    @Override
-    public void setEnclosures(final List<SyndEnclosure> enclosures) {
-        this.enclosures = enclosures;
-    }
+  @Override public void setEnclosures(final List<SyndEnclosure> enclosures) {
+    this.enclosures = enclosures;
+  }
 
-    /**
+  /**
      * Returns the entry published date.
      * <p>
      * This method is a convenience method, it maps to the Dublin Core module
@@ -385,12 +356,11 @@ public class SyndEntryImpl implements Serializable, SyndEntry {
      * @return the entry published date, <b>null</b> if none.
      * 
      */
-    @Override
-    public Date getPublishedDate() {
-        return getDCModule().getDate();
-    }
+  @Override public Date getPublishedDate() {
+    return getDCModule().getDate();
+  }
 
-    /**
+  /**
      * Sets the entry published date.
      * <p>
      * This method is a convenience method, it maps to the Dublin Core module
@@ -401,12 +371,11 @@ public class SyndEntryImpl implements Serializable, SyndEntry {
      *            none.
      * 
      */
-    @Override
-    public void setPublishedDate(final Date publishedDate) {
-        getDCModule().setDate(publishedDate);
-    }
+  @Override public void setPublishedDate(final Date publishedDate) {
+    getDCModule().setDate(publishedDate);
+  }
 
-    /**
+  /**
      * Returns the entry categories.
      * <p>
      * 
@@ -414,12 +383,11 @@ public class SyndEntryImpl implements Serializable, SyndEntry {
      *         empty list if none.
      * 
      */
-    @Override
-    public List<SyndCategory> getCategories() {
-        return categories;
-    }
+  @Override public List<SyndCategory> getCategories() {
+    return categories;
+  }
 
-    /**
+  /**
      * Sets the entry categories.
      * <p>
      * This method is a convenience method, it maps to the Dublin Core module
@@ -430,12 +398,11 @@ public class SyndEntryImpl implements Serializable, SyndEntry {
      *            categories to set, an empty list or <b>null</b> if none.
      * 
      */
-    @Override
-    public void setCategories(final List<SyndCategory> categories) {
-        this.categories = categories;
-    }
+  @Override public void setCategories(final List<SyndCategory> categories) {
+    this.categories = categories;
+  }
 
-    /**
+  /**
      * Returns the entry modules.
      * <p>
      * 
@@ -443,18 +410,17 @@ public class SyndEntryImpl implements Serializable, SyndEntry {
      *         list if none.
      * 
      */
-    @Override
-    public List<Module> getModules() {
-        if (modules == null) {
-            modules = new ArrayList<Module>();
-        }
-        if (ModuleUtils.getModule(modules, DCModule.URI) == null) {
-            modules.add(new DCModuleImpl());
-        }
-        return modules;
+  @Override public List<Module> getModules() {
+    if (modules == null) {
+      modules = new ArrayList<Module>();
     }
+    if (ModuleUtils.getModule(modules, DCModule.URI) == null) {
+      modules.add(new DCModuleImpl());
+    }
+    return modules;
+  }
 
-    /**
+  /**
      * Sets the entry modules.
      * <p>
      * 
@@ -462,134 +428,118 @@ public class SyndEntryImpl implements Serializable, SyndEntry {
      *            set, an empty list or <b>null</b> if none.
      * 
      */
-    @Override
-    public void setModules(final List<Module> modules) {
-        this.modules = modules;
-    }
+  @Override public void setModules(final List<Module> modules) {
+    this.modules = modules;
+  }
 
-    /**
+  /**
      * Returns the module identified by a given URI.
      * <p>
      * 
      * @param uri the URI of the ModuleImpl.
      * @return The module with the given URI, <b>null</b> if none.
      */
-    @Override
-    public Module getModule(final String uri) {
-        return ModuleUtils.getModule(getModules(), uri);
-    }
+  @Override public Module getModule(final String uri) {
+    return ModuleUtils.getModule(getModules(), uri);
+  }
 
-    /**
+  /**
      * Returns the Dublin Core module of the feed.
      * 
      * @return the DC module, it's never <b>null</b>
      * 
      */
-    private DCModule getDCModule() {
-        return (DCModule) getModule(DCModule.URI);
-    }
+  private DCModule getDCModule() {
+    return (DCModule) getModule(DCModule.URI);
+  }
 
-    @Override
-    public Class<SyndEntry> getInterface() {
-        return SyndEntry.class;
-    }
+  @Override public Class<SyndEntry> getInterface() {
+    return SyndEntry.class;
+  }
 
-    @Override
-    public void copyFrom(final CopyFrom<SyndEntry> obj) {
-        COPY_FROM_HELPER.copy(this, obj);
-    }
+  @Override public void copyFrom(final CopyFrom<SyndEntry> obj) {
+    COPY_FROM_HELPER.copy(this, obj);
+  }
 
-    private static final CopyFromHelper COPY_FROM_HELPER;
+  private static final CopyFromHelper COPY_FROM_HELPER;
 
-    static {
-        final Map<String, Class<?>> basePropInterfaceMap = new HashMap<String, Class<?>>();
-        basePropInterfaceMap.put("uri", String.class);
-        basePropInterfaceMap.put("title", String.class);
-        basePropInterfaceMap.put("link", String.class);
-        basePropInterfaceMap.put("uri", String.class);
-        basePropInterfaceMap.put("description", SyndContent.class);
-        basePropInterfaceMap.put("contents", SyndContent.class);
-        basePropInterfaceMap.put("enclosures", SyndEnclosure.class);
-        basePropInterfaceMap.put("modules", Module.class);
+  static {
+    final Map<String, Class<?>> basePropInterfaceMap = new HashMap<String, Class<?>>();
+    basePropInterfaceMap.put("uri", String.class);
+    basePropInterfaceMap.put("title", String.class);
+    basePropInterfaceMap.put("link", String.class);
+    basePropInterfaceMap.put("uri", String.class);
+    basePropInterfaceMap.put("description", SyndContent.class);
+    basePropInterfaceMap.put("contents", SyndContent.class);
+    basePropInterfaceMap.put("enclosures", SyndEnclosure.class);
+    basePropInterfaceMap.put("modules", Module.class);
+    final Map<Class<? extends CopyFrom<?>>, Class<?>> basePropClassImplMap = new HashMap<Class<? extends CopyFrom<?>>, Class<?>>();
+    basePropClassImplMap.put(SyndContent.class, SyndContentImpl.class);
+    basePropClassImplMap.put(SyndEnclosure.class, SyndEnclosureImpl.class);
+    basePropClassImplMap.put(DCModule.class, DCModuleImpl.class);
+    basePropClassImplMap.put(SyModule.class, SyModuleImpl.class);
+    COPY_FROM_HELPER = new CopyFromHelper(SyndEntry.class, basePropInterfaceMap, basePropClassImplMap);
+  }
 
-        final Map<Class<? extends CopyFrom<?>>, Class<?>> basePropClassImplMap = new HashMap<Class<? extends CopyFrom<?>>, Class<?>>();
-        basePropClassImplMap.put(SyndContent.class, SyndContentImpl.class);
-        basePropClassImplMap.put(SyndEnclosure.class, SyndEnclosureImpl.class);
-        basePropClassImplMap.put(DCModule.class, DCModuleImpl.class);
-        basePropClassImplMap.put(SyModule.class, SyModuleImpl.class);
-
-        COPY_FROM_HELPER = new CopyFromHelper(SyndEntry.class, basePropInterfaceMap, basePropClassImplMap);
-    }
-
-    /**
+  /**
      * Returns the links
      * <p>
      * 
      * @return Returns the links.
      */
-    @Override
-    public List<SyndLink> getLinks() {
-        if (links == null) {
-            links = new ArrayList<SyndLink>();
-        }
-        return links;
+  @Override public List<SyndLink> getLinks() {
+    if (links == null) {
+      links = new ArrayList<SyndLink>();
     }
+    return links;
+  }
 
-    /**
+  /**
      * Set the links
      * <p>
      * 
      * @param links The links to set.
      */
-    @Override
-    public void setLinks(final List<SyndLink> links) {
-        this.links = links;
-    }
+  @Override public void setLinks(final List<SyndLink> links) {
+    this.links = links;
+  }
 
-    /**
+  /**
      * Returns the updatedDate
      * <p>
      * 
      * @return Returns the updatedDate.
      */
-    @Override
-    public Date getUpdatedDate() {
-        if (updatedDate == null) {
-            return null;
-        } else {
-            return new Date(updatedDate.getTime());
-        }
+  @Override public Date getUpdatedDate() {
+    if (updatedDate == null) {
+      return null;
+    } else {
+      return new Date(updatedDate.getTime());
     }
+  }
 
-    /**
+  /**
      * Set the updatedDate
      * <p>
      * 
      * @param updatedDate The updatedDate to set.
      */
-    @Override
-    public void setUpdatedDate(final Date updatedDate) {
-        this.updatedDate = new Date(updatedDate.getTime());
-    }
+  @Override public void setUpdatedDate(final Date updatedDate) {
+    this.updatedDate = new Date(updatedDate.getTime());
+  }
 
-    @Override
-    public List<SyndPerson> getAuthors() {
-        if (authors == null) {
-            authors = new ArrayList<SyndPerson>();
-        }
-        return authors;
+  @Override public List<SyndPerson> getAuthors() {
+    if (authors == null) {
+      authors = new ArrayList<SyndPerson>();
     }
+    return authors;
+  }
 
-    /*
-     * (non-Javadoc)
-     * @see com.sun.syndication.feed.synd.SyndEntry#setAuthors(java.util.List)
-     */
-    @Override
-    public void setAuthors(final List<SyndPerson> authors) {
-        this.authors = authors;
-    }
+  @Override public void setAuthors(final List<SyndPerson> authors) {
+    this.authors = authors;
+  }
 
-    /**
+  /**
      * Returns the entry author.
      * <p>
      * This method is a convenience method, it maps to the Dublin Core module
@@ -599,25 +549,20 @@ public class SyndEntryImpl implements Serializable, SyndEntry {
      * @return the entry author, <b>null</b> if none.
      * 
      */
-    @Override
-    public String getAuthor() {
-        String author;
-
-        // Start out looking for one or more authors in authors. For non-Atom
-        // feeds, authors may actually be null.
-        if (authors != null && authors.size() > 0) {
-            author = authors.get(0).getName();
-        } else {
-            author = getDCModule().getCreator();
-        }
-        if (author == null) {
-            author = "";
-        }
-
-        return author;
+  @Override public String getAuthor() {
+    String author;
+    if (authors != null && authors.size() > 0) {
+      author = authors.get(0).getName();
+    } else {
+      author = getDCModule().getCreator();
     }
+    if (author == null) {
+      author = "";
+    }
+    return author;
+  }
 
-    /**
+  /**
      * Sets the entry author.
      * <p>
      * This method is a convenience method, it maps to the Dublin Core module
@@ -627,42 +572,34 @@ public class SyndEntryImpl implements Serializable, SyndEntry {
      * @param author the entry author to set, <b>null</b> if none.
      * 
      */
-    @Override
-    public void setAuthor(final String author) {
-        // Get the DCModule so that we can check to see if "creator" is already
-        // set.
-        final DCModule dcModule = getDCModule();
-        final String currentValue = dcModule.getCreator();
-
-        if (currentValue == null || currentValue.length() == 0) {
-            getDCModule().setCreator(author);
-        }
+  @Override public void setAuthor(final String author) {
+    final DCModule dcModule = getDCModule();
+    final String currentValue = dcModule.getCreator();
+    if (currentValue == null || currentValue.length() == 0) {
+      getDCModule().setCreator(author);
     }
+  }
 
-    @Override
-    public List<SyndPerson> getContributors() {
-        if (contributors == null) {
-            contributors = new ArrayList<SyndPerson>();
-        }
-        return contributors;
+  @Override public List<SyndPerson> getContributors() {
+    if (contributors == null) {
+      contributors = new ArrayList<SyndPerson>();
     }
+    return contributors;
+  }
 
-    @Override
-    public void setContributors(final List<SyndPerson> contributors) {
-        this.contributors = contributors;
-    }
+  @Override public void setContributors(final List<SyndPerson> contributors) {
+    this.contributors = contributors;
+  }
 
-    @Override
-    public SyndFeed getSource() {
-        return source;
-    }
+  @Override public SyndFeed getSource() {
+    return source;
+  }
 
-    @Override
-    public void setSource(final SyndFeed source) {
-        this.source = source;
-    }
+  @Override public void setSource(final SyndFeed source) {
+    this.source = source;
+  }
 
-    /**
+  /**
      * Returns foreign markup found at channel level.
      * <p>
      * 
@@ -670,15 +607,14 @@ public class SyndEntryImpl implements Serializable, SyndEntry {
      *         empty list if none.
      * 
      */
-    @Override
-    public List<Element> getForeignMarkup() {
-        if (foreignMarkup == null) {
-            foreignMarkup = new ArrayList<Element>();
-        }
-        return foreignMarkup;
+  @Override public List<Element> getForeignMarkup() {
+    if (foreignMarkup == null) {
+      foreignMarkup = new ArrayList<Element>();
     }
+    return foreignMarkup;
+  }
 
-    /**
+  /**
      * Sets foreign markup found at channel level.
      * <p>
      * 
@@ -686,27 +622,24 @@ public class SyndEntryImpl implements Serializable, SyndEntry {
      *            markup, an empty list if none.
      * 
      */
-    @Override
-    public void setForeignMarkup(final List<Element> foreignMarkup) {
-        this.foreignMarkup = foreignMarkup;
-    }
+  @Override public void setForeignMarkup(final List<Element> foreignMarkup) {
+    this.foreignMarkup = foreignMarkup;
+  }
 
-    @Override
-    public Object getWireEntry() {
-        return wireEntry;
-    }
+  @Override public Object getWireEntry() {
+    return wireEntry;
+  }
 
-    public void setWireEntry(final Object wireEntry) {
-        this.wireEntry = wireEntry;
-    }
+  public void setWireEntry(final Object wireEntry) {
+    this.wireEntry = wireEntry;
+  }
 
-    @Override
-    public SyndLink findRelatedLink(final String relation) {
-        for (final SyndLink l : getLinks()) {
-            if (relation.equals(l.getRel())) {
-                return l;
-            }
-        }
-        return null;
+  @Override public SyndLink findRelatedLink(final String relation) {
+    for (final SyndLink l : getLinks()) {
+      if (relation.equals(l.getRel())) {
+        return l;
+      }
     }
+    return null;
+  }
 }
