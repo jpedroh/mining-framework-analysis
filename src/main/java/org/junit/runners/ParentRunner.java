@@ -423,9 +423,8 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
             }
             List<T> sortedChildren = new ArrayList<T>(getFilteredChildren());
             Collections.sort(sortedChildren, comparator(sorter));
+<<<<<<< /usr/src/app/output/junit-team/junit4/5a7186b539a7ae1c576ebcea61e0639b7517397c/src/main/java/org/junit/runners/ParentRunner.java/left.java
             filteredChildren = Collections.unmodifiableList(sortedChildren);
-        } finally {
-            childrenLock.unlock();
         }
     }
 
@@ -435,8 +434,7 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
      * @since 4.13
      */
     public void order(GeneralOrdering ordering)   throws InvalidOrderingException {
-        childrenLock.lock();
-        try {
+        synchronized (childrenLock) {
             List<T> children = getFilteredChildren();
             // In theory, we could have duplicate Descriptions. De-dup them before ordering,
             // and add them back at the end.
@@ -460,8 +458,13 @@ public abstract class ParentRunner<T> extends Runner implements Filterable,
                 children.addAll(childMap.get(description));
             }
             filteredChildren = Collections.unmodifiableList(children);
+||||||| /usr/src/app/output/junit-team/junit4/5a7186b539a7ae1c576ebcea61e0639b7517397c/src/main/java/org/junit/runners/ParentRunner.java/base.java
+            filteredChildren = Collections.unmodifiableCollection(sortedChildren);
+=======
+            filteredChildren = Collections.unmodifiableCollection(sortedChildren);
         } finally {
             childrenLock.unlock();
+>>>>>>> /usr/src/app/output/junit-team/junit4/5a7186b539a7ae1c576ebcea61e0639b7517397c/src/main/java/org/junit/runners/ParentRunner.java/right.java
         }
     }
 
