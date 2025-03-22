@@ -11,11 +11,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.log4j.Layout;
-import org.apache.log4j.Logger;
-import org.junit.*;
-import org.junit.runners.MethodSorters;
-
 import com.google.code.tempusfugit.temporal.Condition;
 import com.google.code.tempusfugit.temporal.Duration;
 import com.google.code.tempusfugit.temporal.ThreadSleep;
@@ -25,12 +20,17 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
+import com.lambdaworks.redis.RedisChannelHandler;
 import com.lambdaworks.redis.*;
 import com.lambdaworks.redis.cluster.models.partitions.ClusterPartitionParser;
 import com.lambdaworks.redis.cluster.models.partitions.Partitions;
 import com.lambdaworks.redis.cluster.models.partitions.RedisClusterNode;
 import com.lambdaworks.redis.cluster.models.slots.ClusterSlotRange;
 import com.lambdaworks.redis.cluster.models.slots.ClusterSlotsParser;
+import org.apache.log4j.Layout;
+import org.apache.log4j.Logger;
+import org.junit.*;
+import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @SuppressWarnings("unchecked")
@@ -150,6 +150,7 @@ public class RedisClusterClientTest {
 
     @Test
     public void testClusterSlaves() throws Exception {
+
 
         setNode4SlaveOfNode1();
 
