@@ -61,18 +61,30 @@ public class TrajectoriesInputImpl implements TrajectoriesInput{
  	 * @param elem the elem
  	 */
  	public TrajectoriesInputImpl(Element elem) {
-		 if (elem == null) {
-			 isInitialized = false;
-			 return;
-		 }
-		 
-		 dt = Double.parseDouble(elem.getAttributeValue("dt"));
-		 startTime = Double.parseDouble(elem.getAttributeValue("start_time"));
-		 endTime = Double.parseDouble(elem.getAttributeValue("end_time"));
-		 startPosition = Double.parseDouble(elem.getAttributeValue("start_x"));
-		 endPosition = Double.parseDouble(elem.getAttributeValue("end_x"));
-		 isInitialized = true;
-	 }
+ 			 if (elem == null) {
+ 				 isInitialized = false;
+ 				 return;
+ 			 }
+ 			 
+ 			 dt = Double.parseDouble(elem.getAttributeValue("dt"));
+<<<<<<< /usr/src/app/output/movsim/movsim/dda7cfc15c5dc1102f21327f720973fa36dbc38b/src/main/java/org/movsim/input/model/output/impl/TrajectoriesInputImpl.java/left.java
+ 			 startTime = Double.parseDouble(elem.getAttributeValue("start_time"));
+ 			 endTime = Double.parseDouble(elem.getAttributeValue("end_time"));
+ 			 startPosition = Double.parseDouble(elem.getAttributeValue("start_x"));
+ 			 endPosition = Double.parseDouble(elem.getAttributeValue("end_x"));
+||||||| /usr/src/app/output/movsim/movsim/dda7cfc15c5dc1102f21327f720973fa36dbc38b/src/main/java/org/movsim/input/model/output/impl/TrajectoriesInputImpl.java/base.java
+ 			 startTime = 60*Double.parseDouble(elem.getAttributeValue("t_start_min"));
+ 			 endTime = 60*Double.parseDouble(elem.getAttributeValue("t_end_min"));
+ 			 startPosition = 1000*Double.parseDouble(elem.getAttributeValue("x_start_km"));
+ 			 endPosition = 1000*Double.parseDouble(elem.getAttributeValue("x_end_km"));
+=======
+ 			 startTime = Double.parseDouble(elem.getAttributeValue("start_time"));
+ 			 endTime = startTime+Double.parseDouble(elem.getAttributeValue("duration"));
+ 			 startPosition = Double.parseDouble(elem.getAttributeValue("x"));
+ 			 endPosition = startPosition + Double.parseDouble(elem.getAttributeValue("length"));
+>>>>>>> /usr/src/app/output/movsim/movsim/dda7cfc15c5dc1102f21327f720973fa36dbc38b/src/main/java/org/movsim/input/model/output/impl/TrajectoriesInputImpl.java/right.java
+ 			 isInitialized = true;
+ 		 }
 
 
 
