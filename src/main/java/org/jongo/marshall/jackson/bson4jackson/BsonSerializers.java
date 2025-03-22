@@ -119,6 +119,7 @@ class BsonSerializers extends SimpleSerializers {
 
     static class Decimal128Serializer extends JsonSerializer<Decimal128> {
 
+<<<<<<< /usr/src/app/output/bguerout/jongo/697fc67ed565bbaf3b67d4ad5e8a19ca8c09e90c/src/main/java/org/jongo/marshall/jackson/bson4jackson/BsonSerializers.java/left.java
         public void serialize(Decimal128 decimal, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
             if (jsonGenerator instanceof MongoBsonGenerator) {
                 ((MongoBsonGenerator) jsonGenerator).writeDecima128(decimal);
@@ -131,6 +132,20 @@ class BsonSerializers extends SimpleSerializers {
                 handleUnsupportedGenerator(jsonGenerator);
             }
         }
+||||||| /usr/src/app/output/bguerout/jongo/697fc67ed565bbaf3b67d4ad5e8a19ca8c09e90c/src/main/java/org/jongo/marshall/jackson/bson4jackson/BsonSerializers.java/base.java
+        public void serialize(Decimal128 decimal, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException 
+=======
+        public void serialize(Decimal128 decimal, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
+            if (jsonGenerator instanceof MongoBsonGenerator) {
+                ((MongoBsonGenerator) jsonGenerator).writeDecima128(decimal);
+            } else {
+                jsonGenerator.writeStartObject();
+                jsonGenerator.writeFieldName("$numberDecimal");
+                jsonGenerator.writeString(decimal.bigDecimalValue().toString());
+                jsonGenerator.writeEndObject();
+            }
+        }
+>>>>>>> /usr/src/app/output/bguerout/jongo/697fc67ed565bbaf3b67d4ad5e8a19ca8c09e90c/src/main/java/org/jongo/marshall/jackson/bson4jackson/BsonSerializers.java/right.java
     }
 
     private static void handleUnsupportedGenerator(JsonGenerator jsonGenerator) {
