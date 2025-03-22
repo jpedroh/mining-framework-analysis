@@ -1,20 +1,4 @@
-/*
- *  Copyright 2019-2020 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
 package me.zhengjie.modules.system.rest;
-
 import cn.hutool.core.collection.CollectionUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,86 +23,60 @@ import java.util.*;
 * @author Zheng Jie
 * @date 2019-03-25
 */
-@RestController
-@RequiredArgsConstructor
-@Api(tags = "系统：部门管理")
-@RequestMapping("/api/dept")
-public class DeptController {
+@RestController @RequiredArgsConstructor @Api(tags = "\u7cfb\u7edf\uff1a\u90e8\u95e8\u7ba1\u7406") @RequestMapping(value = "/api/dept") public class DeptController {
+  private final DeptService deptService;
 
-    private final DeptService deptService;
-    private static final String ENTITY_NAME = "dept";
+  private static final String ENTITY_NAME = "dept";
 
-    @ApiOperation("导出部门数据")
-    @GetMapping(value = "/download")
-    @PreAuthorize("@el.check('dept:list')")
-    public void exportDept(HttpServletResponse response, DeptQueryCriteria criteria) throws Exception {
-        deptService.download(deptService.queryAll(criteria, false), response);
+  @ApiOperation(value = "\u5bfc\u51fa\u90e8\u95e8\u6570\u636e") @GetMapping(value = "/download") @PreAuthorize(value = "@el.check(\'dept:list\')") public void exportDept(HttpServletResponse response, DeptQueryCriteria criteria) throws Exception {
+    deptService.download(deptService.queryAll(criteria, false), response);
+  }
+
+  @ApiOperation(value = "\u67e5\u8be2\u90e8\u95e8") @GetMapping @PreAuthorize(value = "@el.check(\'user:list\',\'dept:list\')") public ResponseEntity<PageResult<DeptDto>> queryDept(DeptQueryCriteria criteria) throws Exception {
+    List<DeptDto> depts = deptService.queryAll(criteria, true);
+    return new ResponseEntity<>(PageUtil.toPage(depts, depts.size()), HttpStatus.OK);
+  }
+
+  @ApiOperation(value = "\u67e5\u8be2\u90e8\u95e8:\u6839\u636eID\u83b7\u53d6\u540c\u7ea7\u4e0e\u4e0a\u7ea7\u6570\u636e") @PostMapping(value = "/superior") @PreAuthorize(value = "@el.check(\'user:list\',\'dept:list\')") public ResponseEntity<Object> getDeptSuperior(@RequestBody List<Long> ids) {
+    Set<DeptDto> deptSet = new LinkedHashSet<>();
+    for (Long id : ids) {
+      DeptDto deptDto = deptService.findById(id);
+      List<DeptDto> depts = deptService.getSuperior(deptDto, new ArrayList<>());
+      deptSet.addAll(depts);
     }
+    return new ResponseEntity<>(deptService.buildTree(new ArrayList<>(deptSet)), HttpStatus.OK);
+  }
 
-    @ApiOperation("查询部门")
-    @GetMapping
-    @PreAuthorize("@el.check('user:list','dept:list')")
-    public ResponseEntity<PageResult<DeptDto>> queryDept(DeptQueryCriteria criteria) throws Exception {
-        List<DeptDto> depts = deptService.queryAll(criteria, true);
-        return new ResponseEntity<>(PageUtil.toPage(depts, depts.size()),HttpStatus.OK);
+  @Log(value = "\u65b0\u589e\u90e8\u95e8") @ApiOperation(value = "\u65b0\u589e\u90e8\u95e8") @PostMapping @PreAuthorize(value = "@el.check(\'dept:add\')") public ResponseEntity<Object> createDept(@Validated @RequestBody Dept resources) {
+    if (resources.getId() != null) {
+      throw new BadRequestException("A new " + ENTITY_NAME + " cannot already have an ID");
     }
+    deptService.create(resources);
+    return new ResponseEntity<>(HttpStatus.CREATED);
+  }
 
-    @ApiOperation("查询部门:根据ID获取同级与上级数据")
-    @PostMapping("/superior")
-    @PreAuthorize("@el.check('user:list','dept:list')")
-    public ResponseEntity<Object> getDeptSuperior(@RequestBody List<Long> ids) {
-        Set<DeptDto> deptSet  = new LinkedHashSet<>();
-        for (Long id : ids) {
-            DeptDto deptDto = deptService.findById(id);
-            List<DeptDto> depts = deptService.getSuperior(deptDto, new ArrayList<>());
-            deptSet.addAll(depts);
-        }
-        return new ResponseEntity<>(deptService.buildTree(new ArrayList<>(deptSet)),HttpStatus.OK);
+  @Log(value = "\u4fee\u6539\u90e8\u95e8") @ApiOperation(value = "\u4fee\u6539\u90e8\u95e8") @PutMapping @PreAuthorize(value = "@el.check(\'dept:edit\')") public ResponseEntity<Object> updateDept(@Validated(value = Dept.Update.class) @RequestBody Dept resources) {
+    if (resources.getId() <= 11) {
+      throw new BadRequestException("\u6f14\u793a\u73af\u5883\u4e0d\u53ef\u64cd\u4f5c");
     }
+    deptService.update(resources);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 
-    @Log("新增部门")
-    @ApiOperation("新增部门")
-    @PostMapping
-    @PreAuthorize("@el.check('dept:add')")
-    public ResponseEntity<Object> createDept(@Validated @RequestBody Dept resources){
-        if (resources.getId() != null) {
-            throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
-        }
-        deptService.create(resources);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+  @Log(value = "\u5220\u9664\u90e8\u95e8") @ApiOperation(value = "\u5220\u9664\u90e8\u95e8") @DeleteMapping @PreAuthorize(value = "@el.check(\'dept:del\')") public ResponseEntity<Object> deleteDept(@RequestBody Set<Long> ids) {
+    Set<DeptDto> deptDtos = new HashSet<>();
+    for (Long id : ids) {
+      if (id <= 11) {
+        throw new BadRequestException("\u6f14\u793a\u73af\u5883\u4e0d\u53ef\u64cd\u4f5c");
+      }
+      List<Dept> deptList = deptService.findByPid(id);
+      deptDtos.add(deptService.findById(id));
+      if (CollectionUtil.isNotEmpty(deptList)) {
+        deptDtos = deptService.getDeleteDepts(deptList, deptDtos);
+      }
     }
-
-    @Log("修改部门")
-    @ApiOperation("修改部门")
-    @PutMapping
-    @PreAuthorize("@el.check('dept:edit')")
-    public ResponseEntity<Object> updateDept(@Validated(Dept.Update.class) @RequestBody Dept resources){
-        if(resources.getId() <= 11){
-            throw new BadRequestException("演示环境不可操作");
-        }
-        deptService.update(resources);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @Log("删除部门")
-    @ApiOperation("删除部门")
-    @DeleteMapping
-    @PreAuthorize("@el.check('dept:del')")
-    public ResponseEntity<Object> deleteDept(@RequestBody Set<Long> ids){
-        Set<DeptDto> deptDtos = new HashSet<>();
-        for (Long id : ids) {
-            if(id <= 11){
-                throw new BadRequestException("演示环境不可操作");
-            }
-            List<Dept> deptList = deptService.findByPid(id);
-            deptDtos.add(deptService.findById(id));
-            if(CollectionUtil.isNotEmpty(deptList)){
-                deptDtos = deptService.getDeleteDepts(deptList, deptDtos);
-            }
-        }
-        // 验证是否被角色或用户关联
-        deptService.verification(deptDtos);
-        deptService.delete(deptDtos);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+    deptService.verification(deptDtos);
+    deptService.delete(deptDtos);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 }

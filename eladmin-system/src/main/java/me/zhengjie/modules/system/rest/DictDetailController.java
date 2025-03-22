@@ -1,20 +1,4 @@
-/*
- *  Copyright 2019-2020 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
 package me.zhengjie.modules.system.rest;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -41,66 +25,45 @@ import java.util.Map;
 * @author Zheng Jie
 * @date 2019-04-10
 */
-@RestController
-@RequiredArgsConstructor
-@Api(tags = "系统：字典详情管理")
-@RequestMapping("/api/dictDetail")
-public class DictDetailController {
+@RestController @RequiredArgsConstructor @Api(tags = "\u7cfb\u7edf\uff1a\u5b57\u5178\u8be6\u60c5\u7ba1\u7406") @RequestMapping(value = "/api/dictDetail") public class DictDetailController {
+  private final DictDetailService dictDetailService;
 
-    private final DictDetailService dictDetailService;
-    private static final String ENTITY_NAME = "dictDetail";
+  private static final String ENTITY_NAME = "dictDetail";
 
-    @ApiOperation("查询字典详情")
-    @GetMapping
-    public ResponseEntity<PageResult<DictDetailDto>> queryDictDetail(DictDetailQueryCriteria criteria,
-                                                                     @PageableDefault(sort = {"dictSort"}, direction = Sort.Direction.ASC) Pageable pageable){
-        return new ResponseEntity<>(dictDetailService.queryAll(criteria,pageable),HttpStatus.OK);
+  @ApiOperation(value = "\u67e5\u8be2\u5b57\u5178\u8be6\u60c5") @GetMapping public ResponseEntity<PageResult<DictDetailDto>> queryDictDetail(DictDetailQueryCriteria criteria, @PageableDefault(sort = { "dictSort" }, direction = Sort.Direction.ASC) Pageable pageable) {
+    return new ResponseEntity<>(dictDetailService.queryAll(criteria, pageable), HttpStatus.OK);
+  }
+
+  @ApiOperation(value = "\u67e5\u8be2\u591a\u4e2a\u5b57\u5178\u8be6\u60c5") @GetMapping(value = "/map") public ResponseEntity<Object> getDictDetailMaps(@RequestParam String dictName) {
+    String[] names = dictName.split("[,\uff0c]");
+    Map<String, List<DictDetailDto>> dictMap = new HashMap<>(16);
+    for (String name : names) {
+      dictMap.put(name, dictDetailService.getDictByName(name));
     }
+    return new ResponseEntity<>(dictMap, HttpStatus.OK);
+  }
 
-    @ApiOperation("查询多个字典详情")
-    @GetMapping(value = "/map")
-    public ResponseEntity<Object> getDictDetailMaps(@RequestParam String dictName){
-        String[] names = dictName.split("[,，]");
-        Map<String, List<DictDetailDto>> dictMap = new HashMap<>(16);
-        for (String name : names) {
-            dictMap.put(name, dictDetailService.getDictByName(name));
-        }
-        return new ResponseEntity<>(dictMap, HttpStatus.OK);
+  @Log(value = "\u65b0\u589e\u5b57\u5178\u8be6\u60c5") @ApiOperation(value = "\u65b0\u589e\u5b57\u5178\u8be6\u60c5") @PostMapping @PreAuthorize(value = "@el.check(\'dict:add\')") public ResponseEntity<Object> createDictDetail(@Validated @RequestBody DictDetail resources) {
+    if (resources.getId() != null) {
+      throw new BadRequestException("A new " + ENTITY_NAME + " cannot already have an ID");
     }
+    dictDetailService.create(resources);
+    return new ResponseEntity<>(HttpStatus.CREATED);
+  }
 
-    @Log("新增字典详情")
-    @ApiOperation("新增字典详情")
-    @PostMapping
-    @PreAuthorize("@el.check('dict:add')")
-    public ResponseEntity<Object> createDictDetail(@Validated @RequestBody DictDetail resources){
-        if (resources.getId() != null) {
-            throw new BadRequestException("A new "+ ENTITY_NAME +" cannot already have an ID");
-        }
-        dictDetailService.create(resources);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+  @Log(value = "\u4fee\u6539\u5b57\u5178\u8be6\u60c5") @ApiOperation(value = "\u4fee\u6539\u5b57\u5178\u8be6\u60c5") @PutMapping @PreAuthorize(value = "@el.check(\'dict:edit\')") public ResponseEntity<Object> updateDictDetail(@Validated(value = DictDetail.Update.class) @RequestBody DictDetail resources) {
+    if (resources.getId() <= 6) {
+      throw new BadRequestException("\u6f14\u793a\u73af\u5883\u4e0d\u53ef\u64cd\u4f5c");
     }
+    dictDetailService.update(resources);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 
-    @Log("修改字典详情")
-    @ApiOperation("修改字典详情")
-    @PutMapping
-    @PreAuthorize("@el.check('dict:edit')")
-    public ResponseEntity<Object> updateDictDetail(@Validated(DictDetail.Update.class) @RequestBody DictDetail resources){
-        if(resources.getId() <= 6){
-            throw new BadRequestException("演示环境不可操作");
-        }
-        dictDetailService.update(resources);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  @Log(value = "\u5220\u9664\u5b57\u5178\u8be6\u60c5") @ApiOperation(value = "\u5220\u9664\u5b57\u5178\u8be6\u60c5") @DeleteMapping(value = "/{id}") @PreAuthorize(value = "@el.check(\'dict:del\')") public ResponseEntity<Object> deleteDictDetail(@PathVariable Long id) {
+    if (id <= 6) {
+      throw new BadRequestException("\u6f14\u793a\u73af\u5883\u4e0d\u53ef\u64cd\u4f5c");
     }
-
-    @Log("删除字典详情")
-    @ApiOperation("删除字典详情")
-    @DeleteMapping(value = "/{id}")
-    @PreAuthorize("@el.check('dict:del')")
-    public ResponseEntity<Object> deleteDictDetail(@PathVariable Long id){
-        if(id <= 6){
-            throw new BadRequestException("演示环境不可操作");
-        }
-        dictDetailService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+    dictDetailService.delete(id);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 }

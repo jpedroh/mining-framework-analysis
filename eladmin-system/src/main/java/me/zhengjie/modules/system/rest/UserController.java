@@ -1,20 +1,4 @@
-/*
- *  Copyright 2019-2020 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
 package me.zhengjie.modules.system.rest;
-
 import cn.hutool.core.collection.CollectionUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -55,160 +39,125 @@ import java.util.stream.Collectors;
  * @author Zheng Jie
  * @date 2018-11-23
  */
-@Api(tags = "系统：用户管理")
-@RestController
-@RequestMapping("/api/users")
-@RequiredArgsConstructor
-public class UserController {
+@Api(tags = "\u7cfb\u7edf\uff1a\u7528\u6237\u7ba1\u7406") @RestController @RequestMapping(value = "/api/users") @RequiredArgsConstructor public class UserController {
+  private final PasswordEncoder passwordEncoder;
 
-    private final PasswordEncoder passwordEncoder;
-    private final UserService userService;
-    private final DataService dataService;
-    private final DeptService deptService;
-    private final RoleService roleService;
-    private final VerifyService verificationCodeService;
+  private final UserService userService;
 
-    @ApiOperation("导出用户数据")
-    @GetMapping(value = "/download")
-    @PreAuthorize("@el.check('user:list')")
-    public void exportUser(HttpServletResponse response, UserQueryCriteria criteria) throws IOException {
-        userService.download(userService.queryAll(criteria), response);
+  private final DataService dataService;
+
+  private final DeptService deptService;
+
+  private final RoleService roleService;
+
+  private final VerifyService verificationCodeService;
+
+  @ApiOperation(value = "\u5bfc\u51fa\u7528\u6237\u6570\u636e") @GetMapping(value = "/download") @PreAuthorize(value = "@el.check(\'user:list\')") public void exportUser(HttpServletResponse response, UserQueryCriteria criteria) throws IOException {
+    userService.download(userService.queryAll(criteria), response);
+  }
+
+  @ApiOperation(value = "\u67e5\u8be2\u7528\u6237") @GetMapping @PreAuthorize(value = "@el.check(\'user:list\')") public ResponseEntity<PageResult<UserDto>> queryUser(UserQueryCriteria criteria, Pageable pageable) {
+    if (!ObjectUtils.isEmpty(criteria.getDeptId())) {
+      criteria.getDeptIds().add(criteria.getDeptId());
+      List<Dept> data = deptService.findByPid(criteria.getDeptId());
+      criteria.getDeptIds().addAll(deptService.getDeptChildren(data));
     }
-
-    @ApiOperation("查询用户")
-    @GetMapping
-    @PreAuthorize("@el.check('user:list')")
-    public ResponseEntity<PageResult<UserDto>> queryUser(UserQueryCriteria criteria, Pageable pageable){
-        if (!ObjectUtils.isEmpty(criteria.getDeptId())) {
-            criteria.getDeptIds().add(criteria.getDeptId());
-            // 先查找是否存在子节点
-            List<Dept> data = deptService.findByPid(criteria.getDeptId());
-            // 然后把子节点的ID都加入到集合中
-            criteria.getDeptIds().addAll(deptService.getDeptChildren(data));
-        }
-        // 数据权限
-        List<Long> dataScopes = dataService.getDeptIds(userService.findByName(SecurityUtils.getCurrentUsername()));
-        // criteria.getDeptIds() 不为空并且数据权限不为空则取交集
-        if (!CollectionUtils.isEmpty(criteria.getDeptIds()) && !CollectionUtils.isEmpty(dataScopes)){
-            // 取交集
-            criteria.getDeptIds().retainAll(dataScopes);
-            if(!CollectionUtil.isEmpty(criteria.getDeptIds())){
-                return new ResponseEntity<>(userService.queryAll(criteria,pageable),HttpStatus.OK);
-            }
-        } else {
-            // 否则取并集
-            criteria.getDeptIds().addAll(dataScopes);
-            return new ResponseEntity<>(userService.queryAll(criteria,pageable),HttpStatus.OK);
-        }
-        return new ResponseEntity<>(PageUtil.noData(),HttpStatus.OK);
+    List<Long> dataScopes = dataService.getDeptIds(userService.findByName(SecurityUtils.getCurrentUsername()));
+    if (!CollectionUtils.isEmpty(criteria.getDeptIds()) && !CollectionUtils.isEmpty(dataScopes)) {
+      criteria.getDeptIds().retainAll(dataScopes);
+      if (!CollectionUtil.isEmpty(criteria.getDeptIds())) {
+        return new ResponseEntity<>(userService.queryAll(criteria, pageable), HttpStatus.OK);
+      }
+    } else {
+      criteria.getDeptIds().addAll(dataScopes);
+      return new ResponseEntity<>(userService.queryAll(criteria, pageable), HttpStatus.OK);
     }
+    return new ResponseEntity<>(PageUtil.noData(), HttpStatus.OK);
+  }
 
-    @Log("新增用户")
-    @ApiOperation("新增用户")
-    @PostMapping
-    @PreAuthorize("@el.check('user:add')")
-    public ResponseEntity<Object> createUser(@Validated @RequestBody User resources){
-        checkLevel(resources);
-        // 默认密码 123456
-        resources.setPassword(passwordEncoder.encode("123456"));
-        userService.create(resources);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+  @Log(value = "\u65b0\u589e\u7528\u6237") @ApiOperation(value = "\u65b0\u589e\u7528\u6237") @PostMapping @PreAuthorize(value = "@el.check(\'user:add\')") public ResponseEntity<Object> createUser(@Validated @RequestBody User resources) {
+    checkLevel(resources);
+    resources.setPassword(passwordEncoder.encode("123456"));
+    userService.create(resources);
+    return new ResponseEntity<>(HttpStatus.CREATED);
+  }
+
+  @Log(value = "\u4fee\u6539\u7528\u6237") @ApiOperation(value = "\u4fee\u6539\u7528\u6237") @PutMapping @PreAuthorize(value = "@el.check(\'user:edit\')") public ResponseEntity<Object> updateUser(@Validated(value = User.Update.class) @RequestBody User resources) throws Exception {
+    if (resources.getId() <= 1) {
+      throw new BadRequestException("\u6f14\u793a\u73af\u5883\u4e0d\u53ef\u64cd\u4f5c");
     }
+    checkLevel(resources);
+    userService.update(resources);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 
-    @Log("修改用户")
-    @ApiOperation("修改用户")
-    @PutMapping
-    @PreAuthorize("@el.check('user:edit')")
-    public ResponseEntity<Object> updateUser(@Validated(User.Update.class) @RequestBody User resources) throws Exception {
-        if(resources.getId() <= 1){
-            throw new BadRequestException("演示环境不可操作");
-        }
-        checkLevel(resources);
-        userService.update(resources);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  @Log(value = "\u4fee\u6539\u7528\u6237\uff1a\u4e2a\u4eba\u4e2d\u5fc3") @ApiOperation(value = "\u4fee\u6539\u7528\u6237\uff1a\u4e2a\u4eba\u4e2d\u5fc3") @PutMapping(value = "center") public ResponseEntity<Object> centerUser(@Validated(value = User.Update.class) @RequestBody User resources) {
+    if (!resources.getId().equals(SecurityUtils.getCurrentUserId())) {
+      throw new BadRequestException("\u4e0d\u80fd\u4fee\u6539\u4ed6\u4eba\u8d44\u6599");
     }
-
-    @Log("修改用户：个人中心")
-    @ApiOperation("修改用户：个人中心")
-    @PutMapping(value = "center")
-    public ResponseEntity<Object> centerUser(@Validated(User.Update.class) @RequestBody User resources){
-        if(!resources.getId().equals(SecurityUtils.getCurrentUserId())){
-            throw new BadRequestException("不能修改他人资料");
-        }
-        if(!resources.getId().equals(SecurityUtils.getCurrentUserId())){
-            throw new BadRequestException("不能修改他人资料");
-        }
-        userService.updateCenter(resources);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    if (!resources.getId().equals(SecurityUtils.getCurrentUserId())) {
+      throw new BadRequestException("\u4e0d\u80fd\u4fee\u6539\u4ed6\u4eba\u8d44\u6599");
     }
+    userService.updateCenter(resources);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 
-    @Log("删除用户")
-    @ApiOperation("删除用户")
-    @DeleteMapping
-    @PreAuthorize("@el.check('user:del')")
-    public ResponseEntity<Object> deleteUser(@RequestBody Set<Long> ids){
-        for (Long id : ids) {
-            if(id <= 1){
-                throw new BadRequestException("演示环境不可操作");
-            }
-            Integer currentLevel =  Collections.min(roleService.findByUsersId(SecurityUtils.getCurrentUserId()).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
-            Integer optLevel =  Collections.min(roleService.findByUsersId(id).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
-            if (currentLevel > optLevel) {
-                throw new BadRequestException("角色权限不足，不能删除：" + userService.findById(id).getUsername());
-            }
-        }
-        userService.delete(ids);
-        return new ResponseEntity<>(HttpStatus.OK);
+  @Log(value = "\u5220\u9664\u7528\u6237") @ApiOperation(value = "\u5220\u9664\u7528\u6237") @DeleteMapping @PreAuthorize(value = "@el.check(\'user:del\')") public ResponseEntity<Object> deleteUser(@RequestBody Set<Long> ids) {
+    for (Long id : ids) {
+      if (id <= 1) {
+        throw new BadRequestException("\u6f14\u793a\u73af\u5883\u4e0d\u53ef\u64cd\u4f5c");
+      }
+      Integer currentLevel = Collections.min(roleService.findByUsersId(SecurityUtils.getCurrentUserId()).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
+      Integer optLevel = Collections.min(roleService.findByUsersId(id).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
+      if (currentLevel > optLevel) {
+        throw new BadRequestException("\u89d2\u8272\u6743\u9650\u4e0d\u8db3\uff0c\u4e0d\u80fd\u5220\u9664\uff1a" + userService.findById(id).getUsername());
+      }
     }
+    userService.delete(ids);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 
-    @ApiOperation("修改密码")
-    @PostMapping(value = "/updatePass")
-    public ResponseEntity<Object> updateUserPass(@RequestBody UserPassVo passVo) throws Exception {
-        String oldPass = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey,passVo.getOldPass());
-        String newPass = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey,passVo.getNewPass());
-        UserDto user = userService.findByName(SecurityUtils.getCurrentUsername());
-        if("admin".equals(user.getUsername())){
-            throw new BadRequestException("演示环境不可操作");
-        }
-        if(!passwordEncoder.matches(oldPass, user.getPassword())){
-            throw new BadRequestException("修改失败，旧密码错误");
-        }
-        if(passwordEncoder.matches(newPass, user.getPassword())){
-            throw new BadRequestException("新密码不能与旧密码相同");
-        }
-        userService.updatePass(user.getUsername(),passwordEncoder.encode(newPass));
-        return new ResponseEntity<>(HttpStatus.OK);
+  @ApiOperation(value = "\u4fee\u6539\u5bc6\u7801") @PostMapping(value = "/updatePass") public ResponseEntity<Object> updateUserPass(@RequestBody UserPassVo passVo) throws Exception {
+    String oldPass = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey, passVo.getOldPass());
+    String newPass = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey, passVo.getNewPass());
+    UserDto user = userService.findByName(SecurityUtils.getCurrentUsername());
+    if ("admin".equals(user.getUsername())) {
+      throw new BadRequestException("\u6f14\u793a\u73af\u5883\u4e0d\u53ef\u64cd\u4f5c");
     }
-
-    @ApiOperation("修改头像")
-    @PostMapping(value = "/updateAvatar")
-    public ResponseEntity<Object> updateUserAvatar(@RequestParam MultipartFile avatar){
-        throw new BadRequestException("演示环境不可操作");
+    if (!passwordEncoder.matches(oldPass, user.getPassword())) {
+      throw new BadRequestException("\u4fee\u6539\u5931\u8d25\uff0c\u65e7\u5bc6\u7801\u9519\u8bef");
     }
-
-    @Log("修改邮箱")
-    @ApiOperation("修改邮箱")
-    @PostMapping(value = "/updateEmail/{code}")
-    public ResponseEntity<Object> updateUserEmail(@PathVariable String code,@RequestBody User user) throws Exception {
-        String password = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey,user.getPassword());
-        UserDto userDto = userService.findByName(SecurityUtils.getCurrentUsername());
-        if(!passwordEncoder.matches(password, userDto.getPassword())){
-            throw new BadRequestException("密码错误");
-        }
-        verificationCodeService.validated(CodeEnum.EMAIL_RESET_EMAIL_CODE.getKey() + user.getEmail(), code);
-        userService.updateEmail(userDto.getUsername(),user.getEmail());
-        return new ResponseEntity<>(HttpStatus.OK);
+    if (passwordEncoder.matches(newPass, user.getPassword())) {
+      throw new BadRequestException("\u65b0\u5bc6\u7801\u4e0d\u80fd\u4e0e\u65e7\u5bc6\u7801\u76f8\u540c");
     }
+    userService.updatePass(user.getUsername(), passwordEncoder.encode(newPass));
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 
-    /**
+  @ApiOperation(value = "\u4fee\u6539\u5934\u50cf") @PostMapping(value = "/updateAvatar") public ResponseEntity<Object> updateUserAvatar(@RequestParam MultipartFile avatar) {
+    throw new BadRequestException("\u6f14\u793a\u73af\u5883\u4e0d\u53ef\u64cd\u4f5c");
+  }
+
+  @Log(value = "\u4fee\u6539\u90ae\u7bb1") @ApiOperation(value = "\u4fee\u6539\u90ae\u7bb1") @PostMapping(value = "/updateEmail/{code}") public ResponseEntity<Object> updateUserEmail(@PathVariable String code, @RequestBody User user) throws Exception {
+    String password = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey, user.getPassword());
+    UserDto userDto = userService.findByName(SecurityUtils.getCurrentUsername());
+    if (!passwordEncoder.matches(password, userDto.getPassword())) {
+      throw new BadRequestException("\u5bc6\u7801\u9519\u8bef");
+    }
+    verificationCodeService.validated(CodeEnum.EMAIL_RESET_EMAIL_CODE.getKey() + user.getEmail(), code);
+    userService.updateEmail(userDto.getUsername(), user.getEmail());
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  /**
      * 如果当前用户的角色级别低于创建用户的角色级别，则抛出权限不足的错误
      * @param resources /
      */
-    private void checkLevel(User resources) {
-        Integer currentLevel =  Collections.min(roleService.findByUsersId(SecurityUtils.getCurrentUserId()).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
-        Integer optLevel = roleService.findByRoles(resources.getRoles());
-        if (currentLevel > optLevel) {
-            throw new BadRequestException("角色权限不足");
-        }
+  private void checkLevel(User resources) {
+    Integer currentLevel = Collections.min(roleService.findByUsersId(SecurityUtils.getCurrentUserId()).stream().map(RoleSmallDto::getLevel).collect(Collectors.toList()));
+    Integer optLevel = roleService.findByRoles(resources.getRoles());
+    if (currentLevel > optLevel) {
+      throw new BadRequestException("\u89d2\u8272\u6743\u9650\u4e0d\u8db3");
     }
+  }
 }

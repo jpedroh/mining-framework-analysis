@@ -1,20 +1,4 @@
-/*
- *  Copyright 2019-2020 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
 package me.zhengjie.modules.quartz.rest;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -41,93 +25,53 @@ import java.util.Set;
  * @author Zheng Jie
  * @date 2019-01-07
  */
-@Slf4j
-@RestController
-@RequiredArgsConstructor
-@RequestMapping("/api/jobs")
-@Api(tags = "系统:定时任务管理")
-public class QuartzJobController {
+@Slf4j @RestController @RequiredArgsConstructor @RequestMapping(value = "/api/jobs") @Api(tags = "\u7cfb\u7edf:\u5b9a\u65f6\u4efb\u52a1\u7ba1\u7406") public class QuartzJobController {
+  private static final String ENTITY_NAME = "quartzJob";
 
-    private static final String ENTITY_NAME = "quartzJob";
-    private final QuartzJobService quartzJobService;
+  private final QuartzJobService quartzJobService;
 
-    @ApiOperation("查询定时任务")
-    @GetMapping
-    @PreAuthorize("@el.check('timing:list')")
-    public ResponseEntity<PageResult<QuartzJob>> queryQuartzJob(JobQueryCriteria criteria, Pageable pageable){
-        return new ResponseEntity<>(quartzJobService.queryAll(criteria,pageable), HttpStatus.OK);
+  @ApiOperation(value = "\u67e5\u8be2\u5b9a\u65f6\u4efb\u52a1") @GetMapping @PreAuthorize(value = "@el.check(\'timing:list\')") public ResponseEntity<PageResult<QuartzJob>> queryQuartzJob(JobQueryCriteria criteria, Pageable pageable) {
+    return new ResponseEntity<>(quartzJobService.queryAll(criteria, pageable), HttpStatus.OK);
+  }
+
+  @ApiOperation(value = "\u5bfc\u51fa\u4efb\u52a1\u6570\u636e") @GetMapping(value = "/download") @PreAuthorize(value = "@el.check(\'timing:list\')") public void exportQuartzJob(HttpServletResponse response, JobQueryCriteria criteria) throws IOException {
+    quartzJobService.download(quartzJobService.queryAll(criteria), response);
+  }
+
+  @ApiOperation(value = "\u5bfc\u51fa\u65e5\u5fd7\u6570\u636e") @GetMapping(value = "/logs/download") @PreAuthorize(value = "@el.check(\'timing:list\')") public void exportQuartzJobLog(HttpServletResponse response, JobQueryCriteria criteria) throws IOException {
+    quartzJobService.downloadLog(quartzJobService.queryAllLog(criteria), response);
+  }
+
+  @ApiOperation(value = "\u67e5\u8be2\u4efb\u52a1\u6267\u884c\u65e5\u5fd7") @GetMapping(value = "/logs") @PreAuthorize(value = "@el.check(\'timing:list\')") public ResponseEntity<PageResult<QuartzLog>> queryQuartzJobLog(JobQueryCriteria criteria, Pageable pageable) {
+    return new ResponseEntity<>(quartzJobService.queryAllLog(criteria, pageable), HttpStatus.OK);
+  }
+
+  @Log(value = "\u65b0\u589e\u5b9a\u65f6\u4efb\u52a1") @ApiOperation(value = "\u65b0\u589e\u5b9a\u65f6\u4efb\u52a1") @PostMapping @PreAuthorize(value = "@el.check(\'timing:add\')") public ResponseEntity<Object> createQuartzJob(@Validated @RequestBody QuartzJob resources) {
+    throw new BadRequestException("\u6f14\u793a\u73af\u5883\u4e0d\u652f\u6301\u65b0\u589e\u4efb\u52a1\uff01");
+  }
+
+  @Log(value = "\u4fee\u6539\u5b9a\u65f6\u4efb\u52a1") @ApiOperation(value = "\u4fee\u6539\u5b9a\u65f6\u4efb\u52a1") @PutMapping @PreAuthorize(value = "@el.check(\'timing:edit\')") public ResponseEntity<Object> updateQuartzJob(@Validated(value = QuartzJob.Update.class) @RequestBody QuartzJob resources) {
+    checkBean(resources.getBeanName());
+    quartzJobService.update(resources);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  @Log(value = "\u66f4\u6539\u5b9a\u65f6\u4efb\u52a1\u72b6\u6001") @ApiOperation(value = "\u66f4\u6539\u5b9a\u65f6\u4efb\u52a1\u72b6\u6001") @PutMapping(value = "/{id}") @PreAuthorize(value = "@el.check(\'timing:edit\')") public ResponseEntity<Object> updateQuartzJobStatus(@PathVariable Long id) {
+    throw new BadRequestException("\u6f14\u793a\u73af\u5883\u8bf7\u4f7f\u7528\u6267\u884c\u6309\u94ae\u8fd0\u884c\u4efb\u52a1\uff01");
+  }
+
+  @Log(value = "\u6267\u884c\u5b9a\u65f6\u4efb\u52a1") @ApiOperation(value = "\u6267\u884c\u5b9a\u65f6\u4efb\u52a1") @PutMapping(value = "/exec/{id}") @PreAuthorize(value = "@el.check(\'timing:edit\')") public ResponseEntity<Object> executionQuartzJob(@PathVariable Long id) {
+    quartzJobService.execution(quartzJobService.findById(id));
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  @Log(value = "\u5220\u9664\u5b9a\u65f6\u4efb\u52a1") @ApiOperation(value = "\u5220\u9664\u5b9a\u65f6\u4efb\u52a1") @DeleteMapping @PreAuthorize(value = "@el.check(\'timing:del\')") public ResponseEntity<Object> deleteQuartzJob(@RequestBody Set<Long> ids) {
+    throw new BadRequestException("\u6f14\u793a\u73af\u5883\u4e0d\u652f\u6301\u5220\u9664\u5b9a\u65f6\u4efb\u52a1\uff01");
+  }
+
+  private void checkBean(String beanName) {
+    if (!SpringContextHolder.getAllServiceBeanName().contains(beanName)) {
+      throw new BadRequestException("\u975e\u6cd5\u7684 Bean\uff0c\u8bf7\u91cd\u65b0\u8f93\u5165\uff01");
     }
-
-    @ApiOperation("导出任务数据")
-    @GetMapping(value = "/download")
-    @PreAuthorize("@el.check('timing:list')")
-    public void exportQuartzJob(HttpServletResponse response, JobQueryCriteria criteria) throws IOException {
-        quartzJobService.download(quartzJobService.queryAll(criteria), response);
-    }
-
-    @ApiOperation("导出日志数据")
-    @GetMapping(value = "/logs/download")
-    @PreAuthorize("@el.check('timing:list')")
-    public void exportQuartzJobLog(HttpServletResponse response, JobQueryCriteria criteria) throws IOException {
-        quartzJobService.downloadLog(quartzJobService.queryAllLog(criteria), response);
-    }
-
-    @ApiOperation("查询任务执行日志")
-    @GetMapping(value = "/logs")
-    @PreAuthorize("@el.check('timing:list')")
-    public ResponseEntity<PageResult<QuartzLog>> queryQuartzJobLog(JobQueryCriteria criteria, Pageable pageable){
-        return new ResponseEntity<>(quartzJobService.queryAllLog(criteria,pageable), HttpStatus.OK);
-    }
-
-    @Log("新增定时任务")
-    @ApiOperation("新增定时任务")
-    @PostMapping
-    @PreAuthorize("@el.check('timing:add')")
-    public ResponseEntity<Object> createQuartzJob(@Validated @RequestBody QuartzJob resources){
-        throw new BadRequestException("演示环境不支持新增任务！");
-    }
-
-    @Log("修改定时任务")
-    @ApiOperation("修改定时任务")
-    @PutMapping
-    @PreAuthorize("@el.check('timing:edit')")
-    public ResponseEntity<Object> updateQuartzJob(@Validated(QuartzJob.Update.class) @RequestBody QuartzJob resources){
-        // 验证Bean是不是合法的，合法的定时任务 Bean 需要用 @Service 定义
-        checkBean(resources.getBeanName());
-        quartzJobService.update(resources);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @Log("更改定时任务状态")
-    @ApiOperation("更改定时任务状态")
-    @PutMapping(value = "/{id}")
-    @PreAuthorize("@el.check('timing:edit')")
-    public ResponseEntity<Object> updateQuartzJobStatus(@PathVariable Long id){
-        throw new BadRequestException("演示环境请使用执行按钮运行任务！");
-    }
-
-    @Log("执行定时任务")
-    @ApiOperation("执行定时任务")
-    @PutMapping(value = "/exec/{id}")
-    @PreAuthorize("@el.check('timing:edit')")
-    public ResponseEntity<Object> executionQuartzJob(@PathVariable Long id){
-        quartzJobService.execution(quartzJobService.findById(id));
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @Log("删除定时任务")
-    @ApiOperation("删除定时任务")
-    @DeleteMapping
-    @PreAuthorize("@el.check('timing:del')")
-    public ResponseEntity<Object> deleteQuartzJob(@RequestBody Set<Long> ids){
-        throw new BadRequestException("演示环境不支持删除定时任务！");
-    }
-
-    private void checkBean(String beanName){
-        // 避免调用攻击者可以从SpringContextHolder获得控制jdbcTemplate类
-        // 并使用getDeclaredMethod调用jdbcTemplate的queryForMap函数，执行任意sql命令。
-        if(!SpringContextHolder.getAllServiceBeanName().contains(beanName)){
-            throw new BadRequestException("非法的 Bean，请重新输入！");
-        }
-    }
+  }
 }
