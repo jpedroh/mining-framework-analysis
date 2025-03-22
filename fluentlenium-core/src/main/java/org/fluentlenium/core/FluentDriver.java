@@ -24,6 +24,7 @@ import org.fluentlenium.core.search.SearchFilter;
 import org.fluentlenium.core.wait.FluentWait;
 import org.fluentlenium.utils.ImageUtils;
 import org.fluentlenium.utils.UrlUtils;
+import lombok.experimental.Delegate;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
