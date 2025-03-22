@@ -279,12 +279,12 @@ public class SchemaCompatibility {
           case LONG:
           case FLOAT:
           case DOUBLE:
+          case BYTES:
+            return isDecimal(reader, writer) ?
+              checkDecimalScaleAndPrecision(reader, writer) : SchemaCompatibilityResult.compatible();
           case STRING: {
             return result;
           }
-          case BYTES:
-            return isDecimal(reader, writer) ?
-                    result.mergedWith(checkDecimalScaleAndPrecision(reader, writer, location)) : result;
           case ARRAY: {
             return result.mergedWith(getCompatibility("items", reader.getElementType(), writer.getElementType(), location));
           }
@@ -292,9 +292,27 @@ public class SchemaCompatibility {
             return result.mergedWith(getCompatibility("values", reader.getValueType(), writer.getValueType(), location));
           }
           case FIXED: {
+<<<<<<< /usr/src/app/output/apache/avro/0ccc51fc382fa82adecc092562b89b9d0bfb5cdd/lang/java/avro/src/main/java/org/apache/avro/SchemaCompatibility.java/left.java
+            SchemaCompatibilityResult nameCheck = checkSchemaNames(reader, writer);
+            if (nameCheck.getCompatibility() == SchemaCompatibilityType.INCOMPATIBLE) {
+              return nameCheck;
+            }
+            SchemaCompatibilityResult fixedCheck = checkFixedSize(reader, writer);
+            if (fixedCheck.getCompatibility() == SchemaCompatibilityType.INCOMPATIBLE) {
+              return fixedCheck;
+            }
+            return isDecimal(reader, writer) ?
+              checkDecimalScaleAndPrecision(reader, writer) : SchemaCompatibilityResult.compatible();
+||||||| /usr/src/app/output/apache/avro/0ccc51fc382fa82adecc092562b89b9d0bfb5cdd/lang/java/avro/src/main/java/org/apache/avro/SchemaCompatibility.java/base.java
+            SchemaCompatibilityResult nameCheck = checkSchemaNames(reader, writer);
+            if (nameCheck.getCompatibility() == SchemaCompatibilityType.INCOMPATIBLE) {
+              return nameCheck;
+            }
+            return checkFixedSize(reader, writer);
+=======
             result = result.mergedWith(checkSchemaNames(reader, writer, location));
-            result = result.mergedWith(checkFixedSize(reader, writer, location));
-            return isDecimal(reader, writer) ? result.mergedWith(checkDecimalScaleAndPrecision(reader, writer, location)) : result;
+            return result.mergedWith(checkFixedSize(reader, writer, location));
+>>>>>>> /usr/src/app/output/apache/avro/0ccc51fc382fa82adecc092562b89b9d0bfb5cdd/lang/java/avro/src/main/java/org/apache/avro/SchemaCompatibility.java/right.java
           }
           case ENUM: {
             result = result.mergedWith(checkSchemaNames(reader, writer, location));
@@ -408,27 +426,23 @@ public class SchemaCompatibility {
       }
     }
 
-    private SchemaCompatibilityResult checkDecimalScaleAndPrecision(Schema reader, Schema writer, final Deque<String> location) {
+    private SchemaCompatibilityResult checkDecimalScaleAndPrecision(Schema reader, Schema writer) {
       LogicalTypes.Decimal readerLogicalType = (LogicalTypes.Decimal) reader.getLogicalType();
       LogicalTypes.Decimal writerLogicalType = (LogicalTypes.Decimal) writer.getLogicalType();
       if (readerLogicalType.getScale() == writerLogicalType.getScale()
         && readerLogicalType.getPrecision() == writerLogicalType.getPrecision()) {
         return SchemaCompatibilityResult.compatible();
       }
-      location.addFirst("scaleOrPrecision");
-      SchemaCompatibilityResult result = SchemaCompatibilityResult.incompatible(
-              SchemaIncompatibilityType.DECIMAL_SCALE_OR_PRECISION_MISMATCH,
+      return SchemaCompatibilityResult.incompatible(
+        SchemaIncompatibilityType.DECIMAL_SCALE_OR_PRECISION_MISMATCH,
               reader, writer,
               String.format(
                       "Decimal (precision,scale) doesn't match for reader (%s,%s) and writer (%s,%s) schemas",
                       ((LogicalTypes.Decimal) reader.getLogicalType()).getPrecision(),
                       ((LogicalTypes.Decimal) reader.getLogicalType()).getScale(),
                       ((LogicalTypes.Decimal) writer.getLogicalType()).getPrecision(),
-                      ((LogicalTypes.Decimal) writer.getLogicalType()).getScale()),
-              asList(location)
+                      ((LogicalTypes.Decimal) writer.getLogicalType()).getScale())
       );
-      location.removeFirst();
-      return result;
     }
 
     private boolean isDecimal(Schema reader, Schema writer) {
