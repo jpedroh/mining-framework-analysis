@@ -115,6 +115,13 @@ public class CodegenDiscriminator {
             this.modelName = modelName;
         }
 
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/ca9d32233e84fb5d7b6516b7bad757e0be5e2b0e/modules/openapi-generator/src/main/java/org/openapitools/codegen/CodegenDiscriminator.java/left.java
+        @Override
+        public int compareTo(MappedModel other) {
+            return getMappingName().compareTo(other.getMappingName());
+        }
+||||||| /usr/src/app/output/openapitools/openapi-generator/ca9d32233e84fb5d7b6516b7bad757e0be5e2b0e/modules/openapi-generator/src/main/java/org/openapitools/codegen/CodegenDiscriminator.java/base.java
+=======
         @Override
         public int compareTo(MappedModel other) {
             if (getMappingName() == null && other.getMappingName() == null) {
@@ -126,10 +133,11 @@ public class CodegenDiscriminator {
             }
             return getMappingName().compareTo(other.getMappingName());
         }
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/ca9d32233e84fb5d7b6516b7bad757e0be5e2b0e/modules/openapi-generator/src/main/java/org/openapitools/codegen/CodegenDiscriminator.java/right.java
 
         public String getMappingName() {
-            return mappingName;
-        }
+        return mappingName;
+    }
 
         public void setMappingName(String mappingName) {
             this.mappingName = mappingName;

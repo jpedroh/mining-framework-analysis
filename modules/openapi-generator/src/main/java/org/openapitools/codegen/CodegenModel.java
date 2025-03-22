@@ -35,17 +35,14 @@ public class CodegenModel implements IJsonSchemaValidationProperties {
     // The list of parent model name from the schemas. In order of preference, the parent is obtained
     // from the 'allOf' attribute, then 'anyOf', and finally 'oneOf'.
     public List<String> allParents;
-
     // References to parent and interface CodegenModels. Only set when code generator supports inheritance.
     public CodegenModel parentModel;
     public List<CodegenModel> interfaceModels;
     public List<CodegenModel> children;
-
     // anyOf, oneOf, allOf
     public Set<String> anyOf = new TreeSet<String>();
     public Set<String> oneOf = new TreeSet<String>();
     public Set<String> allOf = new TreeSet<String>();
-
     public String name;
     // The language-specific name of the class that implements this schema.
     // The name of the class is derived from the OpenAPI schema name with formatting rules applied.
@@ -53,36 +50,42 @@ public class CodegenModel implements IJsonSchemaValidationProperties {
     // The value of the 'title' attribute in the OpenAPI document.
     public String title;
     public String description, classVarName, modelJson, dataType, xmlPrefix, xmlNamespace, xmlName;
-    public String classFilename; // store the class file name, mainly used for import
+    public String classFilename;
+// store the class file name, mainly used for import
     public String unescapedDescription;
     public CodegenDiscriminator discriminator;
     public String defaultValue;
     public String arrayModelType;
-    public boolean isAlias; // Is this effectively an alias of another simple type
+    public boolean isAlias;
+// Is this effectively an alias of another simple type
     public boolean isString, isInteger, isLong, isNumber, isNumeric, isFloat, isDouble;
-    public List<CodegenProperty> vars = new ArrayList<CodegenProperty>(); // all properties (without parent's properties)
-    public List<CodegenProperty> allVars = new ArrayList<CodegenProperty>(); // all properties (with parent's properties)
-    public List<CodegenProperty> requiredVars = new ArrayList<CodegenProperty>(); // a list of required properties
-    public List<CodegenProperty> optionalVars = new ArrayList<CodegenProperty>(); // a list of optional properties
-    public List<CodegenProperty> readOnlyVars = new ArrayList<CodegenProperty>(); // a list of read-only properties
-    public List<CodegenProperty> readWriteVars = new ArrayList<CodegenProperty>(); // a list of properties for read, write
+    public List<CodegenProperty> vars = new ArrayList<CodegenProperty>();
+// all properties (without parent's properties)
+    public List<CodegenProperty> allVars = new ArrayList<CodegenProperty>();
+// all properties (with parent's properties)
+    public List<CodegenProperty> requiredVars = new ArrayList<CodegenProperty>();
+// a list of required properties
+    public List<CodegenProperty> optionalVars = new ArrayList<CodegenProperty>();
+// a list of optional properties
+    public List<CodegenProperty> readOnlyVars = new ArrayList<CodegenProperty>();
+// a list of read-only properties
+    public List<CodegenProperty> readWriteVars = new ArrayList<CodegenProperty>();
+// a list of properties for read, write
     public List<CodegenProperty> parentVars = new ArrayList<CodegenProperty>();
     public Map<String, Object> allowableValues;
-
     // Sorted sets of required parameters.
-    public Set<String> mandatory = new TreeSet<String>(); // without parent's required properties
-    public Set<String> allMandatory = new TreeSet<String>(); // with parent's required properties
-
+    public Set<String> mandatory = new TreeSet<String>();
+// without parent's required properties
+    public Set<String> allMandatory = new TreeSet<String>();
+// with parent's required properties
     public Set<String> imports = new TreeSet<String>();
     public boolean hasVars, emptyVars, hasMoreModels, hasEnums, isEnum, isNullable, hasRequired, hasOptional, isArrayModel, hasChildren, isMapModel, isDeprecated;
-    public boolean hasOnlyReadOnly = true; // true if all properties are read-only
+    public boolean hasOnlyReadOnly = true;
+// true if all properties are read-only
     public ExternalDocumentation externalDocumentation;
-
     public Map<String, Object> vendorExtensions = new HashMap<String, Object>();
-
     //The type of the value from additional properties. Used in map like objects.
     public String additionalPropertiesType;
-
     private Integer maxProperties;
     private Integer minProperties;
     private boolean uniqueItems;
@@ -96,429 +99,329 @@ public class CodegenModel implements IJsonSchemaValidationProperties {
     private String maximum;
     private String pattern;
     private Number multipleOf;
-
     public String getAdditionalPropertiesType() {
         return additionalPropertiesType;
     }
-
     public void setAdditionalPropertiesType(String additionalPropertiesType) {
         this.additionalPropertiesType = additionalPropertiesType;
     }
-
     public Set<String> getAllMandatory() {
         return allMandatory;
     }
-
     public void setAllMandatory(Set<String> allMandatory) {
         this.allMandatory = allMandatory;
     }
-
     public List<String> getAllParents() {
         return allParents;
     }
-
     public void setAllParents(List<String> allParents) {
         this.allParents = allParents;
     }
-
     public List<CodegenProperty> getAllVars() {
         return allVars;
     }
-
     public void setAllVars(List<CodegenProperty> allVars) {
         this.allVars = allVars;
     }
-
     public Map<String, Object> getAllowableValues() {
         return allowableValues;
     }
-
     public void setAllowableValues(Map<String, Object> allowableValues) {
         this.allowableValues = allowableValues;
     }
-
     public String getArrayModelType() {
         return arrayModelType;
     }
-
     public void setArrayModelType(String arrayModelType) {
         this.arrayModelType = arrayModelType;
     }
-
     public List<CodegenModel> getChildren() {
         return children;
     }
-
     public void setChildren(List<CodegenModel> children) {
         this.children = children;
     }
-
     public String getClassFilename() {
         return classFilename;
     }
-
     public void setClassFilename(String classFilename) {
         this.classFilename = classFilename;
     }
-
     public String getClassVarName() {
         return classVarName;
     }
-
     public void setClassVarName(String classVarName) {
         this.classVarName = classVarName;
     }
-
     public String getClassname() {
         return classname;
     }
-
     public void setClassname(String classname) {
         this.classname = classname;
     }
-
     public String getDataType() {
         return dataType;
     }
-
     public void setDataType(String dataType) {
         this.dataType = dataType;
     }
-
     public String getDefaultValue() {
         return defaultValue;
     }
-
     public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
     }
-
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
-
     public CodegenDiscriminator getDiscriminator() {
         return discriminator;
     }
-
     public void setDiscriminator(CodegenDiscriminator discriminator) {
         this.discriminator = discriminator;
     }
-
     public String getDiscriminatorName() {
         return discriminator == null ? null : discriminator.getPropertyName();
     }
-
     public ExternalDocumentation getExternalDocumentation() {
         return externalDocumentation;
     }
-
     public void setExternalDocumentation(ExternalDocumentation externalDocumentation) {
         this.externalDocumentation = externalDocumentation;
     }
-
     public Set<String> getImports() {
         return imports;
     }
-
     public void setImports(Set<String> imports) {
         this.imports = imports;
     }
-
     public List<CodegenModel> getInterfaceModels() {
         return interfaceModels;
     }
-
     public void setInterfaceModels(List<CodegenModel> interfaceModels) {
         this.interfaceModels = interfaceModels;
     }
-
     public List<String> getInterfaces() {
         return interfaces;
     }
-
     public void setInterfaces(List<String> interfaces) {
         this.interfaces = interfaces;
     }
-
     public Set<String> getMandatory() {
         return mandatory;
     }
-
     public void setMandatory(Set<String> mandatory) {
         this.mandatory = mandatory;
     }
-
     public String getModelJson() {
         return modelJson;
     }
-
     public void setModelJson(String modelJson) {
         this.modelJson = modelJson;
     }
-
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
-
     public List<CodegenProperty> getOptionalVars() {
         return optionalVars;
     }
-
     public void setOptionalVars(List<CodegenProperty> optionalVars) {
         this.optionalVars = optionalVars;
     }
-
     public String getParent() {
         return parent;
     }
-
     public void setParent(String parent) {
         this.parent = parent;
     }
-
     public CodegenModel getParentModel() {
         return parentModel;
     }
-
     public void setParentModel(CodegenModel parentModel) {
         this.parentModel = parentModel;
     }
-
     public String getParentSchema() {
         return parentSchema;
     }
-
     public void setParentSchema(String parentSchema) {
         this.parentSchema = parentSchema;
     }
-
     public List<CodegenProperty> getParentVars() {
         return parentVars;
     }
-
     public void setParentVars(List<CodegenProperty> parentVars) {
         this.parentVars = parentVars;
     }
-
     @Override
     public String getPattern() {
         return pattern;
     }
-
     @Override
     public void setPattern(String pattern) {
         this.pattern = pattern;
     }
-
     @Override
     public String getMaximum() {
         return maximum;
     }
-
     @Override
     public void setMaximum(String maximum) {
         this.maximum = maximum;
     }
-
     @Override
     public String getMinimum() {
         return minimum;
     }
-
     @Override
     public void setMinimum(String minimum) {
         this.minimum = minimum;
     }
-
     @Override
     public boolean getExclusiveMaximum() {
         return exclusiveMaximum;
     }
-
     @Override
     public void setExclusiveMaximum(boolean exclusiveMaximum) {
         this.exclusiveMaximum = exclusiveMaximum;
     }
-
     @Override
     public boolean getExclusiveMinimum() {
         return exclusiveMinimum;
     }
-
     @Override
     public void setExclusiveMinimum(boolean exclusiveMinimum) {
         this.exclusiveMinimum = exclusiveMinimum;
     }
-
     @Override
     public Integer getMinLength() {
         return minLength;
     }
-
     @Override
     public void setMinLength(Integer minLength) {
         this.minLength = minLength;
     }
-
     @Override
     public Integer getMaxLength() {
         return maxLength;
     }
-
     @Override
     public void setMaxLength(Integer maxLength) {
         this.maxLength = maxLength;
     }
-
     @Override
     public Integer getMinItems() {
         return minItems;
     }
-
     @Override
     public void setMinItems(Integer minItems) {
         this.minItems = minItems;
     }
-
     @Override
     public Integer getMaxItems() {
         return maxItems;
     }
-
     @Override
     public void setMaxItems(Integer maxItems) {
         this.maxItems = maxItems;
     }
-
     @Override
     public boolean getUniqueItems() {
         return uniqueItems;
     }
-
     @Override
     public void setUniqueItems(boolean uniqueItems) {
         this.uniqueItems = uniqueItems;
     }
-
     @Override
     public Integer getMinProperties() {
         return minProperties;
     }
-
     @Override
     public void setMinProperties(Integer minProperties) {
         this.minProperties = minProperties;
     }
-
     @Override
     public Integer getMaxProperties() {
         return maxProperties;
     }
-
     @Override
     public void setMaxProperties(Integer maxProperties) {
         this.maxProperties = maxProperties;
     }
-
     @Override
     public Number getMultipleOf() {
         return multipleOf;
     }
-
     @Override
     public void setMultipleOf(Number multipleOf) {
         this.multipleOf = multipleOf;
     }
-
     public List<CodegenProperty> getReadOnlyVars() {
         return readOnlyVars;
     }
-
     public void setReadOnlyVars(List<CodegenProperty> readOnlyVars) {
         this.readOnlyVars = readOnlyVars;
     }
-
     public List<CodegenProperty> getReadWriteVars() {
         return readWriteVars;
     }
-
     public void setReadWriteVars(List<CodegenProperty> readWriteVars) {
         this.readWriteVars = readWriteVars;
     }
-
     public List<CodegenProperty> getRequiredVars() {
         return requiredVars;
     }
-
     public void setRequiredVars(List<CodegenProperty> requiredVars) {
         this.requiredVars = requiredVars;
     }
-
     public String getTitle() {
         return title;
     }
-
     public void setTitle(String title) {
         this.title = title;
     }
-
     public String getUnescapedDescription() {
         return unescapedDescription;
     }
-
     public void setUnescapedDescription(String unescapedDescription) {
         this.unescapedDescription = unescapedDescription;
     }
-
     public List<CodegenProperty> getVars() {
         return vars;
     }
-
     public void setVars(List<CodegenProperty> vars) {
         this.vars = vars;
     }
-
     public Map<String, Object> getVendorExtensions() {
         return vendorExtensions;
     }
-
     public void setVendorExtensions(Map<String, Object> vendorExtensions) {
         this.vendorExtensions = vendorExtensions;
     }
-
     public String getXmlName() {
         return xmlName;
     }
-
     public void setXmlName(String xmlName) {
         this.xmlName = xmlName;
     }
-
     public String getXmlNamespace() {
         return xmlNamespace;
     }
-
     public void setXmlNamespace(String xmlNamespace) {
         this.xmlNamespace = xmlNamespace;
     }
-
     public String getXmlPrefix() {
         return xmlPrefix;
     }
-
     public void setXmlPrefix(String xmlPrefix) {
         this.xmlPrefix = xmlPrefix;
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -599,7 +502,6 @@ public class CodegenModel implements IJsonSchemaValidationProperties {
                 Objects.equals(getMultipleOf(), that.getMultipleOf());
 
     }
-
     @Override
     public int hashCode() {
         return Objects.hash(getParent(), getParentSchema(), getInterfaces(), getAllParents(), getParentModel(),
@@ -615,7 +517,6 @@ public class CodegenModel implements IJsonSchemaValidationProperties {
                 getMinItems(), getMaxLength(), getMinLength(), getExclusiveMinimum(), getExclusiveMaximum(), getMinimum(),
                 getMaximum(), getPattern(), getMultipleOf());
     }
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("CodegenModel{");
@@ -695,7 +596,6 @@ public class CodegenModel implements IJsonSchemaValidationProperties {
         sb.append('}');
         return sb.toString();
     }
-
     public void addDiscriminatorMappedModelsImports(){
         if (discriminator == null || discriminator.getMappedModels() == null) {
             return;
@@ -706,6 +606,32 @@ public class CodegenModel implements IJsonSchemaValidationProperties {
             }
         }
     }
+    // The parent model name from the schemas. The parent is determined by inspecting the allOf, anyOf and
+    // oneOf attributes in the OAS. First codegen inspects 'allOf', then 'anyOf', then 'oneOf'.
+    // If there are multiple object references in the attribute ('allOf', 'anyOf', 'oneOf'), and one of the
+    // object is a discriminator, that object is set as the parent. If no discriminator is specified,
+    // codegen returns the first one in the list, i.e. there is no obvious parent in the OpenAPI specification.
+    // When possible, the mustache templates should use 'allParents' to handle multiple parents.
+    // The list of parent model name from the schemas. In order of preference, the parent is obtained
+    // from the 'allOf' attribute, then 'anyOf', and finally 'oneOf'.
+    // References to parent and interface CodegenModels. Only set when code generator supports inheritance.
+    // anyOf, oneOf, allOf
+    // The language-specific name of the class that implements this schema.
+    // The name of the class is derived from the OpenAPI schema name with formatting rules applied.
+    // The value of the 'title' attribute in the OpenAPI document.
+// store the class file name, mainly used for import
+// Is this effectively an alias of another simple type
+// all properties (without parent's properties)
+// all properties (with parent's properties)
+// a list of required properties
+// a list of optional properties
+// a list of read-only properties
+// a list of properties for read, write
+    // Sorted sets of required parameters.
+// without parent's required properties
+// with parent's required properties
+// true if all properties are read-only
+    //The type of the value from additional properties. Used in map like objects.
 
     public boolean isEmptyVars() {
         return emptyVars;

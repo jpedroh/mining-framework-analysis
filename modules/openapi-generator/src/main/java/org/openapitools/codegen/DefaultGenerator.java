@@ -156,7 +156,13 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
         return defaultValue;
     }
 
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/ca9d32233e84fb5d7b6516b7bad757e0be5e2b0e/modules/openapi-generator/src/main/java/org/openapitools/codegen/DefaultGenerator.java/left.java
+    protected void configureGeneratorProperties() {
+||||||| /usr/src/app/output/openapitools/openapi-generator/ca9d32233e84fb5d7b6516b7bad757e0be5e2b0e/modules/openapi-generator/src/main/java/org/openapitools/codegen/DefaultGenerator.java/base.java
+    private void configureGeneratorProperties() {
+=======
     void configureGeneratorProperties() {
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/ca9d32233e84fb5d7b6516b7bad757e0be5e2b0e/modules/openapi-generator/src/main/java/org/openapitools/codegen/DefaultGenerator.java/right.java
         // allows generating only models by specifying a CSV of models to generate, or empty for all
         // NOTE: Boolean.TRUE is required below rather than `true` because of JVM boxing constraints and type inference.
         generateApis = GlobalSettings.getProperty(CodegenConstants.APIS) != null ? Boolean.TRUE : getGeneratorPropertyDefaultSwitch(CodegenConstants.APIS, null);
@@ -394,6 +400,7 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
     }
 
     @SuppressWarnings("unchecked")
+    protected
     void generateModels(List<File> files, List<Object> allModels, List<String> unusedModels) {
         if (!generateModels) {
             // TODO: Process these anyway and add to dryRun info

@@ -2134,8 +2134,14 @@ public class DefaultCodegen implements CodegenConfig {
             m.getVendorExtensions().putAll(schema.getExtensions());
         }
         m.isAlias = (typeAliases.containsKey(name)
-                || isAliasOfSimpleTypes(schema)); // check if the unaliased schema is an alias of simple OAS types
+                        || isAliasOfSimpleTypes(schema)); // check if the unaliased schema is an alias of simple OAS types
         m.discriminator = createDiscriminator(name, schema, this.openAPI);
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/ca9d32233e84fb5d7b6516b7bad757e0be5e2b0e/modules/openapi-generator/src/main/java/org/openapitools/codegen/DefaultCodegen.java/left.java
+        if (this.getDiscriminatorExplicitMappingVerbose()) {
+            m.addDiscriminatorMappedModelsImports();
+        }
+||||||| /usr/src/app/output/openapitools/openapi-generator/ca9d32233e84fb5d7b6516b7bad757e0be5e2b0e/modules/openapi-generator/src/main/java/org/openapitools/codegen/DefaultCodegen.java/base.java
+=======
         if (this.getDiscriminatorExplicitMappingVerbose()) {
             m.addDiscriminatorMappedModelsImports();
         }
@@ -2143,12 +2149,13 @@ public class DefaultCodegen implements CodegenConfig {
         if (schema.getDeprecated() != null) {
             m.isDeprecated = schema.getDeprecated();
         }
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/ca9d32233e84fb5d7b6516b7bad757e0be5e2b0e/modules/openapi-generator/src/main/java/org/openapitools/codegen/DefaultCodegen.java/right.java
 
         if (schema.getXml() != null) {
-            m.xmlPrefix = schema.getXml().getPrefix();
-            m.xmlNamespace = schema.getXml().getNamespace();
-            m.xmlName = schema.getXml().getName();
-        }
+        m.xmlPrefix = schema.getXml().getPrefix();
+        m.xmlNamespace = schema.getXml().getNamespace();
+        m.xmlName = schema.getXml().getName();
+    }
 
         if (ModelUtils.isArraySchema(schema)) {
             m.isArrayModel = true;
