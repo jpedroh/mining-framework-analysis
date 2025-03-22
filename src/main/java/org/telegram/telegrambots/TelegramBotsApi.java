@@ -125,30 +125,45 @@ public class TelegramBotsApi {
      * Register a bot. The Bot Session is started immediately, and may be disconnected by calling close.
      * @param bot
      */
+<<<<<<< /usr/src/app/output/rubenlagus/telegrambots/08efa94fcd05f62cd4fae784cba6cd2904011546/src/main/java/org/telegram/telegrambots/TelegramBotsApi.java/left.java
     public BotSession registerBot(TelegramLongPollingBot bot) throws TelegramApiException {
+||||||| /usr/src/app/output/rubenlagus/telegrambots/08efa94fcd05f62cd4fae784cba6cd2904011546/src/main/java/org/telegram/telegrambots/TelegramBotsApi.java/base.java
+    public void registerBot(TelegramLongPollingBot bot) throws TelegramApiException {
+=======
+    public TelegramBotsApi registerBot(TelegramLongPollingBot bot) throws TelegramApiException {
+>>>>>>> /usr/src/app/output/rubenlagus/telegrambots/08efa94fcd05f62cd4fae784cba6cd2904011546/src/main/java/org/telegram/telegrambots/TelegramBotsApi.java/right.java
         setWebhook(bot.getBotToken());
+<<<<<<< /usr/src/app/output/rubenlagus/telegrambots/08efa94fcd05f62cd4fae784cba6cd2904011546/src/main/java/org/telegram/telegrambots/TelegramBotsApi.java/left.java
         return new BotSession(bot.getBotToken(), bot);
+||||||| /usr/src/app/output/rubenlagus/telegrambots/08efa94fcd05f62cd4fae784cba6cd2904011546/src/main/java/org/telegram/telegrambots/TelegramBotsApi.java/base.java
+        new UpdatesThread(bot.getBotToken(), bot);
+=======
+        new UpdatesThread(bot.getBotToken(), bot);
+        return this;
+>>>>>>> /usr/src/app/output/rubenlagus/telegrambots/08efa94fcd05f62cd4fae784cba6cd2904011546/src/main/java/org/telegram/telegrambots/TelegramBotsApi.java/right.java
     }
 
     /**
      *
      * @param bot
      */
-    public void registerBot(TelegramWebhookBot bot) throws TelegramApiException {
+    public TelegramBotsApi registerBot(TelegramWebhookBot bot) throws TelegramApiException {
         if (useWebhook) {
             webhook.registerWebhook(bot);
             setWebhook(bot.getBotToken());
         }
+        return this;
     }
 
     /**
      *
      * @param botToken
      */
-    private void setWebhook(String botToken) throws TelegramApiException {
+    private TelegramBotsApi setWebhook(String botToken) throws TelegramApiException {
         if (botToken == null) {
             throw new TelegramApiException("Parameter botToken can not be null");
         }
         setWebhook(extrenalUrl == null ? "" : extrenalUrl, botToken, pathToCertificate, publicCertificateName);
+        return this;
     }
 }

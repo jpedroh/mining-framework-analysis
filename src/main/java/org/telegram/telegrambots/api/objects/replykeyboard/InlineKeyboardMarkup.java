@@ -37,9 +37,70 @@ public class InlineKeyboardMarkup implements ReplyKeyboard {
         return keyboard;
     }
 
-    public InlineKeyboardMarkup setKeyboard(List<List<InlineKeyboardButton>> keyboard) {
+<<<<<<< /usr/src/app/output/rubenlagus/telegrambots/08efa94fcd05f62cd4fae784cba6cd2904011546/src/main/java/org/telegram/telegrambots/api/objects/replykeyboard/InlineKeyboardMarkup.java/left.java
+    public void setKeyboard(List<List<InlineKeyboardButton>> keyboard) {
+||||||| /usr/src/app/output/rubenlagus/telegrambots/08efa94fcd05f62cd4fae784cba6cd2904011546/src/main/java/org/telegram/telegrambots/api/objects/replykeyboard/InlineKeyboardMarkup.java/base.java
+    public void setKeyboard(List<List<String>> keyboard) {
+=======
+    public InlineKeyboardMarkup setKeyboard(List<List<String>> keyboard) {
+>>>>>>> /usr/src/app/output/rubenlagus/telegrambots/08efa94fcd05f62cd4fae784cba6cd2904011546/src/main/java/org/telegram/telegrambots/api/objects/replykeyboard/InlineKeyboardMarkup.java/right.java
         this.keyboard = keyboard;
+<<<<<<< /usr/src/app/output/rubenlagus/telegrambots/08efa94fcd05f62cd4fae784cba6cd2904011546/src/main/java/org/telegram/telegrambots/api/objects/replykeyboard/InlineKeyboardMarkup.java/left.java
+||||||| /usr/src/app/output/rubenlagus/telegrambots/08efa94fcd05f62cd4fae784cba6cd2904011546/src/main/java/org/telegram/telegrambots/api/objects/replykeyboard/InlineKeyboardMarkup.java/base.java
+    }
+
+    public Boolean getResizeKeyboard() {
+        return resizeKeyboard;
+    }
+
+    public void setResizeKeyboard(Boolean resizeKeyboard) {
+        this.resizeKeyboard = resizeKeyboard;
+    }
+
+    public Boolean getOneTimeKeyboad() {
+        return oneTimeKeyboad;
+    }
+
+    public void setOneTimeKeyboad(Boolean oneTimeKeyboad) {
+        this.oneTimeKeyboad = oneTimeKeyboad;
+    }
+
+    public Boolean getSelective() {
+        return selective;
+    }
+
+    public void setSelective(Boolean selective) {
+        this.selective = selective;
+=======
         return this;
+    }
+
+    public Boolean getResizeKeyboard() {
+        return resizeKeyboard;
+    }
+
+    public InlineKeyboardMarkup setResizeKeyboard(Boolean resizeKeyboard) {
+        this.resizeKeyboard = resizeKeyboard;
+        return this;
+    }
+
+    public Boolean getOneTimeKeyboad() {
+        return oneTimeKeyboad;
+    }
+
+    public InlineKeyboardMarkup setOneTimeKeyboad(Boolean oneTimeKeyboad) {
+        this.oneTimeKeyboad = oneTimeKeyboad;
+        return this;
+    }
+
+    public Boolean getSelective() {
+        return selective;
+    }
+
+    public InlineKeyboardMarkup setSelective(Boolean selective) {
+        this.selective = selective;
+        return this;
+>>>>>>> /usr/src/app/output/rubenlagus/telegrambots/08efa94fcd05f62cd4fae784cba6cd2904011546/src/main/java/org/telegram/telegrambots/api/objects/replykeyboard/InlineKeyboardMarkup.java/right.java
     }
 
     @Override
