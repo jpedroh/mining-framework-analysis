@@ -4,11 +4,17 @@
 
 package net.sourceforge.pmd.lang.apex.ast;
 
-import com.google.summit.ast.statement.DmlStatement;
+import com.google.summit.ast.Node;
 
-public final class ASTDmlUpdateStatement extends AbstractDmlStatement {
+<<<<<<< /usr/src/app/output/pmd/pmd/8528a8ed7d2400fccb0f15c366c9843ee706c329/pmd-apex/src/main/java/net/sourceforge/pmd/lang/apex/ast/ASTDmlUpdateStatement.java/left.java
+public final class ASTDmlUpdateStatement extends AbstractApexNode.Single<Node> {
+||||||| /usr/src/app/output/pmd/pmd/8528a8ed7d2400fccb0f15c366c9843ee706c329/pmd-apex/src/main/java/net/sourceforge/pmd/lang/apex/ast/ASTDmlUpdateStatement.java/base.java
+public final class ASTDmlUpdateStatement extends AbstractApexNode<Node> {
+=======
+public final class ASTDmlUpdateStatement extends AbstractDmlStatement<Node> {
+>>>>>>> /usr/src/app/output/pmd/pmd/8528a8ed7d2400fccb0f15c366c9843ee706c329/pmd-apex/src/main/java/net/sourceforge/pmd/lang/apex/ast/ASTDmlUpdateStatement.java/right.java
 
-    ASTDmlUpdateStatement(DmlStatement dmlUpdateStatement) {
+    ASTDmlUpdateStatement(Node dmlUpdateStatement) {
         super(dmlUpdateStatement);
     }
 

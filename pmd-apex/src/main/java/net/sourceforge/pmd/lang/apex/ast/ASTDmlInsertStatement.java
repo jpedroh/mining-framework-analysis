@@ -4,11 +4,17 @@
 
 package net.sourceforge.pmd.lang.apex.ast;
 
-import com.google.summit.ast.statement.DmlStatement;
+import com.google.summit.ast.Node;
 
-public final class ASTDmlInsertStatement extends AbstractDmlStatement {
+<<<<<<< /usr/src/app/output/pmd/pmd/8528a8ed7d2400fccb0f15c366c9843ee706c329/pmd-apex/src/main/java/net/sourceforge/pmd/lang/apex/ast/ASTDmlInsertStatement.java/left.java
+public final class ASTDmlInsertStatement extends AbstractApexNode.Single<Node> {
+||||||| /usr/src/app/output/pmd/pmd/8528a8ed7d2400fccb0f15c366c9843ee706c329/pmd-apex/src/main/java/net/sourceforge/pmd/lang/apex/ast/ASTDmlInsertStatement.java/base.java
+public final class ASTDmlInsertStatement extends AbstractApexNode<Node> {
+=======
+public final class ASTDmlInsertStatement extends AbstractDmlStatement<Node> {
+>>>>>>> /usr/src/app/output/pmd/pmd/8528a8ed7d2400fccb0f15c366c9843ee706c329/pmd-apex/src/main/java/net/sourceforge/pmd/lang/apex/ast/ASTDmlInsertStatement.java/right.java
 
-    ASTDmlInsertStatement(DmlStatement dmlInsertStatement) {
+    ASTDmlInsertStatement(Node dmlInsertStatement) {
         super(dmlInsertStatement);
     }
 

@@ -4,11 +4,17 @@
 
 package net.sourceforge.pmd.lang.apex.ast;
 
-import com.google.summit.ast.statement.DmlStatement;
+import com.google.summit.ast.Node;
 
-public final class ASTDmlMergeStatement extends AbstractDmlStatement {
+<<<<<<< /usr/src/app/output/pmd/pmd/8528a8ed7d2400fccb0f15c366c9843ee706c329/pmd-apex/src/main/java/net/sourceforge/pmd/lang/apex/ast/ASTDmlMergeStatement.java/left.java
+public final class ASTDmlMergeStatement extends AbstractApexNode.Single<Node> {
+||||||| /usr/src/app/output/pmd/pmd/8528a8ed7d2400fccb0f15c366c9843ee706c329/pmd-apex/src/main/java/net/sourceforge/pmd/lang/apex/ast/ASTDmlMergeStatement.java/base.java
+public final class ASTDmlMergeStatement extends AbstractApexNode<Node> {
+=======
+public final class ASTDmlMergeStatement extends AbstractDmlStatement<Node> {
+>>>>>>> /usr/src/app/output/pmd/pmd/8528a8ed7d2400fccb0f15c366c9843ee706c329/pmd-apex/src/main/java/net/sourceforge/pmd/lang/apex/ast/ASTDmlMergeStatement.java/right.java
 
-    ASTDmlMergeStatement(DmlStatement dmlMergeStatement) {
+    ASTDmlMergeStatement(Node dmlMergeStatement) {
         super(dmlMergeStatement);
     }
 
