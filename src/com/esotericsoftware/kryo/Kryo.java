@@ -32,6 +32,35 @@ import static com.esotericsoftware.minlog.Log.debug;
 import static com.esotericsoftware.minlog.Log.trace;
 import static com.esotericsoftware.minlog.Log.warn;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Proxy;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.ConcurrentModificationException;
+import java.util.Currency;
+import java.util.Date;
+import java.util.EnumSet;
+import java.util.Locale;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.TimeZone;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import org.objenesis.instantiator.ObjectInstantiator;
+import org.objenesis.strategy.InstantiatorStrategy;
+import org.objenesis.strategy.SerializingInstantiatorStrategy;
+import org.objenesis.strategy.StdInstantiatorStrategy;
+
 import com.esotericsoftware.kryo.SerializerFactory.FieldSerializerFactory;
 import com.esotericsoftware.kryo.SerializerFactory.ReflectionSerializerFactory;
 import com.esotericsoftware.kryo.SerializerFactory.SingletonSerializerFactory;
@@ -92,43 +121,18 @@ import com.esotericsoftware.kryo.serializers.MapSerializer;
 import com.esotericsoftware.kryo.serializers.OptionalSerializers;
 import com.esotericsoftware.kryo.serializers.TimeSerializers;
 import com.esotericsoftware.kryo.util.DefaultClassResolver;
+import com.esotericsoftware.kryo.util.DefaultGenericsStrategy;
+import com.esotericsoftware.kryo.util.DefaultGenericsStrategy.GenericType;
+import com.esotericsoftware.kryo.util.DefaultGenericsStrategy.GenericsHierarchy;
 import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
 import com.esotericsoftware.kryo.util.GenericsStrategy;
 import com.esotericsoftware.kryo.util.IdentityMap;
 import com.esotericsoftware.kryo.util.IntArray;
 import com.esotericsoftware.kryo.util.MapReferenceResolver;
+import com.esotericsoftware.kryo.util.NoGenericsStrategy;
 import com.esotericsoftware.kryo.util.ObjectMap;
 import com.esotericsoftware.kryo.util.Pool.Poolable;
 import com.esotericsoftware.kryo.util.Util;
-
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Proxy;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.ConcurrentModificationException;
-import java.util.Currency;
-import java.util.Date;
-import java.util.EnumSet;
-import java.util.Locale;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.TimeZone;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-import org.objenesis.instantiator.ObjectInstantiator;
-import org.objenesis.strategy.InstantiatorStrategy;
-import org.objenesis.strategy.SerializingInstantiatorStrategy;
-import org.objenesis.strategy.StdInstantiatorStrategy;
 
 /** Maps classes to serializers so object graphs can be serialized automatically.
  * @author Nathan Sweet */
@@ -1198,20 +1202,20 @@ public class Kryo implements Poolable {
 
 	/** Tracks the generic type arguments and actual classes for type variables in the object graph during seralization.
 	 * <p>
-	 * When serializing a type with a single type parameter, {@link GenericsStrategy#nextGenericClass() nextGenericClass} will
-	 * return the generic class (or null) and must be followed by {@link GenericsStrategy#popGenericType() popGenericType}. See
-	 * {@link CollectionSerializer} for an example.
+	 * When serializing a type with a single type parameter, {@link DefaultGenericsStrategy#nextGenericClass() nextGenericClass}
+	 * will return the generic class (or null) and must be followed by {@link DefaultGenericsStrategy#popGenericType()
+	 * popGenericType}. See {@link CollectionSerializer} for an example.
 	 * <p>
-	 * When serializing a type with multiple type parameters, {@link GenericsStrategy#nextGenericTypes() nextGenericTypes} will
-	 * return an array of {@link GenericType}, then for each of those {@link GenericType#resolve(GenericsStrategy) resolve} returns
-	 * the generic class. This must be followed by {@link GenericsStrategy#popGenericType() popGenericType}. See
-	 * {@link MapSerializer} for an example.
+	 * When serializing a type with multiple type parameters, {@link DefaultGenericsStrategy#nextGenericTypes() nextGenericTypes}
+	 * will return an array of {@link GenericType}, then for each of those {@link GenericType#resolve(DefaultGenericsStrategy)
+	 * resolve} returns the generic class. This must be followed by {@link DefaultGenericsStrategy#popGenericType()
+	 * popGenericType}. See {@link MapSerializer} for an example.
 	 * <p>
 	 * {@link GenericsHierarchy} stores the type parameters for a class.
-	 * {@link GenericsStrategy#pushTypeVariables(GenericsHierarchy, GenericType[]) pushTypeVariables} can be called before generic
-	 * types are {@link GenericType#resolve(GenericsStrategy) resolved} so the type parameters are tracked as serialization moved
-	 * through the object graph. If >0 is returned, this must be followed by {@link GenericsStrategy#popTypeVariables(int)
-	 * popTypeVariables}. See {@link FieldSerializer} for an example. */
+	 * {@link DefaultGenericsStrategy#pushTypeVariables(GenericsHierarchy, GenericType[]) pushTypeVariables} can be called before
+	 * generic types are {@link GenericType#resolve(DefaultGenericsStrategy) resolved} so the type parameters are tracked as
+	 * serialization moved through the object graph. If >0 is returned, this must be followed by
+	 * {@link DefaultGenericsStrategy#popTypeVariables(int) popTypeVariables}. See {@link FieldSerializer} for an example. */
 	public GenericsStrategy getGenerics () {
 		return generics;
 	}

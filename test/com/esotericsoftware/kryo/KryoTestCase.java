@@ -24,15 +24,6 @@ import static com.esotericsoftware.minlog.Log.warn;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import com.esotericsoftware.kryo.io.ByteBufferInput;
-import com.esotericsoftware.kryo.io.ByteBufferOutput;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
-import com.esotericsoftware.kryo.unsafe.UnsafeByteBufferInput;
-import com.esotericsoftware.kryo.unsafe.UnsafeByteBufferOutput;
-import com.esotericsoftware.kryo.unsafe.UnsafeInput;
-import com.esotericsoftware.kryo.unsafe.UnsafeOutput;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -43,6 +34,15 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import org.junit.Before;
+
+import com.esotericsoftware.kryo.io.ByteBufferInput;
+import com.esotericsoftware.kryo.io.ByteBufferOutput;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.unsafe.UnsafeByteBufferInput;
+import com.esotericsoftware.kryo.unsafe.UnsafeByteBufferOutput;
+import com.esotericsoftware.kryo.unsafe.UnsafeInput;
+import com.esotericsoftware.kryo.unsafe.UnsafeOutput;
 
 /** Convenience methods for round tripping objects.
  * @author Nathan Sweet */
@@ -208,6 +208,13 @@ abstract public class KryoTestCase {
 		return object2;
 	}
 
+	private ByteBuffer allocateByteBuffer(byte[] buffer) {
+		ByteBuffer byteBuffer = ByteBuffer.allocateDirect(buffer.length);
+		byteBuffer.put(buffer);
+		((Buffer) byteBuffer).flip();
+		return byteBuffer;
+	}
+
 	/** @param lengthNonGeneric Pass Integer.MIN_VALUE to disable checking the length. */
 	/** @param lengthGeneric Pass Integer.MIN_VALUE to disable checking the length. */
 	public <T> T roundTripWithBufferFactory (int lengthNonGeneric, int lengthGeneric, T object1, BufferFactory sf) {
@@ -223,13 +230,6 @@ abstract public class KryoTestCase {
 			// reset to default
 			kryo.setOptimizedGenerics(true);
 		}
-	}
-
-	private ByteBuffer allocateByteBuffer (byte[] buffer) {
-		ByteBuffer byteBuffer = ByteBuffer.allocateDirect(buffer.length);
-		byteBuffer.put(buffer);
-		((Buffer)byteBuffer).flip();
-		return byteBuffer;
 	}
 
 	/** @param length Pass Integer.MIN_VALUE to disable checking the length. */
