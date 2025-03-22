@@ -1607,14 +1607,26 @@ public class SpringCodegenTest {
 
         Map<String, File> files = generateFiles(codegen, "src/test/resources/bugs/issue_13365.yml");
 
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/179dd608a686f516a129864e8b128c38bd3756d2/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/spring/SpringCodegenTest.java/left.java
+        JavaFileAssert.assertThat(files.get("Person.java"))
+                .printFileContent().assertMethod("getName").assertMethodAnnotations()
+                .containsWithName("NotNull").containsWithName("Size").containsWithName("javax.validation.constraints.Email");
+
+||||||| /usr/src/app/output/openapitools/openapi-generator/179dd608a686f516a129864e8b128c38bd3756d2/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/spring/SpringCodegenTest.java/base.java
+        JavaFileAssert.assertThat(files.get("Person.java"))
+                .printFileContent().assertMethod("getName").assertMethodAnnotations()
+                .containsWithName("NotNull").containsWithName("Size").containsWithName("Email");
+
+=======
         JavaFileAssert javaFileAssert = JavaFileAssert.assertThat(files.get("Person.java"))
                 .printFileContent();
         javaFileAssert.assertMethod("getName").assertMethodAnnotations()
-                .containsWithName("NotNull").containsWithName("Size").containsWithName("javax.validation.constraints.Email");
+                .containsWithName("NotNull").containsWithName("Size").containsWithName("Email");
         javaFileAssert.isNot(new Condition<>(classfile ->
                 classfile.getImports().stream().map(NodeWithName::getNameAsString)
                         .anyMatch("javax.validation.constraints.NotNull"::equals), ""));
         javaFileAssert.hasImports("javax.validation.constraints");
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/179dd608a686f516a129864e8b128c38bd3756d2/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/spring/SpringCodegenTest.java/right.java
     }
 
     public void shouldUseEqualsNullableForArrayWhenSetInConfig_issue13385() throws IOException {
