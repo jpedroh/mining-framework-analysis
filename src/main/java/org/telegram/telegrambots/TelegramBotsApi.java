@@ -1,5 +1,4 @@
 package org.telegram.telegrambots;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -17,7 +16,6 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.updatesreceivers.BotSession;
 import org.telegram.telegrambots.updatesreceivers.Webhook;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -29,33 +27,37 @@ import java.nio.charset.StandardCharsets;
  * @date 14 of January of 2016
  */
 public class TelegramBotsApi {
-    private boolean useWebhook; ///<
-    private Webhook webhook; ///<
-    private String extrenalUrl; ///<
-    private String pathToCertificate; ///<
-    private String publicCertificateName; ///<
+  private boolean useWebhook;
 
-    /**
+  private Webhook webhook;
+
+  private String extrenalUrl;
+
+  private String pathToCertificate;
+
+  private String publicCertificateName;
+
+  /**
      *
      */
-    public TelegramBotsApi() {
-    }
+  public TelegramBotsApi() {
+  }
 
-    /**
+  /**
      *
      * @param keyStore
      * @param keyStorePassword
      * @param externalUrl
      * @param internalUrl
      */
-    public TelegramBotsApi(String keyStore, String keyStorePassword, String externalUrl, String internalUrl) throws TelegramApiException {
-        this.useWebhook = true;
-        this.extrenalUrl = fixExternalUrl(externalUrl);
-        webhook = new Webhook(keyStore, keyStorePassword, internalUrl);
-        webhook.startServer();
-    }
+  public TelegramBotsApi(String keyStore, String keyStorePassword, String externalUrl, String internalUrl) throws TelegramApiException {
+    this.useWebhook = true;
+    this.extrenalUrl = fixExternalUrl(externalUrl);
+    webhook = new Webhook(keyStore, keyStorePassword, internalUrl);
+    webhook.startServer();
+  }
 
-    /**
+  /**
      *
      * @param keyStore
      * @param keyStorePassword
@@ -64,28 +66,28 @@ public class TelegramBotsApi {
      * @param pathToCertificate
      * @param publicCertificateName
      */
-    public TelegramBotsApi(String keyStore, String keyStorePassword, String externalUrl, String internalUrl, String pathToCertificate, String publicCertificateName) throws TelegramApiException {
-        this.useWebhook = true;
-        this.extrenalUrl = fixExternalUrl(externalUrl);
-        this.pathToCertificate = pathToCertificate;
-        this.publicCertificateName = publicCertificateName;
-        webhook = new Webhook(keyStore, keyStorePassword, internalUrl);
-        webhook.startServer();
-    }
+  public TelegramBotsApi(String keyStore, String keyStorePassword, String externalUrl, String internalUrl, String pathToCertificate, String publicCertificateName) throws TelegramApiException {
+    this.useWebhook = true;
+    this.extrenalUrl = fixExternalUrl(externalUrl);
+    this.pathToCertificate = pathToCertificate;
+    this.publicCertificateName = publicCertificateName;
+    webhook = new Webhook(keyStore, keyStorePassword, internalUrl);
+    webhook.startServer();
+  }
 
-    /**
+  /**
      *
      * @param externalUrl
      * @return
      */
-    private static String fixExternalUrl(String externalUrl) {
-        if (externalUrl != null && !externalUrl.endsWith("/")) {
-            externalUrl = externalUrl + "/";
-        }
-        return externalUrl;
+  private static String fixExternalUrl(String externalUrl) {
+    if (externalUrl != null && !externalUrl.endsWith("/")) {
+      externalUrl = externalUrl + "/";
     }
+    return externalUrl;
+  }
 
-    /**
+  /**
      *
      * @param webHookURL
      * @param botToken
@@ -93,62 +95,75 @@ public class TelegramBotsApi {
      * @param publicCertificateName
      * @throws TelegramApiException
      */
-    private static void setWebhook(String webHookURL, String botToken, String publicCertificatePath, String publicCertificateName) throws TelegramApiException {
-        try {
-            CloseableHttpClient httpclient = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
-            String url = Constants.BASEURL + botToken + "/" + SetWebhook.PATH;
-
-            HttpPost httppost = new HttpPost(url);
-            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-            builder.addTextBody(SetWebhook.URL_FIELD, webHookURL);
-            if (publicCertificatePath != null) {
-                builder.addBinaryBody(SetWebhook.CERTIFICATE_FIELD, new File(publicCertificatePath), ContentType.APPLICATION_OCTET_STREAM, publicCertificateName);
-            }
-            HttpEntity multipart = builder.build();
-            httppost.setEntity(multipart);
-            CloseableHttpResponse response = httpclient.execute(httppost);
-            HttpEntity ht = response.getEntity();
-            BufferedHttpEntity buf = new BufferedHttpEntity(ht);
-            String responseContent = EntityUtils.toString(buf, StandardCharsets.UTF_8);
-            JSONObject jsonObject = new JSONObject(responseContent);
-            if (!jsonObject.getBoolean(Constants.RESPONSEFIELDOK)) {
-                throw new TelegramApiException(webHookURL == null ? "Error removing old webhook" : "Error setting webhook", responseContent);
-            }
-        } catch (JSONException e) {
-            throw new TelegramApiException("Error deserializing setWebhook method response", e);
-        } catch (IOException e) {
-            throw new TelegramApiException("Error executing setWebook method", e);
-        }
+  private static void setWebhook(String webHookURL, String botToken, String publicCertificatePath, String publicCertificateName) throws TelegramApiException {
+    try {
+      CloseableHttpClient httpclient = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
+      String url = Constants.BASEURL + botToken + "/" + SetWebhook.PATH;
+      HttpPost httppost = new HttpPost(url);
+      MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+      builder.addTextBody(SetWebhook.URL_FIELD, webHookURL);
+      if (publicCertificatePath != null) {
+        builder.addBinaryBody(SetWebhook.CERTIFICATE_FIELD, new File(publicCertificatePath), ContentType.APPLICATION_OCTET_STREAM, publicCertificateName);
+      }
+      HttpEntity multipart = builder.build();
+      httppost.setEntity(multipart);
+      CloseableHttpResponse response = httpclient.execute(httppost);
+      HttpEntity ht = response.getEntity();
+      BufferedHttpEntity buf = new BufferedHttpEntity(ht);
+      String responseContent = EntityUtils.toString(buf, StandardCharsets.UTF_8);
+      JSONObject jsonObject = new JSONObject(responseContent);
+      if (!jsonObject.getBoolean(Constants.RESPONSEFIELDOK)) {
+        throw new TelegramApiException(webHookURL == null ? "Error removing old webhook" : "Error setting webhook", responseContent);
+      }
+    } catch (JSONException e) {
+      throw new TelegramApiException("Error deserializing setWebhook method response", e);
+    } catch (IOException e) {
+      throw new TelegramApiException("Error executing setWebook method", e);
     }
+  }
 
-    /**
+  /**
      * Register a bot. The Bot Session is started immediately, and may be disconnected by calling close.
      * @param bot
      */
-    public BotSession registerBot(TelegramLongPollingBot bot) throws TelegramApiException {
-        setWebhook(bot.getBotToken());
-        return new BotSession(bot.getBotToken(), bot);
-    }
+  public 
+<<<<<<< /usr/src/app/output/rubenlagus/telegrambots/08efa94fcd05f62cd4fae784cba6cd2904011546/src/main/java/org/telegram/telegrambots/TelegramBotsApi.java/left.java
+  BotSession
+=======
+  TelegramBotsApi
+>>>>>>> /usr/src/app/output/rubenlagus/telegrambots/08efa94fcd05f62cd4fae784cba6cd2904011546/src/main/java/org/telegram/telegrambots/TelegramBotsApi.java/right.java
+   registerBot(TelegramLongPollingBot bot) throws TelegramApiException {
+    setWebhook(bot.getBotToken());
+    return 
+<<<<<<< /usr/src/app/output/rubenlagus/telegrambots/08efa94fcd05f62cd4fae784cba6cd2904011546/src/main/java/org/telegram/telegrambots/TelegramBotsApi.java/left.java
+    new BotSession(bot.getBotToken(), bot)
+=======
+    this
+>>>>>>> /usr/src/app/output/rubenlagus/telegrambots/08efa94fcd05f62cd4fae784cba6cd2904011546/src/main/java/org/telegram/telegrambots/TelegramBotsApi.java/right.java
+    ;
+  }
 
-    /**
+  /**
      *
      * @param bot
      */
-    public void registerBot(TelegramWebhookBot bot) throws TelegramApiException {
-        if (useWebhook) {
-            webhook.registerWebhook(bot);
-            setWebhook(bot.getBotToken());
-        }
+  public TelegramBotsApi registerBot(TelegramWebhookBot bot) throws TelegramApiException {
+    if (useWebhook) {
+      webhook.registerWebhook(bot);
+      setWebhook(bot.getBotToken());
     }
+    return this;
+  }
 
-    /**
+  /**
      *
      * @param botToken
      */
-    private void setWebhook(String botToken) throws TelegramApiException {
-        if (botToken == null) {
-            throw new TelegramApiException("Parameter botToken can not be null");
-        }
-        setWebhook(extrenalUrl == null ? "" : extrenalUrl, botToken, pathToCertificate, publicCertificateName);
+  private TelegramBotsApi setWebhook(String botToken) throws TelegramApiException {
+    if (botToken == null) {
+      throw new TelegramApiException("Parameter botToken can not be null");
     }
+    setWebhook(extrenalUrl == null ? "" : extrenalUrl, botToken, pathToCertificate, publicCertificateName);
+    return this;
+  }
 }
