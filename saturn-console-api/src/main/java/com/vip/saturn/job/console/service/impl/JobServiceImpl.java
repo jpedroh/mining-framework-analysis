@@ -570,11 +570,15 @@ public class JobServiceImpl implements JobService {
 		if (JobType.isJava(jobType) && (jobConfig.getJobClass() == null || jobConfig.getJobClass().trim().isEmpty())) {
 			throw new SaturnJobConsoleException(ERROR_CODE_BAD_REQUEST, "对于java作业，作业实现类必填");
 		}
+<<<<<<< /usr/src/app/output/vipshop/saturn/fe28294ff25fc14bbd6b6d9d3408a21d208e99be/saturn-console-api/src/main/java/com/vip/saturn/job/console/service/impl/JobServiceImpl.java/left.java
+		// 校验cron
+||||||| /usr/src/app/output/vipshop/saturn/fe28294ff25fc14bbd6b6d9d3408a21d208e99be/saturn-console-api/src/main/java/com/vip/saturn/job/console/service/impl/JobServiceImpl.java/base.java
+=======
 		// 如果是消息作业，queue必填
 		if (JobType.isMsg(jobType) && (jobConfig.getQueueName() == null || jobConfig.getQueueName().trim().isEmpty())) {
 			throw new SaturnJobConsoleException(ERROR_CODE_BAD_REQUEST, "对于消息作业，queue必填");
 		}
-		// 校验cron
+>>>>>>> /usr/src/app/output/vipshop/saturn/fe28294ff25fc14bbd6b6d9d3408a21d208e99be/saturn-console-api/src/main/java/com/vip/saturn/job/console/service/impl/JobServiceImpl.java/right.java
 		validateCronFieldOfJobConfig(jobConfig);
 		// 校验shardingItemParameters
 		validateShardingItemFieldOfJobConfig(jobConfig);
