@@ -1909,8 +1909,8 @@ public class SpringCodegenTest {
         DefaultGenerator generator = new DefaultGenerator();
         generator.opts(input).generate();
 
-        String jsonPropertyInGetClassName = "@NotNull @Schema(name = \"className\", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(\"className\") public String getClassName() {";
-        String jsonPropertyInGetColor = "@Schema(name = \"color\", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(\"color\") public String getColor() {";
+        String jsonPropertyInGetClassName = "@NotNull @Schema(name = \"className\", required = true) @JsonProperty(\"className\") public String getClassName() {";
+        String jsonPropertyInGetColor = "@Schema(name = \"color\", required = false) @JsonProperty(\"color\") public String getColor() {";
         assertFileContains(Paths.get(output.getAbsolutePath() + "/src/main/java/org/openapitools/model/Animal.java"), jsonPropertyInGetClassName, jsonPropertyInGetColor);
     }
 }
