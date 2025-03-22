@@ -71,29 +71,39 @@ public interface VirtualMachineSupport extends AccessControlledService {
     public VirtualMachine alterVirtualMachine(@Nonnull String vmId, @Nonnull VMScalingOptions options) throws InternalException, CloudException;
 
     /**
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/b664347569531574341cfd6947653716c7a7d93e/src/main/java/org/dasein/cloud/compute/VirtualMachineSupport.java/left.java
+     * Allows modification of assigned firewalls of a virtual machine to be changed.
+     * @param vmId the virtual machine to modify
+     * @param firewalls the list of firewalls to be assigned to the virtual machine
+     * @return a virtual machine with the updated firewall assignments
+     * @throws InternalException an internal error occurred processing the request
+||||||| /usr/src/app/output/greese/dasein-cloud-core/b664347569531574341cfd6947653716c7a7d93e/src/main/java/org/dasein/cloud/compute/VirtualMachineSupport.java/base.java
      * Allows certain properties of a virtual machine  to be changed in accordance with the specified  options.
      * @param vmId the virtual machine to scale
      * @param firewalls the options governing how the virtual machine is scaled
      * @return a virtual machine representing the scaled virtual machine
      * @throws InternalException an internal error occurred processing the request
-     * @throws CloudException an error occurred in the cloud processing the request
-     */
-    public abstract VirtualMachine modifyInstance(@Nonnull String vmId, @Nonnull String[] firewalls) throws InternalException, CloudException;
-
-    /**
+=======
      * Cancels the data feed for Spot Instances
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/b664347569531574341cfd6947653716c7a7d93e/src/main/java/org/dasein/cloud/compute/VirtualMachineSupport.java/right.java
      * @throws CloudException an error occurred in the cloud processing the request
      * @throws InternalException an internal error occurred processing the request
      */
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/b664347569531574341cfd6947653716c7a7d93e/src/main/java/org/dasein/cloud/compute/VirtualMachineSupport.java/left.java
+    public VirtualMachine modifyInstance(@Nonnull String vmId, @Nonnull String[] firewalls) throws InternalException, CloudException;
+||||||| /usr/src/app/output/greese/dasein-cloud-core/b664347569531574341cfd6947653716c7a7d93e/src/main/java/org/dasein/cloud/compute/VirtualMachineSupport.java/base.java
+    public abstract VirtualMachine modifyInstance(@Nonnull String vmId, @Nonnull String[] firewalls) throws InternalException, CloudException;
+=======
     public void cancelSpotDataFeedSubscription() throws CloudException, InternalException;
 
     /**
      * Cancels and removes a request for Spot Instances
      * @param providerSpotInstanceRequestID the ID of the SpotInstanceRequest to be cancelled
-     * @throws CloudException an error occurred in the cloud processing the request
-     * @throws InternalException an internal error occurred processing the request
+     * @throws CloudException
+     * @throws InternalException
      */
     public void cancelSpotInstanceRequest(String providerSpotInstanceRequestID) throws CloudException, InternalException;
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/b664347569531574341cfd6947653716c7a7d93e/src/main/java/org/dasein/cloud/compute/VirtualMachineSupport.java/right.java
 
     /**
      * Clones an existing virtual machine into a new copy.
@@ -338,10 +348,13 @@ public interface VirtualMachineSupport extends AccessControlledService {
      * @throws CloudException an error occurred within the cloud provider
      */
     public Iterable<VirtualMachineProduct> listProducts(Architecture architecture) throws InternalException, CloudException;
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/b664347569531574341cfd6947653716c7a7d93e/src/main/java/org/dasein/cloud/compute/VirtualMachineSupport.java/left.java
     /*
      * @param dataCenterId the desired dataCenterId size offerings
      */
     public Iterable<VirtualMachineProduct> listProducts(Architecture architecture, String dataCenterId) throws InternalException, CloudException;
+||||||| /usr/src/app/output/greese/dasein-cloud-core/b664347569531574341cfd6947653716c7a7d93e/src/main/java/org/dasein/cloud/compute/VirtualMachineSupport.java/base.java
+=======
 
     /**
      * Provides a list of price history records for Spot Instances
@@ -351,6 +364,7 @@ public interface VirtualMachineSupport extends AccessControlledService {
      * @throws InternalException
      */
     public Iterable<SpotPriceHistory> listSpotPriceHistories(SPHistoryFilterOptions options) throws CloudException, InternalException;
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/b664347569531574341cfd6947653716c7a7d93e/src/main/java/org/dasein/cloud/compute/VirtualMachineSupport.java/right.java
 
     /**
      * Lists the status for all virtual machines in the current region.

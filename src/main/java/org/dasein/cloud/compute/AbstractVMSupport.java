@@ -85,6 +85,11 @@ public abstract class AbstractVMSupport<T extends CloudProvider> implements Virt
     }
 
     @Override
+    public void cancelSpotDataFeedSubscription() throws CloudException, InternalException{
+        throw new OperationNotSupportedException("Spot Instances are not supported for " + getProvider().getCloudName());
+    }
+
+    @Override
     public void cancelSpotInstanceRequest(String providerSpotInstanceRequestID) throws CloudException, InternalException{
         throw new OperationNotSupportedException("Spot Instances are not supported for " + getProvider().getCloudName());
     }
