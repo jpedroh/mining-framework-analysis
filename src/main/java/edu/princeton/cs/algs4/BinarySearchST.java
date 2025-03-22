@@ -297,9 +297,15 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
      *        <em>n</em>–1
      */
     public Key select(int k) {
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/b66548467b304fa8a6e7b939b7c44cd265c0e1e8/src/main/java/edu/princeton/cs/algs4/BinarySearchST.java/left.java
         if (k < 0 || k >= size()) {
             throw new IllegalArgumentException("called select() with invalid argument: " + k);
         }
+||||||| /usr/src/app/output/kevin-wayne/algs4/b66548467b304fa8a6e7b939b7c44cd265c0e1e8/src/main/java/edu/princeton/cs/algs4/BinarySearchST.java/base.java
+        if (k < 0 || k >= size()) return null;
+=======
+        if (k < 0 || k >= size()) throw new IllegalArgumentException();
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/b66548467b304fa8a6e7b939b7c44cd265c0e1e8/src/main/java/edu/princeton/cs/algs4/BinarySearchST.java/right.java
         return keys[k];
     }
 
