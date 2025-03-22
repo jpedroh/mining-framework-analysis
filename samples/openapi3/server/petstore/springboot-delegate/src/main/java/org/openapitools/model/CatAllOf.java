@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,19 +9,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * CatAllOf
  */
-
-@JsonTypeName("Cat_allOf")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class CatAllOf {
-
+@JsonTypeName(value = "Cat_allOf") @Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class CatAllOf {
   private Boolean declawed;
 
   public CatAllOf declawed(Boolean declawed) {
@@ -34,10 +27,7 @@ public class CatAllOf {
    * Get declawed
    * @return declawed
   */
-  
-  @Schema(name = "declawed", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("declawed")
-  public Boolean getDeclawed() {
+  @Schema(name = "declawed", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "declawed") public Boolean getDeclawed() {
     return declawed;
   }
 
@@ -45,8 +35,7 @@ public class CatAllOf {
     this.declawed = declawed;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -57,13 +46,11 @@ public class CatAllOf {
     return Objects.equals(this.declawed, catAllOf.declawed);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(declawed);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class CatAllOf {\n");
     sb.append("    declawed: ").append(toIndentedString(declawed)).append("\n");
@@ -82,4 +69,3 @@ public class CatAllOf {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

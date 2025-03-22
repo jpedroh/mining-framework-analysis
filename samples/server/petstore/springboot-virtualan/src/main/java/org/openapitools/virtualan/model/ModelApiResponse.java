@@ -1,5 +1,4 @@
 package org.openapitools.virtualan.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,19 +9,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * ModelApiResponse
  */
-
-@JsonTypeName("ApiResponse")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class ModelApiResponse {
-
+@JsonTypeName(value = "ApiResponse") @Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class ModelApiResponse {
   private Integer code;
 
   private String type;
@@ -38,10 +31,7 @@ public class ModelApiResponse {
    * Get code
    * @return code
   */
-  
-  @Schema(name = "code", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("code")
-  public Integer getCode() {
+  @Schema(name = "code", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "code") public Integer getCode() {
     return code;
   }
 
@@ -58,10 +48,7 @@ public class ModelApiResponse {
    * Get type
    * @return type
   */
-  
-  @Schema(name = "type", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("type")
-  public String getType() {
+  @Schema(name = "type", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "type") public String getType() {
     return type;
   }
 
@@ -78,10 +65,7 @@ public class ModelApiResponse {
    * Get message
    * @return message
   */
-  
-  @Schema(name = "message", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("message")
-  public String getMessage() {
+  @Schema(name = "message", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "message") public String getMessage() {
     return message;
   }
 
@@ -89,8 +73,7 @@ public class ModelApiResponse {
     this.message = message;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -98,18 +81,14 @@ public class ModelApiResponse {
       return false;
     }
     ModelApiResponse _apiResponse = (ModelApiResponse) o;
-    return Objects.equals(this.code, _apiResponse.code) &&
-        Objects.equals(this.type, _apiResponse.type) &&
-        Objects.equals(this.message, _apiResponse.message);
+    return Objects.equals(this.code, _apiResponse.code) && Objects.equals(this.type, _apiResponse.type) && Objects.equals(this.message, _apiResponse.message);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(code, type, message);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ModelApiResponse {\n");
     sb.append("    code: ").append(toIndentedString(code)).append("\n");
@@ -130,4 +109,3 @@ public class ModelApiResponse {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,19 +14,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * FormatTest
  */
-
-@JsonTypeName("format_test")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class FormatTest {
-
+@JsonTypeName(value = "format_test") @Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class FormatTest {
   private Integer integer;
 
   private Integer int32;
@@ -46,11 +39,9 @@ public class FormatTest {
 
   private org.springframework.core.io.Resource binary;
 
-  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-  private LocalDate date;
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) private LocalDate date;
 
-  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  private OffsetDateTime dateTime;
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) private OffsetDateTime dateTime;
 
   private UUID uuid;
 
@@ -69,10 +60,7 @@ public class FormatTest {
    * maximum: 100
    * @return integer
   */
-  @Min(10) @Max(100) 
-  @Schema(name = "integer", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("integer")
-  public Integer getInteger() {
+  @Min(value = 10) @Max(value = 100) @Schema(name = "integer", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "integer") public Integer getInteger() {
     return integer;
   }
 
@@ -91,10 +79,7 @@ public class FormatTest {
    * maximum: 200
    * @return int32
   */
-  @Min(20) @Max(200) 
-  @Schema(name = "int32", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("int32")
-  public Integer getInt32() {
+  @Min(value = 20) @Max(value = 200) @Schema(name = "int32", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "int32") public Integer getInt32() {
     return int32;
   }
 
@@ -111,10 +96,7 @@ public class FormatTest {
    * Get int64
    * @return int64
   */
-  
-  @Schema(name = "int64", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("int64")
-  public Long getInt64() {
+  @Schema(name = "int64", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "int64") public Long getInt64() {
     return int64;
   }
 
@@ -133,10 +115,7 @@ public class FormatTest {
    * maximum: 543.2
    * @return number
   */
-  @NotNull @Valid @DecimalMin("32.1") @DecimalMax("543.2") 
-  @Schema(name = "number", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("number")
-  public BigDecimal getNumber() {
+  @NotNull @Valid @DecimalMin(value = "32.1") @DecimalMax(value = "543.2") @Schema(name = "number", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(value = "number") public BigDecimal getNumber() {
     return number;
   }
 
@@ -155,10 +134,7 @@ public class FormatTest {
    * maximum: 987.6
    * @return _float
   */
-  @DecimalMin("54.3") @DecimalMax("987.6") 
-  @Schema(name = "float", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("float")
-  public Float getFloat() {
+  @DecimalMin(value = "54.3") @DecimalMax(value = "987.6") @Schema(name = "float", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "float") public Float getFloat() {
     return _float;
   }
 
@@ -177,10 +153,7 @@ public class FormatTest {
    * maximum: 123.4
    * @return _double
   */
-  @DecimalMin("67.8") @DecimalMax("123.4") 
-  @Schema(name = "double", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("double")
-  public Double getDouble() {
+  @DecimalMin(value = "67.8") @DecimalMax(value = "123.4") @Schema(name = "double", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "double") public Double getDouble() {
     return _double;
   }
 
@@ -197,10 +170,7 @@ public class FormatTest {
    * Get string
    * @return string
   */
-  @Pattern(regexp = "/[a-z]/i") 
-  @Schema(name = "string", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("string")
-  public String getString() {
+  @Pattern(regexp = "/[a-z]/i") @Schema(name = "string", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "string") public String getString() {
     return string;
   }
 
@@ -217,10 +187,7 @@ public class FormatTest {
    * Get _byte
    * @return _byte
   */
-  @NotNull 
-  @Schema(name = "byte", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("byte")
-  public byte[] getByte() {
+  @NotNull @Schema(name = "byte", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(value = "byte") public byte[] getByte() {
     return _byte;
   }
 
@@ -237,10 +204,7 @@ public class FormatTest {
    * Get binary
    * @return binary
   */
-  @Valid 
-  @Schema(name = "binary", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("binary")
-  public org.springframework.core.io.Resource getBinary() {
+  @Valid @Schema(name = "binary", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "binary") public org.springframework.core.io.Resource getBinary() {
     return binary;
   }
 
@@ -257,10 +221,7 @@ public class FormatTest {
    * Get date
    * @return date
   */
-  @NotNull @Valid 
-  @Schema(name = "date", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("date")
-  public LocalDate getDate() {
+  @NotNull @Valid @Schema(name = "date", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(value = "date") public LocalDate getDate() {
     return date;
   }
 
@@ -277,10 +238,7 @@ public class FormatTest {
    * Get dateTime
    * @return dateTime
   */
-  @Valid 
-  @Schema(name = "dateTime", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("dateTime")
-  public OffsetDateTime getDateTime() {
+  @Valid @Schema(name = "dateTime", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "dateTime") public OffsetDateTime getDateTime() {
     return dateTime;
   }
 
@@ -297,10 +255,7 @@ public class FormatTest {
    * Get uuid
    * @return uuid
   */
-  @Valid 
-  @Schema(name = "uuid", example = "72f98069-206d-4f12-9f12-3d1e525a8e84", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("uuid")
-  public UUID getUuid() {
+  @Valid @Schema(name = "uuid", example = "72f98069-206d-4f12-9f12-3d1e525a8e84", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "uuid") public UUID getUuid() {
     return uuid;
   }
 
@@ -317,10 +272,7 @@ public class FormatTest {
    * Get password
    * @return password
   */
-  @NotNull @Size(min = 10, max = 64) 
-  @Schema(name = "password", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("password")
-  public String getPassword() {
+  @NotNull @Size(min = 10, max = 64) @Schema(name = "password", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(value = "password") public String getPassword() {
     return password;
   }
 
@@ -337,10 +289,7 @@ public class FormatTest {
    * Get bigDecimal
    * @return bigDecimal
   */
-  @Valid 
-  @Schema(name = "BigDecimal", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("BigDecimal")
-  public BigDecimal getBigDecimal() {
+  @Valid @Schema(name = "BigDecimal", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "BigDecimal") public BigDecimal getBigDecimal() {
     return bigDecimal;
   }
 
@@ -348,8 +297,7 @@ public class FormatTest {
     this.bigDecimal = bigDecimal;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -357,29 +305,14 @@ public class FormatTest {
       return false;
     }
     FormatTest formatTest = (FormatTest) o;
-    return Objects.equals(this.integer, formatTest.integer) &&
-        Objects.equals(this.int32, formatTest.int32) &&
-        Objects.equals(this.int64, formatTest.int64) &&
-        Objects.equals(this.number, formatTest.number) &&
-        Objects.equals(this._float, formatTest._float) &&
-        Objects.equals(this._double, formatTest._double) &&
-        Objects.equals(this.string, formatTest.string) &&
-        Arrays.equals(this._byte, formatTest._byte) &&
-        Objects.equals(this.binary, formatTest.binary) &&
-        Objects.equals(this.date, formatTest.date) &&
-        Objects.equals(this.dateTime, formatTest.dateTime) &&
-        Objects.equals(this.uuid, formatTest.uuid) &&
-        Objects.equals(this.password, formatTest.password) &&
-        Objects.equals(this.bigDecimal, formatTest.bigDecimal);
+    return Objects.equals(this.integer, formatTest.integer) && Objects.equals(this.int32, formatTest.int32) && Objects.equals(this.int64, formatTest.int64) && Objects.equals(this.number, formatTest.number) && Objects.equals(this._float, formatTest._float) && Objects.equals(this._double, formatTest._double) && Objects.equals(this.string, formatTest.string) && Arrays.equals(this._byte, formatTest._byte) && Objects.equals(this.binary, formatTest.binary) && Objects.equals(this.date, formatTest.date) && Objects.equals(this.dateTime, formatTest.dateTime) && Objects.equals(this.uuid, formatTest.uuid) && Objects.equals(this.password, formatTest.password) && Objects.equals(this.bigDecimal, formatTest.bigDecimal);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(integer, int32, int64, number, _float, _double, string, Arrays.hashCode(_byte), binary, date, dateTime, uuid, password, bigDecimal);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class FormatTest {\n");
     sb.append("    integer: ").append(toIndentedString(integer)).append("\n");
@@ -411,4 +344,3 @@ public class FormatTest {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

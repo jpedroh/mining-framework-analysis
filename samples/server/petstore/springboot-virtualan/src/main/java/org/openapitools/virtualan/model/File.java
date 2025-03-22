@@ -1,5 +1,4 @@
 package org.openapitools.virtualan.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,19 +8,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * Must be named &#x60;File&#x60; for test.
  */
-
-@Schema(name = "File", description = "Must be named `File` for test.")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class File {
-
+@Schema(name = "File", description = "Must be named `File` for test.") @Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class File {
   private String sourceURI;
 
   public File sourceURI(String sourceURI) {
@@ -33,10 +26,7 @@ public class File {
    * Test capitalization
    * @return sourceURI
   */
-  
-  @Schema(name = "sourceURI", description = "Test capitalization", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("sourceURI")
-  public String getSourceURI() {
+  @Schema(name = "sourceURI", description = "Test capitalization", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "sourceURI") public String getSourceURI() {
     return sourceURI;
   }
 
@@ -44,8 +34,7 @@ public class File {
     this.sourceURI = sourceURI;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -56,13 +45,11 @@ public class File {
     return Objects.equals(this.sourceURI, file.sourceURI);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(sourceURI);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class File {\n");
     sb.append("    sourceURI: ").append(toIndentedString(sourceURI)).append("\n");
@@ -81,4 +68,3 @@ public class File {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

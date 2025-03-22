@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,20 +8,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * Model for testing reserved words
  */
-
-@Schema(name = "Return", description = "Model for testing reserved words")
-@JsonTypeName("Return")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class ModelReturn {
-
+@Schema(name = "Return", description = "Model for testing reserved words") @JsonTypeName(value = "Return") @Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class ModelReturn {
   private Integer _return;
 
   public ModelReturn _return(Integer _return) {
@@ -34,10 +26,7 @@ public class ModelReturn {
    * Get _return
    * @return _return
   */
-  
-  @Schema(name = "return", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("return")
-  public Integer getReturn() {
+  @Schema(name = "return", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "return") public Integer getReturn() {
     return _return;
   }
 
@@ -45,8 +34,7 @@ public class ModelReturn {
     this._return = _return;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -57,13 +45,11 @@ public class ModelReturn {
     return Objects.equals(this._return, _return._return);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(_return);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ModelReturn {\n");
     sb.append("    _return: ").append(toIndentedString(_return)).append("\n");
@@ -82,4 +68,3 @@ public class ModelReturn {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

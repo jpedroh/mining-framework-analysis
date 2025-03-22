@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -13,30 +12,19 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * BigCat
  */
-
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class BigCat extends Cat {
-
-  /**
-   * Gets or Sets kind
-   */
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class BigCat extends Cat {
   public enum KindEnum {
     LIONS("lions"),
-    
     TIGERS("tigers"),
-    
     LEOPARDS("leopards"),
-    
-    JAGUARS("jaguars");
+    JAGUARS("jaguars")
+    ;
 
     private String value;
 
@@ -44,24 +32,21 @@ public class BigCat extends Cat {
       this.value = value;
     }
 
-    @JsonValue
-    public String getValue() {
+    @JsonValue public String getValue() {
       return value;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
       return String.valueOf(value);
     }
 
-    @JsonCreator
-    public static KindEnum fromValue(String value) {
+    @JsonCreator public static KindEnum fromValue(String value) {
       for (KindEnum b : KindEnum.values()) {
         if (b.value.equals(value)) {
           return b;
         }
       }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
+      throw new IllegalArgumentException("Unexpected value \'" + value + "\'");
     }
   }
 
@@ -76,10 +61,7 @@ public class BigCat extends Cat {
    * Get kind
    * @return kind
   */
-  
-  @Schema(name = "kind", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("kind")
-  public KindEnum getKind() {
+  @Schema(name = "kind", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "kind") public KindEnum getKind() {
     return kind;
   }
 
@@ -102,8 +84,7 @@ public class BigCat extends Cat {
     return this;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -111,17 +92,14 @@ public class BigCat extends Cat {
       return false;
     }
     BigCat bigCat = (BigCat) o;
-    return Objects.equals(this.kind, bigCat.kind) &&
-        super.equals(o);
+    return Objects.equals(this.kind, bigCat.kind) && super.equals(o);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(kind, super.hashCode());
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class BigCat {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
@@ -141,4 +119,3 @@ public class BigCat extends Cat {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

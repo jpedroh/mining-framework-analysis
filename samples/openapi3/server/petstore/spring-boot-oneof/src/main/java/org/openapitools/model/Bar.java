@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -14,19 +13,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * Bar
  */
-
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class Bar extends Entity implements BarRefOrValue {
-
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class Bar extends Entity implements BarRefOrValue {
   private String id;
 
   private String barPropA;
@@ -44,10 +37,7 @@ public class Bar extends Entity implements BarRefOrValue {
    * Get id
    * @return id
   */
-  @NotNull 
-  @Schema(name = "id", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("id")
-  public String getId() {
+  @NotNull @Schema(name = "id", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(value = "id") public String getId() {
     return id;
   }
 
@@ -64,10 +54,7 @@ public class Bar extends Entity implements BarRefOrValue {
    * Get barPropA
    * @return barPropA
   */
-  
-  @Schema(name = "barPropA", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("barPropA")
-  public String getBarPropA() {
+  @Schema(name = "barPropA", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "barPropA") public String getBarPropA() {
     return barPropA;
   }
 
@@ -84,10 +71,7 @@ public class Bar extends Entity implements BarRefOrValue {
    * Get fooPropB
    * @return fooPropB
   */
-  
-  @Schema(name = "fooPropB", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("fooPropB")
-  public String getFooPropB() {
+  @Schema(name = "fooPropB", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "fooPropB") public String getFooPropB() {
     return fooPropB;
   }
 
@@ -104,10 +88,7 @@ public class Bar extends Entity implements BarRefOrValue {
    * Get foo
    * @return foo
   */
-  @Valid 
-  @Schema(name = "foo", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("foo")
-  public FooRefOrValue getFoo() {
+  @Valid @Schema(name = "foo", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "foo") public FooRefOrValue getFoo() {
     return foo;
   }
 
@@ -135,8 +116,7 @@ public class Bar extends Entity implements BarRefOrValue {
     return this;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -144,20 +124,14 @@ public class Bar extends Entity implements BarRefOrValue {
       return false;
     }
     Bar bar = (Bar) o;
-    return Objects.equals(this.id, bar.id) &&
-        Objects.equals(this.barPropA, bar.barPropA) &&
-        Objects.equals(this.fooPropB, bar.fooPropB) &&
-        Objects.equals(this.foo, bar.foo) &&
-        super.equals(o);
+    return Objects.equals(this.id, bar.id) && Objects.equals(this.barPropA, bar.barPropA) && Objects.equals(this.fooPropB, bar.fooPropB) && Objects.equals(this.foo, bar.foo) && super.equals(o);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(id, barPropA, fooPropB, foo, super.hashCode());
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Bar {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
@@ -180,4 +154,3 @@ public class Bar extends Entity implements BarRefOrValue {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

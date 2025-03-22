@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,28 +10,18 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * EnumTest
  */
-
-@JsonTypeName("Enum_Test")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class EnumTest {
-
-  /**
-   * Gets or Sets enumString
-   */
+@JsonTypeName(value = "Enum_Test") @Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class EnumTest {
   public enum EnumStringEnum {
     UPPER("UPPER"),
-    
     LOWER("lower"),
-    
-    EMPTY("");
+    EMPTY("")
+    ;
 
     private String value;
 
@@ -40,38 +29,31 @@ public class EnumTest {
       this.value = value;
     }
 
-    @JsonValue
-    public String getValue() {
+    @JsonValue public String getValue() {
       return value;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
       return String.valueOf(value);
     }
 
-    @JsonCreator
-    public static EnumStringEnum fromValue(String value) {
+    @JsonCreator public static EnumStringEnum fromValue(String value) {
       for (EnumStringEnum b : EnumStringEnum.values()) {
         if (b.value.equals(value)) {
           return b;
         }
       }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
+      throw new IllegalArgumentException("Unexpected value \'" + value + "\'");
     }
   }
 
   private EnumStringEnum enumString;
 
-  /**
-   * Gets or Sets enumStringRequired
-   */
   public enum EnumStringRequiredEnum {
     UPPER("UPPER"),
-    
     LOWER("lower"),
-    
-    EMPTY("");
+    EMPTY("")
+    ;
 
     private String value;
 
@@ -79,36 +61,30 @@ public class EnumTest {
       this.value = value;
     }
 
-    @JsonValue
-    public String getValue() {
+    @JsonValue public String getValue() {
       return value;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
       return String.valueOf(value);
     }
 
-    @JsonCreator
-    public static EnumStringRequiredEnum fromValue(String value) {
+    @JsonCreator public static EnumStringRequiredEnum fromValue(String value) {
       for (EnumStringRequiredEnum b : EnumStringRequiredEnum.values()) {
         if (b.value.equals(value)) {
           return b;
         }
       }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
+      throw new IllegalArgumentException("Unexpected value \'" + value + "\'");
     }
   }
 
   private EnumStringRequiredEnum enumStringRequired;
 
-  /**
-   * Gets or Sets enumInteger
-   */
   public enum EnumIntegerEnum {
     NUMBER_1(1),
-    
-    NUMBER_MINUS_1(-1);
+    NUMBER_MINUS_1(-1)
+    ;
 
     private Integer value;
 
@@ -116,36 +92,30 @@ public class EnumTest {
       this.value = value;
     }
 
-    @JsonValue
-    public Integer getValue() {
+    @JsonValue public Integer getValue() {
       return value;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
       return String.valueOf(value);
     }
 
-    @JsonCreator
-    public static EnumIntegerEnum fromValue(Integer value) {
+    @JsonCreator public static EnumIntegerEnum fromValue(Integer value) {
       for (EnumIntegerEnum b : EnumIntegerEnum.values()) {
         if (b.value.equals(value)) {
           return b;
         }
       }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
+      throw new IllegalArgumentException("Unexpected value \'" + value + "\'");
     }
   }
 
   private EnumIntegerEnum enumInteger;
 
-  /**
-   * Gets or Sets enumNumber
-   */
   public enum EnumNumberEnum {
     NUMBER_1_DOT_1(1.1),
-    
-    NUMBER_MINUS_1_DOT_2(-1.2);
+    NUMBER_MINUS_1_DOT_2(-1.2)
+    ;
 
     private Double value;
 
@@ -153,24 +123,21 @@ public class EnumTest {
       this.value = value;
     }
 
-    @JsonValue
-    public Double getValue() {
+    @JsonValue public Double getValue() {
       return value;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
       return String.valueOf(value);
     }
 
-    @JsonCreator
-    public static EnumNumberEnum fromValue(Double value) {
+    @JsonCreator public static EnumNumberEnum fromValue(Double value) {
       for (EnumNumberEnum b : EnumNumberEnum.values()) {
         if (b.value.equals(value)) {
           return b;
         }
       }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
+      throw new IllegalArgumentException("Unexpected value \'" + value + "\'");
     }
   }
 
@@ -187,10 +154,7 @@ public class EnumTest {
    * Get enumString
    * @return enumString
   */
-  
-  @Schema(name = "enum_string", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("enum_string")
-  public EnumStringEnum getEnumString() {
+  @Schema(name = "enum_string", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "enum_string") public EnumStringEnum getEnumString() {
     return enumString;
   }
 
@@ -207,10 +171,7 @@ public class EnumTest {
    * Get enumStringRequired
    * @return enumStringRequired
   */
-  @NotNull 
-  @Schema(name = "enum_string_required", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("enum_string_required")
-  public EnumStringRequiredEnum getEnumStringRequired() {
+  @NotNull @Schema(name = "enum_string_required", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(value = "enum_string_required") public EnumStringRequiredEnum getEnumStringRequired() {
     return enumStringRequired;
   }
 
@@ -227,10 +188,7 @@ public class EnumTest {
    * Get enumInteger
    * @return enumInteger
   */
-  
-  @Schema(name = "enum_integer", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("enum_integer")
-  public EnumIntegerEnum getEnumInteger() {
+  @Schema(name = "enum_integer", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "enum_integer") public EnumIntegerEnum getEnumInteger() {
     return enumInteger;
   }
 
@@ -247,10 +205,7 @@ public class EnumTest {
    * Get enumNumber
    * @return enumNumber
   */
-  
-  @Schema(name = "enum_number", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("enum_number")
-  public EnumNumberEnum getEnumNumber() {
+  @Schema(name = "enum_number", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "enum_number") public EnumNumberEnum getEnumNumber() {
     return enumNumber;
   }
 
@@ -267,10 +222,7 @@ public class EnumTest {
    * Get outerEnum
    * @return outerEnum
   */
-  @Valid 
-  @Schema(name = "outerEnum", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("outerEnum")
-  public OuterEnum getOuterEnum() {
+  @Valid @Schema(name = "outerEnum", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "outerEnum") public OuterEnum getOuterEnum() {
     return outerEnum;
   }
 
@@ -278,8 +230,7 @@ public class EnumTest {
     this.outerEnum = outerEnum;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -287,20 +238,14 @@ public class EnumTest {
       return false;
     }
     EnumTest enumTest = (EnumTest) o;
-    return Objects.equals(this.enumString, enumTest.enumString) &&
-        Objects.equals(this.enumStringRequired, enumTest.enumStringRequired) &&
-        Objects.equals(this.enumInteger, enumTest.enumInteger) &&
-        Objects.equals(this.enumNumber, enumTest.enumNumber) &&
-        Objects.equals(this.outerEnum, enumTest.outerEnum);
+    return Objects.equals(this.enumString, enumTest.enumString) && Objects.equals(this.enumStringRequired, enumTest.enumStringRequired) && Objects.equals(this.enumInteger, enumTest.enumInteger) && Objects.equals(this.enumNumber, enumTest.enumNumber) && Objects.equals(this.outerEnum, enumTest.outerEnum);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(enumString, enumStringRequired, enumInteger, enumNumber, outerEnum);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class EnumTest {\n");
     sb.append("    enumString: ").append(toIndentedString(enumString)).append("\n");
@@ -323,4 +268,3 @@ public class EnumTest {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

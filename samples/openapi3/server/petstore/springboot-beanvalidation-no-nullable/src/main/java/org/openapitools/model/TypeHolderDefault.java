@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,18 +10,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * TypeHolderDefault
  */
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class TypeHolderDefault {
-
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class TypeHolderDefault {
   private String stringItem = "what";
 
   private BigDecimal numberItem;
@@ -31,8 +25,7 @@ public class TypeHolderDefault {
 
   private Boolean boolItem = true;
 
-  @Valid
-  private List<Integer> arrayItem = new ArrayList<>();
+  @Valid private List<Integer> arrayItem = new ArrayList<>();
 
   public TypeHolderDefault stringItem(String stringItem) {
     this.stringItem = stringItem;
@@ -43,10 +36,7 @@ public class TypeHolderDefault {
    * Get stringItem
    * @return stringItem
   */
-  @NotNull 
-  @Schema(name = "string_item", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("string_item")
-  public String getStringItem() {
+  @NotNull @Schema(name = "string_item", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(value = "string_item") public String getStringItem() {
     return stringItem;
   }
 
@@ -63,10 +53,7 @@ public class TypeHolderDefault {
    * Get numberItem
    * @return numberItem
   */
-  @NotNull @Valid 
-  @Schema(name = "number_item", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("number_item")
-  public BigDecimal getNumberItem() {
+  @NotNull @Valid @Schema(name = "number_item", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(value = "number_item") public BigDecimal getNumberItem() {
     return numberItem;
   }
 
@@ -83,10 +70,7 @@ public class TypeHolderDefault {
    * Get integerItem
    * @return integerItem
   */
-  @NotNull 
-  @Schema(name = "integer_item", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("integer_item")
-  public Integer getIntegerItem() {
+  @NotNull @Schema(name = "integer_item", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(value = "integer_item") public Integer getIntegerItem() {
     return integerItem;
   }
 
@@ -103,10 +87,7 @@ public class TypeHolderDefault {
    * Get boolItem
    * @return boolItem
   */
-  @NotNull 
-  @Schema(name = "bool_item", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("bool_item")
-  public Boolean getBoolItem() {
+  @NotNull @Schema(name = "bool_item", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(value = "bool_item") public Boolean getBoolItem() {
     return boolItem;
   }
 
@@ -131,10 +112,7 @@ public class TypeHolderDefault {
    * Get arrayItem
    * @return arrayItem
   */
-  @NotNull 
-  @Schema(name = "array_item", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("array_item")
-  public List<Integer> getArrayItem() {
+  @NotNull @Schema(name = "array_item", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(value = "array_item") public List<Integer> getArrayItem() {
     return arrayItem;
   }
 
@@ -142,8 +120,7 @@ public class TypeHolderDefault {
     this.arrayItem = arrayItem;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -151,20 +128,14 @@ public class TypeHolderDefault {
       return false;
     }
     TypeHolderDefault typeHolderDefault = (TypeHolderDefault) o;
-    return Objects.equals(this.stringItem, typeHolderDefault.stringItem) &&
-        Objects.equals(this.numberItem, typeHolderDefault.numberItem) &&
-        Objects.equals(this.integerItem, typeHolderDefault.integerItem) &&
-        Objects.equals(this.boolItem, typeHolderDefault.boolItem) &&
-        Objects.equals(this.arrayItem, typeHolderDefault.arrayItem);
+    return Objects.equals(this.stringItem, typeHolderDefault.stringItem) && Objects.equals(this.numberItem, typeHolderDefault.numberItem) && Objects.equals(this.integerItem, typeHolderDefault.integerItem) && Objects.equals(this.boolItem, typeHolderDefault.boolItem) && Objects.equals(this.arrayItem, typeHolderDefault.arrayItem);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(stringItem, numberItem, integerItem, boolItem, arrayItem);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class TypeHolderDefault {\n");
     sb.append("    stringItem: ").append(toIndentedString(stringItem)).append("\n");
@@ -187,4 +158,3 @@ public class TypeHolderDefault {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

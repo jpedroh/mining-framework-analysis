@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,20 +8,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * Model for testing model name starting with number
  */
-
-@Schema(name = "200_response", description = "Model for testing model name starting with number")
-@JsonTypeName("200_response")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class Model200Response {
-
+@Schema(name = "200_response", description = "Model for testing model name starting with number") @JsonTypeName(value = "200_response") @Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class Model200Response {
   private Integer name;
 
   private String propertyClass;
@@ -36,10 +28,7 @@ public class Model200Response {
    * Get name
    * @return name
   */
-  
-  @Schema(name = "name", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("name")
-  public Integer getName() {
+  @Schema(name = "name", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "name") public Integer getName() {
     return name;
   }
 
@@ -56,10 +45,7 @@ public class Model200Response {
    * Get propertyClass
    * @return propertyClass
   */
-  
-  @Schema(name = "class", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("class")
-  public String getPropertyClass() {
+  @Schema(name = "class", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "class") public String getPropertyClass() {
     return propertyClass;
   }
 
@@ -67,8 +53,7 @@ public class Model200Response {
     this.propertyClass = propertyClass;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -76,17 +61,14 @@ public class Model200Response {
       return false;
     }
     Model200Response _200response = (Model200Response) o;
-    return Objects.equals(this.name, _200response.name) &&
-        Objects.equals(this.propertyClass, _200response.propertyClass);
+    return Objects.equals(this.name, _200response.name) && Objects.equals(this.propertyClass, _200response.propertyClass);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(name, propertyClass);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Model200Response {\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
@@ -106,4 +88,3 @@ public class Model200Response {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

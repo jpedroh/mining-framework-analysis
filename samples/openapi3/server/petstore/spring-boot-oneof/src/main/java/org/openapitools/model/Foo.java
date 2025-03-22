@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -13,19 +12,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * Foo
  */
-
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class Foo extends Entity implements FooRefOrValue {
-
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class Foo extends Entity implements FooRefOrValue {
   private String fooPropA;
 
   private String fooPropB;
@@ -39,10 +32,7 @@ public class Foo extends Entity implements FooRefOrValue {
    * Get fooPropA
    * @return fooPropA
   */
-  
-  @Schema(name = "fooPropA", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("fooPropA")
-  public String getFooPropA() {
+  @Schema(name = "fooPropA", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "fooPropA") public String getFooPropA() {
     return fooPropA;
   }
 
@@ -59,10 +49,7 @@ public class Foo extends Entity implements FooRefOrValue {
    * Get fooPropB
    * @return fooPropB
   */
-  
-  @Schema(name = "fooPropB", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("fooPropB")
-  public String getFooPropB() {
+  @Schema(name = "fooPropB", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "fooPropB") public String getFooPropB() {
     return fooPropB;
   }
 
@@ -95,8 +82,7 @@ public class Foo extends Entity implements FooRefOrValue {
     return this;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -104,18 +90,14 @@ public class Foo extends Entity implements FooRefOrValue {
       return false;
     }
     Foo foo = (Foo) o;
-    return Objects.equals(this.fooPropA, foo.fooPropA) &&
-        Objects.equals(this.fooPropB, foo.fooPropB) &&
-        super.equals(o);
+    return Objects.equals(this.fooPropA, foo.fooPropA) && Objects.equals(this.fooPropB, foo.fooPropB) && super.equals(o);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(fooPropA, fooPropB, super.hashCode());
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Foo {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
@@ -136,4 +118,3 @@ public class Foo extends Entity implements FooRefOrValue {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

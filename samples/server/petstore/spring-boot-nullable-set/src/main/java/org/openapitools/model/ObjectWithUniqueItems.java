@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,35 +18,24 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * ObjectWithUniqueItems
  */
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class ObjectWithUniqueItems {
+  @Valid private JsonNullable<Set<String>> nullSet = JsonNullable.undefined();
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class ObjectWithUniqueItems {
+  @Valid private Set<String> notNullSet = null;
 
-  @Valid
-  private JsonNullable<Set<String>> nullSet = JsonNullable.undefined();
+  @Valid private JsonNullable<List<String>> nullList = JsonNullable.undefined();
 
-  @Valid
-  private Set<String> notNullSet = null;
+  @Valid private List<String> notNullList = null;
 
-  @Valid
-  private JsonNullable<List<String>> nullList = JsonNullable.undefined();
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) private OffsetDateTime notNullDateField;
 
-  @Valid
-  private List<String> notNullList = null;
-
-  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  private OffsetDateTime notNullDateField;
-
-  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  private OffsetDateTime nullDateField;
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) private OffsetDateTime nullDateField;
 
   public ObjectWithUniqueItems nullSet(Set<String> nullSet) {
     this.nullSet = JsonNullable.of(nullSet);
@@ -66,10 +54,7 @@ public class ObjectWithUniqueItems {
    * Get nullSet
    * @return nullSet
   */
-  
-  @Schema(name = "nullSet", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("nullSet")
-  public JsonNullable<Set<String>> getNullSet() {
+  @Schema(name = "nullSet", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "nullSet") public JsonNullable<Set<String>> getNullSet() {
     return nullSet;
   }
 
@@ -94,15 +79,11 @@ public class ObjectWithUniqueItems {
    * Get notNullSet
    * @return notNullSet
   */
-  
-  @Schema(name = "notNullSet", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("notNullSet")
-  public Set<String> getNotNullSet() {
+  @Schema(name = "notNullSet", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "notNullSet") public Set<String> getNotNullSet() {
     return notNullSet;
   }
 
-  @JsonDeserialize(as = LinkedHashSet.class)
-  public void setNotNullSet(Set<String> notNullSet) {
+  @JsonDeserialize(as = LinkedHashSet.class) public void setNotNullSet(Set<String> notNullSet) {
     this.notNullSet = notNullSet;
   }
 
@@ -123,10 +104,7 @@ public class ObjectWithUniqueItems {
    * Get nullList
    * @return nullList
   */
-  
-  @Schema(name = "nullList", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("nullList")
-  public JsonNullable<List<String>> getNullList() {
+  @Schema(name = "nullList", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "nullList") public JsonNullable<List<String>> getNullList() {
     return nullList;
   }
 
@@ -151,10 +129,7 @@ public class ObjectWithUniqueItems {
    * Get notNullList
    * @return notNullList
   */
-  
-  @Schema(name = "notNullList", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("notNullList")
-  public List<String> getNotNullList() {
+  @Schema(name = "notNullList", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "notNullList") public List<String> getNotNullList() {
     return notNullList;
   }
 
@@ -171,10 +146,7 @@ public class ObjectWithUniqueItems {
    * Get notNullDateField
    * @return notNullDateField
   */
-  @Valid 
-  @Schema(name = "notNullDateField", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("notNullDateField")
-  public OffsetDateTime getNotNullDateField() {
+  @Valid @Schema(name = "notNullDateField", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "notNullDateField") public OffsetDateTime getNotNullDateField() {
     return notNullDateField;
   }
 
@@ -191,10 +163,7 @@ public class ObjectWithUniqueItems {
    * Get nullDateField
    * @return nullDateField
   */
-  @Valid 
-  @Schema(name = "nullDateField", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("nullDateField")
-  public OffsetDateTime getNullDateField() {
+  @Valid @Schema(name = "nullDateField", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "nullDateField") public OffsetDateTime getNullDateField() {
     return nullDateField;
   }
 
@@ -202,8 +171,7 @@ public class ObjectWithUniqueItems {
     this.nullDateField = nullDateField;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -211,32 +179,25 @@ public class ObjectWithUniqueItems {
       return false;
     }
     ObjectWithUniqueItems objectWithUniqueItems = (ObjectWithUniqueItems) o;
-    return equalsNullable(this.nullSet, objectWithUniqueItems.nullSet) &&
-        Objects.equals(this.notNullSet, objectWithUniqueItems.notNullSet) &&
-        equalsNullable(this.nullList, objectWithUniqueItems.nullList) &&
-        Objects.equals(this.notNullList, objectWithUniqueItems.notNullList) &&
-        Objects.equals(this.notNullDateField, objectWithUniqueItems.notNullDateField) &&
-        Objects.equals(this.nullDateField, objectWithUniqueItems.nullDateField);
+    return equalsNullable(this.nullSet, objectWithUniqueItems.nullSet) && Objects.equals(this.notNullSet, objectWithUniqueItems.notNullSet) && equalsNullable(this.nullList, objectWithUniqueItems.nullList) && Objects.equals(this.notNullList, objectWithUniqueItems.notNullList) && Objects.equals(this.notNullDateField, objectWithUniqueItems.notNullDateField) && Objects.equals(this.nullDateField, objectWithUniqueItems.nullDateField);
   }
 
-  private static <T> boolean equalsNullable(JsonNullable<T> a, JsonNullable<T> b) {
+  private static <T extends java.lang.Object> boolean equalsNullable(JsonNullable<T> a, JsonNullable<T> b) {
     return a == b || (a != null && b != null && a.isPresent() && b.isPresent() && Objects.deepEquals(a.get(), b.get()));
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(hashCodeNullable(nullSet), notNullSet, hashCodeNullable(nullList), notNullList, notNullDateField, nullDateField);
   }
 
-  private static <T> int hashCodeNullable(JsonNullable<T> a) {
+  private static <T extends java.lang.Object> int hashCodeNullable(JsonNullable<T> a) {
     if (a == null) {
       return 1;
     }
-    return a.isPresent() ? Arrays.deepHashCode(new Object[]{a.get()}) : 31;
+    return a.isPresent() ? Arrays.deepHashCode(new Object[] { a.get() }) : 31;
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ObjectWithUniqueItems {\n");
     sb.append("    nullSet: ").append(toIndentedString(nullSet)).append("\n");
@@ -260,4 +221,3 @@ public class ObjectWithUniqueItems {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

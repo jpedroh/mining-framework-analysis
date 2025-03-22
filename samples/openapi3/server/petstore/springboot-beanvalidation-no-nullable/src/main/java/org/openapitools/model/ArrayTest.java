@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,26 +10,18 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * ArrayTest
  */
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class ArrayTest {
+  @Valid private List<String> arrayOfString = null;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class ArrayTest {
+  @Valid private List<List<Long>> arrayArrayOfInteger = null;
 
-  @Valid
-  private List<String> arrayOfString = null;
-
-  @Valid
-  private List<List<Long>> arrayArrayOfInteger = null;
-
-  @Valid
-  private List<List<ReadOnlyFirst>> arrayArrayOfModel = null;
+  @Valid private List<List<ReadOnlyFirst>> arrayArrayOfModel = null;
 
   public ArrayTest arrayOfString(List<String> arrayOfString) {
     this.arrayOfString = arrayOfString;
@@ -49,10 +40,7 @@ public class ArrayTest {
    * Get arrayOfString
    * @return arrayOfString
   */
-  
-  @Schema(name = "array_of_string", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("array_of_string")
-  public List<String> getArrayOfString() {
+  @Schema(name = "array_of_string", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "array_of_string") public List<String> getArrayOfString() {
     return arrayOfString;
   }
 
@@ -77,10 +65,7 @@ public class ArrayTest {
    * Get arrayArrayOfInteger
    * @return arrayArrayOfInteger
   */
-  @Valid 
-  @Schema(name = "array_array_of_integer", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("array_array_of_integer")
-  public List<List<Long>> getArrayArrayOfInteger() {
+  @Valid @Schema(name = "array_array_of_integer", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "array_array_of_integer") public List<List<Long>> getArrayArrayOfInteger() {
     return arrayArrayOfInteger;
   }
 
@@ -105,10 +90,7 @@ public class ArrayTest {
    * Get arrayArrayOfModel
    * @return arrayArrayOfModel
   */
-  @Valid 
-  @Schema(name = "array_array_of_model", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("array_array_of_model")
-  public List<List<ReadOnlyFirst>> getArrayArrayOfModel() {
+  @Valid @Schema(name = "array_array_of_model", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "array_array_of_model") public List<List<ReadOnlyFirst>> getArrayArrayOfModel() {
     return arrayArrayOfModel;
   }
 
@@ -116,8 +98,7 @@ public class ArrayTest {
     this.arrayArrayOfModel = arrayArrayOfModel;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -125,18 +106,14 @@ public class ArrayTest {
       return false;
     }
     ArrayTest arrayTest = (ArrayTest) o;
-    return Objects.equals(this.arrayOfString, arrayTest.arrayOfString) &&
-        Objects.equals(this.arrayArrayOfInteger, arrayTest.arrayArrayOfInteger) &&
-        Objects.equals(this.arrayArrayOfModel, arrayTest.arrayArrayOfModel);
+    return Objects.equals(this.arrayOfString, arrayTest.arrayOfString) && Objects.equals(this.arrayArrayOfInteger, arrayTest.arrayArrayOfInteger) && Objects.equals(this.arrayArrayOfModel, arrayTest.arrayArrayOfModel);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(arrayOfString, arrayArrayOfInteger, arrayArrayOfModel);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ArrayTest {\n");
     sb.append("    arrayOfString: ").append(toIndentedString(arrayOfString)).append("\n");
@@ -157,4 +134,3 @@ public class ArrayTest {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

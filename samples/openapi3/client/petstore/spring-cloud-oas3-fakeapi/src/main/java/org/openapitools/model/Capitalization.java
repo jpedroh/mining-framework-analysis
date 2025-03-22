@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,18 +8,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * Capitalization
  */
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class Capitalization {
-
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class Capitalization {
   private String smallCamel;
 
   private String capitalCamel;
@@ -42,10 +36,7 @@ public class Capitalization {
    * Get smallCamel
    * @return smallCamel
   */
-  
-  @Schema(name = "smallCamel", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("smallCamel")
-  public String getSmallCamel() {
+  @Schema(name = "smallCamel", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "smallCamel") public String getSmallCamel() {
     return smallCamel;
   }
 
@@ -62,10 +53,7 @@ public class Capitalization {
    * Get capitalCamel
    * @return capitalCamel
   */
-  
-  @Schema(name = "CapitalCamel", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("CapitalCamel")
-  public String getCapitalCamel() {
+  @Schema(name = "CapitalCamel", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "CapitalCamel") public String getCapitalCamel() {
     return capitalCamel;
   }
 
@@ -82,10 +70,7 @@ public class Capitalization {
    * Get smallSnake
    * @return smallSnake
   */
-  
-  @Schema(name = "small_Snake", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("small_Snake")
-  public String getSmallSnake() {
+  @Schema(name = "small_Snake", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "small_Snake") public String getSmallSnake() {
     return smallSnake;
   }
 
@@ -102,10 +87,7 @@ public class Capitalization {
    * Get capitalSnake
    * @return capitalSnake
   */
-  
-  @Schema(name = "Capital_Snake", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("Capital_Snake")
-  public String getCapitalSnake() {
+  @Schema(name = "Capital_Snake", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "Capital_Snake") public String getCapitalSnake() {
     return capitalSnake;
   }
 
@@ -122,10 +104,7 @@ public class Capitalization {
    * Get scAETHFlowPoints
    * @return scAETHFlowPoints
   */
-  
-  @Schema(name = "SCA_ETH_Flow_Points", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("SCA_ETH_Flow_Points")
-  public String getScAETHFlowPoints() {
+  @Schema(name = "SCA_ETH_Flow_Points", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "SCA_ETH_Flow_Points") public String getScAETHFlowPoints() {
     return scAETHFlowPoints;
   }
 
@@ -142,10 +121,7 @@ public class Capitalization {
    * Name of the pet 
    * @return ATT_NAME
   */
-  
-  @Schema(name = "ATT_NAME", description = "Name of the pet ", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("ATT_NAME")
-  public String getATTNAME() {
+  @Schema(name = "ATT_NAME", description = "Name of the pet ", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "ATT_NAME") public String getATTNAME() {
     return ATT_NAME;
   }
 
@@ -153,8 +129,7 @@ public class Capitalization {
     this.ATT_NAME = ATT_NAME;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -162,21 +137,14 @@ public class Capitalization {
       return false;
     }
     Capitalization capitalization = (Capitalization) o;
-    return Objects.equals(this.smallCamel, capitalization.smallCamel) &&
-        Objects.equals(this.capitalCamel, capitalization.capitalCamel) &&
-        Objects.equals(this.smallSnake, capitalization.smallSnake) &&
-        Objects.equals(this.capitalSnake, capitalization.capitalSnake) &&
-        Objects.equals(this.scAETHFlowPoints, capitalization.scAETHFlowPoints) &&
-        Objects.equals(this.ATT_NAME, capitalization.ATT_NAME);
+    return Objects.equals(this.smallCamel, capitalization.smallCamel) && Objects.equals(this.capitalCamel, capitalization.capitalCamel) && Objects.equals(this.smallSnake, capitalization.smallSnake) && Objects.equals(this.capitalSnake, capitalization.capitalSnake) && Objects.equals(this.scAETHFlowPoints, capitalization.scAETHFlowPoints) && Objects.equals(this.ATT_NAME, capitalization.ATT_NAME);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(smallCamel, capitalCamel, smallSnake, capitalSnake, scAETHFlowPoints, ATT_NAME);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Capitalization {\n");
     sb.append("    smallCamel: ").append(toIndentedString(smallCamel)).append("\n");
@@ -200,4 +168,3 @@ public class Capitalization {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

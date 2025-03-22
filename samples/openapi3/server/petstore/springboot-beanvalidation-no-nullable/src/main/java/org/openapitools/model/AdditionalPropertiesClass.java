@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,41 +11,28 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * AdditionalPropertiesClass
  */
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class AdditionalPropertiesClass {
+  @Valid private Map<String, String> mapString = null;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class AdditionalPropertiesClass {
+  @Valid private Map<String, BigDecimal> mapNumber = null;
 
-  @Valid
-  private Map<String, String> mapString = null;
+  @Valid private Map<String, Integer> mapInteger = null;
 
-  @Valid
-  private Map<String, BigDecimal> mapNumber = null;
+  @Valid private Map<String, Boolean> mapBoolean = null;
 
-  @Valid
-  private Map<String, Integer> mapInteger = null;
+  @Valid private Map<String, List<Integer>> mapArrayInteger = null;
 
-  @Valid
-  private Map<String, Boolean> mapBoolean = null;
+  @Valid private Map<String, List<Object>> mapArrayAnytype = null;
 
-  @Valid
-  private Map<String, List<Integer>> mapArrayInteger = null;
+  @Valid private Map<String, Map<String, String>> mapMapString = null;
 
-  @Valid
-  private Map<String, List<Object>> mapArrayAnytype = null;
-
-  @Valid
-  private Map<String, Map<String, String>> mapMapString = null;
-
-  @Valid
-  private Map<String, Map<String, Object>> mapMapAnytype = null;
+  @Valid private Map<String, Map<String, Object>> mapMapAnytype = null;
 
   private Object anytype1;
 
@@ -71,10 +57,7 @@ public class AdditionalPropertiesClass {
    * Get mapString
    * @return mapString
   */
-  
-  @Schema(name = "map_string", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("map_string")
-  public Map<String, String> getMapString() {
+  @Schema(name = "map_string", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "map_string") public Map<String, String> getMapString() {
     return mapString;
   }
 
@@ -99,10 +82,7 @@ public class AdditionalPropertiesClass {
    * Get mapNumber
    * @return mapNumber
   */
-  @Valid 
-  @Schema(name = "map_number", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("map_number")
-  public Map<String, BigDecimal> getMapNumber() {
+  @Valid @Schema(name = "map_number", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "map_number") public Map<String, BigDecimal> getMapNumber() {
     return mapNumber;
   }
 
@@ -127,10 +107,7 @@ public class AdditionalPropertiesClass {
    * Get mapInteger
    * @return mapInteger
   */
-  
-  @Schema(name = "map_integer", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("map_integer")
-  public Map<String, Integer> getMapInteger() {
+  @Schema(name = "map_integer", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "map_integer") public Map<String, Integer> getMapInteger() {
     return mapInteger;
   }
 
@@ -155,10 +132,7 @@ public class AdditionalPropertiesClass {
    * Get mapBoolean
    * @return mapBoolean
   */
-  
-  @Schema(name = "map_boolean", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("map_boolean")
-  public Map<String, Boolean> getMapBoolean() {
+  @Schema(name = "map_boolean", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "map_boolean") public Map<String, Boolean> getMapBoolean() {
     return mapBoolean;
   }
 
@@ -183,10 +157,7 @@ public class AdditionalPropertiesClass {
    * Get mapArrayInteger
    * @return mapArrayInteger
   */
-  @Valid 
-  @Schema(name = "map_array_integer", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("map_array_integer")
-  public Map<String, List<Integer>> getMapArrayInteger() {
+  @Valid @Schema(name = "map_array_integer", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "map_array_integer") public Map<String, List<Integer>> getMapArrayInteger() {
     return mapArrayInteger;
   }
 
@@ -211,10 +182,7 @@ public class AdditionalPropertiesClass {
    * Get mapArrayAnytype
    * @return mapArrayAnytype
   */
-  @Valid 
-  @Schema(name = "map_array_anytype", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("map_array_anytype")
-  public Map<String, List<Object>> getMapArrayAnytype() {
+  @Valid @Schema(name = "map_array_anytype", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "map_array_anytype") public Map<String, List<Object>> getMapArrayAnytype() {
     return mapArrayAnytype;
   }
 
@@ -239,10 +207,7 @@ public class AdditionalPropertiesClass {
    * Get mapMapString
    * @return mapMapString
   */
-  @Valid 
-  @Schema(name = "map_map_string", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("map_map_string")
-  public Map<String, Map<String, String>> getMapMapString() {
+  @Valid @Schema(name = "map_map_string", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "map_map_string") public Map<String, Map<String, String>> getMapMapString() {
     return mapMapString;
   }
 
@@ -267,10 +232,7 @@ public class AdditionalPropertiesClass {
    * Get mapMapAnytype
    * @return mapMapAnytype
   */
-  @Valid 
-  @Schema(name = "map_map_anytype", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("map_map_anytype")
-  public Map<String, Map<String, Object>> getMapMapAnytype() {
+  @Valid @Schema(name = "map_map_anytype", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "map_map_anytype") public Map<String, Map<String, Object>> getMapMapAnytype() {
     return mapMapAnytype;
   }
 
@@ -287,10 +249,7 @@ public class AdditionalPropertiesClass {
    * Get anytype1
    * @return anytype1
   */
-  
-  @Schema(name = "anytype_1", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("anytype_1")
-  public Object getAnytype1() {
+  @Schema(name = "anytype_1", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "anytype_1") public Object getAnytype1() {
     return anytype1;
   }
 
@@ -307,10 +266,7 @@ public class AdditionalPropertiesClass {
    * Get anytype2
    * @return anytype2
   */
-  
-  @Schema(name = "anytype_2", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("anytype_2")
-  public Object getAnytype2() {
+  @Schema(name = "anytype_2", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "anytype_2") public Object getAnytype2() {
     return anytype2;
   }
 
@@ -327,10 +283,7 @@ public class AdditionalPropertiesClass {
    * Get anytype3
    * @return anytype3
   */
-  
-  @Schema(name = "anytype_3", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("anytype_3")
-  public Object getAnytype3() {
+  @Schema(name = "anytype_3", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "anytype_3") public Object getAnytype3() {
     return anytype3;
   }
 
@@ -338,8 +291,7 @@ public class AdditionalPropertiesClass {
     this.anytype3 = anytype3;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -347,26 +299,14 @@ public class AdditionalPropertiesClass {
       return false;
     }
     AdditionalPropertiesClass additionalPropertiesClass = (AdditionalPropertiesClass) o;
-    return Objects.equals(this.mapString, additionalPropertiesClass.mapString) &&
-        Objects.equals(this.mapNumber, additionalPropertiesClass.mapNumber) &&
-        Objects.equals(this.mapInteger, additionalPropertiesClass.mapInteger) &&
-        Objects.equals(this.mapBoolean, additionalPropertiesClass.mapBoolean) &&
-        Objects.equals(this.mapArrayInteger, additionalPropertiesClass.mapArrayInteger) &&
-        Objects.equals(this.mapArrayAnytype, additionalPropertiesClass.mapArrayAnytype) &&
-        Objects.equals(this.mapMapString, additionalPropertiesClass.mapMapString) &&
-        Objects.equals(this.mapMapAnytype, additionalPropertiesClass.mapMapAnytype) &&
-        Objects.equals(this.anytype1, additionalPropertiesClass.anytype1) &&
-        Objects.equals(this.anytype2, additionalPropertiesClass.anytype2) &&
-        Objects.equals(this.anytype3, additionalPropertiesClass.anytype3);
+    return Objects.equals(this.mapString, additionalPropertiesClass.mapString) && Objects.equals(this.mapNumber, additionalPropertiesClass.mapNumber) && Objects.equals(this.mapInteger, additionalPropertiesClass.mapInteger) && Objects.equals(this.mapBoolean, additionalPropertiesClass.mapBoolean) && Objects.equals(this.mapArrayInteger, additionalPropertiesClass.mapArrayInteger) && Objects.equals(this.mapArrayAnytype, additionalPropertiesClass.mapArrayAnytype) && Objects.equals(this.mapMapString, additionalPropertiesClass.mapMapString) && Objects.equals(this.mapMapAnytype, additionalPropertiesClass.mapMapAnytype) && Objects.equals(this.anytype1, additionalPropertiesClass.anytype1) && Objects.equals(this.anytype2, additionalPropertiesClass.anytype2) && Objects.equals(this.anytype3, additionalPropertiesClass.anytype3);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(mapString, mapNumber, mapInteger, mapBoolean, mapArrayInteger, mapArrayAnytype, mapMapString, mapMapAnytype, anytype1, anytype2, anytype3);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class AdditionalPropertiesClass {\n");
     sb.append("    mapString: ").append(toIndentedString(mapString)).append("\n");
@@ -395,4 +335,3 @@ public class AdditionalPropertiesClass {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

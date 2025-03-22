@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,19 +8,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
- * Base schema for addressable entities
+ * Base schema for adressable entities
  */
-
-@Schema(name = "Addressable", description = "Base schema for addressable entities")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class Addressable {
-
+@Schema(name = "Addressable", description = "Base schema for addressable entities") @Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class Addressable {
   private String href;
 
   private String id;
@@ -35,10 +28,7 @@ public class Addressable {
    * Hyperlink reference
    * @return href
   */
-  
-  @Schema(name = "href", description = "Hyperlink reference", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("href")
-  public String getHref() {
+  @Schema(name = "href", description = "Hyperlink reference", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "href") public String getHref() {
     return href;
   }
 
@@ -55,10 +45,7 @@ public class Addressable {
    * unique identifier
    * @return id
   */
-  
-  @Schema(name = "id", description = "unique identifier", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("id")
-  public String getId() {
+  @Schema(name = "id", description = "unique identifier", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "id") public String getId() {
     return id;
   }
 
@@ -66,8 +53,7 @@ public class Addressable {
     this.id = id;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -75,17 +61,14 @@ public class Addressable {
       return false;
     }
     Addressable addressable = (Addressable) o;
-    return Objects.equals(this.href, addressable.href) &&
-        Objects.equals(this.id, addressable.id);
+    return Objects.equals(this.href, addressable.href) && Objects.equals(this.id, addressable.id);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(href, id);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Addressable {\n");
     sb.append("    href: ").append(toIndentedString(href)).append("\n");
@@ -105,4 +88,3 @@ public class Addressable {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,18 +8,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * Extensible
  */
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class Extensible {
-
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class Extensible {
   private String atSchemaLocation;
 
   private String atBaseType;
@@ -36,10 +30,7 @@ public class Extensible {
    * A URI to a JSON-Schema file that defines additional attributes and relationships
    * @return atSchemaLocation
   */
-  
-  @Schema(name = "@schemaLocation", description = "A URI to a JSON-Schema file that defines additional attributes and relationships", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("@schemaLocation")
-  public String getAtSchemaLocation() {
+  @Schema(name = "@schemaLocation", description = "A URI to a JSON-Schema file that defines additional attributes and relationships", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "@schemaLocation") public String getAtSchemaLocation() {
     return atSchemaLocation;
   }
 
@@ -56,10 +47,7 @@ public class Extensible {
    * When sub-classing, this defines the super-class
    * @return atBaseType
   */
-  
-  @Schema(name = "@baseType", description = "When sub-classing, this defines the super-class", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("@baseType")
-  public String getAtBaseType() {
+  @Schema(name = "@baseType", description = "When sub-classing, this defines the super-class", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "@baseType") public String getAtBaseType() {
     return atBaseType;
   }
 
@@ -76,10 +64,7 @@ public class Extensible {
    * When sub-classing, this defines the sub-class Extensible name
    * @return atType
   */
-  @NotNull 
-  @Schema(name = "@type", description = "When sub-classing, this defines the sub-class Extensible name", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("@type")
-  public String getAtType() {
+  @NotNull @Schema(name = "@type", description = "When sub-classing, this defines the sub-class Extensible name", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(value = "@type") public String getAtType() {
     return atType;
   }
 
@@ -87,8 +72,7 @@ public class Extensible {
     this.atType = atType;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -96,18 +80,14 @@ public class Extensible {
       return false;
     }
     Extensible extensible = (Extensible) o;
-    return Objects.equals(this.atSchemaLocation, extensible.atSchemaLocation) &&
-        Objects.equals(this.atBaseType, extensible.atBaseType) &&
-        Objects.equals(this.atType, extensible.atType);
+    return Objects.equals(this.atSchemaLocation, extensible.atSchemaLocation) && Objects.equals(this.atBaseType, extensible.atBaseType) && Objects.equals(this.atType, extensible.atType);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(atSchemaLocation, atBaseType, atType);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Extensible {\n");
     sb.append("    atSchemaLocation: ").append(toIndentedString(atSchemaLocation)).append("\n");
@@ -128,4 +108,3 @@ public class Extensible {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

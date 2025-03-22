@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,22 +10,16 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * FileSchemaTestClass
  */
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class FileSchemaTestClass {
-
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class FileSchemaTestClass {
   private File file;
 
-  @Valid
-  private List<File> files = null;
+  @Valid private List<File> files = null;
 
   public FileSchemaTestClass file(File file) {
     this.file = file;
@@ -37,10 +30,7 @@ public class FileSchemaTestClass {
    * Get file
    * @return file
   */
-  @Valid 
-  @Schema(name = "file", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("file")
-  public File getFile() {
+  @Valid @Schema(name = "file", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "file") public File getFile() {
     return file;
   }
 
@@ -65,10 +55,7 @@ public class FileSchemaTestClass {
    * Get files
    * @return files
   */
-  @Valid 
-  @Schema(name = "files", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("files")
-  public List<File> getFiles() {
+  @Valid @Schema(name = "files", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "files") public List<File> getFiles() {
     return files;
   }
 
@@ -76,8 +63,7 @@ public class FileSchemaTestClass {
     this.files = files;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -85,17 +71,14 @@ public class FileSchemaTestClass {
       return false;
     }
     FileSchemaTestClass fileSchemaTestClass = (FileSchemaTestClass) o;
-    return Objects.equals(this.file, fileSchemaTestClass.file) &&
-        Objects.equals(this.files, fileSchemaTestClass.files);
+    return Objects.equals(this.file, fileSchemaTestClass.file) && Objects.equals(this.files, fileSchemaTestClass.files);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(file, files);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class FileSchemaTestClass {\n");
     sb.append("    file: ").append(toIndentedString(file)).append("\n");
@@ -115,4 +98,3 @@ public class FileSchemaTestClass {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

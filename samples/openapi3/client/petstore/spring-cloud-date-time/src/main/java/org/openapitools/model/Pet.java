@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,18 +12,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * Pet
  */
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class Pet {
-
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class Pet {
   private String atType = "Pet";
 
   private Integer age = 4;
@@ -33,11 +27,9 @@ public class Pet {
 
   private BigDecimal price = new BigDecimal("32000000000");
 
-  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  private OffsetDateTime lastFeed = OffsetDateTime.parse("1973-12-19T11:39:57Z[UTC]", java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME.withZone(java.time.ZoneId.systemDefault()));
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) private OffsetDateTime lastFeed = OffsetDateTime.parse("1973-12-19T11:39:57Z[UTC]", java.time.format.DateTimeFormatter.ISO_ZONED_DATE_TIME.withZone(java.time.ZoneId.systemDefault()));
 
-  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-  private LocalDate dateOfBirth = LocalDate.parse("2021-01-01");
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) private LocalDate dateOfBirth = LocalDate.parse("2021-01-01");
 
   public Pet atType(String atType) {
     this.atType = atType;
@@ -48,10 +40,7 @@ public class Pet {
    * Get atType
    * @return atType
   */
-  @NotNull 
-  @Schema(name = "@type", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("@type")
-  public String getAtType() {
+  @NotNull @Schema(name = "@type", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(value = "@type") public String getAtType() {
     return atType;
   }
 
@@ -68,10 +57,7 @@ public class Pet {
    * Get age
    * @return age
   */
-  
-  @Schema(name = "age", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("age")
-  public Integer getAge() {
+  @Schema(name = "age", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "age") public Integer getAge() {
     return age;
   }
 
@@ -88,10 +74,7 @@ public class Pet {
    * Get happy
    * @return happy
   */
-  
-  @Schema(name = "happy", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("happy")
-  public Boolean getHappy() {
+  @Schema(name = "happy", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "happy") public Boolean getHappy() {
     return happy;
   }
 
@@ -108,10 +91,7 @@ public class Pet {
    * Get price
    * @return price
   */
-  @Valid 
-  @Schema(name = "price", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("price")
-  public BigDecimal getPrice() {
+  @Valid @Schema(name = "price", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "price") public BigDecimal getPrice() {
     return price;
   }
 
@@ -128,10 +108,7 @@ public class Pet {
    * Get lastFeed
    * @return lastFeed
   */
-  @Valid 
-  @Schema(name = "lastFeed", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("lastFeed")
-  public OffsetDateTime getLastFeed() {
+  @Valid @Schema(name = "lastFeed", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "lastFeed") public OffsetDateTime getLastFeed() {
     return lastFeed;
   }
 
@@ -148,10 +125,7 @@ public class Pet {
    * Get dateOfBirth
    * @return dateOfBirth
   */
-  @Valid 
-  @Schema(name = "dateOfBirth", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("dateOfBirth")
-  public LocalDate getDateOfBirth() {
+  @Valid @Schema(name = "dateOfBirth", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "dateOfBirth") public LocalDate getDateOfBirth() {
     return dateOfBirth;
   }
 
@@ -159,8 +133,7 @@ public class Pet {
     this.dateOfBirth = dateOfBirth;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -168,21 +141,14 @@ public class Pet {
       return false;
     }
     Pet pet = (Pet) o;
-    return Objects.equals(this.atType, pet.atType) &&
-        Objects.equals(this.age, pet.age) &&
-        Objects.equals(this.happy, pet.happy) &&
-        Objects.equals(this.price, pet.price) &&
-        Objects.equals(this.lastFeed, pet.lastFeed) &&
-        Objects.equals(this.dateOfBirth, pet.dateOfBirth);
+    return Objects.equals(this.atType, pet.atType) && Objects.equals(this.age, pet.age) && Objects.equals(this.happy, pet.happy) && Objects.equals(this.price, pet.price) && Objects.equals(this.lastFeed, pet.lastFeed) && Objects.equals(this.dateOfBirth, pet.dateOfBirth);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(atType, age, happy, price, lastFeed, dateOfBirth);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Pet {\n");
     sb.append("    atType: ").append(toIndentedString(atType)).append("\n");
@@ -206,4 +172,3 @@ public class Pet {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

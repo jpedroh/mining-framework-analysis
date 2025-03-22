@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,18 +7,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * Client
  */
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class Client {
-
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class Client {
   private String client;
 
   public Client client(String client) {
@@ -31,10 +25,7 @@ public class Client {
    * Get client
    * @return client
   */
-  
-  @Schema(name = "client", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("client")
-  public String getClient() {
+  @Schema(name = "client", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "client") public String getClient() {
     return client;
   }
 
@@ -42,8 +33,7 @@ public class Client {
     this.client = client;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -54,13 +44,11 @@ public class Client {
     return Objects.equals(this.client, client.client);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(client);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Client {\n");
     sb.append("    client: ").append(toIndentedString(client)).append("\n");
@@ -79,4 +67,3 @@ public class Client {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

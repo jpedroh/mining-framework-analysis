@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,30 +9,19 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * BigCatAllOf
  */
-
-@JsonTypeName("BigCat_allOf")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class BigCatAllOf {
-
-  /**
-   * Gets or Sets kind
-   */
+@JsonTypeName(value = "BigCat_allOf") @Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class BigCatAllOf {
   public enum KindEnum {
     LIONS("lions"),
-    
     TIGERS("tigers"),
-    
     LEOPARDS("leopards"),
-    
-    JAGUARS("jaguars");
+    JAGUARS("jaguars")
+    ;
 
     private String value;
 
@@ -41,24 +29,21 @@ public class BigCatAllOf {
       this.value = value;
     }
 
-    @JsonValue
-    public String getValue() {
+    @JsonValue public String getValue() {
       return value;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
       return String.valueOf(value);
     }
 
-    @JsonCreator
-    public static KindEnum fromValue(String value) {
+    @JsonCreator public static KindEnum fromValue(String value) {
       for (KindEnum b : KindEnum.values()) {
         if (b.value.equals(value)) {
           return b;
         }
       }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
+      throw new IllegalArgumentException("Unexpected value \'" + value + "\'");
     }
   }
 
@@ -73,10 +58,7 @@ public class BigCatAllOf {
    * Get kind
    * @return kind
   */
-  
-  @Schema(name = "kind", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("kind")
-  public KindEnum getKind() {
+  @Schema(name = "kind", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "kind") public KindEnum getKind() {
     return kind;
   }
 
@@ -84,8 +66,7 @@ public class BigCatAllOf {
     this.kind = kind;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -96,13 +77,11 @@ public class BigCatAllOf {
     return Objects.equals(this.kind, bigCatAllOf.kind);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(kind);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class BigCatAllOf {\n");
     sb.append("    kind: ").append(toIndentedString(kind)).append("\n");
@@ -121,4 +100,3 @@ public class BigCatAllOf {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

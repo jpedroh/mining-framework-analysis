@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,18 +7,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * User
  */
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class User {
-
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class User {
   private Long id;
 
   private String username;
@@ -45,10 +39,7 @@ public class User {
    * Get id
    * @return id
   */
-  
-  @Schema(name = "id", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("id")
-  public Long getId() {
+  @Schema(name = "id", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "id") public Long getId() {
     return id;
   }
 
@@ -65,10 +56,7 @@ public class User {
    * Get username
    * @return username
   */
-  
-  @Schema(name = "username", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("username")
-  public String getUsername() {
+  @Schema(name = "username", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "username") public String getUsername() {
     return username;
   }
 
@@ -85,10 +73,7 @@ public class User {
    * Get firstName
    * @return firstName
   */
-  
-  @Schema(name = "firstName", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("firstName")
-  public String getFirstName() {
+  @Schema(name = "firstName", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "firstName") public String getFirstName() {
     return firstName;
   }
 
@@ -105,10 +90,7 @@ public class User {
    * Get lastName
    * @return lastName
   */
-  
-  @Schema(name = "lastName", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("lastName")
-  public String getLastName() {
+  @Schema(name = "lastName", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "lastName") public String getLastName() {
     return lastName;
   }
 
@@ -125,10 +107,7 @@ public class User {
    * Get email
    * @return email
   */
-  
-  @Schema(name = "email", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("email")
-  public String getEmail() {
+  @Schema(name = "email", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "email") public String getEmail() {
     return email;
   }
 
@@ -145,10 +124,7 @@ public class User {
    * Get password
    * @return password
   */
-  
-  @Schema(name = "password", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("password")
-  public String getPassword() {
+  @Schema(name = "password", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "password") public String getPassword() {
     return password;
   }
 
@@ -165,10 +141,7 @@ public class User {
    * Get phone
    * @return phone
   */
-  
-  @Schema(name = "phone", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("phone")
-  public String getPhone() {
+  @Schema(name = "phone", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "phone") public String getPhone() {
     return phone;
   }
 
@@ -185,10 +158,7 @@ public class User {
    * User Status
    * @return userStatus
   */
-  
-  @Schema(name = "userStatus", description = "User Status", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("userStatus")
-  public Integer getUserStatus() {
+  @Schema(name = "userStatus", description = "User Status", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "userStatus") public Integer getUserStatus() {
     return userStatus;
   }
 
@@ -196,8 +166,7 @@ public class User {
     this.userStatus = userStatus;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -205,23 +174,14 @@ public class User {
       return false;
     }
     User user = (User) o;
-    return Objects.equals(this.id, user.id) &&
-        Objects.equals(this.username, user.username) &&
-        Objects.equals(this.firstName, user.firstName) &&
-        Objects.equals(this.lastName, user.lastName) &&
-        Objects.equals(this.email, user.email) &&
-        Objects.equals(this.password, user.password) &&
-        Objects.equals(this.phone, user.phone) &&
-        Objects.equals(this.userStatus, user.userStatus);
+    return Objects.equals(this.id, user.id) && Objects.equals(this.username, user.username) && Objects.equals(this.firstName, user.firstName) && Objects.equals(this.lastName, user.lastName) && Objects.equals(this.email, user.email) && Objects.equals(this.password, user.password) && Objects.equals(this.phone, user.phone) && Objects.equals(this.userStatus, user.userStatus);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(id, username, firstName, lastName, email, password, phone, userStatus);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class User {\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
@@ -247,4 +207,3 @@ public class User {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

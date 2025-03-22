@@ -1,5 +1,4 @@
 package org.openapitools.virtualan.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,18 +11,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * AdditionalPropertiesNumber
  */
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class AdditionalPropertiesNumber extends HashMap<String, BigDecimal> {
-
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class AdditionalPropertiesNumber extends HashMap<String, BigDecimal> {
   private String name;
 
   public AdditionalPropertiesNumber name(String name) {
@@ -35,10 +29,7 @@ public class AdditionalPropertiesNumber extends HashMap<String, BigDecimal> {
    * Get name
    * @return name
   */
-  
-  @Schema(name = "name", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("name")
-  public String getName() {
+  @Schema(name = "name", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "name") public String getName() {
     return name;
   }
 
@@ -46,8 +37,7 @@ public class AdditionalPropertiesNumber extends HashMap<String, BigDecimal> {
     this.name = name;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -55,17 +45,14 @@ public class AdditionalPropertiesNumber extends HashMap<String, BigDecimal> {
       return false;
     }
     AdditionalPropertiesNumber additionalPropertiesNumber = (AdditionalPropertiesNumber) o;
-    return Objects.equals(this.name, additionalPropertiesNumber.name) &&
-        super.equals(o);
+    return Objects.equals(this.name, additionalPropertiesNumber.name) && super.equals(o);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(name, super.hashCode());
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class AdditionalPropertiesNumber {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
@@ -85,4 +72,3 @@ public class AdditionalPropertiesNumber extends HashMap<String, BigDecimal> {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

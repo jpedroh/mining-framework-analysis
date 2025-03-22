@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,19 +8,13 @@ import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
  * A category for a pet
  */
-
-@Schema(name = "Category", description = "A category for a pet")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class Category {
-
+@Schema(name = "Category", description = "A category for a pet") @Generated(value = "org.openapitools.codegen.languages.SpringCodegen") public class Category {
   private Long id;
 
   private String name;
@@ -35,10 +28,7 @@ public class Category {
    * Get id
    * @return id
   */
-  
-  @Schema(name = "id", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("id")
-  public Long getId() {
+  @Schema(name = "id", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "id") public Long getId() {
     return id;
   }
 
@@ -55,10 +45,7 @@ public class Category {
    * Get name
    * @return name
   */
-  @Pattern(regexp = "^[a-zA-Z0-9]+[a-zA-Z0-9\\.\\-_]*[a-zA-Z0-9]+$") 
-  @Schema(name = "name", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("name")
-  public String getName() {
+  @Pattern(regexp = "^[a-zA-Z0-9]+[a-zA-Z0-9\\.\\-_]*[a-zA-Z0-9]+$") @Schema(name = "name", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "name") public String getName() {
     return name;
   }
 
@@ -66,8 +53,7 @@ public class Category {
     this.name = name;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -75,17 +61,14 @@ public class Category {
       return false;
     }
     Category category = (Category) o;
-    return Objects.equals(this.id, category.id) &&
-        Objects.equals(this.name, category.name);
+    return Objects.equals(this.id, category.id) && Objects.equals(this.name, category.name);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(id, name);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Category {\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
@@ -105,4 +88,3 @@ public class Category {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

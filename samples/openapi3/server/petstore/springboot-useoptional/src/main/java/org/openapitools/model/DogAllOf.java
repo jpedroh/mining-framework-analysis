@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,19 +9,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * DogAllOf
  */
-
-@JsonTypeName("Dog_allOf")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class DogAllOf {
-
+@JsonTypeName(value = "Dog_allOf") @Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class DogAllOf {
   private String breed;
 
   public DogAllOf breed(String breed) {
@@ -34,10 +27,7 @@ public class DogAllOf {
    * Get breed
    * @return breed
   */
-  
-  @Schema(name = "breed", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("breed")
-  public String getBreed() {
+  @Schema(name = "breed", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "breed") public String getBreed() {
     return breed;
   }
 
@@ -45,8 +35,7 @@ public class DogAllOf {
     this.breed = breed;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -57,13 +46,11 @@ public class DogAllOf {
     return Objects.equals(this.breed, dogAllOf.breed);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(breed);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class DogAllOf {\n");
     sb.append("    breed: ").append(toIndentedString(breed)).append("\n");
@@ -82,4 +69,3 @@ public class DogAllOf {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

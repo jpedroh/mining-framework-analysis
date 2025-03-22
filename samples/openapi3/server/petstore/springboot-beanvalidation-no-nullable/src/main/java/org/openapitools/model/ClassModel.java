@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,19 +7,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * Model for testing model with \&quot;_class\&quot; property
  */
-
-@Schema(name = "ClassModel", description = "Model for testing model with \"_class\" property")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class ClassModel {
-
+@Schema(name = "ClassModel", description = "Model for testing model with \"_class\" property") @Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class ClassModel {
   private String propertyClass;
 
   public ClassModel propertyClass(String propertyClass) {
@@ -32,10 +25,7 @@ public class ClassModel {
    * Get propertyClass
    * @return propertyClass
   */
-  
-  @Schema(name = "_class", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("_class")
-  public String getPropertyClass() {
+  @Schema(name = "_class", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "_class") public String getPropertyClass() {
     return propertyClass;
   }
 
@@ -43,8 +33,7 @@ public class ClassModel {
     this.propertyClass = propertyClass;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -55,13 +44,11 @@ public class ClassModel {
     return Objects.equals(this.propertyClass, classModel.propertyClass);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(propertyClass);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ClassModel {\n");
     sb.append("    propertyClass: ").append(toIndentedString(propertyClass)).append("\n");
@@ -80,4 +67,3 @@ public class ClassModel {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

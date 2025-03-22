@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,25 +11,17 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * EnumArrays
  */
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class EnumArrays {
-
-  /**
-   * Gets or Sets justSymbol
-   */
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class EnumArrays {
   public enum JustSymbolEnum {
     GREATER_THAN_OR_EQUAL_TO(">="),
-    
-    DOLLAR("$");
+    DOLLAR("$")
+    ;
 
     private String value;
 
@@ -38,36 +29,30 @@ public class EnumArrays {
       this.value = value;
     }
 
-    @JsonValue
-    public String getValue() {
+    @JsonValue public String getValue() {
       return value;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
       return String.valueOf(value);
     }
 
-    @JsonCreator
-    public static JustSymbolEnum fromValue(String value) {
+    @JsonCreator public static JustSymbolEnum fromValue(String value) {
       for (JustSymbolEnum b : JustSymbolEnum.values()) {
         if (b.value.equals(value)) {
           return b;
         }
       }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
+      throw new IllegalArgumentException("Unexpected value \'" + value + "\'");
     }
   }
 
   private JustSymbolEnum justSymbol;
 
-  /**
-   * Gets or Sets arrayEnum
-   */
   public enum ArrayEnumEnum {
     FISH("fish"),
-    
-    CRAB("crab");
+    CRAB("crab")
+    ;
 
     private String value;
 
@@ -75,29 +60,25 @@ public class EnumArrays {
       this.value = value;
     }
 
-    @JsonValue
-    public String getValue() {
+    @JsonValue public String getValue() {
       return value;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
       return String.valueOf(value);
     }
 
-    @JsonCreator
-    public static ArrayEnumEnum fromValue(String value) {
+    @JsonCreator public static ArrayEnumEnum fromValue(String value) {
       for (ArrayEnumEnum b : ArrayEnumEnum.values()) {
         if (b.value.equals(value)) {
           return b;
         }
       }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
+      throw new IllegalArgumentException("Unexpected value \'" + value + "\'");
     }
   }
 
-  @Valid
-  private List<ArrayEnumEnum> arrayEnum = null;
+  @Valid private List<ArrayEnumEnum> arrayEnum = null;
 
   public EnumArrays justSymbol(JustSymbolEnum justSymbol) {
     this.justSymbol = justSymbol;
@@ -108,10 +89,7 @@ public class EnumArrays {
    * Get justSymbol
    * @return justSymbol
   */
-  
-  @Schema(name = "just_symbol", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("just_symbol")
-  public JustSymbolEnum getJustSymbol() {
+  @Schema(name = "just_symbol", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "just_symbol") public JustSymbolEnum getJustSymbol() {
     return justSymbol;
   }
 
@@ -136,10 +114,7 @@ public class EnumArrays {
    * Get arrayEnum
    * @return arrayEnum
   */
-  
-  @Schema(name = "array_enum", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("array_enum")
-  public List<ArrayEnumEnum> getArrayEnum() {
+  @Schema(name = "array_enum", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "array_enum") public List<ArrayEnumEnum> getArrayEnum() {
     return arrayEnum;
   }
 
@@ -147,8 +122,7 @@ public class EnumArrays {
     this.arrayEnum = arrayEnum;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -156,17 +130,14 @@ public class EnumArrays {
       return false;
     }
     EnumArrays enumArrays = (EnumArrays) o;
-    return Objects.equals(this.justSymbol, enumArrays.justSymbol) &&
-        Objects.equals(this.arrayEnum, enumArrays.arrayEnum);
+    return Objects.equals(this.justSymbol, enumArrays.justSymbol) && Objects.equals(this.arrayEnum, enumArrays.arrayEnum);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(justSymbol, arrayEnum);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class EnumArrays {\n");
     sb.append("    justSymbol: ").append(toIndentedString(justSymbol)).append("\n");
@@ -186,4 +157,3 @@ public class EnumArrays {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

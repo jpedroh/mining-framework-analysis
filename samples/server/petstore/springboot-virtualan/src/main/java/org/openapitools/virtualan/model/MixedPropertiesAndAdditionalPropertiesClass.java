@@ -1,5 +1,4 @@
 package org.openapitools.virtualan.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,25 +14,18 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * MixedPropertiesAndAdditionalPropertiesClass
  */
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class MixedPropertiesAndAdditionalPropertiesClass {
-
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class MixedPropertiesAndAdditionalPropertiesClass {
   private UUID uuid;
 
-  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  private OffsetDateTime dateTime;
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) private OffsetDateTime dateTime;
 
-  @Valid
-  private Map<String, Animal> map = null;
+  @Valid private Map<String, Animal> map = null;
 
   public MixedPropertiesAndAdditionalPropertiesClass uuid(UUID uuid) {
     this.uuid = uuid;
@@ -44,10 +36,7 @@ public class MixedPropertiesAndAdditionalPropertiesClass {
    * Get uuid
    * @return uuid
   */
-  @Valid 
-  @Schema(name = "uuid", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("uuid")
-  public UUID getUuid() {
+  @Valid @Schema(name = "uuid", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "uuid") public UUID getUuid() {
     return uuid;
   }
 
@@ -64,10 +53,7 @@ public class MixedPropertiesAndAdditionalPropertiesClass {
    * Get dateTime
    * @return dateTime
   */
-  @Valid 
-  @Schema(name = "dateTime", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("dateTime")
-  public OffsetDateTime getDateTime() {
+  @Valid @Schema(name = "dateTime", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "dateTime") public OffsetDateTime getDateTime() {
     return dateTime;
   }
 
@@ -92,10 +78,7 @@ public class MixedPropertiesAndAdditionalPropertiesClass {
    * Get map
    * @return map
   */
-  @Valid 
-  @Schema(name = "map", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("map")
-  public Map<String, Animal> getMap() {
+  @Valid @Schema(name = "map", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "map") public Map<String, Animal> getMap() {
     return map;
   }
 
@@ -103,8 +86,7 @@ public class MixedPropertiesAndAdditionalPropertiesClass {
     this.map = map;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -112,18 +94,14 @@ public class MixedPropertiesAndAdditionalPropertiesClass {
       return false;
     }
     MixedPropertiesAndAdditionalPropertiesClass mixedPropertiesAndAdditionalPropertiesClass = (MixedPropertiesAndAdditionalPropertiesClass) o;
-    return Objects.equals(this.uuid, mixedPropertiesAndAdditionalPropertiesClass.uuid) &&
-        Objects.equals(this.dateTime, mixedPropertiesAndAdditionalPropertiesClass.dateTime) &&
-        Objects.equals(this.map, mixedPropertiesAndAdditionalPropertiesClass.map);
+    return Objects.equals(this.uuid, mixedPropertiesAndAdditionalPropertiesClass.uuid) && Objects.equals(this.dateTime, mixedPropertiesAndAdditionalPropertiesClass.dateTime) && Objects.equals(this.map, mixedPropertiesAndAdditionalPropertiesClass.map);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(uuid, dateTime, map);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class MixedPropertiesAndAdditionalPropertiesClass {\n");
     sb.append("    uuid: ").append(toIndentedString(uuid)).append("\n");
@@ -144,4 +122,3 @@ public class MixedPropertiesAndAdditionalPropertiesClass {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

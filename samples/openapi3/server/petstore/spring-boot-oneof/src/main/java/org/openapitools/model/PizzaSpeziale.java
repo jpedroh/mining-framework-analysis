@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -14,19 +13,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * PizzaSpeziale
  */
-
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class PizzaSpeziale extends Pizza {
-
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class PizzaSpeziale extends Pizza {
   private String toppings;
 
   public PizzaSpeziale toppings(String toppings) {
@@ -38,10 +31,7 @@ public class PizzaSpeziale extends Pizza {
    * Get toppings
    * @return toppings
   */
-  
-  @Schema(name = "toppings", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("toppings")
-  public String getToppings() {
+  @Schema(name = "toppings", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "toppings") public String getToppings() {
     return toppings;
   }
 
@@ -79,8 +69,7 @@ public class PizzaSpeziale extends Pizza {
     return this;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -88,17 +77,14 @@ public class PizzaSpeziale extends Pizza {
       return false;
     }
     PizzaSpeziale pizzaSpeziale = (PizzaSpeziale) o;
-    return Objects.equals(this.toppings, pizzaSpeziale.toppings) &&
-        super.equals(o);
+    return Objects.equals(this.toppings, pizzaSpeziale.toppings) && super.equals(o);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(toppings, super.hashCode());
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class PizzaSpeziale {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
@@ -118,4 +104,3 @@ public class PizzaSpeziale extends Pizza {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

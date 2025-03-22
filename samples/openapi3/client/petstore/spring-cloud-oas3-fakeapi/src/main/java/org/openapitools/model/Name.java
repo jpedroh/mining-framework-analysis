@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,19 +8,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * Model for testing model name same as property name
  */
-
-@Schema(name = "Name", description = "Model for testing model name same as property name")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class Name {
-
+@Schema(name = "Name", description = "Model for testing model name same as property name") @Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class Name {
   private Integer name;
 
   private Integer snakeCase;
@@ -39,10 +32,7 @@ public class Name {
    * Get name
    * @return name
   */
-  @NotNull 
-  @Schema(name = "name", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("name")
-  public Integer getName() {
+  @NotNull @Schema(name = "name", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(value = "name") public Integer getName() {
     return name;
   }
 
@@ -59,10 +49,7 @@ public class Name {
    * Get snakeCase
    * @return snakeCase
   */
-  
-  @Schema(name = "snake_case", accessMode = Schema.AccessMode.READ_ONLY, requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("snake_case")
-  public Integer getSnakeCase() {
+  @Schema(name = "snake_case", accessMode = Schema.AccessMode.READ_ONLY, requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "snake_case") public Integer getSnakeCase() {
     return snakeCase;
   }
 
@@ -79,10 +66,7 @@ public class Name {
    * Get property
    * @return property
   */
-  
-  @Schema(name = "property", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("property")
-  public String getProperty() {
+  @Schema(name = "property", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "property") public String getProperty() {
     return property;
   }
 
@@ -99,10 +83,7 @@ public class Name {
    * Get _123number
    * @return _123number
   */
-  
-  @Schema(name = "123Number", accessMode = Schema.AccessMode.READ_ONLY, requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("123Number")
-  public Integer get123number() {
+  @Schema(name = "123Number", accessMode = Schema.AccessMode.READ_ONLY, requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "123Number") public Integer get123number() {
     return _123number;
   }
 
@@ -110,8 +91,7 @@ public class Name {
     this._123number = _123number;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -119,19 +99,14 @@ public class Name {
       return false;
     }
     Name name = (Name) o;
-    return Objects.equals(this.name, name.name) &&
-        Objects.equals(this.snakeCase, name.snakeCase) &&
-        Objects.equals(this.property, name.property) &&
-        Objects.equals(this._123number, name._123number);
+    return Objects.equals(this.name, name.name) && Objects.equals(this.snakeCase, name.snakeCase) && Objects.equals(this.property, name.property) && Objects.equals(this._123number, name._123number);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(name, snakeCase, property, _123number);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Name {\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
@@ -153,4 +128,3 @@ public class Name {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

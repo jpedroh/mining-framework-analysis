@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,36 +10,26 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * Order
  */
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class Order {
-
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class Order {
   private Long id;
 
   private Long petId;
 
   private Integer quantity;
 
-  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-  private OffsetDateTime shipDate;
+  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) private OffsetDateTime shipDate;
 
-  /**
-   * Order Status
-   */
   public enum StatusEnum {
     PLACED("placed"),
-    
     APPROVED("approved"),
-    
-    DELIVERED("delivered");
+    DELIVERED("delivered")
+    ;
 
     private String value;
 
@@ -48,24 +37,21 @@ public class Order {
       this.value = value;
     }
 
-    @JsonValue
-    public String getValue() {
+    @JsonValue public String getValue() {
       return value;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
       return String.valueOf(value);
     }
 
-    @JsonCreator
-    public static StatusEnum fromValue(String value) {
+    @JsonCreator public static StatusEnum fromValue(String value) {
       for (StatusEnum b : StatusEnum.values()) {
         if (b.value.equals(value)) {
           return b;
         }
       }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
+      throw new IllegalArgumentException("Unexpected value \'" + value + "\'");
     }
   }
 
@@ -82,10 +68,7 @@ public class Order {
    * Get id
    * @return id
   */
-  
-  @Schema(name = "id", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("id")
-  public Long getId() {
+  @Schema(name = "id", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "id") public Long getId() {
     return id;
   }
 
@@ -102,10 +85,7 @@ public class Order {
    * Get petId
    * @return petId
   */
-  
-  @Schema(name = "petId", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("petId")
-  public Long getPetId() {
+  @Schema(name = "petId", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "petId") public Long getPetId() {
     return petId;
   }
 
@@ -122,10 +102,7 @@ public class Order {
    * Get quantity
    * @return quantity
   */
-  
-  @Schema(name = "quantity", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("quantity")
-  public Integer getQuantity() {
+  @Schema(name = "quantity", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "quantity") public Integer getQuantity() {
     return quantity;
   }
 
@@ -142,10 +119,7 @@ public class Order {
    * Get shipDate
    * @return shipDate
   */
-  @Valid 
-  @Schema(name = "shipDate", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("shipDate")
-  public OffsetDateTime getShipDate() {
+  @Valid @Schema(name = "shipDate", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "shipDate") public OffsetDateTime getShipDate() {
     return shipDate;
   }
 
@@ -162,10 +136,7 @@ public class Order {
    * Order Status
    * @return status
   */
-  
-  @Schema(name = "status", description = "Order Status", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("status")
-  public StatusEnum getStatus() {
+  @Schema(name = "status", description = "Order Status", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "status") public StatusEnum getStatus() {
     return status;
   }
 
@@ -182,10 +153,7 @@ public class Order {
    * Get complete
    * @return complete
   */
-  
-  @Schema(name = "complete", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("complete")
-  public Boolean getComplete() {
+  @Schema(name = "complete", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "complete") public Boolean getComplete() {
     return complete;
   }
 
@@ -193,8 +161,7 @@ public class Order {
     this.complete = complete;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -202,21 +169,14 @@ public class Order {
       return false;
     }
     Order order = (Order) o;
-    return Objects.equals(this.id, order.id) &&
-        Objects.equals(this.petId, order.petId) &&
-        Objects.equals(this.quantity, order.quantity) &&
-        Objects.equals(this.shipDate, order.shipDate) &&
-        Objects.equals(this.status, order.status) &&
-        Objects.equals(this.complete, order.complete);
+    return Objects.equals(this.id, order.id) && Objects.equals(this.petId, order.petId) && Objects.equals(this.quantity, order.quantity) && Objects.equals(this.shipDate, order.shipDate) && Objects.equals(this.status, order.status) && Objects.equals(this.complete, order.complete);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(id, petId, quantity, shipDate, status, complete);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Order {\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
@@ -240,4 +200,3 @@ public class Order {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

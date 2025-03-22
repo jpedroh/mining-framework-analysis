@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,18 +8,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * ReadOnlyFirst
  */
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class ReadOnlyFirst {
-
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class ReadOnlyFirst {
   private String bar;
 
   private String baz;
@@ -34,10 +28,7 @@ public class ReadOnlyFirst {
    * Get bar
    * @return bar
   */
-  
-  @Schema(name = "bar", accessMode = Schema.AccessMode.READ_ONLY, requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("bar")
-  public String getBar() {
+  @Schema(name = "bar", accessMode = Schema.AccessMode.READ_ONLY, requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "bar") public String getBar() {
     return bar;
   }
 
@@ -54,10 +45,7 @@ public class ReadOnlyFirst {
    * Get baz
    * @return baz
   */
-  
-  @Schema(name = "baz", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("baz")
-  public String getBaz() {
+  @Schema(name = "baz", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "baz") public String getBaz() {
     return baz;
   }
 
@@ -65,8 +53,7 @@ public class ReadOnlyFirst {
     this.baz = baz;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -74,17 +61,14 @@ public class ReadOnlyFirst {
       return false;
     }
     ReadOnlyFirst readOnlyFirst = (ReadOnlyFirst) o;
-    return Objects.equals(this.bar, readOnlyFirst.bar) &&
-        Objects.equals(this.baz, readOnlyFirst.baz);
+    return Objects.equals(this.bar, readOnlyFirst.bar) && Objects.equals(this.baz, readOnlyFirst.baz);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(bar, baz);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ReadOnlyFirst {\n");
     sb.append("    bar: ").append(toIndentedString(bar)).append("\n");
@@ -104,4 +88,3 @@ public class ReadOnlyFirst {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,20 +10,14 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * ArrayOfNumberOnly
  */
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class ArrayOfNumberOnly {
-
-  @Valid
-  private List<BigDecimal> arrayNumber = null;
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class ArrayOfNumberOnly {
+  @Valid private List<BigDecimal> arrayNumber = null;
 
   public ArrayOfNumberOnly arrayNumber(List<BigDecimal> arrayNumber) {
     this.arrayNumber = arrayNumber;
@@ -43,10 +36,7 @@ public class ArrayOfNumberOnly {
    * Get arrayNumber
    * @return arrayNumber
   */
-  @Valid 
-  @Schema(name = "ArrayNumber", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("ArrayNumber")
-  public List<BigDecimal> getArrayNumber() {
+  @Valid @Schema(name = "ArrayNumber", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "ArrayNumber") public List<BigDecimal> getArrayNumber() {
     return arrayNumber;
   }
 
@@ -54,8 +44,7 @@ public class ArrayOfNumberOnly {
     this.arrayNumber = arrayNumber;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -66,13 +55,11 @@ public class ArrayOfNumberOnly {
     return Objects.equals(this.arrayNumber, arrayOfNumberOnly.arrayNumber);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(arrayNumber);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ArrayOfNumberOnly {\n");
     sb.append("    arrayNumber: ").append(toIndentedString(arrayNumber)).append("\n");
@@ -91,4 +78,3 @@ public class ArrayOfNumberOnly {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

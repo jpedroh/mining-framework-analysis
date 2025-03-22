@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -13,19 +12,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * Pasta
  */
-
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class Pasta extends Entity {
-
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class Pasta extends Entity {
   private String vendor;
 
   public Pasta vendor(String vendor) {
@@ -37,10 +30,7 @@ public class Pasta extends Entity {
    * Get vendor
    * @return vendor
   */
-  
-  @Schema(name = "vendor", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("vendor")
-  public String getVendor() {
+  @Schema(name = "vendor", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "vendor") public String getVendor() {
     return vendor;
   }
 
@@ -73,8 +63,7 @@ public class Pasta extends Entity {
     return this;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -82,17 +71,14 @@ public class Pasta extends Entity {
       return false;
     }
     Pasta pasta = (Pasta) o;
-    return Objects.equals(this.vendor, pasta.vendor) &&
-        super.equals(o);
+    return Objects.equals(this.vendor, pasta.vendor) && super.equals(o);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(vendor, super.hashCode());
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Pasta {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
@@ -112,4 +98,3 @@ public class Pasta extends Entity {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

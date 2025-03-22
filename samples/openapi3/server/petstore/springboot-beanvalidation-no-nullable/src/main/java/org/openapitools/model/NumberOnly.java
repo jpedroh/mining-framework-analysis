@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,18 +8,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * NumberOnly
  */
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class NumberOnly {
-
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class NumberOnly {
   private BigDecimal justNumber;
 
   public NumberOnly justNumber(BigDecimal justNumber) {
@@ -32,10 +26,7 @@ public class NumberOnly {
    * Get justNumber
    * @return justNumber
   */
-  @Valid 
-  @Schema(name = "JustNumber", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("JustNumber")
-  public BigDecimal getJustNumber() {
+  @Valid @Schema(name = "JustNumber", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "JustNumber") public BigDecimal getJustNumber() {
     return justNumber;
   }
 
@@ -43,8 +34,7 @@ public class NumberOnly {
     this.justNumber = justNumber;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -55,13 +45,11 @@ public class NumberOnly {
     return Objects.equals(this.justNumber, numberOnly.justNumber);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(justNumber);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class NumberOnly {\n");
     sb.append("    justNumber: ").append(toIndentedString(justNumber)).append("\n");
@@ -80,4 +68,3 @@ public class NumberOnly {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,40 +13,28 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * A pet for sale in the pet store
  */
-
-@Schema(name = "Pet", description = "A pet for sale in the pet store")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class Pet {
-
+@Schema(name = "Pet", description = "A pet for sale in the pet store") @Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class Pet {
   private Long id;
 
   private Category category;
 
   private String name;
 
-  @Valid
-  private List<String> photoUrls = new ArrayList<>();
+  @Valid private List<String> photoUrls = new ArrayList<>();
 
-  @Valid
-  private List<Tag> tags = null;
+  @Valid private List<Tag> tags = null;
 
-  /**
-   * pet status in the store
-   */
   public enum StatusEnum {
     AVAILABLE("available"),
-    
     PENDING("pending"),
-    
-    SOLD("sold");
+    SOLD("sold")
+    ;
 
     private String value;
 
@@ -55,24 +42,21 @@ public class Pet {
       this.value = value;
     }
 
-    @JsonValue
-    public String getValue() {
+    @JsonValue public String getValue() {
       return value;
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
       return String.valueOf(value);
     }
 
-    @JsonCreator
-    public static StatusEnum fromValue(String value) {
+    @JsonCreator public static StatusEnum fromValue(String value) {
       for (StatusEnum b : StatusEnum.values()) {
         if (b.value.equals(value)) {
           return b;
         }
       }
-      throw new IllegalArgumentException("Unexpected value '" + value + "'");
+      throw new IllegalArgumentException("Unexpected value \'" + value + "\'");
     }
   }
 
@@ -87,10 +71,7 @@ public class Pet {
    * Get id
    * @return id
   */
-  
-  @Schema(name = "id", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("id")
-  public Long getId() {
+  @Schema(name = "id", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "id") public Long getId() {
     return id;
   }
 
@@ -107,10 +88,7 @@ public class Pet {
    * Get category
    * @return category
   */
-  @Valid 
-  @Schema(name = "category", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("category")
-  public Category getCategory() {
+  @Valid @Schema(name = "category", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "category") public Category getCategory() {
     return category;
   }
 
@@ -127,10 +105,7 @@ public class Pet {
    * Get name
    * @return name
   */
-  @NotNull 
-  @Schema(name = "name", example = "doggie", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("name")
-  public String getName() {
+  @NotNull @Schema(name = "name", example = "doggie", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(value = "name") public String getName() {
     return name;
   }
 
@@ -152,10 +127,7 @@ public class Pet {
    * Get photoUrls
    * @return photoUrls
   */
-  @NotNull 
-  @Schema(name = "photoUrls", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("photoUrls")
-  public List<String> getPhotoUrls() {
+  @NotNull @Schema(name = "photoUrls", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(value = "photoUrls") public List<String> getPhotoUrls() {
     return photoUrls;
   }
 
@@ -180,10 +152,7 @@ public class Pet {
    * Get tags
    * @return tags
   */
-  @Valid 
-  @Schema(name = "tags", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("tags")
-  public List<Tag> getTags() {
+  @Valid @Schema(name = "tags", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "tags") public List<Tag> getTags() {
     return tags;
   }
 
@@ -200,10 +169,7 @@ public class Pet {
    * pet status in the store
    * @return status
   */
-  
-  @Schema(name = "status", description = "pet status in the store", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("status")
-  public StatusEnum getStatus() {
+  @Schema(name = "status", description = "pet status in the store", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "status") public StatusEnum getStatus() {
     return status;
   }
 
@@ -211,8 +177,7 @@ public class Pet {
     this.status = status;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -220,21 +185,14 @@ public class Pet {
       return false;
     }
     Pet pet = (Pet) o;
-    return Objects.equals(this.id, pet.id) &&
-        Objects.equals(this.category, pet.category) &&
-        Objects.equals(this.name, pet.name) &&
-        Objects.equals(this.photoUrls, pet.photoUrls) &&
-        Objects.equals(this.tags, pet.tags) &&
-        Objects.equals(this.status, pet.status);
+    return Objects.equals(this.id, pet.id) && Objects.equals(this.category, pet.category) && Objects.equals(this.name, pet.name) && Objects.equals(this.photoUrls, pet.photoUrls) && Objects.equals(this.tags, pet.tags) && Objects.equals(this.status, pet.status);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(id, category, name, photoUrls, tags, status);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Pet {\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
@@ -258,4 +216,3 @@ public class Pet {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

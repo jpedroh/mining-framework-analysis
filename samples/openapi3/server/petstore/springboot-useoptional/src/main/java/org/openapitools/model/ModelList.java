@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,19 +9,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * ModelList
  */
-
-@JsonTypeName("List")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class ModelList {
-
+@JsonTypeName(value = "List") @Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class ModelList {
   private String _123list;
 
   public ModelList _123list(String _123list) {
@@ -34,10 +27,7 @@ public class ModelList {
    * Get _123list
    * @return _123list
   */
-  
-  @Schema(name = "123-list", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("123-list")
-  public String get123list() {
+  @Schema(name = "123-list", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "123-list") public String get123list() {
     return _123list;
   }
 
@@ -45,8 +35,7 @@ public class ModelList {
     this._123list = _123list;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -57,13 +46,11 @@ public class ModelList {
     return Objects.equals(this._123list, _list._123list);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(_123list);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ModelList {\n");
     sb.append("    _123list: ").append(toIndentedString(_123list)).append("\n");
@@ -82,4 +69,3 @@ public class ModelList {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

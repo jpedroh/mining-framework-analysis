@@ -1,5 +1,4 @@
 package org.openapitools.virtualan.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -13,19 +12,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * Dog
  */
-
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class Dog extends Animal {
-
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class Dog extends Animal {
   private String breed;
 
   public Dog breed(String breed) {
@@ -37,10 +30,7 @@ public class Dog extends Animal {
    * Get breed
    * @return breed
   */
-  
-  @Schema(name = "breed", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("breed")
-  public String getBreed() {
+  @Schema(name = "breed", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "breed") public String getBreed() {
     return breed;
   }
 
@@ -58,8 +48,7 @@ public class Dog extends Animal {
     return this;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -67,17 +56,14 @@ public class Dog extends Animal {
       return false;
     }
     Dog dog = (Dog) o;
-    return Objects.equals(this.breed, dog.breed) &&
-        super.equals(o);
+    return Objects.equals(this.breed, dog.breed) && super.equals(o);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(breed, super.hashCode());
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Dog {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
@@ -97,4 +83,3 @@ public class Dog extends Animal {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

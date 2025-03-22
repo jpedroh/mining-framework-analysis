@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,19 +8,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * HasOnlyReadOnly
  */
-
-@JsonTypeName("hasOnlyReadOnly")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class HasOnlyReadOnly {
-
+@JsonTypeName(value = "hasOnlyReadOnly") @Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class HasOnlyReadOnly {
   private String bar;
 
   private String foo;
@@ -35,10 +28,7 @@ public class HasOnlyReadOnly {
    * Get bar
    * @return bar
   */
-  
-  @Schema(name = "bar", accessMode = Schema.AccessMode.READ_ONLY, requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("bar")
-  public String getBar() {
+  @Schema(name = "bar", accessMode = Schema.AccessMode.READ_ONLY, requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "bar") public String getBar() {
     return bar;
   }
 
@@ -55,10 +45,7 @@ public class HasOnlyReadOnly {
    * Get foo
    * @return foo
   */
-  
-  @Schema(name = "foo", accessMode = Schema.AccessMode.READ_ONLY, requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("foo")
-  public String getFoo() {
+  @Schema(name = "foo", accessMode = Schema.AccessMode.READ_ONLY, requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "foo") public String getFoo() {
     return foo;
   }
 
@@ -66,8 +53,7 @@ public class HasOnlyReadOnly {
     this.foo = foo;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -75,17 +61,14 @@ public class HasOnlyReadOnly {
       return false;
     }
     HasOnlyReadOnly hasOnlyReadOnly = (HasOnlyReadOnly) o;
-    return Objects.equals(this.bar, hasOnlyReadOnly.bar) &&
-        Objects.equals(this.foo, hasOnlyReadOnly.foo);
+    return Objects.equals(this.bar, hasOnlyReadOnly.bar) && Objects.equals(this.foo, hasOnlyReadOnly.foo);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(bar, foo);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class HasOnlyReadOnly {\n");
     sb.append("    bar: ").append(toIndentedString(bar)).append("\n");
@@ -105,4 +88,3 @@ public class HasOnlyReadOnly {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

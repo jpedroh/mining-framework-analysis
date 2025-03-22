@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -13,19 +12,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * FooRef
  */
-
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class FooRef extends EntityRef implements FooRefOrValue {
-
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class FooRef extends EntityRef implements FooRefOrValue {
   private String foorefPropA;
 
   public FooRef foorefPropA(String foorefPropA) {
@@ -37,10 +30,7 @@ public class FooRef extends EntityRef implements FooRefOrValue {
    * Get foorefPropA
    * @return foorefPropA
   */
-  
-  @Schema(name = "foorefPropA", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("foorefPropA")
-  public String getFoorefPropA() {
+  @Schema(name = "foorefPropA", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "foorefPropA") public String getFoorefPropA() {
     return foorefPropA;
   }
 
@@ -83,8 +73,7 @@ public class FooRef extends EntityRef implements FooRefOrValue {
     return this;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -92,17 +81,14 @@ public class FooRef extends EntityRef implements FooRefOrValue {
       return false;
     }
     FooRef fooRef = (FooRef) o;
-    return Objects.equals(this.foorefPropA, fooRef.foorefPropA) &&
-        super.equals(o);
+    return Objects.equals(this.foorefPropA, fooRef.foorefPropA) && super.equals(o);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(foorefPropA, super.hashCode());
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class FooRef {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
@@ -122,4 +108,3 @@ public class FooRef extends EntityRef implements FooRefOrValue {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

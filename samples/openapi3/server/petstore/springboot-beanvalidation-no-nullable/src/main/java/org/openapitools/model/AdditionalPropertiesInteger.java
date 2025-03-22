@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,18 +9,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * AdditionalPropertiesInteger
  */
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class AdditionalPropertiesInteger extends HashMap<String, Integer> {
-
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class AdditionalPropertiesInteger extends HashMap<String, Integer> {
   private String name;
 
   public AdditionalPropertiesInteger name(String name) {
@@ -33,10 +27,7 @@ public class AdditionalPropertiesInteger extends HashMap<String, Integer> {
    * Get name
    * @return name
   */
-  
-  @Schema(name = "name", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("name")
-  public String getName() {
+  @Schema(name = "name", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "name") public String getName() {
     return name;
   }
 
@@ -44,8 +35,7 @@ public class AdditionalPropertiesInteger extends HashMap<String, Integer> {
     this.name = name;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -53,17 +43,14 @@ public class AdditionalPropertiesInteger extends HashMap<String, Integer> {
       return false;
     }
     AdditionalPropertiesInteger additionalPropertiesInteger = (AdditionalPropertiesInteger) o;
-    return Objects.equals(this.name, additionalPropertiesInteger.name) &&
-        super.equals(o);
+    return Objects.equals(this.name, additionalPropertiesInteger.name) && super.equals(o);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(name, super.hashCode());
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class AdditionalPropertiesInteger {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
@@ -83,4 +70,3 @@ public class AdditionalPropertiesInteger extends HashMap<String, Integer> {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

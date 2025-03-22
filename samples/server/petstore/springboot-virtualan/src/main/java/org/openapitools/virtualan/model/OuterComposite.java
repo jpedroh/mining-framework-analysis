@@ -1,5 +1,4 @@
 package org.openapitools.virtualan.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,18 +9,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * OuterComposite
  */
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class OuterComposite {
-
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class OuterComposite {
   private BigDecimal myNumber;
 
   private String myString;
@@ -37,10 +31,7 @@ public class OuterComposite {
    * Get myNumber
    * @return myNumber
   */
-  @Valid 
-  @Schema(name = "my_number", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("my_number")
-  public BigDecimal getMyNumber() {
+  @Valid @Schema(name = "my_number", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "my_number") public BigDecimal getMyNumber() {
     return myNumber;
   }
 
@@ -57,10 +48,7 @@ public class OuterComposite {
    * Get myString
    * @return myString
   */
-  
-  @Schema(name = "my_string", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("my_string")
-  public String getMyString() {
+  @Schema(name = "my_string", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "my_string") public String getMyString() {
     return myString;
   }
 
@@ -77,10 +65,7 @@ public class OuterComposite {
    * Get myBoolean
    * @return myBoolean
   */
-  
-  @Schema(name = "my_boolean", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("my_boolean")
-  public Boolean getMyBoolean() {
+  @Schema(name = "my_boolean", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "my_boolean") public Boolean getMyBoolean() {
     return myBoolean;
   }
 
@@ -88,8 +73,7 @@ public class OuterComposite {
     this.myBoolean = myBoolean;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -97,18 +81,14 @@ public class OuterComposite {
       return false;
     }
     OuterComposite outerComposite = (OuterComposite) o;
-    return Objects.equals(this.myNumber, outerComposite.myNumber) &&
-        Objects.equals(this.myString, outerComposite.myString) &&
-        Objects.equals(this.myBoolean, outerComposite.myBoolean);
+    return Objects.equals(this.myNumber, outerComposite.myNumber) && Objects.equals(this.myString, outerComposite.myString) && Objects.equals(this.myBoolean, outerComposite.myBoolean);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(myNumber, myString, myBoolean);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class OuterComposite {\n");
     sb.append("    myNumber: ").append(toIndentedString(myNumber)).append("\n");
@@ -129,4 +109,3 @@ public class OuterComposite {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

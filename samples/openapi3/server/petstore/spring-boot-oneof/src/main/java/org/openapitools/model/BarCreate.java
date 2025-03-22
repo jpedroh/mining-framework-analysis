@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -15,20 +14,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * BarCreate
  */
-
-
-@JsonTypeName("Bar_Create")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class BarCreate extends Entity {
-
+@JsonTypeName(value = "Bar_Create") @Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class BarCreate extends Entity {
   private String barPropA;
 
   private String fooPropB;
@@ -44,10 +36,7 @@ public class BarCreate extends Entity {
    * Get barPropA
    * @return barPropA
   */
-  
-  @Schema(name = "barPropA", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("barPropA")
-  public String getBarPropA() {
+  @Schema(name = "barPropA", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "barPropA") public String getBarPropA() {
     return barPropA;
   }
 
@@ -64,10 +53,7 @@ public class BarCreate extends Entity {
    * Get fooPropB
    * @return fooPropB
   */
-  
-  @Schema(name = "fooPropB", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("fooPropB")
-  public String getFooPropB() {
+  @Schema(name = "fooPropB", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "fooPropB") public String getFooPropB() {
     return fooPropB;
   }
 
@@ -84,10 +70,7 @@ public class BarCreate extends Entity {
    * Get foo
    * @return foo
   */
-  @Valid 
-  @Schema(name = "foo", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("foo")
-  public FooRefOrValue getFoo() {
+  @Valid @Schema(name = "foo", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "foo") public FooRefOrValue getFoo() {
     return foo;
   }
 
@@ -120,8 +103,7 @@ public class BarCreate extends Entity {
     return this;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -129,19 +111,14 @@ public class BarCreate extends Entity {
       return false;
     }
     BarCreate barCreate = (BarCreate) o;
-    return Objects.equals(this.barPropA, barCreate.barPropA) &&
-        Objects.equals(this.fooPropB, barCreate.fooPropB) &&
-        Objects.equals(this.foo, barCreate.foo) &&
-        super.equals(o);
+    return Objects.equals(this.barPropA, barCreate.barPropA) && Objects.equals(this.fooPropB, barCreate.fooPropB) && Objects.equals(this.foo, barCreate.foo) && super.equals(o);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(barPropA, fooPropB, foo, super.hashCode());
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class BarCreate {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
@@ -163,4 +140,3 @@ public class BarCreate extends Entity {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,20 +11,14 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * ArrayOfArrayOfNumberOnly
  */
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class ArrayOfArrayOfNumberOnly {
-
-  @Valid
-  private List<List<BigDecimal>> arrayArrayNumber = null;
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class ArrayOfArrayOfNumberOnly {
+  @Valid private List<List<BigDecimal>> arrayArrayNumber = null;
 
   public ArrayOfArrayOfNumberOnly arrayArrayNumber(List<List<BigDecimal>> arrayArrayNumber) {
     this.arrayArrayNumber = arrayArrayNumber;
@@ -44,10 +37,7 @@ public class ArrayOfArrayOfNumberOnly {
    * Get arrayArrayNumber
    * @return arrayArrayNumber
   */
-  @Valid 
-  @Schema(name = "ArrayArrayNumber", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("ArrayArrayNumber")
-  public List<List<BigDecimal>> getArrayArrayNumber() {
+  @Valid @Schema(name = "ArrayArrayNumber", requiredMode = Schema.RequiredMode.NOT_REQUIRED) @JsonProperty(value = "ArrayArrayNumber") public List<List<BigDecimal>> getArrayArrayNumber() {
     return arrayArrayNumber;
   }
 
@@ -55,8 +45,7 @@ public class ArrayOfArrayOfNumberOnly {
     this.arrayArrayNumber = arrayArrayNumber;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -67,13 +56,11 @@ public class ArrayOfArrayOfNumberOnly {
     return Objects.equals(this.arrayArrayNumber, arrayOfArrayOfNumberOnly.arrayArrayNumber);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(arrayArrayNumber);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ArrayOfArrayOfNumberOnly {\n");
     sb.append("    arrayArrayNumber: ").append(toIndentedString(arrayArrayNumber)).append("\n");
@@ -92,4 +79,3 @@ public class ArrayOfArrayOfNumberOnly {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

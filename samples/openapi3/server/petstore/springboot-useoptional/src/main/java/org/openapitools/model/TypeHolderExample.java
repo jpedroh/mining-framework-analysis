@@ -1,5 +1,4 @@
 package org.openapitools.model;
-
 import java.net.URI;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,18 +11,13 @@ import java.time.OffsetDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import java.util.*;
 import javax.annotation.Generated;
 
 /**
  * TypeHolderExample
  */
-
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen")
-public class TypeHolderExample {
-
+@Generated(value = { "org.openapitools.codegen.languages.SpringCodegen" }) public class TypeHolderExample {
   private String stringItem;
 
   private BigDecimal numberItem;
@@ -34,8 +28,7 @@ public class TypeHolderExample {
 
   private Boolean boolItem;
 
-  @Valid
-  private List<Integer> arrayItem = new ArrayList<>();
+  @Valid private List<Integer> arrayItem = new ArrayList<>();
 
   public TypeHolderExample stringItem(String stringItem) {
     this.stringItem = stringItem;
@@ -46,10 +39,7 @@ public class TypeHolderExample {
    * Get stringItem
    * @return stringItem
   */
-  @NotNull 
-  @Schema(name = "string_item", example = "what", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("string_item")
-  public String getStringItem() {
+  @NotNull @Schema(name = "string_item", example = "what", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(value = "string_item") public String getStringItem() {
     return stringItem;
   }
 
@@ -66,10 +56,7 @@ public class TypeHolderExample {
    * Get numberItem
    * @return numberItem
   */
-  @NotNull @Valid 
-  @Schema(name = "number_item", example = "1.234", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("number_item")
-  public BigDecimal getNumberItem() {
+  @NotNull @Valid @Schema(name = "number_item", example = "1.234", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(value = "number_item") public BigDecimal getNumberItem() {
     return numberItem;
   }
 
@@ -86,10 +73,7 @@ public class TypeHolderExample {
    * Get floatItem
    * @return floatItem
   */
-  @NotNull 
-  @Schema(name = "float_item", example = "1.234", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("float_item")
-  public Float getFloatItem() {
+  @NotNull @Schema(name = "float_item", example = "1.234", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(value = "float_item") public Float getFloatItem() {
     return floatItem;
   }
 
@@ -106,10 +90,7 @@ public class TypeHolderExample {
    * Get integerItem
    * @return integerItem
   */
-  @NotNull 
-  @Schema(name = "integer_item", example = "-2", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("integer_item")
-  public Integer getIntegerItem() {
+  @NotNull @Schema(name = "integer_item", example = "-2", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(value = "integer_item") public Integer getIntegerItem() {
     return integerItem;
   }
 
@@ -126,10 +107,7 @@ public class TypeHolderExample {
    * Get boolItem
    * @return boolItem
   */
-  @NotNull 
-  @Schema(name = "bool_item", example = "true", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("bool_item")
-  public Boolean getBoolItem() {
+  @NotNull @Schema(name = "bool_item", example = "true", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(value = "bool_item") public Boolean getBoolItem() {
     return boolItem;
   }
 
@@ -151,10 +129,7 @@ public class TypeHolderExample {
    * Get arrayItem
    * @return arrayItem
   */
-  @NotNull 
-  @Schema(name = "array_item", example = "[0, 1, 2, 3]", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("array_item")
-  public List<Integer> getArrayItem() {
+  @NotNull @Schema(name = "array_item", example = "[0, 1, 2, 3]", requiredMode = Schema.RequiredMode.REQUIRED) @JsonProperty(value = "array_item") public List<Integer> getArrayItem() {
     return arrayItem;
   }
 
@@ -162,8 +137,7 @@ public class TypeHolderExample {
     this.arrayItem = arrayItem;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -171,21 +145,14 @@ public class TypeHolderExample {
       return false;
     }
     TypeHolderExample typeHolderExample = (TypeHolderExample) o;
-    return Objects.equals(this.stringItem, typeHolderExample.stringItem) &&
-        Objects.equals(this.numberItem, typeHolderExample.numberItem) &&
-        Objects.equals(this.floatItem, typeHolderExample.floatItem) &&
-        Objects.equals(this.integerItem, typeHolderExample.integerItem) &&
-        Objects.equals(this.boolItem, typeHolderExample.boolItem) &&
-        Objects.equals(this.arrayItem, typeHolderExample.arrayItem);
+    return Objects.equals(this.stringItem, typeHolderExample.stringItem) && Objects.equals(this.numberItem, typeHolderExample.numberItem) && Objects.equals(this.floatItem, typeHolderExample.floatItem) && Objects.equals(this.integerItem, typeHolderExample.integerItem) && Objects.equals(this.boolItem, typeHolderExample.boolItem) && Objects.equals(this.arrayItem, typeHolderExample.arrayItem);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(stringItem, numberItem, floatItem, integerItem, boolItem, arrayItem);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class TypeHolderExample {\n");
     sb.append("    stringItem: ").append(toIndentedString(stringItem)).append("\n");
@@ -209,4 +176,3 @@ public class TypeHolderExample {
     return o.toString().replace("\n", "\n    ");
   }
 }
-
