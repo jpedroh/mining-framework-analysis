@@ -1,24 +1,5 @@
-/*
- * (C) Copyright 2015-2020, by Fabian Späh and Contributors.
- *
- * JGraphT : a free Java graph-theory library
- *
- * See the CONTRIBUTORS.md file distributed with this work for additional
- * information regarding copyright ownership.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License 2.0 which is available at
- * http://www.eclipse.org/legal/epl-2.0, or the
- * GNU Lesser General Public License v2.1 or later
- * which is available at
- * http://www.gnu.org/licenses/old-licenses/lgpl-2.1-standalone.html.
- *
- * SPDX-License-Identifier: EPL-2.0 OR LGPL-2.1-or-later
- */
 package org.jgrapht.alg.isomorphism;
-
 import org.jgrapht.*;
-
 import java.util.*;
 
 /**
@@ -28,19 +9,22 @@ import java.util.*;
  * @param <V> the type of the vertices
  * @param <E> the type of the edges
  */
+class GraphOrdering<V extends java.lang.Object, E extends java.lang.Object> {
+  private Graph<V, E> graph;
 
-class GraphOrdering<V, E>
-{
-    private Graph<V, E> graph;
+  private Map<V, Integer> mapVertexToOrder;
 
-    private Map<V, Integer> mapVertexToOrder;
-    private ArrayList<V> mapOrderToVertex;
-    private int vertexCount;
+  private ArrayList<V> mapOrderToVertex;
 
-    private int[][] outgoingEdges;
-    private int[][] incomingEdges;
-    private E[] edgeCache;
-    /**
+  private int vertexCount;
+
+  private int[][] outgoingEdges;
+
+  private int[][] incomingEdges;
+
+  private E[] edgeCache;
+
+  /**
      * if caching is enabled, adjMatrix contains cached information on existing edges, valid values:
      * <ul>
      * <li>0 - no cached value</li>
@@ -48,238 +32,200 @@ class GraphOrdering<V, E>
      * <li>-1 - no edge exists</li>
      * </ul>
      */
-    private byte[] adjMatrix;
+  private byte[] adjMatrix;
 
-    private boolean cacheEdges;
+  private boolean cacheEdges;
 
-    /**
+  /**
      * @param graph the graph to be ordered
      * @param orderByDegree should the vertices be ordered by their degree. This speeds up the VF2
      *        algorithm.
      * @param cacheEdges if true, the class creates a adjacency matrix and two arrays for incoming
      *        and outgoing edges for fast access.
      */
-    @SuppressWarnings("unchecked")
-    public GraphOrdering(Graph<V, E> graph, boolean orderByDegree, boolean cacheEdges)
-    {
-        this.graph = graph;
-        this.cacheEdges = cacheEdges;
-
-        List<V> vertexSet = new ArrayList<>(graph.vertexSet());
-        if (orderByDegree) {
-            vertexSet.sort(new GeneralVertexDegreeComparator<>(graph));
-        }
-
-        vertexCount = vertexSet.size();
-        mapVertexToOrder = new HashMap<>();
-        mapOrderToVertex = new ArrayList<>(vertexCount);
-
-        if (cacheEdges) {
-            outgoingEdges = new int[vertexCount][];
-            incomingEdges = new int[vertexCount][];
-            edgeCache = (E[]) new Object[vertexCount*vertexCount];
-            adjMatrix = new byte[vertexCount*vertexCount];
-        }
-
-        Integer i = 0;
-        for (V vertex : vertexSet) {
-            mapVertexToOrder.put(vertex, i++);
-            mapOrderToVertex.add(vertex);
-        }
+  @SuppressWarnings(value = { "unchecked" }) public GraphOrdering(Graph<V, E> graph, boolean orderByDegree, boolean cacheEdges) {
+    this.graph = graph;
+    this.cacheEdges = cacheEdges;
+    List<V> vertexSet = new ArrayList<>(graph.vertexSet());
+    if (orderByDegree) {
+      vertexSet.sort(new GeneralVertexDegreeComparator<>(graph));
     }
+    vertexCount = vertexSet.size();
+    mapVertexToOrder = new HashMap<>();
+    mapOrderToVertex = new ArrayList<>(vertexCount);
+    if (cacheEdges) {
+      outgoingEdges = new int[vertexCount][];
+      incomingEdges = new int[vertexCount][];
+      edgeCache = (E[]) new Object[vertexCount * vertexCount];
+      adjMatrix = new byte[vertexCount * vertexCount];
+    }
+    Integer i = 0;
+    for (V vertex : vertexSet) {
+      mapVertexToOrder.put(vertex, i++);
+      mapOrderToVertex.add(vertex);
+    }
+  }
 
-    /**
+  /**
      * @param graph the graph to be ordered
      */
-    public GraphOrdering(Graph<V, E> graph)
-    {
-        this(graph, false, true);
-    }
+  public GraphOrdering(Graph<V, E> graph) {
+    this(graph, false, true);
+  }
 
-    /**
+  /**
      * @return returns the number of vertices in the graph.
      */
-    public int getVertexCount()
-    {
-        return this.vertexCount;
-    }
+  public int getVertexCount() {
+    return this.vertexCount;
+  }
 
-    /**
+  /**
      * @param vertexNumber the number which identifies the vertex $v$ in this order.
      *
      * @return the identifying numbers of all vertices which are connected to $v$ by an edge
      *         outgoing from $v$.
      */
-    public int[] getOutEdges(int vertexNumber)
-    {
-        if (cacheEdges && (outgoingEdges[vertexNumber] != null)) {
-            return outgoingEdges[vertexNumber];
-        }
-
-        V v = getVertex(vertexNumber);
-        Set<E> edgeSet = graph.outgoingEdgesOf(v);
-
-        int[] vertexArray = new int[edgeSet.size()];
-        int i = 0;
-
-        for (E edge : edgeSet) {
-            V source = graph.getEdgeSource(edge), target = graph.getEdgeTarget(edge);
-            vertexArray[i++] = mapVertexToOrder.get(source.equals(v) ? target : source);
-        }
-
-        if (cacheEdges) {
-            outgoingEdges[vertexNumber] = vertexArray;
-        }
-
-        return vertexArray;
+  public int[] getOutEdges(int vertexNumber) {
+    if (cacheEdges && (outgoingEdges[vertexNumber] != null)) {
+      return outgoingEdges[vertexNumber];
     }
+    V v = getVertex(vertexNumber);
+    Set<E> edgeSet = graph.outgoingEdgesOf(v);
+    int[] vertexArray = new int[edgeSet.size()];
+    int i = 0;
+    for (E edge : edgeSet) {
+      V source = graph.getEdgeSource(edge), target = graph.getEdgeTarget(edge);
+      vertexArray[i++] = mapVertexToOrder.get(source.equals(v) ? target : source);
+    }
+    if (cacheEdges) {
+      outgoingEdges[vertexNumber] = vertexArray;
+    }
+    return vertexArray;
+  }
 
-    /**
+  /**
      * @param vertexNumber the number which identifies the vertex $v$ in this order.
      *
      * @return the identifying numbers of all vertices which are connected to $v$ by an edge
      *         incoming to $v$.
      */
-    public int[] getInEdges(int vertexNumber)
-    {
-        if (cacheEdges && (incomingEdges[vertexNumber] != null)) {
-            return incomingEdges[vertexNumber];
-        }
-
-        V v = getVertex(vertexNumber);
-        Set<E> edgeSet = graph.incomingEdgesOf(v);
-
-        int[] vertexArray = new int[edgeSet.size()];
-        int i = 0;
-
-        for (E edge : edgeSet) {
-            V source = graph.getEdgeSource(edge), target = graph.getEdgeTarget(edge);
-            vertexArray[i++] = mapVertexToOrder.get(source.equals(v) ? target : source);
-        }
-
-        if (cacheEdges) {
-            incomingEdges[vertexNumber] = vertexArray;
-        }
-
-        return vertexArray;
+  public int[] getInEdges(int vertexNumber) {
+    if (cacheEdges && (incomingEdges[vertexNumber] != null)) {
+      return incomingEdges[vertexNumber];
     }
+    V v = getVertex(vertexNumber);
+    Set<E> edgeSet = graph.incomingEdgesOf(v);
+    int[] vertexArray = new int[edgeSet.size()];
+    int i = 0;
+    for (E edge : edgeSet) {
+      V source = graph.getEdgeSource(edge), target = graph.getEdgeTarget(edge);
+      vertexArray[i++] = mapVertexToOrder.get(source.equals(v) ? target : source);
+    }
+    if (cacheEdges) {
+      incomingEdges[vertexNumber] = vertexArray;
+    }
+    return vertexArray;
+  }
 
-    /**
+  /**
      * @param v1Number the number of the first vertex $v_1$
      * @param v2Number the number of the second vertex $v_2$
      *
      * @return exists the edge from $v_1$ to $v_2$
      */
-    public boolean hasEdge(int v1Number, int v2Number)
-    {
-        
-        int cacheIndex = 0;
-        if (cacheEdges) {
-            cacheIndex = v1Number*vertexCount+v2Number;
-            final byte cache = adjMatrix[cacheIndex];
-            if (cache != 0) {
-                return cache > 0;
-            } else {
-                // initialize both the adjacency matrix as well as the edge cache
-                final V v1 = getVertex(v1Number);
-                final V v2 = getVertex(v2Number);
-                final E edge = graph.getEdge(v1, v2);
-                if (edge == null) {
-                    adjMatrix[cacheIndex] = (byte) -1;
-
-                    return false;
-                } else {
-                    adjMatrix[cacheIndex] = (byte) 1;
-                    edgeCache[cacheIndex] = edge;
-
-                    return true;
-                }
-            }
+  public boolean hasEdge(int v1Number, int v2Number) {
+    int cacheIndex = 0;
+    if (cacheEdges) {
+      cacheIndex = v1Number * vertexCount + v2Number;
+      final byte cache = adjMatrix[cacheIndex];
+      if (cache != 0) {
+        return cache > 0;
+      } else {
+        final V v1 = getVertex(v1Number);
+        final V v2 = getVertex(v2Number);
+        final E edge = graph.getEdge(v1, v2);
+        if (edge == null) {
+          adjMatrix[cacheIndex] = (byte) -1;
+          return false;
+        } else {
+          adjMatrix[cacheIndex] = (byte) 1;
+          edgeCache[cacheIndex] = edge;
+          return true;
         }
-        
-        V v1 = getVertex(v1Number);
-        V v2 = getVertex(v2Number);
-        boolean containsEdge = graph.containsEdge(v1, v2);
-
-        return containsEdge;
+      }
     }
+    V v1 = getVertex(v1Number);
+    V v2 = getVertex(v2Number);
+    boolean containsEdge = graph.containsEdge(v1, v2);
 
-    /**
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+    if (cacheEdges) {
+      adjMatrix[cacheIndex] = (byte) ((containsEdge) ? 1 : -1);
+    }
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/f4240cd3eacf231177dc7d596d87546aab4ad0b2/jgrapht-core/src/main/java/org/jgrapht/alg/isomorphism/GraphOrdering.java/right.java
+
+    return containsEdge;
+  }
+
+  /**
      * be careful: there's no check against an invalid vertexNumber
      *
      * @param vertexNumber the number identifying the vertex $v$
      *
      * @return $v$
      */
-    public V getVertex(int vertexNumber)
-    {
-        return mapOrderToVertex.get(vertexNumber);
-    }
+  public V getVertex(int vertexNumber) {
+    return mapOrderToVertex.get(vertexNumber);
+  }
 
-    /**
+  /**
      * @param v1Number the number identifying the vertex $v_1$
      * @param v2Number the number identifying the vertex $v_2$
      *
      * @return the edge from $v_1$ to $v_2$
      */
-    public E getEdge(int v1Number, int v2Number)
-    {
-        
-        if (cacheEdges) {
-            final int cacheIndex = v1Number*vertexCount+v2Number;
-            final byte containsEdge = adjMatrix[cacheIndex];
-            if(containsEdge == 0){
-                // edge cache has not been initialized yet for this element
-                hasEdge(v1Number, v2Number);
-            }
-            final E edge = edgeCache[cacheIndex];
+  public E getEdge(int v1Number, int v2Number) {
+    if (cacheEdges) {
+      final int cacheIndex = v1Number * vertexCount + v2Number;
+      final byte containsEdge = adjMatrix[cacheIndex];
+      if (containsEdge == 0) {
+        hasEdge(v1Number, v2Number);
+      }
+      final E cache = edgeCache[cacheIndex];
+      return cache;
+    }
+    V v1 = getVertex(v1Number), v2 = getVertex(v2Number);
+    E edge = graph.getEdge(v1, v2);
+    return edge;
+  }
 
-            return edge;
-        }
-        
-        V v1 = getVertex(v1Number), v2 = getVertex(v2Number);
+  public int getVertexNumber(V v) {
+    return mapVertexToOrder.get(v);
+  }
 
-        E edge = graph.getEdge(v1, v2);
-        
-        return edge;
+  public int[] getEdgeNumbers(E e) {
+    V v1 = graph.getEdgeSource(e), v2 = graph.getEdgeTarget(e);
+    int[] edge = new int[2];
+    edge[0] = mapVertexToOrder.get(v1);
+    edge[1] = mapVertexToOrder.get(v2);
+    return edge;
+  }
+
+  public Graph<V, E> getGraph() {
+    return graph;
+  }
+
+  private static class GeneralVertexDegreeComparator<V2 extends java.lang.Object> implements Comparator<V2> {
+    private Graph<V2, ?> graph;
+
+    GeneralVertexDegreeComparator(Graph<V2, ?> graph) {
+      this.graph = graph;
     }
 
-    public int getVertexNumber(V v)
-    {
-        return mapVertexToOrder.get(v);
+    @Override public int compare(V2 v1, V2 v2) {
+      return graph.edgesOf(v1).size() - graph.edgesOf(v2).size();
     }
-
-    public int[] getEdgeNumbers(E e)
-    {
-        V v1 = graph.getEdgeSource(e), v2 = graph.getEdgeTarget(e);
-
-        int[] edge = new int[2];
-        edge[0] = mapVertexToOrder.get(v1);
-        edge[1] = mapVertexToOrder.get(v2);
-
-        return edge;
-    }
-
-    public Graph<V, E> getGraph()
-    {
-        return graph;
-    }
-
-    private static class GeneralVertexDegreeComparator<V2>
-        implements
-        Comparator<V2>
-    {
-        private Graph<V2, ?> graph;
-
-        GeneralVertexDegreeComparator(Graph<V2, ?> graph)
-        {
-            this.graph = graph;
-        }
-
-        @Override
-        public int compare(V2 v1, V2 v2)
-        {
-            return graph.edgesOf(v1).size() - graph.edgesOf(v2).size();
-        }
-    }
+  }
 }
