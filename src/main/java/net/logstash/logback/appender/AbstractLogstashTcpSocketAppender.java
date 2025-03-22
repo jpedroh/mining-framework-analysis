@@ -372,7 +372,6 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
 
             @Override
             public void run() {
-                updateCurrentThreadName();
                 while (true) {
                     try {
                         if (inputStream.read() == -1) {
@@ -534,7 +533,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
                     
                     this.socket = tempSocket;
                     this.outputStream = tempOutputStream;
-
+<<<<<<< /usr/src/app/output/logstash/logstash-logback-encoder/af3c5cc4e65eaaa7b407c431acb5b17f0e3e70e7/src/main/java/net/logstash/logback/appender/AbstractLogstashTcpSocketAppender.java/left.java
                     boolean shouldUpdateThreadName = (destinationIndex != connectedDestinationIndex);
                     connectedDestinationIndex = destinationIndex;
                     
@@ -555,10 +554,11 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
                          */
                         updateCurrentThreadName();
                     }
-                    
-                    this.readerFuture = scheduleReaderRunnable(
+||||||| /usr/src/app/output/logstash/logstash-logback-encoder/af3c5cc4e65eaaa7b407c431acb5b17f0e3e70e7/src/main/java/net/logstash/logback/appender/AbstractLogstashTcpSocketAppender.java/base.java
+=======
+                    this.readerFuture = getExecutorService().submit(
                             new ReaderRunnable(tempSocket.getInputStream()));
-
+>>>>>>> /usr/src/app/output/logstash/logstash-logback-encoder/af3c5cc4e65eaaa7b407c431acb5b17f0e3e70e7/src/main/java/net/logstash/logback/appender/AbstractLogstashTcpSocketAppender.java/right.java
                     return;
                     
                 } catch (Exception e) {
@@ -808,10 +808,6 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
          */
         this.shutdownLatch.countDown();
         super.stop();
-    }
-
-    protected Future<?> scheduleReaderRunnable(Runnable readerRunnable) {
-        return getExecutorService().submit(readerRunnable);
     }
 
     public Encoder<Event> getEncoder() {
@@ -1089,5 +1085,4 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
     public void setThreadNameFormat(String threadNameFormat) {
         super.setThreadNameFormat(threadNameFormat);
     }
-
 }
