@@ -58,6 +58,8 @@ public class ConnectivityInspector<V, E>
     private Graph<V, E> graph;
     private Graph<V, E> originalgraph;
 
+    
+
     /**
      * Creates a connectivity inspector for the specified undirected graph.
      *
@@ -79,6 +81,7 @@ public class ConnectivityInspector<V, E>
     {
         init();
         this.graph = new AsUndirectedGraph<>(g);
+        this.originalgraph = g;
     }
 
     /**

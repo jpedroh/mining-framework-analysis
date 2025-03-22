@@ -19,329 +19,181 @@ package org.jgrapht.alg;
 
 import org.jgrapht.graph.*;
 
-<<<<<<< HEAD
-=======
 import junit.framework.*;
 
->>>>>>> 213a915e30ba0f68cd29f1b7ca2a53588539403a
 /**
  * .
  * 
  * @author Barak Naveh
  */
-<<<<<<< HEAD
 public class ConnectivityInspectorTest extends TestCase {
 	// ~ Static fields/initializers
 	// ---------------------------------------------
-
 	private static final String V1 = "v1";
 	private static final String V2 = "v2";
 	private static final String V3 = "v3";
 	private static final String V4 = "v4";
-	
 	private static final String[] Vertices = {V1, V2, V3, V4};
-	
-
 	// ~ Instance fields
 	// --------------------------------------------------------
-
 	//
 	DefaultEdge e1;
 	DefaultEdge e2;
 	DefaultEdge e3;
 	DefaultEdge e3_b;
 	DefaultEdge u;
-	
 	ConnectivityInspector<String, DefaultEdge> inspector;
-
 	// ~ Methods
 	// ----------------------------------------------------------------
-
 	/**
 	 * .
 	 * 
 	 * @return a graph
 	 */
-	public Pseudograph<String, DefaultEdge> create() {
-		Pseudograph<String, DefaultEdge> g = new Pseudograph<String, DefaultEdge>(
-				DefaultEdge.class);
+    public Pseudograph<String, DefaultEdge> create() {
+    	Pseudograph<String, DefaultEdge> g = new Pseudograph<>(
+    			DefaultEdge.class);
 
-		assertEquals(0, g.vertexSet().size());
-		g.addVertex(V1);
-		assertEquals(1, g.vertexSet().size());
-		g.addVertex(V2);
-		assertEquals(2, g.vertexSet().size());
-		g.addVertex(V3);
-		assertEquals(3, g.vertexSet().size());
-		g.addVertex(V4);
-		assertEquals(4, g.vertexSet().size());
+    	assertEquals(0, g.vertexSet().size());
+    	g.addVertex(V1);
+    	assertEquals(1, g.vertexSet().size());
+    	g.addVertex(V2);
+    	assertEquals(2, g.vertexSet().size());
+    	g.addVertex(V3);
+    	assertEquals(3, g.vertexSet().size());
+    	g.addVertex(V4);
+    	assertEquals(4, g.vertexSet().size());
 
-		assertEquals(0, g.edgeSet().size());
+    	assertEquals(0, g.edgeSet().size());
 
-		e1 = g.addEdge(V1, V2);
-		assertEquals(1, g.edgeSet().size());
+    	e1 = g.addEdge(V1, V2);
+    	assertEquals(1, g.edgeSet().size());
 
-		e2 = g.addEdge(V2, V3);
-		assertEquals(2, g.edgeSet().size());
+    	e2 = g.addEdge(V2, V3);
+    	assertEquals(2, g.edgeSet().size());
 
-		e3 = g.addEdge(V3, V1);
-		assertEquals(3, g.edgeSet().size());
+    	e3 = g.addEdge(V3, V1);
+    	assertEquals(3, g.edgeSet().size());
 
-		e3_b = g.addEdge(V3, V1);
-		assertEquals(4, g.edgeSet().size());
-		assertNotNull(e3_b);
+    	e3_b = g.addEdge(V3, V1);
+    	assertEquals(4, g.edgeSet().size());
+    	assertNotNull(e3_b);
 
-		u = g.addEdge(V1, V1);
-		assertEquals(5, g.edgeSet().size());
-		u = g.addEdge(V1, V1);
-		assertEquals(6, g.edgeSet().size());
+    	u = g.addEdge(V1, V1);
+    	assertEquals(5, g.edgeSet().size());
+    	u = g.addEdge(V1, V1);
+    	assertEquals(6, g.edgeSet().size());
 
-		return g;
-	}
-
+    	return g;
+    }
 	/**
 	 * .
 	 */
-	public void testDirectedGraph() {
-		ListenableDirectedGraph<String, DefaultEdge> g = new ListenableDirectedGraph<String, DefaultEdge>(
-				DefaultEdge.class);
-		g.addVertex(V1);
-		g.addVertex(V2);
-		g.addVertex(V3);
+    public void testDirectedGraph() {
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/f5175d87a484118c5b29556af75dc15b2438191b/jgrapht-core/src/test/java/org/jgrapht/alg/ConnectivityInspectorTest.java/left.java
+    	ListenableDirectedGraph<String, DefaultEdge> g = new ListenableDirectedGraph<String, DefaultEdge>(
+    			DefaultEdge.class);
+    	g.addVertex(V1);
+    	g.addVertex(V2);
+    	g.addVertex(V3);
+||||||| /usr/src/app/output/jgrapht/jgrapht/f5175d87a484118c5b29556af75dc15b2438191b/jgrapht-core/src/test/java/org/jgrapht/alg/ConnectivityInspectorTest.java/base.java
+        ListenableDirectedGraph<String, DefaultEdge> g =
+            new ListenableDirectedGraph<String, DefaultEdge>(
+                DefaultEdge.class);
+        g.addVertex(V1);
+        g.addVertex(V2);
+        g.addVertex(V3);
+=======
+        ListenableDirectedGraph<String, DefaultEdge> g =
+            new ListenableDirectedGraph<>(DefaultEdge.class);
+        g.addVertex(V1);
+        g.addVertex(V2);
+        g.addVertex(V3);
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/f5175d87a484118c5b29556af75dc15b2438191b/jgrapht-core/src/test/java/org/jgrapht/alg/ConnectivityInspectorTest.java/right.java
 
-		g.addEdge(V1, V2);
+    	g.addEdge(V1, V2);
 
-		inspector = new ConnectivityInspector<String, DefaultEdge>(
-				g);
-		g.addGraphListener(inspector);
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/f5175d87a484118c5b29556af75dc15b2438191b/jgrapht-core/src/test/java/org/jgrapht/alg/ConnectivityInspectorTest.java/left.java
+    	inspector = new ConnectivityInspector<String, DefaultEdge>(
+    			g);
+    	g.addGraphListener(inspector);
+||||||| /usr/src/app/output/jgrapht/jgrapht/f5175d87a484118c5b29556af75dc15b2438191b/jgrapht-core/src/test/java/org/jgrapht/alg/ConnectivityInspectorTest.java/base.java
+        ConnectivityInspector<String, DefaultEdge> inspector =
+            new ConnectivityInspector<String, DefaultEdge>(g);
+        g.addGraphListener(inspector);
+=======
+        ConnectivityInspector<String, DefaultEdge> inspector = new ConnectivityInspector<>(g);
+        g.addGraphListener(inspector);
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/f5175d87a484118c5b29556af75dc15b2438191b/jgrapht-core/src/test/java/org/jgrapht/alg/ConnectivityInspectorTest.java/right.java
 
-		assertEquals(false, inspector.isGraphConnected());
+    	assertEquals(false, inspector.isGraphConnected());
 
-		g.addEdge(V1, V3);
+    	g.addEdge(V1, V3);
 
-		assertEquals(true, inspector.isGraphConnected());
-	}
-
+    	assertEquals(true, inspector.isGraphConnected());
+    }
 	/**
 	 * .
 	 */
-	public void testIsGraphConnected() {
-		Pseudograph<String, DefaultEdge> g = create();
-		inspector = new ConnectivityInspector<String, DefaultEdge>(
-				g);
+    public void testIsGraphConnected() {
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/f5175d87a484118c5b29556af75dc15b2438191b/jgrapht-core/src/test/java/org/jgrapht/alg/ConnectivityInspectorTest.java/left.java
+    	Pseudograph<String, DefaultEdge> g = create();
+    	inspector = new ConnectivityInspector<String, DefaultEdge>(
+    			g);
+||||||| /usr/src/app/output/jgrapht/jgrapht/f5175d87a484118c5b29556af75dc15b2438191b/jgrapht-core/src/test/java/org/jgrapht/alg/ConnectivityInspectorTest.java/base.java
+        Pseudograph<String, DefaultEdge> g = create();
+        ConnectivityInspector<String, DefaultEdge> inspector =
+            new ConnectivityInspector<String, DefaultEdge>(g);
+=======
+        Pseudograph<String, DefaultEdge> g = create();
+        ConnectivityInspector<String, DefaultEdge> inspector = new ConnectivityInspector<>(g);
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/f5175d87a484118c5b29556af75dc15b2438191b/jgrapht-core/src/test/java/org/jgrapht/alg/ConnectivityInspectorTest.java/right.java
 
-		assertEquals(false, inspector.isGraphConnected());
+    	assertEquals(false, inspector.isGraphConnected());
 
-		g.removeVertex(V4);
-		inspector = new ConnectivityInspector<String, DefaultEdge>(g);
-		assertEquals(true, inspector.isGraphConnected());
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/f5175d87a484118c5b29556af75dc15b2438191b/jgrapht-core/src/test/java/org/jgrapht/alg/ConnectivityInspectorTest.java/left.java
+    	g.removeVertex(V4);
+    	inspector = new ConnectivityInspector<String, DefaultEdge>(g);
+    	assertEquals(true, inspector.isGraphConnected());
+||||||| /usr/src/app/output/jgrapht/jgrapht/f5175d87a484118c5b29556af75dc15b2438191b/jgrapht-core/src/test/java/org/jgrapht/alg/ConnectivityInspectorTest.java/base.java
+        g.removeVertex(V4);
+        inspector = new ConnectivityInspector<String, DefaultEdge>(g);
+        assertEquals(true, inspector.isGraphConnected());
+=======
+        g.removeVertex(V4);
+        inspector = new ConnectivityInspector<>(g);
+        assertEquals(true, inspector.isGraphConnected());
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/f5175d87a484118c5b29556af75dc15b2438191b/jgrapht-core/src/test/java/org/jgrapht/alg/ConnectivityInspectorTest.java/right.java
 
-		g.removeVertex(V1);
-		assertEquals(1, g.edgeSet().size());
+    	g.removeVertex(V1);
+    	assertEquals(1, g.edgeSet().size());
 
-		g.removeEdge(e2);
-		g.addEdge(V2, V2);
-		assertEquals(1, g.edgeSet().size());
+    	g.removeEdge(e2);
+    	g.addEdge(V2, V2);
+    	assertEquals(1, g.edgeSet().size());
 
-		inspector = new ConnectivityInspector<String, DefaultEdge>(g);
-		assertEquals(false, inspector.isGraphConnected());
-	}
-
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/f5175d87a484118c5b29556af75dc15b2438191b/jgrapht-core/src/test/java/org/jgrapht/alg/ConnectivityInspectorTest.java/left.java
+    	inspector = new ConnectivityInspector<String, DefaultEdge>(g);
+    	assertEquals(false, inspector.isGraphConnected());
+||||||| /usr/src/app/output/jgrapht/jgrapht/f5175d87a484118c5b29556af75dc15b2438191b/jgrapht-core/src/test/java/org/jgrapht/alg/ConnectivityInspectorTest.java/base.java
+        inspector = new ConnectivityInspector<String, DefaultEdge>(g);
+        assertEquals(false, inspector.isGraphConnected());
+=======
+        inspector = new ConnectivityInspector<>(g);
+        assertEquals(false, inspector.isGraphConnected());
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/f5175d87a484118c5b29556af75dc15b2438191b/jgrapht-core/src/test/java/org/jgrapht/alg/ConnectivityInspectorTest.java/right.java
+    }
 	/**
 	 * .
 	 */
-	public void testStronglyConnected1() {
-		DirectedGraph<String, DefaultEdge> g = new DefaultDirectedGraph<String, DefaultEdge>(
-				DefaultEdge.class);
-		g.addVertex(V1);
-		g.addVertex(V2);
-		g.addVertex(V3);
-		g.addVertex(V4);
-
-		g.addEdge(V1, V2);
-		g.addEdge(V2, V1); // strongly connected
-
-		g.addEdge(V3, V4); // only weakly connected
-
-		StrongConnectivityInspector<String, DefaultEdge> inspector = new StrongConnectivityInspector<String, DefaultEdge>(
-				g);
-
-		// convert from List to Set because we need to ignore order
-		// during comparison
-		Set<Set<String>> actualSets = new HashSet<Set<String>>(
-				inspector.stronglyConnectedSets());
-
-		// construct the expected answer
-		Set<Set<String>> expectedSets = new HashSet<Set<String>>();
-		Set<String> set = new HashSet<String>();
-		set.add(V1);
-		set.add(V2);
-		expectedSets.add(set);
-		set = new HashSet<String>();
-		set.add(V3);
-		expectedSets.add(set);
-		set = new HashSet<String>();
-		set.add(V4);
-		expectedSets.add(set);
-
-		assertEquals(expectedSets, actualSets);
-
-		actualSets.clear();
-
-		List<DirectedSubgraph<String, DefaultEdge>> subgraphs = inspector
-				.stronglyConnectedSubgraphs();
-		for (DirectedSubgraph<String, DefaultEdge> sg : subgraphs) {
-			actualSets.add(sg.vertexSet());
-
-			StrongConnectivityInspector<String, DefaultEdge> ci = new StrongConnectivityInspector<String, DefaultEdge>(
-					sg);
-			assertTrue(ci.isStronglyConnected());
-		}
-
-		assertEquals(expectedSets, actualSets);
-	}
-
 	/**
 	 * .
 	 */
-	public void testStronglyConnected2() {
-		DirectedGraph<String, DefaultEdge> g = new DefaultDirectedGraph<String, DefaultEdge>(
-				DefaultEdge.class);
-		g.addVertex(V1);
-		g.addVertex(V2);
-		g.addVertex(V3);
-		g.addVertex(V4);
-
-		g.addEdge(V1, V2);
-		g.addEdge(V2, V1); // strongly connected
-
-		g.addEdge(V4, V3); // only weakly connected
-		g.addEdge(V3, V2); // only weakly connected
-
-		StrongConnectivityInspector<String, DefaultEdge> inspector = new StrongConnectivityInspector<String, DefaultEdge>(
-				g);
-
-		// convert from List to Set because we need to ignore order
-		// during comparison
-		Set<Set<String>> actualSets = new HashSet<Set<String>>(
-				inspector.stronglyConnectedSets());
-
-		// construct the expected answer
-		Set<Set<String>> expectedSets = new HashSet<Set<String>>();
-		Set<String> set = new HashSet<String>();
-		set.add(V1);
-		set.add(V2);
-		expectedSets.add(set);
-		set = new HashSet<String>();
-		set.add(V3);
-		expectedSets.add(set);
-		set = new HashSet<String>();
-		set.add(V4);
-		expectedSets.add(set);
-
-		assertEquals(expectedSets, actualSets);
-
-		actualSets.clear();
-
-		List<DirectedSubgraph<String, DefaultEdge>> subgraphs = inspector
-				.stronglyConnectedSubgraphs();
-		for (DirectedSubgraph<String, DefaultEdge> sg : subgraphs) {
-			actualSets.add(sg.vertexSet());
-
-			StrongConnectivityInspector<String, DefaultEdge> ci = new StrongConnectivityInspector<String, DefaultEdge>(
-					sg);
-			assertTrue(ci.isStronglyConnected());
-		}
-
-		assertEquals(expectedSets, actualSets);
-	}
-
 	/**
 	 * .
 	 */
-	public void testStronglyConnected3() {
-		DirectedGraph<String, DefaultEdge> g = new DefaultDirectedGraph<String, DefaultEdge>(
-				DefaultEdge.class);
-		g.addVertex(V1);
-		g.addVertex(V2);
-		g.addVertex(V3);
-		g.addVertex(V4);
-
-		g.addEdge(V1, V2);
-		g.addEdge(V2, V3);
-		g.addEdge(V3, V1); // strongly connected
-
-		g.addEdge(V1, V4);
-		g.addEdge(V2, V4);
-		g.addEdge(V3, V4); // weakly connected
-
-		StrongConnectivityInspector<String, DefaultEdge> inspector = new StrongConnectivityInspector<String, DefaultEdge>(
-				g);
-
-		// convert from List to Set because we need to ignore order
-		// during comparison
-		Set<Set<String>> actualSets = new HashSet<Set<String>>(
-				inspector.stronglyConnectedSets());
-
-		// construct the expected answer
-		Set<Set<String>> expectedSets = new HashSet<Set<String>>();
-		Set<String> set = new HashSet<String>();
-		set.add(V1);
-		set.add(V2);
-		set.add(V3);
-		expectedSets.add(set);
-		set = new HashSet<String>();
-		set.add(V4);
-		expectedSets.add(set);
-
-		assertEquals(expectedSets, actualSets);
-
-		actualSets.clear();
-
-		List<DirectedSubgraph<String, DefaultEdge>> subgraphs = inspector
-				.stronglyConnectedSubgraphs();
-
-		for (DirectedSubgraph<String, DefaultEdge> sg : subgraphs) {
-			actualSets.add(sg.vertexSet());
-
-			StrongConnectivityInspector<String, DefaultEdge> ci = new StrongConnectivityInspector<String, DefaultEdge>(
-					sg);
-			assertTrue(ci.isStronglyConnected());
-		}
-
-		assertEquals(expectedSets, actualSets);
-	}
-
-	public void testStronglyConnected4() {
-		DefaultDirectedGraph<Integer, String> graph = new DefaultDirectedGraph<Integer, String>(
-				new EdgeFactory<Integer, String>() {
-					public String createEdge(Integer from, Integer to) {
-						return (from + "->" + to).intern();
-					}
-				});
-
-		new RingGraphGenerator<Integer, String>(3).generateGraph(graph,
-				new VertexFactory<Integer>() {
-					private int i = 0;
-
-					public Integer createVertex() {
-						return i++;
-					}
-				}, null);
-
-		StrongConnectivityInspector<Integer, String> sc = new StrongConnectivityInspector<Integer, String>(
-				graph);
-		Set<Set<Integer>> expected = new HashSet<Set<Integer>>();
-		expected.add(graph.vertexSet());
-		assertEquals(expected,
-				new HashSet<Set<Integer>>(sc.stronglyConnectedSets()));
-	}
-
-	
-	
 	// ~ Test cases for isComplete / incompleteVertices methods
 	// ---------------------------------------------
-	
 	public void testUndirectedGraphWithOneVertex_is_Complete() {
 		UndirectedGraph<String, DefaultEdge> g = 
 				this.createUndirectedGraph(1);
@@ -352,7 +204,6 @@ public class ConnectivityInspectorTest extends TestCase {
 		
 		assertTrue(inspector.incompleteVertices().isEmpty());
 	}
-
 	public void testUndirectedGraphWithTwoVerticesAndNoEdges_isNot_Complete() {
 		UndirectedGraph<String, DefaultEdge> g = 
 				this.createUndirectedGraph(2);
@@ -367,7 +218,6 @@ public class ConnectivityInspectorTest extends TestCase {
 		assertTrue(set.contains(V1));
 		assertTrue(set.contains(V2));
 	}
-
 	public void testUndirectedGraphWithTwoVertices_And_OneEdge_is_Complete() {
 		UndirectedGraph<String, DefaultEdge> g = 
 				this.createUndirectedGraph(2);
@@ -376,7 +226,6 @@ public class ConnectivityInspectorTest extends TestCase {
 
 		assertTrue(inspector.isComplete());
 	}
-
 	public void testDirectedGraphWithOneVertex_is_Complete() {
 		DirectedGraph<String, DefaultEdge> g = this.createDirectedGraph(1);
 		inspector = new ConnectivityInspector<String, DefaultEdge>(g);
@@ -386,7 +235,6 @@ public class ConnectivityInspectorTest extends TestCase {
 		Set<String> set = inspector.incompleteVertices();
 		assertTrue(set.isEmpty());
 	}
-
 	public void testDirectedGraphWithTwoVertices_and_OneEdge_isNot_Complete() {
 		DirectedGraph<String, DefaultEdge> g = this.createDirectedGraph(2);
 		g.addEdge(V1, V2);
@@ -398,7 +246,6 @@ public class ConnectivityInspectorTest extends TestCase {
 		assertEquals(1, set.size());
 		assertTrue(set.contains(V2));
 	}
-
 	public void testDirectedGraphWithTwoVertices_and_twoEdges_is_Complete() {
 		DirectedGraph<String, DefaultEdge> g = this.createDirectedGraph(2);
 		g.addEdge(V1, V2);
@@ -409,7 +256,6 @@ public class ConnectivityInspectorTest extends TestCase {
 
 		assertTrue(inspector.incompleteVertices().isEmpty());
 	}
-
 	public void testDirectedGraphPartlyIncomplete() {
 		DirectedGraph<String, DefaultEdge> g = this.createDirectedGraph(3);
 		inspector = new ConnectivityInspector<String, DefaultEdge>(g);
@@ -423,7 +269,6 @@ public class ConnectivityInspectorTest extends TestCase {
 		Set<String> set = inspector.incompleteVertices();
 		assertTrue(set.toString(), set.contains(V3));
 	}
-
 	public void testAllDirectedGeneratedCompleteGraphs_are_Complete() {
 
 		for (int vertices = 1; vertices < 20; vertices++) {
@@ -442,7 +287,6 @@ public class ConnectivityInspectorTest extends TestCase {
 			assertTrue(inspector.isComplete());
 		}
 	}
-
 	public void testAllUndirectedGeneratedCompleteGraphs_are_Complete() {
 
 		for (int vertices = 1; vertices < 20; vertices++) {
@@ -461,7 +305,6 @@ public class ConnectivityInspectorTest extends TestCase {
 			assertTrue(inspector.isComplete());
 		}
 	}
-	
 	public void testMultigraph_NoMultipleEdges() {
 		Multigraph<String, DefaultEdge> mg = new Multigraph<String, DefaultEdge>(DefaultEdge.class);
 		inspector = new ConnectivityInspector<String, DefaultEdge>(mg);
@@ -476,7 +319,6 @@ public class ConnectivityInspectorTest extends TestCase {
 		mg.addEdge(V2, V3);
 		assertEquals(true, inspector.isComplete());
 	}
-
 	public void testMultigraph_WithMultipleEdges() {
 		Multigraph<String, DefaultEdge> mg = new Multigraph<String, DefaultEdge>(DefaultEdge.class);
 		inspector = new ConnectivityInspector<String, DefaultEdge>(mg);
@@ -503,7 +345,6 @@ public class ConnectivityInspectorTest extends TestCase {
 		incompleteVertices = inspector.incompleteVertices();
 		assertEquals(0, incompleteVertices.size());
 	}
-	
 	public void testSelfLoops_in_DefaultDirectedGraph() {
 		DefaultDirectedGraph<String, DefaultEdge> dg = 
 				new DefaultDirectedGraph<String, DefaultEdge>(DefaultEdge.class);
@@ -546,12 +387,8 @@ public class ConnectivityInspectorTest extends TestCase {
 		assertEquals(0, inspector.incompleteVertices().size());
 
 	}
-
-
-	
 	// ~ Helper methods to create graphs
 	// ---------------------------------------------
-	
 	private UndirectedGraph<String, DefaultEdge> createUndirectedGraph(int vertices) 
 	{
 		UndirectedGraph<String, DefaultEdge> g = 
@@ -561,7 +398,6 @@ public class ConnectivityInspectorTest extends TestCase {
 		
 		return g;
 	}
-	
 	private DirectedGraph<String, DefaultEdge> createDirectedGraph(int vertices)
 	{
 		DirectedGraph<String, DefaultEdge> g = 
@@ -571,13 +407,11 @@ public class ConnectivityInspectorTest extends TestCase {
 		
 		return g;
 	}
-	
 	private void addVertices(int vertices, Graph<String, DefaultEdge> g) {
 		for (int i = 0; i < vertices; i++) {
 			g.addVertex(Vertices[i]);
 		}
 	}
-
 	class SimpleVertexFactory implements VertexFactory<String> {
 		private int i = 0;
 
@@ -586,119 +420,15 @@ public class ConnectivityInspectorTest extends TestCase {
 		}
 
 	}
-=======
-public class ConnectivityInspectorTest
-    extends TestCase
-{
     // ~ Static fields/initializers ---------------------------------------------
-
-    private static final String V1 = "v1";
-    private static final String V2 = "v2";
-    private static final String V3 = "v3";
-    private static final String V4 = "v4";
-
     // ~ Instance fields --------------------------------------------------------
-
-    //
-    DefaultEdge e1;
-    DefaultEdge e2;
-    DefaultEdge e3;
-    DefaultEdge e3_b;
-    DefaultEdge u;
-
     // ~ Methods ----------------------------------------------------------------
-
-    /**
-     * .
-     *
-     * @return a graph
-     */
-    public Pseudograph<String, DefaultEdge> create()
-    {
-        Pseudograph<String, DefaultEdge> g = new Pseudograph<>(DefaultEdge.class);
-
-        assertEquals(0, g.vertexSet().size());
-        g.addVertex(V1);
-        assertEquals(1, g.vertexSet().size());
-        g.addVertex(V2);
-        assertEquals(2, g.vertexSet().size());
-        g.addVertex(V3);
-        assertEquals(3, g.vertexSet().size());
-        g.addVertex(V4);
-        assertEquals(4, g.vertexSet().size());
-
-        assertEquals(0, g.edgeSet().size());
-
-        e1 = g.addEdge(V1, V2);
-        assertEquals(1, g.edgeSet().size());
-
-        e2 = g.addEdge(V2, V3);
-        assertEquals(2, g.edgeSet().size());
-
-        e3 = g.addEdge(V3, V1);
-        assertEquals(3, g.edgeSet().size());
-
-        e3_b = g.addEdge(V3, V1);
-        assertEquals(4, g.edgeSet().size());
-        assertNotNull(e3_b);
-
-        u = g.addEdge(V1, V1);
-        assertEquals(5, g.edgeSet().size());
-        u = g.addEdge(V1, V1);
-        assertEquals(6, g.edgeSet().size());
-
-        return g;
-    }
-
     /**
      * .
      */
-    public void testDirectedGraph()
-    {
-        ListenableDirectedGraph<String, DefaultEdge> g =
-            new ListenableDirectedGraph<>(DefaultEdge.class);
-        g.addVertex(V1);
-        g.addVertex(V2);
-        g.addVertex(V3);
-
-        g.addEdge(V1, V2);
-
-        ConnectivityInspector<String, DefaultEdge> inspector = new ConnectivityInspector<>(g);
-        g.addGraphListener(inspector);
-
-        assertEquals(false, inspector.isGraphConnected());
-
-        g.addEdge(V1, V3);
-
-        assertEquals(true, inspector.isGraphConnected());
-    }
-
     /**
      * .
      */
-    public void testIsGraphConnected()
-    {
-        Pseudograph<String, DefaultEdge> g = create();
-        ConnectivityInspector<String, DefaultEdge> inspector = new ConnectivityInspector<>(g);
-
-        assertEquals(false, inspector.isGraphConnected());
-
-        g.removeVertex(V4);
-        inspector = new ConnectivityInspector<>(g);
-        assertEquals(true, inspector.isGraphConnected());
-
-        g.removeVertex(V1);
-        assertEquals(1, g.edgeSet().size());
-
-        g.removeEdge(e2);
-        g.addEdge(V2, V2);
-        assertEquals(1, g.edgeSet().size());
-
-        inspector = new ConnectivityInspector<>(g);
-        assertEquals(false, inspector.isGraphConnected());
-    }
-
->>>>>>> 213a915e30ba0f68cd29f1b7ca2a53588539403a
 }
 
 // End ConnectivityInspectorTest.java
