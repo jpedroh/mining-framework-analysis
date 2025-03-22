@@ -54,62 +54,46 @@ public class Context {
 	public final Schema getTargetSchema() {
 		return targetSchema;
 	}
-
 	Graph targetGraph = null;
-
 	public enum TransformationPhase {
 		SCHEMA, GRAPH
 	}
-
 	TransformationPhase phase = TransformationPhase.SCHEMA;
-
 	/**
 	 * @return the transformation phase
 	 */
 	public final TransformationPhase getPhase() {
 		return phase;
 	}
-
 	private String targetSchemaName;
 	private String targetGraphClassName;
-
 	/**
 	 * saves for nested transformations if the actual is the outermost one
 	 */
 	boolean outermost = true;
-
 	/**
 	 * Maps from {@link AttributedElementClass} to a map, mapping old elements
 	 * to their images. (zeta-reverse)
 	 */
-	private Map<AttributedElementClass<?, ?>, PMap<Object, AttributedElement<?, ?>>> imgMap = new HashMap<AttributedElementClass<?, ?>, PMap<Object, AttributedElement<?, ?>>>();
-
 	/**
 	 * Maps from {@link AttributedElementClass} to a map, mapping new elements
 	 * to the elements they were created for (their archetypes). (zeta)
 	 */
-	private Map<AttributedElementClass<?, ?>, PMap<AttributedElement<?, ?>, Object>> archMap = new HashMap<AttributedElementClass<?, ?>, PMap<AttributedElement<?, ?>, Object>>();
-
 	private final Map<String, Object> greqlExtraVars = new HashMap<String, Object>();
 	private final Set<String> greqlImports = new HashSet<String>();
-
 	final void setGReQLVariable(String name, Object val) {
 		greqlExtraVars.put(name, val);
 	}
-
 	final void setGReQLVariable(String name, String greqlExpression) {
 		greqlExtraVars.put(name, evaluateGReQLQuery(greqlExpression));
 	}
-
 	final void setGReQLHelper(String name, String greqlExpression) {
 		ensureGreqlEvaluator();
 		eval.setSubQuery(name, greqlExpression);
 	}
-
 	final void addGReQLImport(String qualifiedName) {
 		greqlImports.add(qualifiedName);
 	}
-
 	private final String getGreqlImportString(Graph graph) {
 		StringBuilder sb = new StringBuilder();
 		for (String s : greqlImports) {
@@ -132,15 +116,6 @@ public class Context {
 		}
 		return sb.toString();
 	}
-
-	/**
-	 * Creates a new Context object
-	 *
-	 * @param targetSchemaName
-	 *            The name of the target schema
-	 * @param targetGraphClassName
-	 *            The name of the target graph class
-	 */
 	public Context(String targetSchemaName, String targetGraphClassName) {
 		this.targetSchemaName = targetSchemaName;
 		this.targetGraphClassName = targetGraphClassName;
@@ -159,7 +134,6 @@ public class Context {
 		// counted to the transformation time...
 		ensureGreqlEvaluator();
 	}
-
 	/**
 	 * Creates a new Context object with the given target schema.
 	 */
@@ -171,7 +145,6 @@ public class Context {
 		ensureGreqlEvaluator();
 
 	}
-
 	/**
 	 * Creates a new Context object with the given graph set as source and
 	 * target. So this is useful only for in-place transforms.
@@ -183,7 +156,6 @@ public class Context {
 		// counted to the transformation time...
 		ensureGreqlEvaluator();
 	}
-
 	/**
 	 * @param aec
 	 *            the AttributedElementClass for which to get the archMap
@@ -199,7 +171,6 @@ public class Context {
 		}
 		return result;
 	}
-
 	/**
 	 * @param aec
 	 *            the AttributedElementClass for which to get the archMap
@@ -216,21 +187,11 @@ public class Context {
 		}
 		return result;
 	}
-
-	/**
-	 * Ensures that theres a function for this attributed element class, even
-	 * though this function may be empty.
-	 *
-	 * @param aec
-	 *            the AttributedElementClass for which to ensure the
-	 *            archMap/imgMap mappings
-	 */
 	final void ensureMappings(AttributedElementClass<?, ?> aec) {
 		getImg(aec);
 		getArch(aec);
 		// validateMappings();
 	}
-
 	/**
 	 * Ensures that theres a function for all attributed elements in the target
 	 * schema.
@@ -242,7 +203,6 @@ public class Context {
 			ensureMappings(gec);
 		}
 	}
-
 	public final void printImgMappings() {
 		System.out.println("Image Mappings:");
 		for (Entry<AttributedElementClass<?, ?>, PMap<Object, AttributedElement<?, ?>>> e : imgMap
@@ -259,13 +219,11 @@ public class Context {
 			}
 		}
 	}
-
 	final void addMapping(AttributedElementClass<?, ?> attrElemClass,
 			Object archetype, AttributedElement<?, ?> image) {
 		addMappingToClass(attrElemClass, archetype, image);
 		addMappingsToSuperClasses(attrElemClass, archetype, image);
 	}
-
 	private final void addMappingsToSuperClasses(
 			final AttributedElementClass<?, ?> subClass,
 			final Object archetype, final AttributedElement<?, ?> image) {
@@ -277,14 +235,12 @@ public class Context {
 			addMappingToClass(superClass, archetype, image);
 		}
 	}
-
 	private final void addMappingToClass(
 			AttributedElementClass<?, ?> attrElemClass, Object archetype,
 			AttributedElement<?, ?> image) {
 		addArchMapping(attrElemClass, image, archetype);
 		addImgMapping(attrElemClass, archetype, image);
 	}
-
 	private void addArchMapping(AttributedElementClass<?, ?> attrElemClass,
 			AttributedElement<?, ?> image, Object archetype) {
 		PMap<AttributedElement<?, ?>, Object> map = archMap.get(attrElemClass);
@@ -305,7 +261,6 @@ public class Context {
 		map = map.plus(image, archetype);
 		archMap.put(attrElemClass, map);
 	}
-
 	private void addImgMapping(AttributedElementClass<?, ?> attrElemClass,
 			Object archetype, AttributedElement<?, ?> image) {
 		PMap<Object, AttributedElement<?, ?>> map = imgMap.get(attrElemClass);
@@ -326,9 +281,7 @@ public class Context {
 		map = map.plus(archetype, image);
 		imgMap.put(attrElemClass, map);
 	}
-
 	private Random uniqueSeed = new Random();
-
 	/**
 	 * @return a String that is guaranteed to be unique (used for implicit
 	 *         archetypes)
@@ -342,7 +295,6 @@ public class Context {
 		sb.append("]-->");
 		return sb.toString();
 	}
-
 	public final void validateMappings() {
 		if (imgMap.size() != archMap.size()) {
 			@SuppressWarnings("rawtypes")
@@ -419,14 +371,6 @@ public class Context {
 			}
 		}
 	}
-
-	/**
-	 * Swap this context object. E.g. make the current target graph the default
-	 * source graph and reinitialize all member vars such as archMap/imgMap.
-	 * This is mainly useful for chaining multiple transformations.
-	 *
-	 * @return this context object itself
-	 */
 	public final Context swap() {
 		logger.info("Swapping context...");
 		logger.info("Old target schema name: "
@@ -458,14 +402,6 @@ public class Context {
 
 		return reset(true);
 	}
-
-	/**
-	 * Reset this context, so that the same context can be passed to another
-	 * transformation. This means, everything except the source graph is
-	 * cleared.
-	 *
-	 * @return the context
-	 */
 	public final Context reset(boolean forgetTargetSchema) {
 		// reinitialize outermost/phase
 		outermost = true;
@@ -492,26 +428,9 @@ public class Context {
 
 		return this;
 	}
-
-	/**
-	 * Sets the (default) source graph for the transformation
-	 *
-	 * @param sourceGraph
-	 *            the source graph
-	 */
 	public final void setSourceGraph(Graph sourceGraph) {
 		addSourceGraph(DEFAULT_SOURCE_GRAPH_ALIAS, sourceGraph);
 	}
-
-	/**
-	 * adds a source graph for the transformation
-	 *
-	 * @param alias
-	 *            the alias to access this source graph (used as prefix #name#
-	 *            in semantic expressions)
-	 * @param sourceGraph
-	 *            the source graph
-	 */
 	public final void addSourceGraph(String alias, Graph sourceGraph) {
 		if (sourceGraphs.containsKey(alias)) {
 			throw new GReTLException(this,
@@ -541,32 +460,21 @@ public class Context {
 
 		sourceGraphs.put(alias, sourceGraph);
 	}
-
 	/**
 	 * @return a map, mapping aliases to source graphs
 	 */
 	public final Map<String, Graph> getSourceGraphs() {
 		return sourceGraphs;
 	}
-
 	public final Graph getSourceGraph() {
 		return getSourceGraph(DEFAULT_SOURCE_GRAPH_ALIAS);
 	}
-
 	public final Graph getSourceGraph(String alias) {
 		return sourceGraphs.get(alias);
 	}
-
-	/**
-	 * returns the target graph of the transformation if no target graph exists,
-	 * it will be created
-	 *
-	 * @return the target graph
-	 */
 	public final Graph getTargetGraph() {
 		return targetGraph;
 	}
-
 	/**
 	 * @param targetGraph
 	 *            the targetGraph to set
@@ -575,7 +483,6 @@ public class Context {
 		this.targetGraph = targetGraph;
 		targetSchema = targetGraph.getSchema();
 	}
-
 	/**
 	 * creates a blank target Schema
 	 */
@@ -585,24 +492,27 @@ public class Context {
 		GraphClass gc = targetSchema.createGraphClass(targetGraphClassName);
 		ensureMappings(gc);
 	}
-
 	/**
 	 * creates the target graph from the target schema
 	 */
 	final void createTargetGraph() {
+		Method graphCreateMethod;
 		targetSchema.finish();
 		try {
 			// Try to use existing compiled schema
 			targetSchema.getGraphClass().getSchemaClass();
+			graphCreateMethod = targetSchema
+					.getGraphCreateMethod(ImplementationType.STANDARD);
 			logger.info("Schema '" + targetSchema.getQualifiedName()
 					+ "' is already compiled or in the CLASSPATH...");
+			targetGraph = (Graph) graphCreateMethod.invoke(
+					ImplementationType.STANDARD, null, 500, 500);
 			targetSchema = targetGraph.getSchema();
 			targetSchema.finish();
-			targetGraph = targetSchema.createGraph(ImplementationType.STANDARD);
 		} catch (Exception e) {
 			// fall back to generic graph
 			targetGraph = targetSchema.createGraph(ImplementationType.GENERIC,
-					"", 500, 500);
+					500, 500);
 		}
 
 		for (Entry<String, Graph> e : sourceGraphs.entrySet()) {
@@ -617,6 +527,69 @@ public class Context {
 			}
 		}
 	}
+	/**
+	 * This lets you set the directory where to commit the target schema code
+	 * to. Normally, the code isn't committed at all but compiled in memory, but
+	 * you can use this for debugging purposes.
+	 * 
+	 * The value <code>null</code> (default) means don't commit.
+	 * 
+	 * @param targetSchemaCodeDirectory
+	 *            the targetSchemaCodeDirectory to set
+	 */
+	private Map<AttributedElementClass<?, ?>, PMap<Object, AttributedElement<?, ?>>> imgMap = new HashMap<AttributedElementClass<?, ?>, PMap<Object, AttributedElement<?, ?>>>();
+	private Map<AttributedElementClass<?, ?>, PMap<AttributedElement<?, ?>, Object>> archMap = new HashMap<AttributedElementClass<?, ?>, PMap<AttributedElement<?, ?>, Object>>();
+	/**
+	 * Creates a new Context object
+	 * 
+	 * @param targetSchemaName
+	 *            The name of the target schema
+	 * @param targetGraphClassName
+	 *            The name of the target graph class
+	 */
+	/**
+	 * Ensures that theres a function for this attributed element class, even
+	 * though this function may be empty.
+	 * 
+	 * @param aec
+	 *            the AttributedElementClass for which to ensure the
+	 *            archMap/imgMap mappings
+	 */
+	/**
+	 * Swap this context object. E.g. make the current target graph the default
+	 * source graph and reinitialize all member vars such as archMap/imgMap.
+	 * This is mainly useful for chaining multiple transformations.
+	 * 
+	 * @return this context object itself
+	 */
+	/**
+	 * Reset this context, so that the same context can be passed to another
+	 * transformation. This means, everything except the source graph is
+	 * cleared.
+	 * 
+	 * @return the context
+	 */
+	/**
+	 * Sets the (default) source graph for the transformation
+	 * 
+	 * @param sourceGraph
+	 *            the source graph
+	 */
+	/**
+	 * adds a source graph for the transformation
+	 * 
+	 * @param alias
+	 *            the alias to access this source graph (used as prefix #name#
+	 *            in semantic expressions)
+	 * @param sourceGraph
+	 *            the source graph
+	 */
+	/**
+	 * returns the target graph of the transformation if no target graph exists,
+	 * it will be created
+	 * 
+	 * @return the target graph
+	 */
 
 	public enum GReTLVariableType {
 		ARCH, IMG

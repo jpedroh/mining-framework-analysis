@@ -54,8 +54,8 @@ public class GenericEdgeImpl extends EdgeImpl {
 											getSchema())));
 			return;
 		}
-		throw new NoSuchAttributeException(this + " doesn't have an attribute "
-				+ attributeName);
+		throw new NoSuchAttributeException(this
+				+ " doesn't have an attribute " + attributeName);
 
 	}
 
@@ -88,9 +88,25 @@ public class GenericEdgeImpl extends EdgeImpl {
 
 	@Override
 	public AggregationKind getAggregationKind() {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1599d6b3faa82c01a998c961c15a55304d634e59/src/de/uni_koblenz/jgralab/impl/generic/GenericEdgeImpl.java/left.java
+		AggregationKind fromAK = getAttributedElementClass()
+				.getFrom()
+||||||| /usr/src/app/output/jgralab/jgralab/1599d6b3faa82c01a998c961c15a55304d634e59/src/de/uni_koblenz/jgralab/impl/generic/GenericEdgeImpl.java/base.java
+		AggregationKind fromAK = ((EdgeClass) getAttributedElementClass())
+				.getFrom()
+=======
 		AggregationKind fromAK = (getAttributedElementClass()).getFrom()
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1599d6b3faa82c01a998c961c15a55304d634e59/src/de/uni_koblenz/jgralab/impl/generic/GenericEdgeImpl.java/right.java
 				.getAggregationKind();
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1599d6b3faa82c01a998c961c15a55304d634e59/src/de/uni_koblenz/jgralab/impl/generic/GenericEdgeImpl.java/left.java
+		AggregationKind toAK = getAttributedElementClass()
+				.getTo()
+||||||| /usr/src/app/output/jgralab/jgralab/1599d6b3faa82c01a998c961c15a55304d634e59/src/de/uni_koblenz/jgralab/impl/generic/GenericEdgeImpl.java/base.java
+		AggregationKind toAK = ((EdgeClass) getAttributedElementClass())
+				.getTo()
+=======
 		AggregationKind toAK = (getAttributedElementClass()).getTo()
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1599d6b3faa82c01a998c961c15a55304d634e59/src/de/uni_koblenz/jgralab/impl/generic/GenericEdgeImpl.java/right.java
 				.getAggregationKind();
 		return fromAK != AggregationKind.NONE ? fromAK
 				: (toAK != AggregationKind.NONE ? toAK : AggregationKind.NONE);
@@ -98,12 +114,24 @@ public class GenericEdgeImpl extends EdgeImpl {
 
 	@Override
 	public AggregationKind getAlphaAggregationKind() {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1599d6b3faa82c01a998c961c15a55304d634e59/src/de/uni_koblenz/jgralab/impl/generic/GenericEdgeImpl.java/left.java
+		return getAttributedElementClass().getFrom().getAggregationKind();
+||||||| /usr/src/app/output/jgralab/jgralab/1599d6b3faa82c01a998c961c15a55304d634e59/src/de/uni_koblenz/jgralab/impl/generic/GenericEdgeImpl.java/base.java
+		return ((EdgeClass) getAttributedElementClass()).getFrom().getAggregationKind();
+=======
 		return (getAttributedElementClass()).getFrom().getAggregationKind();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1599d6b3faa82c01a998c961c15a55304d634e59/src/de/uni_koblenz/jgralab/impl/generic/GenericEdgeImpl.java/right.java
 	}
 
 	@Override
 	public AggregationKind getOmegaAggregationKind() {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1599d6b3faa82c01a998c961c15a55304d634e59/src/de/uni_koblenz/jgralab/impl/generic/GenericEdgeImpl.java/left.java
+		return getAttributedElementClass().getTo().getAggregationKind();
+||||||| /usr/src/app/output/jgralab/jgralab/1599d6b3faa82c01a998c961c15a55304d634e59/src/de/uni_koblenz/jgralab/impl/generic/GenericEdgeImpl.java/base.java
+		return ((EdgeClass) getAttributedElementClass()).getTo().getAggregationKind();
+=======
 		return (getAttributedElementClass()).getTo().getAggregationKind();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1599d6b3faa82c01a998c961c15a55304d634e59/src/de/uni_koblenz/jgralab/impl/generic/GenericEdgeImpl.java/right.java
 	}
 
 	@SuppressWarnings("unchecked")

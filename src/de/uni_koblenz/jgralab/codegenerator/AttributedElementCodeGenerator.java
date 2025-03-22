@@ -48,9 +48,9 @@ import de.uni_koblenz.jgralab.schema.VertexClass;
 
 /**
  * TODO add comment
- *
+ * 
  * @author ist@uni-koblenz.de
- *
+ * 
  */
 public class AttributedElementCodeGenerator extends CodeGenerator {
 
@@ -96,7 +96,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 		}
 	}
 
-	private static String getSchemaTypeName(AttributedElementClass<?, ?> aec) {
+	private static String getSchemaTypeName(AttributedElementClass aec) {
 		if (aec instanceof VertexClass) {
 			return "VertexClass";
 		} else if (aec instanceof EdgeClass) {
@@ -110,7 +110,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	 * Returns the absolute name of the given AttributdelementClass. The name is
 	 * composed of the package-prefix of the schema the class belongs to and the
 	 * qualified name of the class
-	 *
+	 * 
 	 * @param aec
 	 * @return
 	 */
@@ -146,7 +146,13 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createAttributedElementClassConstant() {
 		return new CodeSnippet(
 				true,
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1599d6b3faa82c01a998c961c15a55304d634e59/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/left.java
+				"static final #jgSchemaPackage#.#schemaTypeName# ATTRIBUTED_ELEMENT_CLASS"
+||||||| /usr/src/app/output/jgralab/jgralab/1599d6b3faa82c01a998c961c15a55304d634e59/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/base.java
+				"static final #jgSchemaPackage#.AttributedElementClass ATTRIBUTED_ELEMENT_CLASS"
+=======
 				"public static final #jgSchemaPackage#.#schemaElementClass# ATTRIBUTED_ELEMENT_CLASS"
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1599d6b3faa82c01a998c961c15a55304d634e59/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/right.java
 						+ " = #schemaPackageName#.#schemaName#.instance().#schemaVariableName#;");
 	}
 
@@ -235,7 +241,13 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	protected CodeBlock createGetAttributedElementClassMethod() {
 		return new CodeSnippet(
 				true,
+<<<<<<< /usr/src/app/output/jgralab/jgralab/1599d6b3faa82c01a998c961c15a55304d634e59/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/left.java
+				"public final #jgSchemaPackage#.#schemaTypeName# getAttributedElementClass() {",
+||||||| /usr/src/app/output/jgralab/jgralab/1599d6b3faa82c01a998c961c15a55304d634e59/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/base.java
+				"public final #jgSchemaPackage#.AttributedElementClass getAttributedElementClass() {",
+=======
 				"@Override",
+>>>>>>> /usr/src/app/output/jgralab/jgralab/1599d6b3faa82c01a998c961c15a55304d634e59/src/de/uni_koblenz/jgralab/codegenerator/AttributedElementCodeGenerator.java/right.java
 				"public final #jgSchemaPackage#.#schemaElementClass# getAttributedElementClass() {",
 				"\treturn #javaClassName#.ATTRIBUTED_ELEMENT_CLASS;", "}");
 	}
@@ -524,7 +536,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param attrSet
 	 * @return
 	 */
@@ -626,7 +638,7 @@ public class AttributedElementCodeGenerator extends CodeGenerator {
 	/**
 	 * Generates method attributes() which returns a set of all versioned
 	 * attributes for an <code>AttributedElement</code>.
-	 *
+	 * 
 	 * @param attributeList
 	 * @return
 	 */
