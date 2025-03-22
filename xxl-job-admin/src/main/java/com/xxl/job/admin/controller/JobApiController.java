@@ -1,5 +1,4 @@
 package com.xxl.job.admin.controller;
-
 import com.xxl.job.admin.controller.annotation.PermissionLimit;
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.core.biz.AdminBiz;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -19,79 +17,53 @@ import java.util.List;
 /**
  * Created by xuxueli on 17/5/10.
  */
-@Controller
-@RequestMapping("/api")
-public class JobApiController {
+@Controller @RequestMapping(value = "/api") public class JobApiController {
 
-    @Resource
-    private AdminBiz adminBiz;
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/8512a34469bf574b199268d855f7fd86a18d8fcc/xxl-job-admin/src/main/java/com/xxl/job/admin/controller/JobApiController.java/left.java
+  @Override public void afterPropertiesSet() {
+  }
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
 
 
-    // ---------------------- admin biz ----------------------
+  @Resource private AdminBiz adminBiz;
 
-    /**
+  /**
      * callback
      *
      * @param callbackParamList
      * @return
      */
-    @RequestMapping("/callback")
-    @ResponseBody
-    @PermissionLimit(limit=false)
-    public ReturnT<String> callback(HttpServletRequest request, @RequestBody List<HandleCallbackParam> callbackParamList) {
-
-        if (XxlJobAdminConfig.getAdminConfig().getAccessToken()!=null
-                && XxlJobAdminConfig.getAdminConfig().getAccessToken().trim().length()>0
-                && !XxlJobAdminConfig.getAdminConfig().getAccessToken().equals(request.getHeader(XxlJobRemotingUtil.XXL_RPC_ACCESS_TOKEN))) {
-            return new ReturnT<String>(ReturnT.FAIL_CODE, "The access token is wrong.");
-        }
-
-        return adminBiz.callback(callbackParamList);
+  @RequestMapping(value = "/callback") @ResponseBody @PermissionLimit(limit = false) public ReturnT<String> callback(HttpServletRequest request, @RequestBody List<HandleCallbackParam> callbackParamList) {
+    if (XxlJobAdminConfig.getAdminConfig().getAccessToken() != null && XxlJobAdminConfig.getAdminConfig().getAccessToken().trim().length() > 0 && !XxlJobAdminConfig.getAdminConfig().getAccessToken().equals(request.getHeader(XxlJobRemotingUtil.XXL_RPC_ACCESS_TOKEN))) {
+      return new ReturnT<String>(ReturnT.FAIL_CODE, "The access token is wrong.");
     }
+    return adminBiz.callback(callbackParamList);
+  }
 
-
-
-    /**
+  /**
      * registry
      *
      * @param registryParam
      * @return
      */
-    @RequestMapping("/registry")
-    @ResponseBody
-    @PermissionLimit(limit=false)
-    public ReturnT<String> registry(HttpServletRequest request, @RequestBody RegistryParam registryParam) {
-
-        if (XxlJobAdminConfig.getAdminConfig().getAccessToken()!=null
-                && XxlJobAdminConfig.getAdminConfig().getAccessToken().trim().length()>0
-                && !XxlJobAdminConfig.getAdminConfig().getAccessToken().equals(request.getHeader(XxlJobRemotingUtil.XXL_RPC_ACCESS_TOKEN))) {
-            return new ReturnT<String>(ReturnT.FAIL_CODE, "The access token is wrong.");
-        }
-
-        return adminBiz.registry(registryParam);
+  @RequestMapping(value = "/registry") @ResponseBody @PermissionLimit(limit = false) public ReturnT<String> registry(HttpServletRequest request, @RequestBody RegistryParam registryParam) {
+    if (XxlJobAdminConfig.getAdminConfig().getAccessToken() != null && XxlJobAdminConfig.getAdminConfig().getAccessToken().trim().length() > 0 && !XxlJobAdminConfig.getAdminConfig().getAccessToken().equals(request.getHeader(XxlJobRemotingUtil.XXL_RPC_ACCESS_TOKEN))) {
+      return new ReturnT<String>(ReturnT.FAIL_CODE, "The access token is wrong.");
     }
+    return adminBiz.registry(registryParam);
+  }
 
-    /**
+  /**
      * registry remove
      *
      * @param registryParam
      * @return
      */
-    @RequestMapping("/registryRemove")
-    @ResponseBody
-    @PermissionLimit(limit=false)
-    public ReturnT<String> registryRemove(HttpServletRequest request, @RequestBody RegistryParam registryParam) {
-
-        if (XxlJobAdminConfig.getAdminConfig().getAccessToken()!=null
-                && XxlJobAdminConfig.getAdminConfig().getAccessToken().trim().length()>0
-                && !XxlJobAdminConfig.getAdminConfig().getAccessToken().equals(request.getHeader(XxlJobRemotingUtil.XXL_RPC_ACCESS_TOKEN))) {
-            return new ReturnT<String>(ReturnT.FAIL_CODE, "The access token is wrong.");
-        }
-
-        return adminBiz.registryRemove(registryParam);
+  @RequestMapping(value = "/registryRemove") @ResponseBody @PermissionLimit(limit = false) public ReturnT<String> registryRemove(HttpServletRequest request, @RequestBody RegistryParam registryParam) {
+    if (XxlJobAdminConfig.getAdminConfig().getAccessToken() != null && XxlJobAdminConfig.getAdminConfig().getAccessToken().trim().length() > 0 && !XxlJobAdminConfig.getAdminConfig().getAccessToken().equals(request.getHeader(XxlJobRemotingUtil.XXL_RPC_ACCESS_TOKEN))) {
+      return new ReturnT<String>(ReturnT.FAIL_CODE, "The access token is wrong.");
     }
-
-
-    // ---------------------- job biz ----------------------
-
+    return adminBiz.registryRemove(registryParam);
+  }
 }
