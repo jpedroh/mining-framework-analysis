@@ -86,15 +86,18 @@ public class XxlJobExecutor  {
         initRpcProvider(ip, port, appName, accessToken);
     }
     public void destroy(){
-
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/35bceaac0b87f9ab7b5fe44c3ea355afd45b52a0/xxl-job-core/src/main/java/com/xxl/job/core/executor/XxlJobExecutor.java/left.java
         List<JobThread> runningThreads = new ArrayList<>(jobThreadRepository.values());
         if (logger.isInfoEnabled()) {
             logger.info("running threads {}", runningThreads);
         }
 
+||||||| /usr/src/app/output/xuxueli/xxl-job/35bceaac0b87f9ab7b5fe44c3ea355afd45b52a0/xxl-job-core/src/main/java/com/xxl/job/core/executor/XxlJobExecutor.java/base.java
+=======
         // destory executor-server
         stopRpcProvider();
 
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/35bceaac0b87f9ab7b5fe44c3ea355afd45b52a0/xxl-job-core/src/main/java/com/xxl/job/core/executor/XxlJobExecutor.java/right.java
         // destory jobThreadRepository
         if (jobThreadRepository.size() > 0) {
             for (Map.Entry<Integer, JobThread> item: jobThreadRepository.entrySet()) {
