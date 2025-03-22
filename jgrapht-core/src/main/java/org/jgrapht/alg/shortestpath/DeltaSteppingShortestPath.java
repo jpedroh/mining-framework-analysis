@@ -33,25 +33,25 @@ import java.util.stream.Collectors;
 
 /**
  * An implementation of the parallel version of the delta-stepping algorithm.
- *
+ * <p>
  * <p>
  * The time complexity of the algorithm is
  * $O(\frac{(|V| + |E| + n_{\Delta} + m_{\Delta})}{p} + \frac{L}{\Delta}\cdot d\cdot l_{\Delta}\cdot \log n)$, where,
  * denoting $\Delta$-path as a path of total weight at most $\Delta$ with no edge repetition,
  * <ul>
- *      <li>$n_{\Delta}$ - number of vertices pairs (u,v), where u and v are connected by some $\Delta$-path.</li>
- *      <li>$m_{\Delta}$ - number of vertices triples (u,$v^{\prime}$,v), where u and $v^{\prime}$ are connected
- *      by some $\Delta$-path and edge ($v^{\prime}$,v) has weight at most $\Delta$.</li>
- *      <li>$L$ - maximal weight of a shortest path from selected source to any sink.</li>
- *      <li>$d$ - maximal edge degree.</li>
- *      <li>$l_{\Delta}$ - maximal number of edges in a $\Delta$-path $+1$.</li>
+ * <li>$n_{\Delta}$ - number of vertices pairs (u,v), where u and v are connected by some $\Delta$-path.</li>
+ * <li>$m_{\Delta}$ - number of vertices triples (u,$v^{\prime}$,v), where u and $v^{\prime}$ are connected
+ * by some $\Delta$-path and edge ($v^{\prime}$,v) has weight at most $\Delta$.</li>
+ * <li>$L$ - maximal weight of a shortest path from selected source to any sink.</li>
+ * <li>$d$ - maximal edge degree.</li>
+ * <li>$l_{\Delta}$ - maximal number of edges in a $\Delta$-path $+1$.</li>
  * </ul>
- *
+ * <p>
  * <p>
  * The algorithm is described in the paper: U. Meyer, P. Sanders,
  * $\Delta$-stepping: a parallelizable shortest path algorithm, Journal of Algorithms,
  * Volume 49, Issue 1, 2003, Pages 114-152, ISSN 0196-6774.
- *
+ * <p>
  * <p>
  * The algorithm solves the single source shortest path problem in a graph with no
  * negative weight edges. Its advantage of the {@link DijkstraShortestPath}
@@ -60,7 +60,7 @@ import java.util.stream.Collectors;
  * has high parallelism since all edges can be relaxed in parallel, the delta-stepping
  * introduces parameter delta, which, when chooses optimally, yields still good parallelism
  * and at the same time enables avoiding too many re-relaxations of the edges.
- *
+ * <p>
  * <p>
  * To prevent the necessity to synchronize threads the bucket structure is implemented here
  * as a map of vertices to their bucket indices. Furthermore, every time a vertex is inserted
@@ -95,7 +95,6 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      * Num of buckets in the bucket structure.
      */
     private int numOfBuckets;
-    private double maxEdgeWeight;
     /**
      * Map with light edges for each vertex. An edge is considered
      * light if its weight is less than or equal to {@link #delta}.
@@ -106,10 +105,9 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      * considered heavy if its weight is greater than {@link #delta}.
      */
     private Map<V, Set<E>> heavy;
-
     /**
      * Map that stores information about each vertex.
-     *
+     * <p>
      * <p>
      * In each triple the first value stands for the bucket index of a
      * vertex or $-1$ if a vertex does not belong to any bucket. The second
@@ -117,18 +115,22 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      * of each triple stands for the predecessor of a vertex in the the
      * shortest path tree. The second and the third values of each triple will
      * be used at the end of the computation to construct shortest paths tree.
-     *
+     * <p>
      * <p>
      * Keeping vertex information in an {@link AtomicReference} objects allows
      * to avoid threads synchronisation. Thus a thread can safely update
      * the information using standard CAS function.
      */
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/129fea2863aabe9261b3524e5bf4d91197e77b2b/jgrapht-core/src/main/java/org/jgrapht/alg/shortestpath/DeltaSteppingShortestPath.java/left.java
+    private Map<V, AtomicReference<Triple<Integer, Double, E>>> verticesDataMap;
+||||||| /usr/src/app/output/jgrapht/jgrapht/129fea2863aabe9261b3524e5bf4d91197e77b2b/jgrapht-core/src/main/java/org/jgrapht/alg/shortestpath/DeltaSteppingShortestPath.java/base.java
+    private Map<V, AtomicReference<Triple<Integer, Double, E>>> verticesDataMap;
+=======
     private Map<V, Triple<Integer, Double, E>> verticesDataMap;
-
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/129fea2863aabe9261b3524e5bf4d91197e77b2b/jgrapht-core/src/main/java/org/jgrapht/alg/shortestpath/DeltaSteppingShortestPath.java/right.java
     private ExecutorService executor;
     private ExecutorCompletionService<Void> completionService;
     private static final int NUMBER_OF_REQUESTS_PER_RELAX_TAKS = 2500;
-
     /**
      * Constructs a new instance of the algorithm for a given graph.
      * Initializes {@link #delta} to $0.0$ to preserve lazy computation style.
@@ -140,7 +142,6 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         delta = 0.0;
         init();
     }
-
     /**
      * Constructs a new instance of the algorithm for a given graph and delta.
      *
@@ -155,7 +156,6 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         this.delta = delta;
         init();
     }
-
     /**
      * Initializes {@link #light}, {@link #heavy} and {@link #verticesDataMap} fields.
      */
@@ -166,27 +166,18 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         completionService = new ExecutorCompletionService<>(executor);
     }
-
+    private void assertPositiveWeights() {
+        boolean allEdgesWithNonNegativeWeights = graph.edgeSet().stream()
+                .map(graph::getEdgeWeight).allMatch(weight -> weight >= 0);
+        if (!allEdgesWithNonNegativeWeights) {
+            throw new IllegalArgumentException(NEGATIVE_EDGE_WEIGHT_NOT_ALLOWED);
+        }
+    }
     /**
      * Calculates max edge weight in the {@link #graph}.
      *
      * @return max edge weight
      */
-    private double getMaxEdgeWeight() {
-        double result = 0.0;
-        double weight;
-        for (E defaultWeightedEdge : graph.edgeSet()) {
-            weight = graph.getEdgeWeight(defaultWeightedEdge);
-            if (weight < 0) {
-                throw new IllegalArgumentException(NEGATIVE_EDGE_WEIGHT_NOT_ALLOWED);
-            }
-            if (weight > result) {
-                result = weight;
-            }
-        }
-        return result;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -200,7 +191,6 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         }
         return getPaths(source).getPath(sink);
     }
-
     /**
      * {@inheritDoc}
      */
@@ -226,7 +216,6 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         }
         return new TreeSingleSourcePathsImpl<>(graph, source, distanceAndPredecessorMap);
     }
-
     /**
      * Calculates value of {@link #delta}. The value is calculated to
      * maximal edge weight divided by maximal out-degree in the {@link #graph}
@@ -234,6 +223,27 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      *
      * @return bucket width
      */
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/129fea2863aabe9261b3524e5bf4d91197e77b2b/jgrapht-core/src/main/java/org/jgrapht/alg/shortestpath/DeltaSteppingShortestPath.java/left.java
+    private double findDelta() {
+        Optional<Double> maxEdgeWeight = getMaxEdgeWeight();
+        if (maxEdgeWeight.isPresent()) {
+            int maxOutDegree = graph.vertexSet().stream().mapToInt(graph::outDegreeOf).max().orElse(0);
+            return maxEdgeWeight.get() / maxOutDegree;
+        } else {
+            return 1.0;
+        }
+    }
+||||||| /usr/src/app/output/jgrapht/jgrapht/129fea2863aabe9261b3524e5bf4d91197e77b2b/jgrapht-core/src/main/java/org/jgrapht/alg/shortestpath/DeltaSteppingShortestPath.java/base.java
+    private double findDelta() {
+        Optional<Double> maxEdgeWeight = getMaxEdgeWeight();
+        if (maxEdgeWeight.isPresent()) {
+            int maxOutDegree = graph.vertexSet().stream().mapToInt(graph::outDegreeOf).max().orElse(0);
+            return maxEdgeWeight.get() / maxOutDegree;
+        } else {
+            return 1.0;
+        }
+    }
+=======
     private double findDelta() {
         if (maxEdgeWeight == 0) {
             return 1.0;
@@ -242,7 +252,7 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
             return maxEdgeWeight / maxOutDegree;
         }
     }
-
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/129fea2863aabe9261b3524e5bf4d91197e77b2b/jgrapht-core/src/main/java/org/jgrapht/alg/shortestpath/DeltaSteppingShortestPath.java/right.java
     /**
      * Fills {@link #light}, {@link #heavy} and{@link #verticesDataMap} fields.
      */
@@ -262,7 +272,6 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
             }
         });
     }
-
     /**
      * Performs shortest paths computation.
      *
@@ -292,7 +301,6 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
             e.printStackTrace();
         }
     }
-
     /**
      * For each vertex v in {@code vertices} relaxes all edges emanating from v
      * that are present in {@code edgesKind#get(v)}.
@@ -314,7 +322,6 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
             }
         }
     }
-
     private List<Runnable> generateRelaxTasks(List<V> vertices, Map<V, Set<E>> edgesKind) {
         List<Runnable> tasks = new ArrayList<>();
         int begin = 0;
@@ -332,7 +339,6 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         }
         return tasks;
     }
-
     class RelaxTask implements Runnable {
         private List<V> vertices;
         Map<V, Set<E>> edgesKind;
@@ -346,12 +352,11 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
         public void run() {
             for (V v : vertices) {
                 for (E e : edgesKind.get(v)) {
-                    relax(Graphs.getOppositeVertex(graph, e, v), e, verticesDataMap.get(v).get().getSecond() + graph.getEdgeWeight(e));
+                    relax(Graphs.getOppositeVertex(graph, e, v), e, verticesDataMap.get(v).getSecond() + graph.getEdgeWeight(e));
                 }
             }
         }
     }
-
     /**
      * Performs relaxation in parallel-safe fashion. Vertex data {@code v} is
      * considered updated once either {@code distance} is greater than or equal
@@ -370,16 +375,11 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
             updated = !(distance < oldData.getSecond()) || verticesDataMap.replace(v, oldData, updatedData);
         }
     }
-
     /**
      * Calculates num of buckets in the bucket structure.
      *
      * @return num of buckets
      */
-    private int numOfBuckets() {
-        return (int) (Math.ceil(maxEdgeWeight / delta) + 1);
-    }
-
     /**
      * Calculates bucket index for a given {@code distance}.
      *
@@ -388,6 +388,46 @@ public class DeltaSteppingShortestPath<V, E> extends BaseShortestPathAlgorithm<V
      */
     private int bucketIndex(double distance) {
         return ((int) Math.round(distance / delta)) % numOfBuckets;
+    }
+    private double maxEdgeWeight;
+    /**
+     * Map that stores information about each vertex.
+     * <p>
+     * <p>
+     * In each triple the first value stands for the bucket index of a
+     * vertex or $-1$ if a vertex does not belong to any bucket. The second
+     * value stands for the tentative distance to a vertex. The third value
+     * of each triple stands for the predecessor of a vertex in the the
+     * shortest path tree. The second and the third values of each triple will
+     * be used at the end of the computation to construct shortest paths tree.
+     * <p>
+     * <p>
+     * Keeping vertex information in an {@link AtomicReference} objects allows
+     * to avoid threads synchronisation. Thus a thread can safely update
+     * the information using standard CAS function.
+     */
+    private double getMaxEdgeWeight() {
+        double result = 0.0;
+        double weight;
+        for (E defaultWeightedEdge : graph.edgeSet()) {
+            weight = graph.getEdgeWeight(defaultWeightedEdge);
+            if (weight < 0) {
+                throw new IllegalArgumentException(NEGATIVE_EDGE_WEIGHT_NOT_ALLOWED);
+            }
+            if (weight > result) {
+                result = weight;
+            }
+        }
+        return result;
+    }
+    /**
+     * {@inheritDoc}
+     */
+    /**
+     * {@inheritDoc}
+     */
+    private int numOfBuckets() {
+        return (int) (Math.ceil(maxEdgeWeight / delta) + 1);
     }
 
     /**
