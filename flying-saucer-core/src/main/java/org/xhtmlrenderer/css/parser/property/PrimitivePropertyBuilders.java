@@ -43,29 +43,22 @@ public class PrimitivePropertyBuilders {
                     IdentValue.DASHED, IdentValue.SOLID, IdentValue.DOUBLE,
                     IdentValue.GROOVE, IdentValue.RIDGE, IdentValue.INSET,
                     IdentValue.OUTSET });
-
     // thin | medium | thick
     public static final BitSet BORDER_WIDTHS = setFor(
             new IdentValue[] { IdentValue.THIN, IdentValue.MEDIUM, IdentValue.THICK });
-
     // normal | small-caps | inherit
     public static final BitSet FONT_VARIANTS = setFor(
             new IdentValue[] { IdentValue.NORMAL, IdentValue.SMALL_CAPS });
-
     // normal | italic | oblique | inherit
     public static final BitSet FONT_STYLES = setFor(
             new IdentValue[] { IdentValue.NORMAL, IdentValue.ITALIC, IdentValue.OBLIQUE });
-
     public static final BitSet FONT_WEIGHTS = setFor(
             new IdentValue[] { IdentValue.NORMAL, IdentValue.BOLD, IdentValue.BOLDER, IdentValue.LIGHTER });
-
     public static final BitSet PAGE_ORIENTATIONS = setFor(
             new IdentValue[] { IdentValue.AUTO, IdentValue.PORTRAIT, IdentValue.LANDSCAPE });
-
     // inside | outside | inherit
     public static final BitSet LIST_STYLE_POSITIONS = setFor(new IdentValue[] {
             IdentValue.INSIDE, IdentValue.OUTSIDE });
-
     // disc | circle | square | decimal
     // | decimal-leading-zero | lower-roman | upper-roman
     // | lower-greek | lower-latin | upper-latin | armenian
@@ -78,39 +71,32 @@ public class PrimitivePropertyBuilders {
             IdentValue.UPPER_LATIN, IdentValue.ARMENIAN,
             IdentValue.GEORGIAN, IdentValue.LOWER_ALPHA,
             IdentValue.UPPER_ALPHA, IdentValue.NONE });
-
     // repeat | repeat-x | repeat-y | no-repeat | inherit
     public static final BitSet BACKGROUND_REPEATS = setFor(
             new IdentValue[] {
                     IdentValue.REPEAT, IdentValue.REPEAT_X,
                     IdentValue.REPEAT_Y, IdentValue.NO_REPEAT });
-
     // scroll | fixed | inherit
     public static final BitSet BACKGROUND_ATTACHMENTS = setFor(
             new IdentValue[] { IdentValue.SCROLL, IdentValue.FIXED });
-
     // left | right | top | bottom | center
     public static final BitSet BACKGROUND_POSITIONS = setFor(
             new IdentValue[] {
                     IdentValue.LEFT, IdentValue.RIGHT, IdentValue.TOP,
                     IdentValue.BOTTOM, IdentValue.CENTER });
-
     public static final BitSet ABSOLUTE_FONT_SIZES = setFor(
             new IdentValue[] {
                     IdentValue.XX_SMALL, IdentValue.X_SMALL, IdentValue.SMALL,
                     IdentValue.MEDIUM, IdentValue.LARGE, IdentValue.X_LARGE,
                     IdentValue.XX_LARGE });
-
     public static final BitSet RELATIVE_FONT_SIZES = setFor(
             new IdentValue[] {
                     IdentValue.SMALLER, IdentValue.LARGER });
-
     public static final PropertyBuilder COLOR = new GenericColor();
     public static final PropertyBuilder BORDER_STYLE = new GenericBorderStyle();
     public static final PropertyBuilder BORDER_WIDTH = new GenericBorderWidth();
     public static final PropertyBuilder MARGIN = new LengthLikeWithAuto();
     public static final PropertyBuilder PADDING = new NonNegativeLengthLike();
-
     private static BitSet setFor(IdentValue[] values) {
         BitSet result = new BitSet(IdentValue.getIdentCount());
         for (int i = 0; i < values.length; i++) {
@@ -119,7 +105,6 @@ public class PrimitivePropertyBuilders {
         }
         return result;
     }
-
     private static abstract class SingleIdent extends AbstractPropertyBuilder {
         protected abstract BitSet getAllowed();
 
@@ -140,7 +125,6 @@ public class PrimitivePropertyBuilders {
 
         }
     }
-
     private static class GenericColor extends AbstractPropertyBuilder {
         private static final BitSet ALLOWED = setFor(
                 new IdentValue[] { IdentValue.TRANSPARENT });
@@ -173,7 +157,6 @@ public class PrimitivePropertyBuilders {
                     new PropertyDeclaration(cssName, value, important, origin));
         }
     }
-    
     private static class GenericBorderCornerRadius extends AbstractPropertyBuilder {
 
         public List buildDeclarations(CSSName cssName, List values, int origin,
@@ -201,13 +184,11 @@ public class PrimitivePropertyBuilders {
              }
         }
     }
-
     private static class GenericBorderStyle extends SingleIdent {
         protected BitSet getAllowed() {
             return BORDER_STYLES;
         }
     }
-
     private static class GenericBorderWidth extends AbstractPropertyBuilder {
         public List buildDeclarations(
                 CSSName cssName, List values, int origin, boolean important, boolean inheritAllowed) {
@@ -235,7 +216,6 @@ public class PrimitivePropertyBuilders {
                     new PropertyDeclaration(cssName, value, important, origin));
         }
     }
-
     private static abstract class LengthWithIdent extends AbstractPropertyBuilder {
         protected abstract BitSet getAllowed();
 
@@ -264,7 +244,6 @@ public class PrimitivePropertyBuilders {
             return true;
         }
     }
-
     private static abstract class LengthLikeWithIdent extends AbstractPropertyBuilder {
         protected abstract BitSet getAllowed();
 
@@ -293,7 +272,6 @@ public class PrimitivePropertyBuilders {
             return true;
         }
     }
-
     private static class LengthLike extends AbstractPropertyBuilder {
         public List buildDeclarations(
                 CSSName cssName, List values, int origin, boolean important, boolean inheritAllowed) {
@@ -317,13 +295,11 @@ public class PrimitivePropertyBuilders {
             return true;
         }
     }
-
     private static class NonNegativeLengthLike extends LengthLike {
         protected boolean isNegativeValuesAllowed() {
             return false;
         }
     }
-
     private static class ColOrRowSpan extends AbstractPropertyBuilder {
         public List buildDeclarations(CSSName cssName, List values, int origin, boolean important, boolean inheritAllowed) {
             checkValueCount(cssName, 1, values.size());
@@ -341,7 +317,6 @@ public class PrimitivePropertyBuilders {
                     new PropertyDeclaration(cssName, value, important, origin));
         }
     }
-
     private static class PlainInteger extends AbstractPropertyBuilder {
         public List buildDeclarations(
                 CSSName cssName, List values, int origin, boolean important, boolean inheritAllowed) {
@@ -365,7 +340,6 @@ public class PrimitivePropertyBuilders {
             return true;
         }
     }
-
     private static class Length extends AbstractPropertyBuilder {
         public List buildDeclarations(
                 CSSName cssName, List values, int origin, boolean important, boolean inheritAllowed) {
@@ -389,7 +363,6 @@ public class PrimitivePropertyBuilders {
             return true;
         }
     }
-
     /*
     private static class SingleString extends AbstractPropertyBuilder {
         public List buildDeclarations(
@@ -407,7 +380,6 @@ public class PrimitivePropertyBuilders {
         }
     }
     */
-
     /*
     private static abstract class SingleStringWithIdent extends AbstractPropertyBuilder {
         protected abstract BitSet getAllowed();
@@ -433,7 +405,6 @@ public class PrimitivePropertyBuilders {
         }
     }
     */
-
     /*
     private static class SingleStringWithNone extends SingleStringWithIdent {
         private static final BitSet ALLOWED = setFor(new IdentValue[] { IdentValue.NONE });
@@ -443,7 +414,6 @@ public class PrimitivePropertyBuilders {
         }
     }
     */
-
     private static class LengthLikeWithAuto extends LengthLikeWithIdent {
         // <length> | <percentage> | auto | inherit
         private static final BitSet ALLOWED = setFor(
@@ -453,7 +423,6 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     private static class LengthWithNormal extends LengthWithIdent {
         // <length> | normal | inherit
         private static final BitSet ALLOWED = setFor(
@@ -463,7 +432,6 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     private static class LengthLikeWithNone extends LengthLikeWithIdent {
         // <length> | <percentage> | none | inherit
         private static final BitSet ALLOWED = setFor(
@@ -473,7 +441,6 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     private static class GenericURIWithNone extends AbstractPropertyBuilder {
         // <uri> | none | inherit
         private static final BitSet ALLOWED = setFor(new IdentValue[] { IdentValue.NONE });
@@ -495,16 +462,13 @@ public class PrimitivePropertyBuilders {
                     new PropertyDeclaration(cssName, value, important, origin));
         }
     }
-
     public static class BackgroundAttachment extends SingleIdent {
         protected BitSet getAllowed() {
             return BACKGROUND_ATTACHMENTS;
         }
     }
-
     public static class BackgroundColor extends GenericColor {
     }
-
     public static class BackgroundImage extends GenericURIWithNone {
     	public List buildDeclarations(CSSName cssName, List values, int origin, boolean important, boolean inheritAllowed) {
     	    checkValueCount(cssName, 1, values.size());
@@ -517,7 +481,6 @@ public class PrimitivePropertyBuilders {
     	    return Collections.singletonList(new PropertyDeclaration(cssName, value, important, origin));
     	}
     }
-
     public static class BackgroundSize extends AbstractPropertyBuilder {
         private static final BitSet ALL_ALLOWED = setFor(new IdentValue[] {
                 IdentValue.AUTO, IdentValue.CONTAIN, IdentValue.COVER
@@ -583,7 +546,6 @@ public class PrimitivePropertyBuilders {
             }
         }
     }
-
     public static class BackgroundPosition extends AbstractPropertyBuilder {
         public List buildDeclarations(
                 CSSName cssName, List values, int origin, boolean important, boolean inheritAllowed) {
@@ -720,13 +682,11 @@ public class PrimitivePropertyBuilders {
             return BACKGROUND_POSITIONS;
         }
     }
-
     public static class BackgroundRepeat extends SingleIdent {
         protected BitSet getAllowed() {
             return BACKGROUND_REPEATS;
         }
     }
-
     public static class BorderCollapse extends SingleIdent {
         // collapse | separate | inherit
         private static final BitSet ALLOWED = setFor(
@@ -736,55 +696,38 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class BorderTopColor extends GenericColor {
     }
-
     public static class BorderRightColor extends GenericColor {
     }
-
     public static class BorderBottomColor extends GenericColor {
     }
-
     public static class BorderLeftColor extends GenericColor {
     }
-
     public static class BorderTopStyle extends GenericBorderStyle {
     }
-
     public static class BorderRightStyle extends GenericBorderStyle {
     }
-
     public static class BorderBottomStyle extends GenericBorderStyle {
     }
-
     public static class BorderLeftStyle extends GenericBorderStyle {
     }
-
     public static class BorderTopWidth extends GenericBorderWidth {
     }
-
     public static class BorderRightWidth extends GenericBorderWidth {
     }
-
     public static class BorderBottomWidth extends GenericBorderWidth {
     }
-
     public static class BorderLeftWidth extends GenericBorderWidth {
     }
-    
     public static class BorderTopLeftRadius extends GenericBorderCornerRadius {
     }
-    
     public static class BorderTopRightRadius extends GenericBorderCornerRadius {
     }
-    
     public static class BorderBottomRightRadius extends GenericBorderCornerRadius {
     }
-    
     public static class BorderBottomLeftRadius extends GenericBorderCornerRadius {
     }
-    
     public static class BorderRadius extends AbstractPropertyBuilder {
 
         public List buildDeclarations(CSSName cssName, List values, int origin,
@@ -847,10 +790,8 @@ public class PrimitivePropertyBuilders {
             return null;
         }
     }
-
     public static class Bottom extends LengthLikeWithAuto {
     }
-
     public static class CaptionSide extends SingleIdent {
         // top | bottom | inherit
         private static final BitSet ALLOWED = setFor(
@@ -860,7 +801,6 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class Clear extends SingleIdent {
         // none | left | right | both | inherit
         private static final BitSet ALLOWED = setFor(
@@ -870,10 +810,8 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class Color extends GenericColor {
     }
-
     public static class Cursor extends SingleIdent {
         // [ [<uri> ,]* [ auto | crosshair | default | pointer | move | e-resize
         // | ne-resize | nw-resize | n-resize | se-resize | sw-resize | s-resize
@@ -894,7 +832,6 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class Display extends SingleIdent {
         // inline | block | list-item | run-in | inline-block | table | inline-table
         // | table-row-group | table-header-group
@@ -915,7 +852,6 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class EmptyCells extends SingleIdent {
         // show | hide | inherit
         private static final BitSet ALLOWED = setFor(
@@ -925,7 +861,6 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class Float extends SingleIdent {
         // left | right | none | inherit
         private static final BitSet ALLOWED = setFor(
@@ -935,7 +870,6 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class FontFamily extends AbstractPropertyBuilder {
         // [[ <family-name> | <generic-family> ] [, <family-name>| <generic-family>]* ] | inherit
 
@@ -1010,7 +944,6 @@ public class PrimitivePropertyBuilders {
             return buf.toString();
         }
     }
-
     public static class FontSize extends AbstractPropertyBuilder {
         // <absolute-size> | <relative-size> | <length> | <percentage> | inherit
         private static final BitSet ALLOWED;
@@ -1042,19 +975,16 @@ public class PrimitivePropertyBuilders {
 
         }
     }
-
     public static class FontStyle extends SingleIdent {
         protected BitSet getAllowed() {
             return FONT_STYLES;
         }
     }
-
     public static class FontVariant extends SingleIdent {
         protected BitSet getAllowed() {
             return FONT_VARIANTS;
         }
     }
-
     public static class FontWeight extends AbstractPropertyBuilder {
         // normal | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | inherit
         public List buildDeclarations(
@@ -1094,28 +1024,22 @@ public class PrimitivePropertyBuilders {
             return FONT_WEIGHTS;
         }
     }
-
     public static class FSBorderSpacingHorizontal extends Length {
     }
-
     public static class FSBorderSpacingVertical extends Length {
     }
-
     public static class FSFontMetricSrc extends GenericURIWithNone {
     }
-
     public static class FSPageHeight extends LengthLikeWithAuto {
         protected boolean isNegativeValuesAllowed() {
             return false;
         }
     }
-
     public static class FSPageWidth extends LengthLikeWithAuto {
         protected boolean isNegativeValuesAllowed() {
             return false;
         }
     }
-
     public static class FSPageSequence extends SingleIdent {
         // start | auto
         private static final BitSet ALLOWED = setFor(
@@ -1125,13 +1049,11 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class FSPageOrientation extends SingleIdent {
         protected BitSet getAllowed() {
             return PAGE_ORIENTATIONS;
         }
     }
-
     public static class FSPDFFontEmbed extends SingleIdent {
         // auto | embed
         private static final BitSet ALLOWED = setFor(
@@ -1141,7 +1063,6 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class FSPDFFontEncoding extends AbstractPropertyBuilder {
         public List buildDeclarations(
                 CSSName cssName, List values, int origin, boolean important, boolean inheritAllowed) {
@@ -1169,13 +1090,10 @@ public class PrimitivePropertyBuilders {
                     new PropertyDeclaration(cssName, value, important, origin));
         }
     }
-
     public static class FSTableCellColspan extends ColOrRowSpan {
     }
-
     public static class FSTableCellRowspan extends ColOrRowSpan {
     }
-
     public static class FSTablePaginate extends SingleIdent {
         private static final BitSet ALLOWED = setFor(
                 new IdentValue[] { IdentValue.PAGINATE, IdentValue.AUTO });
@@ -1184,7 +1102,6 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
      }
-
     public static class FSTextDecorationExtent extends SingleIdent {
        private static final BitSet ALLOWED = setFor(
                new IdentValue[] { IdentValue.LINE, IdentValue.BLOCK });
@@ -1193,19 +1110,16 @@ public class PrimitivePropertyBuilders {
            return ALLOWED;
        }
     }
-
     public static class FSFitImagesToWidth extends LengthLikeWithAuto {
         protected boolean isNegativeValuesAllowed() {
             return false;
         }
      }
-
     public static class Height extends LengthLikeWithAuto {
         protected boolean isNegativeValuesAllowed() {
             return false;
         }
     }
-
     public static class FSDynamicAutoWidth extends SingleIdent {
         private static final BitSet ALLOWED = setFor(
                 new IdentValue[] { IdentValue.DYNAMIC, IdentValue.STATIC });
@@ -1214,7 +1128,6 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class FSKeepWithInline extends SingleIdent {
         // auto | keep
         private static final BitSet ALLOWED = setFor(
@@ -1224,7 +1137,6 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class FSNamedDestination extends SingleIdent {
         // none | create
         private static final BitSet ALLOWED = setFor(
@@ -1234,13 +1146,10 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class Left extends LengthLikeWithAuto {
     }
-
     public static class LetterSpacing extends LengthWithNormal {
     }
-
     public static class LineHeight extends AbstractPropertyBuilder {
         // normal | <number> | <length> | <percentage> | inherit
         private static final BitSet ALLOWED = setFor(
@@ -1265,58 +1174,45 @@ public class PrimitivePropertyBuilders {
                     new PropertyDeclaration(cssName, value, important, origin));
         }
     }
-
     public static class ListStyleImage extends GenericURIWithNone {
     }
-
     public static class ListStylePosition extends SingleIdent {
         protected BitSet getAllowed() {
             return LIST_STYLE_POSITIONS;
         }
     }
-
     public static class ListStyleType extends SingleIdent {
         protected BitSet getAllowed() {
             return LIST_STYLE_TYPES;
         }
     }
-
     public static class MarginTop extends LengthLikeWithAuto {
     }
-
     public static class MarginRight extends LengthLikeWithAuto {
     }
-
     public static class MarginBottom extends LengthLikeWithAuto {
     }
-
     public static class MarginLeft extends LengthLikeWithAuto {
     }
-
     public static class MaxHeight extends LengthLikeWithNone {
         protected boolean isNegativeValuesAllowed() {
             return false;
         }
     }
-
     public static class MaxWidth extends LengthLikeWithNone {
         protected boolean isNegativeValuesAllowed() {
             return false;
         }
     }
-
     public static class MinHeight extends NonNegativeLengthLike {
     }
-
     public static class MinWidth extends NonNegativeLengthLike {
     }
-
     public static class Orphans extends PlainInteger {
         protected boolean isNegativeValuesAllowed() {
             return false;
         }
     }
-    
     public static class Opacity extends AbstractPropertyBuilder {
         public List buildDeclarations(CSSName cssName, List values, int origin, boolean important, boolean inheritAllowed) {
             checkValueCount(cssName, 1, values.size());
@@ -1331,7 +1227,6 @@ public class PrimitivePropertyBuilders {
             return Collections.singletonList(new PropertyDeclaration(cssName, value, important, origin));
         }
     }
-
     public static class Overflow extends SingleIdent {
         // visible | hidden | scroll | auto | inherit
         private static final BitSet ALLOWED = setFor(
@@ -1345,19 +1240,14 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class PaddingTop extends NonNegativeLengthLike {
     }
-
     public static class PaddingRight extends NonNegativeLengthLike {
     }
-
     public static class PaddingBottom extends NonNegativeLengthLike {
     }
-
     public static class PaddingLeft extends NonNegativeLengthLike {
     }
-
     public static class PageBreakBefore extends SingleIdent {
         // auto | always | avoid | left | right | inherit
         private static final BitSet ALLOWED = setFor(
@@ -1370,7 +1260,6 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class Page extends AbstractPropertyBuilder {
         public List buildDeclarations(
                 CSSName cssName, List values, int origin, boolean important, boolean inheritAllowed) {
@@ -1393,7 +1282,6 @@ public class PrimitivePropertyBuilders {
 
         }
     }
-
     public static class PageBreakAfter extends SingleIdent {
         // auto | always | avoid | left | right | inherit
         private static final BitSet ALLOWED = setFor(
@@ -1406,7 +1294,6 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class PageBreakInside extends SingleIdent {
         // avoid | auto | inherit
         private static final BitSet ALLOWED = setFor(
@@ -1417,7 +1304,6 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class Position extends AbstractPropertyBuilder {
         // static | relative | absolute | fixed | inherit
         private static final BitSet ALLOWED = setFor(
@@ -1465,22 +1351,17 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class Right extends LengthLikeWithAuto {
     }
-
     public static class Src extends GenericURIWithNone {
     }
-
     public static class TabSize extends PlainInteger {
         protected boolean isNegativeValuesAllowed() {
             return false;
         }
     }
-
     public static class Top extends LengthLikeWithAuto {
     }
-
     public static class TableLayout extends SingleIdent {
         // auto | fixed | inherit
         private static final BitSet ALLOWED = setFor(
@@ -1491,7 +1372,6 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class TextAlign extends SingleIdent {
         // left | right | center | justify | inherit
         private static final BitSet ALLOWED = setFor(
@@ -1503,7 +1383,6 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class TextDecoration extends AbstractPropertyBuilder {
         // none | [ underline || overline || line-through || blink ] | inherit
         private static final BitSet ALLOWED = setFor(
@@ -1553,10 +1432,8 @@ public class PrimitivePropertyBuilders {
 
         }
     }
-
     public static class TextIndent extends LengthLike {
     }
-
     public static class TextTransform extends SingleIdent {
        // capitalize | uppercase | lowercase | none | inherit
         private static final BitSet ALLOWED = setFor(
@@ -1568,7 +1445,6 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class VerticalAlign extends LengthLikeWithIdent {
         // baseline | sub | super | top | text-top | middle
         // | bottom | text-bottom | <percentage> | <length> | inherit
@@ -1583,7 +1459,6 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class Visibility extends SingleIdent {
         // visible | hidden | collapse | inherit
         private static final BitSet ALLOWED = setFor(
@@ -1594,7 +1469,6 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class WhiteSpace extends SingleIdent {
         // normal | pre | nowrap | pre-wrap | pre-line | inherit
         private static final BitSet ALLOWED = setFor(
@@ -1606,7 +1480,6 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
     public static class WordWrap extends SingleIdent {
         // normal | break-word
         private static final BitSet ALLOWED = setFor(
@@ -1617,23 +1490,18 @@ public class PrimitivePropertyBuilders {
             return ALLOWED;
         }
     }
-
-
     public static class Widows extends PlainInteger {
         protected boolean isNegativeValuesAllowed() {
             return false;
         }
     }
-
     public static class Width extends LengthLikeWithAuto {
         protected boolean isNegativeValuesAllowed() {
             return false;
         }
     }
-
     public static class WordSpacing extends LengthWithNormal {
     }
-
     public static class ZIndex extends AbstractPropertyBuilder {
         // auto | <integer> | inherit
         private static final BitSet ALLOWED = setFor(
@@ -1657,8 +1525,7 @@ public class PrimitivePropertyBuilders {
                     new PropertyDeclaration(cssName, value, important, origin));
         }
     }
-    
-    private static List createTwoValueResponse(CSSName cssName, CSSPrimitiveValue value1, CSSPrimitiveValue value2,
+    private static List createTwoValueResponse(CSSName cssName,CSSPrimitiveValue value1, CSSPrimitiveValue value2,
             int origin, boolean important) {
         List values = new ArrayList(2);
         values.add(value1);
@@ -1670,4 +1537,16 @@ public class PrimitivePropertyBuilders {
 
         return Collections.singletonList(result);
     }
+    // none | hidden | dotted | dashed | solid | double | groove | ridge | inset | outset
+    // thin | medium | thick
+    // normal | small-caps | inherit
+    // normal | italic | oblique | inherit
+    // inside | outside | inherit
+    // disc | circle | square | decimal
+    // | decimal-leading-zero | lower-roman | upper-roman
+    // | lower-greek | lower-latin | upper-latin | armenian
+    // | georgian | lower-alpha | upper-alpha | none | inherit
+    // repeat | repeat-x | repeat-y | no-repeat | inherit
+    // scroll | fixed | inherit
+    // left | right | top | bottom | center
 }
