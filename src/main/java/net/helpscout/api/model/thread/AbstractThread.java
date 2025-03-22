@@ -1,98 +1,121 @@
 package net.helpscout.api.model.thread;
-
 import net.helpscout.api.cbo.ThreadState;
 import net.helpscout.api.cbo.ThreadType;
 import net.helpscout.api.model.Attachment;
-
 import java.util.List;
 
 public class AbstractThread extends BaseLineItem implements ConversationThread {
-	private Long id;
-	private ThreadType type;
-	private ThreadState state;
-	private String body;
-	private List<String> toList;
-	private List<String> ccList;
-	private List<String> bccList;
-	private List<Attachment> attachments;
+  private Long id;
 
-	public boolean isPublished() {
-		return this.state == ThreadState.Published;
-	}
+  private ThreadState state;
 
-	public boolean isDraft() {
-		return this.state == ThreadState.Draft;
-	}
+  private 
+<<<<<<< /usr/src/app/output/helpscout/helpscout-api-java/7dde5bbe5d07ba446e8d8b7b942d378b40f2b5c3/src/main/java/net/helpscout/api/model/thread/AbstractThread.java/left.java
+  String
+=======
+  ThreadType
+>>>>>>> /usr/src/app/output/helpscout/helpscout-api-java/7dde5bbe5d07ba446e8d8b7b942d378b40f2b5c3/src/main/java/net/helpscout/api/model/thread/AbstractThread.java/right.java
+   type;
 
-	public boolean isHeldForReview() {
-		return this.state == ThreadState.UnderReview;
-	}
+  private String body;
 
-	public boolean hasAttachments() {
-		return this.attachments != null && this.attachments.size() > 0;
-	}
+  private List<String> toList;
 
-	public Long getId() {
-		return id;
-	}
+  private List<String> ccList;
 
-	public void setType(ThreadType type) {
-		this.type = type;
-	}
+  private List<String> bccList;
 
-	public ThreadType getType() {
-		return type;
-	}
+  private List<Attachment> attachments;
 
-	public ThreadState getState() {
-		return state;
-	}
+  public boolean isPublished() {
+    return this.state == ThreadState.Published;
+  }
 
-	public String getBody() {
-		return body;
-	}
+  public boolean isDraft() {
+    return this.state == ThreadState.Draft;
+  }
 
-	public List<String> getToList() {
-		return toList;
-	}
+  public boolean isHeldForReview() {
+    return this.state == ThreadState.UnderReview;
+  }
 
-	public List<String> getCcList() {
-		return ccList;
-	}
+  public boolean hasAttachments() {
+    return this.attachments != null && this.attachments.size() > 0;
+  }
 
-	public List<String> getBccList() {
-		return bccList;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public List<Attachment> getAttachments() {
-		return attachments;
-	}
+  public ThreadState getState() {
+    return state;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setType(
+<<<<<<< /usr/src/app/output/helpscout/helpscout-api-java/7dde5bbe5d07ba446e8d8b7b942d378b40f2b5c3/src/main/java/net/helpscout/api/model/thread/AbstractThread.java/left.java
+  String
+=======
+  ThreadType
+>>>>>>> /usr/src/app/output/helpscout/helpscout-api-java/7dde5bbe5d07ba446e8d8b7b942d378b40f2b5c3/src/main/java/net/helpscout/api/model/thread/AbstractThread.java/right.java
+   type) {
+    this.type = type;
+  }
 
-	public void setState(ThreadState state) {
-		this.state = state;
-	}
+  public String getBody() {
+    return body;
+  }
 
-	public void setBody(String body) {
-		this.body = body;
-	}
+  public 
+<<<<<<< /usr/src/app/output/helpscout/helpscout-api-java/7dde5bbe5d07ba446e8d8b7b942d378b40f2b5c3/src/main/java/net/helpscout/api/model/thread/AbstractThread.java/left.java
+  String
+=======
+  ThreadType
+>>>>>>> /usr/src/app/output/helpscout/helpscout-api-java/7dde5bbe5d07ba446e8d8b7b942d378b40f2b5c3/src/main/java/net/helpscout/api/model/thread/AbstractThread.java/right.java
+   getType() {
+    return type;
+  }
 
-	public void setToList(List<String> toList) {
-		this.toList = toList;
-	}
+  public List<String> getToList() {
+    return toList;
+  }
 
-	public void setCcList(List<String> ccList) {
-		this.ccList = ccList;
-	}
+  public List<String> getCcList() {
+    return ccList;
+  }
 
-	public void setBccList(List<String> bccList) {
-		this.bccList = bccList;
-	}
+  public List<String> getBccList() {
+    return bccList;
+  }
 
-	public void setAttachments(List<Attachment> attachments) {
-		this.attachments = attachments;
-	}
+  public List<Attachment> getAttachments() {
+    return attachments;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public void setState(ThreadState state) {
+    this.state = state;
+  }
+
+  public void setBody(String body) {
+    this.body = body;
+  }
+
+  public void setToList(List<String> toList) {
+    this.toList = toList;
+  }
+
+  public void setCcList(List<String> ccList) {
+    this.ccList = ccList;
+  }
+
+  public void setBccList(List<String> bccList) {
+    this.bccList = bccList;
+  }
+
+  public void setAttachments(List<Attachment> attachments) {
+    this.attachments = attachments;
+  }
 }
