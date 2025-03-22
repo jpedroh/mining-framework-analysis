@@ -163,9 +163,6 @@ public class OrderFacadeImpl implements OrderFacade {
 
 	@Inject
 	private LabelUtils messages;
-	
-	@Autowired
-	private ProductPriceUtils productPriceUtils;
 
 	@Inject
 	@Qualifier("img")
@@ -1278,17 +1275,26 @@ public class OrderFacadeImpl implements OrderFacade {
 			}
 
 			String submitedAmount = order.getPayment().getAmount();
-
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/bdd5e3ab30278e6f399eba1e3a3365d93e2e9070/sm-shop/src/main/java/com/salesmanager/shop/store/controller/order/facade/OrderFacadeImpl.java/left.java
 			BigDecimal formattedSubmittedAmount = productPriceUtils.getAmount(submitedAmount);
-
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/bdd5e3ab30278e6f399eba1e3a3365d93e2e9070/sm-shop/src/main/java/com/salesmanager/shop/store/controller/order/facade/OrderFacadeImpl.java/base.java
+			BigDecimal ;
+=======
 			BigDecimal submitedAmountFormat = productPriceUtils.getAmount(submitedAmount);
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/bdd5e3ab30278e6f399eba1e3a3365d93e2e9070/sm-shop/src/main/java/com/salesmanager/shop/store/controller/order/facade/OrderFacadeImpl.java/right.java
+
 
 			BigDecimal calculatedAmount = orderTotalSummary.getTotal();
 			String strCalculatedTotal = calculatedAmount.toPlainString();
 
 			// compare both prices
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/bdd5e3ab30278e6f399eba1e3a3365d93e2e9070/sm-shop/src/main/java/com/salesmanager/shop/store/controller/order/facade/OrderFacadeImpl.java/left.java
 			if (calculatedAmount.compareTo(formattedSubmittedAmount) != 0) {
-
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/bdd5e3ab30278e6f399eba1e3a3365d93e2e9070/sm-shop/src/main/java/com/salesmanager/shop/store/controller/order/facade/OrderFacadeImpl.java/base.java
+			if (!submitedAmount.equals(strCalculatedTotal)) {
+=======
+			if (calculatedAmount.compareTo(submitedAmountFormat) != 0) {
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/bdd5e3ab30278e6f399eba1e3a3365d93e2e9070/sm-shop/src/main/java/com/salesmanager/shop/store/controller/order/facade/OrderFacadeImpl.java/right.java
 
 				throw new ConversionException("Payment.amount does not match what the system has calculated "
 						+ strCalculatedTotal + " (received " + submitedAmount + ") please recalculate the order and submit again");
