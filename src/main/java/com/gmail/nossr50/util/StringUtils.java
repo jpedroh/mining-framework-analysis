@@ -43,6 +43,7 @@ public class StringUtils {
     }
 
     public static String getFriendlyConfigBlockDataString(BlockData data) {
+<<<<<<< /usr/src/app/output/mcmmo-dev/mcmmo/e5d00d1a5065ee745c3abcfa97df4a736d206af4/src/main/java/com/gmail/nossr50/util/StringUtils.java/left.java
         switch(data.getMaterial()){
             case COCOA:
             case WHEAT:
@@ -59,6 +60,23 @@ public class StringUtils {
                 return getPrettyItemString(data.getMaterial()).replace(" ", "_") + "_Ungrown";
             }
         }
+||||||| /usr/src/app/output/mcmmo-dev/mcmmo/e5d00d1a5065ee745c3abcfa97df4a736d206af4/src/main/java/com/gmail/nossr50/util/StringUtils.java/base.java
+=======
+        Ageable isCrop = (Ageable) data;
+        switch(data.getMaterial()){
+            case COCOA:
+            case WHEAT:
+            case BEETROOTS:
+            case CARROTS:
+            case POTATOES:
+            case NETHER_WART_BLOCK: {
+                if (isCrop.getAge() == isCrop.getMaximumAge()) {
+                    return getPrettyItemString(data.getMaterial()).replace(" ", "_") + "_Ripe";
+                }
+                return getPrettyItemString(data.getMaterial()).replace(" ", "_") + "_Ungrown";
+            }
+        }
+>>>>>>> /usr/src/app/output/mcmmo-dev/mcmmo/e5d00d1a5065ee745c3abcfa97df4a736d206af4/src/main/java/com/gmail/nossr50/util/StringUtils.java/right.java
         return getPrettyItemString(data.getMaterial()).replace(" ", "_");
     }
 

@@ -203,6 +203,12 @@ public class BlockListener implements Listener {
              * Instead, we check it inside the drops handler.
              */
             if (SkillType.HERBALISM.getPermissions(player)) {
+<<<<<<< /usr/src/app/output/mcmmo-dev/mcmmo/e5d00d1a5065ee745c3abcfa97df4a736d206af4/src/main/java/com/gmail/nossr50/listeners/BlockListener.java/left.java
+||||||| /usr/src/app/output/mcmmo-dev/mcmmo/e5d00d1a5065ee745c3abcfa97df4a736d206af4/src/main/java/com/gmail/nossr50/listeners/BlockListener.java/base.java
+                System.out.println(">>Pee pee");
+=======
+                System.out.print(">>getPermissions");
+>>>>>>> /usr/src/app/output/mcmmo-dev/mcmmo/e5d00d1a5065ee745c3abcfa97df4a736d206af4/src/main/java/com/gmail/nossr50/listeners/BlockListener.java/right.java
                 herbalismManager.herbalismBlockCheck(blockState);
             }
         }
