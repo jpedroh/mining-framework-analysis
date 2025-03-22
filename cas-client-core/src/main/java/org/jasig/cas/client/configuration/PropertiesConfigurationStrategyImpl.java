@@ -26,13 +26,16 @@ import javax.servlet.Filter;
 import javax.servlet.FilterConfig;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * This implement support loading properties file from classpath or normal file system.
- * 1. loading from classpath (classpath:/some_path/cas-java-client.properties)
- * 2. loading from file system (/etc/cas-java-client.properties)
+ * This implement support loading properties file from classpath or normal file system.<br/>
+ * <li> Loading from classpath (classpath:/some_path/cas-java-client.properties).</li>
+ * <li> Loading from file system (/etc/cas-java-client.properties).</li>
+ *
  * @author Scott Battaglia
+ * @author Luo Peng
  * @since 3.4.0
  */
 public final class PropertiesConfigurationStrategyImpl extends BaseConfigurationStrategy {
@@ -60,9 +63,13 @@ public final class PropertiesConfigurationStrategyImpl extends BaseConfiguration
     private String envProfile;
 
     /**
-     * The classpath file prefix. While file name starts with this, read properties from classpath 
+     * The classpath file prefix. While file name starts with this, read properties from classpath
      */
     private static final String CLASSPATH_PREFIX = "classpath:";
+
+    private static final int CLASSPATH_PLACEHOLDER_SIZE = CLASSPATH_PREFIX.length();
+
+    private static final ClassLoader CLASS_LOADER = PropertiesConfigurationStrategyImpl.class.getClassLoader();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesConfigurationStrategyImpl.class);
 
@@ -125,6 +132,7 @@ public final class PropertiesConfigurationStrategyImpl extends BaseConfiguration
             return false;
         }
 
+<<<<<<< /usr/src/app/output/jasig/java-cas-client/ab939f70599cc9da71e37c6882cfd436729d74cf/cas-client-core/src/main/java/org/jasig/cas/client/configuration/PropertiesConfigurationStrategyImpl.java/left.java
         //filter config file name
         String filteredFile = filterFileName(file);
 
@@ -150,6 +158,48 @@ public final class PropertiesConfigurationStrategyImpl extends BaseConfiguration
                     CommonUtils.closeQuietly(fis);
                 }
         }
+||||||| /usr/src/app/output/jasig/java-cas-client/ab939f70599cc9da71e37c6882cfd436729d74cf/cas-client-core/src/main/java/org/jasig/cas/client/configuration/PropertiesConfigurationStrategyImpl.java/base.java
+    	if (file.startsWith(CLASSPATH_PREFIX)) {
+    		String classpathFile = file.substring(CLASSPATH_PREFIX.length());
+    		try {
+    			properties.load(this.getClass().getClassLoader().getResourceAsStream(classpathFile));
+    			return true;
+    		} catch (IOException e) {
+    			LOGGER.warn("Unable to load properties for file {}", file, e);
+    			return false;
+    		}
+    	} else {
+    		FileInputStream fis = null;
+    	        try {
+    	            fis = new FileInputStream(file);
+    	            this.properties.load(fis);
+    	            return true;
+    	        } catch (final IOException e) {
+    	            LOGGER.warn("Unable to load properties for file {}", file, e);
+    	            return false;
+    	        } finally {
+    	            CommonUtils.closeQuietly(fis);
+    	        }	
+    	}
+=======
+        InputStream is = null;
+        try {
+            if (file.startsWith(CLASSPATH_PREFIX)) {
+                String classpathFile = file.substring(CLASSPATH_PLACEHOLDER_SIZE);
+                is = CLASS_LOADER.getResourceAsStream(classpathFile);
+            } else {
+                is = new FileInputStream(file);
+            }
+
+            this.properties.load(is);
+            return true;
+        } catch (final IOException e) {
+            LOGGER.warn("Unable to load properties for file {}", file, e);
+            return false;
+        } finally {
+            CommonUtils.closeQuietly(is);
+        }
+>>>>>>> /usr/src/app/output/jasig/java-cas-client/ab939f70599cc9da71e37c6882cfd436729d74cf/cas-client-core/src/main/java/org/jasig/cas/client/configuration/PropertiesConfigurationStrategyImpl.java/right.java
     }
 
     private String filterFileName(String file) {
