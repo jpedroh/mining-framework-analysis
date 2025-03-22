@@ -84,7 +84,7 @@ public class FileDialog {
 	public synchronized void initOpenDialog() {
 		if (fcOpen == null) {
 			fcOpen = createFileChooser("*.jar", "*.zip", "*.war", "*.class");
-			retrieveOpenDialogDir(fcOpen);
+            dirPreferences.retrieveOpenDialogDir(fcOpen);
 		}
 	}
 

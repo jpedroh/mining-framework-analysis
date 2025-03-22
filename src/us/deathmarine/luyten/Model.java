@@ -87,7 +87,13 @@ public class Model extends JSplitPane {
 	private static final long serialVersionUID = 6896857630400910200L;
 
 	private static final long MAX_JAR_FILE_SIZE_BYTES = 10_000_000_000L;
+<<<<<<< /usr/src/app/output/deathmarine/luyten/c6cd5d8c8ef78ee339561dbf844332d9aa4a5f8c/src/us/deathmarine/luyten/Model.java/left.java
+	private static final long MAX_UNPACKED_FILE_SIZE_BYTES = 200_000_000;
+||||||| /usr/src/app/output/deathmarine/luyten/c6cd5d8c8ef78ee339561dbf844332d9aa4a5f8c/src/us/deathmarine/luyten/Model.java/base.java
+	private static final long MAX_UNPACKED_FILE_SIZE_BYTES = 1_000_000;
+=======
 	private static final long MAX_UNPACKED_FILE_SIZE_BYTES = 10_000_000L;
+>>>>>>> /usr/src/app/output/deathmarine/luyten/c6cd5d8c8ef78ee339561dbf844332d9aa4a5f8c/src/us/deathmarine/luyten/Model.java/right.java
 
 	private static LuytenTypeLoader typeLoader = new LuytenTypeLoader();
 	public static MetadataSystem metadataSystem = new MetadataSystem(typeLoader);
