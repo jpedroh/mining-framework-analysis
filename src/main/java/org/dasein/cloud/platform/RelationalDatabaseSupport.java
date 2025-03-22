@@ -95,9 +95,9 @@ public interface RelationalDatabaseSupport extends AccessControlledService {
      * @see org.dasein.cloud.platform.RelationalDatabaseSupport#listDatabaseProducts(DatabaseEngine)
      *
      */
-
     @Deprecated
     public Iterable<DatabaseProduct> getDatabaseProducts(DatabaseEngine forEngine) throws CloudException, InternalException;
+
     /**
      * List supported database products
      * @param forEngine database engine, e.g. MySQL, SQL Server EE, etc.
@@ -107,7 +107,7 @@ public interface RelationalDatabaseSupport extends AccessControlledService {
      * @since 2014.07 for consistency
      */
     public Iterable<DatabaseProduct> listDatabaseProducts(DatabaseEngine forEngine) throws CloudException, InternalException;
-
+    
     @Deprecated
     public String getProviderTermForDatabase(Locale locale);
 
