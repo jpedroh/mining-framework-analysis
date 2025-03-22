@@ -46,7 +46,7 @@ public class ServerUtils {
         }
 
         return null;
-
+    }
     public static ArtifactoryManager getArtifactoryManager(ServerConfigBean serverConfigBean,
                                                            String username, String password) {
         ArtifactoryManager artifactoryManager = new ArtifactoryManager(serverConfigBean.getUrl(), username, password, new TeamcityServerBuildInfoLog());

@@ -176,15 +176,18 @@ public class ArtifactoryGlobalServerConfigController extends BaseFormXmlControll
 
         CredentialsBean resolvingCredentials = getPreferredResolvingCredentials(useDifferentResolverCredentials, defaultResolverUsername, defaultResolverPassword, defaultDeployerUsername, defaultDeployerPassword, !propBeanMode);
 
+<<<<<<< /usr/src/app/output/jfrogdev/teamcity-artifactory-plugin/08f8573776df392bef2843094930ed26e1a39b54/server/src/main/java/org/jfrog/teamcity/server/global/ArtifactoryGlobalServerConfigController.java/left.java
         ArtifactoryBuildInfoClient client = new ArtifactoryBuildInfoClient(url, resolvingCredentials.getUsername(),
                 resolvingCredentials.getPassword(), new TeamcityServerBuildInfoLog());
         client.setConnectionTimeout(Integer.parseInt(timeout));
-
-        ProxyInfo proxyInfo = ProxyInfo.getInfo();
-        if (proxyInfo != null) {
-            client.setProxyConfiguration(proxyInfo.getHost(), proxyInfo.getPort(), proxyInfo.getUsername(),
-                    proxyInfo.getPassword());
-        }
+||||||| /usr/src/app/output/jfrogdev/teamcity-artifactory-plugin/08f8573776df392bef2843094930ed26e1a39b54/server/src/main/java/org/jfrog/teamcity/server/global/ArtifactoryGlobalServerConfigController.java/base.java
+        String url = request.getParameter("url");
+        ArtifactoryBuildInfoClient client = new ArtifactoryBuildInfoClient(url, resolvingCredentials.getUsername(),
+                resolvingCredentials.getPassword(), new TeamcityServerBuildInfoLog());
+        client.setConnectionTimeout(Integer.parseInt(request.getParameter("timeout")));
+=======
+        String url = request.getParameter("url");
+>>>>>>> /usr/src/app/output/jfrogdev/teamcity-artifactory-plugin/08f8573776df392bef2843094930ed26e1a39b54/server/src/main/java/org/jfrog/teamcity/server/global/ArtifactoryGlobalServerConfigController.java/right.java
 
         try (ArtifactoryManager artifactoryManager = new ArtifactoryManager(url, resolvingCredentials.getUsername(),
                 resolvingCredentials.getPassword(), new TeamcityServerBuildInfoLog())) {
