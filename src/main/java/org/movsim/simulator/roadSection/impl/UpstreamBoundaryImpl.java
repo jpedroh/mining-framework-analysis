@@ -48,14 +48,20 @@ import org.slf4j.LoggerFactory;
  */
 public class UpstreamBoundaryImpl implements UpstreamBoundary {
 
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/movsim/movsim/a1a04271dd9f9c1984db574e638fc0eb890760d3/src/main/java/org/movsim/simulator/roadSection/impl/UpstreamBoundaryImpl.java/left.java
     private static final String extensionFormat = ".S%d_log.csv";
     private static final String outputHeading = Constants.COMMENT_CHAR
             + "     t[s], lane,  xEnter[m],    v[km/h],   total qBC[1/h],    count,      queue\n";
     private static final String outputFormat = "%10.2f, %4d, %10.2f, %10.2f, %10.2f, %8d, %10.5f%n";
 
+||||||| /usr/src/app/output/movsim/movsim/a1a04271dd9f9c1984db574e638fc0eb890760d3/src/main/java/org/movsim/simulator/roadSection/impl/UpstreamBoundaryImpl.java/base.java
+    private static final String extensionFormat = ".S%d_log.csv";
+    private static final String outputHeading = Constants.COMMENT_CHAR
+            + "     t[s], lane,  xEnter[m],    v[km/h],   qBC[1/h],    count,      queue\n";
+    private static final String outputFormat = "%10.2f, %4d, %10.2f, %10.2f, %10.2f, %8d, %10.5f%n";
+
 =======
->>>>>>> df3df68bf0da2145eb5fdcbc5ccf00e098abf7ec
+>>>>>>> /usr/src/app/output/movsim/movsim/a1a04271dd9f9c1984db574e638fc0eb890760d3/src/main/java/org/movsim/simulator/roadSection/impl/UpstreamBoundaryImpl.java/right.java
     /** The Constant logger. */
     final static Logger logger = LoggerFactory.getLogger(UpstreamBoundaryImpl.class);
 
@@ -144,13 +150,16 @@ public class UpstreamBoundaryImpl implements UpstreamBoundary {
                 final boolean isEntered = tryEnteringNewVehicle(vehContainerLane, iLane, time, totalInflow);
                 if (isEntered) {
                     nWait--;
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/movsim/movsim/a1a04271dd9f9c1984db574e638fc0eb890760d3/src/main/java/org/movsim/simulator/roadSection/impl/UpstreamBoundaryImpl.java/left.java
                     if (fstrLogging != null) {
                         fstrLogging.printf(outputFormat, time, laneEnterLast, xEnterLast, 3.6 * vEnterLast, 3600 * totalInflow,
+||||||| /usr/src/app/output/movsim/movsim/a1a04271dd9f9c1984db574e638fc0eb890760d3/src/main/java/org/movsim/simulator/roadSection/impl/UpstreamBoundaryImpl.java/base.java
+                    if (fstrLogging != null) {
+                        fstrLogging.printf(outputFormat, time, laneEnterLast, xEnterLast, 3.6 * vEnterLast, 3600 * qBC,
 =======
                     if (fileUpstreamBoundary != null) {
                         fileUpstreamBoundary.update(time, laneEnterLast, xEnterLast, 3.6 * vEnterLast, 3600 * qBC,
->>>>>>> df3df68bf0da2145eb5fdcbc5ccf00e098abf7ec
+>>>>>>> /usr/src/app/output/movsim/movsim/a1a04271dd9f9c1984db574e638fc0eb890760d3/src/main/java/org/movsim/simulator/roadSection/impl/UpstreamBoundaryImpl.java/right.java
                                 enteringVehCounter, nWait);
                         
                     }
