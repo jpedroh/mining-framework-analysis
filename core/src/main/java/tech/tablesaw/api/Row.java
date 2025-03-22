@@ -1,5 +1,4 @@
 package tech.tablesaw.api;
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,13 +11,9 @@ import tech.tablesaw.columns.Column;
 import tech.tablesaw.table.TableSlice;
 
 public class Row implements Iterator<Row> {
-
-  /**
-   * Wrap Map of column name to Column map and provide helpful error messages to the user when a
-   * column name cannot be found.
-   */
-  private class ColumnMap<T> {
+  private class ColumnMap<T extends java.lang.Object> {
     private final Map<String, T> columnMap = new HashMap<>();
+
     private final ColumnType columnType;
 
     public ColumnMap(ColumnType columnType) {
@@ -51,18 +46,13 @@ public class Row implements Iterator<Row> {
         if (columnName.equals(columnNames[i])) {
           String actualType = tableSlice.getTable().columns().get(i).type().name();
           String proposedType = columnTypeName();
-          throw new IllegalArgumentException(
-              String.format(
-                  "Column %s is of type %s and cannot be cast to %s. Use the method for %s.",
-                  columnName, actualType, proposedType, actualType));
+          throw new IllegalArgumentException(String.format("Column %s is of type %s and cannot be cast to %s. Use the method for %s.", columnName, actualType, proposedType, actualType));
         }
       }
     }
 
     private void throwColumnNotPresentError(String columnName) {
-      throw new IllegalStateException(
-          String.format(
-              "Column %s is not present in table %s", columnName, tableSlice.getTable().name()));
+      throw new IllegalStateException(String.format("Column %s is not present in table %s", columnName, tableSlice.getTable().name()));
     }
 
     private String columnTypeName() {
@@ -74,21 +64,35 @@ public class Row implements Iterator<Row> {
   }
 
   private final TableSlice tableSlice;
+
   private final String[] columnNames;
+
   private final ColumnMap<DateColumn> dateColumnMap = new ColumnMap<>();
+
   private final ColumnMap<DoubleColumn> doubleColumnMap = new ColumnMap<>(ColumnType.DOUBLE);
+
   private final ColumnMap<IntColumn> intColumnMap = new ColumnMap<>(ColumnType.INTEGER);
+
   private final ColumnMap<LongColumn> longColumnMap = new ColumnMap<>(ColumnType.LONG);
+
   private final ColumnMap<ShortColumn> shortColumnMap = new ColumnMap<>(ColumnType.SHORT);
+
   private final ColumnMap<FloatColumn> floatColumnMap = new ColumnMap<>(ColumnType.FLOAT);
+
   private final ColumnMap<Column<String>> stringColumnMap = new ColumnMap<>(ColumnType.STRING);
+
   private final ColumnMap<BooleanColumn> booleanColumnMap = new ColumnMap<>(ColumnType.BOOLEAN);
-  private final ColumnMap<DateTimeColumn> dateTimeColumnMap =
-      new ColumnMap<>(ColumnType.LOCAL_DATE_TIME);
+
+  private final ColumnMap<DateTimeColumn> dateTimeColumnMap = new ColumnMap<>(ColumnType.LOCAL_DATE_TIME);
+
   private final ColumnMap<InstantColumn> instantColumnMap = new ColumnMap<>(ColumnType.INSTANT);
+
   private final ColumnMap<TimeColumn> timeColumnMap = new ColumnMap<>(ColumnType.LOCAL_TIME);
+
   private final ColumnMap<Column<?>> columnMap = new ColumnMap<>();
+
   private final ColumnMap<NumericColumn<? extends Number>> numericColumnMap = new ColumnMap<>();
+
   private int rowNumber;
 
   public Row(Table table) {
@@ -139,15 +143,18 @@ public class Row implements Iterator<Row> {
       }
       if (column instanceof DateColumn) {
         dateColumnMap.put(column.name(), (DateColumn) column);
-
-      } else if (column instanceof DateTimeColumn) {
-        dateTimeColumnMap.put(column.name(), (DateTimeColumn) column);
-
-      } else if (column instanceof InstantColumn) {
-        instantColumnMap.put(column.name(), (InstantColumn) column);
-
-      } else if (column instanceof TimeColumn) {
-        timeColumnMap.put(column.name(), (TimeColumn) column);
+      } else {
+        if (column instanceof DateTimeColumn) {
+          dateTimeColumnMap.put(column.name(), (DateTimeColumn) column);
+        } else {
+          if (column instanceof InstantColumn) {
+            instantColumnMap.put(column.name(), (InstantColumn) column);
+          } else {
+            if (column instanceof TimeColumn) {
+              timeColumnMap.put(column.name(), (TimeColumn) column);
+            }
+          }
+        }
       }
       columnMap.put(column.name(), column);
     }
@@ -304,13 +311,11 @@ public class Row implements Iterator<Row> {
     return x.isMissing(i);
   }
 
-  @Override
-  public boolean hasNext() {
+  @Override public boolean hasNext() {
     return rowNumber < this.tableSlice.rowCount() - 1;
   }
 
-  @Override
-  public Row next() {
+  @Override public Row next() {
     rowNumber++;
     return this;
   }
@@ -433,8 +438,7 @@ public class Row implements Iterator<Row> {
     return columnMap.get(columnName).type();
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     Table t = tableSlice.getTable().emptyCopy();
     if (getRowNumber() == -1) {
       return "";

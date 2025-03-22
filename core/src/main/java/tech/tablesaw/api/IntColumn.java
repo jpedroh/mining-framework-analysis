@@ -1,5 +1,4 @@
 package tech.tablesaw.api;
-
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntArrays;
@@ -22,16 +21,14 @@ import tech.tablesaw.columns.numbers.NumberColumnFormatter;
 import tech.tablesaw.selection.Selection;
 
 public class IntColumn extends NumberColumn<Integer> implements CategoricalColumn<Integer> {
-
   /** Compares two ints, such that a sort based on this comparator would sort in descending order */
   private final IntComparator descendingComparator = (o2, o1) -> (Integer.compare(o1, o2));
 
-  protected final IntComparator comparator =
-      (r1, r2) -> {
-        final int f1 = getInt(r1);
-        final int f2 = getInt(r2);
-        return Integer.compare(f1, f2);
-      };
+  protected final IntComparator comparator = (r1, r2) -> {
+    final int f1 = getInt(r1);
+    final int f2 = getInt(r2);
+    return Integer.compare(f1, f2);
+  };
 
   private final IntArrayList data;
 
@@ -71,17 +68,15 @@ public class IntColumn extends NumberColumn<Integer> implements CategoricalColum
 
   public static IntColumn create(String name, IntStream stream) {
     IntArrayList list = new IntArrayList();
-    stream.forEach(val -> list.add(val));
+    stream.forEach((val) -> list.add(val));
     return new IntColumn(name, list);
   }
 
-  @Override
-  public IntColumn createCol(String name, int initialSize) {
+  @Override public IntColumn createCol(String name, int initialSize) {
     return create(name, initialSize);
   }
 
-  @Override
-  public IntColumn createCol(String name) {
+  @Override public IntColumn createCol(String name) {
     return create(name);
   }
 
@@ -91,8 +86,7 @@ public class IntColumn extends NumberColumn<Integer> implements CategoricalColum
    * increasing by 1 TODO consider a generic fill function including steps or random samples from
    * various distributions
    */
-  public static IntColumn indexColumn(
-      final String columnName, final int size, final int startsWith) {
+  public static IntColumn indexColumn(final String columnName, final int size, final int startsWith) {
     final IntColumn indexColumn = IntColumn.create(columnName, size);
     for (int i = 0; i < size; i++) {
       indexColumn.set(i, i + startsWith);
@@ -100,27 +94,24 @@ public class IntColumn extends NumberColumn<Integer> implements CategoricalColum
     return indexColumn;
   }
 
-  @Override
-  public int size() {
+  @Override public int size() {
     return data.size();
   }
 
-  @Override
-  public void clear() {
+  @Override public void clear() {
     data.clear();
   }
 
+  /** @deprecated use IntColumnType.isMissingValue(value) instead */
   public static boolean valueIsMissing(int value) {
     return IntColumnType.isMissingValue(value);
   }
 
-  @Override
-  public Integer get(int index) {
+  @Override public Integer get(int index) {
     return getInt(index);
   }
 
-  @Override
-  public IntColumn subset(final int[] rows) {
+  @Override public IntColumn subset(final int[] rows) {
     final IntColumn c = this.emptyCopy();
     for (final int row : rows) {
       c.append(getInt(row));
@@ -128,8 +119,7 @@ public class IntColumn extends NumberColumn<Integer> implements CategoricalColum
     return c;
   }
 
-  @Override
-  public IntColumn unique() {
+  @Override public IntColumn unique() {
     final IntSet values = new IntOpenHashSet();
     for (int i = 0; i < size(); i++) {
       values.add(getInt(i));
@@ -141,8 +131,7 @@ public class IntColumn extends NumberColumn<Integer> implements CategoricalColum
     return column;
   }
 
-  @Override
-  public IntColumn top(int n) {
+  @Override public IntColumn top(int n) {
     final IntArrayList top = new IntArrayList();
     final int[] values = data.toIntArray();
     IntArrays.parallelQuickSort(values, descendingComparator);
@@ -152,8 +141,7 @@ public class IntColumn extends NumberColumn<Integer> implements CategoricalColum
     return new IntColumn(name() + "[Top " + n + "]", top);
   }
 
-  @Override
-  public IntColumn bottom(final int n) {
+  @Override public IntColumn bottom(final int n) {
     final IntArrayList bottom = new IntArrayList();
     final int[] values = data.toIntArray();
     IntArrays.parallelQuickSort(values);
@@ -163,25 +151,20 @@ public class IntColumn extends NumberColumn<Integer> implements CategoricalColum
     return new IntColumn(name() + "[Bottoms " + n + "]", bottom);
   }
 
-  @Override
-  public IntColumn lag(int n) {
+  @Override public IntColumn lag(int n) {
     final int srcPos = n >= 0 ? 0 : 0 - n;
     final int[] dest = new int[size()];
     final int destPos = n <= 0 ? 0 : n;
     final int length = n >= 0 ? size() - n : size() + n;
-
     for (int i = 0; i < size(); i++) {
       dest[i] = IntColumnType.missingValueIndicator();
     }
-
     int[] array = data.toIntArray();
-
     System.arraycopy(array, srcPos, dest, destPos, length);
     return new IntColumn(name() + " lag(" + n + ")", new IntArrayList(dest));
   }
 
-  @Override
-  public IntColumn removeMissing() {
+  @Override public IntColumn removeMissing() {
     IntColumn result = copy();
     result.clear();
     IntListIterator iterator = data.iterator();
@@ -208,28 +191,23 @@ public class IntColumn extends NumberColumn<Integer> implements CategoricalColum
     return this;
   }
 
-  @Override
-  public IntColumn emptyCopy() {
+  @Override public IntColumn emptyCopy() {
     return (IntColumn) super.emptyCopy();
   }
 
-  @Override
-  public IntColumn emptyCopy(final int rowSize) {
+  @Override public IntColumn emptyCopy(final int rowSize) {
     return (IntColumn) super.emptyCopy(rowSize);
   }
 
-  @Override
-  public IntColumn copy() {
+  @Override public IntColumn copy() {
     return new IntColumn(name(), data.clone());
   }
 
-  @Override
-  public Iterator<Integer> iterator() {
+  @Override public Iterator<Integer> iterator() {
     return data.iterator();
   }
 
-  @Override
-  public Integer[] asObjectArray() {
+  @Override public Integer[] asObjectArray() {
     final Integer[] output = new Integer[size()];
     for (int i = 0; i < size(); i++) {
       if (!isMissing(i)) {
@@ -241,13 +219,11 @@ public class IntColumn extends NumberColumn<Integer> implements CategoricalColum
     return output;
   }
 
-  @Override
-  public int compare(Integer o1, Integer o2) {
+  @Override public int compare(Integer o1, Integer o2) {
     return Integer.compare(o1, o2);
   }
 
-  @Override
-  public IntColumn set(int i, Integer val) {
+  @Override public IntColumn set(int i, Integer val) {
     return set(i, (int) val);
   }
 
@@ -256,8 +232,7 @@ public class IntColumn extends NumberColumn<Integer> implements CategoricalColum
     return this;
   }
 
-  @Override
-  public IntColumn append(final Column<Integer> column) {
+  @Override public IntColumn append(final Column<Integer> column) {
     Preconditions.checkArgument(column.type() == this.type());
     final IntColumn numberColumn = (IntColumn) column;
     final int size = numberColumn.size();
@@ -267,32 +242,25 @@ public class IntColumn extends NumberColumn<Integer> implements CategoricalColum
     return this;
   }
 
-  @Override
-  public IntColumn append(Column<Integer> column, int row) {
+  @Override public IntColumn append(Column<Integer> column, int row) {
     Preconditions.checkArgument(column.type() == this.type());
     return append(((IntColumn) column).getInt(row));
   }
 
-  @Override
-  public IntColumn set(int row, Column<Integer> column, int sourceRow) {
+  @Override public IntColumn set(int row, Column<Integer> column, int sourceRow) {
     Preconditions.checkArgument(column.type() == this.type());
     return set(row, ((IntColumn) column).getInt(sourceRow));
   }
 
-  @Override
-  public IntColumn appendMissing() {
+  @Override public IntColumn appendMissing() {
     return append(IntColumnType.missingValueIndicator());
   }
 
-  @Override
-  public byte[] asBytes(int rowNumber) {
-    return ByteBuffer.allocate(IntColumnType.instance().byteSize())
-        .putInt(getInt(rowNumber))
-        .array();
+  @Override public byte[] asBytes(int rowNumber) {
+    return ByteBuffer.allocate(IntColumnType.instance().byteSize()).putInt(getInt(rowNumber)).array();
   }
 
-  @Override
-  public String getString(final int row) {
+  @Override public String getString(final int row) {
     final int value = getInt(row);
     if (IntColumnType.isMissingValue(value)) {
       return "";
@@ -300,8 +268,7 @@ public class IntColumn extends NumberColumn<Integer> implements CategoricalColum
     return String.valueOf(getPrintFormatter().format(value));
   }
 
-  @Override
-  public int countUnique() {
+  @Override public int countUnique() {
     IntSet uniqueElements = new IntOpenHashSet();
     for (int i = 0; i < size(); i++) {
       uniqueElements.add(getInt(i));
@@ -332,8 +299,7 @@ public class IntColumn extends NumberColumn<Integer> implements CategoricalColum
     return data.getInt(row);
   }
 
-  @Override
-  public double getDouble(int row) {
+  @Override public double getDouble(int row) {
     int value = data.getInt(row);
     if (isMissingValue(value)) {
       return DoubleColumnType.missingValueIndicator();
@@ -345,23 +311,19 @@ public class IntColumn extends NumberColumn<Integer> implements CategoricalColum
     return IntColumnType.isMissingValue(value);
   }
 
-  @Override
-  public boolean isMissing(int rowNumber) {
+  @Override public boolean isMissing(int rowNumber) {
     return isMissingValue(getInt(rowNumber));
   }
 
-  @Override
-  public void sortAscending() {
+  @Override public void sortAscending() {
     IntArrays.parallelQuickSort(data.elements());
   }
 
-  @Override
-  public void sortDescending() {
+  @Override public void sortDescending() {
     IntArrays.parallelQuickSort(data.elements(), descendingComparator);
   }
 
-  @Override
-  public IntColumn appendObj(Object obj) {
+  @Override public IntColumn appendObj(Object obj) {
     if (obj == null) {
       return appendMissing();
     }
@@ -371,28 +333,23 @@ public class IntColumn extends NumberColumn<Integer> implements CategoricalColum
     throw new IllegalArgumentException("Could not append " + obj.getClass());
   }
 
-  @Override
-  public IntColumn appendCell(final String value) {
+  @Override public IntColumn appendCell(final String value) {
     try {
       return append(IntColumnType.DEFAULT_PARSER.parseInt(value));
     } catch (final NumberFormatException e) {
-      throw new NumberFormatException(
-          "Error adding value to column " + name() + ": " + e.getMessage());
+      throw new NumberFormatException("Error adding value to column " + name() + ": " + e.getMessage());
     }
   }
 
-  @Override
-  public IntColumn appendCell(final String value, AbstractColumnParser<?> parser) {
+  @Override public IntColumn appendCell(final String value, AbstractColumnParser<?> parser) {
     try {
       return append(parser.parseInt(value));
     } catch (final NumberFormatException e) {
-      throw new NumberFormatException(
-          "Error adding value to column " + name() + ": " + e.getMessage());
+      throw new NumberFormatException("Error adding value to column " + name() + ": " + e.getMessage());
     }
   }
 
-  @Override
-  public String getUnformattedString(final int row) {
+  @Override public String getUnformattedString(final int row) {
     final int value = getInt(row);
     if (IntColumnType.isMissingValue(value)) {
       return "";
@@ -400,88 +357,71 @@ public class IntColumn extends NumberColumn<Integer> implements CategoricalColum
     return String.valueOf(value);
   }
 
-  @Override
-  public IntColumn inRange(int start, int end) {
+  @Override public IntColumn inRange(int start, int end) {
     return (IntColumn) super.inRange(start, end);
   }
 
-  @Override
-  public IntColumn where(Selection selection) {
+  @Override public IntColumn where(Selection selection) {
     return (IntColumn) super.where(selection);
   }
 
-  @Override
-  public IntColumn lead(int n) {
+  @Override public IntColumn lead(int n) {
     return (IntColumn) super.lead(n);
   }
 
-  @Override
-  public IntColumn setName(String name) {
+  @Override public IntColumn setName(String name) {
     return (IntColumn) super.setName(name);
   }
 
-  @Override
-  public IntColumn filter(Predicate<? super Integer> test) {
+  @Override public IntColumn filter(Predicate<? super Integer> test) {
     return (IntColumn) super.filter(test);
   }
 
-  @Override
-  public IntColumn sorted(Comparator<? super Integer> comp) {
+  @Override public IntColumn sorted(Comparator<? super Integer> comp) {
     return (IntColumn) super.sorted(comp);
   }
 
-  @Override
-  public IntColumn map(Function<? super Integer, ? extends Integer> fun) {
+  @Override public IntColumn map(Function<? super Integer, ? extends Integer> fun) {
     return (IntColumn) super.map(fun);
   }
 
-  @Override
-  public IntColumn min(Column<Integer> other) {
+  @Override public IntColumn min(Column<Integer> other) {
     return (IntColumn) super.min(other);
   }
 
-  @Override
-  public IntColumn max(Column<Integer> other) {
+  @Override public IntColumn max(Column<Integer> other) {
     return (IntColumn) super.max(other);
   }
 
-  @Override
-  public IntColumn set(Selection condition, Column<Integer> other) {
+  @Override public IntColumn set(Selection condition, Column<Integer> other) {
     return (IntColumn) super.set(condition, other);
   }
 
-  @Override
-  public IntColumn set(Selection rowSelection, Integer newValue) {
+  @Override public IntColumn set(Selection rowSelection, Integer newValue) {
     return (IntColumn) super.set(rowSelection, newValue);
   }
 
-  @Override
-  public IntColumn set(DoublePredicate condition, Integer newValue) {
+  @Override public IntColumn set(DoublePredicate condition, Integer newValue) {
     return (IntColumn) super.set(condition, newValue);
   }
 
-  @Override
-  public IntColumn set(DoublePredicate condition, NumberColumn<Integer> other) {
+  @Override public IntColumn set(DoublePredicate condition, NumberColumn<Integer> other) {
     return (IntColumn) super.set(condition, other);
   }
 
-  @Override
-  public IntColumn first(int numRows) {
+  @Override public IntColumn first(int numRows) {
     return (IntColumn) super.first(numRows);
   }
 
-  @Override
-  public IntColumn last(int numRows) {
+  @Override public IntColumn last(int numRows) {
     return (IntColumn) super.last(numRows);
   }
 
-  @Override
-  public IntColumn sampleN(int n) {
+  @Override public IntColumn sampleN(int n) {
     return (IntColumn) super.sampleN(n);
   }
 
-  @Override
-  public IntColumn sampleX(double proportion) {
+  @Override public IntColumn sampleX(double proportion) {
     return (IntColumn) super.sampleX(proportion);
   }
 
@@ -493,8 +433,7 @@ public class IntColumn extends NumberColumn<Integer> implements CategoricalColum
    *
    * <p>A missing value in the receiver is converted to a missing value in the result
    */
-  @Override
-  public LongColumn asLongColumn() {
+  @Override public LongColumn asLongColumn() {
     LongColumn result = LongColumn.create(name());
     for (int d : data) {
       if (IntColumnType.isMissingValue(d)) {
@@ -521,8 +460,7 @@ public class IntColumn extends NumberColumn<Integer> implements CategoricalColum
    *
    * <p>A missing value in the receiver is converted to a missing value in the result
    */
-  @Override
-  public FloatColumn asFloatColumn() {
+  @Override public FloatColumn asFloatColumn() {
     FloatColumn result = FloatColumn.create(name());
     for (int d : data) {
       if (IntColumnType.isMissingValue(d)) {
@@ -549,8 +487,7 @@ public class IntColumn extends NumberColumn<Integer> implements CategoricalColum
    *
    * <p>A missing value in the receiver is converted to a missing value in the result
    */
-  @Override
-  public DoubleColumn asDoubleColumn() {
+  @Override public DoubleColumn asDoubleColumn() {
     DoubleColumn result = DoubleColumn.create(name());
     for (int d : data) {
       if (IntColumnType.isMissingValue(d)) {
@@ -578,8 +515,7 @@ public class IntColumn extends NumberColumn<Integer> implements CategoricalColum
    *
    * <p>A missing value in the receiver is converted to a missing value in the result
    */
-  @Override
-  public ShortColumn asShortColumn() {
+  @Override public ShortColumn asShortColumn() {
     ShortColumn result = ShortColumn.create(name());
     for (int d : data) {
       if (IntColumnType.isMissingValue(d)) {
