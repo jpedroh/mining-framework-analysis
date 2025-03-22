@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Ö´ĞĞÆ÷×Ô¶¯×¢²áÏß³Ì
+ * æ‰§è¡Œå™¨è‡ªåŠ¨æ³¨å†Œçº¿ç¨‹
  * job registry instance
  * @author xuxueli 2016-10-02 19:10:24
  */
@@ -37,11 +37,11 @@ public class JobRegistryMonitorHelper {
 			public void run() {
 				while (!toStop) {
 					try {
-						// auto registry group  ×Ô¶¯»ñÈ¡µØÖ·µÄÖ´ĞĞÆ÷
+						// auto registry group  è‡ªåŠ¨è·å–åœ°å€çš„æ‰§è¡Œå™¨
 						List<XxlJobGroup> groupList = XxlJobAdminConfig.getAdminConfig().getXxlJobGroupDao().findByAddressType(0);
 						if (CollectionUtils.isNotEmpty(groupList)) {
 
-							// remove dead address (admin/executor)  Á¬ĞøÈı´ÎĞÄÌøÎ¬»¤Ê§°Ü¾Í»áÉ¾³ı µ÷¶ÈÆ÷ºÍÖ´ĞĞÆ÷
+							// remove dead address (admin/executor)  è¿ç»­ä¸‰æ¬¡å¿ƒè·³ç»´æŠ¤å¤±è´¥å°±ä¼šåˆ é™¤ è°ƒåº¦å™¨å’Œæ‰§è¡Œå™¨
 							XxlJobAdminConfig.getAdminConfig().getXxlJobRegistryDao().removeDead(RegistryConfig.DEAD_TIMEOUT);
 
 							// fresh online address (admin/executor)

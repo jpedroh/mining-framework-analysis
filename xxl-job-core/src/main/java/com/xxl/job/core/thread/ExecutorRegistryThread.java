@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
- * È·ÊµÓĞ±ØÒªÍ¨¹ıÃ¿30Ãë×¢²áÒ»´Î£¬ÕâÑùÄÜÈ·¶¨Ë«·½¶¼´æ»î
+ * ç¡®å®æœ‰å¿…è¦é€šè¿‡æ¯30ç§’æ³¨å†Œä¸€æ¬¡ï¼Œè¿™æ ·èƒ½ç¡®å®šåŒæ–¹éƒ½å­˜æ´»
  * Created by xuxueli on 17/3/2.
  */
 public class ExecutorRegistryThread extends Thread {
@@ -24,7 +24,6 @@ public class ExecutorRegistryThread extends Thread {
 
     private Thread registryThread;
     private volatile boolean toStop = false;
-  
     public void start(final String appName, final String address){
 
         // valid
@@ -44,9 +43,8 @@ public class ExecutorRegistryThread extends Thread {
                 // registry
                 while (!toStop) {
                     try {
-                      
                         RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(), appName, address);
-                          //Ö®Ç°ÒÑ¾­»ñÈ¡ÁËËùÓĞµ÷¶ÈÖĞĞÄµÄ±¾µØ´úÀí
+                          //ä¹‹å‰å·²ç»è·å–äº†æ‰€æœ‰è°ƒåº¦ä¸­å¿ƒçš„æœ¬åœ°ä»£ç†
                         for (AdminBiz adminBiz: XxlJobExecutor.getAdminBizList()) {
                             try {
                                 ReturnT<String> registryResult = adminBiz.registry(registryParam);
@@ -69,13 +67,12 @@ public class ExecutorRegistryThread extends Thread {
                     try {
                         TimeUnit.SECONDS.sleep(RegistryConfig.BEAT_TIMEOUT);
                     } catch (InterruptedException e) {
-                       
                         logger.warn(">>>>>>>>>>> xxl-job, executor registry thread interrupted, error msg:{}", e.getMessage());
                     }
                 }
 
                 // registry remove
-                try {          
+                try {
                     RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(), appName, address);
                     for (AdminBiz adminBiz: XxlJobExecutor.getAdminBizList()) {
                         try {

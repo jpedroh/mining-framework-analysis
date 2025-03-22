@@ -49,6 +49,15 @@ public class JobFailMonitorHelper {
 				// monitor
 				while (!toStop) {
 					try {
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/36a114cac368477d23daf49693ccd6ea4e591f6e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/thread/JobFailMonitorHelper.java/left.java
+						List<Integer> jobLogIdList = new ArrayList<Integer>();
+						//一次性从队列中取出所有数据
+						int drainToNum = JobFailMonitorHelper.instance.queue.drainTo(jobLogIdList);
+||||||| /usr/src/app/output/xuxueli/xxl-job/36a114cac368477d23daf49693ccd6ea4e591f6e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/thread/JobFailMonitorHelper.java/base.java
+						List<Integer> jobLogIdList = new ArrayList<Integer>();
+						int drainToNum = JobFailMonitorHelper.instance.queue.drainTo(jobLogIdList);
+=======
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/36a114cac368477d23daf49693ccd6ea4e591f6e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/thread/JobFailMonitorHelper.java/right.java
 
 						List<Integer> failLogIds = XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().findFailJobLogIds(1000);
 						if (CollectionUtils.isNotEmpty(failLogIds)) {
@@ -59,6 +68,37 @@ public class JobFailMonitorHelper {
 								if (lockRet < 1) {
 									continue;
 								}
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/36a114cac368477d23daf49693ccd6ea4e591f6e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/thread/JobFailMonitorHelper.java/left.java
+								XxlJobLog log = XxlJobDynamicScheduler.xxlJobLogDao.load(jobLogId);
+								if (log == null) {
+									continue;
+								} //0 还在处理
+								if (IJobHandler.SUCCESS.getCode() == log.getTriggerCode() && log.getHandleCode() == 0) {
+									// job running
+									JobFailMonitorHelper.monitor(jobLogId);
+									logger.info(">>>>>>>>>>> job monitor, job running, JobLogId:{}", jobLogId);
+								} else if (IJobHandler.SUCCESS.getCode() == log.getHandleCode()) {
+									// job success, pass
+									logger.info(">>>>>>>>>>> job monitor, job success, JobLogId:{}", jobLogId);
+								} else /*if (IJobHandler.FAIL.getCode() == log.getTriggerCode()
+										|| IJobHandler.FAIL.getCode() == log.getHandleCode()
+										|| IJobHandler.FAIL_RETRY.getCode() == log.getHandleCode() )*/ {
+||||||| /usr/src/app/output/xuxueli/xxl-job/36a114cac368477d23daf49693ccd6ea4e591f6e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/thread/JobFailMonitorHelper.java/base.java
+								XxlJobLog log = XxlJobDynamicScheduler.xxlJobLogDao.load(jobLogId);
+								if (log == null) {
+									continue;
+								}
+								if (IJobHandler.SUCCESS.getCode() == log.getTriggerCode() && log.getHandleCode() == 0) {
+									// job running
+									JobFailMonitorHelper.monitor(jobLogId);
+									logger.info(">>>>>>>>>>> job monitor, job running, JobLogId:{}", jobLogId);
+								} else if (IJobHandler.SUCCESS.getCode() == log.getHandleCode()) {
+									// job success, pass
+									logger.info(">>>>>>>>>>> job monitor, job success, JobLogId:{}", jobLogId);
+								} else /*if (IJobHandler.FAIL.getCode() == log.getTriggerCode()
+										|| IJobHandler.FAIL.getCode() == log.getHandleCode()
+										|| IJobHandler.FAIL_RETRY.getCode() == log.getHandleCode() )*/ {
+=======
 								XxlJobLog log = XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().load(failLogId);
 								XxlJobInfo info = XxlJobAdminConfig.getAdminConfig().getXxlJobInfoDao().loadById(log.getJobId());
 
@@ -68,7 +108,8 @@ public class JobFailMonitorHelper {
 									String retryMsg = "<br><br><span style=\"color:#F39C12;\" > >>>>>>>>>>>"+ I18nUtil.getString("jobconf_trigger_type_retry") +"<<<<<<<<<<< </span><br>";
 									log.setTriggerMsg(log.getTriggerMsg() + retryMsg);
 									XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().updateTriggerInfo(log);
-								} //0 还在处理
+								}
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/36a114cac368477d23daf49693ccd6ea4e591f6e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/thread/JobFailMonitorHelper.java/right.java
 
 								// 2、fail alarm monitor
 								int newAlarmStatus = 0;		// 告警状态：0-默认、-1=锁定状态、1-无需告警、2-告警成功、3-告警失败

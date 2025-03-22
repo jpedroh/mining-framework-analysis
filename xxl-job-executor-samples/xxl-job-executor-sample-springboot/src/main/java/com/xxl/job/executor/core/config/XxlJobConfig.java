@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * xxl-job config
- * ’‚∏ˆ «∫À–ƒ¿‡ Ω´±æ÷¥––∆˜◊¢≤·µΩ¡À µ˜∂»÷––ƒ
+ * Ëøô‰∏™ÊòØÊ†∏ÂøÉÁ±ª Â∞ÜÊú¨ÊâßË°åÂô®Ê≥®ÂÜåÂà∞‰∫Ü Ë∞ÉÂ∫¶‰∏≠ÂøÉ
  *
  * @author xuxueli 2017-04-28
  */
@@ -44,15 +44,16 @@ public class XxlJobConfig {
     @Bean(initMethod = "start", destroyMethod = "destroy")
     public XxlJobSpringExecutor xxlJobExecutor() {
         logger.info(">>>>>>>>>>> xxl-job config init.");
-    XxlJobSpringExecutor xxlJobSpringExecutor = new XxlJobSpringExecutor();
+        XxlJobSpringExecutor xxlJobSpringExecutor = new XxlJobSpringExecutor();
         xxlJobSpringExecutor.setAdminAddresses(adminAddresses);
         xxlJobSpringExecutor.setAppName(appName);
         xxlJobSpringExecutor.setIp(ip);
         xxlJobSpringExecutor.setPort(port);
         xxlJobSpringExecutor.setAccessToken(accessToken);
         xxlJobSpringExecutor.setLogPath(logPath);
+        //Êó•Âøó‰øùÁïôÊó∂Èó¥
         xxlJobSpringExecutor.setLogRetentionDays(logRetentionDays);
-     
+
         return xxlJobSpringExecutor;
     }
 

@@ -43,30 +43,67 @@ public final class XxlJobDynamicScheduler {
     // ---------------------- param ----------------------
 
     // scheduler
+
     private static Scheduler scheduler;
+
     public void setScheduler(Scheduler scheduler) {
 		XxlJobDynamicScheduler.scheduler = scheduler;
 	}
 
+	// accessToken
+
+    private static String accessToken;
+
+    public void setAccessToken(String accessToken) {
+        XxlJobDynamicScheduler.accessToken = accessToken;
+    }
+
+    // dao
+
+    // ---------------------- applicationContext ----------------------
 
     // ---------------------- init + destroy ----------------------
+
     public void start() throws Exception {
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/36a114cac368477d23daf49693ccd6ea4e591f6e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/schedule/XxlJobDynamicScheduler.java/left.java
+        // admin registry monitor run  执行器自动注册
+||||||| /usr/src/app/output/xuxueli/xxl-job/36a114cac368477d23daf49693ccd6ea4e591f6e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/schedule/XxlJobDynamicScheduler.java/base.java
+        // admin registry monitor run
+=======
         // valid
         Assert.notNull(scheduler, "quartz scheduler is null");
 
         // init i18n
         initI18n();
 
-        // admin registry monitor run  执行器自动注册
+        // admin registry monitor run
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/36a114cac368477d23daf49693ccd6ea4e591f6e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/schedule/XxlJobDynamicScheduler.java/right.java
         JobRegistryMonitorHelper.getInstance().start();
 
         // admin monitor run  监控执行日志
         JobFailMonitorHelper.getInstance().start();
 
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/36a114cac368477d23daf49693ccd6ea4e591f6e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/schedule/XxlJobDynamicScheduler.java/left.java
+        // admin-server(spring-mvc)  调度中心 与  处理地址
+        NetComServerFactory.putService(AdminBiz.class, XxlJobDynamicScheduler.adminBiz);
+        NetComServerFactory.setAccessToken(accessToken);
+||||||| /usr/src/app/output/xuxueli/xxl-job/36a114cac368477d23daf49693ccd6ea4e591f6e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/schedule/XxlJobDynamicScheduler.java/base.java
+        // admin-server(spring-mvc)
+        NetComServerFactory.putService(AdminBiz.class, XxlJobDynamicScheduler.adminBiz);
+        NetComServerFactory.setAccessToken(accessToken);
+=======
+        // admin-server
         initRpcProvider();
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/36a114cac368477d23daf49693ccd6ea4e591f6e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/schedule/XxlJobDynamicScheduler.java/right.java
+
         logger.info(">>>>>>>>> init xxl-job admin success.");
     }
 
+    private void initI18n(){
+        for (ExecutorBlockStrategyEnum item:ExecutorBlockStrategyEnum.values()) {
+            item.setTitle(I18nUtil.getString("jobconf_block_".concat(item.name())));
+        }
+    }
 
     public void destroy() throws Exception {
         // admin trigger pool stop
@@ -82,39 +119,10 @@ public final class XxlJobDynamicScheduler {
         stopRpcProvider();
     }
 
-
-    // ---------------------- I18n ----------------------
-
-    private void initI18n(){
-        for (ExecutorBlockStrategyEnum item:ExecutorBlockStrategyEnum.values()) {
-            item.setTitle(I18nUtil.getString("jobconf_block_".concat(item.name())));
-        }
-    }
-
-
-    // ---------------------- admin rpc provider (no server version) ----------------------
-    private static JettyServerHandler jettyServerHandler;
-    private void initRpcProvider(){
-        // init
-        XxlRpcProviderFactory xxlRpcProviderFactory = new XxlRpcProviderFactory();
-        xxlRpcProviderFactory.initConfig(NetEnum.JETTY, Serializer.SerializeEnum.HESSIAN.getSerializer(), null, 0, XxlJobAdminConfig.getAdminConfig().getAccessToken(), null, null);
-
-        // add services
-        xxlRpcProviderFactory.addService(AdminBiz.class.getName(), null, XxlJobAdminConfig.getAdminConfig().getAdminBiz());
-
-        // jetty handler
-        jettyServerHandler = new JettyServerHandler(xxlRpcProviderFactory);
-    }
-    private void stopRpcProvider() throws Exception {
-        new XxlRpcInvokerFactory().stop();
-    }
-    public static void invokeAdminService(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        jettyServerHandler.handle(null, new Request(null, null), request, response);
-    }
-
-
     // ---------------------- executor-client ----------------------
+
     private static ConcurrentHashMap<String, ExecutorBiz> executorBizRepository = new ConcurrentHashMap<String, ExecutorBiz>();
+
     public static ExecutorBiz getExecutorBiz(String address) throws Exception {
         // valid
         if (address==null || address.trim().length()==0) {
@@ -136,7 +144,6 @@ public final class XxlJobDynamicScheduler {
         return executorBiz;
     }
 
-
     // ---------------------- schedule util ----------------------
 
     /**
@@ -144,6 +151,7 @@ public final class XxlJobDynamicScheduler {
      *
      * @param jobInfo
      */
+
 	public static void fillJobInfo(XxlJobInfo jobInfo) {
 
         String group = String.valueOf(jobInfo.getJobGroup());
@@ -175,9 +183,8 @@ public final class XxlJobDynamicScheduler {
 		}
 	}
 
-
     /**
-     * add trigger + job
+     * addJob
      *  将任务添加到scheduler器中
      * @param jobName
      * @param jobGroup
@@ -185,6 +192,7 @@ public final class XxlJobDynamicScheduler {
      * @return
      * @throws SchedulerException
      */
+
 	public static boolean addJob(String jobName, String jobGroup, String cronExpression) throws SchedulerException {
     	// 1、job key
         TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
@@ -216,37 +224,6 @@ public final class XxlJobDynamicScheduler {
         return true;
     }
 
-
-    /**
-     * remove trigger + job
-     *
-     * @param jobName
-     * @param jobGroup
-     * @return
-     * @throws SchedulerException
-     */
-    public static boolean removeJob(String jobName, String jobGroup) throws SchedulerException {
-
-        TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
-
-        if (scheduler.checkExists(triggerKey)) {
-            scheduler.unscheduleJob(triggerKey);    // trigger + job
-        }
-
-        logger.info(">>>>>>>>>>> removeJob success, triggerKey:{}", triggerKey);
-        return true;
-    }
-
-
-    /**
-     * updateJobCron
-     * 移除任务
-     * @param jobGroup
-     * @param jobName
-     * @param cronExpression
-     * @return
-     * @throws SchedulerException
-     */
 	public static boolean updateJobCron(String jobGroup, String jobName, String cronExpression) throws SchedulerException {
 
         // 1、job key
@@ -288,6 +265,50 @@ public final class XxlJobDynamicScheduler {
         return true;
     }
 
+    /**
+     * unscheduleJob
+     * 移除任务
+     * @param jobName
+     * @param jobGroup
+     * @return
+     * @throws SchedulerException
+     */
+
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/36a114cac368477d23daf49693ccd6ea4e591f6e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/schedule/XxlJobDynamicScheduler.java/left.java
+    public static boolean removeJob(String jobName, String jobGroup) throws SchedulerException {
+    	// TriggerKey : name + group
+        TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
+        boolean result = false;
+        if (checkExists(jobName, jobGroup)) {
+            result = scheduler.unscheduleJob(triggerKey);
+            logger.info(">>>>>>>>>>> removeJob, triggerKey:{}, result [{}]", triggerKey, result);
+        }
+        return true;
+    }
+||||||| /usr/src/app/output/xuxueli/xxl-job/36a114cac368477d23daf49693ccd6ea4e591f6e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/schedule/XxlJobDynamicScheduler.java/base.java
+    public static boolean removeJob(String jobName, String jobGroup) throws SchedulerException {
+    	// TriggerKey : name + group
+        TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
+        boolean result = false;
+        if (checkExists(jobName, jobGroup)) {
+            result = scheduler.unscheduleJob(triggerKey);
+            logger.info(">>>>>>>>>>> removeJob, triggerKey:{}, result [{}]", triggerKey, result);
+        }
+        return true;
+    }
+=======
+    public static boolean removeJob(String jobName, String jobGroup) throws SchedulerException {
+
+        TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
+
+        if (scheduler.checkExists(triggerKey)) {
+            scheduler.unscheduleJob(triggerKey);    // trigger + job
+        }
+
+        logger.info(">>>>>>>>>>> removeJob success, triggerKey:{}", triggerKey);
+        return true;
+    }
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/36a114cac368477d23daf49693ccd6ea4e591f6e/xxl-job-admin/src/main/java/com/xxl/job/admin/core/schedule/XxlJobDynamicScheduler.java/right.java
 
     /**
      * pause
@@ -297,6 +318,90 @@ public final class XxlJobDynamicScheduler {
      * @return
      * @throws SchedulerException
      */
+
+    /**
+     * resume
+     * 继续任务
+     * @param jobName
+     * @param jobGroup
+     * @return
+     * @throws SchedulerException
+     */
+
+    /**
+     * run
+     * 调用任务
+     * @param jobName
+     * @param jobGroup
+     * @return
+     * @throws SchedulerException
+     */
+
+    // ---------------------- param ----------------------
+
+    // scheduler
+
+    // ---------------------- init + destroy ----------------------
+
+    // ---------------------- I18n ----------------------
+
+    // ---------------------- admin rpc provider (no server version) ----------------------
+
+    private static JettyServerHandler jettyServerHandler;
+
+    private void initRpcProvider(){
+        // init
+        XxlRpcProviderFactory xxlRpcProviderFactory = new XxlRpcProviderFactory();
+        xxlRpcProviderFactory.initConfig(NetEnum.JETTY, Serializer.SerializeEnum.HESSIAN.getSerializer(), null, 0, XxlJobAdminConfig.getAdminConfig().getAccessToken(), null, null);
+
+        // add services
+        xxlRpcProviderFactory.addService(AdminBiz.class.getName(), null, XxlJobAdminConfig.getAdminConfig().getAdminBiz());
+
+        // jetty handler
+        jettyServerHandler = new JettyServerHandler(xxlRpcProviderFactory);
+    }
+
+    private void stopRpcProvider() throws Exception {
+        new XxlRpcInvokerFactory().stop();
+    }
+
+    public static void invokeAdminService(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        jettyServerHandler.handle(null, new Request(null, null), request, response);
+    }
+
+    // ---------------------- executor-client ----------------------
+
+    // ---------------------- schedule util ----------------------
+
+    /**
+     * add trigger + job
+     *
+     * @param jobName
+     * @param jobGroup
+     * @param cronExpression
+     * @return
+     * @throws SchedulerException
+     */
+
+    /**
+     * remove trigger + job
+     *
+     * @param jobName
+     * @param jobGroup
+     * @return
+     * @throws SchedulerException
+     */
+
+    /**
+     * updateJobCron
+     *
+     * @param jobGroup
+     * @param jobName
+     * @param cronExpression
+     * @return
+     * @throws SchedulerException
+     */
+
     /*public static boolean pauseJob(String jobName, String jobGroup) throws SchedulerException {
 
     	TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
@@ -311,15 +416,6 @@ public final class XxlJobDynamicScheduler {
         return result;
     }*/
 
-
-    /**
-     * resume
-     * 继续任务
-     * @param jobName
-     * @param jobGroup
-     * @return
-     * @throws SchedulerException
-     */
     /*public static boolean resumeJob(String jobName, String jobGroup) throws SchedulerException {
 
         TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
@@ -334,15 +430,6 @@ public final class XxlJobDynamicScheduler {
         return result;
     }*/
 
-
-    /**
-     * run
-     * 调用任务
-     * @param jobName
-     * @param jobGroup
-     * @return
-     * @throws SchedulerException
-     */
     /*public static boolean triggerJob(String jobName, String jobGroup) throws SchedulerException {
     	// TriggerKey : name + group
     	JobKey jobKey = new JobKey(jobName, jobGroup);
