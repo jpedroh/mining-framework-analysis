@@ -59,8 +59,14 @@ public interface PetApi {
    * Finds Pets by tags
    * Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
    * @param tags Tags to filter by (required)
-   * @return Observable&lt;List&lt;Pet&gt;&gt;
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/5a2c3a65716ce03071721aaea9d0b745700f2eae/samples/client/petstore/java/retrofit2rx/src/main/java/io/swagger/client/api/PetApi.java/left.java
+   * @return Call&lt;List&lt;Pet&gt;&gt;
    * @deprecated
+||||||| /usr/src/app/output/openapitools/openapi-generator/5a2c3a65716ce03071721aaea9d0b745700f2eae/samples/client/petstore/java/retrofit2rx/src/main/java/io/swagger/client/api/PetApi.java/base.java
+   * @return Call&lt;List&lt;Pet&gt;&gt;
+=======
+   * @return Observable&lt;List&lt;Pet&gt;&gt;
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/5a2c3a65716ce03071721aaea9d0b745700f2eae/samples/client/petstore/java/retrofit2rx/src/main/java/io/swagger/client/api/PetApi.java/right.java
    */
   @Deprecated
   @GET("pet/findByTags")
