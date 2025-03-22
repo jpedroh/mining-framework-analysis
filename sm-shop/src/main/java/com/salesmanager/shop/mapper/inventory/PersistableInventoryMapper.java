@@ -1,7 +1,5 @@
 package com.salesmanager.shop.mapper.inventory;
-
 import static com.salesmanager.core.business.utils.NumberUtils.isPositive;
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -9,13 +7,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.salesmanager.core.business.constants.Constants;
 import com.salesmanager.core.business.exception.ConversionException;
 import com.salesmanager.core.business.exception.ServiceException;
@@ -36,164 +32,138 @@ import com.salesmanager.shop.store.api.exception.ConversionRuntimeException;
 import com.salesmanager.shop.store.api.exception.ResourceNotFoundException;
 import com.salesmanager.shop.utils.DateUtil;
 
-@Component
-public class PersistableInventoryMapper implements Mapper<PersistableInventory, ProductAvailability> {
+@Component public class PersistableInventoryMapper implements Mapper<PersistableInventory, ProductAvailability> {
+  @Autowired private LanguageService languageService;
 
-	@Autowired
-	private LanguageService languageService;
+  @Autowired private ProductInstanceService productInstanceService;
 
-	@Autowired
-	private ProductInstanceService productInstanceService;
+  @Autowired private ProductService productService;
 
-	@Autowired
-	private ProductService productService;
+  @Override public ProductAvailability convert(PersistableInventory source, MerchantStore store, Language language) {
+    ProductAvailability availability = new ProductAvailability();
+    availability.setMerchantStore(store);
+    return merge(source, availability, store, language);
+  }
 
-	@Override
-	public ProductAvailability convert(PersistableInventory source, MerchantStore store, Language language) {
-		ProductAvailability availability = new ProductAvailability();
-		availability.setMerchantStore(store);
-		return merge(source, availability, store, language);
+  @Override public ProductAvailability merge(PersistableInventory source, ProductAvailability destination, MerchantStore store, Language language) {
+    Validate.notNull(destination, "Product availability cannot be null");
+    try {
+      destination.setProductQuantity(source.getQuantity());
+      destination.setProductQuantityOrderMin(source.getProductQuantityOrderMax());
+      destination.setProductQuantityOrderMax(source.getProductQuantityOrderMin());
+      destination.setAvailable(source.isAvailable());
+      destination.setOwner(source.getOwner());
+      String region = getRegion(source);
+      destination.setRegion(region);
+      destination.setRegionVariant(source.getRegionVariant());
+      if (StringUtils.isNotBlank(source.getDateAvailable())) {
+        destination.setProductDateAvailable(DateUtil.getDate(source.getDateAvailable()));
+      }
+      if (source.getProductId() != null && 
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/98a9e4f60539e64bc147453626e9cce7439f0d62/sm-shop/src/main/java/com/salesmanager/shop/mapper/inventory/PersistableInventoryMapper.java/left.java
+      (source.getInstance() == null || source.getInstance() == 0)
+=======
+      source.getProductId().longValue() > 0
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/98a9e4f60539e64bc147453626e9cce7439f0d62/sm-shop/src/main/java/com/salesmanager/shop/mapper/inventory/PersistableInventoryMapper.java/right.java
+      ) {
+        Product product = productService.findOne(source.getId(), store);
+        if (product == null) {
+          throw new ResourceNotFoundException("Product with id [" + source.getId() + "] not found for store [" + store.getCode() + "]");
+        }
+        destination.setSku(product.getSku());
+      }
+      if (source.getInstance() != null && source.getInstance().longValue() > 0) {
+        Optional<ProductInstance> instance = productInstanceService.getById(source.getInstance(), store);
+        if (instance.isEmpty()) {
+          throw new ResourceNotFoundException("ProductInstance with id [" + source.getInstance() + "] not found for store [" + store.getCode() + "]");
+        }
+        destination.setSku(instance.get().getSku());
+        destination.setProductInstance(instance.get());
+      }
+      for (PersistableProductPrice priceEntity : source.getPrices()) {
+        ProductPrice price = new ProductPrice();
+        price.setId(null);
+        if (isPositive(priceEntity.getId())) {
+          price.setId(priceEntity.getId());
+        }
+        if (destination.getPrices() != null) {
+          for (ProductPrice pp : destination.getPrices()) {
+            if (isPositive(priceEntity.getId()) && priceEntity.getId().equals(pp.getId())) {
+              price = pp;
+              price.setId(pp.getId());
+            }
+          }
+        }
+        price.setProductAvailability(destination);
+        price.setDefaultPrice(priceEntity.isDefaultPrice());
+        price.setProductPriceAmount(priceEntity.getOriginalPrice());
+        price.setDefaultPrice(priceEntity.isDefaultPrice());
+        price.setCode(priceEntity.getCode());
+        price.setProductPriceSpecialAmount(priceEntity.getDiscountedPrice());
+        if (Objects.nonNull(priceEntity.getDiscountStartDate())) {
+          Date startDate = DateUtil.getDate(priceEntity.getDiscountStartDate());
+          price.setProductPriceSpecialStartDate(startDate);
+        }
+        if (Objects.nonNull(priceEntity.getDiscountEndDate())) {
+          Date endDate = DateUtil.getDate(priceEntity.getDiscountEndDate());
+          price.setProductPriceSpecialEndDate(endDate);
+        }
+        Set<ProductPriceDescription> descs = getProductPriceDescriptions(price, priceEntity.getDescriptions());
+        price.setDescriptions(descs);
+        Set<ProductPrice> prices = new HashSet<ProductPrice>();
+        prices.add(price);
+        destination.setPrices(prices);
+      }
+      return destination;
+    } catch (Exception e) {
+      throw new ConversionRuntimeException(e);
+    }
+  }
 
-	}
+  private Set<ProductPriceDescription> getProductPriceDescriptions(ProductPrice price, List<com.salesmanager.shop.model.catalog.product.ProductPriceDescription> descriptions) throws ConversionException {
+    if (CollectionUtils.isEmpty(descriptions)) {
+      return Collections.emptySet();
+    }
+    Set<ProductPriceDescription> descs = new HashSet<ProductPriceDescription>();
+    for (com.salesmanager.shop.model.catalog.product.ProductPriceDescription desc : descriptions) {
+      ProductPriceDescription description = null;
+      if (CollectionUtils.isNotEmpty(price.getDescriptions())) {
+        for (ProductPriceDescription d : price.getDescriptions()) {
+          if (isPositive(desc.getId()) && desc.getId().equals(d.getId())) {
+            desc.setId(d.getId());
+          }
+        }
+      }
+      description = getDescription(desc);
+      description.setProductPrice(price);
+      descs.add(description);
+    }
+    return descs;
+  }
 
-	@Override
-	public ProductAvailability merge(PersistableInventory source, ProductAvailability destination, MerchantStore store,
-			Language language) {
-		Validate.notNull(destination, "Product availability cannot be null");
+  private String getRegion(PersistableInventory source) {
+    return Optional.ofNullable(source.getRegion()).filter(StringUtils::isNotBlank).orElse(Constants.ALL_REGIONS);
+  }
 
-		try {
-			destination.setProductQuantity(source.getQuantity());
-			destination.setProductQuantityOrderMin(source.getProductQuantityOrderMax());
-			destination.setProductQuantityOrderMax(source.getProductQuantityOrderMin());
-			destination.setAvailable(source.isAvailable());
-			destination.setOwner(source.getOwner());
+  private ProductPriceDescription getDescription(com.salesmanager.shop.model.catalog.product.ProductPriceDescription desc) throws ConversionException {
+    ProductPriceDescription target = new ProductPriceDescription();
+    target.setDescription(desc.getDescription());
+    target.setName(desc.getName());
+    target.setTitle(desc.getTitle());
+    target.setId(null);
+    if (isPositive(desc.getId())) {
+      target.setId(desc.getId());
+    }
+    Language lang = getLanguage(desc);
+    target.setLanguage(lang);
+    return target;
+  }
 
-			String region = getRegion(source);
-			destination.setRegion(region);
-
-			destination.setRegionVariant(source.getRegionVariant());
-			if (StringUtils.isNotBlank(source.getDateAvailable())) {
-				destination.setProductDateAvailable(DateUtil.getDate(source.getDateAvailable()));
-			}
-			
-			if(source.getProductId()!= null && source.getProductId().longValue() > 0) {
-				Product product = productService.findOne(source.getId(), store);
-				if(product == null) {
-					throw new ResourceNotFoundException("Product with id [" + source.getId() + "] not found for store [" + store.getCode() + "]");
-				}
-				destination.setSku(product.getSku());
-			}
-
-			if (source.getInstance() != null && source.getInstance() .longValue()> 0) {
-				Optional<ProductInstance> instance = productInstanceService.getById(source.getInstance(), store);
-				if(instance.isEmpty()) {
-					throw new ResourceNotFoundException("ProductInstance with id [" + source.getInstance() + "] not found for store [" + store.getCode() + "]");
-				}
-				destination.setSku(instance.get().getSku());
-				destination.setProductInstance(instance.get());
-			}
-
-			for (PersistableProductPrice priceEntity : source.getPrices()) {
-
-				ProductPrice price = new ProductPrice();
-				price.setId(null);
-
-				if (isPositive(priceEntity.getId())) {
-					price.setId(priceEntity.getId());
-				}
-
-				if (destination.getPrices() != null) {
-					for (ProductPrice pp : destination.getPrices()) {
-						if (isPositive(priceEntity.getId()) && priceEntity.getId().equals(pp.getId())) {
-							price = pp;
-							price.setId(pp.getId());
-						}
-					}
-				}
-
-				price.setProductAvailability(destination);
-				price.setDefaultPrice(priceEntity.isDefaultPrice());
-				price.setProductPriceAmount(priceEntity.getOriginalPrice());
-				price.setDefaultPrice(priceEntity.isDefaultPrice());
-				price.setCode(priceEntity.getCode());
-				price.setProductPriceSpecialAmount(priceEntity.getDiscountedPrice());
-
-				if (Objects.nonNull(priceEntity.getDiscountStartDate())) {
-					Date startDate = DateUtil.getDate(priceEntity.getDiscountStartDate());
-					price.setProductPriceSpecialStartDate(startDate);
-				}
-				if (Objects.nonNull(priceEntity.getDiscountEndDate())) {
-					Date endDate = DateUtil.getDate(priceEntity.getDiscountEndDate());
-					price.setProductPriceSpecialEndDate(endDate);
-				}
-
-				Set<ProductPriceDescription> descs = getProductPriceDescriptions(price, priceEntity.getDescriptions());
-				price.setDescriptions(descs);
-				Set<ProductPrice> prices = new HashSet<ProductPrice>();
-				prices.add(price);
-				destination.setPrices(prices);
-			}
-
-			return destination;
-
-		} catch (Exception e) {
-			throw new ConversionRuntimeException(e);
-		}
-
-	}
-
-	private Set<ProductPriceDescription> getProductPriceDescriptions(ProductPrice price,
-			List<com.salesmanager.shop.model.catalog.product.ProductPriceDescription> descriptions)
-			throws ConversionException {
-		if (CollectionUtils.isEmpty(descriptions)) {
-			return Collections.emptySet();
-		}
-		Set<ProductPriceDescription> descs = new HashSet<ProductPriceDescription>();
-		for (com.salesmanager.shop.model.catalog.product.ProductPriceDescription desc : descriptions) {
-			ProductPriceDescription description = null;
-			if (CollectionUtils.isNotEmpty(price.getDescriptions())) {
-				for (ProductPriceDescription d : price.getDescriptions()) {
-					if (isPositive(desc.getId()) && desc.getId().equals(d.getId())) {
-						desc.setId(d.getId());
-					}
-				}
-			}
-			description = getDescription(desc);
-			description.setProductPrice(price);
-			descs.add(description);
-		}
-		return descs;
-	}
-
-	private String getRegion(PersistableInventory source) {
-		return Optional.ofNullable(source.getRegion()).filter(StringUtils::isNotBlank).orElse(Constants.ALL_REGIONS);
-	}
-
-	private ProductPriceDescription getDescription(
-			com.salesmanager.shop.model.catalog.product.ProductPriceDescription desc) throws ConversionException {
-		ProductPriceDescription target = new ProductPriceDescription();
-		target.setDescription(desc.getDescription());
-		target.setName(desc.getName());
-		target.setTitle(desc.getTitle());
-		target.setId(null);
-		if (isPositive(desc.getId())) {
-			target.setId(desc.getId());
-		}
-		Language lang = getLanguage(desc);
-		target.setLanguage(lang);
-		return target;
-
-	}
-
-	private Language getLanguage(com.salesmanager.shop.model.catalog.product.ProductPriceDescription desc)
-			throws ConversionException {
-		try {
-			return Optional.ofNullable(languageService.getByCode(desc.getLanguage()))
-					.orElseThrow(() -> new ConversionException(
-							"Language is null for code " + desc.getLanguage() + " use language ISO code [en, fr ...]"));
-		} catch (ServiceException e) {
-			throw new ConversionException(e);
-		}
-	}
-
+  private Language getLanguage(com.salesmanager.shop.model.catalog.product.ProductPriceDescription desc) throws ConversionException {
+    try {
+      return Optional.ofNullable(languageService.getByCode(desc.getLanguage())).orElseThrow(() -> new ConversionException("Language is null for code " + desc.getLanguage() + " use language ISO code [en, fr ...]"));
+    } catch (ServiceException e) {
+      throw new ConversionException(e);
+    }
+  }
 }
