@@ -306,7 +306,15 @@ public class RecordSerializerTest extends KryoTestCase {
 
     @Test
     void testRecordWithSuperType() {
+<<<<<<< /usr/src/app/output/esotericsoftware/kryo/3fdfef395f6b96c57aa1f4f02ce91fb9fb2b3cc8/test-jdk14/com/esotericsoftware/kryo/serializers/RecordSerializerTest.java/left.java
         kryo.register(RecordWithSuperType.class);
+||||||| /usr/src/app/output/esotericsoftware/kryo/3fdfef395f6b96c57aa1f4f02ce91fb9fb2b3cc8/test-jdk14/com/esotericsoftware/kryo/serializers/RecordSerializerTest.java/base.java
+        var rc = new RecordSerializer<RecordWithSuperType>();
+        kryo.register(RecordWithSuperType.class, rc);
+=======
+        var rc = new RecordSerializer<>(RecordWithSuperType.class);
+        kryo.register(RecordWithSuperType.class, rc);
+>>>>>>> /usr/src/app/output/esotericsoftware/kryo/3fdfef395f6b96c57aa1f4f02ce91fb9fb2b3cc8/test-jdk14/com/esotericsoftware/kryo/serializers/RecordSerializerTest.java/right.java
 
         final var r = new RecordWithSuperType(1L);
         final var output = new Output(32);
