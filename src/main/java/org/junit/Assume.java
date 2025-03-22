@@ -1,11 +1,9 @@
 package org.junit;
-
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.everyItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
-
 import org.hamcrest.Matcher;
 
 /**
@@ -34,57 +32,57 @@ import org.hamcrest.Matcher;
  * @since 4.4
  */
 public class Assume {
-
-    /**
+  /**
      * Do not instantiate.
      * @deprecated since 4.13.
      */
-    @Deprecated
-    public Assume() {
-    }
+  @Deprecated public Assume() {
+  }
 
-    /**
+  /**
      * If called with an expression evaluating to {@code false}, the test will halt and be ignored.
      */
-    public static void assumeTrue(boolean b) {
-        assumeThat(b, is(true));
-    }
+  public static void assumeTrue(boolean b) {
+    assumeThat(b, is(true));
+  }
 
-    /**
+  /**
      * The inverse of {@link #assumeTrue(boolean)}.
      */
-    public static void assumeFalse(boolean b) {
-        assumeTrue(!b);
-    }
+  public static void assumeFalse(boolean b) {
+    assumeTrue(!b);
+  }
 
-    /**
+  /**
      * If called with an expression evaluating to {@code false}, the test will halt and be ignored.
      *
      * @param b If <code>false</code>, the method will attempt to stop the test and ignore it by
      * throwing {@link AssumptionViolatedException}.
      * @param message A message to pass to {@link AssumptionViolatedException}.
      */
-    public static void assumeTrue(String message, boolean b) {
-        if (!b) throw new AssumptionViolatedException(message);
+  public static void assumeTrue(String message, boolean b) {
+    if (!b) {
+      throw new AssumptionViolatedException(message);
     }
+  }
 
-    /**
+  /**
      * The inverse of {@link #assumeTrue(String, boolean)}.
      */
-    public static void assumeFalse(String message, boolean b) {
-        assumeTrue(message, !b);
-    }
+  public static void assumeFalse(String message, boolean b) {
+    assumeTrue(message, !b);
+  }
 
-    /**
+  /**
      * If called with a {@code null} array or one or more {@code null} elements in {@code objects},
      * the test will halt and be ignored.
      */
-    public static void assumeNotNull(Object... objects) {
-        assumeThat(objects, notNullValue());
-        assumeThat(asList(objects), everyItem(notNullValue()));
-    }
+  public static void assumeNotNull(Object... objects) {
+    assumeThat(objects, notNullValue());
+    assumeThat(asList(objects), everyItem(notNullValue()));
+  }
 
-    /**
+  /**
      * Call to assume that <code>actual</code> satisfies the condition specified by <code>matcher</code>.
      * If not, the test halts and is ignored.
      * Example:
@@ -102,14 +100,13 @@ public class Assume {
      * @see org.junit.matchers.JUnitMatchers
      * @deprecated use {@code org.hamcrest.junit.MatcherAssume.assumeThat()}
      */
-    @Deprecated
-    public static <T> void assumeThat(T actual, Matcher<T> matcher) {
-        if (!matcher.matches(actual)) {
-            throw new AssumptionViolatedException(actual, matcher);
-        }
+  @Deprecated public static <T extends java.lang.Object> void assumeThat(T actual, Matcher<T> matcher) {
+    if (!matcher.matches(actual)) {
+      throw new AssumptionViolatedException(actual, matcher);
     }
+  }
 
-    /**
+  /**
      * Call to assume that <code>actual</code> satisfies the condition specified by <code>matcher</code>.
      * If not, the test halts and is ignored.
      * Example:
@@ -127,14 +124,13 @@ public class Assume {
      * @see org.junit.matchers.JUnitMatchers
      * @deprecated use {@code org.hamcrest.junit.MatcherAssume.assumeThat()}
      */
-    @Deprecated
-    public static <T> void assumeThat(String message, T actual, Matcher<T> matcher) {
-        if (!matcher.matches(actual)) {
-            throw new AssumptionViolatedException(message, actual, matcher);
-        }
+  @Deprecated public static <T extends java.lang.Object> void assumeThat(String message, T actual, Matcher<T> matcher) {
+    if (!matcher.matches(actual)) {
+      throw new AssumptionViolatedException(message, actual, matcher);
     }
+  }
 
-    /**
+  /**
      * Use to assume that an operation completes normally.  If {@code e} is non-null, the test will halt and be ignored.
      *
      * For example:
@@ -153,11 +149,11 @@ public class Assume {
      *
      * @param e if non-null, the offending exception
      */
-    public static void assumeNoException(Throwable e) {
-        assumeThat(e, nullValue());
-    }
+  public static void assumeNoException(Throwable e) {
+    assumeThat(e, nullValue());
+  }
 
-    /**
+  /**
      * Attempts to halt the test and ignore it if Throwable <code>e</code> is
      * not <code>null</code>. Similar to {@link #assumeNoException(Throwable)},
      * but provides an additional message that can explain the details
@@ -167,7 +163,7 @@ public class Assume {
      * @param message Additional message to pass to {@link AssumptionViolatedException}.
      * @see #assumeNoException(Throwable)
      */
-    public static void assumeNoException(String message, Throwable e) {
-        assumeThat(message, e, nullValue());
-    }
+  public static void assumeNoException(String message, Throwable e) {
+    assumeThat(message, e, nullValue());
+  }
 }
