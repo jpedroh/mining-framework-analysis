@@ -1,22 +1,4 @@
-/*-
- * #%L
- * BroadleafCommerce Open Admin Platform
- * %%
- * Copyright (C) 2009 - 2023 Broadleaf Commerce
- * %%
- * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
- * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
- * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
- * shall apply.
- * 
- * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
- * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
- * #L%
- */
 package org.broadleafcommerce.openadmin.server.security.domain;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -24,74 +6,69 @@ import java.util.List;
  * @author elbertbautista
  */
 public interface AdminSection extends Serializable {
+  Long getId();
 
-    Long getId();
+  String getName();
 
-    String getName();
+  void setName(String name);
 
-    void setName(String name);
+  String getSectionKey();
 
-    String getSectionKey();
+  void setSectionKey(String sectionKey);
 
-    void setSectionKey(String sectionKey);
+  String getUrl();
 
-    String getUrl();
+  void setUrl(String url);
 
-    void setUrl(String url);
+  List<AdminPermission> getPermissions();
 
-    List<AdminPermission> getPermissions();
+  void setPermissions(List<AdminPermission> permissions);
 
-    void setPermissions(List<AdminPermission> permissions);
-
-    /**
+  /**
      * No longer needed after GWT removal
      *
      * @param displayController
      */
-    @Deprecated
-    void setDisplayController(String displayController);
+  @Deprecated void setDisplayController(String displayController);
 
-    /**
+  /**
      * No longer needed after GWT removal
      *
      * @param displayController
      */
-    @Deprecated
-    String getDisplayController();
+  @Deprecated String getDisplayController();
 
-    AdminModule getModule();
+  AdminModule getModule();
 
-    void setModule(AdminModule module);
+  void setModule(AdminModule module);
 
-    /**
+  /**
      * No longer needed after GWT removal
      *
      * @param displayController
      */
-    @Deprecated
-    Boolean getUseDefaultHandler();
+  @Deprecated Boolean getUseDefaultHandler();
 
-    /**
+  /**
      * No longer needed after GWT removal
      *
      * @param displayController
      */
-    @Deprecated
-    void setUseDefaultHandler(Boolean useDefaultHandler);
+  @Deprecated void setUseDefaultHandler(Boolean useDefaultHandler);
 
-    String getCeilingEntity();
+  String getCeilingEntity();
 
-    void setCeilingEntity(String ceilingEntity);
+  void setCeilingEntity(String ceilingEntity);
 
-    Integer getDisplayOrder();
+  Integer getDisplayOrder();
 
-    void setDisplayOrder(Integer displayOrder);
+  void setDisplayOrder(Integer displayOrder);
 
-    boolean isFolderable();
+  boolean isFolderable();
 
-    void setFolderable(boolean folderable);
+  void setFolderable(boolean folderable);
 
-    boolean isFolderedByDefault();
+  boolean isFolderedByDefault();
 
-    void setFolderedByDefault(boolean folderedByDefault);
+  void setFolderedByDefault(boolean folderedByDefault);
 }

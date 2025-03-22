@@ -1,25 +1,4 @@
-/*-
- * #%L
- * BroadleafCommerce Common Libraries
- * %%
- * Copyright (C) 2009 - 2023 Broadleaf Commerce
- * %%
- * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
- * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
- * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
- * shall apply.
- * 
- * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
- * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
- * #L%
- */
-/**
- * 
- */
 package org.broadleafcommerce.test.common.properties;
-
 import org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener;
 import org.broadleafcommerce.common.config.BroadleafEnvironmentConfigurer;
 import org.junit.Assert;
@@ -40,23 +19,15 @@ import org.springframework.test.context.junit4.SpringRunner;
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
-@RunWith(SpringRunner.class)
-@ContextConfiguration(initializers = BroadleafEnvironmentConfiguringApplicationListener.class)
-@ActiveProfiles("production")
-@DirtiesContext
-public class ProductionOverridePropertiesTest {
+@RunWith(value = SpringRunner.class) @ContextConfiguration(initializers = BroadleafEnvironmentConfiguringApplicationListener.class) @ActiveProfiles(value = "production") @DirtiesContext public class ProductionOverridePropertiesTest {
+  @Autowired protected Environment env;
 
-    @Autowired
-    protected Environment env;
-    
-    @Test
-    public void testOverriddenProductionProperty() {
-        Assert.assertEquals("productionvalue", env.getProperty(DefaultDevelopmentOverridePropertiesTest.TEST_PROPERTY));
-    }
-    
-    @Test
-    public void testOverriddenProductionSharedProperty() {
-        Assert.assertEquals("productionsharedvalue", env.getProperty("shared.override.test"));
-        Assert.assertTrue(((ConfigurableEnvironment) env).getPropertySources().contains(BroadleafEnvironmentConfigurer.PROFILE_AWARE_SOURCES_NAME));
-    }
+  @Test public void testOverriddenProductionProperty() {
+    Assert.assertEquals("productionvalue", env.getProperty(DefaultDevelopmentOverridePropertiesTest.TEST_PROPERTY));
+  }
+
+  @Test public void testOverriddenProductionSharedProperty() {
+    Assert.assertEquals("productionsharedvalue", env.getProperty("shared.override.test"));
+    Assert.assertTrue(((ConfigurableEnvironment) env).getPropertySources().contains(BroadleafEnvironmentConfigurer.PROFILE_AWARE_SOURCES_NAME));
+  }
 }

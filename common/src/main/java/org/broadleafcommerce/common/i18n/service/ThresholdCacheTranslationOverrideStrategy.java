@@ -1,22 +1,4 @@
-/*-
- * #%L
- * BroadleafCommerce Common Libraries
- * %%
- * Copyright (C) 2009 - 2023 Broadleaf Commerce
- * %%
- * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
- * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
- * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
- * shall apply.
- * 
- * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
- * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
- * #L%
- */
 package org.broadleafcommerce.common.i18n.service;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
@@ -29,11 +11,9 @@ import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 
 /**
@@ -53,123 +33,104 @@ import javax.annotation.Resource;
  * @see SparseTranslationOverrideStrategy
  * @author Jeff Fischer
  */
-@Component("blThresholdCacheTranslationOverrideStrategy")
-@Lazy
-public class ThresholdCacheTranslationOverrideStrategy implements TranslationOverrideStrategy {
+@Component(value = "blThresholdCacheTranslationOverrideStrategy") @Lazy public class ThresholdCacheTranslationOverrideStrategy implements TranslationOverrideStrategy {
+  @Resource(name = "blStatisticsService") protected StatisticsService statisticsService;
 
-    @Resource(name="blStatisticsService")
-    protected StatisticsService statisticsService;
+  @Resource(name = "blTranslationDao") protected TranslationDao dao;
 
-    @Resource(name = "blTranslationDao")
-    protected TranslationDao dao;
+  @Autowired protected TranslationSupport translationSupport;
 
-    @Autowired
-    protected TranslationSupport translationSupport;
-
-    @Override
-    public LocalePair getLocaleBasedOverride(String property, TranslatedEntity entityType, String entityId,
-                                             String localeCode, String localeCountryCode, String basicCacheKey) {
-        String specificPropertyKey = property + "_" + localeCountryCode;
-        String generalPropertyKey = property + "_" + localeCode;
-        Object cacheResult = translationSupport.getCache().get(basicCacheKey);
-        Object result = null;
-        LocalePair response = new LocalePair();
-        if (cacheResult == null) {
-            statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), false);
-            if (dao.countTranslationEntries(entityType, ResultType.STANDARD_CACHE) < translationSupport.getThresholdForFullCache()) {
-                Map<String, Map<String, StandardCacheItem>> propertyTranslationMap = new HashMap<String, Map<String, StandardCacheItem>>();
-                List<StandardCacheItem> convertedList = dao.readConvertedTranslationEntries(entityType, ResultType.STANDARD_CACHE);
-                if (!CollectionUtils.isEmpty(convertedList)) {
-                    for (StandardCacheItem standardCache : convertedList) {
-                        Translation translation = (Translation) standardCache.getCacheItem();
-                        String key = translation.getFieldName() + "_" + translation.getLocaleCode();
-                        if (!propertyTranslationMap.containsKey(key)) {
-                            propertyTranslationMap.put(key, new HashMap<String, StandardCacheItem>());
-                        }
-                        propertyTranslationMap.get(key).put(translation.getEntityId(), standardCache);
-                    }
-                }
-                translationSupport.getCache().put(basicCacheKey, propertyTranslationMap);
-                result = propertyTranslationMap;
-            } else {
-                //Translation is dual discriminated by site and catalog, which can make it impossible to find results under normal
-                //circumstances because the two discriminators can cancel eachother out. We use the CATALOG_ONLY ResultType
-                //to force the system to only honor the catalog discrimination during this call.
-                Translation translation = dao.readTranslation(entityType, entityId, property, localeCode, localeCountryCode, ResultType.CATALOG_ONLY);
-                buildSingleItemResponse(response, translation);
-                return response;
+  @Override public LocalePair getLocaleBasedOverride(String property, TranslatedEntity entityType, String entityId, String localeCode, String localeCountryCode, String basicCacheKey) {
+    String specificPropertyKey = property + "_" + localeCountryCode;
+    String generalPropertyKey = property + "_" + localeCode;
+    Object cacheResult = translationSupport.getCache().get(basicCacheKey);
+    Object result = null;
+    LocalePair response = new LocalePair();
+    if (cacheResult == null) {
+      statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), false);
+      if (dao.countTranslationEntries(entityType, ResultType.STANDARD_CACHE) < translationSupport.getThresholdForFullCache()) {
+        Map<String, Map<String, StandardCacheItem>> propertyTranslationMap = new HashMap<String, Map<String, StandardCacheItem>>();
+        List<StandardCacheItem> convertedList = dao.readConvertedTranslationEntries(entityType, ResultType.STANDARD_CACHE);
+        if (!CollectionUtils.isEmpty(convertedList)) {
+          for (StandardCacheItem standardCache : convertedList) {
+            Translation translation = (Translation) standardCache.getCacheItem();
+            String key = translation.getFieldName() + "_" + translation.getLocaleCode();
+            if (!propertyTranslationMap.containsKey(key)) {
+              propertyTranslationMap.put(key, new HashMap<String, StandardCacheItem>());
             }
-        } else {
-            result = cacheResult;
-            statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), true);
+            propertyTranslationMap.get(key).put(translation.getEntityId(), standardCache);
+          }
         }
-        Map<String, Map<String, StandardCacheItem>> propertyTranslationMap = (Map<String, Map<String, StandardCacheItem>>) result;
-        // Check For a Specific Standard Site Match (language and country)
-        StandardCacheItem specificTranslation = translationSupport.lookupTranslationFromMap(specificPropertyKey, propertyTranslationMap, entityId);
-        // Check For a General Match (language and country)
-        StandardCacheItem generalTranslation = translationSupport.lookupTranslationFromMap(generalPropertyKey, propertyTranslationMap, entityId);
-        response.setSpecificItem(specificTranslation);
-        response.setGeneralItem(generalTranslation);
-
+        translationSupport.getCache().put(basicCacheKey, propertyTranslationMap);
+        result = propertyTranslationMap;
+      } else {
+        Translation translation = dao.readTranslation(entityType, entityId, property, localeCode, localeCountryCode, ResultType.CATALOG_ONLY);
+        buildSingleItemResponse(response, translation);
         return response;
+      }
+    } else {
+      result = cacheResult;
+      statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), true);
     }
+    Map<String, Map<String, StandardCacheItem>> propertyTranslationMap = (Map<String, Map<String, StandardCacheItem>>) result;
+    StandardCacheItem specificTranslation = translationSupport.lookupTranslationFromMap(specificPropertyKey, propertyTranslationMap, entityId);
+    StandardCacheItem generalTranslation = translationSupport.lookupTranslationFromMap(generalPropertyKey, propertyTranslationMap, entityId);
+    response.setSpecificItem(specificTranslation);
+    response.setGeneralItem(generalTranslation);
+    return response;
+  }
 
-    @Override
-    public LocalePair getLocaleBasedTemplateValue(String templateCacheKey, String property, TranslatedEntity entityType,
-                                                  String entityId, String localeCode, String localeCountryCode, String specificPropertyKey, String generalPropertyKey) {
-        Object cacheResult = translationSupport.getCache().get(templateCacheKey);
-        LocalePair response = new LocalePair();
-        if (cacheResult == null) {
-            statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), false);
-            if (dao.countTranslationEntries(entityType, ResultType.TEMPLATE_CACHE) < translationSupport.getTemplateThresholdForFullCache()) {
-                Map<String, Map<String, Translation>> propertyTranslationMap = new HashMap<String, Map<String, Translation>>();
-                List<Translation> translationList = dao.readAllTranslationEntries(entityType, ResultType.TEMPLATE_CACHE);
-                if (!CollectionUtils.isEmpty(translationList)) {
-                    for (Translation translation : translationList) {
-                        String key = translation.getFieldName() + "_" + translation.getLocaleCode();
-                        if (!propertyTranslationMap.containsKey(key)) {
-                            propertyTranslationMap.put(key, new HashMap<String, Translation>());
-                        }
-                        propertyTranslationMap.get(key).put(translation.getEntityId(), translation);
-                    }
-                }
-                translationSupport.getCache().put(templateCacheKey, propertyTranslationMap);
-                Translation translation = translationSupport.findBestTemplateTranslation(specificPropertyKey, generalPropertyKey, propertyTranslationMap, entityId);
-                if (translation != null) {
-                    buildSingleItemResponse(response, translation);
-                }
-            } else {
-                Translation translation = dao.readTranslation(entityType, entityId, property, localeCode, localeCountryCode, ResultType.TEMPLATE);
-                if (translation != null) {
-                    buildSingleItemResponse(response, translation);
-                }
+  @Override public LocalePair getLocaleBasedTemplateValue(String templateCacheKey, String property, TranslatedEntity entityType, String entityId, String localeCode, String localeCountryCode, String specificPropertyKey, String generalPropertyKey) {
+    Object cacheResult = translationSupport.getCache().get(templateCacheKey);
+    LocalePair response = new LocalePair();
+    if (cacheResult == null) {
+      statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), false);
+      if (dao.countTranslationEntries(entityType, ResultType.TEMPLATE_CACHE) < translationSupport.getTemplateThresholdForFullCache()) {
+        Map<String, Map<String, Translation>> propertyTranslationMap = new HashMap<String, Map<String, Translation>>();
+        List<Translation> translationList = dao.readAllTranslationEntries(entityType, ResultType.TEMPLATE_CACHE);
+        if (!CollectionUtils.isEmpty(translationList)) {
+          for (Translation translation : translationList) {
+            String key = translation.getFieldName() + "_" + translation.getLocaleCode();
+            if (!propertyTranslationMap.containsKey(key)) {
+              propertyTranslationMap.put(key, new HashMap<String, Translation>());
             }
-        } else {
-            statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), true);
-            Map<String, Map<String, Translation>> propertyTranslationMap = (Map<String, Map<String, Translation>>) cacheResult;
-            Translation bestTranslation = translationSupport.findBestTemplateTranslation(specificPropertyKey, generalPropertyKey, propertyTranslationMap, entityId);
-            if (bestTranslation != null) {
-                buildSingleItemResponse(response, bestTranslation);
-            }
+            propertyTranslationMap.get(key).put(translation.getEntityId(), translation);
+          }
         }
-        return response;
-    }
-
-    @Override
-    public boolean validateTemplateProcessing(String standardCacheKey, String templateCacheKey) {
-        return !standardCacheKey.equals(templateCacheKey);
-    }
-
-    @Override
-    public int getOrder() {
-            return 0;
+        translationSupport.getCache().put(templateCacheKey, propertyTranslationMap);
+        Translation translation = translationSupport.findBestTemplateTranslation(specificPropertyKey, generalPropertyKey, propertyTranslationMap, entityId);
+        if (translation != null) {
+          buildSingleItemResponse(response, translation);
         }
-
-    protected void buildSingleItemResponse(LocalePair response, Translation translation) {
-        StandardCacheItem cacheItem = new StandardCacheItem();
-        cacheItem.setItemStatus(ItemStatus.NORMAL);
-        cacheItem.setCacheItem(translation==null?"":translation);
-        response.setSpecificItem(cacheItem);
+      } else {
+        Translation translation = dao.readTranslation(entityType, entityId, property, localeCode, localeCountryCode, ResultType.TEMPLATE);
+        if (translation != null) {
+          buildSingleItemResponse(response, translation);
+        }
+      }
+    } else {
+      statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), true);
+      Map<String, Map<String, Translation>> propertyTranslationMap = (Map<String, Map<String, Translation>>) cacheResult;
+      Translation bestTranslation = translationSupport.findBestTemplateTranslation(specificPropertyKey, generalPropertyKey, propertyTranslationMap, entityId);
+      if (bestTranslation != null) {
+        buildSingleItemResponse(response, bestTranslation);
+      }
     }
+    return response;
+  }
 
+  @Override public boolean validateTemplateProcessing(String standardCacheKey, String templateCacheKey) {
+    return !standardCacheKey.equals(templateCacheKey);
+  }
+
+  @Override public int getOrder() {
+    return 0;
+  }
+
+  protected void buildSingleItemResponse(LocalePair response, Translation translation) {
+    StandardCacheItem cacheItem = new StandardCacheItem();
+    cacheItem.setItemStatus(ItemStatus.NORMAL);
+    cacheItem.setCacheItem(translation == null ? "" : translation);
+    response.setSpecificItem(cacheItem);
+  }
 }

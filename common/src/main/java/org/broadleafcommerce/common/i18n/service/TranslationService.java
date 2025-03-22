@@ -1,43 +1,21 @@
-/*-
- * #%L
- * BroadleafCommerce Common Libraries
- * %%
- * Copyright (C) 2009 - 2023 Broadleaf Commerce
- * %%
- * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
- * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
- * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
- * shall apply.
- * 
- * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
- * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
- * #L%
- */
-
 package org.broadleafcommerce.common.i18n.service;
-
 import org.broadleafcommerce.common.extension.ResultType;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
-
 import java.util.List;
 import java.util.Locale;
-
 import javax.cache.Cache;
 
 public interface TranslationService {
-
-    /**
+  /**
      * Persists the given translation
      * 
      * @param translation
      * @return the persisted translation
      */
-    public Translation save(Translation translation);
+  public Translation save(Translation translation);
 
-    /**
+  /**
      * Creates a new translation object for the requested parameters, saves it, and returns the saved instance.
      * 
      * <b>Note: This method will overwrite a previously existing translation if it matches on entityType, entityId, 
@@ -50,10 +28,9 @@ public interface TranslationService {
      * @param translatedValue
      * @return the persisted translation
      */
-    public Translation save(String entityType, String entityId, String fieldName, String localeCode, 
-            String translatedValue);
-    
-    /**
+  public Translation save(String entityType, String entityId, String fieldName, String localeCode, String translatedValue);
+
+  /**
      * Updates the given translation id with the new locale code and translated value
      * 
      * @param translationId
@@ -61,16 +38,16 @@ public interface TranslationService {
      * @param translatedValue
      * @return the persisted translation
      */
-    public Translation update(Long translationId, String localeCode, String translatedValue);
-    
-    /**
+  public Translation update(Long translationId, String localeCode, String translatedValue);
+
+  /**
      * Deletes the given translations
      * 
      * @param translationId
      */
-    public void deleteTranslationById(Long translationId);
-    
-    /**
+  public void deleteTranslationById(Long translationId);
+
+  /**
      * Finds all current translations for the specified field
      * 
      * @param ceilingEntityClassname
@@ -78,9 +55,9 @@ public interface TranslationService {
      * @param property
      * @return the list of translations
      */
-    public List<Translation> getTranslations(String ceilingEntityClassname, String entityId, String property);
-    
-    /**
+  public List<Translation> getTranslations(String ceilingEntityClassname, String entityId, String property);
+
+  /**
      * Attempts to find the translation object for the given parameters
      * 
      * @param entity
@@ -89,9 +66,9 @@ public interface TranslationService {
      * @param localeCode
      * @return the persisted translation
      */
-    public Translation getTranslation(TranslatedEntity entity, String entityId, String fieldName, String localeCode);
+  public Translation getTranslation(TranslatedEntity entity, String entityId, String fieldName, String localeCode);
 
-    /**
+  /**
      * Returns the translated value of the property for the given entity. For example, if entity is an instance of 
      * Product and property is equal to name, this method might return "Hoppin' Hot Sauce" if we are in an English 
      * locale and "Salsa de la Muerte Saltante" if we are in a Spanish locale.
@@ -105,40 +82,39 @@ public interface TranslationService {
      * @param locale
      * @return the translated value of the property for the given entity
      */
-    public String getTranslatedValue(Object entity, String property, Locale locale);
+  public String getTranslatedValue(Object entity, String property, Locale locale);
 
-    /**
+  /**
      * Gets the TranslatedEntity based on the passed className.  The TranslatedEntity may be an assignable.
      * 
      * @param className
      * @return
      */
-    public TranslatedEntity getAssignableEntityType(String className);
+  public TranslatedEntity getAssignableEntityType(String className);
 
-    
-    /**
+  /**
      * Remove a translation instance from the translation specific cache (different than level-2 hibernate cache)
      *
      * @param translation The translation instance to remove
      */
-    void removeTranslationFromCache(Translation translation);
+  void removeTranslationFromCache(Translation translation);
 
-    /**
+  /**
      * Find a translation instance by its primary key value.
      *
      * @param id the primary key value
      * @return
      */
-    Translation findTranslationById(Long id);
+  Translation findTranslationById(Long id);
 
-    /**
+  /**
      * Get the translation specific cache (different than the level-2 hibernate cache)
      *
      * @return the translation specific cache
      */
-    Cache<String, Object> getCache();
+  Cache<String, Object> getCache();
 
-    /**
+  /**
      * Intended for use with the {@link DynamicTranslationProvider} to determine the default value when a 
      * translation was not provided.
      * 
@@ -156,9 +132,9 @@ public interface TranslationService {
      * @param requestedDefaultValue
      * @return
      */
-    String getDefaultTranslationValue(Object entity, String property, Locale locale, String requestedDefaultValue);
+  String getDefaultTranslationValue(Object entity, String property, Locale locale, String requestedDefaultValue);
 
-    /**
+  /**
      * Find all the available translations for the given params.
      *
      * @param entityType
@@ -166,6 +142,5 @@ public interface TranslationService {
      * @param entityIds the {@link Translation#getEntityId()} to restrict the results by
      * @return
      */
-    List<Translation> findAllTranslationEntries(TranslatedEntity translatedEntity, ResultType standard, List<String> entityIds);
-
+  List<Translation> findAllTranslationEntries(TranslatedEntity translatedEntity, ResultType standard, List<String> entityIds);
 }

@@ -1,200 +1,181 @@
-/*-
- * #%L
- * BroadleafCommerce Common Libraries
- * %%
- * Copyright (C) 2009 - 2023 Broadleaf Commerce
- * %%
- * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
- * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
- * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
- * shall apply.
- * 
- * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
- * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
- * #L%
- */
 package org.broadleafcommerce.common.payment.dto;
-
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author Elbert Bautista (elbertbautista)
  */
-public class AddressDTO<T> {
+public class AddressDTO<T extends java.lang.Object> {
+  protected T parent;
 
-    protected T parent;
+  protected Map<String, Object> additionalFields;
 
-    protected Map<String, Object> additionalFields;
+  protected String addressFirstName;
 
-    protected String addressFirstName;
-    protected String addressLastName;
-    protected String addressFullName;
-    protected String addressCompanyName;
-    protected String addressLine1;
-    protected String addressLine2;
-    protected String addressCityLocality;
-    protected String addressStateRegion;
-    protected String addressPostalCode;
-    protected String addressCountryCode;
-    protected String addressPhone;
-    protected String addressEmail;
-    protected String county;
+  protected String addressLastName;
 
-    public AddressDTO() {
-        this.additionalFields = new HashMap<String, Object>();
-    }
+  protected String addressFullName;
 
-    public AddressDTO(T parent) {
-        this.additionalFields = new HashMap<String, Object>();
-        this.parent = parent;
-    }
+  protected String addressCompanyName;
 
-    public T done() {
-        return parent;
-    }
+  protected String addressLine1;
 
-    public AddressDTO<T> additionalFields(String key, Object value) {
-        additionalFields.put(key, value);
-        return this;
-    }
+  protected String addressLine2;
 
-    public AddressDTO<T> addressFirstName(String addressFirstName) {
-        this.addressFirstName = addressFirstName;
-        return this;
-    }
+  protected String addressCityLocality;
 
-    public AddressDTO<T> addressLastName(String addressLastName) {
-        this.addressLastName = addressLastName;
-        return this;
-    }
+  protected String addressStateRegion;
 
-    public AddressDTO<T> addressFullName(String addressFullName) {
-        this.addressFullName = addressFullName;
-        return this;
-    }
+  protected String addressPostalCode;
 
-    public AddressDTO<T> addressCompanyName(String addressCompanyName) {
-        this.addressCompanyName = addressCompanyName;
-        return this;
-    }
+  protected String addressCountryCode;
 
-    public AddressDTO<T> addressLine1(String addressLine1) {
-        this.addressLine1 = addressLine1;
-        return this;
-    }
+  protected String addressPhone;
 
-    public AddressDTO<T> addressLine2(String addressLine2) {
-        this.addressLine2 = addressLine2;
-        return this;
-    }
+  protected String addressEmail;
 
-    public AddressDTO<T> addressCityLocality(String addressCityLocality) {
-        this.addressCityLocality = addressCityLocality;
-        return this;
-    }
+  protected String county;
 
-    public AddressDTO<T> addressStateRegion(String addressStateRegion) {
-        this.addressStateRegion = addressStateRegion;
-        return this;
-    }
+  public AddressDTO() {
+    this.additionalFields = new HashMap<String, Object>();
+  }
 
-    public AddressDTO<T> addressPostalCode(String addressPostalCode) {
-        this.addressPostalCode = addressPostalCode;
-        return this;
-    }
+  public AddressDTO(T parent) {
+    this.additionalFields = new HashMap<String, Object>();
+    this.parent = parent;
+  }
 
-    public AddressDTO<T> addressCountryCode(String addressCountryCode) {
-        this.addressCountryCode = addressCountryCode;
-        return this;
-    }
+  public T done() {
+    return parent;
+  }
 
-    public AddressDTO<T> addressPhone(String addressPhone) {
-        this.addressPhone = addressPhone;
-        return this;
-    }
+  public AddressDTO<T> additionalFields(String key, Object value) {
+    additionalFields.put(key, value);
+    return this;
+  }
 
-    public AddressDTO<T> addressEmail(String addressEmail) {
-        this.addressEmail = addressEmail;
-        return this;
-    }
+  public AddressDTO<T> addressFirstName(String addressFirstName) {
+    this.addressFirstName = addressFirstName;
+    return this;
+  }
 
-    public AddressDTO<T> addressCounty(String county) {
-        this.county = county;
-        return this;
-    }
+  public AddressDTO<T> addressLastName(String addressLastName) {
+    this.addressLastName = addressLastName;
+    return this;
+  }
 
-    public Map<String, Object> getAdditionalFields() {
-        return additionalFields;
-    }
+  public AddressDTO<T> addressFullName(String addressFullName) {
+    this.addressFullName = addressFullName;
+    return this;
+  }
 
-    public String getAddressFirstName() {
-        return addressFirstName;
-    }
+  public AddressDTO<T> addressCompanyName(String addressCompanyName) {
+    this.addressCompanyName = addressCompanyName;
+    return this;
+  }
 
-    public String getAddressLastName() {
-        return addressLastName;
-    }
+  public AddressDTO<T> addressLine1(String addressLine1) {
+    this.addressLine1 = addressLine1;
+    return this;
+  }
 
-    public String getAddressFullName() {
-        return addressFullName;
-    }
+  public AddressDTO<T> addressLine2(String addressLine2) {
+    this.addressLine2 = addressLine2;
+    return this;
+  }
 
-    public String getAddressCompanyName() {
-        return addressCompanyName;
-    }
+  public AddressDTO<T> addressCityLocality(String addressCityLocality) {
+    this.addressCityLocality = addressCityLocality;
+    return this;
+  }
 
-    public String getAddressLine1() {
-        return addressLine1;
-    }
+  public AddressDTO<T> addressStateRegion(String addressStateRegion) {
+    this.addressStateRegion = addressStateRegion;
+    return this;
+  }
 
-    public String getAddressLine2() {
-        return addressLine2;
-    }
+  public AddressDTO<T> addressPostalCode(String addressPostalCode) {
+    this.addressPostalCode = addressPostalCode;
+    return this;
+  }
 
-    public String getAddressCityLocality() {
-        return addressCityLocality;
-    }
+  public AddressDTO<T> addressCountryCode(String addressCountryCode) {
+    this.addressCountryCode = addressCountryCode;
+    return this;
+  }
 
-    public String getAddressStateRegion() {
-        return addressStateRegion;
-    }
+  public AddressDTO<T> addressPhone(String addressPhone) {
+    this.addressPhone = addressPhone;
+    return this;
+  }
 
-    public String getAddressPostalCode() {
-        return addressPostalCode;
-    }
+  public AddressDTO<T> addressEmail(String addressEmail) {
+    this.addressEmail = addressEmail;
+    return this;
+  }
 
-    public String getAddressCountryCode() {
-        return addressCountryCode;
-    }
+  public AddressDTO<T> addressCounty(String county) {
+    this.county = county;
+    return this;
+  }
 
-    public String getAddressPhone() {
-        return addressPhone;
-    }
+  public Map<String, Object> getAdditionalFields() {
+    return additionalFields;
+  }
 
-    public String getAddressEmail() {
-        return addressEmail;
-    }
+  public String getAddressFirstName() {
+    return addressFirstName;
+  }
 
-    public String getCounty() {
-        return county;
-    }
+  public String getAddressLastName() {
+    return addressLastName;
+  }
 
-    public boolean addressPopulated() {
-        return ((getAdditionalFields() != null && !getAdditionalFields().isEmpty()) ||
-                getAddressFirstName() != null ||
-                getAddressLastName() != null ||
-                getAddressCompanyName() != null ||
-                getAddressLine1() != null ||
-                getAddressLine2() != null ||
-                getAddressCityLocality() != null ||
-                getAddressStateRegion() != null ||
-                getAddressPostalCode() != null ||
-                getAddressCountryCode() != null ||
-                getAddressPhone() != null ||
-                getAddressEmail() != null);
-    }
-    
+  public String getAddressFullName() {
+    return addressFullName;
+  }
+
+  public String getAddressCompanyName() {
+    return addressCompanyName;
+  }
+
+  public String getAddressLine1() {
+    return addressLine1;
+  }
+
+  public String getAddressLine2() {
+    return addressLine2;
+  }
+
+  public String getAddressCityLocality() {
+    return addressCityLocality;
+  }
+
+  public String getAddressStateRegion() {
+    return addressStateRegion;
+  }
+
+  public String getAddressPostalCode() {
+    return addressPostalCode;
+  }
+
+  public String getAddressCountryCode() {
+    return addressCountryCode;
+  }
+
+  public String getAddressPhone() {
+    return addressPhone;
+  }
+
+  public String getAddressEmail() {
+    return addressEmail;
+  }
+
+  public String getCounty() {
+    return county;
+  }
+
+  public boolean addressPopulated() {
+    return ((getAdditionalFields() != null && !getAdditionalFields().isEmpty()) || getAddressFirstName() != null || getAddressLastName() != null || getAddressCompanyName() != null || getAddressLine1() != null || getAddressLine2() != null || getAddressCityLocality() != null || getAddressStateRegion() != null || getAddressPostalCode() != null || getAddressCountryCode() != null || getAddressPhone() != null || getAddressEmail() != null);
+  }
 }

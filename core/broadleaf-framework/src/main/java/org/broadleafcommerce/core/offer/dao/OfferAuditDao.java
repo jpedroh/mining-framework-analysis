@@ -1,29 +1,10 @@
-/*-
- * #%L
- * BroadleafCommerce Framework
- * %%
- * Copyright (C) 2009 - 2023 Broadleaf Commerce
- * %%
- * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
- * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
- * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
- * shall apply.
- * 
- * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
- * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
- * #L%
- */
 package org.broadleafcommerce.core.offer.dao;
-
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageActivity;
 import org.broadleafcommerce.core.offer.service.workflow.VerifyCustomerMaxOfferUsesActivity;
 import org.broadleafcommerce.core.order.domain.Order;
-
 import java.util.List;
 
 /**
@@ -35,22 +16,21 @@ import java.util.List;
  * {@link OfferService#verifyMaxCustomerUsageThreshold(Order, OfferCode)}
  */
 public interface OfferAuditDao {
-    
-    OfferAudit readAuditById(Long offerAuditId);
-    
-    /**
+  OfferAudit readAuditById(Long offerAuditId);
+
+  /**
      * Persists an audit record to the database
      */
-    OfferAudit save(OfferAudit offerAudit);
-    
-    void delete(OfferAudit offerAudit);
+  OfferAudit save(OfferAudit offerAudit);
 
-    /**
+  void delete(OfferAudit offerAudit);
+
+  /**
      * Creates a new offer audit
      */
-    OfferAudit create();
-    
-    /**
+  OfferAudit create();
+
+  /**
      * Counts how many times the an offer has been used by a customer. 
      * This method will take into account if the Offer has already been 
      * applied to the Order so as not to prevent the Offer from applying 
@@ -61,9 +41,9 @@ public interface OfferAuditDao {
      * @param offerId
      * @return number of times and offer has been used by a customer
      */
-    Long countUsesByCustomer(Order order, Long customerId, Long offerId);
+  Long countUsesByCustomer(Order order, Long customerId, Long offerId);
 
-    /**
+  /**
      * Counts how many times the an offer has been used by a customer (within the number of passed in days if provided). 
      * This method will take into account if the Offer has already been 
      * applied to the Order so as not to prevent the Offer from applying 
@@ -74,9 +54,9 @@ public interface OfferAuditDao {
      * @param offerId
      * @return number of times and offer has been used by a customer
      */
-    Long countUsesByCustomer(Order order, Long customerId, Long offerId, Long minimumDaysPerUsage);
+  Long countUsesByCustomer(Order order, Long customerId, Long offerId, Long minimumDaysPerUsage);
 
-    /**
+  /**
      * Counts how many times the an offer has been used by an account. 
      * This method will take into account if the Offer has already been 
      * applied to the Order so as not to prevent the Offer from applying 
@@ -87,9 +67,9 @@ public interface OfferAuditDao {
      * @param offerId
      * @return number of times and offer has been used by a customer
      */
-    Long countUsesByAccount(Order order, Long accountId, Long offerId);
+  Long countUsesByAccount(Order order, Long accountId, Long offerId);
 
-    /**
+  /**
      * Counts how many times the an offer has been used by an account (within the number of passed in days if provided). 
      * This method will take into account if the Offer has already been 
      * applied to the Order so as not to prevent the Offer from applying 
@@ -100,9 +80,9 @@ public interface OfferAuditDao {
      * @param offerId
      * @return number of times and offer has been used by a customer
      */
-    Long countUsesByAccount(Order order, Long accountId, Long offerId, Long minimumDaysPerUsage);
+  Long countUsesByAccount(Order order, Long accountId, Long offerId, Long minimumDaysPerUsage);
 
-    /**
+  /**
      * Counts how many times the an offer has been used by a customer
      *
      * @param customerId
@@ -110,9 +90,9 @@ public interface OfferAuditDao {
      * @return number of times and offer has been used by a customer
      * @deprecated use {@link #countUsesByCustomer(Order, Long, Long)}
      */
-    Long countUsesByCustomer(Long customerId, Long offerId);
+  Long countUsesByCustomer(Long customerId, Long offerId);
 
-    /**
+  /**
      * Counts how many times the given offer code has been used in the system. 
      * This method will take into account if the OfferCode has already been 
      * applied to the Order so as not to prevent the OfferCODE from applying 
@@ -122,27 +102,25 @@ public interface OfferAuditDao {
      * @param offerCodeId
      * @return number of times the offer code has been used
      */
-    Long countOfferCodeUses(Order order, Long offerCodeId);
+  Long countOfferCodeUses(Order order, Long offerCodeId);
 
-    /**
+  /**
      * Counts how many times the given offer code has been used in the system
      *
      * @param offerCodeId
      * @return number of times the offer code has been used
      * @deprecated use {@link #countOfferCodeUses(Order, Long)}
      */
-    @Deprecated
-    Long countOfferCodeUses(Long offerCodeId);
+  @Deprecated Long countOfferCodeUses(Long offerCodeId);
 
-
-    /**
+  /**
      * Return all offer audits for a particular order
      * @param orderId
      * @return
      */
-    List<OfferAudit> readOfferAuditsByOrderId(Long orderId);
+  List<OfferAudit> readOfferAuditsByOrderId(Long orderId);
 
-    Long getCurrentDateResolution();
+  Long getCurrentDateResolution();
 
-    void setCurrentDateResolution(Long currentDateResolution);
+  void setCurrentDateResolution(Long currentDateResolution);
 }

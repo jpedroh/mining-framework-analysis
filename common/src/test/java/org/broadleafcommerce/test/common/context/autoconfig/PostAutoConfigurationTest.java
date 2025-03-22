@@ -1,25 +1,4 @@
-/*-
- * #%L
- * BroadleafCommerce Common Libraries
- * %%
- * Copyright (C) 2009 - 2023 Broadleaf Commerce
- * %%
- * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
- * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
- * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
- * shall apply.
- * 
- * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
- * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
- * #L%
- */
-/**
- * 
- */
 package org.broadleafcommerce.test.common.context.autoconfig;
-
 import org.broadleafcommerce.test.common.context.autoconfig.nested.ContainsNestedConfiguration;
 import org.broadleafcommerce.test.common.context.autoconfig.nested.ContainsNestedConfiguration.NestedAfterAutoConfiguration;
 import org.broadleafcommerce.test.common.context.autoconfig.scan.AfterAutoConfiguration;
@@ -44,43 +23,25 @@ import org.springframework.test.context.junit4.SpringRunner;
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
-@SpringBootTest
-@RunWith(SpringRunner.class)
-@TestPropertySource(properties = "spring.main.allow-bean-definition-overriding=true")
-public class PostAutoConfigurationTest {
-    
-    @Configuration
-    @Import({ComponentScanningConfiguration.class, ContainsNestedConfiguration.class})
-    @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class,
-        DataSourceTransactionManagerAutoConfiguration.class,
-        HibernateJpaAutoConfiguration.class})
-    public static class Config { } 
+@SpringBootTest @RunWith(value = SpringRunner.class) @TestPropertySource(properties = "spring.main.allow-bean-definition-overriding=true") public class PostAutoConfigurationTest {
+  @Configuration @Import(value = { ComponentScanningConfiguration.class, ContainsNestedConfiguration.class }) @EnableAutoConfiguration(exclude = { DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class, HibernateJpaAutoConfiguration.class }) public static class Config {
+  }
 
-    @Autowired
-    @Qualifier("overridingBean")
-    String overridingBean;
-    
-    @Autowired
-    @Qualifier("nonOverridingBean")
-    String nonOverridingBean;
-    
-    @Autowired
-    @Qualifier("nestedRunsFirst")
-    String nestedRunsFirst;
-    
-    @Test
-    public void testPostAutoConfigurationOverridesAutoConfig() {
-        Assert.assertEquals(AfterAutoConfiguration.class.getName(), overridingBean);
-    }
-    
-    @Test
-    public void testPostAutoConfigurationRunsSecond() {
-        Assert.assertEquals(BaseAutoConfiguration.class.getName(), nonOverridingBean);
-    }
-    
-    @Test
-    public void testNestedPostAutoConfigurationRunsFirst() {
-        Assert.assertEquals(NestedAfterAutoConfiguration.class.getName(), nestedRunsFirst);
-    }
+  @Autowired @Qualifier(value = "overridingBean") String overridingBean;
 
+  @Autowired @Qualifier(value = "nonOverridingBean") String nonOverridingBean;
+
+  @Autowired @Qualifier(value = "nestedRunsFirst") String nestedRunsFirst;
+
+  @Test public void testPostAutoConfigurationOverridesAutoConfig() {
+    Assert.assertEquals(AfterAutoConfiguration.class.getName(), overridingBean);
+  }
+
+  @Test public void testPostAutoConfigurationRunsSecond() {
+    Assert.assertEquals(BaseAutoConfiguration.class.getName(), nonOverridingBean);
+  }
+
+  @Test public void testNestedPostAutoConfigurationRunsFirst() {
+    Assert.assertEquals(NestedAfterAutoConfiguration.class.getName(), nestedRunsFirst);
+  }
 }

@@ -1,28 +1,9 @@
-/*-
- * #%L
- * BroadleafCommerce Framework
- * %%
- * Copyright (C) 2009 - 2023 Broadleaf Commerce
- * %%
- * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
- * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
- * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
- * shall apply.
- * 
- * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
- * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
- * #L%
- */
 package org.broadleafcommerce.core.order.service.call;
-
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.service.OrderService;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -48,142 +29,153 @@ import java.util.Map;
  *
  */
 public class OrderItemRequestDTO {
+  private Long skuId;
 
-    private Long skuId;
-    private Long categoryId;
-    private Long productId;
-    private Long orderItemId;
-    private Integer quantity;
-    private Money overrideSalePrice;
-    private Money overrideRetailPrice;
-    private Map<String,String> itemAttributes = new HashMap<String,String>();
-    private List<OrderItemRequestDTO> childOrderItems = new ArrayList<OrderItemRequestDTO>();
-    private Long parentOrderItemId;
-    private Map<String,String> additionalAttributes = new HashMap<String,String>();
-    private Boolean hasConfigurationError;
+  private Long categoryId;
 
-    public OrderItemRequestDTO() {}
-    
-    public OrderItemRequestDTO(Long productId, Integer quantity) {
-        setProductId(productId);
-        setQuantity(quantity);
-    }
-    
-    public OrderItemRequestDTO(Long productId, Long skuId, Integer quantity) {
-        setProductId(productId);
-        setSkuId(skuId);
-        setQuantity(quantity);
-    }
-    
-    public OrderItemRequestDTO(Long productId, Long skuId, Long categoryId, Integer quantity) {
-        setProductId(productId);
-        setSkuId(skuId);
-        setCategoryId(categoryId);
-        setQuantity(quantity);
-    }
+  private Long productId;
 
-    public Long getSkuId() {
-        return skuId;
-    }
+  private Long orderItemId;
 
-    public OrderItemRequestDTO setSkuId(Long skuId) {
-        this.skuId = skuId;
-        return this;
-    }
+  private Integer quantity;
 
-    public Long getCategoryId() {
-        return categoryId;
-    }
+  private Money overrideSalePrice;
 
-    public OrderItemRequestDTO setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
-        return this;
-    }
+  private Money overrideRetailPrice;
 
-    public Long getProductId() {
-        return productId;
-    }
+  private Map<String, String> itemAttributes = new HashMap<String, String>();
 
-    public OrderItemRequestDTO setProductId(Long productId) {
-        this.productId = productId;
-        return this;
-    }
+  private List<OrderItemRequestDTO> childOrderItems = new ArrayList<OrderItemRequestDTO>();
 
-    public Integer getQuantity() {
-        return quantity;
-    }
+  private Long parentOrderItemId;
 
-    public OrderItemRequestDTO setQuantity(Integer quantity) {
-        this.quantity = quantity;
-        return this;
-    }
+  private Map<String, String> additionalAttributes = new HashMap<String, String>();
 
-    public Map<String, String> getItemAttributes() {
-        return itemAttributes;
-    }
+  private Boolean hasConfigurationError;
 
-    public OrderItemRequestDTO setItemAttributes(Map<String, String> itemAttributes) {
-        this.itemAttributes = itemAttributes;
-        return this;
-    }
-    
-    public Long getOrderItemId() {
-        return orderItemId;
-    }
+  public OrderItemRequestDTO() {
+  }
 
-    public OrderItemRequestDTO setOrderItemId(Long orderItemId) {
-        this.orderItemId = orderItemId;
-        return this;
-    }
+  public OrderItemRequestDTO(Long productId, Integer quantity) {
+    setProductId(productId);
+    setQuantity(quantity);
+  }
 
-    public Money getOverrideSalePrice() {
-        return overrideSalePrice;
-    }
+  public OrderItemRequestDTO(Long productId, Long skuId, Integer quantity) {
+    setProductId(productId);
+    setSkuId(skuId);
+    setQuantity(quantity);
+  }
 
-    public void setOverrideSalePrice(Money overrideSalePrice) {
-        this.overrideSalePrice = overrideSalePrice;
-    }
+  public OrderItemRequestDTO(Long productId, Long skuId, Long categoryId, Integer quantity) {
+    setProductId(productId);
+    setSkuId(skuId);
+    setCategoryId(categoryId);
+    setQuantity(quantity);
+  }
 
-    public Money getOverrideRetailPrice() {
-        return overrideRetailPrice;
-    }
+  public Long getSkuId() {
+    return skuId;
+  }
 
-    public void setOverrideRetailPrice(Money overrideRetailPrice) {
-        this.overrideRetailPrice = overrideRetailPrice;
-    }
+  public OrderItemRequestDTO setSkuId(Long skuId) {
+    this.skuId = skuId;
+    return this;
+  }
 
-    public List<OrderItemRequestDTO> getChildOrderItems() {
-        return childOrderItems;
-    }
-    
-    public void setChildOrderItems(List<OrderItemRequestDTO> childOrderItems) {
-        this.childOrderItems = childOrderItems;
-    }
+  public Long getCategoryId() {
+    return categoryId;
+  }
 
-    public Long getParentOrderItemId() {
-        return parentOrderItemId;
-    }
+  public OrderItemRequestDTO setCategoryId(Long categoryId) {
+    this.categoryId = categoryId;
+    return this;
+  }
 
-    public void setParentOrderItemId(Long parentOrderItemId) {
-        this.parentOrderItemId = parentOrderItemId;
-    }
+  public Long getProductId() {
+    return productId;
+  }
 
-    public Map<String, String> getAdditionalAttributes() {
-        return additionalAttributes;
-    }
+  public OrderItemRequestDTO setProductId(Long productId) {
+    this.productId = productId;
+    return this;
+  }
 
-    public void setAdditionalAttributes(Map<String, String> additionalAttributes) {
-        this.additionalAttributes = additionalAttributes;
-    }
+  public Integer getQuantity() {
+    return quantity;
+  }
 
-    public Boolean getHasConfigurationError() {
-        if (hasConfigurationError == null) {
-            return false;
-        }
-        return hasConfigurationError;
-    }
+  public OrderItemRequestDTO setQuantity(Integer quantity) {
+    this.quantity = quantity;
+    return this;
+  }
 
-    public void setHasConfigurationError(Boolean hasConfigurationError) {
-        this.hasConfigurationError = hasConfigurationError;
+  public Map<String, String> getItemAttributes() {
+    return itemAttributes;
+  }
+
+  public OrderItemRequestDTO setItemAttributes(Map<String, String> itemAttributes) {
+    this.itemAttributes = itemAttributes;
+    return this;
+  }
+
+  public Long getOrderItemId() {
+    return orderItemId;
+  }
+
+  public OrderItemRequestDTO setOrderItemId(Long orderItemId) {
+    this.orderItemId = orderItemId;
+    return this;
+  }
+
+  public Money getOverrideSalePrice() {
+    return overrideSalePrice;
+  }
+
+  public void setOverrideSalePrice(Money overrideSalePrice) {
+    this.overrideSalePrice = overrideSalePrice;
+  }
+
+  public Money getOverrideRetailPrice() {
+    return overrideRetailPrice;
+  }
+
+  public void setOverrideRetailPrice(Money overrideRetailPrice) {
+    this.overrideRetailPrice = overrideRetailPrice;
+  }
+
+  public List<OrderItemRequestDTO> getChildOrderItems() {
+    return childOrderItems;
+  }
+
+  public void setChildOrderItems(List<OrderItemRequestDTO> childOrderItems) {
+    this.childOrderItems = childOrderItems;
+  }
+
+  public Long getParentOrderItemId() {
+    return parentOrderItemId;
+  }
+
+  public void setParentOrderItemId(Long parentOrderItemId) {
+    this.parentOrderItemId = parentOrderItemId;
+  }
+
+  public Map<String, String> getAdditionalAttributes() {
+    return additionalAttributes;
+  }
+
+  public void setAdditionalAttributes(Map<String, String> additionalAttributes) {
+    this.additionalAttributes = additionalAttributes;
+  }
+
+  public Boolean getHasConfigurationError() {
+    if (hasConfigurationError == null) {
+      return false;
     }
+    return hasConfigurationError;
+  }
+
+  public void setHasConfigurationError(Boolean hasConfigurationError) {
+    this.hasConfigurationError = hasConfigurationError;
+  }
 }

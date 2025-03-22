@@ -1,22 +1,4 @@
-/*-
- * #%L
- * BroadleafCommerce Framework
- * %%
- * Copyright (C) 2009 - 2023 Broadleaf Commerce
- * %%
- * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
- * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
- * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
- * shall apply.
- * 
- * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
- * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
- * #L%
- */
 package org.broadleafcommerce.core.catalog.service;
-
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.file.service.BroadleafFileUtils;
 import org.broadleafcommerce.common.media.domain.Media;
@@ -31,10 +13,8 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.util.service.BroadleafSitemapUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import java.util.Date;
 import java.util.List;
-
 import javax.annotation.Resource;
 
 /**
@@ -42,86 +22,64 @@ import javax.annotation.Resource;
  * 
  * @author Joshua Skorton (jskorton)
  */
-@Component("blProductSiteMapGenerator")
-public class ProductSiteMapGenerator implements SiteMapGenerator {
+@Component(value = "blProductSiteMapGenerator") public class ProductSiteMapGenerator implements SiteMapGenerator {
+  @Resource(name = "blProductDao") protected ProductDao productDao;
 
-    @Resource(name = "blProductDao")
-    protected ProductDao productDao;
+  @Value(value = "${product.site.map.generator.row.limit}") protected int pageSize;
 
-    @Value("${product.site.map.generator.row.limit}")
-    protected int pageSize;
+  @Override public boolean canHandleSiteMapConfiguration(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration) {
+    return SiteMapGeneratorType.PRODUCT.equals(siteMapGeneratorConfiguration.getSiteMapGeneratorType());
+  }
 
-    @Override
-    public boolean canHandleSiteMapConfiguration(SiteMapGeneratorConfiguration siteMapGeneratorConfiguration) {
-        return SiteMapGeneratorType.PRODUCT.equals(siteMapGeneratorConfiguration.getSiteMapGeneratorType());
-    }
-
-    @Override
-    public void addSiteMapEntries(SiteMapGeneratorConfiguration smgc, SiteMapBuilder siteMapBuilder) {
-
-        int pageNum = 0;
-        List<Product> products;
-
-        do {
-            products = productDao.readAllActiveProductsForSiteMap(pageNum++, pageSize);
-            for (Product product : products) {
-                if (StringUtils.isEmpty(product.getUrl())) {
-                    continue;
-                }
-
-                SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
-
-                // location
-                siteMapUrl.setLoc(generateUri(siteMapBuilder, product));
-
-                // change frequency
-                siteMapUrl.setChangeFreqType(smgc.getSiteMapChangeFreq());
-
-                // priority
-                siteMapUrl.setPriorityType(smgc.getSiteMapPriority());
-
-                // lastModDate
-                siteMapUrl.setLastModDate(generateDate(product));
-
-                constructImageURLs(siteMapBuilder, siteMapUrl, product);
-
-                siteMapBuilder.addUrl(siteMapUrl);
-            }
-        } while (products.size() == pageSize);
-    }
-
-    protected void constructImageURLs(SiteMapBuilder siteMapBuilder, SiteMapURLWrapper siteMapUrl, Product product) {
-        for (Media media : product.getMedia().values()) {
-            SiteMapImageWrapper siteMapImage = new SiteMapImageWrapper();
-
-            siteMapImage.setLoc(BroadleafSitemapUtils.generateImageUrl(siteMapBuilder, media));
-
-            siteMapUrl.addImage(siteMapImage);
+  @Override public void addSiteMapEntries(SiteMapGeneratorConfiguration smgc, SiteMapBuilder siteMapBuilder) {
+    int pageNum = 0;
+    List<Product> products;
+    do {
+      products = productDao.readAllActiveProductsForSiteMap(pageNum++, pageSize);
+      for (Product product : products) {
+        if (StringUtils.isEmpty(product.getUrl())) {
+          continue;
         }
-    }
+        SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
+        siteMapUrl.setLoc(generateUri(siteMapBuilder, product));
+        siteMapUrl.setChangeFreqType(smgc.getSiteMapChangeFreq());
+        siteMapUrl.setPriorityType(smgc.getSiteMapPriority());
+        siteMapUrl.setLastModDate(generateDate(product));
+        constructImageURLs(siteMapBuilder, siteMapUrl, product);
+        siteMapBuilder.addUrl(siteMapUrl);
+      }
+    } while(products.size() == pageSize);
+  }
 
-    protected String generateUri(SiteMapBuilder smb, Product product) {
-        return BroadleafFileUtils.appendUnixPaths(smb.getBaseUrl(), product.getUrl());
+  protected void constructImageURLs(SiteMapBuilder siteMapBuilder, SiteMapURLWrapper siteMapUrl, Product product) {
+    for (Media media : product.getMedia().values()) {
+      SiteMapImageWrapper siteMapImage = new SiteMapImageWrapper();
+      siteMapImage.setLoc(BroadleafSitemapUtils.generateImageUrl(siteMapBuilder, media));
+      siteMapUrl.addImage(siteMapImage);
     }
+  }
 
-    protected Date generateDate(Product product) {
-        return new Date();
-    }
+  protected String generateUri(SiteMapBuilder smb, Product product) {
+    return BroadleafFileUtils.appendUnixPaths(smb.getBaseUrl(), product.getUrl());
+  }
 
-    public ProductDao getProductDao() {
-        return productDao;
-    }
+  protected Date generateDate(Product product) {
+    return new Date();
+  }
 
-    public void setProductDao(ProductDao productDao) {
-        this.productDao = productDao;
-    }
+  public ProductDao getProductDao() {
+    return productDao;
+  }
 
-    public int getPageSize() {
-        return pageSize;
-    }
+  public void setProductDao(ProductDao productDao) {
+    this.productDao = productDao;
+  }
 
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
+  public int getPageSize() {
+    return pageSize;
+  }
 
+  public void setPageSize(int pageSize) {
+    this.pageSize = pageSize;
+  }
 }

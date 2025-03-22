@@ -1,22 +1,4 @@
-/*-
- * #%L
- * BroadleafCommerce Framework
- * %%
- * Copyright (C) 2009 - 2023 Broadleaf Commerce
- * %%
- * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
- * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
- * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
- * shall apply.
- * 
- * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
- * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
- * #L%
- */
 package org.broadleafcommerce.core.order.domain;
-
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
@@ -36,7 +18,6 @@ import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupPricingActivity;
 import org.broadleafcommerce.core.pricing.service.workflow.TotalActivity;
 import org.broadleafcommerce.profile.core.domain.Customer;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -60,74 +41,73 @@ import java.util.Map;
  * 5.  Order shipping (e.g. fulfillment) are represented with Fulfillment objects.
  */
 public interface Order extends Serializable, MultiTenantCloneable<Order> {
+  Long getId();
 
-    Long getId();
+  void setId(Long id);
 
-    void setId(Long id);
-
-    /**
+  /**
      * Gets the name of the order, mainly in order to support wishlists.
      * 
      * @return the name of the order
      */
-    String getName();
+  String getName();
 
-    /**
+  /**
      * Sets the name of the order in the context of a wishlist. In this fashion, a {@link Customer} can have multiple
      * wishlists like "Christmas" or "Gaming Computer" etc.
      * 
      * @param name
      */
-    void setName(String name);
+  void setName(String name);
 
-    /**
+  /**
      * Gets the auditable associated with this Order instance which tracks changes made to this Order (creation/update)
      * 
      * @return
      */
-    Auditable getAuditable();
+  Auditable getAuditable();
 
-    void setAuditable(Auditable auditable);
+  void setAuditable(Auditable auditable);
 
-    /**
+  /**
      * Returns the subtotal price for the order.  The subtotal price is the price of all order items
      * with item offers applied.  The subtotal does not take into account the order promotions, shipping costs or any
      * taxes that apply to this order.
      *
      * @return the total item price with offers applied
      */
-    Money getSubTotal();
+  Money getSubTotal();
 
-    /**
+  /**
      * Sets the subtotal price for the order.  The subtotal price is the price of all order items
      * with item offers applied.  The subtotal does not take into account the order offers or any
      * taxes that apply to this order.
      *
      * @param subTotal
      */
-    void setSubTotal(Money subTotal);
+  void setSubTotal(Money subTotal);
 
-    /**
+  /**
      * Assigns a final price to all the order items
      */
-    void assignOrderItemsFinalPrice();
+  void assignOrderItemsFinalPrice();
 
-    /**
+  /**
      * Returns the sum of the item totals. 
      * 
      * @return
      */
-    Money calculateSubTotal();
+  Money calculateSubTotal();
 
-    /**
+  /**
      * The grand total of this {@link Order} which includes all shipping costs and taxes, as well as any adjustments from
      * promotions.
      * 
      * @return the grand total price of this {@link Order}
      */
-    Money getTotal();
+  Money getTotal();
 
-    /**
+  /**
      * This is getTotal() minus the sum of all the {@link OrderPayment} already applied to this order.
      * An applied payment can be of any type that does NOT have to be the final payment on the order.
      * In this implementation, THIRD_PARTY_ACCOUNT and CREDIT_CARD type payments
@@ -146,85 +126,85 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
      *
      * @return the total price minus any payments that have been applied to this order already.
      */
-    Money getTotalAfterAppliedPayments();
+  Money getTotalAfterAppliedPayments();
 
-    /**
+  /**
      * Used in {@link TotalActivity} to set the grand total of this {@link Order}. This includes the prices of all of the
      * {@link OrderItem}s as well as any taxes, fees, shipping and adjustments for all 3.
      * 
      * @param orderTotal the total cost of this {@link Order}
      */
-    void setTotal(Money orderTotal);
+  void setTotal(Money orderTotal);
 
-    /**
+  /**
      * Gets the {@link Customer} for this {@link Order}.
      * 
      * @return
      */
-    Customer getCustomer();
+  Customer getCustomer();
 
-    /**
+  /**
      * Sets the associated {@link Customer} for this Order.
      * 
      * @param customer
      */
-    void setCustomer(Customer customer);
+  void setCustomer(Customer customer);
 
-    /**
+  /**
      * Gets the status of the Order.
      * 
      * @return
      */
-    OrderStatus getStatus();
+  OrderStatus getStatus();
 
-    /**
+  /**
      * Sets the status of the Order
      * 
      * @param status
      */
-    void setStatus(OrderStatus status);
+  void setStatus(OrderStatus status);
 
-    /**
+  /**
      * Gets all the {@link OrderItem}s included in this {@link Order}
      * 
      * @return
      */
-    List<OrderItem> getOrderItems();
+  List<OrderItem> getOrderItems();
 
-    void setOrderItems(List<OrderItem> orderItems);
+  void setOrderItems(List<OrderItem> orderItems);
 
-    /**
+  /**
      * Adds an {@link OrderItem} to the list of {@link OrderItem}s already associated with this {@link Order}
      * 
      * @param orderItem the {@link OrderItem} to add to this {@link Order}
      */
-    void addOrderItem(OrderItem orderItem);
+  void addOrderItem(OrderItem orderItem);
 
-    /**
+  /**
      * Gets the {@link FulfillmentGroup}s associated with this {@link Order}. An {@link Order} can have many
      * {@link FulfillmentGroup}s associated with it in order to support multi-address (and multi-type) shipping.
      * 
      * @return the {@link FulfillmentGroup}s associated with this {@link Order}
      */
-    List<FulfillmentGroup> getFulfillmentGroups();
+  List<FulfillmentGroup> getFulfillmentGroups();
 
-    void setFulfillmentGroups(List<FulfillmentGroup> fulfillmentGroups);
+  void setFulfillmentGroups(List<FulfillmentGroup> fulfillmentGroups);
 
-    /**
+  /**
      * Sets the {@link Offer}s that could potentially apply to this {@link Order}
      * 
      * @param candidateOrderOffers
      */
-    void setCandidateOrderOffers(List<CandidateOrderOffer> candidateOrderOffers);
+  void setCandidateOrderOffers(List<CandidateOrderOffer> candidateOrderOffers);
 
-    /**
+  /**
      * Gets the {@link Offer}s that could potentially apply to this {@link Order}. Used in the promotion engine.
      * 
      * @return
      */
-    List<CandidateOrderOffer> getCandidateOrderOffers();
+  List<CandidateOrderOffer> getCandidateOrderOffers();
 
-    /**
+  /**
      * Gets the date that this {@link Order} was submitted.  Note that if this date is non-null, then the following should
      * also be true:
      *  <ul>
@@ -234,105 +214,104 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
      *  
      * @return
      */
-    Date getSubmitDate();
+  Date getSubmitDate();
 
-    /**
+  /**
      * Set the date that this {@link Order} was submitted. Used in the blCheckoutWorkflow as the last step after everything
      * else has been completed (payments charged, integration systems notified, etc).
      * 
      * @param submitDate the date that this {@link Order} was submitted.
      */
-    void setSubmitDate(Date submitDate);
+  void setSubmitDate(Date submitDate);
 
-    /**
+  /**
      * Gets the total tax for this order, which is the sum of the taxes on all fulfillment 
      * groups. This total is calculated in the TotalActivity stage of the pricing workflow.
      *
      * @return the total tax for the order
      */
-    Money getTotalTax();
+  Money getTotalTax();
 
-    /**
+  /**
      * Sets the total tax of this order, which is the sum of the taxes on all fulfillment
      * groups. This total should only be set during the TotalActivity stage of the pricing workflow.
      *
      * @param the total tax for this order
      */
-    void setTotalTax(Money totalTax);
+  void setTotalTax(Money totalTax);
 
-    /**
+  /**
      * @deprected - use {@link #getTotalFulfillmentCharges()} instead.
      */
-    Money getTotalShipping();
+  Money getTotalShipping();
 
-    /**
+  /**
      * @deprecated - Use {@link #setTotalFulfillmentCharges(Money)} instead.
      * 
      * @param totalShipping
      */
-    @Deprecated
-    void setTotalShipping(Money totalShipping);
+  @Deprecated void setTotalShipping(Money totalShipping);
 
-    /**
+  /**
      * Gets the total fulfillment costs that should be charged for this {@link Order}. This value should be equivalent to 
      * the summation of {@link FulfillmentGroup#getTotal()} for each {@link FulfillmentGroup} associated with this 
      * {@link Order}
      * 
      * @return the total fulfillment cost of this {@link Order}
      */
-    Money getTotalFulfillmentCharges();
+  Money getTotalFulfillmentCharges();
 
-    /**
+  /**
      * Set the total fulfillment cost of this {@link Order}. Used in the {@link FulfillmentGroupPricingActivity} after the cost
      * of each {@link FulfillmentGroup} has been calculated.
      * 
      * @param totalShipping
      */
-    void setTotalFulfillmentCharges(Money totalFulfillmentCharges);
+  void setTotalFulfillmentCharges(Money totalFulfillmentCharges);
 
-    /**
+  /**
      * Gets all the {@link OrderPayment}s associated with this {@link Order}. An {@link Order} can have many
      * {@link OrderPayment}s associated with it to support things like paying with multiple cards or perhaps paying some of
      * this {@link Order} with a gift card and some with a credit card.
      * 
      * @return the {@link OrderPayment}s associated with this {@link Order}.
      */
-    List<OrderPayment> getPayments();
+  List<OrderPayment> getPayments();
 
-    /**
+  /**
      * Sets the various payment types associated with this {@link Order}
      * 
      * @param payments
      */
-    void setPayments(List<OrderPayment> payments);
+  void setPayments(List<OrderPayment> payments);
 
-    /**
+  /**
      * Determines if this {@link Order} has an item in the given category.
      * 
      * @param categoryName the {@link Category#getName} to check
      * @return <b>true</b> if at least one {@link OrderItem} is in the given category, <b>false</b> otherwise.
      * @see {@link OrderItem#isInCategory(String)}
      */
-    boolean hasCategoryItem(String categoryName);
+  boolean hasCategoryItem(String categoryName);
 
-    /**
+  /**
      * Returns a unmodifiable List of OrderAdjustment.  To modify the List of OrderAdjustment, please
      * use the addOrderAdjustments or removeAllOrderAdjustments methods.
      * 
      * @return a unmodifiable List of OrderItemAdjustment
      */
-    List<OrderAdjustment> getOrderAdjustments();
+  List<OrderAdjustment> getOrderAdjustments();
 
-    /**
+  /**
      * Returns a List of OrderAdjustment originating from FUTURE_CREDIT Offers.
      * 
      * See {@link org.broadleafcommerce.core.offer.domain.Offer#getAdjustmentType()} for more info on future credit
      *
      * @return a List of OrderItemAdjustment
      */
-    List<OrderAdjustment> getFutureCreditOrderAdjustments();
+  List<OrderAdjustment> getFutureCreditOrderAdjustments();
 
-    /**
+  /**
      * Returns a List of Adjustment originating from FUTURE_CREDIT Offers. This is obtained from the Order, OrderItem, 
      * and FulfillmentGroup levels. 
      * 
@@ -340,26 +319,26 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
      *
      * @return a List of OrderItemAdjustment
      */
-    List<Adjustment> getAllFutureCreditAdjustments();
+  List<Adjustment> getAllFutureCreditAdjustments();
 
-    /**
+  /**
      * Returns all of the {@link OrderItem}s in this {@link Order} that are an instanceof {@link DiscreteOrderItem}. This
      * will also go into each {@link BundleOrderItem} (if there are any) and return all of the
      * {@link BundleOrderItem#getDiscreteOrderItems()} from each of those as well.
      * 
      * @return
      */
-    List<DiscreteOrderItem> getDiscreteOrderItems();
-    
-    /**
+  List<DiscreteOrderItem> getDiscreteOrderItems();
+
+  /**
      * Returns all of the {@link OrderItem}s in this {@link Order} that are an instanceof {@link OrderItemImpl}.  This 
      * will return all of the order items that do not have any reference to a product or sku
      * 
      * @return
      */
-    List<OrderItem> getNonDiscreteOrderItems();
-    
-    /**
+  List<OrderItem> getNonDiscreteOrderItems();
+
+  /**
      * Checks the DiscreteOrderItems in the cart and returns whether or not the given SKU was found.
      * The equality of the SKUs is based on the .equals() method in SkuImpl. This includes checking the
      * {@link DiscreteOrderItem}s from {link {@link BundleOrderItem#getDiscreteOrderItems()}
@@ -367,80 +346,80 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
      * @param sku The sku to check for
      * @return whether or not the given SKU exists in the cart
      */
-    boolean containsSku(Sku sku);
+  boolean containsSku(Sku sku);
 
-    List<OfferCode> getAddedOfferCodes();
+  List<OfferCode> getAddedOfferCodes();
 
-    String getFulfillmentStatus();
+  String getFulfillmentStatus();
 
-    /**
+  /**
      * The unique number associated with this {@link Order}. Generally preferred to use instead of just using {@link #getId()}
      * since that exposes unwanted information about your database.
      * 
      * @return the unique order number for this {@link Order}
      */
-    String getOrderNumber();
+  String getOrderNumber();
 
-    /**
+  /**
      * Set the unique order number for this {@link Order}
      * 
      * @param orderNumber
      */
-    void setOrderNumber(String orderNumber);
+  void setOrderNumber(String orderNumber);
 
-    String getEmailAddress();
+  String getEmailAddress();
 
-    void setEmailAddress(String emailAddress);
+  void setEmailAddress(String emailAddress);
 
-    Map<Offer, OfferInfo> getAdditionalOfferInformation();
+  Map<Offer, OfferInfo> getAdditionalOfferInformation();
 
-    void setAdditionalOfferInformation(Map<Offer, OfferInfo> additionalOfferInformation);
+  void setAdditionalOfferInformation(Map<Offer, OfferInfo> additionalOfferInformation);
 
-    /**
+  /**
      * Returns the discount value of all the applied item offers for this order.  This value is already
      * deducted from the order subTotal.
      *
      * @return the discount value of all the applied item offers for this order
      */
-    Money getItemAdjustmentsValue();
+  Money getItemAdjustmentsValue();
 
-    /**
+  /**
      * Returns the discount value of the applied future credit item offers for this order.
      * 
      * See {@link org.broadleafcommerce.core.offer.domain.Offer#getAdjustmentType()} for more info on future credit
      *
      * @return the discount value of the applied item offers for this order
      */
-    Money getFutureCreditItemAdjustmentsValue();
+  Money getFutureCreditItemAdjustmentsValue();
 
-    /**
+  /**
      * Returns the discount value of all the applied order offers.  The value returned from this
      * method should be subtracted from the getSubTotal() to get the order price with all item and
      * order offers applied.
      *
      * @return the discount value of all applied order offers.
      */
-    Money getOrderAdjustmentsValue();
+  Money getOrderAdjustmentsValue();
 
-    /**
+  /**
      * Returns the discount value of the applied future credit order offers originating.
      * 
      * See {@link org.broadleafcommerce.core.offer.domain.Offer#getAdjustmentType()} for more info on future credit
      *
      * @return the discount value of applied order offers.
      */
-    Money getFutureCreditOrderAdjustmentsValue();
+  Money getFutureCreditOrderAdjustmentsValue();
 
-    /**
+  /**
      * Returns the total discount value for all applied item and order offers in the order.  The return
      * value should not be used with getSubTotal() to calculate the final price, since getSubTotal()
      * already takes into account the applied item offers.
      *
      * @return the total discount of all applied item and order offers
      */
-    Money getTotalAdjustmentsValue();
+  Money getTotalAdjustmentsValue();
 
-    /**
+  /**
      * Returns the total discount value for applied item, order, and fulfillment offers in the order originating from 
      * FUTURE_CREDIT Offers.  This should be used to credit the customer after the order has been placed.
      * 
@@ -448,107 +427,100 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
      *
      * @return the total discount of applied item, order, and fulfillment offers
      */
-    Money getTotalFutureCreditAdjustmentsValue();
+  Money getTotalFutureCreditAdjustmentsValue();
 
-    /**
+  /**
      * Updates all of the prices of the {@link OrderItem}s in this {@link Order}
      * @return <b>true</b> if at least 1 {@link OrderItem} returned true from {@link OrderItem#updatePrices}, <b>false</b>
      * otherwise.
      * @see {@link OrderItem#updatePrices()}
      */
-    boolean updatePrices();
-    
-    /**
+  boolean updatePrices();
+
+  /**
      * Updates the averagePriceField for all order items.
      * @return
      */
-    boolean finalizeItemPrices();
+  boolean finalizeItemPrices();
 
-    Money getFulfillmentGroupAdjustmentsValue();
+  Money getFulfillmentGroupAdjustmentsValue();
 
-    /**
+  /**
      * Returns the discount value of the applied future credit fulfillment offers for this order.
      * 
      * See {@link org.broadleafcommerce.core.offer.domain.Offer#getAdjustmentType()} for more info on future credit
      *
      * @return the discount value of the applied future credit fulfillment offers for this order.
      */
-    Money getFutureCreditFulfillmentGroupAdjustmentsValue();
-    
-    void addOfferCode(OfferCode addedOfferCode);
-    
-    @Deprecated
-    void addAddedOfferCode(OfferCode offerCode);
+  Money getFutureCreditFulfillmentGroupAdjustmentsValue();
 
-    /**
+  void addOfferCode(OfferCode addedOfferCode);
+
+  @Deprecated void addAddedOfferCode(OfferCode offerCode);
+
+  /**
      * A list of arbitrary attributes added to this order.
      */
-    Map<String,OrderAttribute> getOrderAttributes();
+  Map<String, OrderAttribute> getOrderAttributes();
 
-    /**
+  /**
      * Sets the map of order attributes.
      *
      * @param orderAttributes
      */
-    void setOrderAttributes(Map<String,OrderAttribute> orderAttributes);
-    
-    /**
+  void setOrderAttributes(Map<String, OrderAttribute> orderAttributes);
+
+  /**
      * This method returns the total number of items in this order. It iterates through all of the
      * discrete order items and sums up the quantity. This method is useful for display to the customer
      * the current number of "physical" items in the cart
      * 
      * @return the number of items in the order
      */
-    int getItemCount();
+  int getItemCount();
 
-    /**
+  /**
      * The currency that the {@link Order} is priced in. Note that this is only on {@link Order} since all of the other
      * entities that are related (like {@link FulfillmentGroup} and {@link OrderItem} have a link back to here. This also
      * has the side effect that an {@link Order} can only be priced in a single currency.
      * 
      * @return
      */
-    BroadleafCurrency getCurrency();
+  BroadleafCurrency getCurrency();
 
-    /**
+  /**
      * Set the currency that the {@link Order} is priced in.
      * 
      * @param currency
      */
-    void setCurrency(BroadleafCurrency currency);
+  void setCurrency(BroadleafCurrency currency);
 
-    Locale getLocale();
+  Locale getLocale();
 
-    void setLocale(Locale locale);
+  void setLocale(Locale locale);
 
-    /**
+  /**
      * Returns true if this item has order adjustments.
      * @return
      */
-    boolean getHasOrderAdjustments();
+  boolean getHasOrderAdjustments();
 
-    /*
-     * transient field to hold order messages
-     */
-    List<ActivityMessageDTO> getOrderMessages();
+  List<ActivityMessageDTO> getOrderMessages();
 
-    /*
-     * transient field to hold order messages
-     */
-    void setOrderMessages(List<ActivityMessageDTO> orderMessages);
+  void setOrderMessages(List<ActivityMessageDTO> orderMessages);
 
-    /**
+  /**
      * @return whether or not to override the tax calculation
      */
-    public Boolean getTaxOverride();
+  public Boolean getTaxOverride();
 
-    /**
+  /**
      * Sets whether or not to override the tax calculation
      * @param taxOverride
      */
-    public void setTaxOverride(Boolean taxOverride);
+  public void setTaxOverride(Boolean taxOverride);
 
-    /**
+  /**
      * This method returns null from the default implementation.   The Broadleaf
      * Account module weaves in an implementation that returns the account id associated
      * with the order.   
@@ -559,5 +531,5 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
      * @see Offer.getMaxUsesStrategyType()
      * 
      */
-    Long getBroadleafAccountId();
+  Long getBroadleafAccountId();
 }
