@@ -146,9 +146,9 @@ public class GreedyMultiplicativeSpanner<V, E>
         public UnweightedSpannerAlgorithm()
         {
             spanner = GraphTypeBuilder
-                .<V, E> undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
+                .<> undirected().allowingMultipleEdges(false).allowingSelfLoops(false)
                 .edgeSupplier(graph.getEdgeSupplier()).buildGraph();
-            touchedVertices = new ArrayDeque<V>(graph.vertexSet().size());
+            touchedVertices = new ArrayDeque<>(graph.vertexSet().size());
             for (V v : graph.vertexSet()) {
                 spanner.addVertex(v);
                 touchedVertices.push(v);
