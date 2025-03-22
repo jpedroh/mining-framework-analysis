@@ -1,13 +1,4 @@
-/******************************************************************************
- *  Compilation:  javac FenwickTree.java
- *  Execution:    java FenwickTree
- *
- *  A Fenwick tree.
- *
- ******************************************************************************/
-
 package edu.princeton.cs.algs4;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -44,65 +35,59 @@ import java.util.Arrays;
  * @author Ricardo Pacheco 
  */
 public class FenwickTree {
+  int[] array;
 
-    int[] array; // 1-indexed array, In this array We save cumulative information to perform efficient range queries and updates
+  public FenwickTree(int size) {
+    array = new int[size + 1];
+  }
 
-    public FenwickTree(int size) {
-        array = new int[size + 1];
-    }
-
-    /**
+  /**
      * Range Sum query from 1 to ind
      * ind is 1-indexed
      * 
      * <p>Time-Complexity:    O(log(n))
      */
-    public int rsq(int ind) {
-        assert ind > 0;
-        int sum = 0;
-        while (ind > 0) {
-            sum += array[ind];
-            //Extracting the portion up to the first significant one of the binary representation of 'ind' and decrementing ind by that number
-            ind -= ind & (-ind);
-        }
-
-        return sum;
+  public int rsq(int ind) {
+    assert ind > 0;
+    int sum = 0;
+    while (ind > 0) {
+      sum += array[ind];
+      ind -= ind & (-ind);
     }
+    return sum;
+  }
 
-    /**
+  /**
      * Range Sum Query from a to b.
      * Search for the sum from array index from a to b
      * a and b are 1-indexed
      * 
      * <p>Time-Complexity:    O(log(n))
      */
-    public int rsq(int a, int b) {
-        assert b >= a && a > 0 && b > 0;
+  public int rsq(int a, int b) {
+    assert b >= a && a > 0 && b > 0;
+    return rsq(b) - rsq(a - 1);
+  }
 
-        return rsq(b) - rsq(a - 1);
-    }
-
-    /**
+  /**
      * Update the array at ind and all the affected regions above ind.
      * ind is 1-indexed
      * 
      * <p>Time-Complexity:    O(log(n))
      */
-    public void update(int ind, int value) {
-        assert ind > 0;
-        while (ind < array.length) {
-            array[ind] += value;
-            //Extracting the portion up to the first significant one of the binary representation of 'ind' and incrementing ind by that number
-            ind += ind & (-ind);
-        }
+  public void update(int ind, int value) {
+    assert ind > 0;
+    while (ind < array.length) {
+      array[ind] += value;
+      ind += ind & (-ind);
     }
+  }
 
-    public int size() {
-        return array.length - 1;
-    }
+  public int size() {
+    return array.length - 1;
+  }
 
-
-    /**
+  /**
      * Read the following commands:
      * init n     Initializes the array of size n all zeroes
      * set a b c    Initializes the array  with [a, b, c ...]
@@ -122,88 +107,54 @@ public class FenwickTree {
      *
      * @param args
      */
-    public static void main(String[] args) {
-
-
-        FenwickTree ft = null;
-
-        String cmd = "cmp";
-        while (true) {
-            String[] line = StdIn.readLine().split(" ");
-
-            if (line[0].equals("exit")) break;
-
-            int arg1 = 0, arg2 = 0;
-
-            if (line.length > 1) {
-                arg1 = Integer.parseInt(line[1]);
-            }
-            if (line.length > 2) {
-                arg2 = Integer.parseInt(line[2]);
-            }
-
-            if ((!line[0].equals("set") && !line[0].equals("init")) && ft == null) {
-                StdOut.println("FenwickTree not initialized");
-                continue;
-            }
-
-            if (line[0].equals("init")) {
-                ft = new FenwickTree(arg1);
-                for (int i = 1; i <= ft.size(); i++) {
-                    StdOut.print(ft.rsq(i, i) + " ");
-                }
-                StdOut.println();
-            }
-            else if (line[0].equals("set")) {
-                ft = new FenwickTree(line.length - 1);
-                for (int i = 1; i <= line.length - 1; i++) {
-                    ft.update(i, Integer.parseInt(line[i]));
-                }
-            }
-
-            else if (line[0].equals("up")) {
-                ft.update(arg1, arg2);
-                for (int i = 1; i <= ft.size(); i++) {
-                    StdOut.print(ft.rsq(i, i) + " ");
-                }
-                StdOut.println();
-            }
-            else if (line[0].equals("rsq")) {
-                StdOut.printf("Sum from %d to %d = %d%n", arg1, arg2, ft.rsq(arg1, arg2));
-            }
-            else {
-                StdOut.println("Invalid command");
-            }
-
+  public static void main(String[] args) {
+    FenwickTree ft = null;
+    String cmd = "cmp";
+    while (true) {
+      String[] line = StdIn.readLine().split(" ");
+      if (line[0].equals("exit")) {
+        break;
+      }
+      int arg1 = 0, arg2 = 0;
+      if (line.length > 1) {
+        arg1 = Integer.parseInt(line[1]);
+      }
+      if (line.length > 2) {
+        arg2 = Integer.parseInt(line[2]);
+      }
+      if ((!line[0].equals("set") && !line[0].equals("init")) && ft == null) {
+        StdOut.println("FenwickTree not initialized");
+        continue;
+      }
+      if (line[0].equals("init")) {
+        ft = new FenwickTree(arg1);
+        for (int i = 1; i <= ft.size(); i++) {
+          StdOut.print(ft.rsq(i, i) + " ");
         }
-
-
-        StdOut.close();
+        StdOut.println();
+      } else {
+        if (line[0].equals("set")) {
+          ft = new FenwickTree(line.length - 1);
+          for (int i = 1; i <= line.length - 1; i++) {
+            ft.update(i, Integer.parseInt(line[i]));
+          }
+        } else {
+          if (line[0].equals("up")) {
+            ft.update(arg1, arg2);
+            for (int i = 1; i <= ft.size(); i++) {
+              StdOut.print(ft.rsq(i, i) + " ");
+            }
+            StdOut.println();
+          } else {
+            if (line[0].equals("rsq")) {
+              StdOut.printf("Sum from %d to %d = %d%n", arg1, arg2, ft.rsq(arg1, arg2));
+            } else {
+              StdOut.println("Invalid command");
+            }
+          }
+        }
+      }
     }
-
-
+    StdOut.close();
+  }
 }
-
-/******************************************************************************
- *  Copyright 2002-2016, Robert Sedgewick and Kevin Wayne.
- *
- *  This file is part of algs4.jar, which accompanies the textbook
- *
- *      Algorithms, 4th edition by Robert Sedgewick and Kevin Wayne,
- *      Addison-Wesley Professional, 2011, ISBN 0-321-57351-X.
- *      http://algs4.cs.princeton.edu
- *
- *
- *  algs4.jar is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  algs4.jar is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with algs4.jar.  If not, see http://www.gnu.org/licenses.
- ******************************************************************************/
