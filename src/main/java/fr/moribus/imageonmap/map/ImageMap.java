@@ -33,6 +33,58 @@ public abstract class ImageMap implements ConfigurationSerializable
     static public enum Type 
     {
         SINGLE, POSTER;
+<<<<<<< /usr/src/app/output/coutume/imageonmap/3ace5f5edf302738f9c7d705ce9c81f718c800af/src/main/java/fr/moribus/imageonmap/map/ImageMap.java/left.java
+||||||| /usr/src/app/output/coutume/imageonmap/3ace5f5edf302738f9c7d705ce9c81f718c800af/src/main/java/fr/moribus/imageonmap/map/ImageMap.java/base.java
+        
+        static public ImageMap createNewMap(Type type, BufferedImage image, Player player)
+        {
+            switch(type)
+            {
+                case POSTER:
+                    return new PosterMap(new PosterImage(image), player);
+                default:
+                    return new SingleMap(image, player);
+            }
+        }
+        
+        static public Type fromString(String string)
+        { 
+            switch(string.toLowerCase())
+            {
+                case "poster":
+                case "multi":
+                    return POSTER;
+                default:
+                    return SINGLE;
+            }
+        }
+=======
+        
+        static public ImageMap createNewMap(Type type, BufferedImage image, Player player)
+        {
+            switch(type)
+            {
+                case POSTER:
+                    return new PosterMap(new PosterImage(image), player);
+                default:
+                    return new SingleMap(image, player);
+            }
+        }
+        
+        static public Type fromString(String string)
+        { 
+            switch(string.toLowerCase())
+            {
+                case "poster":
+                case "multi":
+                    return POSTER;
+                case "single":
+                    return SINGLE;
+                default:
+                    return null;
+            }
+        }
+>>>>>>> /usr/src/app/output/coutume/imageonmap/3ace5f5edf302738f9c7d705ce9c81f718c800af/src/main/java/fr/moribus/imageonmap/map/ImageMap.java/right.java
     };
     
     static public final int WIDTH = 128;
