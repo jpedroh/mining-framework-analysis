@@ -444,12 +444,18 @@ public abstract class AbstractKotlinCodegen extends DefaultCodegen implements Co
             additionalProperties.put(CodegenConstants.PARCELIZE_MODELS, parcelizeModels);
         }
 
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/b5a133592c516b07cb5f7d90316f0b50b52624a4/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractKotlinCodegen.java/left.java
         if (additionalProperties.containsKey(CodegenConstants.NON_PUBLIC_API)) {
             this.setNonPublicApi(Boolean.valueOf((String) additionalProperties.get(CodegenConstants.NON_PUBLIC_API)));
         } else {
             additionalProperties.put(CodegenConstants.NON_PUBLIC_API, nonPublicApi);
         }
 
+        additionalProperties.put(CodegenConstants.NEEDS_DATACLASS_BODY, this.hasEnums || serializableModel);
+||||||| /usr/src/app/output/openapitools/openapi-generator/b5a133592c516b07cb5f7d90316f0b50b52624a4/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractKotlinCodegen.java/base.java
+        additionalProperties.put(CodegenConstants.NEEDS_DATACLASS_BODY, this.hasEnums || serializableModel);
+=======
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/b5a133592c516b07cb5f7d90316f0b50b52624a4/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractKotlinCodegen.java/right.java
         additionalProperties.put(CodegenConstants.API_PACKAGE, apiPackage());
         additionalProperties.put(CodegenConstants.MODEL_PACKAGE, modelPackage());
 
