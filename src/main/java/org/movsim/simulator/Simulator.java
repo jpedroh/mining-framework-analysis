@@ -56,31 +56,19 @@ public class Simulator implements Runnable {
 
     /** The Constant logger. */
     final static Logger logger = LoggerFactory.getLogger(Simulator.class);
-
     /** singleton pattern with eager initialization */
     private static Simulator instance = new Simulator();
-
     private double time;
-
     private long iterationCount;
-
-    private double timestep; // constant for one simulation run
-
+    private double timestep;
     /** The duration of the simulation. */
     private double tMax;
-
     private SimOutput simOutput;
-
     private final InputData inputData;
-
     private VehicleGenerator vehGenerator;
-
     private String projectName;
-
     private long startTimeMillis;
-
     private final RoadNetwork roadNetwork;
-
     /**
      * Instantiates a new simulator.
      */
@@ -88,11 +76,9 @@ public class Simulator implements Runnable {
         inputData = new InputData(); // accesses static reference ProjectMetaData
         roadNetwork = new RoadNetwork();
     }
-
     public static Simulator getInstance() {
         return instance;
     }
-
     public void initialize() {
         logger.info("Copyright '\u00A9' by Arne Kesting, Martin Treiber, Ralph Germ and Martin Budden (2011)");
 
@@ -103,7 +89,8 @@ public class Simulator implements Runnable {
 
         final boolean loadedRoadNetwork = parseOpenDriveXml(projectMetaData);
 
-        this.timestep = simInput.getTimestep(); // fix
+        this.timestep = simInput.getTimestep(); 
+
         this.tMax = simInput.getMaxSimTime();
 
         MyRandom.initialize(simInput.isWithFixedSeed(), simInput.getRandomSeed());
@@ -124,7 +111,6 @@ public class Simulator implements Runnable {
 
         reset();
     }
-
     /**
      * @param roadInputMap
      */
@@ -136,7 +122,6 @@ public class Simulator implements Runnable {
             }
         }
     }
-
     /**
      * this is the default vehGenerator for *all* roadsections if an individual vehicle composition is defined for a specific road
      * 
@@ -147,7 +132,6 @@ public class Simulator implements Runnable {
         final boolean isWithFundDiagramOutput = simInput.isWithWriteFundamentalDiagrams();
         vehGenerator = new VehicleGenerator(timestep, inputData, heterogenInputData, isWithFundDiagramOutput);
     }
-
     /**
      * there was no xodr file and there is only one road segment in the MovSimXML file so set up a default s-shaped road mapping
      * 
@@ -165,7 +149,6 @@ public class Simulator implements Runnable {
         roadSegment.addDefaultSink();
         roadNetwork.add(roadSegment);
     }
-
     /**
      * @param projectMetaData
      * @return
@@ -180,7 +163,6 @@ public class Simulator implements Runnable {
         logger.info("done with parsing road network {}. Success: {}", fullXodrFileName, loaded);
         return loaded;
     }
-
     /**
      * @return
      */
@@ -191,6 +173,7 @@ public class Simulator implements Runnable {
         final SimulationInput simInput = inputData.getSimulationInput();
         return simInput;
     }
+// constant for one simulation run
 
     public void reset() {
         time = 0;
