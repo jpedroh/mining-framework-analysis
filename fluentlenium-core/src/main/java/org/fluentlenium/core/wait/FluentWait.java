@@ -1,6 +1,5 @@
 package org.fluentlenium.core.wait;
 
-
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
@@ -9,6 +8,7 @@ import org.fluentlenium.core.FluentPage;
 import org.fluentlenium.core.domain.FluentList;
 import org.fluentlenium.core.domain.FluentWebElement;
 import org.fluentlenium.core.search.Search;
+import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 
@@ -56,17 +56,14 @@ public class FluentWait implements org.openqa.selenium.support.ui.Wait<Fluent> {
         return this;
     }
 
-
     public FluentWait ignoreAll(java.util.Collection<java.lang.Class<? extends Throwable>> types) {
         wait.ignoreAll(types);
         return this;
-
     }
 
     public FluentWait ignoring(java.lang.Class<? extends java.lang.RuntimeException> exceptionType) {
         wait.ignoring(exceptionType);
         return this;
-
     }
 
     /**
@@ -76,10 +73,10 @@ public class FluentWait implements org.openqa.selenium.support.ui.Wait<Fluent> {
      * @param secondType second type of exception which extends java.lang.RuntimeException
      * @return this fluent wait
      */
-    public FluentWait ignoring(java.lang.Class<? extends java.lang.RuntimeException> firstType, java.lang.Class<? extends java.lang.RuntimeException> secondType) {
+    public FluentWait ignoring(java.lang.Class<? extends java.lang.RuntimeException> firstType,
+            java.lang.Class<? extends java.lang.RuntimeException> secondType) {
         wait.ignoring(firstType, secondType);
         return this;
-
     }
 
     /**
