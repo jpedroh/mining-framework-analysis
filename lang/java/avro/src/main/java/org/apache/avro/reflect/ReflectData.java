@@ -433,10 +433,7 @@ public class ReflectData extends SpecificData {
   Schema createNonStringMapSchema(Type keyType, Type valueType,
                                   Map<String, Schema> names) {
     Schema keySchema = createSchema(keyType, names);
-    keySchema = checkCircularRefSchema(keySchema);
     Schema valueSchema = createSchema(valueType, names);
-    valueSchema = checkCircularRefSchema(valueSchema);
-
     Schema.Field keyField = 
       new Schema.Field(NS_MAP_KEY, keySchema, null, null);
     Schema.Field valueField = 
@@ -510,11 +507,17 @@ public class ReflectData extends SpecificData {
       Class raw = (Class)ptype.getRawType();
       Type[] params = ptype.getActualTypeArguments();
       if (Map.class.isAssignableFrom(raw)) {                 // Map
+<<<<<<< /usr/src/app/output/apache/avro/53ca7bf14e5a7eda4a19e86e064ec25e553373e7/lang/java/avro/src/main/java/org/apache/avro/reflect/ReflectData.java/left.java
+        Schema valueSchema = createSchema(params[1], names);
+        Schema circularSchema = checkCircularRefSchema(valueSchema);
+        Schema schema = Schema.createMap(circularSchema);
+||||||| /usr/src/app/output/apache/avro/53ca7bf14e5a7eda4a19e86e064ec25e553373e7/lang/java/avro/src/main/java/org/apache/avro/reflect/ReflectData.java/base.java
+        Schema schema = Schema.createMap(createSchema(params[1], names));
+=======
+>>>>>>> /usr/src/app/output/apache/avro/53ca7bf14e5a7eda4a19e86e064ec25e553373e7/lang/java/avro/src/main/java/org/apache/avro/reflect/ReflectData.java/right.java
         Class key = (Class)params[0];
         if (isStringable(key)) {                             // Stringable key
-          Schema valueSchema = createSchema(params[1], names);
-          Schema circularSchema = checkCircularRefSchema(valueSchema);
-          Schema schema = Schema.createMap(circularSchema);
+          Schema schema = Schema.createMap(createSchema(params[1], names));
           schema.addProp(KEY_CLASS_PROP, key.getName());
           return schema;
         } else if (key != String.class) {
