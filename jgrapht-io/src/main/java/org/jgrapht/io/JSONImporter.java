@@ -31,7 +31,14 @@ import java.util.function.Supplier;
 /**
  * Imports a graph from a <a href="https://tools.ietf.org/html/rfc8259">JSON</a> file.
  * 
+ * <p>
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/d869c1917ec93b3ca0dd5e0797c9fe7b4fc00c88/jgrapht-io/src/main/java/org/jgrapht/io/JSONImporter.java/left.java
  * Below is a small example of a graph in GML format.
+||||||| /usr/src/app/output/jgrapht/jgrapht/d869c1917ec93b3ca0dd5e0797c9fe7b4fc00c88/jgrapht-io/src/main/java/org/jgrapht/io/JSONImporter.java/base.java
+ * Below is small example of a graph in GML format.
+=======
+ * Below is small example of a graph in JSON format.
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/d869c1917ec93b3ca0dd5e0797c9fe7b4fc00c88/jgrapht-io/src/main/java/org/jgrapht/io/JSONImporter.java/right.java
  * 
  * <pre>
  * {
