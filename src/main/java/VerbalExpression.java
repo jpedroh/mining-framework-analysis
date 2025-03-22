@@ -271,7 +271,7 @@ public class VerbalExpression {
     }
     
     public String getText(String toTest) {
-        Matcher m = pattern.matcher(toTest);
+        Matcher m = Pattern.compile(this.pattern).matcher(toTest);
         StringBuilder result = new StringBuilder();
         while (m.find()){
             result.append(m.group());

@@ -1,9 +1,8 @@
-import org.junit.Test;
-import org.junit.Before;
-import org.junit.Ignore;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class BasicFunctionalityUnitTests {
+
     @Test
     public void testSomething() {
         VerbalExpression testRegex = new VerbalExpression.Builder().something().build();
@@ -201,12 +200,9 @@ public class BasicFunctionalityUnitTests {
    @Test
    public void testGetText () {
        String testString = "123 https://www.google.com 456";
-       VerbalExpression testRegex = new VerbalExpression.Builder().add("http")
-               .maybe("s")
-               .then("://")
-               .then("www.")
-               .anythingButNot(" ")
-               .add("com").build();
+       VerbalExpression testRegex = new VerbalExpression().add("http")
+               .maybe("s").then("://").then("www.").anythingBut(" ")
+               .add("com");
        assertEquals(testRegex.getText(testString), "https://www.google.com");
        
    }
