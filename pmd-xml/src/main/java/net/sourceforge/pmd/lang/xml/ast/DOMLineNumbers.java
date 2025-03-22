@@ -4,7 +4,10 @@
 package net.sourceforge.pmd.lang.xml.ast;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -140,7 +143,13 @@ class DOMLineNumbers {
      * Calculates a list with the file offsets for each line.
      */
     private void calculateLinesMap() {
+<<<<<<< /usr/src/app/output/adangel/pmd/a2c344fb54f78c17d684a9b8b2158d23e326a874/pmd-xml/src/main/java/net/sourceforge/pmd/lang/xml/ast/DOMLineNumbers.java/left.java
         lines = new ArrayList<>();
+||||||| /usr/src/app/output/adangel/pmd/a2c344fb54f78c17d684a9b8b2158d23e326a874/pmd-xml/src/main/java/net/sourceforge/pmd/lang/xml/ast/DOMLineNumbers.java/base.java
+        lines = new ArrayList<Integer, Integer>();
+=======
+        lines = new ArrayList<Integer>();
+>>>>>>> /usr/src/app/output/adangel/pmd/a2c344fb54f78c17d684a9b8b2158d23e326a874/pmd-xml/src/main/java/net/sourceforge/pmd/lang/xml/ast/DOMLineNumbers.java/right.java
 
         int index = -1;
         int count = StringUtils.countMatches(xmlString, "\n");
