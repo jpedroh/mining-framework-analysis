@@ -1,56 +1,14 @@
-/*
- * Copyright (c) 2009-2016, Data Geekery GmbH (http://www.datageekery.com)
- * All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * Other licenses:
- * -----------------------------------------------------------------------------
- * Commercial licenses for this work are available. These replace the above
- * ASL 2.0 and offer limited warranties, support, maintenance, and commercial
- * database integrations.
- *
- * For more information, please visit: http://www.jooq.org/licenses
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- */
 package org.jooq.tools.jdbc;
-
 import org.jooq.DSLContext;
+import java.sql.SQLException;
 import org.jooq.SQLDialect;
+import java.sql.SQLFeatureNotSupportedException;
 import org.jooq.exception.ErroneousRowSpecificationException;
 import org.jooq.impl.DSL;
-import org.jooq.tools.JooqLogger;
-
-import java.io.*;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.util.ArrayList;
+import org.jooq.tools.JooqLogger;
 import java.util.LinkedHashMap;
+import java.io.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -113,240 +71,187 @@ import java.util.regex.Pattern;
  * @author Lukas Eder
  */
 public class MockFileDatabase implements MockDataProvider {
+  private static final JooqLogger log = JooqLogger.getLogger(MockFileDatabase.class);
 
-    private static final JooqLogger              log = JooqLogger.getLogger(MockFileDatabase.class);
+  private final LineNumberReader in;
 
-    private final LineNumberReader               in;
-    private final Map<String, List<MockResult>>  matchExactly;
-    private final Map<Pattern, List<MockResult>> matchPattern;
-    private final DSLContext                     create;
-    private String                               nullLiteral;
+  private final Map<String, List<MockResult>> matchExactly;
 
-    public MockFileDatabase(File file) throws IOException {
-        this(file, "UTF-8");
-    }
+  private final Map<Pattern, List<MockResult>> matchPattern;
 
-    public MockFileDatabase(File file, String encoding) throws IOException {
-        this(new FileInputStream(file), encoding);
-    }
+  private final DSLContext create;
 
-    public MockFileDatabase(InputStream stream) throws IOException {
-        this(stream, "UTF-8");
-    }
+  private String nullLiteral;
 
-    public MockFileDatabase(InputStream stream, String encoding) throws IOException {
-        this(new InputStreamReader(stream, encoding));
-    }
+  public MockFileDatabase(File file) throws IOException {
+    this(file, "UTF-8");
+  }
 
-    public MockFileDatabase(Reader reader) throws IOException {
-        this(new LineNumberReader(reader));
-    }
+  public MockFileDatabase(File file, String encoding) throws IOException {
+    this(new FileInputStream(file), encoding);
+  }
 
-    public MockFileDatabase(String string) throws IOException {
-        this(new StringReader(string));
-    }
+  public MockFileDatabase(InputStream stream) throws IOException {
+    this(stream, "UTF-8");
+  }
 
-    /**
+  public MockFileDatabase(InputStream stream, String encoding) throws IOException {
+    this(new InputStreamReader(stream, encoding));
+  }
+
+  public MockFileDatabase(Reader reader) throws IOException {
+    this(new LineNumberReader(reader));
+  }
+
+  public MockFileDatabase(String string) throws IOException {
+    this(new StringReader(string));
+  }
+
+  /**
      * Specify the <code>null</code> literal, i.e. the string that should be
      * parsed as a <code>null</code> reference, rather than as the string
      * itself.
      *
      * @see DSLContext#fetchFromTXT(String, String)
      */
-    public MockFileDatabase nullLiteral(String literal) {
-        this.nullLiteral = literal;
-        return this;
-    }
+  public MockFileDatabase nullLiteral(String literal) {
+    this.nullLiteral = literal;
+    return this;
+  }
 
-    private MockFileDatabase(LineNumberReader reader) throws IOException {
-        this.in = reader;
-        this.matchExactly = new LinkedHashMap<String, List<MockResult>>();
-        this.matchPattern = new LinkedHashMap<Pattern, List<MockResult>>();
-        this.create = DSL.using(SQLDialect.DEFAULT);
+  private MockFileDatabase(LineNumberReader reader) throws IOException {
+    this.in = reader;
+    this.matchExactly = new LinkedHashMap<String, List<MockResult>>();
+    this.matchPattern = new LinkedHashMap<Pattern, List<MockResult>>();
+    this.create = DSL.using(SQLDialect.DEFAULT);
+    load();
+  }
 
-        load();
-    }
+  private void load() throws FileNotFoundException, IOException {
+    new Object() {
+      private StringBuilder currentSQL = new StringBuilder();
 
-    private void load() throws FileNotFoundException, IOException {
+      private StringBuilder currentResult = new StringBuilder();
 
-        // Wrap the below code in a local scope
-        new Object() {
-            private StringBuilder    currentSQL    = new StringBuilder();
-            private StringBuilder    currentResult = new StringBuilder();
-            private String           previousSQL   = null;
+      private String previousSQL = null;
 
-            private void load() throws FileNotFoundException, IOException {
-                try {
-                    while (true) {
-                        String line = readLine();
-
-                        // End of file reached
-                        if (line == null) {
-
-                            // The file was ended, but the previous data was
-                            // not yet terminated
-                            if (currentResult.length() > 0) {
-                                loadOneResult("");
-                                currentResult = new StringBuilder();
-                            }
-
-                            break;
-                        }
-
-                        // Comments are ignored
-                        else if (line.startsWith("#")) {
-                            continue;
-                        }
-
-                        // A line of result data
-                        else if (line.startsWith(">")) {
-                            currentResult.append(line.substring(2));
-                            currentResult.append("\n");
-                        }
-
-                        // A result data termination literal
-                        else if (line.startsWith("@")) {
-                            loadOneResult(line);
-                            currentResult = new StringBuilder();
-                        }
-
-                        // A terminated line of SQL
-                        else if (line.endsWith(";")) {
-                            currentSQL.append(line.substring(0, line.length() - 1));
-
-                            if (!matchExactly.containsKey(previousSQL)) {
-                                matchExactly.put(previousSQL, null);
-                            }
-
-                            previousSQL = currentSQL.toString();
-                            currentSQL = new StringBuilder();
-
-                            if (log.isDebugEnabled()) {
-                                log.debug("Loaded SQL", previousSQL);
-                            }
-                        }
-
-                        // A non-terminated line of SQL
-                        else {
-
-                            // A new SQL statement is created, but the previous
-                            // data was not yet terminated
-                            if (currentResult.length() > 0) {
-                                loadOneResult("");
-                                currentResult = new StringBuilder();
-                            }
-
-                            currentSQL.append(line);
-                        }
+      private void load() throws FileNotFoundException, IOException {
+        try {
+          while (true) {
+            String line = readLine();
+            if (line == null) {
+              if (currentResult.length() > 0) {
+                loadOneResult("");
+                currentResult = new StringBuilder();
+              }
+              break;
+            } else {
+              if (line.startsWith("#")) {
+                continue;
+              } else {
+                if (line.startsWith(">")) {
+                  currentResult.append(line.substring(2));
+                  currentResult.append("\n");
+                } else {
+                  if (line.startsWith("@")) {
+                    loadOneResult(line);
+                    currentResult = new StringBuilder();
+                  } else {
+                    if (line.endsWith(";")) {
+                      currentSQL.append(line.substring(0, line.length() - 1));
+                      if (!matchExactly.containsKey(previousSQL)) {
+                        matchExactly.put(previousSQL, null);
+                      }
+                      previousSQL = currentSQL.toString();
+                      currentSQL = new StringBuilder();
+                      if (log.isDebugEnabled()) {
+                        log.debug("Loaded SQL", previousSQL);
+                      }
+                    } else {
+                      if (currentResult.length() > 0) {
+                        loadOneResult("");
+                        currentResult = new StringBuilder();
+                      }
+                      currentSQL.append(line);
                     }
+                  }
                 }
-                finally {
-                    if (in != null) {
-                        in.close();
-                    }
-                }
+              }
             }
-
-            private void loadOneResult(String line) {
-                List<MockResult> results = matchExactly.get(previousSQL);
-                if (results == null) {
-                    results = new ArrayList<MockResult>();
-                    matchExactly.put(previousSQL, results);
-
-//                    try {
-//                        Pattern p = Pattern.compile(previousSQL);
-//                        matchPattern.put(p, results);
-//                    }
-//                    catch (PatternSyntaxException ignore) {
-//                        if (log.isDebugEnabled()) {
-//                            log.debug("Not a pattern", previousSQL);
-//                        }
-//                    }
-                }
-
-                MockResult mock = parse(line);
-                results.add(mock);
-                //[#5639] We are throwing an exception if the numbers do not match
-                if(mock.rows != mock.data.size()){
-                    String errorMessage = "Erroneous row number specification (specified " + mock.rows +
-                            " but found " + mock.data.size() + ")";
-                    throw new ErroneousRowSpecificationException(errorMessage);
-                }
-                if (log.isDebugEnabled()) {
-                    String comment = "Loaded Result";
-
-                    for (String l : mock.data.format(5).split("\n")) {
-                        log.debug(comment, l);
-                        comment = "";
-                    }
-                }
-            }
-
-            private MockResult parse(String rowString) {
-                int rows = 0;
-                if (rowString.startsWith("@ rows:")) {
-                    rows = Integer.parseInt(rowString.substring(7).trim());
-                }
-
-                return new MockResult(rows,
-                    nullLiteral == null
-                    ? create.fetchFromTXT(currentResult.toString())
-                    : create.fetchFromTXT(currentResult.toString(), nullLiteral)
-                );
-            }
-
-            private String readLine() throws IOException {
-                while (true) {
-                    String line = in.readLine();
-
-                    if (line == null) {
-                        return line;
-                    }
-
-                    line = line.trim();
-
-                    // Skip empty lines
-                    if (line.length() > 0) {
-                        return line;
-                    }
-                }
-            }
-        }.load();
-    }
-
-    @Override
-    public MockResult[] execute(MockExecuteContext ctx) throws SQLException {
-        if (ctx.batch()) {
-            throw new SQLFeatureNotSupportedException("Not yet supported");
+          }
+        }  finally {
+          if (in != null) {
+            in.close();
+          }
         }
-        else {
-            String sql = ctx.sql();
-            String inlined = null;
+      }
 
-            // Check for an exact match
-            List<MockResult> list = matchExactly.get(sql);
-
-            // Check again, with inlined bind values
-            if (list == null) {
-                inlined = create.query(sql, ctx.bindings()).toString();
-                list = matchExactly.get(inlined);
-            }
-
-            // Check for the first pattern match
-            if (list == null) {
-                for (Entry<Pattern, List<MockResult>> entry : matchPattern.entrySet()) {
-                    if (    entry.getKey().matcher(sql).matches()
-                         || entry.getKey().matcher(inlined).matches()) {
-                        list = entry.getValue();
-                    }
-                }
-            }
-
-            if (list == null) {
-                throw new SQLException("Invalid SQL: " + sql);
-            }
-
-            return list.toArray(new MockResult[list.size()]);
+      private void loadOneResult(String line) {
+        List<MockResult> results = matchExactly.get(previousSQL);
+        if (results == null) {
+          results = new ArrayList<MockResult>();
+          matchExactly.put(previousSQL, results);
         }
+        MockResult mock = parse(line);
+        results.add(mock);
+        if (mock.rows != mock.data.size()) {
+          String errorMessage = "Erroneous row number specification (specified " + mock.rows + " but found " + mock.data.size() + ")";
+          throw new ErroneousRowSpecificationException(errorMessage);
+        }
+        if (log.isDebugEnabled()) {
+          String comment = "Loaded Result";
+          for (String l : mock.data.format(5).split("\n")) {
+            log.debug(comment, l);
+            comment = "";
+          }
+        }
+      }
+
+      private MockResult parse(String rowString) {
+        int rows = 0;
+        if (rowString.startsWith("@ rows:")) {
+          rows = Integer.parseInt(rowString.substring(7).trim());
+        }
+        return new MockResult(rows, nullLiteral == null ? create.fetchFromTXT(currentResult.toString()) : create.fetchFromTXT(currentResult.toString(), nullLiteral));
+      }
+
+      private String readLine() throws IOException {
+        while (true) {
+          String line = in.readLine();
+          if (line == null) {
+            return line;
+          }
+          line = line.trim();
+          if (line.length() > 0) {
+            return line;
+          }
+        }
+      }
+    }.load();
+  }
+
+  @Override public MockResult[] execute(MockExecuteContext ctx) throws SQLException {
+    if (ctx.batch()) {
+      throw new SQLFeatureNotSupportedException("Not yet supported");
+    } else {
+      String sql = ctx.sql();
+      String inlined = null;
+      List<MockResult> list = matchExactly.get(sql);
+      if (list == null) {
+        inlined = create.query(sql, ctx.bindings()).toString();
+        list = matchExactly.get(inlined);
+      }
+      if (list == null) {
+        for (Entry<Pattern, List<MockResult>> entry : matchPattern.entrySet()) {
+          if (entry.getKey().matcher(sql).matches() || entry.getKey().matcher(inlined).matches()) {
+            list = entry.getValue();
+          }
+        }
+      }
+      if (list == null) {
+        throw new SQLException("Invalid SQL: " + sql);
+      }
+      return list.toArray(new MockResult[list.size()]);
     }
+  }
 }
