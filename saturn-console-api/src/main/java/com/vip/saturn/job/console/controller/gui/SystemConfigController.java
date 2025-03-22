@@ -1,5 +1,4 @@
 package com.vip.saturn.job.console.controller.gui;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -18,104 +17,81 @@ import com.vip.saturn.job.console.utils.Permissions;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.annotation.Resource;
 import java.io.IOException;
+import org.springframework.beans.factory.annotation.Value;
 import java.util.HashMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
 import java.util.Map;
+import org.springframework.web.bind.annotation.RequestMapping;
+import javax.annotation.Resource;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * System config related operations.
  *
  * @author kfchu
  */
-@RequiresPermissions(Permissions.systemConfig)
-@RequestMapping("/console/configs")
-public class SystemConfigController extends AbstractGUIController {
+@RequiresPermissions(value = Permissions.systemConfig) @RequestMapping(value = "/console/configs") public class SystemConfigController extends AbstractGUIController {
+  private static final ObjectMapper YAML_OBJ_MAPPER = new ObjectMapper(new YAMLFactory());
 
-	private static final ObjectMapper YAML_OBJ_MAPPER = new ObjectMapper(new YAMLFactory());
+  @Resource private SystemConfigService systemConfigService;
 
-	@Resource
-	private SystemConfigService systemConfigService;
+  @Value(value = "classpath:system-config-meta.yaml") private org.springframework.core.io.Resource configYaml;
 
-	@Value(value = "classpath:system-config-meta.yaml")
-	private org.springframework.core.io.Resource configYaml;
-
-	/**
+  /**
 	 * 创建或者更新配置项。
 	 *
 	 * @param key 配置key
 	 * @param value 配置值
 	 */
-	@ApiResponses(value = {@ApiResponse(code = 200, message = "Success/Fail", response = RequestResult.class)})
-	@Audit
-	@PostMapping
-	public SuccessResponseEntity createOrUpdateConfig(@AuditParam(value = "key") @RequestParam String key,
-			@AuditParam(value = "value") @RequestParam String value) throws SaturnJobConsoleException {
-		SystemConfig systemConfig = new SystemConfig();
-		systemConfig.setProperty(key);
-		systemConfig.setValue(value);
-		systemConfigService.insertOrUpdate(systemConfig);
+  @ApiResponses(value = { @ApiResponse(code = 200, message = "Success/Fail", response = RequestResult.class) }) @Audit @PostMapping public SuccessResponseEntity createOrUpdateConfig(@AuditParam(value = "key") @RequestParam String key, @AuditParam(value = "value") @RequestParam String value) throws SaturnJobConsoleException {
+    SystemConfig systemConfig = new SystemConfig();
+    systemConfig.setProperty(key);
+    systemConfig.setValue(value);
+    systemConfigService.insertOrUpdate(systemConfig);
+    return new SuccessResponseEntity();
+  }
 
-		return new SuccessResponseEntity();
-	}
-
-	/**
+  /**
 	 * 获取所有系统配置信息。
 	 */
-	@ApiResponses(value = {@ApiResponse(code = 200, message = "Success/Fail", response = RequestResult.class)})
-	@GetMapping
-	public SuccessResponseEntity getConfigs() throws IOException, SaturnJobConsoleException {
-		//获取配置meta
-		Map<String, List<JobConfigMeta>> jobConfigGroups = getSystemConfigMeta();
-		//返回所有配置信息
-		List<SystemConfig> systemConfigs = systemConfigService.getSystemConfigsDirectly(null);
+  @ApiResponses(value = { @ApiResponse(code = 200, message = "Success/Fail", response = RequestResult.class) }) @GetMapping public SuccessResponseEntity getConfigs() throws IOException, SaturnJobConsoleException {
+    Map<String, List<JobConfigMeta>> jobConfigGroups = getSystemConfigMeta();
+    List<SystemConfig> systemConfigs = systemConfigService.getSystemConfigsDirectly(null);
+    return new SuccessResponseEntity(genSystemConfigInfo(jobConfigGroups, systemConfigs));
+  }
 
-		return new SuccessResponseEntity(genSystemConfigInfo(jobConfigGroups, systemConfigs));
-	}
+  private Map<String, List<SystemConfigVo>> genSystemConfigInfo(Map<String, List<JobConfigMeta>> jobConfigGroups, List<SystemConfig> systemConfigs) {
+    Map<String, SystemConfig> systemConfigMap = convertList2Map(systemConfigs);
+    Map<String, List<SystemConfigVo>> jobConfigDisplayInfoMap = Maps.newHashMap();
+    for (Map.Entry<String, List<JobConfigMeta>> group : jobConfigGroups.entrySet()) {
+      List<JobConfigMeta> jobConfigMetas = group.getValue();
+      List<SystemConfigVo> jobConfigVos = Lists.newArrayListWithCapacity(jobConfigMetas.size());
+      for (JobConfigMeta configMeta : jobConfigMetas) {
+        SystemConfig systemConfig = systemConfigMap.get(configMeta.getName());
+        String value = systemConfig != null ? systemConfig.getValue() : null;
+        jobConfigVos.add(new SystemConfigVo(configMeta.getName(), value, configMeta.getDesc_zh()));
+      }
+      jobConfigDisplayInfoMap.put(group.getKey(), jobConfigVos);
+    }
+    return jobConfigDisplayInfoMap;
+  }
 
-	private Map<String, List<SystemConfigVo>> genSystemConfigInfo(Map<String, List<JobConfigMeta>> jobConfigGroups,
-			List<SystemConfig> systemConfigs) {
-		Map<String, SystemConfig> systemConfigMap = convertList2Map(systemConfigs);
-		Map<String, List<SystemConfigVo>> jobConfigDisplayInfoMap = Maps.newHashMap();
-		for (Map.Entry<String, List<JobConfigMeta>> group : jobConfigGroups.entrySet()) {
-			List<JobConfigMeta> jobConfigMetas = group.getValue();
-			List<SystemConfigVo> jobConfigVos = Lists.newArrayListWithCapacity(jobConfigMetas.size());
-			for (JobConfigMeta configMeta : jobConfigMetas) {
-				SystemConfig systemConfig = systemConfigMap.get(configMeta.getName());
-				String value = systemConfig != null ? systemConfig.getValue() : null;
-				jobConfigVos.add(new SystemConfigVo(configMeta.getName(), value, configMeta.getDesc_zh()));
-			}
+  private Map<String, List<JobConfigMeta>> getSystemConfigMeta() throws IOException {
+    TypeReference<HashMap<String, List<JobConfigMeta>>> typeRef = new TypeReference<HashMap<String, List<JobConfigMeta>>>() { };
+    return YAML_OBJ_MAPPER.readValue(configYaml.getInputStream(), typeRef);
+  }
 
-			jobConfigDisplayInfoMap.put(group.getKey(), jobConfigVos);
-		}
-		return jobConfigDisplayInfoMap;
-	}
-
-	private Map<String, List<JobConfigMeta>> getSystemConfigMeta() throws IOException {
-		TypeReference<HashMap<String, List<JobConfigMeta>>> typeRef = new TypeReference<HashMap<String, List<JobConfigMeta>>>() {
-		};
-
-		return YAML_OBJ_MAPPER.readValue(configYaml.getInputStream(), typeRef);
-	}
-
-	Map<String, SystemConfig> convertList2Map(List<SystemConfig> configList) {
-		Map<String, SystemConfig> configMap = Maps.newHashMap();
-		for (SystemConfig config : configList) {
-			if (configMap.containsKey(config.getProperty())) {
-				continue;
-			}
-			configMap.put(config.getProperty(), config);
-		}
-
-		return configMap;
-	}
-
-
+  Map<String, SystemConfig> convertList2Map(List<SystemConfig> configList) {
+    Map<String, SystemConfig> configMap = Maps.newHashMap();
+    for (SystemConfig config : configList) {
+      if (configMap.containsKey(config.getProperty())) {
+        continue;
+      }
+      configMap.put(config.getProperty(), config);
+    }
+    return configMap;
+  }
 }
