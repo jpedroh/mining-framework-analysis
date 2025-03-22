@@ -1,5 +1,4 @@
 package tech.tablesaw.plotly.components;
-
 import com.google.common.base.Preconditions;
 import com.mitchellbosecke.pebble.PebbleEngine;
 import com.mitchellbosecke.pebble.error.PebbleException;
@@ -24,10 +23,12 @@ import tech.tablesaw.plotly.traces.Trace;
  * null a default layout is provided.
  */
 public class Figure {
-
   private final Trace[] data;
+
   private Layout layout;
+
   private final Config config;
+
   private final EventHandler[] eventHandlers;
 
   private final Map<String, Object> context = new HashMap<>();
@@ -57,14 +58,12 @@ public class Figure {
   }
 
   /** @deprecated Use the FigureBuilder instead */
-  @Deprecated
-  public Figure(Layout layout, EventHandler eventHandler, Trace... traces) {
-    this(layout, new EventHandler[] {eventHandler}, traces);
+  @Deprecated public Figure(Layout layout, EventHandler eventHandler, Trace... traces) {
+    this(layout, new EventHandler[] { eventHandler }, traces);
   }
 
   /** @deprecated Use the FigureBuilder instead */
-  @Deprecated
-  public Figure(Layout layout, EventHandler[] eventHandlers, Trace... traces) {
+  @Deprecated public Figure(Layout layout, EventHandler[] eventHandlers, Trace... traces) {
     this.data = traces;
     this.layout = layout;
     this.config = null;
@@ -72,7 +71,7 @@ public class Figure {
   }
 
   public String divString(String divName) {
-    return String.format("<div id='%s' ></div>" + System.lineSeparator(), divName);
+    return String.format("<div id=\'%s\' ></div>" + System.lineSeparator(), divName);
   }
 
   public Layout getLayout() {
@@ -86,9 +85,7 @@ public class Figure {
   public String asJavascript(String divName) {
     Writer writer = new StringWriter();
     PebbleTemplate compiledTemplate;
-
     buildContext(divName);
-
     try {
       compiledTemplate = engine.getTemplate("figure_template.html");
       compiledTemplate.evaluate(writer, getContext());
@@ -99,13 +96,10 @@ public class Figure {
   }
 
   private void buildContext(String divName) {
-
     String targetName = "target_" + divName;
     context.put("divName", divName);
     context.put("targetName", targetName);
-
     StringBuilder builder = new StringBuilder();
-
     if (layout != null) {
       builder.append(layout.asJavascript());
     }
@@ -127,7 +121,6 @@ public class Figure {
 
   private String plotFunction(String divName) {
     StringBuilder builder = new StringBuilder();
-
     builder.append("var data = [ ");
     for (int i = 0; i < data.length; i++) {
       builder.append("trace").append(i);
@@ -136,9 +129,7 @@ public class Figure {
       }
     }
     builder.append("];").append(System.lineSeparator());
-
     builder.append("Plotly.newPlot(").append(divName).append(", ").append("data");
-
     if (layout != null) {
       builder.append(", ");
       builder.append("layout");
@@ -147,15 +138,12 @@ public class Figure {
       builder.append(", ");
       builder.append("config");
     }
-
     builder.append(");");
-
     return builder.toString();
   }
 
   private String eventHandlerFunction(String targetName, String divName) {
     StringBuilder builder = new StringBuilder();
-
     if (eventHandlers != null) {
       builder.append(System.lineSeparator());
       for (EventHandler eventHandler : eventHandlers) {
@@ -163,7 +151,6 @@ public class Figure {
       }
       builder.append(System.lineSeparator());
     }
-
     return builder.toString();
   }
 
@@ -176,10 +163,12 @@ public class Figure {
   }
 
   public static class FigureBuilder {
-
     private Layout layout;
+
     private Config config;
+
     private List<Trace> traces = new ArrayList<>();
+
     private List<EventHandler> eventHandlers = new ArrayList<>();
 
     public FigureBuilder layout(Layout layout) {
