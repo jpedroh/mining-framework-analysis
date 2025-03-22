@@ -26,6 +26,12 @@
 package io.swagger.client;
 
 
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/bc42d941ec8c184829816c05236cf58f5c59a3ff/samples/client/petstore/java/okhttp-gson/src/main/java/io/swagger/client/StringUtil.java/left.java
+||||||| /usr/src/app/output/openapitools/openapi-generator/bc42d941ec8c184829816c05236cf58f5c59a3ff/samples/client/petstore/java/okhttp-gson/src/main/java/io/swagger/client/StringUtil.java/base.java
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-06-09T00:01:22.559+08:00")
+=======
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-06-09T08:56:08.812+02:00")
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/bc42d941ec8c184829816c05236cf58f5c59a3ff/samples/client/petstore/java/okhttp-gson/src/main/java/io/swagger/client/StringUtil.java/right.java
 public class StringUtil {
   /**
    * Check if the given array contains the given value (with case-insensitive comparison).

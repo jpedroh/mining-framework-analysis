@@ -31,6 +31,12 @@ import java.util.Map;
 import java.util.List;
 
 
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/bc42d941ec8c184829816c05236cf58f5c59a3ff/samples/client/petstore/java/okhttp-gson/src/main/java/io/swagger/client/auth/OAuth.java/left.java
+||||||| /usr/src/app/output/openapitools/openapi-generator/bc42d941ec8c184829816c05236cf58f5c59a3ff/samples/client/petstore/java/okhttp-gson/src/main/java/io/swagger/client/auth/OAuth.java/base.java
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-06-09T00:01:22.559+08:00")
+=======
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-06-09T08:56:08.812+02:00")
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/bc42d941ec8c184829816c05236cf58f5c59a3ff/samples/client/petstore/java/okhttp-gson/src/main/java/io/swagger/client/auth/OAuth.java/right.java
 public class OAuth implements Authentication {
   private String accessToken;
 
