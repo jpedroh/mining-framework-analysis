@@ -17,7 +17,6 @@ import com.sun.jersey.multipart.file.FileDataBodyPart;
 import javax.ws.rs.core.MediaType;
 
 import java.io.File;
-import java.util.Map;
 import java.util.HashMap;
 
 public class StoreApi {
@@ -59,17 +58,17 @@ public class StoreApi {
 
     
 
-    
-
     final String[] accepts = {
       "application/json", "application/xml"
     };
-    final String accept = apiClient.selectHeaderAccept(accepts);
+    final String accept = ApiInvoker.selectHeaderAccept(accepts);
 
     final String[] contentTypes = {
       
     };
-    final String contentType = apiClient.selectHeaderContentType(contentTypes);
+    final String contentType = ApiInvoker.selectHeaderContentType(contentTypes);
+
+    
 
     if(contentType.startsWith("multipart/form-data")) {
       boolean hasFields = false;
@@ -115,17 +114,17 @@ public class StoreApi {
 
     
 
-    
-
     final String[] accepts = {
       "application/json", "application/xml"
     };
-    final String accept = apiClient.selectHeaderAccept(accepts);
+    final String accept = ApiInvoker.selectHeaderAccept(accepts);
 
     final String[] contentTypes = {
       
     };
-    final String contentType = apiClient.selectHeaderContentType(contentTypes);
+    final String contentType = ApiInvoker.selectHeaderContentType(contentTypes);
+
+    
 
     if(contentType.startsWith("multipart/form-data")) {
       boolean hasFields = false;
@@ -177,17 +176,17 @@ public class StoreApi {
 
     
 
-    
-
     final String[] accepts = {
       "application/json", "application/xml"
     };
-    final String accept = apiClient.selectHeaderAccept(accepts);
+    final String accept = ApiInvoker.selectHeaderAccept(accepts);
 
     final String[] contentTypes = {
       
     };
-    final String contentType = apiClient.selectHeaderContentType(contentTypes);
+    final String contentType = ApiInvoker.selectHeaderContentType(contentTypes);
+
+    
 
     if(contentType.startsWith("multipart/form-data")) {
       boolean hasFields = false;
@@ -239,17 +238,17 @@ public class StoreApi {
 
     
 
-    
-
     final String[] accepts = {
       "application/json", "application/xml"
     };
-    final String accept = apiClient.selectHeaderAccept(accepts);
+    final String accept = ApiInvoker.selectHeaderAccept(accepts);
 
     final String[] contentTypes = {
       
     };
-    final String contentType = apiClient.selectHeaderContentType(contentTypes);
+    final String contentType = ApiInvoker.selectHeaderContentType(contentTypes);
+
+    
 
     if(contentType.startsWith("multipart/form-data")) {
       boolean hasFields = false;

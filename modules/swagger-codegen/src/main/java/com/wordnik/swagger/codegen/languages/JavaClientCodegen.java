@@ -45,6 +45,38 @@ public class JavaClientCodegen extends DefaultCodegen implements CodegenConfig {
         "native", "super", "while")
     );
 
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/ee471981810c8006517fb23d0b6091c6166121c8/modules/swagger-codegen/src/main/java/com/wordnik/swagger/codegen/languages/JavaClientCodegen.java/left.java
+    additionalProperties.put("invokerPackage", invokerPackage);
+    additionalProperties.put("groupId", groupId);
+    additionalProperties.put("artifactId", artifactId);
+    additionalProperties.put("artifactVersion", artifactVersion);
+
+    supportingFiles.add(new SupportingFile("pom.mustache", "", "pom.xml"));
+    supportingFiles.add(new SupportingFile("apiInvoker.mustache",
+      (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "ApiInvoker.java"));
+    supportingFiles.add(new SupportingFile("JsonUtil.mustache",
+      (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "JsonUtil.java"));
+    supportingFiles.add(new SupportingFile("StringUtil.mustache",
+      (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "StringUtil.java"));
+    supportingFiles.add(new SupportingFile("apiException.mustache",
+      (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "ApiException.java"));
+
+||||||| /usr/src/app/output/openapitools/openapi-generator/ee471981810c8006517fb23d0b6091c6166121c8/modules/swagger-codegen/src/main/java/com/wordnik/swagger/codegen/languages/JavaClientCodegen.java/base.java
+    additionalProperties.put("invokerPackage", invokerPackage);
+    additionalProperties.put("groupId", groupId);
+    additionalProperties.put("artifactId", artifactId);
+    additionalProperties.put("artifactVersion", artifactVersion);
+
+    supportingFiles.add(new SupportingFile("pom.mustache", "", "pom.xml"));
+    supportingFiles.add(new SupportingFile("apiInvoker.mustache", 
+      (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "ApiInvoker.java"));
+    supportingFiles.add(new SupportingFile("JsonUtil.mustache", 
+      (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "JsonUtil.java"));
+    supportingFiles.add(new SupportingFile("apiException.mustache", 
+      (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "ApiException.java"));
+
+=======
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/ee471981810c8006517fb23d0b6091c6166121c8/modules/swagger-codegen/src/main/java/com/wordnik/swagger/codegen/languages/JavaClientCodegen.java/right.java
     languageSpecificPrimitives = new HashSet<String>(
       Arrays.asList(
         "String",
@@ -108,15 +140,13 @@ public class JavaClientCodegen extends DefaultCodegen implements CodegenConfig {
 
     supportingFiles.add(new SupportingFile("pom.mustache", "", "pom.xml"));
     supportingFiles.add(new SupportingFile("ApiClient.mustache",
-      (sourceFolder + File.separator + invokerPackage).replace(".", File.separator), "ApiClient.java"));
+      (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "ApiClient.java"));
     supportingFiles.add(new SupportingFile("Configuration.mustache",
-      (sourceFolder + File.separator + invokerPackage).replace(".", File.separator), "Configuration.java"));
+      (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "Configuration.java"));
     supportingFiles.add(new SupportingFile("JsonUtil.mustache",
-      (sourceFolder + File.separator + invokerPackage).replace(".", File.separator), "JsonUtil.java"));
-    supportingFiles.add(new SupportingFile("StringUtil.mustache",
-      (sourceFolder + File.separator + invokerPackage).replace(".", File.separator), "StringUtil.java"));
+      (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "JsonUtil.java"));
     supportingFiles.add(new SupportingFile("apiException.mustache",
-      (sourceFolder + File.separator + invokerPackage).replace(".", File.separator), "ApiException.java"));
+      (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "ApiException.java"));
   }
 
 

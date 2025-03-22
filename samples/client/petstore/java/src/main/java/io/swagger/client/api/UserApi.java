@@ -9,7 +9,6 @@ import io.swagger.client.model.*;
 import java.util.*;
 
 import io.swagger.client.model.User;
-import java.util.*;
 
 import com.sun.jersey.multipart.FormDataMultiPart;
 import com.sun.jersey.multipart.file.FileDataBodyPart;
@@ -60,17 +59,17 @@ public class UserApi {
 
     
 
-    
-
     final String[] accepts = {
       "application/json", "application/xml"
     };
-    final String accept = apiClient.selectHeaderAccept(accepts);
+    final String accept = ApiInvoker.selectHeaderAccept(accepts);
 
     final String[] contentTypes = {
       
     };
-    final String contentType = apiClient.selectHeaderContentType(contentTypes);
+    final String contentType = ApiInvoker.selectHeaderContentType(contentTypes);
+
+    
 
     if(contentType.startsWith("multipart/form-data")) {
       boolean hasFields = false;
@@ -116,17 +115,17 @@ public class UserApi {
 
     
 
-    
-
     final String[] accepts = {
       "application/json", "application/xml"
     };
-    final String accept = apiClient.selectHeaderAccept(accepts);
+    final String accept = ApiInvoker.selectHeaderAccept(accepts);
 
     final String[] contentTypes = {
       
     };
-    final String contentType = apiClient.selectHeaderContentType(contentTypes);
+    final String contentType = ApiInvoker.selectHeaderContentType(contentTypes);
+
+    
 
     if(contentType.startsWith("multipart/form-data")) {
       boolean hasFields = false;
@@ -172,17 +171,17 @@ public class UserApi {
 
     
 
-    
-
     final String[] accepts = {
       "application/json", "application/xml"
     };
-    final String accept = apiClient.selectHeaderAccept(accepts);
+    final String accept = ApiInvoker.selectHeaderAccept(accepts);
 
     final String[] contentTypes = {
       
     };
-    final String contentType = apiClient.selectHeaderContentType(contentTypes);
+    final String contentType = ApiInvoker.selectHeaderContentType(contentTypes);
+
+    
 
     if(contentType.startsWith("multipart/form-data")) {
       boolean hasFields = false;
@@ -233,17 +232,17 @@ public class UserApi {
       queryParams.put("password", apiClient.parameterToString(password));
     
 
-    
-
     final String[] accepts = {
       "application/json", "application/xml"
     };
-    final String accept = apiClient.selectHeaderAccept(accepts);
+    final String accept = ApiInvoker.selectHeaderAccept(accepts);
 
     final String[] contentTypes = {
       
     };
-    final String contentType = apiClient.selectHeaderContentType(contentTypes);
+    final String contentType = ApiInvoker.selectHeaderContentType(contentTypes);
+
+    
 
     if(contentType.startsWith("multipart/form-data")) {
       boolean hasFields = false;
@@ -288,17 +287,17 @@ public class UserApi {
 
     
 
-    
-
     final String[] accepts = {
       "application/json", "application/xml"
     };
-    final String accept = apiClient.selectHeaderAccept(accepts);
+    final String accept = ApiInvoker.selectHeaderAccept(accepts);
 
     final String[] contentTypes = {
       
     };
-    final String contentType = apiClient.selectHeaderContentType(contentTypes);
+    final String contentType = ApiInvoker.selectHeaderContentType(contentTypes);
+
+    
 
     if(contentType.startsWith("multipart/form-data")) {
       boolean hasFields = false;
@@ -350,17 +349,17 @@ public class UserApi {
 
     
 
-    
-
     final String[] accepts = {
       "application/json", "application/xml"
     };
-    final String accept = apiClient.selectHeaderAccept(accepts);
+    final String accept = ApiInvoker.selectHeaderAccept(accepts);
 
     final String[] contentTypes = {
       
     };
-    final String contentType = apiClient.selectHeaderContentType(contentTypes);
+    final String contentType = ApiInvoker.selectHeaderContentType(contentTypes);
+
+    
 
     if(contentType.startsWith("multipart/form-data")) {
       boolean hasFields = false;
@@ -413,17 +412,17 @@ public class UserApi {
 
     
 
-    
-
     final String[] accepts = {
       "application/json", "application/xml"
     };
-    final String accept = apiClient.selectHeaderAccept(accepts);
+    final String accept = ApiInvoker.selectHeaderAccept(accepts);
 
     final String[] contentTypes = {
       
     };
-    final String contentType = apiClient.selectHeaderContentType(contentTypes);
+    final String contentType = ApiInvoker.selectHeaderContentType(contentTypes);
+
+    
 
     if(contentType.startsWith("multipart/form-data")) {
       boolean hasFields = false;
@@ -475,17 +474,17 @@ public class UserApi {
 
     
 
-    
-
     final String[] accepts = {
       "application/json", "application/xml"
     };
-    final String accept = apiClient.selectHeaderAccept(accepts);
+    final String accept = ApiInvoker.selectHeaderAccept(accepts);
 
     final String[] contentTypes = {
       
     };
-    final String contentType = apiClient.selectHeaderContentType(contentTypes);
+    final String contentType = ApiInvoker.selectHeaderContentType(contentTypes);
+
+    
 
     if(contentType.startsWith("multipart/form-data")) {
       boolean hasFields = false;

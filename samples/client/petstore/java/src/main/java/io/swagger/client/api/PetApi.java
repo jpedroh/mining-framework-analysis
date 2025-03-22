@@ -15,8 +15,6 @@ import com.sun.jersey.multipart.FormDataMultiPart;
 import com.sun.jersey.multipart.file.FileDataBodyPart;
 
 import javax.ws.rs.core.MediaType;
-
-import java.io.File;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -60,17 +58,17 @@ public class PetApi {
 
     
 
-    
-
     final String[] accepts = {
       "application/json", "application/xml"
     };
-    final String accept = apiClient.selectHeaderAccept(accepts);
+    final String accept = ApiInvoker.selectHeaderAccept(accepts);
 
     final String[] contentTypes = {
       "application/json", "application/xml"
     };
-    final String contentType = apiClient.selectHeaderContentType(contentTypes);
+    final String contentType = ApiInvoker.selectHeaderContentType(contentTypes);
+
+    
 
     if(contentType.startsWith("multipart/form-data")) {
       boolean hasFields = false;
@@ -116,17 +114,17 @@ public class PetApi {
 
     
 
-    
-
     final String[] accepts = {
       "application/json", "application/xml"
     };
-    final String accept = apiClient.selectHeaderAccept(accepts);
+    final String accept = ApiInvoker.selectHeaderAccept(accepts);
 
     final String[] contentTypes = {
       "application/json", "application/xml"
     };
-    final String contentType = apiClient.selectHeaderContentType(contentTypes);
+    final String contentType = ApiInvoker.selectHeaderContentType(contentTypes);
+
+    
 
     if(contentType.startsWith("multipart/form-data")) {
       boolean hasFields = false;
@@ -174,17 +172,17 @@ public class PetApi {
       queryParams.put("status", apiClient.parameterToString(status));
     
 
-    
-
     final String[] accepts = {
       "application/json", "application/xml"
     };
-    final String accept = apiClient.selectHeaderAccept(accepts);
+    final String accept = ApiInvoker.selectHeaderAccept(accepts);
 
     final String[] contentTypes = {
       
     };
-    final String contentType = apiClient.selectHeaderContentType(contentTypes);
+    final String contentType = ApiInvoker.selectHeaderContentType(contentTypes);
+
+    
 
     if(contentType.startsWith("multipart/form-data")) {
       boolean hasFields = false;
@@ -232,17 +230,17 @@ public class PetApi {
       queryParams.put("tags", apiClient.parameterToString(tags));
     
 
-    
-
     final String[] accepts = {
       "application/json", "application/xml"
     };
-    final String accept = apiClient.selectHeaderAccept(accepts);
+    final String accept = ApiInvoker.selectHeaderAccept(accepts);
 
     final String[] contentTypes = {
       
     };
-    final String contentType = apiClient.selectHeaderContentType(contentTypes);
+    final String contentType = ApiInvoker.selectHeaderContentType(contentTypes);
+
+    
 
     if(contentType.startsWith("multipart/form-data")) {
       boolean hasFields = false;
@@ -294,17 +292,17 @@ public class PetApi {
 
     
 
-    
-
     final String[] accepts = {
       "application/json", "application/xml"
     };
-    final String accept = apiClient.selectHeaderAccept(accepts);
+    final String accept = ApiInvoker.selectHeaderAccept(accepts);
 
     final String[] contentTypes = {
       
     };
-    final String contentType = apiClient.selectHeaderContentType(contentTypes);
+    final String contentType = ApiInvoker.selectHeaderContentType(contentTypes);
+
+    
 
     if(contentType.startsWith("multipart/form-data")) {
       boolean hasFields = false;
@@ -358,17 +356,17 @@ public class PetApi {
 
     
 
-    
-
     final String[] accepts = {
       "application/json", "application/xml"
     };
-    final String accept = apiClient.selectHeaderAccept(accepts);
+    final String accept = ApiInvoker.selectHeaderAccept(accepts);
 
     final String[] contentTypes = {
       "application/x-www-form-urlencoded"
     };
-    final String contentType = apiClient.selectHeaderContentType(contentTypes);
+    final String contentType = ApiInvoker.selectHeaderContentType(contentTypes);
+
+    
 
     if(contentType.startsWith("multipart/form-data")) {
       boolean hasFields = false;
@@ -435,19 +433,25 @@ public class PetApi {
 
     
 
-    if (apiKey != null)
-      headerParams.put("api_key", apiClient.parameterToString(apiKey));
-    
-
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/ee471981810c8006517fb23d0b6091c6166121c8/samples/client/petstore/java/src/main/java/io/swagger/client/api/PetApi.java/left.java
     final String[] accepts = {
       "application/json", "application/xml"
     };
-    final String accept = apiClient.selectHeaderAccept(accepts);
-
+    final String accept = ApiInvoker.selectHeaderAccept(accepts);
+||||||| /usr/src/app/output/openapitools/openapi-generator/ee471981810c8006517fb23d0b6091c6166121c8/samples/client/petstore/java/src/main/java/io/swagger/client/api/PetApi.java/base.java
+    headerParams.put("api_key", ApiInvoker.parameterToString(apiKey));
+=======
+    if (apiKey != null)
+      headerParams.put("api_key", apiClient.parameterToString(apiKey));
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/ee471981810c8006517fb23d0b6091c6166121c8/samples/client/petstore/java/src/main/java/io/swagger/client/api/PetApi.java/right.java
+    
     final String[] contentTypes = {
-      
-    };
-    final String contentType = apiClient.selectHeaderContentType(contentTypes);
+    
+  };
+    final String contentType = ApiInvoker.selectHeaderContentType(contentTypes);
+
+    headerParams.put("api_key", ApiInvoker.parameterToString(apiKey));
+    
 
     if(contentType.startsWith("multipart/form-data")) {
       boolean hasFields = false;
@@ -501,17 +505,17 @@ public class PetApi {
 
     
 
-    
-
     final String[] accepts = {
       "application/json", "application/xml"
     };
-    final String accept = apiClient.selectHeaderAccept(accepts);
+    final String accept = ApiInvoker.selectHeaderAccept(accepts);
 
     final String[] contentTypes = {
       "multipart/form-data"
     };
-    final String contentType = apiClient.selectHeaderContentType(contentTypes);
+    final String contentType = ApiInvoker.selectHeaderContentType(contentTypes);
+
+    
 
     if(contentType.startsWith("multipart/form-data")) {
       boolean hasFields = false;
