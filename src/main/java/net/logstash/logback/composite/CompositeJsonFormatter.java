@@ -66,7 +66,49 @@ public abstract class CompositeJsonFormatter<Event extends DeferredProcessingAwa
     /**
      * Used to create the necessary {@link JsonGenerator}s for generating JSON.
      */
-    private JsonFactory jsonFactory;
+<<<<<<< /usr/src/app/output/logstash/logstash-logback-encoder/ea11a810d43cfed1452773d9154a514bc4f4dfb0/src/main/java/net/logstash/logback/composite/CompositeJsonFormatter.java/left.java
+    private JsonFactory jsonFactory = new ObjectMapper()
+        /*
+         * Assume empty beans are ok.
+         */
+        .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+        .getFactory()
+        /*
+         * When generators are flushed, don't flush the underlying outputStream.
+         * 
+         * This allows some streaming optimizations when using an encoder.
+         * 
+         * The encoder generally determines when the stream should be flushed
+         * by an 'immediateFlush' property.
+         * 
+         * The 'immediateFlush' property of the encoder can be set to false
+         * when the appender performs the flushes at appropriate times
+         * (such as the end of a batch in the AbstractLogstashTcpSocketAppender).
+         */
+        .disable(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM);
+||||||| /usr/src/app/output/logstash/logstash-logback-encoder/ea11a810d43cfed1452773d9154a514bc4f4dfb0/src/main/java/net/logstash/logback/composite/CompositeJsonFormatter.java/base.java
+    private MappingJsonFactory jsonFactory = (MappingJsonFactory) new ObjectMapper()
+        /*
+         * Assume empty beans are ok.
+         */
+        .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+        .getFactory()
+        /*
+         * When generators are flushed, don't flush the underlying outputStream.
+         * 
+         * This allows some streaming optimizations when using an encoder.
+         * 
+         * The encoder generally determines when the stream should be flushed
+         * by an 'immediateFlush' property.
+         * 
+         * The 'immediateFlush' property of the encoder can be set to false
+         * when the appender performs the flushes at appropriate times
+         * (such as the end of a batch in the AbstractLogstashTcpSocketAppender).
+         */
+        .disable(JsonGenerator.Feature.FLUSH_PASSED_TO_STREAM);
+=======
+    private MappingJsonFactory jsonFactory;
+>>>>>>> /usr/src/app/output/logstash/logstash-logback-encoder/ea11a810d43cfed1452773d9154a514bc4f4dfb0/src/main/java/net/logstash/logback/composite/CompositeJsonFormatter.java/right.java
 
     /**
      * Decorates the {@link #jsonFactory}.
@@ -118,7 +160,7 @@ public abstract class CompositeJsonFormatter<Event extends DeferredProcessingAwa
         return started;
     }
 
-    private JsonFactory createJsonFactory() {
+    private MappingJsonFactory createJsonFactory() {
         ObjectMapper objectMapper = new ObjectMapper()
                 /*
                  * Assume empty beans are ok.
@@ -129,7 +171,7 @@ public abstract class CompositeJsonFormatter<Event extends DeferredProcessingAwa
             objectMapper.findAndRegisterModules();
         }
 
-        JsonFactory jsonFactory = objectMapper
+        MappingJsonFactory jsonFactory = (MappingJsonFactory) objectMapper
                 .getFactory()
                 /*
                  * When generators are flushed, don't flush the underlying outputStream.
