@@ -4,9 +4,11 @@ import java.util.Random;
 import java.util.Scanner;
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.apis.GoogleApi20;
+import com.github.scribejava.core.model.AccessToken;
 import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;
+import com.github.scribejava.core.model.Token;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.model.Verifier;
 import com.github.scribejava.core.oauth.OAuth20Service;
@@ -16,7 +18,7 @@ public abstract class Google20Example {
     private static final String NETWORK_NAME = "G+";
     private static final String PROTECTED_RESOURCE_URL = "https://www.googleapis.com/plus/v1/people/me";
 
-    public static void main(final String[] args) {
+    public static void main(final String... args) {
         final Scanner in = new Scanner(System.in, "UTF-8");
 
         System.out.println("=== " + NETWORK_NAME + "'s OAuth Workflow ===");
@@ -34,8 +36,15 @@ public abstract class Google20Example {
                 .apiSecret(clientSecret)
                 .scope("profile") // replace with desired scope
                 .state(secretState)
+<<<<<<< /usr/src/app/output/scribejava/scribejava/b4e5895a364746923caa75cfbcaf05772b9fa927/scribejava-apis/src/test/java/com/github/scribejava/apis/examples/Google20Example.java/left.java
+                .build();
+||||||| /usr/src/app/output/scribejava/scribejava/b4e5895a364746923caa75cfbcaf05772b9fa927/scribejava-apis/src/test/java/com/github/scribejava/apis/examples/Google20Example.java/base.java
+                .callback("http://example.com/callback")
+                .build();
+=======
                 .callback("http://example.com/callback")
                 .build(GoogleApi20.instance());
+>>>>>>> /usr/src/app/output/scribejava/scribejava/b4e5895a364746923caa75cfbcaf05772b9fa927/scribejava-apis/src/test/java/com/github/scribejava/apis/examples/Google20Example.java/right.java
 
         // Obtain the Authorization URL
         System.out.println("Fetching the Authorization URL...");

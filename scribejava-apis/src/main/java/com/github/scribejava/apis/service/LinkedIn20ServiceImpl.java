@@ -16,7 +16,13 @@ public class LinkedIn20ServiceImpl extends OAuth20Service {
     }
 
     @Override
-    public void signRequest(final AccessToken accessToken, final AbstractRequest request) {
+<<<<<<< /usr/src/app/output/scribejava/scribejava/b4e5895a364746923caa75cfbcaf05772b9fa927/scribejava-apis/src/main/java/com/github/scribejava/apis/service/LinkedIn20ServiceImpl.java/left.java
+    public void signRequest(AccessToken accessToken, final AbstractRequest request) {
+||||||| /usr/src/app/output/scribejava/scribejava/b4e5895a364746923caa75cfbcaf05772b9fa927/scribejava-apis/src/main/java/com/github/scribejava/apis/service/LinkedIn20ServiceImpl.java/base.java
+    public void signRequest(Token accessToken, final AbstractRequest request) {
+=======
+    public void signRequest(final Token accessToken, final AbstractRequest request) {
+>>>>>>> /usr/src/app/output/scribejava/scribejava/b4e5895a364746923caa75cfbcaf05772b9fa927/scribejava-apis/src/main/java/com/github/scribejava/apis/service/LinkedIn20ServiceImpl.java/right.java
         request.addQuerystringParameter("oauth2_access_token", accessToken.getToken());
     }
 
