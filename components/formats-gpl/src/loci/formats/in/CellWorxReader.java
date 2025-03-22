@@ -147,10 +147,11 @@ public class CellWorxReader extends FormatReader {
           }
           else if (key.startsWith("WellsSelection")) {
             int row = Integer.parseInt(key.substring(14)) - 1;
+            char rowLetter = (char) (row + 'A');
             String[] mapping = value.split(",");
             for (int col=0; col<xWells; col++) {
               if (new Boolean(mapping[col].trim()).booleanValue()) {
-                String base = plate + FormatTools.getWellName(row, col);
+                String base = plate + rowLetter + String.format("%02d", col + 1);
                 Location pnl = new Location(base + ".pnl");
                 if (pnl.exists()) {
                   return isThisType(pnl.getAbsolutePath(), open);
@@ -310,7 +311,72 @@ public class CellWorxReader extends FormatReader {
     populateMetadata();
   }
 
+<<<<<<< /usr/src/app/output/openmicroscopy/bioformats/6b73e46baf0dbd4692d41b00f2ff78078d5ed29e/components/formats-gpl/src/loci/formats/in/CellWorxReader.java/left.java
+    for (int row=0; row<fieldMap.length; row++) {
+      for (int col=0; col<fieldMap[row].length; col++) {
+        if (fieldMap[row][col]) fieldCount++;
+      }
+    }
+
+    // find pixels files
+    String plateName = new Location(id).getAbsolutePath();
+    plateName = plateName.substring(0, plateName.lastIndexOf(".")) + "_";
+    int wellCount = 0;
+    for (int row=0; row<wellFiles.length; row++) {
+      for (int col=0; col<wellFiles[row].length; col++) {
+        if (wellFiles[row][col] != null) {
+          wellCount++;
+          String base = plateName + FormatTools.getWellName(row, col);
+          wellFiles[row][col][0] = base + ".pnl";
+          logFiles[row][col] = base + "_scan.log";
+
+          if (!new Location(wellFiles[row][col][0]).exists()) {
+            // using TIFF files instead
+
+            wellFiles[row][col] = getTiffFiles(
+              plateName, row, col, wavelengths.length, nTimepoints, zSteps);
+          }
+        }
+      }
+    }
+
+    plateLogFile = plateName + "scan.log";
+
+||||||| /usr/src/app/output/openmicroscopy/bioformats/6b73e46baf0dbd4692d41b00f2ff78078d5ed29e/components/formats-gpl/src/loci/formats/in/CellWorxReader.java/base.java
+    for (int row=0; row<fieldMap.length; row++) {
+      for (int col=0; col<fieldMap[row].length; col++) {
+        if (fieldMap[row][col]) fieldCount++;
+      }
+    }
+
+    // find pixels files
+    String plateName = new Location(id).getAbsolutePath();
+    plateName = plateName.substring(0, plateName.lastIndexOf(".")) + "_";
+    int wellCount = 0;
+    for (int row=0; row<wellFiles.length; row++) {
+      for (int col=0; col<wellFiles[row].length; col++) {
+        if (wellFiles[row][col] != null) {
+          wellCount++;
+          char rowLetter = (char) (row + 'A');
+          String base = plateName + rowLetter + String.format("%02d", col + 1);
+          wellFiles[row][col][0] = base + ".pnl";
+          logFiles[row][col] = base + "_scan.log";
+
+          if (!new Location(wellFiles[row][col][0]).exists()) {
+            // using TIFF files instead
+
+            wellFiles[row][col] = getTiffFiles(
+              plateName, rowLetter, col, wavelengths.length, nTimepoints, zSteps);
+          }
+        }
+      }
+    }
+
+    plateLogFile = plateName + "scan.log";
+
+=======
   protected void populateMetadata() throws FormatException, IOException {
+>>>>>>> /usr/src/app/output/openmicroscopy/bioformats/6b73e46baf0dbd4692d41b00f2ff78078d5ed29e/components/formats-gpl/src/loci/formats/in/CellWorxReader.java/right.java
     String serialNumber = null;
 
     if (plateLogFile != null && new Location(plateLogFile).exists()) {
@@ -645,7 +711,8 @@ public class CellWorxReader extends FormatReader {
       for (int col=0; col<wellFiles[row].length; col++) {
         if (wellFiles[row][col] != null) {
           wellCount++;
-          String base = plateName + FormatTools.getWellName(row, col);
+          char rowLetter = (char) (row + 'A');
+          String base = plateName + rowLetter + String.format("%02d", col + 1);
           wellFiles[row][col][0] = base + ".pnl";
           logFiles[row][col] = base + "_scan.log";
         }
@@ -720,7 +787,7 @@ public class CellWorxReader extends FormatReader {
     if (!new Location(logFile).exists()) {
       return;
     }
-    LOGGER.debug("Parsing log file for well {}", FormatTools.getWellName(row, col));
+    LOGGER.debug("Parsing log file for well {}{}", (char) (row + 'A'), col + 1);
 
     int oldSeries = getSeries();
     setSeries(seriesIndex);
@@ -874,9 +941,24 @@ public class CellWorxReader extends FormatReader {
     reader.setId(file);
   }
 
+<<<<<<< /usr/src/app/output/openmicroscopy/bioformats/6b73e46baf0dbd4692d41b00f2ff78078d5ed29e/components/formats-gpl/src/loci/formats/in/CellWorxReader.java/left.java
+  private String[] getTiffFiles(String plateName, int row, int col,
+    int channels, int nTimepoints, int zSteps)
+  {
+    String well = FormatTools.getWellName(row, col);
+    String base = plateName + well;
+||||||| /usr/src/app/output/openmicroscopy/bioformats/6b73e46baf0dbd4692d41b00f2ff78078d5ed29e/components/formats-gpl/src/loci/formats/in/CellWorxReader.java/base.java
+  private String[] getTiffFiles(String plateName, char rowLetter, int col,
+    int channels, int nTimepoints, int zSteps)
+    throws FormatException
+  {
+    String well = rowLetter + String.format("%02d", col + 1);
+    String base = plateName + well;
+=======
   protected boolean foundHTDFile(String name) {
     Location current = new Location(name).getAbsoluteFile();
     Location parent = current.getParentFile();
+>>>>>>> /usr/src/app/output/openmicroscopy/bioformats/6b73e46baf0dbd4692d41b00f2ff78078d5ed29e/components/formats-gpl/src/loci/formats/in/CellWorxReader.java/right.java
 
     String htdName = current.getName();
     while (htdName.indexOf('_') > 0) {
