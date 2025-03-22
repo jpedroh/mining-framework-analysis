@@ -29,8 +29,13 @@ import org.jgrapht.nio.IntegerIdProvider;
  * @param <T> the component type
  *
  * @author Trevor Harmon
- * @author Amr ALHOSSARY
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/c952336693fd5ec482268e92c2975319b3bc8402/jgrapht-io/src/main/java/org/jgrapht/io/IntegerComponentNameProvider.java/left.java
+ *  
  * @deprecated Use {@link IntegerIdProvider} instead.
+||||||| /usr/src/app/output/jgrapht/jgrapht/c952336693fd5ec482268e92c2975319b3bc8402/jgrapht-io/src/main/java/org/jgrapht/io/IntegerComponentNameProvider.java/base.java
+=======
+ * @author Amr ALHOSSARY
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/c952336693fd5ec482268e92c2975319b3bc8402/jgrapht-io/src/main/java/org/jgrapht/io/IntegerComponentNameProvider.java/right.java
  */
 @Deprecated
 public class IntegerComponentNameProvider<T>
