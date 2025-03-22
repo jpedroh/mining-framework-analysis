@@ -46,8 +46,16 @@ import java.util.regex.Pattern;
  *  <p>
  *  Whitespace is defined in {@link Character#isWhitespace(char)}. Newlines
  *  consist of \n, \r, \r\n, and Unicode hex code points 0x2028, 0x2029, 0x0085;
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/In.java/left.java
  *  <p> see <a href="http://www.docjar.com/html/api/java/util/Scanner.java.html">
  *  Scanner.java</a> (NB: Java 6u23 and earlier uses only \r, \r, \r\n).
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/In.java/base.java
+ *  see <tt><a href="http://www.docjar.com/html/api/java/util/Scanner.java.html">
+ *  Scanner.java</a></tt> (NB: Java 6u23 and earlier uses only \r, \r, \r\n).
+=======
+ *  see <a href="http://www.docjar.com/html/api/java/util/Scanner.java.html">
+ *  Scanner.java</a> (NB: Java 6u23 and earlier uses only \r, \r, \r\n).
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/In.java/right.java
  *
  *  @author David Pritchard
  *  @author Robert Sedgewick

@@ -210,8 +210,18 @@ public class Alphabet {
      * Returns the character corresponding to the argument index.
      * 
      * @param  index the index
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Alphabet.java/left.java
+     * @return the character corresponding to the index {@code index}
+     * @throws IllegalArgumentException unless {@code index} is between {@code 0}
+     *         and {@code R - 1}
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Alphabet.java/base.java
+     * @return the character corresponding to the index <tt>index</tt>
+     * @throws IllegalArgumentException unless <tt>index</tt> is between <tt>0</tt>
+     *         and <tt>R - 1</tt>
+=======
      * @return the character corresponding to the index {@code index}
      * @throws IllegalArgumentException unless {@code 0 <= index < R}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Alphabet.java/right.java
      */
     public char toChar(int index) {
         if (index < 0 || index >= R) {
@@ -224,9 +234,19 @@ public class Alphabet {
      * Returns the characters corresponding to the argument indices.
      * 
      * @param  indices the indices
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Alphabet.java/left.java
+     * @return the characters corresponding to the indices {@code indices}
+     * @throws IllegalArgumentException unless every index is between {@code 0}
+     *         and {@code R - 1}
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Alphabet.java/base.java
+     * @return the characters corresponding to the indices <tt>indices</tt>
+     * @throws IllegalArgumentException unless every index is between <tt>0</tt>
+     *         and <tt>R - 1</tt>
+=======
      * @return the characters corresponding to the indices {@code indices}
      * @throws IllegalArgumentException unless {@code 0 < indices[i] < R}
      *         for every {@code i}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Alphabet.java/right.java
      */
     public String toChars(int[] indices) {
         StringBuilder s = new StringBuilder(indices.length);

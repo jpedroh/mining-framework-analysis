@@ -50,7 +50,6 @@ public class GraphGenerator {
 
     // this class cannot be instantiated
     private GraphGenerator() { }
-
     /**
      * Returns a random simple graph containing {@code V} vertices and {@code E} edges.
      * @param V the number of vertices
@@ -75,7 +74,6 @@ public class GraphGenerator {
         }
         return G;
     }
-
     /**
      * Returns a random simple graph on {@code V} vertices, with an 
      * edge between any two vertices with probability {@code p}. This is sometimes
@@ -96,7 +94,6 @@ public class GraphGenerator {
                     G.addEdge(v, w);
         return G;
     }
-
     /**
      * Returns the complete graph on {@code V} vertices.
      * @param V the number of vertices
@@ -105,7 +102,6 @@ public class GraphGenerator {
     public static Graph complete(int V) {
         return simple(V, 1.0);
     }
-
     /**
      * Returns a complete bipartite graph on {@code V1} and {@code V2} vertices.
      * @param V1 the number of vertices in one partition
@@ -116,7 +112,6 @@ public class GraphGenerator {
     public static Graph completeBipartite(int V1, int V2) {
         return bipartite(V1, V2, V1*V2);
     }
-
     /**
      * Returns a random simple bipartite graph on {@code V1} and {@code V2} vertices
      * with {@code E} edges.
@@ -149,7 +144,6 @@ public class GraphGenerator {
         }
         return G;
     }
-
     /**
      * Returns a random simple bipartite graph on {@code V1} and {@code V2} vertices,
      * containing each possible edge with probability {@code p}.
@@ -174,7 +168,6 @@ public class GraphGenerator {
                     G.addEdge(vertices[i], vertices[V1+j]);
         return G;
     }
-
     /**
      * Returns a path graph on {@code V} vertices.
      * @param V the number of vertices in the path
@@ -191,7 +184,6 @@ public class GraphGenerator {
         }
         return G;
     }
-
     /**
      * Returns a complete binary tree graph on {@code V} vertices.
      * @param V the number of vertices in the binary tree
@@ -208,7 +200,6 @@ public class GraphGenerator {
         }
         return G;
     }
-
     /**
      * Returns a cycle graph on {@code V} vertices.
      * @param V the number of vertices in the cycle
@@ -226,7 +217,6 @@ public class GraphGenerator {
         G.addEdge(vertices[V-1], vertices[0]);
         return G;
     }
-
     /**
      * Returns an Eulerian cycle graph on {@code V} vertices.
      *
@@ -251,7 +241,6 @@ public class GraphGenerator {
         G.addEdge(vertices[E-1], vertices[0]);
         return G;
     }
-
     /**
      * Returns an Eulerian path graph on {@code V} vertices.
      *
@@ -275,7 +264,6 @@ public class GraphGenerator {
         }
         return G;
     }
-
     /**
      * Returns a wheel graph on {@code V} vertices.
      * @param V the number of vertices in the wheel
@@ -303,7 +291,6 @@ public class GraphGenerator {
 
         return G;
     }
-
     /**
      * Returns a star graph on {@code V} vertices.
      * @param V the number of vertices in the star
@@ -325,7 +312,6 @@ public class GraphGenerator {
 
         return G;
     }
-
     /**
      * Returns a uniformly random {@code k}-regular graph on {@code V} vertices
      * (not necessarily simple). The graph is simple with probability only about e^(-k^2/4),
@@ -352,7 +338,6 @@ public class GraphGenerator {
         }
         return G;
     }
-
     // http://www.proofwiki.org/wiki/Labeled_Tree_from_Prüfer_Sequence
     // http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.36.6484&rep=rep1&type=pdf
     /**
@@ -398,7 +383,120 @@ public class GraphGenerator {
         G.addEdge(pq.delMin(), pq.delMin());
         return G;
     }
-
+    /**
+     * Unit tests the {@code GraphGenerator} library.
+     */
+    // this class cannot be instantiated
+    /**
+     * Returns a random simple graph containing {@code V} vertices and {@code E} edges.
+     * @param V the number of vertices
+     * @param E the number of vertices
+     * @return a random simple graph on {@code V} vertices, containing a total
+     *     of {@code E} edges
+     * @throws IllegalArgumentException if no such simple graph exists
+     */
+    /**
+     * Returns a random simple graph on {@code V} vertices, with an 
+     * edge between any two vertices with probability {@code p}. This is sometimes
+     * referred to as the Erdos-Renyi random graph model.
+     * @param V the number of vertices
+     * @param p the probability of choosing an edge
+     * @return a random simple graph on {@code V} vertices, with an edge between
+     *     any two vertices with probability {@code p}
+     * @throws IllegalArgumentException if probability is not between 0 and 1
+     */
+    /**
+     * Returns the complete graph on {@code V} vertices.
+     * @param V the number of vertices
+     * @return the complete graph on {@code V} vertices
+     */
+    /**
+     * Returns a complete bipartite graph on {@code V1} and {@code V2} vertices.
+     * @param V1 the number of vertices in one partition
+     * @param V2 the number of vertices in the other partition
+     * @return a complete bipartite graph on {@code V1} and {@code V2} vertices
+     * @throws IllegalArgumentException if probability is not between 0 and 1
+     */
+    /**
+     * Returns a random simple bipartite graph on {@code V1} and {@code V2} vertices
+     * with {@code E} edges.
+     * @param V1 the number of vertices in one partition
+     * @param V2 the number of vertices in the other partition
+     * @param E the number of edges
+     * @return a random simple bipartite graph on {@code V1} and {@code V2} vertices,
+     *    containing a total of {@code E} edges
+     * @throws IllegalArgumentException if no such simple bipartite graph exists
+     */
+    /**
+     * Returns a random simple bipartite graph on {@code V1} and {@code V2} vertices,
+     * containing each possible edge with probability {@code p}.
+     * @param V1 the number of vertices in one partition
+     * @param V2 the number of vertices in the other partition
+     * @param p the probability that the graph contains an edge with one endpoint in either side
+     * @return a random simple bipartite graph on {@code V1} and {@code V2} vertices,
+     *    containing each possible edge with probability {@code p}
+     * @throws IllegalArgumentException if probability is not between 0 and 1
+     */
+    /**
+     * Returns a path graph on {@code V} vertices.
+     * @param V the number of vertices in the path
+     * @return a path graph on {@code V} vertices
+     */
+    /**
+     * Returns a complete binary tree graph on {@code V} vertices.
+     * @param V the number of vertices in the binary tree
+     * @return a complete binary tree graph on {@code V} vertices
+     */
+    /**
+     * Returns a cycle graph on {@code V} vertices.
+     * @param V the number of vertices in the cycle
+     * @return a cycle graph on {@code V} vertices
+     */
+    /**
+     * Returns an Eulerian cycle graph on {@code V} vertices.
+     *
+     * @param  V the number of vertices in the cycle
+     * @param  E the number of edges in the cycle
+     * @return a graph that is an Eulerian cycle on {@code V} vertices
+     *         and {@code E} edges
+     * @throws IllegalArgumentException if either V <= 0 or E <= 0
+     */
+    /**
+     * Returns an Eulerian path graph on {@code V} vertices.
+     *
+     * @param  V the number of vertices in the path
+     * @param  E the number of edges in the path
+     * @return a graph that is an Eulerian path on {@code V} vertices
+     *         and {@code E} edges
+     * @throws IllegalArgumentException if either V <= 0 or E < 0
+     */
+    /**
+     * Returns a wheel graph on {@code V} vertices.
+     * @param V the number of vertices in the wheel
+     * @return a wheel graph on {@code V} vertices: a single vertex connected to
+     *     every vertex in a cycle on {@code V-1} vertices
+     */
+    /**
+     * Returns a star graph on {@code V} vertices.
+     * @param V the number of vertices in the star
+     * @return a star graph on {@code V} vertices: a single vertex connected to
+     *     every other vertex
+     */
+    /**
+     * Returns a uniformly random {@code k}-regular graph on {@code V} vertices
+     * (not necessarily simple). The graph is simple with probability only about e^(-k^2/4),
+     * which is tiny when k = 14.
+     * @param V the number of vertices in the graph
+     * @return a uniformly random {@code k}-regular graph on {@code V} vertices.
+     */
+    // http://www.proofwiki.org/wiki/Labeled_Tree_from_Prüfer_Sequence
+    // http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.36.6484&rep=rep1&type=pdf
+    /**
+     * Returns a uniformly random tree on {@code V} vertices.
+     * This algorithm uses a Prufer sequence and takes time proportional to <em>V log V</em>.
+     * @param V the number of vertices in the tree
+     * @return a uniformly random tree on {@code V} vertices
+     */
     /**
      * Unit tests the {@code GraphGenerator} library.
      */

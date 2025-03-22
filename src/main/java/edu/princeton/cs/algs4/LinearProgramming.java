@@ -16,8 +16,16 @@
 package edu.princeton.cs.algs4;
 
 /**
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/LinearProgramming.java/left.java
  *  The {@code LinearProgramming} class represents a data type for solving a
  *  linear program of the form { max cx : Ax &lt;= b, x &gt;= 0 }, where A is a m-by-n
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/LinearProgramming.java/base.java
+ *  The <tt>LinearProgramming</tt> class represents a data type for solving a
+ *  linear program of the form { max cx : Ax <= b, x >= 0 }, where A is a m-by-n
+=======
+ *  The {@code LinearProgramming} class represents a data type for solving a
+ *  linear program of the form { max cx : Ax <= b, x >= 0 }, where A is a m-by-n
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/LinearProgramming.java/right.java
  *  matrix, b is an m-length vector, and c is an n-length vector. For simplicity,
  *  we assume that A is of full rank and that b &gt;= 0 so that x = 0 is a basic
  *  feasible soution.

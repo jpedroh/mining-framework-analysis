@@ -72,7 +72,13 @@ public class Graph {
      * param V the number of vertices
      *
      * @param  V number of vertices
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Graph.java/left.java
      * @throws IllegalArgumentException if {@code V} &lt; 0
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Graph.java/base.java
+     * @throws IllegalArgumentException if <tt>V</tt> < 0
+=======
+     * @throws IllegalArgumentException if {@code V} < 0
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Graph.java/right.java
      */
     public Graph(int V) {
         if (V < 0) throw new IllegalArgumentException("Number of vertices must be nonnegative");
@@ -169,8 +175,16 @@ public class Graph {
      * Returns the vertices adjacent to vertex {@code v}.
      *
      * @param  v the vertex
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Graph.java/left.java
      * @return the vertices adjacent to vertex {@code v}, as an iterable
      * @throws IndexOutOfBoundsException unless 0 &lt;= v &lt; V
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Graph.java/base.java
+     * @return the vertices adjacent to vertex <tt>v</tt>, as an iterable
+     * @throws IndexOutOfBoundsException unless 0 <= v < V
+=======
+     * @return the vertices adjacent to vertex {@code v}, as an iterable
+     * @throws IndexOutOfBoundsException unless 0 <= v < V
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Graph.java/right.java
      */
     public Iterable<Integer> adj(int v) {
         validateVertex(v);
@@ -181,8 +195,16 @@ public class Graph {
      * Returns the degree of vertex {@code v}.
      *
      * @param  v the vertex
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Graph.java/left.java
      * @return the degree of vertex {@code v}
      * @throws IndexOutOfBoundsException unless 0 &lt;= v &lt; V
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Graph.java/base.java
+     * @return the degree of vertex <tt>v</tt>
+     * @throws IndexOutOfBoundsException unless 0 <= v < V
+=======
+     * @return the degree of vertex {@code v}
+     * @throws IndexOutOfBoundsException unless 0 <= v < V
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Graph.java/right.java
      */
     public int degree(int v) {
         validateVertex(v);

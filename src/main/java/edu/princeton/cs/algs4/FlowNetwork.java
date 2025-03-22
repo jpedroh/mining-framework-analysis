@@ -43,7 +43,13 @@ public class FlowNetwork {
     /**
      * Initializes an empty flow network with {@code V} vertices and 0 edges.
      * param V the number of vertices
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/FlowNetwork.java/left.java
      * @throws java.lang.IllegalArgumentException if {@code V} &lt; 0
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/FlowNetwork.java/base.java
+     * @throws java.lang.IllegalArgumentException if <tt>V</tt> < 0
+=======
+     * @throws java.lang.IllegalArgumentException if {@code V} < 0
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/FlowNetwork.java/right.java
      */
     public FlowNetwork(int V) {
         if (V < 0) throw new IllegalArgumentException("Number of vertices in a Graph must be nonnegative");
@@ -59,8 +65,16 @@ public class FlowNetwork {
      * The capacities are integers between 0 and 99 and the flow values are zero.
      * param V the number of vertices
      * param E the number of edges
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/FlowNetwork.java/left.java
      * @throws java.lang.IllegalArgumentException if {@code V} &lt; 0
      * @throws java.lang.IllegalArgumentException if {@code E} &lt; 0
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/FlowNetwork.java/base.java
+     * @throws java.lang.IllegalArgumentException if <tt>V</tt> < 0
+     * @throws java.lang.IllegalArgumentException if <tt>E</tt> < 0
+=======
+     * @throws java.lang.IllegalArgumentException if {@code V} < 0
+     * @throws java.lang.IllegalArgumentException if {@code E} < 0
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/FlowNetwork.java/right.java
      */
     public FlowNetwork(int V, int E) {
         this(V);
@@ -114,6 +128,7 @@ public class FlowNetwork {
         return E;
     }
 
+    // throw an IndexOutOfBoundsException unless 0&lt;= v &lt; V
     // throw an IndexOutOfBoundsException unless {@code 0 <= v < V}
     private void validateVertex(int v) {
         if (v < 0 || v >= V)
@@ -140,8 +155,16 @@ public class FlowNetwork {
      * Returns the edges incident on vertex {@code v} (includes both edges pointing to
      * and from {@code v}).
      * @param v the vertex
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/FlowNetwork.java/left.java
+     * @return the edges incident on vertex {@code v} as an Iterable
+     * @throws java.lang.IndexOutOfBoundsException unless 0 &lt;= v &lt; V
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/FlowNetwork.java/base.java
+     * @return the edges incident on vertex <tt>v</tt> as an Iterable
+     * @throws java.lang.IndexOutOfBoundsException unless 0 <= v < V
+=======
      * @return the edges incident on vertex {@code v} as an Iterable
      * @throws java.lang.IndexOutOfBoundsException unless {@code 0 <= v < V}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/FlowNetwork.java/right.java
      */
     public Iterable<FlowEdge> adj(int v) {
         validateVertex(v);

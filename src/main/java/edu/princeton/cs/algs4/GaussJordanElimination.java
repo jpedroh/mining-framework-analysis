@@ -173,7 +173,13 @@ public class GaussJordanElimination {
      * <em>yb</em> &ne; 0.
      *      
      * @return a solution <em>y</em> to the linear system of equations
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/GaussJordanElimination.java/left.java
      *         <em>yA</em> = 0, <em>yb</em> &ne; 0; {@code null} if no such solution
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/GaussJordanElimination.java/base.java
+     *         <em>yA</em> = 0, <em>yb</em> &ne 0; <tt>null</tt> if no such solution
+=======
+     *         <em>yA</em> = 0, <em>yb</em> &ne 0; {@code null} if no such solution
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/GaussJordanElimination.java/right.java
      */
     public double[] dual() {
         double[] y = new double[n];

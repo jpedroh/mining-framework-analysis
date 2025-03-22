@@ -14,8 +14,16 @@ import java.util.Arrays;
  * The {@code SegmentTree} class is an structure for efficient search of cummulative data.
  * It performs  Range Minimum Query and Range Sum Query in O(log(n)) time.
  * It can be easily customizable to support Range Max Query, Range Multiplication Query etc.
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/SegmentTree.java/left.java
  * 
  * <p>Also it has been develop with  {@code LazyPropagation} for range updates, which means
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/SegmentTree.java/base.java
+ * <p/>
+ * Also it has been develop with  <tt>LazyPropagation</tt> for range updates, which means
+=======
+ * <p/>
+ * Also it has been develop with  {@code LazyPropagation} for range updates, which means
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/SegmentTree.java/right.java
  * when you perform update operations over a range, the update process affects the least nodes as possible
  * so that the bigger the range you want to update the less time it consumes to update it. Eventually those changes will be propagated
  * to the children and the whole array will be up to date.

@@ -116,7 +116,15 @@ public class Topological {
      * -1 if the digraph is not a DAG
      * @return the position of vertex {@code v} in a topological order
      *    of the digraph; -1 if the digraph is not a DAG
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Topological.java/left.java
+     * @throws IndexOutOfBoundsException unless {@code v} is between 0 and
+     *    <em>V</em> &minus; 1
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Topological.java/base.java
+     * @throws IndexOutOfBoundsException unless <tt>v</tt> is between 0 and
+     *    <em>V</em> &minus; 1
+=======
      * @throws IndexOutOfBoundsException unless {@code 0 <= v < V}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Topological.java/right.java
      */
     public int rank(int v) {
         validateVertex(v);

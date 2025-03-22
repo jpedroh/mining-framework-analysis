@@ -38,7 +38,13 @@ public class DijkstraAllPairsSP {
      * the edge-weighted digraph {@code G}.
      * @param G the edge-weighted digraph
      * @throws IllegalArgumentException if an edge weight is negative
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/DijkstraAllPairsSP.java/left.java
      * @throws IllegalArgumentException unless 0 &le; {@code s} &le; {@code V} - 1
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/DijkstraAllPairsSP.java/base.java
+     * @throws IllegalArgumentException unless 0 &le; <tt>s</tt> &le; <tt>V</tt> - 1
+=======
+     * @throws IllegalArgumentException unless 0 <= {@code s} <= {@code V} - 1
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/DijkstraAllPairsSP.java/right.java
      */
     public DijkstraAllPairsSP(EdgeWeightedDigraph G) {
         all  = new DijkstraSP[G.V()];

@@ -65,7 +65,13 @@ public class BellmanFordSP {
      * the edge-weighted digraph {@code G}.
      * @param G the acyclic digraph
      * @param s the source vertex
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/BellmanFordSP.java/left.java
+     * @throws IllegalArgumentException unless 0 &le; {@code s} &le; {@code V} - 1
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/BellmanFordSP.java/base.java
+     * @throws IllegalArgumentException unless 0 &le; <tt>s</tt> &le; <tt>V</tt> - 1
+=======
      * @throws IllegalArgumentException unless {@code 0 <= s < V}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/BellmanFordSP.java/right.java
      */
     public BellmanFordSP(EdgeWeightedDigraph G, int s) {
         distTo  = new double[G.V()];

@@ -249,8 +249,18 @@ public final class Picture implements ActionListener {
      *
      * @param col the column index
      * @param row the row index
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Picture.java/left.java
+     * @return the color of pixel ({@code col}, {@code row})
+     * @throws IndexOutOfBoundsException unless both 0 &le; {@code col} &lt; {@code width}
+     *         and 0 &le; {@code row} &lt; {@code height}
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Picture.java/base.java
+     * @return the color of pixel (<tt>col</tt>, <tt>row</tt>)
+     * @throws IndexOutOfBoundsException unless both 0 &le; <tt>col</tt> &lt; <tt>width</tt>
+     *         and 0 &le; <tt>row</tt> &lt; <tt>height</tt>
+=======
      * @return the color of pixel ({@code col}, {@code row})
      * @throws IndexOutOfBoundsException unless both {@code 0 <= col < width} and {@code 0 <= row < height}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Picture.java/right.java
      */
     public Color get(int col, int row) {
         validateCol(col);
@@ -265,8 +275,18 @@ public final class Picture implements ActionListener {
      * @param col the column index
      * @param row the row index
      * @param color the color
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Picture.java/left.java
+     * @throws IndexOutOfBoundsException unless both 0 &le; {@code col} &lt; {@code width}
+     *         and 0 &le; {@code row} &lt; {@code height}
+     * @throws NullPointerException if {@code color} is {@code null}
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Picture.java/base.java
+     * @throws IndexOutOfBoundsException unless both 0 &le; <tt>col</tt> &lt; <tt>width</tt>
+     *         and 0 &le; <tt>row</tt> &lt; <tt>height</tt>
+     * @throws NullPointerException if <tt>color</tt> is <tt>null</tt>
+=======
      * @throws IndexOutOfBoundsException unless both {@code 0 <= col < width} and {@code 0 <= row < height}
      * @throws NullPointerException if {@code color} is {@code null}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Picture.java/right.java
      */
     public void set(int col, int row, Color color) {
         validateCol(col);

@@ -97,9 +97,19 @@ public class FordFulkerson {
     /**
      * Returns true if the specified vertex is on the {@code s} side of the mincut.
      *
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/FordFulkerson.java/left.java
      * @return {@code true} if vertex {@code v} is on the {@code s} side of the micut;
      *         {@code false} otherwise
      * @throws IndexOutOfBoundsException unless 0 &lt;= v &lt; V
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/FordFulkerson.java/base.java
+     * @return <tt>true</tt> if vertex <tt>v</tt> is on the <tt>s</tt> side of the micut;
+     *         <tt>false</tt> otherwise
+     * @throws IndexOutOfBoundsException unless 0 <= v < V
+=======
+     * @return {@code true} if vertex {@code v} is on the {@code s} side of the micut;
+     *         {@code false} otherwise
+     * @throws IndexOutOfBoundsException unless 0 <= v < V
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/FordFulkerson.java/right.java
      */
     public boolean inCut(int v)  {
         validate(v, marked.length);

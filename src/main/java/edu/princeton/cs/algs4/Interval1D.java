@@ -16,7 +16,13 @@ import java.util.Comparator;
  *  The {@code Interval1D} class represents a one-dimensional interval.
  *  The interval is <em>closed</em>&mdash;it contains both endpoints.
  *  Intervals are immutable: their values cannot be changed after they are created.
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Interval1D.java/left.java
  *  The class {@code Interval1D} includes methods for checking whether
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Interval1D.java/base.java
+ *  The class <code>Interval1D</code> includes methods for checking whether
+=======
+ *  The class <@code>Interval1D</@code> includes methods for checking whether
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Interval1D.java/right.java
  *  an interval contains a point and determining whether two intervals intersect.
  *  <p>
  *  For additional documentation, 
@@ -55,6 +61,7 @@ public class Interval1D {
      * @throws IllegalArgumentException if either {@code min} or {@code max}
      *         is {@code Double.NaN}, {@code Double.POSITIVE_INFINITY} or
      *         {@code Double.NEGATIVE_INFINITY}
+
      */
     public Interval1D(double min, double max) {
         if (Double.isInfinite(min) || Double.isInfinite(max))

@@ -38,15 +38,22 @@ public final class BinaryStdIn {
     private static BufferedInputStream in = new BufferedInputStream(System.in);
     private static final int EOF = -1;    // end of file
 
-    private static int buffer;            // one character buffer
-    private static int n;                 // number of bits left in buffer
+    private static int buffer;
+
+// one character buffer
+
+    private static int n;
+
+// number of bits left in buffer
 
     // static initializer
+
     static {
         fillBuffer();
     }
 
     // don't instantiate
+
     private BinaryStdIn() { }
 
     private static void fillBuffer() {
@@ -64,6 +71,7 @@ public final class BinaryStdIn {
    /**
      * Close this input stream and release any associated system resources.
      */
+
     public static void close() {
         try {
             in.close();
@@ -78,6 +86,7 @@ public final class BinaryStdIn {
      * Returns true if standard input is empty.
      * @return true if and only if standard input is empty
      */
+
     public static boolean isEmpty() {
         return buffer == EOF;
     }
@@ -88,6 +97,7 @@ public final class BinaryStdIn {
      * @return the next bit of data from standard input as a {@code boolean}
      * @throws RuntimeException if standard input is empty
      */
+
     public static boolean readBoolean() {
         if (isEmpty()) throw new RuntimeException("Reading from empty input stream");
         n--;
@@ -104,6 +114,7 @@ public final class BinaryStdIn {
      * @return the next 8 bits of data from standard input as a {@code char}
      * @throws RuntimeException if there are fewer than 8 bits available on standard input
      */
+
     public static char readChar() {
         if (isEmpty()) throw new RuntimeException("Reading from empty input stream");
 
@@ -133,8 +144,9 @@ public final class BinaryStdIn {
      * @param  r number of bits to read.
      * @return the next r bits of data from standard input as a {@code char}
      * @throws IllegalArgumentException if there are fewer than r bits available on standard input
-     * @throws IllegalArgumentException unless both {@code 1 <= r <= 16}
+     * @throws IllegalArgumentException unless 1 &le; r &le; 16
      */
+
     public static char readChar(int r) {
         if (r < 1 || r > 16) throw new IllegalArgumentException("Illegal value of r = " + r);
 
@@ -157,6 +169,7 @@ public final class BinaryStdIn {
      * @throws RuntimeException if standard input is empty or if the number of bits
      *         available on standard input is not a multiple of 8 (byte-aligned)
      */
+
     public static String readString() {
         if (isEmpty()) throw new RuntimeException("Reading from empty input stream");
 
@@ -168,13 +181,13 @@ public final class BinaryStdIn {
         return sb.toString();
     }
 
-
    /**
      * Reads the next 16 bits from standard input and return as a 16-bit short.
      *
      * @return the next 16 bits of data from standard input as a {@code short}
      * @throws RuntimeException if there are fewer than 16 bits available on standard input
      */
+
     public static short readShort() {
         short x = 0;
         for (int i = 0; i < 2; i++) {
@@ -191,6 +204,7 @@ public final class BinaryStdIn {
      * @return the next 32 bits of data from standard input as a {@code int}
      * @throws RuntimeException if there are fewer than 32 bits available on standard input
      */
+
     public static int readInt() {
         int x = 0;
         for (int i = 0; i < 4; i++) {
@@ -207,8 +221,9 @@ public final class BinaryStdIn {
      * @param  r number of bits to read.
      * @return the next r bits of data from standard input as a {@code int}
      * @throws IllegalArgumentException if there are fewer than r bits available on standard input
-     * @throws IllegalArgumentException unless {@code 1 <= r <= 32}
+     * @throws IllegalArgumentException unless 1 &le; r &le; 32
      */
+
     public static int readInt(int r) {
         if (r < 1 || r > 32) throw new IllegalArgumentException("Illegal value of r = " + r);
 
@@ -230,6 +245,7 @@ public final class BinaryStdIn {
      * @return the next 64 bits of data from standard input as a {@code long}
      * @throws RuntimeException if there are fewer than 64 bits available on standard input
      */
+
     public static long readLong() {
         long x = 0;
         for (int i = 0; i < 8; i++) {
@@ -240,13 +256,13 @@ public final class BinaryStdIn {
         return x;
     }
 
-
    /**
      * Reads the next 64 bits from standard input and return as a 64-bit double.
      *
      * @return the next 64 bits of data from standard input as a {@code double}
      * @throws RuntimeException if there are fewer than 64 bits available on standard input
      */
+
     public static double readDouble() {
         return Double.longBitsToDouble(readLong());
     }
@@ -257,10 +273,104 @@ public final class BinaryStdIn {
      * @return the next 32 bits of data from standard input as a {@code float}
      * @throws RuntimeException if there are fewer than 32 bits available on standard input
      */
+
     public static float readFloat() {
         return Float.intBitsToFloat(readInt());
     }
 
+   /**
+     * Reads the next 8 bits from standard input and return as an 8-bit byte.
+     *
+     * @return the next 8 bits of data from standard input as a {@code byte}
+     * @throws RuntimeException if there are fewer than 8 bits available on standard input
+     */
+
+// end of file
+
+// one character buffer
+
+// number of bits left in buffer
+
+    // static initializer
+
+    // don't instantiate
+
+   /**
+     * Reads the next bit of data from standard input and return as a boolean.
+     *
+     * @return the next bit of data from standard input as a {@code boolean}
+     * @throws RuntimeException if standard input is empty
+     */
+
+   /**
+     * Reads the next 8 bits from standard input and return as an 8-bit char.
+     * Note that {@code char} is a 16-bit type;
+     * to read the next 16 bits as a char, use {@code readChar(16)}.
+     *
+     * @return the next 8 bits of data from standard input as a {@code char}
+     * @throws RuntimeException if there are fewer than 8 bits available on standard input
+     */
+
+   /**
+     * Reads the next r bits from standard input and return as an r-bit character.
+     *
+     * @param  r number of bits to read.
+     * @return the next r bits of data from standard input as a {@code char}
+     * @throws IllegalArgumentException if there are fewer than r bits available on standard input
+     * @throws IllegalArgumentException unless both {@code 1 <= r <= 16}
+     */
+
+   /**
+     * Reads the remaining bytes of data from standard input and return as a string. 
+     *
+     * @return the remaining bytes of data from standard input as a {@code String}
+     * @throws RuntimeException if standard input is empty or if the number of bits
+     *         available on standard input is not a multiple of 8 (byte-aligned)
+     */
+
+   /**
+     * Reads the next 16 bits from standard input and return as a 16-bit short.
+     *
+     * @return the next 16 bits of data from standard input as a {@code short}
+     * @throws RuntimeException if there are fewer than 16 bits available on standard input
+     */
+
+   /**
+     * Reads the next 32 bits from standard input and return as a 32-bit int.
+     *
+     * @return the next 32 bits of data from standard input as a {@code int}
+     * @throws RuntimeException if there are fewer than 32 bits available on standard input
+     */
+
+   /**
+     * Reads the next r bits from standard input and return as an r-bit int.
+     *
+     * @param  r number of bits to read.
+     * @return the next r bits of data from standard input as a {@code int}
+     * @throws IllegalArgumentException if there are fewer than r bits available on standard input
+     * @throws IllegalArgumentException unless {@code 1 <= r <= 32}
+     */
+
+   /**
+     * Reads the next 64 bits from standard input and return as a 64-bit long.
+     *
+     * @return the next 64 bits of data from standard input as a {@code long}
+     * @throws RuntimeException if there are fewer than 64 bits available on standard input
+     */
+
+   /**
+     * Reads the next 64 bits from standard input and return as a 64-bit double.
+     *
+     * @return the next 64 bits of data from standard input as a {@code double}
+     * @throws RuntimeExceptionArgument if there are fewer than 64 bits available on standard input
+     */
+
+   /**
+     * Reads the next 32 bits from standard input and return as a 32-bit float.
+     *
+     * @return the next 32 bits of data from standard input as a {@code float}
+     * @throws RuntimeException if there are fewer than 32 bits available on standard input
+     */
 
    /**
      * Reads the next 8 bits from standard input and return as an 8-bit byte.

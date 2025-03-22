@@ -124,7 +124,13 @@ public class BipartiteX {
      * @return the side of the bipartition that vertex {@code v} is on; two vertices
      *         are in the same side of the bipartition if and only if they have the
      *         same color
-     * @throws IllegalArgumentException unless {@code 0 <= v < V} 
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/BipartiteX.java/left.java
+     * @throws IllegalArgumentException unless {@code 0 &le; v &lt; V}  
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/BipartiteX.java/base.java
+     * @throws IllegalArgumentException unless <tt>0 &le; v &lt; V</tt>  
+=======
+     * @throws IllegalArgumentException unless {@code 0 <= v < V}  
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/BipartiteX.java/right.java
      * @throws UnsupportedOperationException if this method is called when the graph
      *         is not bipartite
      */

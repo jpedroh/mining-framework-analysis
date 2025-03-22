@@ -10,12 +10,28 @@
 package edu.princeton.cs.algs4;
 
 /**
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Interval2D.java/left.java
  *  The {@code Interval2D} class represents a closed two-dimensional interval,
  *  which represents all points (x, y) with both xmin &lt;= x &lt;= xmax and
  *  ymin &lt;= y &lt;= ymax.
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Interval2D.java/base.java
+ *  The <tt>Interval2D</tt> class represents a closed two-dimensional interval,
+ *  which represents all points (x, y) with both xmin <= x <= xmax and
+ *  ymin <= y <= ymax.
+=======
+ *  The {@code Interval2D} class represents a closed two-dimensional interval,
+ *  which represents all points (x, y) with both xmin <= x <= xmax and
+ *  ymin <= y <= ymax.
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Interval2D.java/right.java
  *  Two-dimensional intervals are immutable: their values cannot be changed
  *  after they are created.
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Interval2D.java/left.java
  *  The class {@code Interval2D} includes methods for checking whether
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Interval2D.java/base.java
+ *  The class <code>Interval2D</code> includes methods for checking whether
+=======
+ *  The class <@code>Interval2D</@code> includes methods for checking whether
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Interval2D.java/right.java
  *  a two-dimensional interval contains a point and determining whether
  *  two two-dimensional intervals intersect.
  *  <p>

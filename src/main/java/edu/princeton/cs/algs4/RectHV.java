@@ -24,8 +24,8 @@ package edu.princeton.cs.algs4;
 
 public final class RectHV {
     private final double xmin, ymin;   // minimum x- and y-coordinates
-    private final double xmax, ymax;   // maximum x- and y-coordinates
-
+    private final double xmax, ymax;
+// maximum x- and y-coordinates
     /**
      * Initializes a new rectangle [<em>xmin</em>, <em>xmax</em>]
      * x [<em>ymin</em>, <em>ymax</em>].
@@ -53,7 +53,6 @@ public final class RectHV {
         this.xmax = xmax;
         this.ymax = ymax;
     }
-
     /**
      * Returns the minimum <em>x</em>-coordinate of any point in this rectangle.
      *
@@ -62,7 +61,6 @@ public final class RectHV {
     public double xmin() {
         return xmin;
     }
-
     /**
      * Returns the maximum <em>x</em>-coordinate of any point in this rectangle.
      *
@@ -71,7 +69,6 @@ public final class RectHV {
     public double xmax() {
         return xmax;
     }
-
     /**
      * Returns the minimum <em>y</em>-coordinate of any point in this rectangle.
      *
@@ -80,7 +77,6 @@ public final class RectHV {
     public double ymin() {
         return ymin;
     }
-
     /**
      * Returns the maximum <em>y</em>-coordinate of any point in this rectangle.
      *
@@ -89,7 +85,6 @@ public final class RectHV {
     public double ymax() {
         return ymax;
     }
-
     /**
      * Returns the width of this rectangle.
      *
@@ -98,7 +93,6 @@ public final class RectHV {
     public double width() {
         return xmax - xmin;
     }
-
     /**
      * Returns the height of this rectangle.
      *
@@ -107,7 +101,6 @@ public final class RectHV {
     public double height() {
         return ymax - ymin;
     }
-
     /**
      * Returns true if the two rectangles intersect.
      *
@@ -119,7 +112,6 @@ public final class RectHV {
         return this.xmax >= that.xmin && this.ymax >= that.ymin
             && that.xmax >= this.xmin && that.ymax >= this.ymin;
     }
-
     /**
      * Returns true if this rectangle contain the point.
      * @param  p the point
@@ -130,7 +122,6 @@ public final class RectHV {
         return (p.x() >= xmin) && (p.x() <= xmax)
             && (p.y() >= ymin) && (p.y() <= ymax);
     }
-
     /**
      * Returns the Euclidean distance between this rectangle and the point {@code p}.
      *
@@ -141,7 +132,6 @@ public final class RectHV {
     public double distanceTo(Point2D p) {
         return Math.sqrt(this.distanceSquaredTo(p));
     }
-
     /**
      * Returns the square of the Euclidean distance between this rectangle and the point {@code p}.
      *
@@ -158,7 +148,6 @@ public final class RectHV {
         else if (p.y() > ymax) dy = p.y() - ymax;
         return dx*dx + dy*dy;
     }
-
     /**
      * Compares this rectangle to the specified rectangle.
      *
@@ -178,7 +167,6 @@ public final class RectHV {
         if (this.ymax != that.ymax) return false;
         return true;
     }
-
     /**
      * Returns an integer hash code for this rectangle.
      * @return an integer hash code for this rectangle
@@ -191,7 +179,73 @@ public final class RectHV {
         int hash4 = ((Double) ymax).hashCode();
         return 31*(31*(31*hash1 + hash2) + hash3) + hash4;
     }
-
+    /**
+     * Returns a string representation of this rectangle.
+     *
+     * @return a string representation of this rectangle, using the format
+     *         {@code [xmin, xmax] x [ymin, ymax]}
+     */
+// minimum x- and y-coordinates
+// maximum x- and y-coordinates
+    /**
+     * Initializes a new rectangle [<em>xmin</em>, <em>xmax</em>]
+     * x [<em>ymin</em>, <em>ymax</em>].
+     *
+     * @param  xmin the <em>x</em>-coordinate of the lower-left endpoint
+     * @param  xmax the <em>x</em>-coordinate of the upper-right endpoint
+     * @param  ymin the <em>y</em>-coordinate of the lower-left endpoint
+     * @param  ymax the <em>y</em>-coordinate of the upper-right endpoint
+     * @throws IllegalArgumentException if any of {@code xmin},
+     *         {@code xmax}, {@code ymin}, or {@code ymax}
+     *         is {@code Double.NaN}.
+     * @throws IllegalArgumentException if {@code xmax} <
+     *         {@code xmin} or {@code ymax} < {@code ymin}.
+     */
+    /**
+     * Returns the width of this rectangle.
+     *
+     * @return the width of this rectangle {@code xmax - xmin}
+     */
+    /**
+     * Returns the height of this rectangle.
+     *
+     * @return the height of this rectangle {@code ymax - ymin}
+     */
+    /**
+     * Returns true if the two rectangles intersect.
+     *
+     * @param  that the other rectangle
+     * @return {@code true} if this rectangle intersect the argument
+               rectagnle at one or more points, including on the boundary
+     */
+    /**
+     * Returns true if this rectangle contain the point.
+     * @param  p the point
+     * @return {@code true} if this rectangle contain the point {@code p},
+               possibly at the boundary; {@code false} otherwise
+     */
+    /**
+     * Returns the Euclidean distance between this rectangle and the point {@code p}.
+     *
+     * @param  p the point
+     * @return the Euclidean distance between the point {@code p} and the closest point
+               on this rectangle; 0 if the point is contained in this rectangle
+     */
+    /**
+     * Returns the square of the Euclidean distance between this rectangle and the point {@code p}.
+     *
+     * @param  p the point
+     * @return the square of the Euclidean distance between the point {@code p} and
+     *         the closest point on this rectangle; 0 if the point is contained
+     *         in this rectangle
+     */
+    /**
+     * Compares this rectangle to the specified rectangle.
+     *
+     * @param  other the other rectangle
+     * @return {@code true} if this rectangle equals {@code other};
+     *         {@code false} otherwise
+     */
     /**
      * Returns a string representation of this rectangle.
      *

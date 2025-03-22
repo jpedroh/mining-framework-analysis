@@ -13,7 +13,13 @@
 package edu.princeton.cs.algs4;
 
 /**
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/QuickFindUF.java/left.java
  *  The {@code QuickFindUF} class represents a <em>union-find data type</em>
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/QuickFindUF.java/base.java
+ *  The <tt>QuickFindUF</tt> class represents a <em>union-find data type</em>
+=======
+ *  The {@code QuickFindUF} class represents a <em>union–find data type</em>
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/QuickFindUF.java/right.java
  *  (also known as the <em>disjoint-sets data type</em>).
  *  It supports the <em>union</em> and <em>find</em> operations,
  *  along with a <em>connected</em> operation for determining whether
@@ -85,12 +91,26 @@ public class QuickFindUF {
     private int count;   // number of components
 
     /**
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/QuickFindUF.java/left.java
+     * Initializes an empty union-find data structure with {@code n} sites
+     * {@code 0} through {@code n-1}. Each site is initially in its own 
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/QuickFindUF.java/base.java
+     * Initializes an empty union-find data structure with <tt>n</tt> sites
+     * <tt>0</tt> through <tt>n-1</tt>. Each site is initially in its own 
+=======
      * Initializes an empty union–find data structure with {@code n} sites
      * {@code 0} through {@code n-1}. Each site is initially in its own 
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/QuickFindUF.java/right.java
      * component.
      *
      * @param  n the number of sites
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/QuickFindUF.java/left.java
+     * @throws IllegalArgumentException if {@code n &lt; 0}
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/QuickFindUF.java/base.java
+     * @throws IllegalArgumentException if <tt>n &lt; 0</tt>
+=======
      * @throws IllegalArgumentException if {@code n < 0}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/QuickFindUF.java/right.java
      */
     public QuickFindUF(int n) {
         count = n;
@@ -112,8 +132,16 @@ public class QuickFindUF {
      * Returns the component identifier for the component containing site {@code p}.
      *
      * @param  p the integer representing one site
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/QuickFindUF.java/left.java
      * @return the component identifier for the component containing site {@code p}
      * @throws IndexOutOfBoundsException unless {@code 0 &le; p &lt; n}
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/QuickFindUF.java/base.java
+     * @return the component identifier for the component containing site <tt>p</tt>
+     * @throws IndexOutOfBoundsException unless <tt>0 &le; p &lt; n</tt>
+=======
+     * @return the component identifier for the component containing site {@code p}
+     * @throws IndexOutOfBoundsException unless {@code 0 <= p < n}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/QuickFindUF.java/right.java
      */
     public int find(int p) {
         validate(p);
@@ -136,7 +164,13 @@ public class QuickFindUF {
      * @return {@code true} if the two sites {@code p} and {@code q} are in the same component;
      *         {@code false} otherwise
      * @throws IndexOutOfBoundsException unless
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/QuickFindUF.java/left.java
      *         both {@code 0 &le; p &lt; n} and {@code 0 &le; q &lt; n}
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/QuickFindUF.java/base.java
+     *         both <tt>0 &le; p &lt; n</tt> and <tt>0 &le; q &lt; n</tt>
+=======
+     *         both {@code 0 <= p < n} and {@code 0 <= q < n}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/QuickFindUF.java/right.java
      */
     public boolean connected(int p, int q) {
         validate(p);
@@ -151,7 +185,13 @@ public class QuickFindUF {
      * @param  p the integer representing one site
      * @param  q the integer representing the other site
      * @throws IndexOutOfBoundsException unless
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/QuickFindUF.java/left.java
      *         both {@code 0 &le; p &lt; n} and {@code 0 &le; q &lt; n}
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/QuickFindUF.java/base.java
+     *         both <tt>0 &le; p &lt; n</tt> and <tt>0 &le; q &lt; n</tt>
+=======
+     *         both {@code 0 <= p < n} and {@code 0 <= q < n}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/QuickFindUF.java/right.java
      */
     public void union(int p, int q) {
         validate(p);

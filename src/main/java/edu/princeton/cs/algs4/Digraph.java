@@ -162,7 +162,13 @@ public class Digraph {
      *
      * @param  v the tail vertex
      * @param  w the head vertex
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Digraph.java/left.java
+     * @throws IndexOutOfBoundsException unless both 0 &lt;= v &lt; V and 0 &lt;= w &lt; V
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Digraph.java/base.java
+     * @throws IndexOutOfBoundsException unless both 0 <= v < V and 0 <= w < V
+=======
      * @throws IndexOutOfBoundsException unless both {@code 0 <= v < V} and {@code 0 <= w < V}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Digraph.java/right.java
      */
     public void addEdge(int v, int w) {
         validateVertex(v);
@@ -176,8 +182,16 @@ public class Digraph {
      * Returns the vertices adjacent from vertex {@code v} in this digraph.
      *
      * @param  v the vertex
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Digraph.java/left.java
+     * @return the vertices adjacent from vertex {@code v} in this digraph, as an iterable
+     * @throws IndexOutOfBoundsException unless 0 &lt;= v &lt; V
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Digraph.java/base.java
+     * @return the vertices adjacent from vertex <tt>v</tt> in this digraph, as an iterable
+     * @throws IndexOutOfBoundsException unless 0 <= v < V
+=======
      * @return the vertices adjacent from vertex {@code v} in this digraph, as an iterable
      * @throws IndexOutOfBoundsException unless {@code 0 <= v < V}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Digraph.java/right.java
      */
     public Iterable<Integer> adj(int v) {
         validateVertex(v);
@@ -189,8 +203,16 @@ public class Digraph {
      * This is known as the <em>outdegree</em> of vertex {@code v}.
      *
      * @param  v the vertex
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Digraph.java/left.java
+     * @return the outdegree of vertex {@code v}               
+     * @throws IndexOutOfBoundsException unless 0 &lt;= v &lt; V
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Digraph.java/base.java
+     * @return the outdegree of vertex <tt>v</tt>               
+     * @throws IndexOutOfBoundsException unless 0 <= v < V
+=======
      * @return the outdegree of vertex {@code v}               
      * @throws IndexOutOfBoundsException unless {@code 0 <= v < V}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Digraph.java/right.java
      */
     public int outdegree(int v) {
         validateVertex(v);
@@ -202,8 +224,16 @@ public class Digraph {
      * This is known as the <em>indegree</em> of vertex {@code v}.
      *
      * @param  v the vertex
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Digraph.java/left.java
+     * @return the indegree of vertex {@code v}               
+     * @throws IndexOutOfBoundsException unless 0 &lt;= v &lt; V
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Digraph.java/base.java
+     * @return the indegree of vertex <tt>v</tt>               
+     * @throws IndexOutOfBoundsException unless 0 <= v < V
+=======
      * @return the indegree of vertex {@code v}               
      * @throws IndexOutOfBoundsException unless {@code 0 <= v < V}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/Digraph.java/right.java
      */
     public int indegree(int v) {
         validateVertex(v);

@@ -226,7 +226,12 @@ public class IndexFibonacciMinPQ<Key> implements Iterable<Integer> {
 	 * @param key the key to associate with i
 	 * @throws java.lang.IndexOutOfBoundsException if the specified index is invalid
 	 * @throws java.util.NoSuchElementException if the index has no key associated with
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/IndexFibonacciMinPQ.java/left.java
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/IndexFibonacciMinPQ.java/base.java
+	 * @throws java.util.IllegalArgumentException if the given key is greater than the current key
+=======
 	 * @throws java.lang.IllegalArgumentException if the given key is greater than the current key
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/IndexFibonacciMinPQ.java/right.java
 	 */
 	
 	public void decreaseKey(int i, Key key) {

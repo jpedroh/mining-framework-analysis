@@ -24,6 +24,18 @@ package edu.princeton.cs.algs4;
  *  O(<em>n</em>^3 log <em>n</em>) to solve an <em>n</em>-by-<em>n</em>
  *  instance.
  *  <p>
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/AssignmentProblem.java/left.java
+ *  See also {@code WeightedBipartiteMatching}, which solves the problem
+ *  in O(<em>E V</em> log <em>V</em>) time in the worst case
+ *  for bipartite graphs with <em>V</em> vertices and <em>E</em> edges.
+ *  <p>
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/AssignmentProblem.java/base.java
+ *  See also {@link WeightedBipartiteMatching}, which solves the problem
+ *  in O(<em>E V</em> log <em>V</em>) time in the worst case
+ *  for bipartite graphs with <em>V</em> vertices and <em>E</em> edges.
+ *  <p>
+=======
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/AssignmentProblem.java/right.java
  *  For additional documentation, see
  *  <a href="http://algs4.cs.princeton.edu/65reductions">Section 6.5</a>
  *  <i>Algorithms, 4th Edition</i> by Robert Sedgewick and Kevin Wayne.
@@ -130,8 +142,16 @@ public class AssignmentProblem {
      * Returns the dual optimal value for the specified row.
      *
      * @param  i the row index
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/AssignmentProblem.java/left.java
+     * @return the dual optimal value for row {@code i}
+     * @throws IndexOutOfBoundsException unless {@code 0 &le; i &lt; N}
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/AssignmentProblem.java/base.java
+     * @return the dual optimal value for row <tt>i</tt>
+     * @throws IndexOutOfBoundsException unless <tt>0 &le; i &lt; N</tt>
+=======
      * @return the dual optimal value for row {@code i}
      * @throws IndexOutOfBoundsException unless {@code 0 <= i < n}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/AssignmentProblem.java/right.java
      *
      */
     // dual variable for row i
@@ -144,8 +164,16 @@ public class AssignmentProblem {
      * Returns the dual optimal value for the specified column.
      *
      * @param  j the column index
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/AssignmentProblem.java/left.java
+     * @return the dual optimal value for column {@code j}
+     * @throws IndexOutOfBoundsException unless {@code 0 &le; j &lt; n}
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/AssignmentProblem.java/base.java
+     * @return the dual optimal value for column <tt>j</tt>
+     * @throws IndexOutOfBoundsException unless <tt>0 &le; j &lt; n</tt>
+=======
      * @return the dual optimal value for column {@code j}
      * @throws IndexOutOfBoundsException unless {@code 0 <= j < n}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/AssignmentProblem.java/right.java
      *
      */
     public double dualCol(int j) {
@@ -157,8 +185,16 @@ public class AssignmentProblem {
      * Returns the column associated with the specified row in the optimal solution.
      *
      * @param  i the row index
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/AssignmentProblem.java/left.java
+     * @return the column matched to row {@code i} in the optimal solution
+     * @throws IndexOutOfBoundsException unless {@code 0 &le; i &lt; n}
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/AssignmentProblem.java/base.java
+     * @return the column matched to row <tt>i</tt> in the optimal solution
+     * @throws IndexOutOfBoundsException unless <tt>0 &le; i &lt; n</tt>
+=======
      * @return the column matched to row {@code i} in the optimal solution
      * @throws IndexOutOfBoundsException unless {@code 0 <= i < n}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/AssignmentProblem.java/right.java
      *
      */
     public int sol(int i) {

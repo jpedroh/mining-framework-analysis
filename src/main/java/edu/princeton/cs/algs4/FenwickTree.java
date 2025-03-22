@@ -13,8 +13,16 @@ import java.util.Arrays;
 
 /**
  * Created by ricardodpsx@gmail.com on 4/01/15.
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/FenwickTree.java/left.java
  * 
  * <p>In {@code Fenwick Tree} structure We arrange the array in an smart way to perform efficient <em>range queries and updates</em>.
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/FenwickTree.java/base.java
+ * <p/>
+ * In <tt>Fenwick Tree</tt> structure We arrange the array in an smart way to perform efficient <em>range queries and updates</em>.
+=======
+ * <p/>
+ * In {@code Fenwick Tree} structure We arrange the array in an smart way to perform efficient <em>range queries and updates</em>.
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/FenwickTree.java/right.java
  * The key point is this: In a fenwick array, each position "responsible" for storing cumulative data of N previous positions (N could be 1)
  * For example:
  * array[40] stores: array[40] + array[39] ... + array[32] (8 positions)

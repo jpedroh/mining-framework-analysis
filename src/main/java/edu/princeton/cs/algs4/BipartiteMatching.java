@@ -178,9 +178,19 @@ public class BipartiteMatching {
      * the maximum matching computed by the algorithm.
      *
      * @param  v the vertex
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/BipartiteMatching.java/left.java
+     * @return the vertex to which vertex {@code v} is matched in the
+     *         maximum matching; {@code -1} if the vertex is not matched
+     * @throws IllegalArgumentException unless {@code 0 &le; v &lt; V}
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/BipartiteMatching.java/base.java
+     * @return the vertex to which vertex <tt>v</tt> is matched in the
+     *         maximum matching; <tt>-1</tt> if the vertex is not matched
+     * @throws IllegalArgumentException unless <tt>0 &le; v &lt; V</tt>
+=======
      * @return the vertex to which vertex {@code v} is matched in the
      *         maximum matching; {@code -1} if the vertex is not matched
      * @throws IllegalArgumentException unless {@code 0 <= v < V}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/BipartiteMatching.java/right.java
      *
      */
     public int mate(int v) {
@@ -193,9 +203,19 @@ public class BipartiteMatching {
      * computed by the algorithm.
      *
      * @param  v the vertex
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/BipartiteMatching.java/left.java
+     * @return {@code true} if vertex {@code v} is matched in maximum matching;
+     *         {@code false} otherwise
+     * @throws IllegalArgumentException unless {@code 0 &le; v &lt; V}
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/BipartiteMatching.java/base.java
+     * @return <tt>true</tt> if vertex <tt>v</tt> is matched in maximum matching;
+     *         <tt>false</tt> otherwise
+     * @throws IllegalArgumentException unless <tt>0 &le; v &lt; V</tt>
+=======
      * @return {@code true} if vertex {@code v} is matched in maximum matching;
      *         {@code false} otherwise
      * @throws IllegalArgumentException unless {@code 0 <= v < V}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/BipartiteMatching.java/right.java
      *
      */
     public boolean isMatched(int v) {
@@ -229,9 +249,19 @@ public class BipartiteMatching {
      * computed by the algorithm.
      *
      * @param  v the vertex
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/BipartiteMatching.java/left.java
+     * @return {@code true} if vertex {@code v} is in the minimum vertex cover;
+     *         {@code false} otherwise
+     * @throws IllegalArgumentException unless {@code 0 &le; v &lt; V}
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/BipartiteMatching.java/base.java
+     * @return <tt>true</tt> if vertex <tt>v</tt> is in the minimum vertex cover;
+     *         <tt>false</tt> otherwise
+     * @throws IllegalArgumentException unless <tt>0 &le; v &lt; V</tt>
+=======
      * @return {@code true} if vertex {@code v} is in the minimum vertex cover;
      *         {@code false} otherwise
      * @throws IllegalArgumentException unless {@code 0 <= v < V}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/BipartiteMatching.java/right.java
      */
     public boolean inMinVertexCover(int v) {
         validate(v);

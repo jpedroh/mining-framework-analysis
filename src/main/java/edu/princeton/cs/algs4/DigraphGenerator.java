@@ -42,7 +42,6 @@ public class DigraphGenerator {
 
     // this class cannot be instantiated
     private DigraphGenerator() { }
-
     /**
      * Returns a random simple digraph containing {@code V} vertices and {@code E} edges.
      * @param V the number of vertices
@@ -67,7 +66,6 @@ public class DigraphGenerator {
         }
         return G;
     }
-
    /**
      * Returns a random simple digraph on {@code V} vertices, with an 
      * edge between any two vertices with probability {@code p}. This is sometimes
@@ -90,7 +88,6 @@ public class DigraphGenerator {
                         G.addEdge(v, w);
         return G;
     }
-
     /**
      * Returns the complete digraph on {@code V} vertices.
      * @param V the number of vertices
@@ -99,7 +96,6 @@ public class DigraphGenerator {
     public static Digraph complete(int V) {
         return simple(V, V*(V-1));
     }
-
     /**
      * Returns a random simple DAG containing {@code V} vertices and {@code E} edges.
      * Note: it is not uniformly selected at random among all such DAGs.
@@ -129,7 +125,6 @@ public class DigraphGenerator {
         }
         return G;
     }
-
     // tournament
     /**
      * Returns a random tournament digraph on {@code V} vertices. A tournament digraph
@@ -148,7 +143,6 @@ public class DigraphGenerator {
         }
         return G;
     }
-
     /**
      * Returns a random rooted-in DAG on {@code V} vertices and {@code E} edges.
      * A rooted in-tree is a DAG in which there is a single vertex
@@ -189,7 +183,6 @@ public class DigraphGenerator {
         }
         return G;
     }
-
     /**
      * Returns a random rooted-out DAG on {@code V} vertices and {@code E} edges.
      * A rooted out-tree is a DAG in which every vertex is reachable from a
@@ -230,7 +223,6 @@ public class DigraphGenerator {
         }
         return G;
     }
-
     /**
      * Returns a random rooted-in tree on {@code V} vertices.
      * A rooted in-tree is an oriented tree in which there is a single vertex
@@ -242,7 +234,6 @@ public class DigraphGenerator {
     public static Digraph rootedInTree(int V) {
         return rootedInDAG(V, V-1);
     }
-
     /**
      * Returns a random rooted-out tree on {@code V} vertices. A rooted out-tree
      * is an oriented tree in which each vertex is reachable from a single vertex.
@@ -254,7 +245,6 @@ public class DigraphGenerator {
     public static Digraph rootedOutTree(int V) {
         return rootedOutDAG(V, V-1);
     }
-
     /**
      * Returns a path digraph on {@code V} vertices.
      * @param V the number of vertices in the path
@@ -271,7 +261,6 @@ public class DigraphGenerator {
         }
         return G;
     }
-
     /**
      * Returns a complete binary tree digraph on {@code V} vertices.
      * @param V the number of vertices in the binary tree
@@ -288,7 +277,6 @@ public class DigraphGenerator {
         }
         return G;
     }
-
     /**
      * Returns a cycle digraph on {@code V} vertices.
      * @param V the number of vertices in the cycle
@@ -306,7 +294,6 @@ public class DigraphGenerator {
         G.addEdge(vertices[V-1], vertices[0]);
         return G;
     }
-
     /**
      * Returns an Eulerian cycle digraph on {@code V} vertices.
      *
@@ -314,7 +301,7 @@ public class DigraphGenerator {
      * @param  E the number of edges in the cycle
      * @return a digraph that is a directed Eulerian cycle on {@code V} vertices
      *         and {@code E} edges
-     * @throws IllegalArgumentException if either {@code V <= 0 or E <= 0}
+     * @throws IllegalArgumentException if either V &le; 0 or E &le; 0
      */
     public static Digraph eulerianCycle(int V, int E) {
         if (E <= 0)
@@ -331,7 +318,6 @@ public class DigraphGenerator {
         G.addEdge(vertices[E-1], vertices[0]);
         return G;
     }
-
     /**
      * Returns an Eulerian path digraph on {@code V} vertices.
      *
@@ -339,7 +325,7 @@ public class DigraphGenerator {
      * @param  E the number of edges in the path
      * @return a digraph that is a directed Eulerian path on {@code V} vertices
      *         and {@code E} edges
-     * @throws IllegalArgumentException if either {@code V <= 0 or E <= 0}
+     * @throws IllegalArgumentException if either V &le; 0 or E &lt; 0
      */
     public static Digraph eulerianPath(int V, int E) {
         if (E < 0)
@@ -355,7 +341,6 @@ public class DigraphGenerator {
         }
         return G;
     }
-
    /**
      * Returns a random simple digraph on {@code V} vertices, {@code E}
      * edges and (at least) {@code c} strong components. The vertices are randomly
@@ -438,7 +423,135 @@ public class DigraphGenerator {
 
         return G;
     }
-
+    /**
+     * Unit tests the {@code DigraphGenerator} library.
+     */
+    // this class cannot be instantiated
+    /**
+     * Returns a random simple digraph containing {@code V} vertices and {@code E} edges.
+     * @param V the number of vertices
+     * @param E the number of vertices
+     * @return a random simple digraph on {@code V} vertices, containing a total
+     *     of {@code E} edges
+     * @throws IllegalArgumentException if no such simple digraph exists
+     */
+   /**
+     * Returns a random simple digraph on {@code V} vertices, with an 
+     * edge between any two vertices with probability {@code p}. This is sometimes
+     * referred to as the Erdos-Renyi random digraph model.
+     * This implementations takes time propotional to V^2 (even if {@code p} is small).
+     * @param V the number of vertices
+     * @param p the probability of choosing an edge
+     * @return a random simple digraph on {@code V} vertices, with an edge between
+     *     any two vertices with probability {@code p}
+     * @throws IllegalArgumentException if probability is not between 0 and 1
+     */
+    /**
+     * Returns the complete digraph on {@code V} vertices.
+     * @param V the number of vertices
+     * @return the complete digraph on {@code V} vertices
+     */
+    /**
+     * Returns a random simple DAG containing {@code V} vertices and {@code E} edges.
+     * Note: it is not uniformly selected at random among all such DAGs.
+     * @param V the number of vertices
+     * @param E the number of vertices
+     * @return a random simple DAG on {@code V} vertices, containing a total
+     *     of {@code E} edges
+     * @throws IllegalArgumentException if no such simple DAG exists
+     */
+    // tournament
+    /**
+     * Returns a random tournament digraph on {@code V} vertices. A tournament digraph
+     * is a DAG in which for every two vertices, there is one directed edge.
+     * A tournament is an oriented complete graph.
+     * @param V the number of vertices
+     * @return a random tournament digraph on {@code V} vertices
+     */
+    /**
+     * Returns a random rooted-in DAG on {@code V} vertices and {@code E} edges.
+     * A rooted in-tree is a DAG in which there is a single vertex
+     * reachable from every other vertex.
+     * The DAG returned is not chosen uniformly at random among all such DAGs.
+     * @param V the number of vertices
+     * @param E the number of edges
+     * @return a random rooted-in DAG on {@code V} vertices and {@code E} edges
+     */
+    /**
+     * Returns a random rooted-out DAG on {@code V} vertices and {@code E} edges.
+     * A rooted out-tree is a DAG in which every vertex is reachable from a
+     * single vertex.
+     * The DAG returned is not chosen uniformly at random among all such DAGs.
+     * @param V the number of vertices
+     * @param E the number of edges
+     * @return a random rooted-out DAG on {@code V} vertices and {@code E} edges
+     */
+    /**
+     * Returns a random rooted-in tree on {@code V} vertices.
+     * A rooted in-tree is an oriented tree in which there is a single vertex
+     * reachable from every other vertex.
+     * The tree returned is not chosen uniformly at random among all such trees.
+     * @param V the number of vertices
+     * @return a random rooted-in tree on {@code V} vertices
+     */
+    /**
+     * Returns a random rooted-out tree on {@code V} vertices. A rooted out-tree
+     * is an oriented tree in which each vertex is reachable from a single vertex.
+     * It is also known as a <em>arborescence</em> or <em>branching</em>.
+     * The tree returned is not chosen uniformly at random among all such trees.
+     * @param V the number of vertices
+     * @return a random rooted-out tree on {@code V} vertices
+     */
+    /**
+     * Returns a path digraph on {@code V} vertices.
+     * @param V the number of vertices in the path
+     * @return a digraph that is a directed path on {@code V} vertices
+     */
+    /**
+     * Returns a complete binary tree digraph on {@code V} vertices.
+     * @param V the number of vertices in the binary tree
+     * @return a digraph that is a complete binary tree on {@code V} vertices
+     */
+    /**
+     * Returns a cycle digraph on {@code V} vertices.
+     * @param V the number of vertices in the cycle
+     * @return a digraph that is a directed cycle on {@code V} vertices
+     */
+    /**
+     * Returns an Eulerian cycle digraph on {@code V} vertices.
+     *
+     * @param  V the number of vertices in the cycle
+     * @param  E the number of edges in the cycle
+     * @return a digraph that is a directed Eulerian cycle on {@code V} vertices
+     *         and {@code E} edges
+     * @throws IllegalArgumentException if either V <= 0 or E <= 0
+     */
+    /**
+     * Returns an Eulerian path digraph on {@code V} vertices.
+     *
+     * @param  V the number of vertices in the path
+     * @param  E the number of edges in the path
+     * @return a digraph that is a directed Eulerian path on {@code V} vertices
+     *         and {@code E} edges
+     * @throws IllegalArgumentException if either V <= 0 or E < 0
+     */
+   /**
+     * Returns a random simple digraph on {@code V} vertices, {@code E}
+     * edges and (at least) {@code c} strong components. The vertices are randomly
+     * assigned integer labels between {@code 0} and {@code c-1} (corresponding to 
+     * strong components). Then, a strong component is creates among the vertices
+     * with the same label. Next, random edges (either between two vertices with
+     * the same labels or from a vetex with a smaller label to a vertex with a 
+     * larger label). The number of components will be equal to the number of
+     * distinct labels that are assigned to vertices.
+     *
+     * @param V the number of vertices
+     * @param E the number of edges
+     * @param c the (maximum) number of strong components
+     * @return a random simple digraph on {@code V} vertices and
+               {@code E} edges, with (at most) {@code c} strong components
+     * @throws IllegalArgumentException if {@code c} is larger than {@code V}
+     */
     /**
      * Unit tests the {@code DigraphGenerator} library.
      */

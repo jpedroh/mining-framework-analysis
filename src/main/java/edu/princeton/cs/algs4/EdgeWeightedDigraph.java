@@ -47,7 +47,13 @@ public class EdgeWeightedDigraph {
      * Initializes an empty edge-weighted digraph with {@code V} vertices and 0 edges.
      *
      * @param  V the number of vertices
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/EdgeWeightedDigraph.java/left.java
      * @throws IllegalArgumentException if {@code V} &lt; 0
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/EdgeWeightedDigraph.java/base.java
+     * @throws IllegalArgumentException if <tt>V</tt> < 0
+=======
+     * @throws IllegalArgumentException if {@code V} < 0
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/EdgeWeightedDigraph.java/right.java
      */
     public EdgeWeightedDigraph(int V) {
         if (V < 0) throw new IllegalArgumentException("Number of vertices in a Digraph must be nonnegative");
@@ -64,8 +70,16 @@ public class EdgeWeightedDigraph {
      *
      * @param  V the number of vertices
      * @param  E the number of edges
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/EdgeWeightedDigraph.java/left.java
      * @throws IllegalArgumentException if {@code V} &lt; 0
      * @throws IllegalArgumentException if {@code E} &lt; 0
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/EdgeWeightedDigraph.java/base.java
+     * @throws IllegalArgumentException if <tt>V</tt> < 0
+     * @throws IllegalArgumentException if <tt>E</tt> < 0
+=======
+     * @throws IllegalArgumentException if {@code V} < 0
+     * @throws IllegalArgumentException if {@code E} < 0
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/EdgeWeightedDigraph.java/right.java
      */
     public EdgeWeightedDigraph(int V, int E) {
         this(V);
@@ -144,6 +158,7 @@ public class EdgeWeightedDigraph {
         return E;
     }
 
+    // throw an IndexOutOfBoundsException unless 0 &lt;= v &lt; V
     // throw an IndexOutOfBoundsException unless {@code 0 <= v < V}
     private void validateVertex(int v) {
         if (v < 0 || v >= V)
@@ -172,8 +187,16 @@ public class EdgeWeightedDigraph {
      * Returns the directed edges incident from vertex {@code v}.
      *
      * @param  v the vertex
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/EdgeWeightedDigraph.java/left.java
+     * @return the directed edges incident from vertex {@code v} as an Iterable
+     * @throws IndexOutOfBoundsException unless 0 &lt;= v &lt; V
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/EdgeWeightedDigraph.java/base.java
+     * @return the directed edges incident from vertex <tt>v</tt> as an Iterable
+     * @throws IndexOutOfBoundsException unless 0 <= v < V
+=======
      * @return the directed edges incident from vertex {@code v} as an Iterable
      * @throws IndexOutOfBoundsException unless {@code 0 <= v < V}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/EdgeWeightedDigraph.java/right.java
      */
     public Iterable<DirectedEdge> adj(int v) {
         validateVertex(v);
@@ -185,8 +208,16 @@ public class EdgeWeightedDigraph {
      * This is known as the <em>outdegree</em> of vertex {@code v}.
      *
      * @param  v the vertex
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/EdgeWeightedDigraph.java/left.java
+     * @return the outdegree of vertex {@code v}
+     * @throws IndexOutOfBoundsException unless 0 &lt;= v &lt; V
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/EdgeWeightedDigraph.java/base.java
+     * @return the outdegree of vertex <tt>v</tt>
+     * @throws IndexOutOfBoundsException unless 0 <= v < V
+=======
      * @return the outdegree of vertex {@code v}
      * @throws IndexOutOfBoundsException unless {@code 0 <= v < V}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/EdgeWeightedDigraph.java/right.java
      */
     public int outdegree(int v) {
         validateVertex(v);
@@ -198,8 +229,16 @@ public class EdgeWeightedDigraph {
      * This is known as the <em>indegree</em> of vertex {@code v}.
      *
      * @param  v the vertex
+<<<<<<< /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/EdgeWeightedDigraph.java/left.java
+     * @return the indegree of vertex {@code v}
+     * @throws IndexOutOfBoundsException unless 0 &lt;= v &lt; V
+||||||| /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/EdgeWeightedDigraph.java/base.java
+     * @return the indegree of vertex <tt>v</tt>
+     * @throws IndexOutOfBoundsException unless 0 <= v < V
+=======
      * @return the indegree of vertex {@code v}
      * @throws IndexOutOfBoundsException unless {@code 0 <= v < V}
+>>>>>>> /usr/src/app/output/kevin-wayne/algs4/f747b209db1cca23c5be2220f0d677f26b98696f/src/main/java/edu/princeton/cs/algs4/EdgeWeightedDigraph.java/right.java
      */
     public int indegree(int v) {
         validateVertex(v);
