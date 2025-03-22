@@ -26,15 +26,14 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Random;
-
-import static junit.framework.TestCase.fail;
+import java.util.*;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
 /**
  * Test class GraphTests.
- *
+ * 
  * @author Dimitrios Michail
  */
 public class GraphTestsTest
@@ -409,7 +408,8 @@ public class GraphTestsTest
         }
     }
 
-    @Test public void testIsCubic()
+    @Test
+    public void testIsCubic()
     {
         assertTrue(GraphTests.isCubic(NamedGraphGenerator.petersenGraph()));
         Graph<Integer, DefaultEdge> triangle = new SimpleGraph<>(DefaultEdge.class);
