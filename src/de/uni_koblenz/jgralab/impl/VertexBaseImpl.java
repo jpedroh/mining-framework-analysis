@@ -49,6 +49,7 @@ import de.uni_koblenz.jgralab.AttributedElement;
 import de.uni_koblenz.jgralab.Edge;
 import de.uni_koblenz.jgralab.EdgeDirection;
 import de.uni_koblenz.jgralab.Graph;
+import de.uni_koblenz.jgralab.JGraLab;
 import de.uni_koblenz.jgralab.PathElement;
 import de.uni_koblenz.jgralab.TraversalContext;
 import de.uni_koblenz.jgralab.Vertex;
@@ -575,7 +576,8 @@ public abstract class VertexBaseImpl extends GraphElementImpl implements
 	@Override
 	public String toString() {
 		assert isValid();
-		return "v" + id + ": " + getAttributedElementClass().getQualifiedName();
+		return "v" + getId() + ": "
+				+ getAttributedElementClass().getQualifiedName();
 	}
 
 	/*

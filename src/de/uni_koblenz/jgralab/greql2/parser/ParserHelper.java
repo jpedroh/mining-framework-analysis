@@ -98,6 +98,8 @@ import de.uni_koblenz.jgralab.greql2.schema.ThisLiteral;
 import de.uni_koblenz.jgralab.greql2.schema.ThisVertex;
 import de.uni_koblenz.jgralab.greql2.schema.Variable;
 import de.uni_koblenz.jgralab.greql2.schema.WhereExpression;
+import de.uni_koblenz.jgralab.impl.InternalEdge;
+import de.uni_koblenz.jgralab.impl.InternalVertex;
 
 public abstract class ParserHelper {
 
@@ -232,20 +234,22 @@ public abstract class ParserHelper {
 				Variable variable = (Variable) isVarOf.getAlpha();
 				isVarOf.delete();
 				isExprOf.delete();
-				Edge e = variable.getFirstIncidence(EdgeDirection.OUT);
+				InternalEdge e = (InternalEdge) variable
+						.getFirstIncidence(EdgeDirection.OUT);
 				while (e != null) {
 					e.setAlpha(expr);
-					e = variable.getFirstIncidence(EdgeDirection.OUT);
+					e = (InternalEdge) variable
+							.getFirstIncidence(EdgeDirection.OUT);
 				}
 				variable.delete();
 			}
 			Expression boundExpr = (Expression) exp
 					.getFirstIsBoundExprOfIncidence(EdgeDirection.IN)
 					.getAlpha();
-			Edge e = exp.getFirstIncidence(EdgeDirection.OUT);
+			InternalEdge e = (InternalEdge) exp.getFirstIncidence(EdgeDirection.OUT);
 			while (e != null) {
-				e.setAlpha(boundExpr);
-				e = exp.getFirstIncidence(EdgeDirection.OUT);
+				e.setAlpha((InternalVertex) boundExpr);
+				e = (InternalEdge) exp.getFirstIncidence(EdgeDirection.OUT);
 			}
 			exp.delete();
 		}
@@ -295,7 +299,8 @@ public abstract class ParserHelper {
 					.get_name());
 			if (var != null) {
 				if (var != v) {
-					Edge inc = v.getFirstIncidence(EdgeDirection.OUT);
+					InternalEdge inc = (InternalEdge) v
+							.getFirstIncidence(EdgeDirection.OUT);
 					inc.setAlpha(var);
 					if (v.getDegree() <= 0) {
 						v.delete();
@@ -304,8 +309,8 @@ public abstract class ParserHelper {
 			} else {
 				Greql2Aggregation e = (Greql2Aggregation) v
 						.getFirstIncidence(EdgeDirection.OUT);
-				throw new UndefinedVariableException((Variable) v,
-						e.get_sourcePositions());
+				throw new UndefinedVariableException((Variable) v, e
+						.get_sourcePositions());
 			}
 		} else {
 			ArrayList<Edge> incidenceList = new ArrayList<Edge>();
@@ -331,9 +336,8 @@ public abstract class ParserHelper {
 		afterParsingvariableSymbolTable.blockBegin();
 		for (IsBoundVarOf isBoundVarOf : root
 				.getIsBoundVarOfIncidences(EdgeDirection.IN)) {
-			afterParsingvariableSymbolTable.insert(
-					((Variable) isBoundVarOf.getAlpha()).get_name(),
-					isBoundVarOf.getAlpha());
+			afterParsingvariableSymbolTable.insert(((Variable) isBoundVarOf
+					.getAlpha()).get_name(), isBoundVarOf.getAlpha());
 		}
 		IsQueryExprOf isQueryExprOf = root
 				.getFirstIsQueryExprOfIncidence(EdgeDirection.IN);
@@ -546,7 +550,7 @@ public abstract class ParserHelper {
 		public void postOp(String op) {
 			lengthOperator = getLength(offsetOperator);
 			offsetArg2 = getCurrentOffset();
-			this.operatorName = op;
+			operatorName = op;
 		}
 
 		public FunctionApplication postArg2(Expression arg2) {
@@ -677,7 +681,7 @@ public abstract class ParserHelper {
 				firstThisVertex = thisVertex;
 			} else {
 				while (thisVertex.getFirstIncidence() != null) {
-					Edge e = thisVertex.getFirstIncidence();
+					InternalEdge e = (InternalEdge) thisVertex.getFirstIncidence();
 					e.setThis(firstThisVertex);
 				}
 				literalsToDelete.add(thisVertex);
@@ -689,8 +693,8 @@ public abstract class ParserHelper {
 				firstThisEdge = thisEdge;
 			} else {
 				while (thisEdge.getFirstIncidence() != null) {
-					Edge e = thisEdge.getFirstIncidence();
-					e.setThis(firstThisEdge);
+					InternalEdge e = (InternalEdge) thisEdge.getFirstIncidence();
+					e.setThis((InternalVertex) firstThisEdge);
 				}
 				literalsToDelete.add(thisEdge);
 			}

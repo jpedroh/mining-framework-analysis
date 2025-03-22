@@ -349,8 +349,10 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 		InternalVertex oldAlpha = getIncidentVertex();
 
-		if (!graph.isLoading() && graph.getECARuleManagerIfThere() != null) {
-			graph.getECARuleManager().fireBeforeChangeAlphaOfEdgeEvents(this,
+		if (!graph.isLoading()
+				&& graph.getECARuleManagerIfThere() != null) {
+			graph.getECARuleManager()
+					.fireBeforeChangeAlphaOfEdgeEvents(this,
 					oldAlpha, alphaBase);
 		}
 
@@ -393,8 +395,10 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 
 		InternalVertex oldOmgea = reversedEdge.getIncidentVertex();
 
-		if (!graph.isLoading() && graph.getECARuleManagerIfThere() != null) {
-			graph.getECARuleManager().fireBeforeChangeOmegaOfEdgeEvents(this,
+		if (!graph.isLoading()
+				&& graph.getECARuleManagerIfThere() != null) {
+			graph.getECARuleManager()
+					.fireBeforeChangeOmegaOfEdgeEvents(this,
 					oldOmgea, omegaBase);
 		}
 
@@ -463,7 +467,7 @@ public abstract class EdgeBaseImpl extends IncidenceImpl implements Edge,
 	@Override
 	public String toString() {
 		assert isValid();
-		return "+e" + id + ": "
+		return "+e" + getId() + ": "
 				+ getAttributedElementClass().getQualifiedName();
 	}
 

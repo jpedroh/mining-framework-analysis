@@ -135,6 +135,7 @@ public class TransactionImpl implements Transaction {
 	 *         it
 	 */
 	protected long incrTemporaryVersionCounter() {
+
 		++temporaryVersionCounter;
 		return temporaryVersionCounter;
 	}
@@ -250,8 +251,8 @@ public class TransactionImpl implements Transaction {
 			if (internalIsInConflict()) {
 				state = TransactionState.RUNNING;
 				transactionManager.commitSync.writeLock().unlock();
-				throw new CommitFailedException(this, validationComponent
-						.getConflictReason());
+				throw new CommitFailedException(this,
+						validationComponent.getConflictReason());
 			}
 			// make sure no other transaction is executing isInConflict()-method
 			transactionManager.commitValidatingSync.writeLock().lock();
@@ -634,8 +635,8 @@ public class TransactionImpl implements Transaction {
 								.getKey();
 						SortedMap<Long, Object> versionsMap = entries
 								.getValue();
-						temporaryValueMap.put(versionedDataObject, versionsMap
-								.get(versionsMap.lastKey()));
+						temporaryValueMap.put(versionedDataObject,
+								versionsMap.get(versionsMap.lastKey()));
 						temporaryVersionMap.remove(versionedDataObject);
 					}
 					temporaryVersionMap = null;
