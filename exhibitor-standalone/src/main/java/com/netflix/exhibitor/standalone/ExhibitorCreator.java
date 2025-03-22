@@ -95,7 +95,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import com.orbitz.consul.Consul;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.ParseException;
@@ -115,7 +114,14 @@ import org.apache.zookeeper.data.ACL;
 import org.apache.zookeeper.data.Id;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import com.orbitz.consul.Consul;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import java.security.KeyStore;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import static com.netflix.exhibitor.standalone.ExhibitorCLI.*;
 
 public class ExhibitorCreator
@@ -270,7 +276,7 @@ public class ExhibitorCreator
     {
         return httpPort;
     }
-
+    
     public String getListenAddress()
     {
         return listenAddress;

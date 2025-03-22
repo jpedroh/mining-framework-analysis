@@ -35,6 +35,7 @@ import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import com.sun.jersey.api.client.filter.HTTPDigestAuthFilter;
 import com.sun.jersey.api.core.DefaultResourceConfig;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
+import org.mortbay.jetty.bio.SocketConnector;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
@@ -86,17 +87,24 @@ public class ExhibitorMain implements Closeable
 
         SecurityArguments securityArguments = new SecurityArguments(creator.getSecurityFile(), creator.getRealmSpec(), creator.getRemoteAuthSpec());
         ExhibitorMain exhibitorMain = new ExhibitorMain
-        (
+            (
             creator.getBackupProvider(),
             creator.getConfigProvider(),
             creator.getBuilder(),
             creator.getHttpPort(),
+<<<<<<< /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/left.java
+||||||| /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/base.java
+            creator.getSecurityHandler(),
+=======
             creator.getListenAddress(),
+            creator.getSecurityHandler(),
+>>>>>>> /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/right.java
             securityArguments
         );
         setShutdown(exhibitorMain);
 
-        try {exhibitorMain.start();
+        try {
+            exhibitorMain.start();
         }
         catch (Exception ex) {
             ex.printStackTrace(System.err);
@@ -104,8 +112,7 @@ public class ExhibitorMain implements Closeable
             Runtime.getRuntime().exit(1);
         }
 
-        try
-        {
+        try {
             exhibitorMain.join();
         }
         finally {
@@ -117,7 +124,13 @@ public class ExhibitorMain implements Closeable
         }
     }
 
-    public ExhibitorMain(BackupProvider backupProvider, ConfigProvider configProvider, ExhibitorArguments.Builder builder, int httpPort, String listenAddress, SecurityArguments securityArguments) throws Exception
+<<<<<<< /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/left.java
+    public ExhibitorMain(BackupProvider backupProvider, ConfigProvider configProvider, ExhibitorArguments.Builder builder, int httpPort, SecurityArguments securityArguments) throws Exception
+||||||| /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/base.java
+    public ExhibitorMain(BackupProvider backupProvider, ConfigProvider configProvider, ExhibitorArguments.Builder builder, int httpPort, SecurityHandler security, SecurityArguments securityArguments) throws Exception
+=======
+    public ExhibitorMain(BackupProvider backupProvider, ConfigProvider configProvider, ExhibitorArguments.Builder builder, int httpPort, String listenAddress, SecurityHandler security, SecurityArguments securityArguments) throws Exception
+>>>>>>> /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/right.java
     {
         HashLoginService loginService = makeLoginService(securityArguments);
 
@@ -129,18 +142,40 @@ public class ExhibitorMain implements Closeable
         exhibitor = new Exhibitor(configProvider, null, backupProvider, builder.build());
         exhibitor.start();
 
-        server = new Server();
-        SocketConnector http = new SocketConnector();
-        http.setHost(listenAddress);
-        http.setPort(httpPort);
-        server.addConnector(http);
-
+<<<<<<< /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/left.java
+        server = new Server(httpPort);
 
         // This is some magic to get path of root directory of the JAR
         // see https://github.com/jetty-project/embedded-jetty-uber-jar/blob/master/src/main/java/jetty/uber/ServerMain.java
         URL webRootLocation = ExhibitorMain.class.getClassLoader().getResource("index.html");
         if (webRootLocation == null) {
             throw new IllegalStateException("Unable to find resource directory");
+||||||| /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/base.java
+        DefaultResourceConfig   application = JerseySupport.newApplicationConfig(new UIContext(exhibitor));
+        ServletContainer        container = new ServletContainer(application);
+        server = new Server(httpPort);
+        Context root = new Context(server, "/", Context.SESSIONS);
+        root.addFilter(ExhibitorServletFilter.class, "/", Handler.ALL);
+        root.addServlet(new ServletHolder(container), "/*");
+        if ( security != null )
+        {
+            root.setSecurityHandler(security);
+=======
+        DefaultResourceConfig   application = JerseySupport.newApplicationConfig(new UIContext(exhibitor));
+        ServletContainer        container = new ServletContainer(application);
+        server = new Server();
+        SocketConnector http = new SocketConnector();
+        http.setHost(listenAddress);
+        http.setPort(httpPort);
+        server.addConnector(http);
+
+        Context root = new Context(server, "/", Context.SESSIONS);
+        root.addFilter(ExhibitorServletFilter.class, "/", Handler.ALL);
+        root.addServlet(new ServletHolder(container), "/*");
+        if ( security != null )
+        {
+            root.setSecurityHandler(security);
+>>>>>>> /usr/src/app/output/soabase/exhibitor/78de708554f75c4e14dc12d8f6ac3f02ed567a26/exhibitor-standalone/src/main/java/com/netflix/exhibitor/application/ExhibitorMain.java/right.java
         }
 
         URI webRootUri = URI.create(webRootLocation.toURI().toASCIIString().replaceFirst("/index.html$", "/"));
