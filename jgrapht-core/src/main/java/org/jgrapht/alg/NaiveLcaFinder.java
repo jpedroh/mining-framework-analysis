@@ -1,5 +1,11 @@
 /*
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/64077a72f87a6d3d81e5e3b45b4357abaebb4321/jgrapht-core/src/main/java/org/jgrapht/alg/NaiveLcaFinder.java/left.java
  * (C) Copyright 2013-2018, by Leo Crawford, Alexandru Valeanu and Contributors.
+||||||| /usr/src/app/output/jgrapht/jgrapht/64077a72f87a6d3d81e5e3b45b4357abaebb4321/jgrapht-core/src/main/java/org/jgrapht/alg/NaiveLcaFinder.java/base.java
+ * (C) Copyright 2013-2017, by Leo Crawford and Contributors.
+=======
+ * (C) Copyright 2013-2018, by Leo Crawford and Contributors.
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/64077a72f87a6d3d81e5e3b45b4357abaebb4321/jgrapht-core/src/main/java/org/jgrapht/alg/NaiveLcaFinder.java/right.java
  *
  * JGraphT : a free Java graph-theory library
  *
