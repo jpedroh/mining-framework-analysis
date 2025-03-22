@@ -7074,24 +7074,25 @@ public static Object macroexpand1(Object x) {
 				String sname = sym.name;
 				//(.substring s 2 5) => (. s substring 2 5)
 				//(.String/substring s 2 5) => (. ^String s substring 2 5)
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/clojure/clojure/87ff4a0ce6c5dd24fe4086ec63987e08b1ff8cc7/src/jvm/clojure/lang/Compiler.java/left.java
 				if(namesInstanceMethod(sym) || namesQualifiedInstanceMember(sym))
+||||||| /usr/src/app/output/clojure/clojure/87ff4a0ce6c5dd24fe4086ec63987e08b1ff8cc7/src/jvm/clojure/lang/Compiler.java/base.java
+				if(sym.name.charAt(0) == '.')
 =======
 				if(sym.name.charAt(0) == '.' || (sym.ns != null && sym.ns.charAt(0) == '.'))
->>>>>>> refs/remotes/origin/dev-qualified-instance-method
+>>>>>>> /usr/src/app/output/clojure/clojure/87ff4a0ce6c5dd24fe4086ec63987e08b1ff8cc7/src/jvm/clojure/lang/Compiler.java/right.java
 					{
 					if(RT.length(form) < 2)
 						throw new IllegalArgumentException(
 								"Malformed member expression, expecting (.member target ...)");
-<<<<<<< HEAD
 
 					Symbol meth = (sname.charAt(0) == '.') ? Symbol.intern(sname.substring(1)) : Symbol.intern(sname);
+<<<<<<< /usr/src/app/output/clojure/clojure/87ff4a0ce6c5dd24fe4086ec63987e08b1ff8cc7/src/jvm/clojure/lang/Compiler.java/left.java
 					Symbol maybeQualifiedHint = namesQualifiedInstanceMember(sym) ? Symbol.intern(sym.ns.substring(1)) : null;
-
+||||||| /usr/src/app/output/clojure/clojure/87ff4a0ce6c5dd24fe4086ec63987e08b1ff8cc7/src/jvm/clojure/lang/Compiler.java/base.java
 =======
-					Symbol meth = (sname.charAt(0) == '.') ? Symbol.intern(sname.substring(1)) : Symbol.intern(sname);
 					Symbol maybeQualifiedHint = (sym.ns != null && sym.ns.charAt(0) == '.') ? Symbol.intern(sym.ns.substring(1)) : null;
->>>>>>> refs/remotes/origin/dev-qualified-instance-method
+>>>>>>> /usr/src/app/output/clojure/clojure/87ff4a0ce6c5dd24fe4086ec63987e08b1ff8cc7/src/jvm/clojure/lang/Compiler.java/right.java
 					Object target = RT.second(form);
 					if(HostExpr.maybeClass(target, false) != null)
 						{
