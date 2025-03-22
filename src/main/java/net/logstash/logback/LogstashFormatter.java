@@ -42,18 +42,18 @@ public class LogstashFormatter {
     
     private boolean includeCallerInfo;
     private JsonNode customFields;
-    
-    public LogstashFormatter() {
-        this(false);
-    }
-    
+
     public LogstashFormatter(boolean includeCallerInfo) {
         this.includeCallerInfo = includeCallerInfo;
     }
-    
+
     public LogstashFormatter(boolean includeCallerInfo, JsonNode customFields) {
         this.includeCallerInfo = includeCallerInfo;
         this.customFields = customFields;
+    }
+
+    public LogstashFormatter() {
+        this(false);
     }
     
     public byte[] writeValueAsBytes(ILoggingEvent event, Context context) throws IOException {
@@ -98,9 +98,9 @@ public class LogstashFormatter {
             addPropertiesAsFields(eventNode, context.getCopyOfPropertyMap());
         }
         addPropertiesAsFields(eventNode, event.getMDCPropertyMap());
-        
+
         addCustomFields(eventNode);
-        
+
     }
     
     private ArrayNode createTags(ILoggingEvent event) {
@@ -143,7 +143,7 @@ public class LogstashFormatter {
         }
         return ste[0];
     }
-    
+
     private void addCustomFields(ObjectNode eventNode) {
         if (customFields != null) {
             Iterator<String> i = customFields.fieldNames();
@@ -154,7 +154,7 @@ public class LogstashFormatter {
             }
         }
     }
-    
+
     public boolean isIncludeCallerInfo() {
         return includeCallerInfo;
     }
@@ -162,11 +162,10 @@ public class LogstashFormatter {
     public void setIncludeCallerInfo(boolean includeCallerInfo) {
         this.includeCallerInfo = includeCallerInfo;
     }
-    
+
     public void setCustomFields(JsonNode customFields) {
         this.customFields = customFields;
     }
-    
     public JsonNode getCustomFields() {
         return this.customFields;
     }

@@ -21,7 +21,6 @@ import net.logstash.logback.LogstashFormatter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.encoder.EncoderBase;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -54,10 +53,10 @@ public class LogstashEncoder extends EncoderBase<ILoggingEvent> {
         write(LINE_SEPARATOR, outputStream);
     }
     
-    public static JsonNode parseCustomFields(String customFields) throws JsonParseException, JsonProcessingException, IOException {
+    public static JsonNode parseCustomFields(String customFields) throws JsonParseException,JsonProcessingException,IOException {
         return new ObjectMapper().getFactory().createParser(customFields).readValueAsTree();
     }
-    
+  
     public boolean isImmediateFlush() {
         return immediateFlush;
     }
@@ -83,9 +82,9 @@ public class LogstashEncoder extends EncoderBase<ILoggingEvent> {
             addError("Failed to parse custom fields [" + customFields + "]", e);
         } catch (IOException e) {
             addError("Failed to parse custom fields [" + customFields + "]", e);
-        }
+        }    
     }
-    
+
     public JsonNode getCustomFields() {
         return formatter.getCustomFields();
     }
