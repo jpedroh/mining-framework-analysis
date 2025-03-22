@@ -1,14 +1,11 @@
 package org.telegram.telegrambots.api.objects;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.telegram.telegrambots.api.interfaces.IBotApiObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,512 +17,516 @@ import java.util.List;
  * @date 20 of June of 2015
  */
 public class Message implements IBotApiObject {
-    private static final String MESSAGEID_FIELD = "message_id";
-    private static final String FROM_FIELD = "from";
-    private static final String DATE_FIELD = "date";
-    private static final String CHAT_FIELD = "chat";
-    private static final String FORWARDFROM_FIELD = "forward_from";
-    private static final String FORWARDFROMCHAT_FIELD = "forward_from_chat";
-    private static final String FORWARDDATE_FIELD = "forward_date";
-    private static final String TEXT_FIELD = "text";
-    private static final String ENTITIES_FIELD = "entities";
-    private static final String AUDIO_FIELD = "audio";
-    private static final String DOCUMENT_FIELD = "document";
-    private static final String PHOTO_FIELD = "photo";
-    private static final String STICKER_FIELD = "sticker";
-    private static final String VIDEO_FIELD = "video";
-    private static final String CONTACT_FIELD = "contact";
-    private static final String LOCATION_FIELD = "location";
-    private static final String VENUE_FIELD = "venue";
-    private static final String PINNED_MESSAGE_FIELD = "pinned_message";
-    private static final String NEWCHATMEMBER_FIELD = "new_chat_member";
-    private static final String LEFTCHATMEMBER_FIELD = "left_chat_member";
-    private static final String NEWCHATTITLE_FIELD = "new_chat_title";
-    private static final String NEWCHATPHOTO_FIELD = "new_chat_photo";
-    private static final String DELETECHATPHOTO_FIELD = "delete_chat_photo";
-    private static final String GROUPCHATCREATED_FIELD = "group_chat_created";
-    private static final String REPLYTOMESSAGE_FIELD = "reply_to_message";
-    private static final String VOICE_FIELD = "voice";
-    private static final String CAPTION_FIELD = "caption";
-    private static final String SUPERGROUPCREATED_FIELD = "supergroup_chat_created";
-    private static final String CHANNELCHATCREATED_FIELD = "channel_chat_created";
-    private static final String MIGRATETOCHAT_FIELD = "migrate_to_chat_id";
-    private static final String MIGRATEFROMCHAT_FIELD = "migrate_from_chat_id";
-    @JsonProperty(MESSAGEID_FIELD)
-    private Integer messageId; ///< Integer	Unique message identifier
-    @JsonProperty(FROM_FIELD)
-    private User from; ///< Optional. Sender, can be empty for messages sent to channels
-    @JsonProperty(DATE_FIELD)
-    private Integer date; ///< Optional. Date the message was sent in Unix time
-    @JsonProperty(CHAT_FIELD)
-    private Chat chat; ///< Conversation the message belongs to
-    @JsonProperty(FORWARDFROM_FIELD)
-    private User forwardFrom; ///< Optional. For forwarded messages, sender of the original message
-    @JsonProperty(FORWARDFROMCHAT_FIELD)
-    private Chat forwardFromChat; ///< Optional. For messages forwarded from a channel, information about the original channel
-    @JsonProperty(FORWARDDATE_FIELD)
-    private Integer forwardDate; ///< Optional. For forwarded messages, date the original message was sent
-    @JsonProperty(TEXT_FIELD)
-    private String text; ///< Optional. For text messages, the actual UTF-8 text of the message
-    @JsonProperty(ENTITIES_FIELD)
-    /**
-     * Optional. For text messages, special entities like usernames, URLs,
-     * bot commands, etc. that appear in the text
-     */
-    private List<MessageEntity> entities;
-    @JsonProperty(AUDIO_FIELD)
-    private Audio audio; ///< Optional. Message is an audio file, information about the file
-    @JsonProperty(DOCUMENT_FIELD)
-    private Document document; ///< Optional. Message is a general file, information about the file
-    @JsonProperty(PHOTO_FIELD)
-    private List<PhotoSize> photo; ///< Optional. Message is a photo, available sizes of the photo
-    @JsonProperty(STICKER_FIELD)
-    private Sticker sticker; ///< Optional. Message is a sticker, information about the sticker
-    @JsonProperty(VIDEO_FIELD)
-    private Video video; ///< Optional. Message is a video, information about the video
-    @JsonProperty(CONTACT_FIELD)
-    private Contact contact; ///< Optional. Message is a shared contact, information about the contact
-    @JsonProperty(LOCATION_FIELD)
-    private Location location; ///< Optional. Message is a shared location, information about the location
-    @JsonProperty(VENUE_FIELD)
-    private Venue venue; ///< Optional. Message is a venue, information about the venue
-    @JsonProperty(PINNED_MESSAGE_FIELD)
-    private Message pinnedMessage; ///< Optional. Specified message was pinned. Note that the Message object in this field will not contain further reply_to_message fields even if it is itself a reply.
-    @JsonProperty(NEWCHATMEMBER_FIELD)
-    private User newChatMember; ///< Optional. A new member was added to the group, information about them (this member may be bot itself)
-    @JsonProperty(LEFTCHATMEMBER_FIELD)
-    private User leftChatMember; ///< Optional. A member was removed from the group, information about them (this member may be bot itself)
-    @JsonProperty(NEWCHATTITLE_FIELD)
-    private String newChatTitle; ///< Optional. A chat title was changed to this value
-    @JsonProperty(NEWCHATPHOTO_FIELD)
-    private List<PhotoSize> newChatPhoto; ///< Optional. A chat photo was change to this value
-    @JsonProperty(DELETECHATPHOTO_FIELD)
-    private Boolean deleteChatPhoto; ///< Optional. Informs that the chat photo was deleted
-    @JsonProperty(GROUPCHATCREATED_FIELD)
-    private Boolean groupchatCreated; ///< Optional. Informs that the group has been created
-    @JsonProperty(REPLYTOMESSAGE_FIELD)
-    private Message replyToMessage;
-    @JsonProperty(VOICE_FIELD)
-    private Voice voice; ///< Optional. Message is a voice message, information about the file
-    @JsonProperty(CAPTION_FIELD)
-    private String caption; ///< Optional. Caption for the document, photo or video, 0-200 characters
-    @JsonProperty(SUPERGROUPCREATED_FIELD)
-    private Boolean superGroupCreated; ///< Optional. Informs that the supergroup has been created
-    @JsonProperty(CHANNELCHATCREATED_FIELD)
-    private Boolean channelChatCreated; ///< Optional. Informs that the channel has been created
-    @JsonProperty(MIGRATETOCHAT_FIELD)
-    private Long migrateToChatId; ///< Optional. The chat has been migrated to a chat with specified identifier, not exceeding 1e13 by absolute value
-    @JsonProperty(MIGRATEFROMCHAT_FIELD)
-    private Long migrateFromChatId; ///< Optional. The chat has been migrated from a chat with specified identifier, not exceeding 1e13 by absolute value
+  private static final String MESSAGEID_FIELD = "message_id";
 
-    public Message() {
-        super();
+  private static final String FROM_FIELD = "from";
+
+  private static final String DATE_FIELD = "date";
+
+  private static final String CHAT_FIELD = "chat";
+
+  private static final String FORWARDFROM_FIELD = "forward_from";
+
+  private static final String FORWARDFROMCHAT_FIELD = "forward_from_chat";
+
+  private static final String FORWARDDATE_FIELD = "forward_date";
+
+  private static final String TEXT_FIELD = "text";
+
+  private static final String ENTITIES_FIELD = "entities";
+
+  private static final String AUDIO_FIELD = "audio";
+
+  private static final String DOCUMENT_FIELD = "document";
+
+  private static final String PHOTO_FIELD = "photo";
+
+  private static final String STICKER_FIELD = "sticker";
+
+  private static final String VIDEO_FIELD = "video";
+
+  private static final String CONTACT_FIELD = "contact";
+
+  private static final String LOCATION_FIELD = "location";
+
+  private static final String VENUE_FIELD = "venue";
+
+  private static final String PINNED_MESSAGE_FIELD = "pinned_message";
+
+  private static final String NEWCHATMEMBER_FIELD = "new_chat_member";
+
+  private static final String LEFTCHATMEMBER_FIELD = "left_chat_member";
+
+  private static final String NEWCHATTITLE_FIELD = "new_chat_title";
+
+  private static final String NEWCHATPHOTO_FIELD = "new_chat_photo";
+
+  private static final String DELETECHATPHOTO_FIELD = "delete_chat_photo";
+
+  private static final String GROUPCHATCREATED_FIELD = "group_chat_created";
+
+  private static final String REPLYTOMESSAGE_FIELD = "reply_to_message";
+
+  private static final String VOICE_FIELD = "voice";
+
+  private static final String CAPTION_FIELD = "caption";
+
+  private static final String SUPERGROUPCREATED_FIELD = "supergroup_chat_created";
+
+  private static final String CHANNELCHATCREATED_FIELD = "channel_chat_created";
+
+  private static final String MIGRATETOCHAT_FIELD = "migrate_to_chat_id";
+
+  private static final String MIGRATEFROMCHAT_FIELD = "migrate_from_chat_id";
+
+  @JsonProperty(value = MESSAGEID_FIELD) private Integer messageId;
+
+  @JsonProperty(value = FROM_FIELD) private User from;
+
+  @JsonProperty(value = DATE_FIELD) private Integer date;
+
+  @JsonProperty(value = CHAT_FIELD) private Chat chat;
+
+  @JsonProperty(value = FORWARDFROM_FIELD) private User forwardFrom;
+
+  @JsonProperty(value = FORWARDFROMCHAT_FIELD) private Chat forwardFromChat;
+
+  @JsonProperty(value = FORWARDDATE_FIELD) private Integer forwardDate;
+
+  @JsonProperty(value = TEXT_FIELD) private String text;
+
+  @JsonProperty(value = ENTITIES_FIELD) private List<MessageEntity> entities;
+
+  @JsonProperty(value = AUDIO_FIELD) private Audio audio;
+
+  @JsonProperty(value = DOCUMENT_FIELD) private Document document;
+
+  @JsonProperty(value = PHOTO_FIELD) private List<PhotoSize> photo;
+
+  @JsonProperty(value = STICKER_FIELD) private Sticker sticker;
+
+  @JsonProperty(value = VIDEO_FIELD) private Video video;
+
+  @JsonProperty(value = CONTACT_FIELD) private Contact contact;
+
+  @JsonProperty(value = LOCATION_FIELD) private Location location;
+
+  @JsonProperty(value = VENUE_FIELD) private Venue venue;
+
+  @JsonProperty(value = PINNED_MESSAGE_FIELD) private Message pinnedMessage;
+
+  @JsonProperty(value = NEWCHATMEMBER_FIELD) private User newChatMember;
+
+  @JsonProperty(value = LEFTCHATMEMBER_FIELD) private User leftChatMember;
+
+  @JsonProperty(value = NEWCHATTITLE_FIELD) private String newChatTitle;
+
+  @JsonProperty(value = NEWCHATPHOTO_FIELD) private List<PhotoSize> newChatPhoto;
+
+  @JsonProperty(value = DELETECHATPHOTO_FIELD) private Boolean deleteChatPhoto;
+
+  @JsonProperty(value = GROUPCHATCREATED_FIELD) private Boolean groupchatCreated;
+
+  @JsonProperty(value = REPLYTOMESSAGE_FIELD) private Message replyToMessage;
+
+  @JsonProperty(value = VOICE_FIELD) private Voice voice;
+
+  @JsonProperty(value = CAPTION_FIELD) private String caption;
+
+  @JsonProperty(value = SUPERGROUPCREATED_FIELD) private Boolean superGroupCreated;
+
+  @JsonProperty(value = CHANNELCHATCREATED_FIELD) private Boolean channelChatCreated;
+
+  @JsonProperty(value = MIGRATETOCHAT_FIELD) private Long migrateToChatId;
+
+  @JsonProperty(value = MIGRATEFROMCHAT_FIELD) private Long migrateFromChatId;
+
+  public Message() {
+    super();
+  }
+
+  public Message(JSONObject jsonObject) {
+    super();
+    this.messageId = jsonObject.getInt(MESSAGEID_FIELD);
+    if (jsonObject.has(FROM_FIELD)) {
+      this.from = new User(jsonObject.getJSONObject(FROM_FIELD));
     }
-
-    public Message(JSONObject jsonObject) {
-        super();
-        this.messageId = jsonObject.getInt(MESSAGEID_FIELD);
-        if (jsonObject.has(FROM_FIELD)) {
-            this.from = new User(jsonObject.getJSONObject(FROM_FIELD));
-        }
-        if (jsonObject.has(DATE_FIELD)) {
-            this.date = jsonObject.getInt(DATE_FIELD);
-        }
-        this.chat = new Chat(jsonObject.getJSONObject(CHAT_FIELD));
-        if (jsonObject.has(FORWARDFROMCHAT_FIELD)) {
-            this.forwardFromChat = new Chat(jsonObject.getJSONObject(FORWARDFROMCHAT_FIELD));
-        }
-        if (jsonObject.has(FORWARDFROM_FIELD)) {
-            this.forwardFrom = new User(jsonObject.getJSONObject(FORWARDFROM_FIELD));
-        }
-        if (jsonObject.has(FORWARDDATE_FIELD)) {
-            this.forwardDate = jsonObject.getInt(FORWARDDATE_FIELD);
-        }
-        if (jsonObject.has(TEXT_FIELD)) {
-            this.text = jsonObject.getString(TEXT_FIELD);
-        }
-        if (jsonObject.has(ENTITIES_FIELD)) {
-            this.entities = new ArrayList<>();
-            JSONArray entities = jsonObject.getJSONArray(ENTITIES_FIELD);
-            for (int i = 0; i < entities.length(); i++) {
-                this.entities.add(new MessageEntity(entities.getJSONObject(i)));
-            }
-        }
-        if (jsonObject.has(AUDIO_FIELD)) {
-            this.audio = new Audio(jsonObject.getJSONObject(AUDIO_FIELD));
-        }
-        if (jsonObject.has(DOCUMENT_FIELD)) {
-            this.document = new Document(jsonObject.getJSONObject(DOCUMENT_FIELD));
-        }
-        if (jsonObject.has(PHOTO_FIELD)) {
-            this.photo = new ArrayList<>();
-            JSONArray photos = jsonObject.getJSONArray(PHOTO_FIELD);
-            for (int i = 0; i < photos.length(); i++) {
-                this.photo.add(new PhotoSize(photos.getJSONObject(i)));
-            }
-        }
-        if (jsonObject.has(STICKER_FIELD)) {
-            this.sticker = new Sticker(jsonObject.getJSONObject(STICKER_FIELD));
-        }
-        if (jsonObject.has(VIDEO_FIELD)) {
-            this.video = new Video(jsonObject.getJSONObject(VIDEO_FIELD));
-        }
-        if (jsonObject.has(CONTACT_FIELD)) {
-            this.contact = new Contact(jsonObject.getJSONObject(CONTACT_FIELD));
-        }
-        if (jsonObject.has(LOCATION_FIELD)) {
-            this.location = new Location(jsonObject.getJSONObject(LOCATION_FIELD));
-        }
-        if (jsonObject.has(VENUE_FIELD)) {
-            venue = new Venue(jsonObject.getJSONObject(VENUE_FIELD));
-        }
-        if (jsonObject.has(PINNED_MESSAGE_FIELD)) {
-            pinnedMessage = new Message(jsonObject.getJSONObject(PINNED_MESSAGE_FIELD));
-        }
-        if (jsonObject.has(VOICE_FIELD)) {
-            this.voice = new Voice(jsonObject.getJSONObject(VOICE_FIELD));
-        }
-        if (jsonObject.has(CAPTION_FIELD)) {
-            this.caption = jsonObject.getString(CAPTION_FIELD);
-        }
-        if (jsonObject.has(NEWCHATMEMBER_FIELD)) {
-            this.newChatMember = new User(jsonObject.getJSONObject(NEWCHATMEMBER_FIELD));
-        }
-        if (jsonObject.has(LEFTCHATMEMBER_FIELD)) {
-            this.leftChatMember = new User(jsonObject.getJSONObject(LEFTCHATMEMBER_FIELD));
-        }
-        if (jsonObject.has(REPLYTOMESSAGE_FIELD)) {
-            this.replyToMessage = new Message(jsonObject.getJSONObject(REPLYTOMESSAGE_FIELD));
-        }
-        if (jsonObject.has(NEWCHATTITLE_FIELD)) {
-            this.newChatTitle = jsonObject.getString(NEWCHATTITLE_FIELD);
-        }
-        if (jsonObject.has(NEWCHATPHOTO_FIELD)) {
-            JSONArray photoArray = jsonObject.getJSONArray(NEWCHATPHOTO_FIELD);
-            this.newChatPhoto = new ArrayList<>();
-            for (int i = 0; i < photoArray.length(); i++) {
-                this.newChatPhoto.add(new PhotoSize(photoArray.getJSONObject(i)));
-            }
-        }
-        if (jsonObject.has(DELETECHATPHOTO_FIELD)) {
-            this.deleteChatPhoto = true;
-        }
-        if (jsonObject.has(GROUPCHATCREATED_FIELD)) {
-            this.groupchatCreated = true;
-        }
-        if (jsonObject.has(SUPERGROUPCREATED_FIELD)) {
-            this.superGroupCreated = true;
-        }
-        if (jsonObject.has(CHANNELCHATCREATED_FIELD)) {
-            this.channelChatCreated = true;
-        }
-        if (jsonObject.has(MIGRATETOCHAT_FIELD)) {
-            this.migrateToChatId = jsonObject.getLong(MIGRATETOCHAT_FIELD);
-        }
-        if (jsonObject.has(MIGRATEFROMCHAT_FIELD)) {
-            this.migrateFromChatId = jsonObject.getLong(MIGRATEFROMCHAT_FIELD);
-        }
-
-        if (hasText() && entities != null) {
-            entities.forEach(x -> x.computeText(text));
-        }
+    if (jsonObject.has(DATE_FIELD)) {
+      this.date = jsonObject.getInt(DATE_FIELD);
     }
-
-    public Integer getMessageId() {
-        return messageId;
+    this.chat = new Chat(jsonObject.getJSONObject(CHAT_FIELD));
+    if (jsonObject.has(FORWARDFROMCHAT_FIELD)) {
+      this.forwardFromChat = new Chat(jsonObject.getJSONObject(FORWARDFROMCHAT_FIELD));
     }
-
-    public User getFrom() {
-        return from;
+    if (jsonObject.has(FORWARDFROM_FIELD)) {
+      this.forwardFrom = new User(jsonObject.getJSONObject(FORWARDFROM_FIELD));
     }
-
-    public Integer getDate() {
-        return date;
+    if (jsonObject.has(FORWARDDATE_FIELD)) {
+      this.forwardDate = jsonObject.getInt(FORWARDDATE_FIELD);
     }
-
-    public Chat getChat() {
-        return chat;
+    if (jsonObject.has(TEXT_FIELD)) {
+      this.text = jsonObject.getString(TEXT_FIELD);
     }
-
-    public User getForwardFrom() {
-        return forwardFrom;
+    if (jsonObject.has(ENTITIES_FIELD)) {
+      this.entities = new ArrayList<>();
+      JSONArray entities = jsonObject.getJSONArray(ENTITIES_FIELD);
+      for (int i = 0; i < entities.length(); i++) {
+        this.entities.add(new MessageEntity(entities.getJSONObject(i)));
+      }
     }
-
-    public Integer getForwardDate() {
-        return forwardDate;
+    if (jsonObject.has(AUDIO_FIELD)) {
+      this.audio = new Audio(jsonObject.getJSONObject(AUDIO_FIELD));
     }
-
-    public String getText() {
-        return text;
+    if (jsonObject.has(DOCUMENT_FIELD)) {
+      this.document = new Document(jsonObject.getJSONObject(DOCUMENT_FIELD));
     }
-
-    public List<MessageEntity> getEntities() {
-        return entities;
+    if (jsonObject.has(PHOTO_FIELD)) {
+      this.photo = new ArrayList<>();
+      JSONArray photos = jsonObject.getJSONArray(PHOTO_FIELD);
+      for (int i = 0; i < photos.length(); i++) {
+        this.photo.add(new PhotoSize(photos.getJSONObject(i)));
+      }
     }
-
-    public Audio getAudio() {
-        return audio;
+    if (jsonObject.has(STICKER_FIELD)) {
+      this.sticker = new Sticker(jsonObject.getJSONObject(STICKER_FIELD));
     }
-
-    public Document getDocument() {
-        return document;
+    if (jsonObject.has(VIDEO_FIELD)) {
+      this.video = new Video(jsonObject.getJSONObject(VIDEO_FIELD));
     }
-
-    public List<PhotoSize> getPhoto() {
-        return photo;
+    if (jsonObject.has(CONTACT_FIELD)) {
+      this.contact = new Contact(jsonObject.getJSONObject(CONTACT_FIELD));
     }
-
-    public Sticker getSticker() {
-        return sticker;
+    if (jsonObject.has(LOCATION_FIELD)) {
+      this.location = new Location(jsonObject.getJSONObject(LOCATION_FIELD));
     }
-
-    public Video getVideo() {
-        return video;
+    if (jsonObject.has(VENUE_FIELD)) {
+      venue = new Venue(jsonObject.getJSONObject(VENUE_FIELD));
     }
-
-    public Contact getContact() {
-        return contact;
+    if (jsonObject.has(PINNED_MESSAGE_FIELD)) {
+      pinnedMessage = new Message(jsonObject.getJSONObject(PINNED_MESSAGE_FIELD));
     }
-
-    public Location getLocation() {
-        return location;
+    if (jsonObject.has(VOICE_FIELD)) {
+      this.voice = new Voice(jsonObject.getJSONObject(VOICE_FIELD));
     }
-
-    public Venue getVenue() {
-        return venue;
+    if (jsonObject.has(CAPTION_FIELD)) {
+      this.caption = jsonObject.getString(CAPTION_FIELD);
     }
-
-    public Message getPinnedMessage() {
-        return pinnedMessage;
+    if (jsonObject.has(NEWCHATMEMBER_FIELD)) {
+      this.newChatMember = new User(jsonObject.getJSONObject(NEWCHATMEMBER_FIELD));
     }
-
-    public User getNewChatMember() {
-        return newChatMember;
+    if (jsonObject.has(LEFTCHATMEMBER_FIELD)) {
+      this.leftChatMember = new User(jsonObject.getJSONObject(LEFTCHATMEMBER_FIELD));
     }
-
-    public User getLeftChatMember() {
-        return leftChatMember;
+    if (jsonObject.has(REPLYTOMESSAGE_FIELD)) {
+      this.replyToMessage = new Message(jsonObject.getJSONObject(REPLYTOMESSAGE_FIELD));
     }
-
-    public String getNewChatTitle() {
-        return newChatTitle;
+    if (jsonObject.has(NEWCHATTITLE_FIELD)) {
+      this.newChatTitle = jsonObject.getString(NEWCHATTITLE_FIELD);
     }
-
-    public List<PhotoSize> getNewChatPhoto() {
-        return newChatPhoto;
+    if (jsonObject.has(NEWCHATPHOTO_FIELD)) {
+      JSONArray photoArray = jsonObject.getJSONArray(NEWCHATPHOTO_FIELD);
+      this.newChatPhoto = new ArrayList<>();
+      for (int i = 0; i < photoArray.length(); i++) {
+        this.newChatPhoto.add(new PhotoSize(photoArray.getJSONObject(i)));
+      }
     }
-
-    public Boolean getDeleteChatPhoto() {
-        return deleteChatPhoto;
+    if (jsonObject.has(DELETECHATPHOTO_FIELD)) {
+      this.deleteChatPhoto = true;
     }
-
-    public Boolean getGroupchatCreated() {
-        return groupchatCreated;
+    if (jsonObject.has(GROUPCHATCREATED_FIELD)) {
+      this.groupchatCreated = true;
     }
-
-    public Message getReplyToMessage() {
-        return replyToMessage;
+    if (jsonObject.has(SUPERGROUPCREATED_FIELD)) {
+      this.superGroupCreated = true;
     }
-
-    public Voice getVoice() {
-        return voice;
+    if (jsonObject.has(CHANNELCHATCREATED_FIELD)) {
+      this.channelChatCreated = true;
     }
-
-    public String getCaption() {
-        return caption;
+    if (jsonObject.has(MIGRATETOCHAT_FIELD)) {
+      this.migrateToChatId = jsonObject.getLong(MIGRATETOCHAT_FIELD);
     }
-
-    public Boolean getSuperGroupCreated() {
-        return superGroupCreated;
+    if (jsonObject.has(MIGRATEFROMCHAT_FIELD)) {
+      this.migrateFromChatId = jsonObject.getLong(MIGRATEFROMCHAT_FIELD);
     }
-
-    public Boolean getChannelChatCreated() {
-        return channelChatCreated;
+    if (hasText() && entities != null) {
+      entities.forEach((x) -> x.computeText(text));
     }
+  }
 
-    public Long getMigrateToChatId() {
-        return migrateToChatId;
-    }
+  public Integer getMessageId() {
+    return messageId;
+  }
 
-    public Long getMigrateFromChatId() {
-        return migrateFromChatId;
-    }
+  public User getFrom() {
+    return from;
+  }
 
-    public boolean isGroupMessage() {
-        return chat.isGroupChat();
-    }
+  public Integer getDate() {
+    return date;
+  }
 
-    public boolean isUserMessage() {
-        return chat.isUserChat();
-    }
+  public Chat getChat() {
+    return chat;
+  }
 
-    public boolean isChannelMessage() {
-        return chat.isChannelChat();
-    }
+  public User getForwardFrom() {
+    return forwardFrom;
+  }
 
-    public boolean isSuperGroupMessage() {
-        return chat.isSuperGroupChat();
-    }
+  public Integer getForwardDate() {
+    return forwardDate;
+  }
 
-    public Long getChatId() {
-        return chat.getId();
-    }
+  public String getText() {
+    return text;
+  }
 
-    public boolean hasText() {
-        return text != null && !text.isEmpty();
-    }
+  public List<MessageEntity> getEntities() {
+    return entities;
+  }
 
-    public boolean hasDocument() {
-        return this.document != null;
-    }
+  public Audio getAudio() {
+    return audio;
+  }
 
-    public boolean isReply() {
-        return this.replyToMessage != null;
-    }
+  public Document getDocument() {
+    return document;
+  }
 
-    public boolean hasLocation() {
-        return location != null;
-    }
+  public List<PhotoSize> getPhoto() {
+    return photo;
+  }
 
-    public Chat getForwardFromChat() {
-        return forwardFromChat;
-    }
+  public Sticker getSticker() {
+    return sticker;
+  }
 
-    @Override
-    public void serialize(JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        gen.writeStartObject();
-        gen.writeNumberField(MESSAGEID_FIELD, messageId);
-        if (from != null) {
-            gen.writeObjectField(FROM_FIELD, from);
-        }
-        if (date != null) {
-            gen.writeNumberField(DATE_FIELD, date);
-        }
-        gen.writeObjectField(CHAT_FIELD, chat);
-        if (forwardFromChat != null) {
-            gen.writeObjectField(FORWARDFROMCHAT_FIELD, forwardFromChat);
-        }
-        if (forwardFrom != null) {
-            gen.writeObjectField(FORWARDFROM_FIELD, forwardFrom);
-        }
-        if (forwardDate != null) {
-            gen.writeNumberField(FORWARDDATE_FIELD, forwardDate);
-        }
-        if (text != null) {
-            gen.writeStringField(TEXT_FIELD, text);
-        }
-        if (audio != null) {
-            gen.writeObjectField(AUDIO_FIELD, audio);
-        }
-        if (document != null) {
-            gen.writeObjectField(DOCUMENT_FIELD, document);
-        }
-        if (photo != null && photo.size() > 0) {
-            gen.writeArrayFieldStart(PHOTO_FIELD);
-            for (PhotoSize photoSize : photo) {
-                gen.writeObject(photoSize);
-            }
-            gen.writeEndArray();
-        }
-        if (sticker != null) {
-            gen.writeObjectField(STICKER_FIELD, sticker);
-        }
-        if (video != null) {
-            gen.writeObjectField(VIDEO_FIELD, video);
-        }
-        if (contact != null) {
-            gen.writeObjectField(CONTACT_FIELD, contact);
-        }
-        if (location != null) {
-            gen.writeObjectField(LOCATION_FIELD, location);
-        }
-        if (venue != null) {
-            gen.writeObjectField(VENUE_FIELD, venue);
-        }
-        if (voice != null) {
-            gen.writeObjectField(VOICE_FIELD, voice);
-        }
-        if (caption != null) {
-            gen.writeObjectField(CAPTION_FIELD, caption);
-        }
-        if (newChatMember != null) {
-            gen.writeObjectField(NEWCHATMEMBER_FIELD, newChatMember);
-        }
-        if (leftChatMember != null) {
-            gen.writeObjectField(LEFTCHATMEMBER_FIELD, leftChatMember);
-        }
-        if (replyToMessage != null) {
-            gen.writeObjectField(REPLYTOMESSAGE_FIELD, replyToMessage);
-        }
-        if (newChatTitle != null) {
-            gen.writeStringField(NEWCHATTITLE_FIELD, newChatTitle);
-        }
-        if (newChatPhoto != null && newChatPhoto.size() > 0) {
-            gen.writeArrayFieldStart(NEWCHATPHOTO_FIELD);
-            for (PhotoSize photoSize: newChatPhoto) {
-                gen.writeObject(photoSize);
-            }
-            gen.writeEndArray();
-        }
-        if (deleteChatPhoto != null) {
-            gen.writeBooleanField(DELETECHATPHOTO_FIELD, deleteChatPhoto);
-        }
-        if (groupchatCreated != null) {
-            gen.writeBooleanField(GROUPCHATCREATED_FIELD, groupchatCreated);
-        }
-        if (superGroupCreated != null) {
-            gen.writeBooleanField(SUPERGROUPCREATED_FIELD, superGroupCreated);
-        }
-        if (channelChatCreated != null) {
-            gen.writeBooleanField(CHANNELCHATCREATED_FIELD, channelChatCreated);
-        }
-        if (migrateToChatId != null) {
-            gen.writeNumberField(MIGRATETOCHAT_FIELD, migrateToChatId);
-        }
-        if (migrateFromChatId != null) {
-            gen.writeNumberField(MIGRATEFROMCHAT_FIELD, migrateFromChatId);
-        }
-        gen.writeEndObject();
-        gen.flush();
-    }
+  public Video getVideo() {
+    return video;
+  }
 
-    @Override
-    public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        serialize(gen, serializers);
-    }
+  public Contact getContact() {
+    return contact;
+  }
 
-    @Override
-    public String toString() {
-        return "Message{" +
-                "messageId=" + messageId +
-                ", from=" + from +
-                ", date=" + date +
-                ", chat=" + chat +
-                ", forwardFrom=" + forwardFrom +
-                ", forwardFromChat=" + forwardFromChat +
-                ", forwardDate=" + forwardDate +
-                ", text='" + text + '\'' +
-                ", audio=" + audio +
-                ", document=" + document +
-                ", photo=" + photo +
-                ", sticker=" + sticker +
-                ", video=" + video +
-                ", contact=" + contact +
-                ", location=" + location +
-                ", venue=" + venue +
-                ", newChatMember=" + newChatMember +
-                ", leftChatMember=" + leftChatMember +
-                ", newChatTitle='" + newChatTitle + '\'' +
-                ", newChatPhoto=" + newChatPhoto +
-                ", deleteChatPhoto=" + deleteChatPhoto +
-                ", groupchatCreated=" + groupchatCreated +
-                ", replyToMessage=" + replyToMessage +
-                ", voice=" + voice +
-                ", caption=" + caption +
-                ", superGroupCreated=" + superGroupCreated +
-                ", channelChatCreated=" + channelChatCreated +
-                ", migrateToChatId=" + migrateToChatId +
-                ", migrateFromChatId=" + migrateFromChatId +
-                '}';
+  public Location getLocation() {
+    return location;
+  }
+
+  public Venue getVenue() {
+    return venue;
+  }
+
+  public Message getPinnedMessage() {
+    return pinnedMessage;
+  }
+
+  public User getNewChatMember() {
+    return newChatMember;
+  }
+
+  public User getLeftChatMember() {
+    return leftChatMember;
+  }
+
+  public String getNewChatTitle() {
+    return newChatTitle;
+  }
+
+  public List<PhotoSize> getNewChatPhoto() {
+    return newChatPhoto;
+  }
+
+  public Boolean getDeleteChatPhoto() {
+    return deleteChatPhoto;
+  }
+
+  public Boolean getGroupchatCreated() {
+    return groupchatCreated;
+  }
+
+  public Message getReplyToMessage() {
+    return replyToMessage;
+  }
+
+  public Voice getVoice() {
+    return voice;
+  }
+
+  public String getCaption() {
+    return caption;
+  }
+
+  public Boolean getSuperGroupCreated() {
+    return superGroupCreated;
+  }
+
+  public Boolean getChannelChatCreated() {
+    return channelChatCreated;
+  }
+
+  public Long getMigrateToChatId() {
+    return migrateToChatId;
+  }
+
+  public Long getMigrateFromChatId() {
+    return migrateFromChatId;
+  }
+
+  public boolean isGroupMessage() {
+    return chat.isGroupChat();
+  }
+
+  public boolean isUserMessage() {
+    return chat.isUserChat();
+  }
+
+  public boolean isChannelMessage() {
+    return chat.isChannelChat();
+  }
+
+  public boolean isSuperGroupMessage() {
+    return chat.isSuperGroupChat();
+  }
+
+  public Long getChatId() {
+    return chat.getId();
+  }
+
+  public boolean hasText() {
+    return text != null && !text.isEmpty();
+  }
+
+  public boolean hasDocument() {
+    return this.document != null;
+  }
+
+  public boolean isReply() {
+    return this.replyToMessage != null;
+  }
+
+  public boolean hasLocation() {
+    return location != null;
+  }
+
+  public Chat getForwardFromChat() {
+    return forwardFromChat;
+  }
+
+  @Override public void serialize(JsonGenerator gen, SerializerProvider serializers) throws IOException {
+    gen.writeStartObject();
+    gen.writeNumberField(MESSAGEID_FIELD, messageId);
+    if (from != null) {
+      gen.writeObjectField(FROM_FIELD, from);
     }
+    if (date != null) {
+      gen.writeNumberField(DATE_FIELD, date);
+    }
+    gen.writeObjectField(CHAT_FIELD, chat);
+    if (forwardFromChat != null) {
+      gen.writeObjectField(FORWARDFROMCHAT_FIELD, forwardFromChat);
+    }
+    if (forwardFrom != null) {
+      gen.writeObjectField(FORWARDFROM_FIELD, forwardFrom);
+    }
+    if (forwardDate != null) {
+      gen.writeNumberField(FORWARDDATE_FIELD, forwardDate);
+    }
+    if (text != null) {
+      gen.writeStringField(TEXT_FIELD, text);
+    }
+    if (audio != null) {
+      gen.writeObjectField(AUDIO_FIELD, audio);
+    }
+    if (document != null) {
+      gen.writeObjectField(DOCUMENT_FIELD, document);
+    }
+    if (photo != null && photo.size() > 0) {
+      gen.writeArrayFieldStart(PHOTO_FIELD);
+      for (PhotoSize photoSize : photo) {
+        gen.writeObject(photoSize);
+      }
+      gen.writeEndArray();
+    }
+    if (sticker != null) {
+      gen.writeObjectField(STICKER_FIELD, sticker);
+    }
+    if (video != null) {
+      gen.writeObjectField(VIDEO_FIELD, video);
+    }
+    if (contact != null) {
+      gen.writeObjectField(CONTACT_FIELD, contact);
+    }
+    if (location != null) {
+      gen.writeObjectField(LOCATION_FIELD, location);
+    }
+    if (venue != null) {
+      gen.writeObjectField(VENUE_FIELD, venue);
+    }
+    if (voice != null) {
+      gen.writeObjectField(VOICE_FIELD, voice);
+    }
+    if (caption != null) {
+      gen.writeObjectField(CAPTION_FIELD, caption);
+    }
+    if (newChatMember != null) {
+      gen.writeObjectField(NEWCHATMEMBER_FIELD, newChatMember);
+    }
+    if (leftChatMember != null) {
+      gen.writeObjectField(LEFTCHATMEMBER_FIELD, leftChatMember);
+    }
+    if (replyToMessage != null) {
+      gen.writeObjectField(REPLYTOMESSAGE_FIELD, replyToMessage);
+    }
+    if (newChatTitle != null) {
+      gen.writeStringField(NEWCHATTITLE_FIELD, newChatTitle);
+    }
+    if (newChatPhoto != null && newChatPhoto.size() > 0) {
+      gen.writeArrayFieldStart(NEWCHATPHOTO_FIELD);
+      for (PhotoSize photoSize : newChatPhoto) {
+        gen.writeObject(photoSize);
+      }
+      gen.writeEndArray();
+    }
+    if (deleteChatPhoto != null) {
+      gen.writeBooleanField(DELETECHATPHOTO_FIELD, deleteChatPhoto);
+    }
+    if (groupchatCreated != null) {
+      gen.writeBooleanField(GROUPCHATCREATED_FIELD, groupchatCreated);
+    }
+    if (superGroupCreated != null) {
+      gen.writeBooleanField(SUPERGROUPCREATED_FIELD, superGroupCreated);
+    }
+    if (channelChatCreated != null) {
+      gen.writeBooleanField(CHANNELCHATCREATED_FIELD, channelChatCreated);
+    }
+    if (migrateToChatId != null) {
+      gen.writeNumberField(MIGRATETOCHAT_FIELD, migrateToChatId);
+    }
+    if (migrateFromChatId != null) {
+      gen.writeNumberField(MIGRATEFROMCHAT_FIELD, migrateFromChatId);
+    }
+    gen.writeEndObject();
+    gen.flush();
+  }
+
+  @Override public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
+    serialize(gen, serializers);
+  }
+
+  @Override public String toString() {
+    return "Message{" + "messageId=" + messageId + ", from=" + from + ", date=" + date + ", chat=" + chat + ", forwardFrom=" + forwardFrom + ", forwardedFromChat=" + forwardedFromChat + 
+<<<<<<< /usr/src/app/output/rubenlagus/telegrambots/37eac085543d35d210e744092d86a74d88862f8f/src/main/java/org/telegram/telegrambots/api/objects/Message.java/left.java
+    ", forwardFromChat="
+=======
+    ", forwardDate="
+>>>>>>> /usr/src/app/output/rubenlagus/telegrambots/37eac085543d35d210e744092d86a74d88862f8f/src/main/java/org/telegram/telegrambots/api/objects/Message.java/right.java
+     + 
+<<<<<<< /usr/src/app/output/rubenlagus/telegrambots/37eac085543d35d210e744092d86a74d88862f8f/src/main/java/org/telegram/telegrambots/api/objects/Message.java/left.java
+    forwardFromChat
+=======
+    forwardDate
+>>>>>>> /usr/src/app/output/rubenlagus/telegrambots/37eac085543d35d210e744092d86a74d88862f8f/src/main/java/org/telegram/telegrambots/api/objects/Message.java/right.java
+     + ", text=\'" + text + '\'' + ", audio=" + audio + ", document=" + document + ", photo=" + photo + ", sticker=" + sticker + ", video=" + video + ", contact=" + contact + ", location=" + location + ", venue=" + venue + ", newChatMember=" + newChatMember + ", leftChatMember=" + leftChatMember + ", newChatTitle=\'" + newChatTitle + '\'' + ", newChatPhoto=" + newChatPhoto + ", deleteChatPhoto=" + deleteChatPhoto + ", groupchatCreated=" + groupchatCreated + ", replyToMessage=" + replyToMessage + ", voice=" + voice + ", caption=" + caption + ", superGroupCreated=" + superGroupCreated + ", channelChatCreated=" + channelChatCreated + ", migrateToChatId=" + migrateToChatId + ", migrateFromChatId=" + migrateFromChatId + '}';
+  }
 }
