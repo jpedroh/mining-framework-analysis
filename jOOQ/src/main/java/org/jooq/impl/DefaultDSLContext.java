@@ -36,7 +36,6 @@
  *
  */
 package org.jooq.impl;
-
 import static org.jooq.conf.ParamType.INLINED;
 import static org.jooq.conf.ParamType.NAMED;
 import static org.jooq.conf.ParamType.NAMED_OR_INLINED;
@@ -57,7 +56,6 @@ import static org.jooq.impl.Tools.EMPTY_UPDATABLE_RECORD;
 import static org.jooq.impl.Tools.blocking;
 import static org.jooq.impl.Tools.list;
 import static org.jooq.tools.Convert.convert;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
@@ -82,10 +80,8 @@ import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
-
 import javax.annotation.Generated;
 import javax.sql.DataSource;
-
 import org.jooq.AlterIndexStep;
 import org.jooq.AlterSchemaStep;
 import org.jooq.AlterSequenceStep;
@@ -124,7 +120,6 @@ import org.jooq.ExecuteContext;
 import org.jooq.ExecuteListener;
 import org.jooq.Explain;
 import org.jooq.Field;
-import org.jooq.GrantStepOn;
 import org.jooq.Index;
 import org.jooq.InsertQuery;
 import org.jooq.InsertSetStep;
@@ -179,7 +174,6 @@ import org.jooq.MergeUsingStep;
 import org.jooq.Meta;
 import org.jooq.Name;
 import org.jooq.Param;
-import org.jooq.Privilege;
 import org.jooq.Parser;
 import org.jooq.Queries;
 import org.jooq.Query;
@@ -211,7 +205,6 @@ import org.jooq.RenderContext;
 import org.jooq.Result;
 import org.jooq.ResultQuery;
 import org.jooq.Results;
-import org.jooq.RevokeStepOn;
 import org.jooq.SQL;
 import org.jooq.SQLDialect;
 import org.jooq.Schema;
@@ -271,6 +264,9 @@ import org.jooq.tools.jdbc.MockConfiguration;
 import org.jooq.tools.jdbc.MockDataProvider;
 import org.jooq.tools.jdbc.MockRunnable;
 import org.jooq.util.xml.jaxb.InformationSchema;
+import org.jooq.GrantStepOn;
+import org.jooq.Privilege;
+import org.jooq.RevokeStepOn;
 
 /**
  * A default implementation for {@link DSLContext}.

@@ -36,7 +36,6 @@
  *
  */
 package org.jooq.impl;
-
 import static java.util.Arrays.asList;
 import static org.jooq.Operator.AND;
 import static org.jooq.Operator.OR;
@@ -73,7 +72,6 @@ import static org.jooq.impl.Tools.EMPTY_FIELD;
 import static org.jooq.impl.Tools.EMPTY_QUERYPART;
 import static org.jooq.impl.Tools.combine;
 import static org.jooq.impl.Tools.configuration;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
@@ -97,10 +95,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.function.Function;
-
 import javax.annotation.Generated;
 import javax.sql.DataSource;
-
 import org.jooq.AggregateFunction;
 import org.jooq.AlterIndexStep;
 import org.jooq.AlterSchemaStep;
@@ -161,7 +157,6 @@ import org.jooq.DropViewFinalStep;
 import org.jooq.False;
 import org.jooq.Field;
 import org.jooq.FieldOrRow;
-import org.jooq.GrantStepOn;
 import org.jooq.GroupConcatOrderByStep;
 import org.jooq.GroupField;
 import org.jooq.Index;
@@ -224,7 +219,6 @@ import org.jooq.OrderedAggregateFunction;
 import org.jooq.OrderedAggregateFunctionOfDeferredType;
 import org.jooq.Param;
 import org.jooq.PlainSQL;
-import org.jooq.Privilege;
 import org.jooq.QuantifiedSelect;
 import org.jooq.Queries;
 import org.jooq.Query;
@@ -256,7 +250,6 @@ import org.jooq.RecordHandler;
 import org.jooq.RecordType;
 import org.jooq.Result;
 import org.jooq.ResultQuery;
-import org.jooq.RevokeStepOn;
 import org.jooq.Role;
 import org.jooq.Row1;
 import org.jooq.Row10;
@@ -339,6 +332,25 @@ import org.jooq.types.UByte;
 import org.jooq.types.UInteger;
 import org.jooq.types.ULong;
 import org.jooq.types.UShort;
+// ...
+// ...
+// ...
+// ...
+// ...
+// ...
+// ...
+// ...
+// ...
+// ...
+// ...
+// ...
+// ...
+// ...
+// ...
+import org.jooq.GrantStepOn;
+// ...
+import org.jooq.Privilege;
+import org.jooq.RevokeStepOn;
 
 /**
  * A DSL "entry point" providing implementations to the <code>org.jooq</code>
@@ -395,7 +407,6 @@ public class DSL {
     // -------------------------------------------------------------------------
     // XXX Contextual factory methods
     // -------------------------------------------------------------------------
-
     /**
      * Create an executor with a dialect configured.
      * <p>
@@ -407,7 +418,6 @@ public class DSL {
     public static DSLContext using(SQLDialect dialect) {
         return new DefaultDSLContext(dialect, null);
     }
-
     /**
      * Create an executor with a dialect and settings configured.
      * <p>
@@ -421,7 +431,6 @@ public class DSL {
     public static DSLContext using(SQLDialect dialect, Settings settings) {
         return new DefaultDSLContext(dialect, settings);
     }
-
     /**
      * Create an executor from a JDBC connection URL.
      * <p>
@@ -450,7 +459,6 @@ public class DSL {
             throw Tools.translate("Error when initialising Connection", e);
         }
     }
-
     /**
      * Create an executor from a JDBC connection URL.
      * <p>
@@ -481,7 +489,6 @@ public class DSL {
             throw Tools.translate("Error when initialising Connection", e);
         }
     }
-
     /**
      * Create an executor from a JDBC connection URL.
      * <p>
@@ -511,7 +518,6 @@ public class DSL {
             throw Tools.translate("Error when initialising Connection", e);
         }
     }
-
     /**
      * Create an executor with a connection configured.
      * <p>
@@ -530,7 +536,6 @@ public class DSL {
     public static DSLContext using(Connection connection) {
         return new DefaultDSLContext(connection, JDBCUtils.dialect(connection), null);
     }
-
     /**
      * Create an executor with a connection and a dialect configured.
      * <p>
@@ -549,7 +554,6 @@ public class DSL {
     public static DSLContext using(Connection connection, SQLDialect dialect) {
         return new DefaultDSLContext(connection, dialect, null);
     }
-
     /**
      * Create an executor with a connection, a dialect and settings configured.
      * <p>
@@ -571,7 +575,6 @@ public class DSL {
     public static DSLContext using(Connection connection, Settings settings) {
         return new DefaultDSLContext(connection, JDBCUtils.dialect(connection), settings);
     }
-
     /**
      * Create an executor with a connection, a dialect and settings configured.
      * <p>
@@ -592,7 +595,6 @@ public class DSL {
     public static DSLContext using(Connection connection, SQLDialect dialect, Settings settings) {
         return new DefaultDSLContext(connection, dialect, settings);
     }
-
     /**
      * Create an executor with a data source and a dialect configured.
      * <p>
@@ -611,7 +613,6 @@ public class DSL {
     public static DSLContext using(DataSource datasource, SQLDialect dialect) {
         return new DefaultDSLContext(datasource, dialect);
     }
-
     /**
      * Create an executor with a data source, a dialect and settings configured.
      * <p>
@@ -632,7 +633,6 @@ public class DSL {
     public static DSLContext using(DataSource datasource, SQLDialect dialect, Settings settings) {
         return new DefaultDSLContext(datasource, dialect, settings);
     }
-
     /**
      * Create an executor with a custom connection provider and a dialect
      * configured.
@@ -644,7 +644,6 @@ public class DSL {
     public static DSLContext using(ConnectionProvider connectionProvider, SQLDialect dialect) {
         return new DefaultDSLContext(connectionProvider, dialect);
     }
-
     /**
      * Create an executor with a custom connection provider, a dialect and settings
      * configured.
@@ -658,7 +657,6 @@ public class DSL {
     public static DSLContext using(ConnectionProvider connectionProvider, SQLDialect dialect, Settings settings) {
         return new DefaultDSLContext(connectionProvider, dialect, settings);
     }
-
     /**
      * Create an executor from a custom configuration.
      *
@@ -667,11 +665,9 @@ public class DSL {
     public static DSLContext using(Configuration configuration) {
         return new DefaultDSLContext(configuration);
     }
-
     // -------------------------------------------------------------------------
     // XXX Static subselect factory methods
     // -------------------------------------------------------------------------
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -689,7 +685,6 @@ public class DSL {
     public static WithAsStep with(String alias) {
         return new WithImpl(null, false).with(alias);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -707,8 +702,6 @@ public class DSL {
     public static WithAsStep with(String alias, String... fieldAliases) {
         return new WithImpl(null, false).with(alias, fieldAliases);
     }
-
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -729,10 +722,7 @@ public class DSL {
     public static WithAsStep with(String alias, Function<? super Field<?>, ? extends String> fieldNameFunction) {
         return new WithImpl(null, false).with(alias, fieldNameFunction);
     }
-
-
     // [jooq-tools] START [with]
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -751,7 +741,6 @@ public class DSL {
     public static WithAsStep1 with(String alias, String fieldAlias1) {
         return new WithImpl(null, false).with(alias, fieldAlias1);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -770,7 +759,6 @@ public class DSL {
     public static WithAsStep2 with(String alias, String fieldAlias1, String fieldAlias2) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -789,7 +777,6 @@ public class DSL {
     public static WithAsStep3 with(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -808,7 +795,6 @@ public class DSL {
     public static WithAsStep4 with(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -827,7 +813,6 @@ public class DSL {
     public static WithAsStep5 with(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -846,7 +831,6 @@ public class DSL {
     public static WithAsStep6 with(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -865,7 +849,6 @@ public class DSL {
     public static WithAsStep7 with(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -884,7 +867,6 @@ public class DSL {
     public static WithAsStep8 with(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -903,7 +885,6 @@ public class DSL {
     public static WithAsStep9 with(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -922,7 +903,6 @@ public class DSL {
     public static WithAsStep10 with(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -941,7 +921,6 @@ public class DSL {
     public static WithAsStep11 with(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -960,7 +939,6 @@ public class DSL {
     public static WithAsStep12 with(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11, String fieldAlias12) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -979,7 +957,6 @@ public class DSL {
     public static WithAsStep13 with(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11, String fieldAlias12, String fieldAlias13) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -998,7 +975,6 @@ public class DSL {
     public static WithAsStep14 with(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11, String fieldAlias12, String fieldAlias13, String fieldAlias14) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1017,7 +993,6 @@ public class DSL {
     public static WithAsStep15 with(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11, String fieldAlias12, String fieldAlias13, String fieldAlias14, String fieldAlias15) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1036,7 +1011,6 @@ public class DSL {
     public static WithAsStep16 with(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11, String fieldAlias12, String fieldAlias13, String fieldAlias14, String fieldAlias15, String fieldAlias16) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1055,7 +1029,6 @@ public class DSL {
     public static WithAsStep17 with(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11, String fieldAlias12, String fieldAlias13, String fieldAlias14, String fieldAlias15, String fieldAlias16, String fieldAlias17) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1074,7 +1047,6 @@ public class DSL {
     public static WithAsStep18 with(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11, String fieldAlias12, String fieldAlias13, String fieldAlias14, String fieldAlias15, String fieldAlias16, String fieldAlias17, String fieldAlias18) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17, fieldAlias18);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1093,7 +1065,6 @@ public class DSL {
     public static WithAsStep19 with(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11, String fieldAlias12, String fieldAlias13, String fieldAlias14, String fieldAlias15, String fieldAlias16, String fieldAlias17, String fieldAlias18, String fieldAlias19) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17, fieldAlias18, fieldAlias19);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1112,7 +1083,6 @@ public class DSL {
     public static WithAsStep20 with(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11, String fieldAlias12, String fieldAlias13, String fieldAlias14, String fieldAlias15, String fieldAlias16, String fieldAlias17, String fieldAlias18, String fieldAlias19, String fieldAlias20) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17, fieldAlias18, fieldAlias19, fieldAlias20);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1131,7 +1101,6 @@ public class DSL {
     public static WithAsStep21 with(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11, String fieldAlias12, String fieldAlias13, String fieldAlias14, String fieldAlias15, String fieldAlias16, String fieldAlias17, String fieldAlias18, String fieldAlias19, String fieldAlias20, String fieldAlias21) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17, fieldAlias18, fieldAlias19, fieldAlias20, fieldAlias21);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1150,7 +1119,6 @@ public class DSL {
     public static WithAsStep22 with(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11, String fieldAlias12, String fieldAlias13, String fieldAlias14, String fieldAlias15, String fieldAlias16, String fieldAlias17, String fieldAlias18, String fieldAlias19, String fieldAlias20, String fieldAlias21, String fieldAlias22) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17, fieldAlias18, fieldAlias19, fieldAlias20, fieldAlias21, fieldAlias22);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1169,7 +1137,6 @@ public class DSL {
     public static WithAsStep1 with(Name alias, Name fieldAlias1) {
         return new WithImpl(null, false).with(alias, fieldAlias1);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1188,7 +1155,6 @@ public class DSL {
     public static WithAsStep2 with(Name alias, Name fieldAlias1, Name fieldAlias2) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1207,7 +1173,6 @@ public class DSL {
     public static WithAsStep3 with(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1226,7 +1191,6 @@ public class DSL {
     public static WithAsStep4 with(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1245,7 +1209,6 @@ public class DSL {
     public static WithAsStep5 with(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1264,7 +1227,6 @@ public class DSL {
     public static WithAsStep6 with(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1283,7 +1245,6 @@ public class DSL {
     public static WithAsStep7 with(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1302,7 +1263,6 @@ public class DSL {
     public static WithAsStep8 with(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1321,7 +1281,6 @@ public class DSL {
     public static WithAsStep9 with(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1340,7 +1299,6 @@ public class DSL {
     public static WithAsStep10 with(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1359,7 +1317,6 @@ public class DSL {
     public static WithAsStep11 with(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1378,7 +1335,6 @@ public class DSL {
     public static WithAsStep12 with(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11, Name fieldAlias12) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1397,7 +1353,6 @@ public class DSL {
     public static WithAsStep13 with(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11, Name fieldAlias12, Name fieldAlias13) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1416,7 +1371,6 @@ public class DSL {
     public static WithAsStep14 with(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11, Name fieldAlias12, Name fieldAlias13, Name fieldAlias14) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1435,7 +1389,6 @@ public class DSL {
     public static WithAsStep15 with(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11, Name fieldAlias12, Name fieldAlias13, Name fieldAlias14, Name fieldAlias15) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1454,7 +1407,6 @@ public class DSL {
     public static WithAsStep16 with(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11, Name fieldAlias12, Name fieldAlias13, Name fieldAlias14, Name fieldAlias15, Name fieldAlias16) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1473,7 +1425,6 @@ public class DSL {
     public static WithAsStep17 with(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11, Name fieldAlias12, Name fieldAlias13, Name fieldAlias14, Name fieldAlias15, Name fieldAlias16, Name fieldAlias17) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1492,7 +1443,6 @@ public class DSL {
     public static WithAsStep18 with(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11, Name fieldAlias12, Name fieldAlias13, Name fieldAlias14, Name fieldAlias15, Name fieldAlias16, Name fieldAlias17, Name fieldAlias18) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17, fieldAlias18);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1511,7 +1461,6 @@ public class DSL {
     public static WithAsStep19 with(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11, Name fieldAlias12, Name fieldAlias13, Name fieldAlias14, Name fieldAlias15, Name fieldAlias16, Name fieldAlias17, Name fieldAlias18, Name fieldAlias19) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17, fieldAlias18, fieldAlias19);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1530,7 +1479,6 @@ public class DSL {
     public static WithAsStep20 with(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11, Name fieldAlias12, Name fieldAlias13, Name fieldAlias14, Name fieldAlias15, Name fieldAlias16, Name fieldAlias17, Name fieldAlias18, Name fieldAlias19, Name fieldAlias20) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17, fieldAlias18, fieldAlias19, fieldAlias20);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1549,7 +1497,6 @@ public class DSL {
     public static WithAsStep21 with(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11, Name fieldAlias12, Name fieldAlias13, Name fieldAlias14, Name fieldAlias15, Name fieldAlias16, Name fieldAlias17, Name fieldAlias18, Name fieldAlias19, Name fieldAlias20, Name fieldAlias21) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17, fieldAlias18, fieldAlias19, fieldAlias20, fieldAlias21);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1568,9 +1515,7 @@ public class DSL {
     public static WithAsStep22 with(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11, Name fieldAlias12, Name fieldAlias13, Name fieldAlias14, Name fieldAlias15, Name fieldAlias16, Name fieldAlias17, Name fieldAlias18, Name fieldAlias19, Name fieldAlias20, Name fieldAlias21, Name fieldAlias22) {
         return new WithImpl(null, false).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17, fieldAlias18, fieldAlias19, fieldAlias20, fieldAlias21, fieldAlias22);
     }
-
 // [jooq-tools] END [with]
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1596,7 +1541,6 @@ public class DSL {
     public static WithStep with(CommonTableExpression<?>... tables) {
         return new WithImpl(null, false).with(tables);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1617,7 +1561,6 @@ public class DSL {
     public static WithAsStep withRecursive(String alias) {
         return new WithImpl(null, true).with(alias);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1638,8 +1581,6 @@ public class DSL {
     public static WithAsStep withRecursive(String alias, String... fieldAliases) {
         return new WithImpl(null, true).with(alias, fieldAliases);
     }
-
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1664,10 +1605,7 @@ public class DSL {
     public static WithAsStep withRecursive(String alias, Function<? super Field<?>, ? extends String> fieldNameFunction) {
         return new WithImpl(null, true).with(alias, fieldNameFunction);
     }
-
-
     // [jooq-tools] START [with-recursive]
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1689,7 +1627,6 @@ public class DSL {
     public static WithAsStep1 withRecursive(String alias, String fieldAlias1) {
         return new WithImpl(null, true).with(alias, fieldAlias1);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1711,7 +1648,6 @@ public class DSL {
     public static WithAsStep2 withRecursive(String alias, String fieldAlias1, String fieldAlias2) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1733,7 +1669,6 @@ public class DSL {
     public static WithAsStep3 withRecursive(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1755,7 +1690,6 @@ public class DSL {
     public static WithAsStep4 withRecursive(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1777,7 +1711,6 @@ public class DSL {
     public static WithAsStep5 withRecursive(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1799,7 +1732,6 @@ public class DSL {
     public static WithAsStep6 withRecursive(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1821,7 +1753,6 @@ public class DSL {
     public static WithAsStep7 withRecursive(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1843,7 +1774,6 @@ public class DSL {
     public static WithAsStep8 withRecursive(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1865,7 +1795,6 @@ public class DSL {
     public static WithAsStep9 withRecursive(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1887,7 +1816,6 @@ public class DSL {
     public static WithAsStep10 withRecursive(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1909,7 +1837,6 @@ public class DSL {
     public static WithAsStep11 withRecursive(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1931,7 +1858,6 @@ public class DSL {
     public static WithAsStep12 withRecursive(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11, String fieldAlias12) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1953,7 +1879,6 @@ public class DSL {
     public static WithAsStep13 withRecursive(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11, String fieldAlias12, String fieldAlias13) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1975,7 +1900,6 @@ public class DSL {
     public static WithAsStep14 withRecursive(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11, String fieldAlias12, String fieldAlias13, String fieldAlias14) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -1997,7 +1921,6 @@ public class DSL {
     public static WithAsStep15 withRecursive(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11, String fieldAlias12, String fieldAlias13, String fieldAlias14, String fieldAlias15) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2019,7 +1942,6 @@ public class DSL {
     public static WithAsStep16 withRecursive(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11, String fieldAlias12, String fieldAlias13, String fieldAlias14, String fieldAlias15, String fieldAlias16) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2041,7 +1963,6 @@ public class DSL {
     public static WithAsStep17 withRecursive(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11, String fieldAlias12, String fieldAlias13, String fieldAlias14, String fieldAlias15, String fieldAlias16, String fieldAlias17) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2063,7 +1984,6 @@ public class DSL {
     public static WithAsStep18 withRecursive(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11, String fieldAlias12, String fieldAlias13, String fieldAlias14, String fieldAlias15, String fieldAlias16, String fieldAlias17, String fieldAlias18) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17, fieldAlias18);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2085,7 +2005,6 @@ public class DSL {
     public static WithAsStep19 withRecursive(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11, String fieldAlias12, String fieldAlias13, String fieldAlias14, String fieldAlias15, String fieldAlias16, String fieldAlias17, String fieldAlias18, String fieldAlias19) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17, fieldAlias18, fieldAlias19);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2107,7 +2026,6 @@ public class DSL {
     public static WithAsStep20 withRecursive(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11, String fieldAlias12, String fieldAlias13, String fieldAlias14, String fieldAlias15, String fieldAlias16, String fieldAlias17, String fieldAlias18, String fieldAlias19, String fieldAlias20) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17, fieldAlias18, fieldAlias19, fieldAlias20);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2129,7 +2047,6 @@ public class DSL {
     public static WithAsStep21 withRecursive(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11, String fieldAlias12, String fieldAlias13, String fieldAlias14, String fieldAlias15, String fieldAlias16, String fieldAlias17, String fieldAlias18, String fieldAlias19, String fieldAlias20, String fieldAlias21) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17, fieldAlias18, fieldAlias19, fieldAlias20, fieldAlias21);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2151,7 +2068,6 @@ public class DSL {
     public static WithAsStep22 withRecursive(String alias, String fieldAlias1, String fieldAlias2, String fieldAlias3, String fieldAlias4, String fieldAlias5, String fieldAlias6, String fieldAlias7, String fieldAlias8, String fieldAlias9, String fieldAlias10, String fieldAlias11, String fieldAlias12, String fieldAlias13, String fieldAlias14, String fieldAlias15, String fieldAlias16, String fieldAlias17, String fieldAlias18, String fieldAlias19, String fieldAlias20, String fieldAlias21, String fieldAlias22) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17, fieldAlias18, fieldAlias19, fieldAlias20, fieldAlias21, fieldAlias22);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2173,7 +2089,6 @@ public class DSL {
     public static WithAsStep1 withRecursive(Name alias, Name fieldAlias1) {
         return new WithImpl(null, true).with(alias, fieldAlias1);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2195,7 +2110,6 @@ public class DSL {
     public static WithAsStep2 withRecursive(Name alias, Name fieldAlias1, Name fieldAlias2) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2217,7 +2131,6 @@ public class DSL {
     public static WithAsStep3 withRecursive(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2239,7 +2152,6 @@ public class DSL {
     public static WithAsStep4 withRecursive(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2261,7 +2173,6 @@ public class DSL {
     public static WithAsStep5 withRecursive(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2283,7 +2194,6 @@ public class DSL {
     public static WithAsStep6 withRecursive(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2305,7 +2215,6 @@ public class DSL {
     public static WithAsStep7 withRecursive(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2327,7 +2236,6 @@ public class DSL {
     public static WithAsStep8 withRecursive(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2349,7 +2257,6 @@ public class DSL {
     public static WithAsStep9 withRecursive(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2371,7 +2278,6 @@ public class DSL {
     public static WithAsStep10 withRecursive(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2393,7 +2299,6 @@ public class DSL {
     public static WithAsStep11 withRecursive(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2415,7 +2320,6 @@ public class DSL {
     public static WithAsStep12 withRecursive(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11, Name fieldAlias12) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2437,7 +2341,6 @@ public class DSL {
     public static WithAsStep13 withRecursive(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11, Name fieldAlias12, Name fieldAlias13) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2459,7 +2362,6 @@ public class DSL {
     public static WithAsStep14 withRecursive(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11, Name fieldAlias12, Name fieldAlias13, Name fieldAlias14) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2481,7 +2383,6 @@ public class DSL {
     public static WithAsStep15 withRecursive(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11, Name fieldAlias12, Name fieldAlias13, Name fieldAlias14, Name fieldAlias15) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2503,7 +2404,6 @@ public class DSL {
     public static WithAsStep16 withRecursive(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11, Name fieldAlias12, Name fieldAlias13, Name fieldAlias14, Name fieldAlias15, Name fieldAlias16) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2525,7 +2425,6 @@ public class DSL {
     public static WithAsStep17 withRecursive(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11, Name fieldAlias12, Name fieldAlias13, Name fieldAlias14, Name fieldAlias15, Name fieldAlias16, Name fieldAlias17) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2547,7 +2446,6 @@ public class DSL {
     public static WithAsStep18 withRecursive(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11, Name fieldAlias12, Name fieldAlias13, Name fieldAlias14, Name fieldAlias15, Name fieldAlias16, Name fieldAlias17, Name fieldAlias18) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17, fieldAlias18);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2569,7 +2467,6 @@ public class DSL {
     public static WithAsStep19 withRecursive(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11, Name fieldAlias12, Name fieldAlias13, Name fieldAlias14, Name fieldAlias15, Name fieldAlias16, Name fieldAlias17, Name fieldAlias18, Name fieldAlias19) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17, fieldAlias18, fieldAlias19);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2591,7 +2488,6 @@ public class DSL {
     public static WithAsStep20 withRecursive(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11, Name fieldAlias12, Name fieldAlias13, Name fieldAlias14, Name fieldAlias15, Name fieldAlias16, Name fieldAlias17, Name fieldAlias18, Name fieldAlias19, Name fieldAlias20) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17, fieldAlias18, fieldAlias19, fieldAlias20);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2613,7 +2509,6 @@ public class DSL {
     public static WithAsStep21 withRecursive(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11, Name fieldAlias12, Name fieldAlias13, Name fieldAlias14, Name fieldAlias15, Name fieldAlias16, Name fieldAlias17, Name fieldAlias18, Name fieldAlias19, Name fieldAlias20, Name fieldAlias21) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17, fieldAlias18, fieldAlias19, fieldAlias20, fieldAlias21);
     }
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2635,9 +2530,7 @@ public class DSL {
     public static WithAsStep22 withRecursive(Name alias, Name fieldAlias1, Name fieldAlias2, Name fieldAlias3, Name fieldAlias4, Name fieldAlias5, Name fieldAlias6, Name fieldAlias7, Name fieldAlias8, Name fieldAlias9, Name fieldAlias10, Name fieldAlias11, Name fieldAlias12, Name fieldAlias13, Name fieldAlias14, Name fieldAlias15, Name fieldAlias16, Name fieldAlias17, Name fieldAlias18, Name fieldAlias19, Name fieldAlias20, Name fieldAlias21, Name fieldAlias22) {
         return new WithImpl(null, true).with(alias, fieldAlias1, fieldAlias2, fieldAlias3, fieldAlias4, fieldAlias5, fieldAlias6, fieldAlias7, fieldAlias8, fieldAlias9, fieldAlias10, fieldAlias11, fieldAlias12, fieldAlias13, fieldAlias14, fieldAlias15, fieldAlias16, fieldAlias17, fieldAlias18, fieldAlias19, fieldAlias20, fieldAlias21, fieldAlias22);
     }
-
 // [jooq-tools] END [with-recursive]
-
     /**
      * Create a <code>WITH</code> clause to supply subsequent
      * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
@@ -2666,7 +2559,6 @@ public class DSL {
     public static WithStep withRecursive(CommonTableExpression<?>... tables) {
         return new WithImpl(null, true).with(tables);
     }
-
     /**
      * Create a new DSL select statement.
      * <p>
@@ -2687,7 +2579,6 @@ public class DSL {
     public static <R extends Record> SelectWhereStep<R> selectFrom(Table<R> table) {
         return using(new DefaultConfiguration()).selectFrom(table);
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -2727,7 +2618,6 @@ public class DSL {
     public static SelectSelectStep<Record> select(Collection<? extends SelectField<?>> fields) {
         return using(new DefaultConfiguration()).select(fields);
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -2767,9 +2657,7 @@ public class DSL {
     public static SelectSelectStep<Record> select(SelectField<?>... fields) {
         return using(new DefaultConfiguration()).select(fields);
     }
-
 // [jooq-tools] START [select]
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -2807,7 +2695,6 @@ public class DSL {
     public static <T1> SelectSelectStep<Record1<T1>> select(SelectField<T1> field1) {
         return (SelectSelectStep) select(new SelectField[] { field1 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -2845,7 +2732,6 @@ public class DSL {
     public static <T1, T2> SelectSelectStep<Record2<T1, T2>> select(SelectField<T1> field1, SelectField<T2> field2) {
         return (SelectSelectStep) select(new SelectField[] { field1, field2 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -2883,7 +2769,6 @@ public class DSL {
     public static <T1, T2, T3> SelectSelectStep<Record3<T1, T2, T3>> select(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3) {
         return (SelectSelectStep) select(new SelectField[] { field1, field2, field3 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -2921,7 +2806,6 @@ public class DSL {
     public static <T1, T2, T3, T4> SelectSelectStep<Record4<T1, T2, T3, T4>> select(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4) {
         return (SelectSelectStep) select(new SelectField[] { field1, field2, field3, field4 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -2959,7 +2843,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5> SelectSelectStep<Record5<T1, T2, T3, T4, T5>> select(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5) {
         return (SelectSelectStep) select(new SelectField[] { field1, field2, field3, field4, field5 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -2997,7 +2880,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6> SelectSelectStep<Record6<T1, T2, T3, T4, T5, T6>> select(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6) {
         return (SelectSelectStep) select(new SelectField[] { field1, field2, field3, field4, field5, field6 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3035,7 +2917,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7> SelectSelectStep<Record7<T1, T2, T3, T4, T5, T6, T7>> select(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7) {
         return (SelectSelectStep) select(new SelectField[] { field1, field2, field3, field4, field5, field6, field7 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3073,7 +2954,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8> SelectSelectStep<Record8<T1, T2, T3, T4, T5, T6, T7, T8>> select(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8) {
         return (SelectSelectStep) select(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3111,7 +2991,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9> SelectSelectStep<Record9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> select(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9) {
         return (SelectSelectStep) select(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3149,7 +3028,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> SelectSelectStep<Record10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>> select(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10) {
         return (SelectSelectStep) select(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3187,7 +3065,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> SelectSelectStep<Record11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>> select(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11) {
         return (SelectSelectStep) select(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3225,7 +3102,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> SelectSelectStep<Record12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>> select(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12) {
         return (SelectSelectStep) select(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3263,7 +3139,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> SelectSelectStep<Record13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>> select(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13) {
         return (SelectSelectStep) select(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3301,7 +3176,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> SelectSelectStep<Record14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>> select(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14) {
         return (SelectSelectStep) select(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3339,7 +3213,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> SelectSelectStep<Record15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>> select(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15) {
         return (SelectSelectStep) select(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3377,7 +3250,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> SelectSelectStep<Record16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>> select(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15, SelectField<T16> field16) {
         return (SelectSelectStep) select(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3415,7 +3287,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> SelectSelectStep<Record17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>> select(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15, SelectField<T16> field16, SelectField<T17> field17) {
         return (SelectSelectStep) select(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3453,7 +3324,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18> SelectSelectStep<Record18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>> select(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15, SelectField<T16> field16, SelectField<T17> field17, SelectField<T18> field18) {
         return (SelectSelectStep) select(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3491,7 +3361,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19> SelectSelectStep<Record19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>> select(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15, SelectField<T16> field16, SelectField<T17> field17, SelectField<T18> field18, SelectField<T19> field19) {
         return (SelectSelectStep) select(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3529,7 +3398,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20> SelectSelectStep<Record20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>> select(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15, SelectField<T16> field16, SelectField<T17> field17, SelectField<T18> field18, SelectField<T19> field19, SelectField<T20> field20) {
         return (SelectSelectStep) select(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3567,7 +3435,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21> SelectSelectStep<Record21<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21>> select(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15, SelectField<T16> field16, SelectField<T17> field17, SelectField<T18> field18, SelectField<T19> field19, SelectField<T20> field20, SelectField<T21> field21) {
         return (SelectSelectStep) select(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20, field21 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3605,9 +3472,7 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22> SelectSelectStep<Record22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22>> select(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15, SelectField<T16> field16, SelectField<T17> field17, SelectField<T18> field18, SelectField<T19> field19, SelectField<T20> field20, SelectField<T21> field21, SelectField<T22> field22) {
         return (SelectSelectStep) select(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20, field21, field22 });
     }
-
 // [jooq-tools] END [select]
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3647,7 +3512,6 @@ public class DSL {
     public static SelectSelectStep<Record> selectDistinct(Collection<? extends SelectField<?>> fields) {
         return using(new DefaultConfiguration()).selectDistinct(fields);
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3687,9 +3551,7 @@ public class DSL {
     public static SelectSelectStep<Record> selectDistinct(SelectField<?>... fields) {
         return using(new DefaultConfiguration()).selectDistinct(fields);
     }
-
 // [jooq-tools] START [selectDistinct]
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3727,7 +3589,6 @@ public class DSL {
     public static <T1> SelectSelectStep<Record1<T1>> selectDistinct(SelectField<T1> field1) {
         return (SelectSelectStep) selectDistinct(new SelectField[] { field1 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3765,7 +3626,6 @@ public class DSL {
     public static <T1, T2> SelectSelectStep<Record2<T1, T2>> selectDistinct(SelectField<T1> field1, SelectField<T2> field2) {
         return (SelectSelectStep) selectDistinct(new SelectField[] { field1, field2 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3803,7 +3663,6 @@ public class DSL {
     public static <T1, T2, T3> SelectSelectStep<Record3<T1, T2, T3>> selectDistinct(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3) {
         return (SelectSelectStep) selectDistinct(new SelectField[] { field1, field2, field3 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3841,7 +3700,6 @@ public class DSL {
     public static <T1, T2, T3, T4> SelectSelectStep<Record4<T1, T2, T3, T4>> selectDistinct(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4) {
         return (SelectSelectStep) selectDistinct(new SelectField[] { field1, field2, field3, field4 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3879,7 +3737,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5> SelectSelectStep<Record5<T1, T2, T3, T4, T5>> selectDistinct(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5) {
         return (SelectSelectStep) selectDistinct(new SelectField[] { field1, field2, field3, field4, field5 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3917,7 +3774,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6> SelectSelectStep<Record6<T1, T2, T3, T4, T5, T6>> selectDistinct(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6) {
         return (SelectSelectStep) selectDistinct(new SelectField[] { field1, field2, field3, field4, field5, field6 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3955,7 +3811,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7> SelectSelectStep<Record7<T1, T2, T3, T4, T5, T6, T7>> selectDistinct(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7) {
         return (SelectSelectStep) selectDistinct(new SelectField[] { field1, field2, field3, field4, field5, field6, field7 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -3993,7 +3848,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8> SelectSelectStep<Record8<T1, T2, T3, T4, T5, T6, T7, T8>> selectDistinct(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8) {
         return (SelectSelectStep) selectDistinct(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -4031,7 +3885,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9> SelectSelectStep<Record9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> selectDistinct(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9) {
         return (SelectSelectStep) selectDistinct(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -4069,7 +3922,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> SelectSelectStep<Record10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>> selectDistinct(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10) {
         return (SelectSelectStep) selectDistinct(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -4107,7 +3959,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> SelectSelectStep<Record11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>> selectDistinct(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11) {
         return (SelectSelectStep) selectDistinct(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -4145,7 +3996,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> SelectSelectStep<Record12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>> selectDistinct(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12) {
         return (SelectSelectStep) selectDistinct(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -4183,7 +4033,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> SelectSelectStep<Record13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>> selectDistinct(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13) {
         return (SelectSelectStep) selectDistinct(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -4221,7 +4070,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> SelectSelectStep<Record14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>> selectDistinct(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14) {
         return (SelectSelectStep) selectDistinct(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -4259,7 +4107,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> SelectSelectStep<Record15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>> selectDistinct(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15) {
         return (SelectSelectStep) selectDistinct(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -4297,7 +4144,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> SelectSelectStep<Record16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>> selectDistinct(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15, SelectField<T16> field16) {
         return (SelectSelectStep) selectDistinct(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -4335,7 +4181,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> SelectSelectStep<Record17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>> selectDistinct(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15, SelectField<T16> field16, SelectField<T17> field17) {
         return (SelectSelectStep) selectDistinct(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -4373,7 +4218,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18> SelectSelectStep<Record18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>> selectDistinct(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15, SelectField<T16> field16, SelectField<T17> field17, SelectField<T18> field18) {
         return (SelectSelectStep) selectDistinct(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -4411,7 +4255,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19> SelectSelectStep<Record19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>> selectDistinct(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15, SelectField<T16> field16, SelectField<T17> field17, SelectField<T18> field18, SelectField<T19> field19) {
         return (SelectSelectStep) selectDistinct(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -4449,7 +4292,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20> SelectSelectStep<Record20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>> selectDistinct(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15, SelectField<T16> field16, SelectField<T17> field17, SelectField<T18> field18, SelectField<T19> field19, SelectField<T20> field20) {
         return (SelectSelectStep) selectDistinct(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -4487,7 +4329,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21> SelectSelectStep<Record21<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21>> selectDistinct(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15, SelectField<T16> field16, SelectField<T17> field17, SelectField<T18> field18, SelectField<T19> field19, SelectField<T20> field20, SelectField<T21> field21) {
         return (SelectSelectStep) selectDistinct(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20, field21 });
     }
-
     /**
      * Create a new DSL subselect statement.
      * <p>
@@ -4525,9 +4366,7 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22> SelectSelectStep<Record22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22>> selectDistinct(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15, SelectField<T16> field16, SelectField<T17> field17, SelectField<T18> field18, SelectField<T19> field19, SelectField<T20> field20, SelectField<T21> field21, SelectField<T22> field22) {
         return (SelectSelectStep) selectDistinct(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20, field21, field22 });
     }
-
 // [jooq-tools] END [selectDistinct]
-
     /**
      * Create a new DSL subselect statement for a constant <code>0</code>
      * literal.
@@ -4560,7 +4399,6 @@ public class DSL {
     public static SelectSelectStep<Record1<Integer>> selectZero() {
         return using(new DefaultConfiguration()).selectZero();
     }
-
     /**
      * Create a new DSL subselect statement for a constant <code>1</code>
      * literal.
@@ -4593,7 +4431,6 @@ public class DSL {
     public static SelectSelectStep<Record1<Integer>> selectOne() {
         return using(new DefaultConfiguration()).selectOne();
     }
-
     /**
      * Create a new DSL subselect statement for <code>COUNT(*)</code>.
      * <p>
@@ -4625,7 +4462,6 @@ public class DSL {
     public static SelectSelectStep<Record1<Integer>> selectCount() {
         return using(new DefaultConfiguration()).selectCount();
     }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -4658,9 +4494,11 @@ public class DSL {
     public static <R extends Record> InsertSetStep<R> insertInto(Table<R> into) {
         return using(new DefaultConfiguration()).insertInto(into);
     }
-
+    @Support
+    public static <R extends Record> InsertValuesStepN<R> insertInto(Table<R> into, Field<?>... fields) {
+        return using(new DefaultConfiguration()).insertInto(into, fields);
+    }
     // [jooq-tools] START [insert]
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -4688,7 +4526,6 @@ public class DSL {
     public static <R extends Record, T1> InsertValuesStep1<R, T1> insertInto(Table<R> into, Field<T1> field1) {
         return (InsertValuesStep1) insertInto(into, new Field[] { field1 });
     }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -4716,7 +4553,6 @@ public class DSL {
     public static <R extends Record, T1, T2> InsertValuesStep2<R, T1, T2> insertInto(Table<R> into, Field<T1> field1, Field<T2> field2) {
         return (InsertValuesStep2) insertInto(into, new Field[] { field1, field2 });
     }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -4744,7 +4580,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3> InsertValuesStep3<R, T1, T2, T3> insertInto(Table<R> into, Field<T1> field1, Field<T2> field2, Field<T3> field3) {
         return (InsertValuesStep3) insertInto(into, new Field[] { field1, field2, field3 });
     }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -4772,7 +4607,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4> InsertValuesStep4<R, T1, T2, T3, T4> insertInto(Table<R> into, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4) {
         return (InsertValuesStep4) insertInto(into, new Field[] { field1, field2, field3, field4 });
     }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -4800,7 +4634,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5> InsertValuesStep5<R, T1, T2, T3, T4, T5> insertInto(Table<R> into, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5) {
         return (InsertValuesStep5) insertInto(into, new Field[] { field1, field2, field3, field4, field5 });
     }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -4828,7 +4661,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6> InsertValuesStep6<R, T1, T2, T3, T4, T5, T6> insertInto(Table<R> into, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6) {
         return (InsertValuesStep6) insertInto(into, new Field[] { field1, field2, field3, field4, field5, field6 });
     }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -4856,7 +4688,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7> InsertValuesStep7<R, T1, T2, T3, T4, T5, T6, T7> insertInto(Table<R> into, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7) {
         return (InsertValuesStep7) insertInto(into, new Field[] { field1, field2, field3, field4, field5, field6, field7 });
     }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -4884,7 +4715,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8> InsertValuesStep8<R, T1, T2, T3, T4, T5, T6, T7, T8> insertInto(Table<R> into, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8) {
         return (InsertValuesStep8) insertInto(into, new Field[] { field1, field2, field3, field4, field5, field6, field7, field8 });
     }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -4912,7 +4742,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9> InsertValuesStep9<R, T1, T2, T3, T4, T5, T6, T7, T8, T9> insertInto(Table<R> into, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9) {
         return (InsertValuesStep9) insertInto(into, new Field[] { field1, field2, field3, field4, field5, field6, field7, field8, field9 });
     }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -4940,7 +4769,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> InsertValuesStep10<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> insertInto(Table<R> into, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10) {
         return (InsertValuesStep10) insertInto(into, new Field[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10 });
     }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -4968,7 +4796,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> InsertValuesStep11<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> insertInto(Table<R> into, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11) {
         return (InsertValuesStep11) insertInto(into, new Field[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11 });
     }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -4996,7 +4823,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> InsertValuesStep12<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> insertInto(Table<R> into, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12) {
         return (InsertValuesStep12) insertInto(into, new Field[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12 });
     }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -5024,7 +4850,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> InsertValuesStep13<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> insertInto(Table<R> into, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13) {
         return (InsertValuesStep13) insertInto(into, new Field[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13 });
     }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -5052,7 +4877,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> InsertValuesStep14<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> insertInto(Table<R> into, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14) {
         return (InsertValuesStep14) insertInto(into, new Field[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14 });
     }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -5080,7 +4904,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> InsertValuesStep15<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> insertInto(Table<R> into, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15) {
         return (InsertValuesStep15) insertInto(into, new Field[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15 });
     }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -5108,7 +4931,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> InsertValuesStep16<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> insertInto(Table<R> into, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16) {
         return (InsertValuesStep16) insertInto(into, new Field[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16 });
     }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -5136,7 +4958,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> InsertValuesStep17<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> insertInto(Table<R> into, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17) {
         return (InsertValuesStep17) insertInto(into, new Field[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17 });
     }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -5164,7 +4985,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18> InsertValuesStep18<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18> insertInto(Table<R> into, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17, Field<T18> field18) {
         return (InsertValuesStep18) insertInto(into, new Field[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18 });
     }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -5192,7 +5012,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19> InsertValuesStep19<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19> insertInto(Table<R> into, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17, Field<T18> field18, Field<T19> field19) {
         return (InsertValuesStep19) insertInto(into, new Field[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19 });
     }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -5220,7 +5039,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20> InsertValuesStep20<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20> insertInto(Table<R> into, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17, Field<T18> field18, Field<T19> field19, Field<T20> field20) {
         return (InsertValuesStep20) insertInto(into, new Field[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20 });
     }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -5248,7 +5066,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21> InsertValuesStep21<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21> insertInto(Table<R> into, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17, Field<T18> field18, Field<T19> field19, Field<T20> field20, Field<T21> field21) {
         return (InsertValuesStep21) insertInto(into, new Field[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20, field21 });
     }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -5276,9 +5093,7 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22> InsertValuesStep22<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22> insertInto(Table<R> into, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17, Field<T18> field18, Field<T19> field19, Field<T20> field20, Field<T21> field21, Field<T22> field22) {
         return (InsertValuesStep22) insertInto(into, new Field[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20, field21, field22 });
     }
-
 // [jooq-tools] END [insert]
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -5301,11 +5116,6 @@ public class DSL {
      *
      * @see DSLContext#insertInto(Table, Field...)
      */
-    @Support
-    public static <R extends Record> InsertValuesStepN<R> insertInto(Table<R> into, Field<?>... fields) {
-        return using(new DefaultConfiguration()).insertInto(into, fields);
-    }
-
     /**
      * Create a new DSL insert statement.
      * <p>
@@ -5332,7 +5142,6 @@ public class DSL {
     public static <R extends Record> InsertValuesStepN<R> insertInto(Table<R> into, Collection<? extends Field<?>> fields) {
         return using(new DefaultConfiguration()).insertInto(into, fields);
     }
-
     /**
      * Create a new DSL update statement.
      * <p>
@@ -5364,7 +5173,6 @@ public class DSL {
     public static <R extends Record> UpdateSetFirstStep<R> update(Table<R> table) {
         return using(new DefaultConfiguration()).update(table);
     }
-
     /**
      * Create a new DSL SQL standard MERGE statement.
      * <p>
@@ -5450,9 +5258,11 @@ public class DSL {
     public static <R extends Record> MergeUsingStep<R> mergeInto(Table<R> table) {
         return using(new DefaultConfiguration()).mergeInto(table);
     }
-
+    @Support({ CUBRID, H2, HSQLDB })
+    public static <R extends Record> MergeKeyStepN<R> mergeInto(Table<R> table, Field<?>... fields) {
+        return using(new DefaultConfiguration()).mergeInto(table, fields);
+    }
     // [jooq-tools] START [merge]
-
     /**
      * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
      * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
@@ -5464,7 +5274,6 @@ public class DSL {
     public static <R extends Record, T1> MergeKeyStep1<R, T1> mergeInto(Table<R> table, Field<T1> field1) {
         return using(new DefaultConfiguration()).mergeInto(table, field1);
     }
-
     /**
      * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
      * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
@@ -5476,7 +5285,6 @@ public class DSL {
     public static <R extends Record, T1, T2> MergeKeyStep2<R, T1, T2> mergeInto(Table<R> table, Field<T1> field1, Field<T2> field2) {
         return using(new DefaultConfiguration()).mergeInto(table, field1, field2);
     }
-
     /**
      * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
      * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
@@ -5488,7 +5296,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3> MergeKeyStep3<R, T1, T2, T3> mergeInto(Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3) {
         return using(new DefaultConfiguration()).mergeInto(table, field1, field2, field3);
     }
-
     /**
      * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
      * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
@@ -5500,7 +5307,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4> MergeKeyStep4<R, T1, T2, T3, T4> mergeInto(Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4) {
         return using(new DefaultConfiguration()).mergeInto(table, field1, field2, field3, field4);
     }
-
     /**
      * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
      * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
@@ -5512,7 +5318,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5> MergeKeyStep5<R, T1, T2, T3, T4, T5> mergeInto(Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5) {
         return using(new DefaultConfiguration()).mergeInto(table, field1, field2, field3, field4, field5);
     }
-
     /**
      * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
      * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
@@ -5524,7 +5329,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6> MergeKeyStep6<R, T1, T2, T3, T4, T5, T6> mergeInto(Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6) {
         return using(new DefaultConfiguration()).mergeInto(table, field1, field2, field3, field4, field5, field6);
     }
-
     /**
      * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
      * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
@@ -5536,7 +5340,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7> MergeKeyStep7<R, T1, T2, T3, T4, T5, T6, T7> mergeInto(Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7) {
         return using(new DefaultConfiguration()).mergeInto(table, field1, field2, field3, field4, field5, field6, field7);
     }
-
     /**
      * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
      * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
@@ -5548,7 +5351,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8> MergeKeyStep8<R, T1, T2, T3, T4, T5, T6, T7, T8> mergeInto(Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8) {
         return using(new DefaultConfiguration()).mergeInto(table, field1, field2, field3, field4, field5, field6, field7, field8);
     }
-
     /**
      * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
      * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
@@ -5560,7 +5362,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9> MergeKeyStep9<R, T1, T2, T3, T4, T5, T6, T7, T8, T9> mergeInto(Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9) {
         return using(new DefaultConfiguration()).mergeInto(table, field1, field2, field3, field4, field5, field6, field7, field8, field9);
     }
-
     /**
      * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
      * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
@@ -5572,7 +5373,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> MergeKeyStep10<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> mergeInto(Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10) {
         return using(new DefaultConfiguration()).mergeInto(table, field1, field2, field3, field4, field5, field6, field7, field8, field9, field10);
     }
-
     /**
      * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
      * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
@@ -5584,7 +5384,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> MergeKeyStep11<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> mergeInto(Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11) {
         return using(new DefaultConfiguration()).mergeInto(table, field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11);
     }
-
     /**
      * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
      * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
@@ -5596,7 +5395,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> MergeKeyStep12<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> mergeInto(Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12) {
         return using(new DefaultConfiguration()).mergeInto(table, field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12);
     }
-
     /**
      * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
      * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
@@ -5608,7 +5406,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> MergeKeyStep13<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> mergeInto(Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13) {
         return using(new DefaultConfiguration()).mergeInto(table, field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13);
     }
-
     /**
      * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
      * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
@@ -5620,7 +5417,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> MergeKeyStep14<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> mergeInto(Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14) {
         return using(new DefaultConfiguration()).mergeInto(table, field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14);
     }
-
     /**
      * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
      * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
@@ -5632,7 +5428,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> MergeKeyStep15<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> mergeInto(Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15) {
         return using(new DefaultConfiguration()).mergeInto(table, field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15);
     }
-
     /**
      * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
      * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
@@ -5644,7 +5439,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> MergeKeyStep16<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> mergeInto(Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16) {
         return using(new DefaultConfiguration()).mergeInto(table, field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16);
     }
-
     /**
      * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
      * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
@@ -5656,7 +5450,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> MergeKeyStep17<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> mergeInto(Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17) {
         return using(new DefaultConfiguration()).mergeInto(table, field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17);
     }
-
     /**
      * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
      * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
@@ -5668,7 +5461,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18> MergeKeyStep18<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18> mergeInto(Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17, Field<T18> field18) {
         return using(new DefaultConfiguration()).mergeInto(table, field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18);
     }
-
     /**
      * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
      * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
@@ -5680,7 +5472,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19> MergeKeyStep19<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19> mergeInto(Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17, Field<T18> field18, Field<T19> field19) {
         return using(new DefaultConfiguration()).mergeInto(table, field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19);
     }
-
     /**
      * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
      * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
@@ -5692,7 +5483,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20> MergeKeyStep20<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20> mergeInto(Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17, Field<T18> field18, Field<T19> field19, Field<T20> field20) {
         return using(new DefaultConfiguration()).mergeInto(table, field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20);
     }
-
     /**
      * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
      * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
@@ -5704,7 +5494,6 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21> MergeKeyStep21<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21> mergeInto(Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17, Field<T18> field18, Field<T19> field19, Field<T20> field20, Field<T21> field21) {
         return using(new DefaultConfiguration()).mergeInto(table, field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20, field21);
     }
-
     /**
      * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
      * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
@@ -5716,9 +5505,7 @@ public class DSL {
     public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22> MergeKeyStep22<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22> mergeInto(Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17, Field<T18> field18, Field<T19> field19, Field<T20> field20, Field<T21> field21, Field<T22> field22) {
         return using(new DefaultConfiguration()).mergeInto(table, field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20, field21, field22);
     }
-
 // [jooq-tools] END [merge]
-
     /**
      * Create a new DSL merge statement (H2-specific syntax).
      * <p>
@@ -5745,11 +5532,6 @@ public class DSL {
      *
      * @see DSLContext#mergeInto(Table, Field...)
      */
-    @Support({ CUBRID, H2, HSQLDB })
-    public static <R extends Record> MergeKeyStepN<R> mergeInto(Table<R> table, Field<?>... fields) {
-        return using(new DefaultConfiguration()).mergeInto(table, fields);
-    }
-
     /**
      * Create a new DSL merge statement (H2-specific syntax).
      * <p>
@@ -5763,7 +5545,6 @@ public class DSL {
     public static <R extends Record> MergeKeyStepN<R> mergeInto(Table<R> table, Collection<? extends Field<?>> fields) {
         return using(new DefaultConfiguration()).mergeInto(table, fields);
     }
-
     /**
      * Create a new DSL delete statement.
      * <p>
@@ -5788,7 +5569,6 @@ public class DSL {
     public static <R extends Record> DeleteWhereStep<R> deleteFrom(Table<R> table) {
         return using(new DefaultConfiguration()).deleteFrom(table);
     }
-
     /**
      * Create a new DSL delete statement.
      * <p>
@@ -5798,11 +5578,9 @@ public class DSL {
     public static <R extends Record> DeleteWhereStep<R> delete(Table<R> table) {
         return using(new DefaultConfiguration()).deleteFrom(table);
     }
-
     // -------------------------------------------------------------------------
     // XXX DDL Clauses
     // -------------------------------------------------------------------------
-
     /**
      * Create an unnamed (system named) <code>CONSTRAINT</code> specification.
      */
@@ -5810,7 +5588,6 @@ public class DSL {
     public static ConstraintTypeStep constraint() {
         return new ConstraintImpl();
     }
-
     /**
      * Create a <code>CONSTRAINT</code> specification.
      */
@@ -5818,7 +5595,6 @@ public class DSL {
     public static ConstraintTypeStep constraint(Name name) {
         return new ConstraintImpl(name);
     }
-
     /**
      * Create a <code>CONSTRAINT</code> specification.
      */
@@ -5826,7 +5602,6 @@ public class DSL {
     public static ConstraintTypeStep constraint(String name) {
         return constraint(name(name));
     }
-
     /**
      * Create an unnamed (system named) <code>PRIMARY KEY</code> constraint.
      */
@@ -5834,7 +5609,6 @@ public class DSL {
     public static ConstraintFinalStep primaryKey(String... fields) {
         return constraint().primaryKey(fields);
     }
-
     /**
      * Create an unnamed (system named) <code>PRIMARY KEY</code> constraint.
      */
@@ -5842,7 +5616,6 @@ public class DSL {
     public static ConstraintFinalStep primaryKey(Name... fields) {
         return constraint().primaryKey(fields);
     }
-
     /**
      * Create an unnamed (system named) <code>PRIMARY KEY</code> constraint.
      */
@@ -5850,7 +5623,6 @@ public class DSL {
     public static ConstraintFinalStep primaryKey(Field<?>... fields) {
         return constraint().primaryKey(fields);
     }
-
     /**
      * Add a <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -5858,7 +5630,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStepN foreignKey(String... fields) {
         return constraint().foreignKey(fields);
     }
-
     /**
      * Add a <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -5866,7 +5637,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStepN foreignKey(Name... fields) {
         return constraint().foreignKey(fields);
     }
-
     /**
      * Add a <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -5874,9 +5644,7 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStepN foreignKey(Field<?>... fields) {
         return constraint().foreignKey(fields);
     }
-
     // [jooq-tools] START [foreignKey]
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -5885,7 +5653,6 @@ public class DSL {
     public static <T1> ConstraintForeignKeyReferencesStep1<T1> foreignKey(Field<T1> field1) {
         return constraint().foreignKey(field1);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -5894,7 +5661,6 @@ public class DSL {
     public static <T1, T2> ConstraintForeignKeyReferencesStep2<T1, T2> foreignKey(Field<T1> field1, Field<T2> field2) {
         return constraint().foreignKey(field1, field2);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -5903,7 +5669,6 @@ public class DSL {
     public static <T1, T2, T3> ConstraintForeignKeyReferencesStep3<T1, T2, T3> foreignKey(Field<T1> field1, Field<T2> field2, Field<T3> field3) {
         return constraint().foreignKey(field1, field2, field3);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -5912,7 +5677,6 @@ public class DSL {
     public static <T1, T2, T3, T4> ConstraintForeignKeyReferencesStep4<T1, T2, T3, T4> foreignKey(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4) {
         return constraint().foreignKey(field1, field2, field3, field4);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -5921,7 +5685,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5> ConstraintForeignKeyReferencesStep5<T1, T2, T3, T4, T5> foreignKey(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5) {
         return constraint().foreignKey(field1, field2, field3, field4, field5);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -5930,7 +5693,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6> ConstraintForeignKeyReferencesStep6<T1, T2, T3, T4, T5, T6> foreignKey(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -5939,7 +5701,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7> ConstraintForeignKeyReferencesStep7<T1, T2, T3, T4, T5, T6, T7> foreignKey(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -5948,7 +5709,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8> ConstraintForeignKeyReferencesStep8<T1, T2, T3, T4, T5, T6, T7, T8> foreignKey(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -5957,7 +5717,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9> ConstraintForeignKeyReferencesStep9<T1, T2, T3, T4, T5, T6, T7, T8, T9> foreignKey(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -5966,7 +5725,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> ConstraintForeignKeyReferencesStep10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> foreignKey(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -5975,7 +5733,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> ConstraintForeignKeyReferencesStep11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> foreignKey(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -5984,7 +5741,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> ConstraintForeignKeyReferencesStep12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> foreignKey(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -5993,7 +5749,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> ConstraintForeignKeyReferencesStep13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> foreignKey(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6002,7 +5757,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> ConstraintForeignKeyReferencesStep14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> foreignKey(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6011,7 +5765,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> ConstraintForeignKeyReferencesStep15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> foreignKey(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6020,7 +5773,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> ConstraintForeignKeyReferencesStep16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> foreignKey(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6029,7 +5781,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> ConstraintForeignKeyReferencesStep17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> foreignKey(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6038,7 +5789,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18> ConstraintForeignKeyReferencesStep18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18> foreignKey(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17, Field<T18> field18) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6047,7 +5797,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19> ConstraintForeignKeyReferencesStep19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19> foreignKey(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17, Field<T18> field18, Field<T19> field19) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6056,7 +5805,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20> ConstraintForeignKeyReferencesStep20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20> foreignKey(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17, Field<T18> field18, Field<T19> field19, Field<T20> field20) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6065,7 +5813,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21> ConstraintForeignKeyReferencesStep21<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21> foreignKey(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17, Field<T18> field18, Field<T19> field19, Field<T20> field20, Field<T21> field21) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20, field21);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6074,7 +5821,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22> ConstraintForeignKeyReferencesStep22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22> foreignKey(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17, Field<T18> field18, Field<T19> field19, Field<T20> field20, Field<T21> field21, Field<T22> field22) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20, field21, field22);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6083,7 +5829,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep1<?> foreignKey(Name field1) {
         return constraint().foreignKey(field1);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6092,7 +5837,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep2<?, ?> foreignKey(Name field1, Name field2) {
         return constraint().foreignKey(field1, field2);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6101,7 +5845,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep3<?, ?, ?> foreignKey(Name field1, Name field2, Name field3) {
         return constraint().foreignKey(field1, field2, field3);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6110,7 +5853,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep4<?, ?, ?, ?> foreignKey(Name field1, Name field2, Name field3, Name field4) {
         return constraint().foreignKey(field1, field2, field3, field4);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6119,7 +5861,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep5<?, ?, ?, ?, ?> foreignKey(Name field1, Name field2, Name field3, Name field4, Name field5) {
         return constraint().foreignKey(field1, field2, field3, field4, field5);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6128,7 +5869,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep6<?, ?, ?, ?, ?, ?> foreignKey(Name field1, Name field2, Name field3, Name field4, Name field5, Name field6) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6137,7 +5877,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep7<?, ?, ?, ?, ?, ?, ?> foreignKey(Name field1, Name field2, Name field3, Name field4, Name field5, Name field6, Name field7) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6146,7 +5885,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep8<?, ?, ?, ?, ?, ?, ?, ?> foreignKey(Name field1, Name field2, Name field3, Name field4, Name field5, Name field6, Name field7, Name field8) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6155,7 +5893,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep9<?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(Name field1, Name field2, Name field3, Name field4, Name field5, Name field6, Name field7, Name field8, Name field9) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6164,7 +5901,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep10<?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(Name field1, Name field2, Name field3, Name field4, Name field5, Name field6, Name field7, Name field8, Name field9, Name field10) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6173,7 +5909,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep11<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(Name field1, Name field2, Name field3, Name field4, Name field5, Name field6, Name field7, Name field8, Name field9, Name field10, Name field11) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6182,7 +5917,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep12<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(Name field1, Name field2, Name field3, Name field4, Name field5, Name field6, Name field7, Name field8, Name field9, Name field10, Name field11, Name field12) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6191,7 +5925,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep13<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(Name field1, Name field2, Name field3, Name field4, Name field5, Name field6, Name field7, Name field8, Name field9, Name field10, Name field11, Name field12, Name field13) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6200,7 +5933,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep14<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(Name field1, Name field2, Name field3, Name field4, Name field5, Name field6, Name field7, Name field8, Name field9, Name field10, Name field11, Name field12, Name field13, Name field14) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6209,7 +5941,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep15<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(Name field1, Name field2, Name field3, Name field4, Name field5, Name field6, Name field7, Name field8, Name field9, Name field10, Name field11, Name field12, Name field13, Name field14, Name field15) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6218,7 +5949,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep16<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(Name field1, Name field2, Name field3, Name field4, Name field5, Name field6, Name field7, Name field8, Name field9, Name field10, Name field11, Name field12, Name field13, Name field14, Name field15, Name field16) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6227,7 +5957,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep17<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(Name field1, Name field2, Name field3, Name field4, Name field5, Name field6, Name field7, Name field8, Name field9, Name field10, Name field11, Name field12, Name field13, Name field14, Name field15, Name field16, Name field17) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6236,7 +5965,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep18<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(Name field1, Name field2, Name field3, Name field4, Name field5, Name field6, Name field7, Name field8, Name field9, Name field10, Name field11, Name field12, Name field13, Name field14, Name field15, Name field16, Name field17, Name field18) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6245,7 +5973,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep19<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(Name field1, Name field2, Name field3, Name field4, Name field5, Name field6, Name field7, Name field8, Name field9, Name field10, Name field11, Name field12, Name field13, Name field14, Name field15, Name field16, Name field17, Name field18, Name field19) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6254,7 +5981,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep20<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(Name field1, Name field2, Name field3, Name field4, Name field5, Name field6, Name field7, Name field8, Name field9, Name field10, Name field11, Name field12, Name field13, Name field14, Name field15, Name field16, Name field17, Name field18, Name field19, Name field20) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6263,7 +5989,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep21<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(Name field1, Name field2, Name field3, Name field4, Name field5, Name field6, Name field7, Name field8, Name field9, Name field10, Name field11, Name field12, Name field13, Name field14, Name field15, Name field16, Name field17, Name field18, Name field19, Name field20, Name field21) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20, field21);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6272,7 +5997,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep22<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(Name field1, Name field2, Name field3, Name field4, Name field5, Name field6, Name field7, Name field8, Name field9, Name field10, Name field11, Name field12, Name field13, Name field14, Name field15, Name field16, Name field17, Name field18, Name field19, Name field20, Name field21, Name field22) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20, field21, field22);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6281,7 +6005,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep1<?> foreignKey(String field1) {
         return constraint().foreignKey(field1);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6290,7 +6013,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep2<?, ?> foreignKey(String field1, String field2) {
         return constraint().foreignKey(field1, field2);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6299,7 +6021,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep3<?, ?, ?> foreignKey(String field1, String field2, String field3) {
         return constraint().foreignKey(field1, field2, field3);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6308,7 +6029,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep4<?, ?, ?, ?> foreignKey(String field1, String field2, String field3, String field4) {
         return constraint().foreignKey(field1, field2, field3, field4);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6317,7 +6037,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep5<?, ?, ?, ?, ?> foreignKey(String field1, String field2, String field3, String field4, String field5) {
         return constraint().foreignKey(field1, field2, field3, field4, field5);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6326,7 +6045,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep6<?, ?, ?, ?, ?, ?> foreignKey(String field1, String field2, String field3, String field4, String field5, String field6) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6335,7 +6053,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep7<?, ?, ?, ?, ?, ?, ?> foreignKey(String field1, String field2, String field3, String field4, String field5, String field6, String field7) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6344,7 +6061,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep8<?, ?, ?, ?, ?, ?, ?, ?> foreignKey(String field1, String field2, String field3, String field4, String field5, String field6, String field7, String field8) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6353,7 +6069,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep9<?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(String field1, String field2, String field3, String field4, String field5, String field6, String field7, String field8, String field9) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6362,7 +6077,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep10<?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(String field1, String field2, String field3, String field4, String field5, String field6, String field7, String field8, String field9, String field10) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6371,7 +6085,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep11<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(String field1, String field2, String field3, String field4, String field5, String field6, String field7, String field8, String field9, String field10, String field11) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6380,7 +6093,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep12<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(String field1, String field2, String field3, String field4, String field5, String field6, String field7, String field8, String field9, String field10, String field11, String field12) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6389,7 +6101,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep13<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(String field1, String field2, String field3, String field4, String field5, String field6, String field7, String field8, String field9, String field10, String field11, String field12, String field13) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6398,7 +6109,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep14<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(String field1, String field2, String field3, String field4, String field5, String field6, String field7, String field8, String field9, String field10, String field11, String field12, String field13, String field14) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6407,7 +6117,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep15<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(String field1, String field2, String field3, String field4, String field5, String field6, String field7, String field8, String field9, String field10, String field11, String field12, String field13, String field14, String field15) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6416,7 +6125,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep16<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(String field1, String field2, String field3, String field4, String field5, String field6, String field7, String field8, String field9, String field10, String field11, String field12, String field13, String field14, String field15, String field16) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6425,7 +6133,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep17<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(String field1, String field2, String field3, String field4, String field5, String field6, String field7, String field8, String field9, String field10, String field11, String field12, String field13, String field14, String field15, String field16, String field17) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6434,7 +6141,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep18<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(String field1, String field2, String field3, String field4, String field5, String field6, String field7, String field8, String field9, String field10, String field11, String field12, String field13, String field14, String field15, String field16, String field17, String field18) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6443,7 +6149,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep19<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(String field1, String field2, String field3, String field4, String field5, String field6, String field7, String field8, String field9, String field10, String field11, String field12, String field13, String field14, String field15, String field16, String field17, String field18, String field19) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6452,7 +6157,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep20<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(String field1, String field2, String field3, String field4, String field5, String field6, String field7, String field8, String field9, String field10, String field11, String field12, String field13, String field14, String field15, String field16, String field17, String field18, String field19, String field20) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6461,7 +6165,6 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep21<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(String field1, String field2, String field3, String field4, String field5, String field6, String field7, String field8, String field9, String field10, String field11, String field12, String field13, String field14, String field15, String field16, String field17, String field18, String field19, String field20, String field21) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20, field21);
     }
-
     /**
      * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
      */
@@ -6470,9 +6173,7 @@ public class DSL {
     public static ConstraintForeignKeyReferencesStep22<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> foreignKey(String field1, String field2, String field3, String field4, String field5, String field6, String field7, String field8, String field9, String field10, String field11, String field12, String field13, String field14, String field15, String field16, String field17, String field18, String field19, String field20, String field21, String field22) {
         return constraint().foreignKey(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20, field21, field22);
     }
-
 // [jooq-tools] END [foreignKey]
-
     /**
      * Create an unnamed (system named) <code>UNIQUE</code> constraint.
      */
@@ -6480,7 +6181,6 @@ public class DSL {
     public static ConstraintFinalStep unique(String... fields) {
         return constraint().unique(fields);
     }
-
     /**
      * Create an unnamed (system named) <code>UNIQUE</code> constraint.
      */
@@ -6488,7 +6188,6 @@ public class DSL {
     public static ConstraintFinalStep unique(Name... fields) {
         return constraint().unique(fields);
     }
-
     /**
      * Create an unnamed (system named) <code>UNIQUE</code> constraint.
      */
@@ -6496,7 +6195,6 @@ public class DSL {
     public static ConstraintFinalStep unique(Field<?>... fields) {
         return constraint().unique(fields);
     }
-
     /**
      * Create an unnamed (system named) <code>CHECK</code> constraint.
      */
@@ -6504,11 +6202,9 @@ public class DSL {
     public static ConstraintFinalStep check(Condition condition) {
         return constraint().check(condition);
     }
-
     // -------------------------------------------------------------------------
     // XXX DDL Statements
     // -------------------------------------------------------------------------
-
     /**
      * Create a new DSL <code>CREATE SCHEMA</code> statement.
      *
@@ -6518,7 +6214,6 @@ public class DSL {
     public static CreateSchemaFinalStep createSchema(String schema) {
         return using(new DefaultConfiguration()).createSchema(schema);
     }
-
     /**
      * Create a new DSL <code>CREATE SCHEMA</code> statement.
      *
@@ -6528,7 +6223,6 @@ public class DSL {
     public static CreateSchemaFinalStep createSchema(Name table) {
         return using(new DefaultConfiguration()).createSchema(table);
     }
-
     /**
      * Create a new DSL <code>CREATE SCHEMA</code> statement.
      *
@@ -6538,7 +6232,6 @@ public class DSL {
     public static CreateSchemaFinalStep createSchema(Schema schema) {
         return using(new DefaultConfiguration()).createSchema(schema);
     }
-
     /**
      * Create a new DSL <code>CREATE SCHEMA</code> statement.
      *
@@ -6548,7 +6241,6 @@ public class DSL {
     public static CreateSchemaFinalStep createSchemaIfNotExists(String schema) {
         return using(new DefaultConfiguration()).createSchemaIfNotExists(schema);
     }
-
     /**
      * Create a new DSL <code>CREATE SCHEMA</code> statement.
      *
@@ -6558,7 +6250,6 @@ public class DSL {
     public static CreateSchemaFinalStep createSchemaIfNotExists(Name table) {
         return using(new DefaultConfiguration()).createSchemaIfNotExists(table);
     }
-
     /**
      * Create a new DSL <code>CREATE SCHEMA</code> statement.
      *
@@ -6568,8 +6259,6 @@ public class DSL {
     public static CreateSchemaFinalStep createSchemaIfNotExists(Schema schema) {
         return using(new DefaultConfiguration()).createSchemaIfNotExists(schema);
     }
-
-
     /**
      * Create a new DSL <code>CREATE TABLE</code> statement.
      *
@@ -6579,7 +6268,6 @@ public class DSL {
     public static CreateTableAsStep<Record> createTable(String table) {
         return using(new DefaultConfiguration()).createTable(table);
     }
-
     /**
      * Create a new DSL <code>CREATE TABLE</code> statement.
      *
@@ -6589,7 +6277,6 @@ public class DSL {
     public static CreateTableAsStep<Record> createTable(Name table) {
         return using(new DefaultConfiguration()).createTable(table);
     }
-
     /**
      * Create a new DSL <code>CREATE TABLE</code> statement.
      *
@@ -6599,7 +6286,6 @@ public class DSL {
     public static CreateTableAsStep<Record> createTable(Table<?> table) {
         return using(new DefaultConfiguration()).createTable(table);
     }
-
     /**
      * Create a new DSL <code>CREATE TABLE</code> statement.
      *
@@ -6609,7 +6295,6 @@ public class DSL {
     public static CreateTableAsStep<Record> createTableIfNotExists(String table) {
         return using(new DefaultConfiguration()).createTableIfNotExists(table);
     }
-
     /**
      * Create a new DSL <code>CREATE TABLE</code> statement.
      *
@@ -6619,7 +6304,6 @@ public class DSL {
     public static CreateTableAsStep<Record> createTableIfNotExists(Name table) {
         return using(new DefaultConfiguration()).createTableIfNotExists(table);
     }
-
     /**
      * Create a new DSL <code>CREATE TABLE</code> statement.
      *
@@ -6629,7 +6313,6 @@ public class DSL {
     public static CreateTableAsStep<Record> createTableIfNotExists(Table<?> table) {
         return using(new DefaultConfiguration()).createTableIfNotExists(table);
     }
-
     /**
      * Create a new DSL <code>CREATE GLOBAL TEMPORARY TABLE</code> statement.
      *
@@ -6639,7 +6322,6 @@ public class DSL {
     public static CreateTableAsStep<Record> createTemporaryTable(String table) {
         return using(new DefaultConfiguration()).createTemporaryTable(table);
     }
-
     /**
      * Create a new DSL <code>CREATE GLOBAL TEMPORARY TABLE</code> statement.
      *
@@ -6649,7 +6331,6 @@ public class DSL {
     public static CreateTableAsStep<Record> createTemporaryTable(Name table) {
         return using(new DefaultConfiguration()).createTemporaryTable(table);
     }
-
     /**
      * Create a new DSL <code>CREATE GLOBAL TEMPORARY TABLE</code> statement.
      *
@@ -6659,7 +6340,6 @@ public class DSL {
     public static CreateTableAsStep<Record> createTemporaryTable(Table<?> table) {
         return using(new DefaultConfiguration()).createTemporaryTable(table);
     }
-
     /**
      * Create a new DSL <code>CREATE GLOBAL TEMPORARY TABLE</code> statement.
      *
@@ -6669,7 +6349,6 @@ public class DSL {
     public static CreateTableAsStep<Record> createGlobalTemporaryTable(String table) {
         return using(new DefaultConfiguration()).createGlobalTemporaryTable(table);
     }
-
     /**
      * Create a new DSL <code>CREATE GLOBAL TEMPORARY TABLE</code> statement.
      *
@@ -6679,7 +6358,6 @@ public class DSL {
     public static CreateTableAsStep<Record> createGlobalTemporaryTable(Name table) {
         return using(new DefaultConfiguration()).createGlobalTemporaryTable(table);
     }
-
     /**
      * Create a new DSL <code>CREATE GLOBAL TEMPORARY TABLE</code> statement.
      *
@@ -6689,7 +6367,6 @@ public class DSL {
     public static CreateTableAsStep<Record> createGlobalTemporaryTable(Table<?> table) {
         return using(new DefaultConfiguration()).createGlobalTemporaryTable(table);
     }
-
     /**
      * Create a new DSL <code>CREATE VIEW</code> statement.
      *
@@ -6699,7 +6376,6 @@ public class DSL {
     public static CreateViewAsStep createView(String view, String... fields) {
         return using(new DefaultConfiguration()).createView(view, fields);
     }
-
     /**
      * Create a new DSL <code>CREATE VIEW</code> statement.
      *
@@ -6709,7 +6385,6 @@ public class DSL {
     public static CreateViewAsStep createView(Name view, Name... fields) {
         return using(new DefaultConfiguration()).createView(view, fields);
     }
-
     /**
      * Create a new DSL <code>CREATE VIEW</code> statement.
      *
@@ -6719,8 +6394,6 @@ public class DSL {
     public static CreateViewAsStep createView(Table<?> view, Field<?>... fields) {
         return using(new DefaultConfiguration()).createView(view, fields);
     }
-
-
     /**
      * Create a new DSL <code>CREATE VIEW</code> statement.
      * <p>
@@ -6734,7 +6407,6 @@ public class DSL {
     public static CreateViewAsStep createView(String view, Function<? super Field<?>, ? extends String> fieldNameFunction) {
         return using(new DefaultConfiguration()).createView(view, fieldNameFunction);
     }
-
     /**
      * Create a new DSL <code>CREATE VIEW</code> statement.
      * <p>
@@ -6748,7 +6420,6 @@ public class DSL {
     public static CreateViewAsStep createView(Name view, Function<? super Field<?>, ? extends Name> fieldNameFunction) {
         return using(new DefaultConfiguration()).createView(view, fieldNameFunction);
     }
-
     /**
      * Create a new DSL <code>CREATE VIEW</code> statement.
      * <p>
@@ -6762,8 +6433,6 @@ public class DSL {
     public static CreateViewAsStep createView(Table<?> view, Function<? super Field<?>, ? extends Field<?>> fieldNameFunction) {
         return using(new DefaultConfiguration()).createView(view, fieldNameFunction);
     }
-
-
     /**
      * Create a new DSL <code>CREATE VIEW IF NOT EXISTS</code> statement.
      *
@@ -6773,7 +6442,6 @@ public class DSL {
     public static CreateViewAsStep createViewIfNotExists(String view, String... fields) {
         return using(new DefaultConfiguration()).createViewIfNotExists(view, fields);
     }
-
     /**
      * Create a new DSL <code>CREATE VIEW IF NOT EXISTS</code> statement.
      *
@@ -6783,7 +6451,6 @@ public class DSL {
     public static CreateViewAsStep createViewIfNotExists(Name view, Name... fields) {
         return using(new DefaultConfiguration()).createViewIfNotExists(view, fields);
     }
-
     /**
      * Create a new DSL <code>CREATE VIEW IF NOT EXISTS</code> statement.
      *
@@ -6793,8 +6460,6 @@ public class DSL {
     public static CreateViewAsStep createViewIfNotExists(Table<?> view, Field<?>... fields) {
         return using(new DefaultConfiguration()).createViewIfNotExists(view, fields);
     }
-
-
     /**
      * Create a new DSL <code>CREATE VIEW IF NOT EXISTS</code> statement.
      * <p>
@@ -6808,7 +6473,6 @@ public class DSL {
     public static CreateViewAsStep createViewIfNotExists(String view, Function<? super Field<?>, ? extends String> fieldNameFunction) {
         return using(new DefaultConfiguration()).createViewIfNotExists(view, fieldNameFunction);
     }
-
     /**
      * Create a new DSL <code>CREATE VIEW IF NOT EXISTS</code> statement.
      * <p>
@@ -6822,7 +6486,6 @@ public class DSL {
     public static CreateViewAsStep createViewIfNotExists(Name view, Function<? super Field<?>, ? extends Name> fieldNameFunction) {
         return using(new DefaultConfiguration()).createViewIfNotExists(view, fieldNameFunction);
     }
-
     /**
      * Create a new DSL <code>CREATE VIEW IF NOT EXISTS</code> statement.
      * <p>
@@ -6836,8 +6499,6 @@ public class DSL {
     public static CreateViewAsStep createViewIfNotExists(Table<?> view, Function<? super Field<?>, ? extends Field<?>> fieldNameFunction) {
         return using(new DefaultConfiguration()).createViewIfNotExists(view, fieldNameFunction);
     }
-
-
     /**
      * Create a new DSL <code>CREATE INDEX</code> statement.
      *
@@ -6847,7 +6508,6 @@ public class DSL {
     public static CreateIndexStep createIndex(String index) {
         return using(new DefaultConfiguration()).createIndex(index);
     }
-
     /**
      * Create a new DSL <code>CREATE INDEX</code> statement.
      *
@@ -6857,7 +6517,6 @@ public class DSL {
     public static CreateIndexStep createIndex(Name index) {
         return using(new DefaultConfiguration()).createIndex(index);
     }
-
     /**
      * Create a new DSL <code>CREATE INDEX</code> statement.
      *
@@ -6867,7 +6526,6 @@ public class DSL {
     public static CreateIndexStep createIndex(Index index) {
         return using(new DefaultConfiguration()).createIndex(index);
     }
-
     /**
      * Create a new DSL <code>CREATE INDEX IF NOT EXISTS</code> statement.
      *
@@ -6877,7 +6535,6 @@ public class DSL {
     public static CreateIndexStep createIndexIfNotExists(String index) {
         return using(new DefaultConfiguration()).createIndexIfNotExists(index);
     }
-
     /**
      * Create a new DSL <code>CREATE INDEX IF NOT EXISTS</code> statement.
      *
@@ -6887,7 +6544,6 @@ public class DSL {
     public static CreateIndexStep createIndexIfNotExists(Name index) {
         return using(new DefaultConfiguration()).createIndexIfNotExists(index);
     }
-
     /**
      * Create a new DSL <code>CREATE INDEX IF NOT EXISTS</code> statement.
      *
@@ -6897,7 +6553,6 @@ public class DSL {
     public static CreateIndexStep createIndexIfNotExists(Index index) {
         return using(new DefaultConfiguration()).createIndexIfNotExists(index);
     }
-
     /**
      * Create a new DSL <code>CREATE UNIQUE INDEX</code> statement.
      *
@@ -6907,7 +6562,6 @@ public class DSL {
     public static CreateIndexStep createUniqueIndex(String index) {
         return using(new DefaultConfiguration()).createUniqueIndex(index);
     }
-
     /**
      * Create a new DSL <code>CREATE UNIQUE INDEX</code> statement.
      *
@@ -6917,7 +6571,6 @@ public class DSL {
     public static CreateIndexStep createUniqueIndex(Name index) {
         return using(new DefaultConfiguration()).createUniqueIndex(index);
     }
-
     /**
      * Create a new DSL <code>CREATE UNIQUE INDEX</code> statement.
      *
@@ -6927,7 +6580,6 @@ public class DSL {
     public static CreateIndexStep createUniqueIndex(Index index) {
         return using(new DefaultConfiguration()).createUniqueIndex(index);
     }
-
     /**
      * Create a new DSL <code>CREATE UNIQUE INDEX IF NOT EXISTS</code> statement.
      *
@@ -6937,7 +6589,6 @@ public class DSL {
     public static CreateIndexStep createUniqueIndexIfNotExists(String index) {
         return using(new DefaultConfiguration()).createUniqueIndexIfNotExists(index);
     }
-
     /**
      * Create a new DSL <code>CREATE UNIQUE INDEX IF NOT EXISTS</code> statement.
      *
@@ -6947,7 +6598,6 @@ public class DSL {
     public static CreateIndexStep createUniqueIndexIfNotExists(Name index) {
         return using(new DefaultConfiguration()).createUniqueIndexIfNotExists(index);
     }
-
     /**
      * Create a new DSL <code>CREATE UNIQUE INDEX IF NOT EXISTS</code> statement.
      *
@@ -6957,7 +6607,6 @@ public class DSL {
     public static CreateIndexStep createUniqueIndexIfNotExists(Index index) {
         return using(new DefaultConfiguration()).createUniqueIndexIfNotExists(index);
     }
-
     /**
      * Create a new DSL <code>CREATE SEQUENCE</code> statement.
      *
@@ -6967,7 +6616,6 @@ public class DSL {
     public static CreateSequenceFinalStep createSequence(String sequence) {
         return using(new DefaultConfiguration()).createSequence(sequence);
     }
-
     /**
      * Create a new DSL <code>CREATE SEQUENCE</code> statement.
      *
@@ -6977,7 +6625,6 @@ public class DSL {
     public static CreateSequenceFinalStep createSequence(Name sequence) {
         return using(new DefaultConfiguration()).createSequence(sequence);
     }
-
     /**
      * Create a new DSL <code>CREATE SEQUENCE</code> statement.
      *
@@ -6987,7 +6634,6 @@ public class DSL {
     public static CreateSequenceFinalStep createSequence(Sequence<?> sequence) {
         return using(new DefaultConfiguration()).createSequence(sequence);
     }
-
     /**
      * Create a new DSL <code>CREATE SEQUENCE IF NOT EXISTS</code> statement.
      *
@@ -6997,7 +6643,6 @@ public class DSL {
     public static CreateSequenceFinalStep createSequenceIfNotExists(String sequence) {
         return using(new DefaultConfiguration()).createSequenceIfNotExists(sequence);
     }
-
     /**
      * Create a new DSL <code>CREATE SEQUENCE IF NOT EXISTS</code> statement.
      *
@@ -7007,7 +6652,6 @@ public class DSL {
     public static CreateSequenceFinalStep createSequenceIfNotExists(Name sequence) {
         return using(new DefaultConfiguration()).createSequenceIfNotExists(sequence);
     }
-
     /**
      * Create a new DSL <code>CREATE SEQUENCE IF NOT EXISTS</code> statement.
      *
@@ -7017,7 +6661,6 @@ public class DSL {
     public static CreateSequenceFinalStep createSequenceIfNotExists(Sequence<?> sequence) {
         return using(new DefaultConfiguration()).createSequenceIfNotExists(sequence);
     }
-
     /**
      * Create a new DSL <code>ALTER SEQUENCE</code> statement.
      *
@@ -7027,7 +6670,6 @@ public class DSL {
     public static AlterSequenceStep<BigInteger> alterSequence(String sequence) {
         return using(new DefaultConfiguration()).alterSequence(sequence);
     }
-
     /**
      * Create a new DSL <code>ALTER SEQUENCE</code> statement.
      *
@@ -7037,7 +6679,6 @@ public class DSL {
     public static AlterSequenceStep<BigInteger> alterSequence(Name sequence) {
         return using(new DefaultConfiguration()).alterSequence(sequence);
     }
-
     /**
      * Create a new DSL <code>ALTER SEQUENCE</code> statement.
      *
@@ -7047,7 +6688,6 @@ public class DSL {
     public static <T extends Number> AlterSequenceStep<T> alterSequence(Sequence<T> sequence) {
         return using(new DefaultConfiguration()).alterSequence(sequence);
     }
-
     /**
      * Create a new DSL <code>ALTER SEQUENCE</code> statement.
      *
@@ -7057,7 +6697,6 @@ public class DSL {
     public static AlterSequenceStep<BigInteger> alterSequenceIfExists(String sequence) {
         return using(new DefaultConfiguration()).alterSequenceIfExists(sequence);
     }
-
     /**
      * Create a new DSL <code>ALTER SEQUENCE</code> statement.
      *
@@ -7067,7 +6706,6 @@ public class DSL {
     public static AlterSequenceStep<BigInteger> alterSequenceIfExists(Name sequence) {
         return using(new DefaultConfiguration()).alterSequenceIfExists(sequence);
     }
-
     /**
      * Create a new DSL <code>ALTER SEQUENCE</code> statement.
      *
@@ -7077,7 +6715,6 @@ public class DSL {
     public static <T extends Number> AlterSequenceStep<T> alterSequenceIfExists(Sequence<T> sequence) {
         return using(new DefaultConfiguration()).alterSequenceIfExists(sequence);
     }
-
     /**
      * Create a new DSL <code>ALTER TABLE</code> statement.
      *
@@ -7087,7 +6724,6 @@ public class DSL {
     public static AlterTableStep alterTable(String table) {
         return using(new DefaultConfiguration()).alterTable(table);
     }
-
     /**
      * Create a new DSL <code>ALTER TABLE</code> statement.
      *
@@ -7097,7 +6733,6 @@ public class DSL {
     public static AlterTableStep alterTable(Name table) {
         return using(new DefaultConfiguration()).alterTable(table);
     }
-
     /**
      * Create a new DSL <code>ALTER TABLE</code> statement.
      *
@@ -7107,7 +6742,6 @@ public class DSL {
     public static AlterTableStep alterTable(Table<?> table) {
         return using(new DefaultConfiguration()).alterTable(table);
     }
-
     /**
      * Create a new DSL <code>ALTER TABLE</code> statement.
      *
@@ -7117,7 +6751,6 @@ public class DSL {
     public static AlterTableStep alterTableIfExists(String table) {
         return using(new DefaultConfiguration()).alterTableIfExists(table);
     }
-
     /**
      * Create a new DSL <code>ALTER TABLE</code> statement.
      *
@@ -7127,7 +6760,6 @@ public class DSL {
     public static AlterTableStep alterTableIfExists(Name table) {
         return using(new DefaultConfiguration()).alterTableIfExists(table);
     }
-
     /**
      * Create a new DSL <code>ALTER TABLE</code> statement.
      *
@@ -7137,7 +6769,6 @@ public class DSL {
     public static AlterTableStep alterTableIfExists(Table<?> table) {
         return using(new DefaultConfiguration()).alterTableIfExists(table);
     }
-
     /**
      * Create a new DSL <code>ALTER SCHEMA</code> statement.
      *
@@ -7147,7 +6778,6 @@ public class DSL {
     public static AlterSchemaStep alterSchema(String schema) {
         return using(new DefaultConfiguration()).alterSchema(schema);
     }
-
     /**
      * Create a new DSL <code>ALTER SCHEMA</code> statement.
      *
@@ -7157,7 +6787,6 @@ public class DSL {
     public static AlterSchemaStep alterSchema(Name schema) {
         return using(new DefaultConfiguration()).alterSchema(schema);
     }
-
     /**
      * Create a new DSL <code>ALTER SCHEMA</code> statement.
      *
@@ -7167,7 +6796,6 @@ public class DSL {
     public static AlterSchemaStep alterSchema(Schema schema) {
         return using(new DefaultConfiguration()).alterSchema(schema);
     }
-
     /**
      * Create a new DSL <code>ALTER SCHEMA</code> statement.
      *
@@ -7177,7 +6805,6 @@ public class DSL {
     public static AlterSchemaStep alterSchemaIfExists(String schema) {
         return using(new DefaultConfiguration()).alterSchemaIfExists(schema);
     }
-
     /**
      * Create a new DSL <code>ALTER SCHEMA</code> statement.
      *
@@ -7187,7 +6814,6 @@ public class DSL {
     public static AlterSchemaStep alterSchemaIfExists(Name schema) {
         return using(new DefaultConfiguration()).alterSchemaIfExists(schema);
     }
-
     /**
      * Create a new DSL <code>ALTER SCHEMA</code> statement.
      *
@@ -7197,7 +6823,6 @@ public class DSL {
     public static AlterSchemaStep alterSchemaIfExists(Schema schema) {
         return using(new DefaultConfiguration()).alterSchemaIfExists(schema);
     }
-
     /**
      * Create a new DSL <code>ALTER VIEW</code> statement.
      *
@@ -7207,7 +6832,6 @@ public class DSL {
     public static AlterViewStep alterView(String view) {
         return using(new DefaultConfiguration()).alterView(view);
     }
-
     /**
      * Create a new DSL <code>ALTER VIEW</code> statement.
      *
@@ -7217,7 +6841,6 @@ public class DSL {
     public static AlterViewStep alterView(Name view) {
         return using(new DefaultConfiguration()).alterView(view);
     }
-
     /**
      * Create a new DSL <code>ALTER VIEW</code> statement.
      *
@@ -7227,7 +6850,6 @@ public class DSL {
     public static AlterViewStep alterView(Table<?> view) {
         return using(new DefaultConfiguration()).alterView(view);
     }
-
     /**
      * Create a new DSL <code>ALTER VIEW</code> statement.
      *
@@ -7237,7 +6859,6 @@ public class DSL {
     public static AlterViewStep alterViewIfExists(String view) {
         return using(new DefaultConfiguration()).alterViewIfExists(view);
     }
-
     /**
      * Create a new DSL <code>ALTER VIEW</code> statement.
      *
@@ -7247,7 +6868,6 @@ public class DSL {
     public static AlterViewStep alterViewIfExists(Name view) {
         return using(new DefaultConfiguration()).alterViewIfExists(view);
     }
-
     /**
      * Create a new DSL <code>ALTER VIEW</code> statement.
      *
@@ -7257,7 +6877,6 @@ public class DSL {
     public static AlterViewStep alterViewIfExists(Table<?> view) {
         return using(new DefaultConfiguration()).alterViewIfExists(view);
     }
-
     /**
      * Create a new DSL <code>ALTER INDEX</code> statement.
      *
@@ -7267,7 +6886,6 @@ public class DSL {
     public static AlterIndexStep alterIndex(String index) {
         return using(new DefaultConfiguration()).alterIndex(index);
     }
-
     /**
      * Create a new DSL <code>ALTER INDEX</code> statement.
      *
@@ -7277,7 +6895,6 @@ public class DSL {
     public static AlterIndexStep alterIndex(Name index) {
         return using(new DefaultConfiguration()).alterIndex(index);
     }
-
     /**
      * Create a new DSL <code>ALTER INDEX</code> statement.
      *
@@ -7287,7 +6904,6 @@ public class DSL {
     public static AlterIndexStep alterIndex(Index index) {
         return using(new DefaultConfiguration()).alterIndex(index);
     }
-
     /**
      * Create a new DSL <code>ALTER INDEX</code> statement.
      *
@@ -7297,7 +6913,6 @@ public class DSL {
     public static AlterIndexStep alterIndexIfExists(String index) {
         return using(new DefaultConfiguration()).alterIndexIfExists(index);
     }
-
     /**
      * Create a new DSL <code>ALTER INDEX</code> statement.
      *
@@ -7307,7 +6922,6 @@ public class DSL {
     public static AlterIndexStep alterIndexIfExists(Name index) {
         return using(new DefaultConfiguration()).alterIndexIfExists(index);
     }
-
     /**
      * Create a new DSL <code>ALTER INDEX</code> statement.
      *
@@ -7317,7 +6931,6 @@ public class DSL {
     public static AlterIndexStep alterIndexIfExists(Index index) {
         return using(new DefaultConfiguration()).alterIndexIfExists(index);
     }
-
     /**
      * Create a new DSL <code>DROP SCHEMA</code> statement.
      *
@@ -7327,7 +6940,6 @@ public class DSL {
     public static DropSchemaStep dropSchema(String schema){
         return using(new DefaultConfiguration()).dropSchema(schema);
     }
-
     /**
      * Create a new DSL <code>DROP SCHEMA</code> statement.
      *
@@ -7337,7 +6949,6 @@ public class DSL {
     public static DropSchemaStep dropSchema(Name schema){
         return using(new DefaultConfiguration()).dropSchema(schema);
     }
-
     /**
      * Create a new DSL <code>DROP SCHEMA</code> statement.
      *
@@ -7347,7 +6958,6 @@ public class DSL {
     public static DropSchemaStep dropSchema(Schema schema){
         return using(new DefaultConfiguration()).dropSchema(schema);
     }
-
     /**
      * Create a new DSL <code>DROP SCHEMA</code> statement.
      *
@@ -7357,7 +6967,6 @@ public class DSL {
     public static DropSchemaStep dropSchemaIfExists(String schema){
         return using(new DefaultConfiguration()).dropSchemaIfExists(schema);
     }
-
     /**
      * Create a new DSL <code>DROP SCHEMA</code> statement.
      *
@@ -7367,7 +6976,6 @@ public class DSL {
     public static DropSchemaStep dropSchemaIfExists(Name schema){
         return using(new DefaultConfiguration()).dropSchemaIfExists(schema);
     }
-
     /**
      * Create a new DSL <code>DROP SCHEMA</code> statement.
      *
@@ -7377,7 +6985,6 @@ public class DSL {
     public static DropSchemaStep dropSchemaIfExists(Schema schema){
         return using(new DefaultConfiguration()).dropSchemaIfExists(schema);
     }
-
     /**
      * Create a new DSL <code>DROP VIEW</code> statement.
      *
@@ -7387,7 +6994,6 @@ public class DSL {
     public static DropViewFinalStep dropView(String view) {
         return using(new DefaultConfiguration()).dropView(view);
     }
-
     /**
      * Create a new DSL <code>DROP VIEW</code> statement.
      *
@@ -7397,7 +7003,6 @@ public class DSL {
     public static DropViewFinalStep dropView(Name view) {
         return using(new DefaultConfiguration()).dropView(view);
     }
-
     /**
      * Create a new DSL <code>DROP VIEW</code> statement.
      *
@@ -7407,7 +7012,6 @@ public class DSL {
     public static DropViewFinalStep dropView(Table<?> view) {
         return using(new DefaultConfiguration()).dropView(view);
     }
-
     /**
      * Create a new DSL <code>DROP VIEW IF EXISTS</code> statement.
      * <p>
@@ -7420,7 +7024,6 @@ public class DSL {
     public static DropViewFinalStep dropViewIfExists(String view) {
         return using(new DefaultConfiguration()).dropViewIfExists(view);
     }
-
     /**
      * Create a new DSL <code>DROP VIEW IF EXISTS</code> statement.
      * <p>
@@ -7433,7 +7036,6 @@ public class DSL {
     public static DropViewFinalStep dropViewIfExists(Name view) {
         return using(new DefaultConfiguration()).dropViewIfExists(view);
     }
-
     /**
      * Create a new DSL <code>DROP VIEW IF EXISTS</code> statement.
      * <p>
@@ -7446,7 +7048,6 @@ public class DSL {
     public static DropViewFinalStep dropViewIfExists(Table<?> view) {
         return using(new DefaultConfiguration()).dropViewIfExists(view);
     }
-
     /**
      * Create a new DSL <code>DROP TABLE</code> statement.
      *
@@ -7456,7 +7057,6 @@ public class DSL {
     public static DropTableStep dropTable(String table) {
         return using(new DefaultConfiguration()).dropTable(table);
     }
-
     /**
      * Create a new DSL <code>DROP TABLE</code> statement.
      *
@@ -7466,7 +7066,6 @@ public class DSL {
     public static DropTableStep dropTable(Name table) {
         return using(new DefaultConfiguration()).dropTable(table);
     }
-
     /**
      * Create a new DSL <code>DROP TABLE</code> statement.
      *
@@ -7476,7 +7075,6 @@ public class DSL {
     public static DropTableStep dropTable(Table<?> table) {
         return using(new DefaultConfiguration()).dropTable(table);
     }
-
     /**
      * Create a new DSL <code>DROP TABLE IF EXISTS</code> statement.
      * <p>
@@ -7489,7 +7087,6 @@ public class DSL {
     public static DropTableStep dropTableIfExists(String table) {
         return using(new DefaultConfiguration()).dropTableIfExists(table);
     }
-
     /**
      * Create a new DSL <code>DROP TABLE IF EXISTS</code> statement.
      * <p>
@@ -7502,7 +7099,6 @@ public class DSL {
     public static DropTableStep dropTableIfExists(Name table) {
         return using(new DefaultConfiguration()).dropTableIfExists(table);
     }
-
     /**
      * Create a new DSL <code>DROP TABLE IF EXISTS</code> statement.
      * <p>
@@ -7515,7 +7111,6 @@ public class DSL {
     public static DropTableStep dropTableIfExists(Table<?> table) {
         return using(new DefaultConfiguration()).dropTableIfExists(table);
     }
-
     /**
      * Create a new DSL <code>DROP INDEX</code> statement.
      *
@@ -7525,7 +7120,6 @@ public class DSL {
     public static DropIndexOnStep dropIndex(String index) {
         return using(new DefaultConfiguration()).dropIndex(index);
     }
-
     /**
      * Create a new DSL <code>DROP INDEX</code> statement.
      *
@@ -7535,7 +7129,6 @@ public class DSL {
     public static DropIndexOnStep dropIndex(Name index) {
         return using(new DefaultConfiguration()).dropIndex(index);
     }
-
     /**
      * Create a new DSL <code>DROP INDEX</code> statement.
      *
@@ -7545,7 +7138,6 @@ public class DSL {
     public static DropIndexOnStep dropIndex(Index index) {
         return using(new DefaultConfiguration()).dropIndex(index);
     }
-
     /**
      * Create a new DSL <code>DROP INDEX IF EXISTS</code> statement.
      * <p>
@@ -7558,7 +7150,6 @@ public class DSL {
     public static DropIndexOnStep dropIndexIfExists(String index) {
         return using(new DefaultConfiguration()).dropIndexIfExists(index);
     }
-
     /**
      * Create a new DSL <code>DROP INDEX IF EXISTS</code> statement.
      * <p>
@@ -7571,7 +7162,6 @@ public class DSL {
     public static DropIndexOnStep dropIndexIfExists(Name index) {
         return using(new DefaultConfiguration()).dropIndexIfExists(index);
     }
-
     /**
      * Create a new DSL <code>DROP INDEX IF EXISTS</code> statement.
      * <p>
@@ -7584,7 +7174,6 @@ public class DSL {
     public static DropIndexOnStep dropIndexIfExists(Index index) {
         return using(new DefaultConfiguration()).dropIndexIfExists(index);
     }
-
     /**
      * Create a new DSL <code>DROP SEQUENCE</code> statement.
      *
@@ -7594,7 +7183,6 @@ public class DSL {
     public static <T extends Number> DropSequenceFinalStep dropSequence(String sequence) {
         return using(new DefaultConfiguration()).dropSequence(sequence);
     }
-
     /**
      * Create a new DSL <code>DROP SEQUENCE</code> statement.
      *
@@ -7604,7 +7192,6 @@ public class DSL {
     public static <T extends Number> DropSequenceFinalStep dropSequence(Name sequence) {
         return using(new DefaultConfiguration()).dropSequence(sequence);
     }
-
     /**
      * Create a new DSL <code>DROP SEQUENCE</code> statement.
      *
@@ -7614,7 +7201,6 @@ public class DSL {
     public static <T extends Number> DropSequenceFinalStep dropSequence(Sequence<?> sequence) {
         return using(new DefaultConfiguration()).dropSequence(sequence);
     }
-
     /**
      * Create a new DSL <code>DROP SEQUENCE IF EXISTS</code> statement.
      * <p>
@@ -7627,7 +7213,6 @@ public class DSL {
     public static <T extends Number> DropSequenceFinalStep dropSequenceIfExists(String sequence) {
         return using(new DefaultConfiguration()).dropSequenceIfExists(sequence);
     }
-
     /**
      * Create a new DSL <code>DROP SEQUENCE IF EXISTS</code> statement.
      * <p>
@@ -7640,7 +7225,6 @@ public class DSL {
     public static <T extends Number> DropSequenceFinalStep dropSequenceIfExists(Name sequence) {
         return using(new DefaultConfiguration()).dropSequenceIfExists(sequence);
     }
-
     /**
      * Create a new DSL <code>DROP SEQUENCE IF EXISTS</code> statement.
      * <p>
@@ -7653,7 +7237,6 @@ public class DSL {
     public static <T extends Number> DropSequenceFinalStep dropSequenceIfExists(Sequence<?> sequence) {
         return using(new DefaultConfiguration()).dropSequenceIfExists(sequence);
     }
-
     /**
      * Create a new DSL truncate statement.
      * <p>
@@ -7700,7 +7283,6 @@ public class DSL {
     public static TruncateIdentityStep<Record> truncate(Name table) {
         return using(new DefaultConfiguration()).truncate(table);
     }
-
     /**
      * Create a new DSL truncate statement.
      * <p>
@@ -7747,11 +7329,9 @@ public class DSL {
     public static <R extends Record> TruncateIdentityStep<R> truncate(Table<R> table) {
         return using(new DefaultConfiguration()).truncate(table);
     }
-
     // -------------------------------------------------------------------------
     // XXX Quantified comparison predicate expressions
     // -------------------------------------------------------------------------
-
     /**
      * Create an <code>ALL</code> quantified select to be used in quantified
      * comparison predicate expressions.
@@ -7767,7 +7347,6 @@ public class DSL {
     public static <R extends Record> QuantifiedSelect<R> all(Select<R> select) {
         return new QuantifiedSelectImpl<R>(Quantifier.ALL, select);
     }
-
     /**
      * Create an <code>ALL</code> quantified select to be used in quantified
      * comparison predicate expressions.
@@ -7786,7 +7365,6 @@ public class DSL {
     public static <T> QuantifiedSelect<Record1<T>> all(T... array) {
         return all(val(array));
     }
-
     /**
      * Create an <code>ALL</code> quantified select to be used in quantified
      * comparison predicate expressions.
@@ -7805,7 +7383,6 @@ public class DSL {
     public static <T> QuantifiedSelect<Record1<T>> all(Field<T[]> array) {
         return new QuantifiedSelectImpl<Record1<T>>(Quantifier.ALL, array);
     }
-
     /**
      * Create an <code>ANY</code> quantified select to be used in quantified
      * comparison predicate expressions.
@@ -7821,7 +7398,6 @@ public class DSL {
     public static <R extends Record> QuantifiedSelect<R> any(Select<R> select) {
         return new QuantifiedSelectImpl<R>(Quantifier.ANY, select);
     }
-
     /**
      * Create an <code>ANY</code> quantified select to be used in quantified
      * comparison predicate expressions.
@@ -7840,7 +7416,6 @@ public class DSL {
     public static <T> QuantifiedSelect<Record1<T>> any(T... array) {
         return any(val(array));
     }
-
     /**
      * Create an <code>ANY</code> quantified select to be used in quantified
      * comparison predicate expressions.
@@ -7859,123 +7434,9 @@ public class DSL {
     public static <T> QuantifiedSelect<Record1<T>> any(Field<T[]> array) {
         return new QuantifiedSelectImpl<Record1<T>>(Quantifier.ANY, array);
     }
-
     // -------------------------------------------------------------------------
     // XXX Access control
     // -------------------------------------------------------------------------
-
-    /**
-     * Grant a privilege on table to user or role.
-     *
-     * <p>
-     * Example: <code><pre>
-     * import static org.jooq.impl.DSL.*;
-     *
-     * grant(privilege)
-     *   .on(table)
-     *   .to(user)
-     *
-     * grant(privilege)
-     *   .on(table)
-     *   .to(role)
-     * </pre></code>
-     *
-     * 
-     * @see #grant(Collection)
-     */
-    @Support
-    public static GrantStepOn grant(String privilege) {
-        return using(new DefaultConfiguration()).grant(privilege(privilege));
-    }
-
-    /**
-     * Grant a privilege on table to user or role.
-     *
-     * <p>
-     * Example: <code><pre>
-     * import static org.jooq.impl.DSL.*;
-     *
-     * grant(privileges)
-     *   .on(table)
-     *   .to(user)
-     *
-     * grant(privileges)
-     *   .on(table)
-     *   .to(role)
-     * </pre></code>
-     * <p>
-     *
-     * @see #grant(String)
-     */
-    @Support
-    public static GrantStepOn grant(Collection<? extends Privilege> privileges) {
-        return using(new DefaultConfiguration()).grant(privileges);
-    }
-
-    /**
-     * Revoke a privilege on table from user or role.
-     *
-     * <p>
-     * Example: <code><pre>
-     * import static org.jooq.impl.DSL.*;
-     *
-     * revoke(privilege)
-     *   .on(table)
-     *   .from(user)
-     *
-     * revoke(privilege)
-     *   .on(table)
-     *   .from(role)
-     * </pre></code>
-     * <p>
-     *
-     * @see #revoke(Collection)
-     */
-    @Support
-    public static RevokeStepOn revoke(String privilege) {
-        return using(new DefaultConfiguration()).revoke(privilege(privilege));
-    }
-
-    /**
-     * Revoke a privilege on table from user or role.
-     *
-     * <p>
-     * Example: <code><pre>
-     * import static org.jooq.impl.DSL.*;
-     *
-     * revoke(privileges)
-     *   .on(table)
-     *   .from(user)
-     *
-     * revoke(privileges)
-     *   .on(table)
-     *   .from(role)
-     * </pre></code>
-     * <p>
-     *
-     * @see #revoke(String)
-     */
-    @Support
-    public static RevokeStepOn revoke(Collection<? extends Privilege> privileges) {
-        return using(new DefaultConfiguration()).revoke(privileges);
-    }
-
-    /**
-     * Create a new privilege reference.
-     *
-     * @see #privilege(Keyword)
-     */
-    public static Privilege privilege(String privilege) {
-        return privilege(keyword(privilege));
-    }
-
-    /**
-     * Create a new privilege reference.
-     */
-    public static Privilege privilege(Keyword privilege) {
-        return new PrivilegeImpl(privilege);
-    }
-
     /**
      * Create a new user reference.
      *
@@ -7984,14 +7445,12 @@ public class DSL {
     public static User user(String name) {
         return user(name(name));
     }
-
     /**
      * Create a new user reference.
      */
     public static User user(Name name) {
         return new UserImpl(name);
     }
-
     /**
      * Create a new role reference.
      *
@@ -8000,18 +7459,15 @@ public class DSL {
     public static Role role(String name) {
         return role(name(name));
     }
-
     /**
      * Create a new role reference.
      */
     public static Role role(Name name) {
         return new RoleImpl(name);
     }
-
     // -------------------------------------------------------------------------
     // XXX Conversion of objects into tables
     // -------------------------------------------------------------------------
-
     /**
      * A synonym for {@link Select#asTable()}, which might look a bit more fluent
      * like this, to some users.
@@ -8022,7 +7478,6 @@ public class DSL {
     public static <R extends Record> Table<R> table(Select<R> select) {
         return select.asTable();
     }
-
     /**
      * Use a previously obtained result as a new {@link Table} that can be used
      * in SQL statements through {@link #values(RowN...)}.
@@ -8045,7 +7500,6 @@ public class DSL {
         // TODO [#2986] Coerce the record type upon the resulting table.
         return (Table<R>) values(rows).as("v", columns);
     }
-
     /**
      * Use a previously obtained record as a new Table
      */
@@ -8053,7 +7507,6 @@ public class DSL {
     public static <R extends Record> Table<R> table(R record) {
         return table((R[]) new Record[] { record });
     }
-
     /**
      * Use a previously obtained set of records as a new Table
      */
@@ -8067,7 +7520,6 @@ public class DSL {
 
         return table(result);
     }
-
     /**
      * A synonym for {@link #unnest(List)}.
      *
@@ -8077,7 +7529,6 @@ public class DSL {
     public static Table<?> table(List<?> list) {
         return table(list.toArray());
     }
-
     /**
      * A synonym for {@link #unnest(Object[])}.
      *
@@ -8087,19 +7538,6 @@ public class DSL {
     public static Table<?> table(Object[] array) {
         return table(val(array));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * A synonym for {@link #unnest(Field)}.
      *
@@ -8109,7 +7547,6 @@ public class DSL {
     public static Table<?> table(Field<?> cursor) {
         return unnest(cursor);
     }
-
     /**
      * Create a table from a list of values.
      * <p>
@@ -8126,7 +7563,6 @@ public class DSL {
     public static Table<?> unnest(List<?> list) {
         return unnest(list.toArray());
     }
-
     /**
      * Create a table from an array of values.
      * <p>
@@ -8143,20 +7579,6 @@ public class DSL {
     public static Table<?> unnest(Object[] array) {
         return unnest(val(array));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Create a table from a field.
      * <p>
@@ -8210,11 +7632,9 @@ public class DSL {
         // The field has any other type. Try to make it an array
         throw new SQLDialectNotSupportedException("Converting arbitrary types into array tables is currently not supported");
     }
-
     // -------------------------------------------------------------------------
     // XXX Table functions
     // -------------------------------------------------------------------------
-
     /**
      * The <code>DUAL</code> table to be used for syntactic completeness.
      * <p>
@@ -8235,7 +7655,6 @@ public class DSL {
     public static Table<Record> dual() {
         return new Dual(true);
     }
-
     /**
      * A table function generating a series of values from <code>from</code> to
      * <code>to</code> (inclusive).
@@ -8254,7 +7673,6 @@ public class DSL {
     public static Table<Record1<Integer>> generateSeries(int from, int to) {
         return generateSeries(val(from), val(to));
     }
-
     /**
      * A table function generating a series of values from <code>from</code> to
      * <code>to</code> (inclusive).
@@ -8273,7 +7691,6 @@ public class DSL {
     public static Table<Record1<Integer>> generateSeries(int from, Field<Integer> to) {
         return generateSeries(val(from), nullSafe(to));
     }
-
     /**
      * A table function generating a series of values from <code>from</code> to
      * <code>to</code> (inclusive).
@@ -8292,7 +7709,6 @@ public class DSL {
     public static Table<Record1<Integer>> generateSeries(Field<Integer> from, int to) {
         return new GenerateSeries(nullSafe(from), val(to));
     }
-
     /**
      * A table function generating a series of values from <code>from</code> to
      * <code>to</code> (inclusive).
@@ -8311,7 +7727,6 @@ public class DSL {
     public static Table<Record1<Integer>> generateSeries(Field<Integer> from, Field<Integer> to) {
         return new GenerateSeries(nullSafe(from), nullSafe(to));
     }
-
     /**
      * Create a <code>LATERAL</code> joined table.
      * <p>
@@ -8327,7 +7742,6 @@ public class DSL {
     public static <R extends Record> Table<R> lateral(TableLike<R> table) {
         return new Lateral<R>(table.asTable());
     }
-
     /**
      * Create a <code>ROWS FROM (tables...)</code> expression.
      * <p>
@@ -8343,11 +7757,9 @@ public class DSL {
     public static Table<Record> rowsFrom(Table<?>... tables) {
         return new RowsFrom(tables);
     }
-
     // -------------------------------------------------------------------------
     // XXX SQL keywords
     // -------------------------------------------------------------------------
-
     /**
      * Create a SQL keyword.
      * <p>
@@ -8367,11 +7779,9 @@ public class DSL {
     public static Keyword keyword(String keyword) {
         return new KeywordImpl(keyword);
     }
-
     // -------------------------------------------------------------------------
     // XXX Names
     // -------------------------------------------------------------------------
-
     /**
      * Create a new SQL identifier using an unqualified name.
      * <p>
@@ -8398,7 +7808,6 @@ public class DSL {
     public static Name name(String unqualifiedName) {
         return new UnqualifiedName(unqualifiedName);
     }
-
     /**
      * Create a new SQL identifier using a qualified name.
      * <p>
@@ -8428,7 +7837,6 @@ public class DSL {
         else
             return new UnqualifiedName(qualifiedName[0]);
     }
-
     /**
      * Create a new SQL identifier using a qualified name.
      * <p>
@@ -8459,7 +7867,6 @@ public class DSL {
     public static Name name(Name... nameParts) {
         return new QualifiedName(nameParts);
     }
-
     /**
      * Create a new SQL identifier using a qualified name.
      * <p>
@@ -8486,7 +7893,6 @@ public class DSL {
     public static Name name(Collection<String> qualifiedName) {
         return name(qualifiedName.toArray(Tools.EMPTY_STRING));
     }
-
     /**
      * Create a new SQL identifier using an unqualified, quoted name.
      * <p>
@@ -8500,7 +7906,6 @@ public class DSL {
     public static Name quotedName(String unqualifiedName) {
         return new UnqualifiedName(unqualifiedName, true);
     }
-
     /**
      * Create a new SQL identifier using a qualified, quoted name.
      * <p>
@@ -8514,7 +7919,6 @@ public class DSL {
     public static Name quotedName(String... qualifiedName) {
         return new QualifiedName(qualifiedName, true);
     }
-
     /**
      * Create a new SQL identifier using a qualified, quoted name.
      * <p>
@@ -8528,7 +7932,6 @@ public class DSL {
     public static Name quotedName(Collection<String> qualifiedName) {
         return quotedName(qualifiedName.toArray(Tools.EMPTY_STRING));
     }
-
     /**
      * Create a new SQL identifier using an unqualified, quoted name.
      * <p>
@@ -8542,7 +7945,6 @@ public class DSL {
     public static Name unquotedName(String unqualifiedName) {
         return new UnqualifiedName(unqualifiedName, false);
     }
-
     /**
      * Create a new SQL identifier using a qualified, quoted name.
      * <p>
@@ -8559,7 +7961,6 @@ public class DSL {
         else
             return new UnqualifiedName(qualifiedName[0], false);
     }
-
     /**
      * Create a new SQL identifier using a qualified, quoted name.
      * <p>
@@ -8573,11 +7974,9 @@ public class DSL {
     public static Name unquotedName(Collection<String> qualifiedName) {
         return unquotedName(qualifiedName.toArray(Tools.EMPTY_STRING));
     }
-
     // -------------------------------------------------------------------------
     // XXX QueryPart composition
     // -------------------------------------------------------------------------
-
     /**
      * Compose a list of <code>QueryParts</code> into a new
      * <code>QueryPart</code>, with individual parts being comma-separated.
@@ -8585,7 +7984,6 @@ public class DSL {
     public static QueryPart list(QueryPart... parts) {
         return list(Arrays.asList(parts));
     }
-
     /**
      * Compose a list of <code>QueryParts</code> into a new
      * <code>QueryPart</code>, with individual parts being comma-separated.
@@ -8593,11 +7991,9 @@ public class DSL {
     public static QueryPart list(Collection<? extends QueryPart> parts) {
         return new QueryPartList<QueryPart>(parts);
     }
-
     // -------------------------------------------------------------------------
     // XXX SQL identifiers
     // -------------------------------------------------------------------------
-
     /**
      * Create a <code>DEFAULT</code> keyword for use with <code>INSERT</code>,
      * <code>UPDATE</code>, or <code>MERGE</code> statements.
@@ -8611,7 +8007,6 @@ public class DSL {
     public static Field<Object> defaultValue() {
         return defaultValue(Object.class);
     }
-
     /**
      * Create a <code>DEFAULT</code> keyword for use with <code>INSERT</code>,
      * <code>UPDATE</code>, or <code>MERGE</code> statements.
@@ -8620,7 +8015,6 @@ public class DSL {
     public static <T> Field<T> defaultValue(Class<T> type) {
         return defaultValue(getDataType(type));
     }
-
     /**
      * Create a <code>DEFAULT</code> keyword for use with <code>INSERT</code>,
      * <code>UPDATE</code>, or <code>MERGE</code> statements.
@@ -8629,7 +8023,6 @@ public class DSL {
     public static <T> Field<T> defaultValue(DataType<T> type) {
         return new SQLField<T>(type, keyword("default"));
     }
-
     /**
      * Create a <code>DEFAULT</code> keyword for use with <code>INSERT</code>,
      * <code>UPDATE</code>, or <code>MERGE</code> statements.
@@ -8638,7 +8031,6 @@ public class DSL {
     public static <T> Field<T> defaultValue(Field<T> field) {
         return new SQLField<T>(field.getDataType(), keyword("default"));
     }
-
     /**
      * Create a qualified schema, given its schema name.
      * <p>
@@ -8665,7 +8057,6 @@ public class DSL {
     public static Schema schemaByName(String name) {
         return new SchemaImpl(name);
     }
-
     /**
      * Create a qualified catalog, given its catalog name.
      * <p>
@@ -8687,7 +8078,6 @@ public class DSL {
     public static Catalog catalog(Name name) {
         return new CatalogImpl(name);
     }
-
     /**
      * Create a qualified schema, given its schema name.
      * <p>
@@ -8709,7 +8099,6 @@ public class DSL {
     public static Schema schema(Name name) {
         return new SchemaImpl(name);
     }
-
     /**
      * Create a qualified sequence, given its sequence name.
      * <p>
@@ -8737,7 +8126,6 @@ public class DSL {
     public static Sequence<BigInteger> sequenceByName(String... qualifiedName) {
         return sequenceByName(BigInteger.class, qualifiedName);
     }
-
     /**
      * Create a qualified sequence, given its sequence name.
      * <p>
@@ -8766,7 +8154,6 @@ public class DSL {
     public static <T extends Number> Sequence<T> sequenceByName(Class<T> type, String... qualifiedName) {
         return sequenceByName(getDataType(type), qualifiedName);
     }
-
     /**
      * Create a qualified sequence, given its sequence name.
      * <p>
@@ -8804,7 +8191,6 @@ public class DSL {
 
         return new SequenceImpl<T>(name, schema, type);
     }
-
     /**
      * Create a qualified sequence, given its sequence name.
      * <p>
@@ -8826,7 +8212,6 @@ public class DSL {
     public static Sequence<BigInteger> sequence(Name name) {
         return sequence(name, BigInteger.class);
     }
-
     /**
      * Create a qualified sequence, given its sequence name.
      * <p>
@@ -8848,7 +8233,6 @@ public class DSL {
     public static <T extends Number> Sequence<T> sequence(Name name, Class<T> type) {
         return sequence(name, getDataType(type));
     }
-
     /**
      * Create a qualified sequence, given its sequence name.
      * <p>
@@ -8879,7 +8263,6 @@ public class DSL {
 
         return new SequenceImpl<T>(n, s, type);
     }
-
     /**
      * Create a qualified table, given its table name.
      * <p>
@@ -8907,7 +8290,6 @@ public class DSL {
     public static Table<Record> tableByName(String... qualifiedName) {
         return table(name(qualifiedName));
     }
-
     /**
      * Create a qualified table, given its table name.
      * <p>
@@ -8929,7 +8311,6 @@ public class DSL {
     public static Table<Record> table(Name name) {
         return new TableImpl<Record>(name);
     }
-
     /**
      * Create a qualified field, given its (qualified) field name.
      * <p>
@@ -8966,7 +8347,6 @@ public class DSL {
     public static Field<Object> fieldByName(String... qualifiedName) {
         return fieldByName(Object.class, qualifiedName);
     }
-
     /**
      * Create a qualified field, given its (qualified) field name.
      * <p>
@@ -9004,7 +8384,6 @@ public class DSL {
     public static <T> Field<T> fieldByName(Class<T> type, String... qualifiedName) {
         return fieldByName(getDataType(type), qualifiedName);
     }
-
     /**
      * Create a qualified field, given its (qualified) field name.
      * <p>
@@ -9042,7 +8421,6 @@ public class DSL {
     public static <T> Field<T> fieldByName(DataType<T> type, String... qualifiedName) {
         return field(name(qualifiedName), type);
     }
-
     /**
      * Create a qualified field, given its (qualified) field name.
      * <p>
@@ -9073,7 +8451,6 @@ public class DSL {
     public static Field<Object> field(Name name) {
         return field(name, Object.class);
     }
-
     /**
      * Create a qualified field, given its (qualified) field name.
      * <p>
@@ -9104,7 +8481,6 @@ public class DSL {
     public static <T> Field<T> field(Name name, Class<T> type) {
         return field(name, getDataType(type));
     }
-
     /**
      * Create a qualified field, given its (qualified) field name.
      * <p>
@@ -9135,7 +8511,6 @@ public class DSL {
     public static <T> Field<T> field(Name name, DataType<T> type) {
         return new QualifiedField<T>(name, type);
     }
-
     /**
      * Create a qualified index reference by name.
      */
@@ -9143,11 +8518,9 @@ public class DSL {
     public static Index index(Name name) {
         return new IndexImpl(name);
     }
-
     // -------------------------------------------------------------------------
     // XXX: Queries
     // -------------------------------------------------------------------------
-
     /**
      * Wrap a collection of queries.
      *
@@ -9157,7 +8530,6 @@ public class DSL {
     public static Queries queries(Query... queries) {
         return queries(Arrays.asList(queries));
     }
-
     /**
      * Wrap a collection of queries.
      *
@@ -9167,41 +8539,9 @@ public class DSL {
     public static Queries queries(Collection<? extends Query> queries) {
         return DSL.using(new DefaultConfiguration()).queries(queries);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // -------------------------------------------------------------------------
     // XXX Plain SQL object factory
     // -------------------------------------------------------------------------
-
     /**
      * A custom SQL clause that can render arbitrary expressions.
      * <p>
@@ -9223,7 +8563,6 @@ public class DSL {
     public static SQL sql(String sql) {
         return sql(sql, new Object[0]);
     }
-
     /**
      * A custom SQL clause that can render arbitrary expressions.
      * <p>
@@ -9260,7 +8599,6 @@ public class DSL {
     public static SQL sql(String sql, QueryPart... parts) {
         return sql(sql, (Object[]) parts);
     }
-
     /**
      * A custom SQL clause that can render arbitrary expressions.
      * <p>
@@ -9291,7 +8629,6 @@ public class DSL {
     public static SQL sql(String sql, Object... bindings) {
         return new SQLImpl(sql, bindings);
     }
-
     /**
      * A custom SQL clause that can render arbitrary expressions.
      * <p>
@@ -9315,7 +8652,6 @@ public class DSL {
     public static QueryPart queryPart(String sql) {
         return sql(sql);
     }
-
     /**
      * A custom SQL clause that can render arbitrary expressions.
      * <p>
@@ -9343,7 +8679,6 @@ public class DSL {
     public static QueryPart queryPart(String sql, QueryPart... parts) {
         return sql(sql, parts);
     }
-
     /**
      * A custom SQL clause that can render arbitrary expressions.
      * <p>
@@ -9369,11 +8704,9 @@ public class DSL {
     public static QueryPart queryPart(String sql, Object... bindings) {
         return sql(sql, bindings);
     }
-
     // -------------------------------------------------------------------------
     // XXX Plain SQL API
     // -------------------------------------------------------------------------
-
     /**
      * Create a new query holding plain SQL. There must not be any binding
      * variables contained in the SQL.
@@ -9397,7 +8730,6 @@ public class DSL {
     public static Query query(SQL sql) {
         return using(new DefaultConfiguration()).query(sql);
     }
-
     /**
      * Create a new query holding plain SQL. There must not be any binding
      * variables contained in the SQL.
@@ -9421,7 +8753,6 @@ public class DSL {
     public static Query query(String sql) {
         return using(new DefaultConfiguration()).query(sql);
     }
-
     /**
      * Create a new query holding plain SQL. There must be as many bind
      * variables contained in the SQL, as passed in the bindings parameter.
@@ -9447,7 +8778,6 @@ public class DSL {
     public static Query query(String sql, Object... bindings) {
         return using(new DefaultConfiguration()).query(sql, bindings);
     }
-
     /**
      * Create a new query holding plain SQL.
      * <p>
@@ -9481,7 +8811,6 @@ public class DSL {
     public static Query query(String sql, QueryPart... parts) {
         return using(new DefaultConfiguration()).query(sql, parts);
     }
-
     /**
      * Create a new query holding plain SQL.
      * <p>
@@ -9529,7 +8858,6 @@ public class DSL {
     public static ResultQuery<Record> resultQuery(SQL sql) {
         return using(new DefaultConfiguration()).resultQuery(sql);
     }
-
     /**
      * Create a new query holding plain SQL.
      * <p>
@@ -9577,7 +8905,6 @@ public class DSL {
     public static ResultQuery<Record> resultQuery(String sql) {
         return using(new DefaultConfiguration()).resultQuery(sql);
     }
-
     /**
      * Create a new query holding plain SQL.
      * <p>
@@ -9628,7 +8955,6 @@ public class DSL {
     public static ResultQuery<Record> resultQuery(String sql, Object... bindings) {
         return using(new DefaultConfiguration()).resultQuery(sql, bindings);
     }
-
     /**
      * Create a new query holding plain SQL.
      * <p>
@@ -9662,7 +8988,6 @@ public class DSL {
     public static ResultQuery<Record> resultQuery(String sql, QueryPart... parts) {
         return using(new DefaultConfiguration()).resultQuery(sql, parts);
     }
-
     /**
      * A custom SQL clause that can render arbitrary table expressions.
      * <p>
@@ -9690,7 +9015,6 @@ public class DSL {
     public static Table<Record> table(SQL sql) {
         return new SQLTable(sql);
     }
-
     /**
      * A custom SQL clause that can render arbitrary table expressions.
      * <p>
@@ -9718,7 +9042,6 @@ public class DSL {
     public static Table<Record> table(String sql) {
         return table(sql, new Object[0]);
     }
-
     /**
      * A custom SQL clause that can render arbitrary table expressions.
      * <p>
@@ -9750,7 +9073,6 @@ public class DSL {
     public static Table<Record> table(String sql, Object... bindings) {
         return table(sql(sql, bindings));
     }
-
     /**
      * A custom SQL clause that can render arbitrary table expressions.
      * <p>
@@ -9783,7 +9105,6 @@ public class DSL {
     public static Table<Record> table(String sql, QueryPart... parts) {
         return table(sql, (Object[]) parts);
     }
-
     /**
      * Create a "plain SQL" sequence.
      * <p>
@@ -9803,7 +9124,6 @@ public class DSL {
     public static Sequence<BigInteger> sequence(String sql) {
         return sequence(sql, BigInteger.class);
     }
-
     /**
      * Create a "plain SQL" sequence.
      * <p>
@@ -9824,7 +9144,6 @@ public class DSL {
     public static <T extends Number> Sequence<T> sequence(String sql, Class<T> type) {
         return sequence(sql, getDataType(type));
     }
-
     /**
      * Create a "plain SQL" sequence.
      * <p>
@@ -9846,7 +9165,6 @@ public class DSL {
     public static <T extends Number> Sequence<T> sequence(String sql, DataType<T> type) {
         return new SequenceImpl<T>(sql, null, type, true);
     }
-
     /**
      * Create a "plain SQL" field.
      * <p>
@@ -9875,7 +9193,6 @@ public class DSL {
     public static Field<Object> field(SQL sql) {
         return field(sql, Object.class);
     }
-
     /**
      * Create a "plain SQL" field.
      * <p>
@@ -9904,7 +9221,6 @@ public class DSL {
     public static Field<Object> field(String sql) {
         return field(sql, new Object[0]);
     }
-
     /**
      * Create a "plain SQL" field.
      * <p>
@@ -9935,7 +9251,6 @@ public class DSL {
     public static Field<Object> field(String sql, Object... bindings) {
         return field(sql, Object.class, bindings);
     }
-
     /**
      * Create a "plain SQL" field.
      * <p>
@@ -9965,7 +9280,6 @@ public class DSL {
     public static <T> Field<T> field(SQL sql, Class<T> type) {
         return field(sql, getDataType(type));
     }
-
     /**
      * Create a "plain SQL" field.
      * <p>
@@ -9995,7 +9309,6 @@ public class DSL {
     public static <T> Field<T> field(String sql, Class<T> type) {
         return field(sql, type, new Object[0]);
     }
-
     /**
      * Create a "plain SQL" field.
      * <p>
@@ -10027,7 +9340,6 @@ public class DSL {
     public static <T> Field<T> field(String sql, Class<T> type, Object... bindings) {
         return field(sql, getDataType(type), bindings);
     }
-
     /**
      * Create a "plain SQL" field.
      * <p>
@@ -10057,7 +9369,6 @@ public class DSL {
     public static <T> Field<T> field(SQL sql, DataType<T> type) {
         return new SQLField(type, sql);
     }
-
     /**
      * Create a "plain SQL" field.
      * <p>
@@ -10087,7 +9398,6 @@ public class DSL {
     public static <T> Field<T> field(String sql, DataType<T> type) {
         return field(sql, type, new Object[0]);
     }
-
     /**
      * Create a "plain SQL" field.
      * <p>
@@ -10119,7 +9429,6 @@ public class DSL {
     public static <T> Field<T> field(String sql, DataType<T> type, Object... bindings) {
         return field(sql(sql, bindings), type);
     }
-
     /**
      * Create a "plain SQL" field.
      * <p>
@@ -10156,7 +9465,6 @@ public class DSL {
     public static <T> Field<T> field(String sql, DataType<T> type, QueryPart... parts) {
         return field(sql(sql, parts), type);
     }
-
     /**
      * A custom SQL clause that can render arbitrary SQL elements.
      * <p>
@@ -10193,7 +9501,6 @@ public class DSL {
     public static Field<Object> field(String sql, QueryPart... parts) {
         return field(sql, (Object[]) parts);
     }
-
     /**
      * A custom SQL clause that can render arbitrary SQL elements.
      * <p>
@@ -10231,7 +9538,6 @@ public class DSL {
     public static <T> Field<T> field(String sql, Class<T> type, QueryPart... parts) {
         return field(sql, getDataType(type), (Object[]) parts);
     }
-
     /**
      * <code>function()</code> can be used to access native or user-defined
      * functions that are not yet or insufficiently supported by jOOQ.
@@ -10251,7 +9557,6 @@ public class DSL {
     public static <T> Field<T> function(String name, Class<T> type, Field<?>... arguments) {
         return function(name, getDataType(type), nullSafe(arguments));
     }
-
     /**
      * <code>function()</code> can be used to access native or user-defined
      * functions that are not yet or insufficiently supported by jOOQ.
@@ -10271,7 +9576,6 @@ public class DSL {
     public static <T> Field<T> function(String name, DataType<T> type, Field<?>... arguments) {
         return new org.jooq.impl.Function<T>(name, type, nullSafe(arguments));
     }
-
     /**
      * <code>function()</code> can be used to access native or user-defined
      * functions that are not yet or insufficiently supported by jOOQ.
@@ -10284,7 +9588,6 @@ public class DSL {
     public static <T> Field<T> function(Name name, Class<T> type, Field<?>... arguments) {
         return function(name, getDataType(type), nullSafe(arguments));
     }
-
     /**
      * <code>function()</code> can be used to access native or user-defined
      * functions that are not yet or insufficiently supported by jOOQ.
@@ -10297,7 +9600,6 @@ public class DSL {
     public static <T> Field<T> function(Name name, DataType<T> type, Field<?>... arguments) {
         return new org.jooq.impl.Function<T>(name, type, nullSafe(arguments));
     }
-
     /**
      * Create a new condition holding plain SQL.
      * <p>
@@ -10322,7 +9624,6 @@ public class DSL {
     public static Condition condition(SQL sql) {
         return new SQLCondition(sql);
     }
-
     /**
      * Create a new condition holding plain SQL.
      * <p>
@@ -10347,7 +9648,6 @@ public class DSL {
     public static Condition condition(String sql) {
         return condition(sql, new Object[0]);
     }
-
     /**
      * Create a new condition holding plain SQL.
      * <p>
@@ -10376,7 +9676,6 @@ public class DSL {
     public static Condition condition(String sql, Object... bindings) {
         return condition(sql(sql, bindings));
     }
-
     /**
      * A custom SQL clause that can render arbitrary SQL elements.
      * <p>
@@ -10408,7 +9707,6 @@ public class DSL {
     public static Condition condition(String sql, QueryPart... parts) {
         return condition(sql, (Object[]) parts);
     }
-
     /**
      * Create a condition from a boolean field.
      * <p>
@@ -10427,7 +9725,6 @@ public class DSL {
     public static Condition condition(Boolean value) {
         return condition(Tools.field(value, Boolean.class));
     }
-
     /**
      * Create a condition from a boolean field.
      * <p>
@@ -10448,7 +9745,6 @@ public class DSL {
             ? ((ConditionAsField) field).condition
             : new FieldCondition(field);
     }
-
     /**
      * Create a condition from a map.
      * <p>
@@ -10465,7 +9761,6 @@ public class DSL {
     public static Condition condition(Map<Field<?>, ?> map) {
         return new MapCondition(map);
     }
-
     /**
      * Create a "Query By Example" (QBE) {@link Condition} from a {@link Record}
      * .
@@ -10484,11 +9779,9 @@ public class DSL {
     public static Condition condition(Record record) {
         return new RecordCondition(record);
     }
-
     // -------------------------------------------------------------------------
     // XXX Global Condition factory
     // -------------------------------------------------------------------------
-
     /**
      * Return a <code>Condition</code> that behaves like no condition being
      * present.
@@ -10519,7 +9812,6 @@ public class DSL {
     public static Condition noCondition() {
         return NoCondition.INSTANCE;
     }
-
     /**
      * Return a <code>Condition</code> that will always evaluate to true.
      */
@@ -10527,7 +9819,6 @@ public class DSL {
     public static True trueCondition() {
         return TrueCondition.INSTANCE;
     }
-
     /**
      * Return a <code>Condition</code> that will always evaluate to false.
      */
@@ -10535,7 +9826,6 @@ public class DSL {
     public static False falseCondition() {
         return FalseCondition.INSTANCE;
     }
-
     /**
      * Return a <code>Condition</code> that connects all argument
      * <code>conditions</code> with {@link Operator#AND}.
@@ -10544,7 +9834,6 @@ public class DSL {
     public static Condition and(Condition left, Condition right) {
         return condition(AND, left, right);
     }
-
     /**
      * Return a <code>Condition</code> that connects all argument
      * <code>conditions</code> with {@link Operator#AND}.
@@ -10553,7 +9842,6 @@ public class DSL {
     public static Condition and(Condition... conditions) {
         return condition(AND, conditions);
     }
-
     /**
      * Return a <code>Condition</code> that connects all argument
      * <code>conditions</code> with {@link Operator#AND}.
@@ -10562,7 +9850,6 @@ public class DSL {
     public static Condition and(Collection<? extends Condition> conditions) {
         return condition(AND, conditions);
     }
-
     /**
      * Return a <code>Condition</code> that connects all argument
      * <code>conditions</code> with {@link Operator#OR}.
@@ -10571,7 +9858,6 @@ public class DSL {
     public static Condition or(Condition left, Condition right) {
         return condition(OR, left, right);
     }
-
     /**
      * Return a <code>Condition</code> that connects all argument
      * <code>conditions</code> with {@link Operator#OR}.
@@ -10580,7 +9866,6 @@ public class DSL {
     public static Condition or(Condition... conditions) {
         return condition(OR, conditions);
     }
-
     /**
      * Return a <code>Condition</code> that connects all argument
      * <code>conditions</code> with {@link Operator#OR}.
@@ -10589,7 +9874,6 @@ public class DSL {
     public static Condition or(Collection<? extends Condition> conditions) {
         return condition(OR, conditions);
     }
-
     /**
      * Return a <code>Condition</code> that connects all argument
      * <code>conditions</code> with <code>Operator</code>.
@@ -10598,7 +9882,6 @@ public class DSL {
     public static Condition condition(Operator operator, Condition left, Condition right) {
         return CombinedCondition.of(operator, left, right);
     }
-
     /**
      * Return a <code>Condition</code> that connects all argument
      * <code>conditions</code> with <code>Operator</code>.
@@ -10607,7 +9890,6 @@ public class DSL {
     public static Condition condition(Operator operator, Condition... conditions) {
         return condition(operator, asList(conditions));
     }
-
     /**
      * Return a <code>Condition</code> that connects all argument
      * <code>conditions</code> with <code>Operator</code>.
@@ -10616,7 +9898,6 @@ public class DSL {
     public static Condition condition(Operator operator, Collection<? extends Condition> conditions) {
         return CombinedCondition.of(operator, conditions);
     }
-
     /**
      * Create an exists condition.
      * <p>
@@ -10626,7 +9907,6 @@ public class DSL {
     public static Condition exists(Select<?> query) {
         return new ExistsCondition(query, true);
     }
-
     /**
      * Create a not exists condition.
      * <p>
@@ -10636,7 +9916,6 @@ public class DSL {
     public static Condition notExists(Select<?> query) {
         return new ExistsCondition(query, false);
     }
-
     /**
      * Invert a condition.
      * <p>
@@ -10646,7 +9925,6 @@ public class DSL {
     public static Condition not(Condition condition) {
         return condition.not();
     }
-
     /**
      * Invert a boolean value.
      * <p>
@@ -10666,7 +9944,6 @@ public class DSL {
     public static Field<Boolean> not(Boolean value) {
         return not(Tools.field(value, Boolean.class));
     }
-
     /**
      * Invert a boolean value.
      * <p>
@@ -10679,7 +9956,6 @@ public class DSL {
     public static Field<Boolean> not(Field<Boolean> field) {
         return new NotField(field);
     }
-
     /**
      * Transform a condition into a boolean field.
      */
@@ -10689,11 +9965,9 @@ public class DSL {
             ? ((FieldCondition) condition).field
             : new ConditionAsField(condition);
     }
-
     // -------------------------------------------------------------------------
     // XXX Global Field and Function factory
     // -------------------------------------------------------------------------
-
     /**
      * Wrap a {@link SelectField} in a general-purpose {@link Field}
      */
@@ -10701,9 +9975,7 @@ public class DSL {
     public static <T> Field<T> field(SelectField<T> field) {
         return field instanceof Field ? (Field<T>) field : field("{0}", field.getDataType(), field);
     }
-
     // [jooq-tools] START [row-field]
-
     /**
      * Experimental method removed again.
      * <p>
@@ -10722,7 +9994,6 @@ public class DSL {
     private static <T1> Field<Record1<T1>> field(Row1<T1> row) {
         return new RowField<Row1<T1>, Record1<T1>>(row);
     }
-
     /**
      * Experimental method removed again.
      * <p>
@@ -10741,7 +10012,6 @@ public class DSL {
     private static <T1, T2> Field<Record2<T1, T2>> field(Row2<T1, T2> row) {
         return new RowField<Row2<T1, T2>, Record2<T1, T2>>(row);
     }
-
     /**
      * Experimental method removed again.
      * <p>
@@ -10760,7 +10030,6 @@ public class DSL {
     private static <T1, T2, T3> Field<Record3<T1, T2, T3>> field(Row3<T1, T2, T3> row) {
         return new RowField<Row3<T1, T2, T3>, Record3<T1, T2, T3>>(row);
     }
-
     /**
      * Experimental method removed again.
      * <p>
@@ -10779,7 +10048,6 @@ public class DSL {
     private static <T1, T2, T3, T4> Field<Record4<T1, T2, T3, T4>> field(Row4<T1, T2, T3, T4> row) {
         return new RowField<Row4<T1, T2, T3, T4>, Record4<T1, T2, T3, T4>>(row);
     }
-
     /**
      * Experimental method removed again.
      * <p>
@@ -10798,7 +10066,6 @@ public class DSL {
     private static <T1, T2, T3, T4, T5> Field<Record5<T1, T2, T3, T4, T5>> field(Row5<T1, T2, T3, T4, T5> row) {
         return new RowField<Row5<T1, T2, T3, T4, T5>, Record5<T1, T2, T3, T4, T5>>(row);
     }
-
     /**
      * Experimental method removed again.
      * <p>
@@ -10817,7 +10084,6 @@ public class DSL {
     private static <T1, T2, T3, T4, T5, T6> Field<Record6<T1, T2, T3, T4, T5, T6>> field(Row6<T1, T2, T3, T4, T5, T6> row) {
         return new RowField<Row6<T1, T2, T3, T4, T5, T6>, Record6<T1, T2, T3, T4, T5, T6>>(row);
     }
-
     /**
      * Experimental method removed again.
      * <p>
@@ -10836,7 +10102,6 @@ public class DSL {
     private static <T1, T2, T3, T4, T5, T6, T7> Field<Record7<T1, T2, T3, T4, T5, T6, T7>> field(Row7<T1, T2, T3, T4, T5, T6, T7> row) {
         return new RowField<Row7<T1, T2, T3, T4, T5, T6, T7>, Record7<T1, T2, T3, T4, T5, T6, T7>>(row);
     }
-
     /**
      * Experimental method removed again.
      * <p>
@@ -10855,7 +10120,6 @@ public class DSL {
     private static <T1, T2, T3, T4, T5, T6, T7, T8> Field<Record8<T1, T2, T3, T4, T5, T6, T7, T8>> field(Row8<T1, T2, T3, T4, T5, T6, T7, T8> row) {
         return new RowField<Row8<T1, T2, T3, T4, T5, T6, T7, T8>, Record8<T1, T2, T3, T4, T5, T6, T7, T8>>(row);
     }
-
     /**
      * Experimental method removed again.
      * <p>
@@ -10874,7 +10138,6 @@ public class DSL {
     private static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Field<Record9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> field(Row9<T1, T2, T3, T4, T5, T6, T7, T8, T9> row) {
         return new RowField<Row9<T1, T2, T3, T4, T5, T6, T7, T8, T9>, Record9<T1, T2, T3, T4, T5, T6, T7, T8, T9>>(row);
     }
-
     /**
      * Experimental method removed again.
      * <p>
@@ -10893,7 +10156,6 @@ public class DSL {
     private static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> Field<Record10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>> field(Row10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> row) {
         return new RowField<Row10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>, Record10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>>(row);
     }
-
     /**
      * Experimental method removed again.
      * <p>
@@ -10912,7 +10174,6 @@ public class DSL {
     private static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> Field<Record11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>> field(Row11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> row) {
         return new RowField<Row11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>, Record11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>>(row);
     }
-
     /**
      * Experimental method removed again.
      * <p>
@@ -10931,7 +10192,6 @@ public class DSL {
     private static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> Field<Record12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>> field(Row12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> row) {
         return new RowField<Row12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>, Record12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>>(row);
     }
-
     /**
      * Experimental method removed again.
      * <p>
@@ -10950,7 +10210,6 @@ public class DSL {
     private static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> Field<Record13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>> field(Row13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> row) {
         return new RowField<Row13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>, Record13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>>(row);
     }
-
     /**
      * Experimental method removed again.
      * <p>
@@ -10969,7 +10228,6 @@ public class DSL {
     private static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> Field<Record14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>> field(Row14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> row) {
         return new RowField<Row14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>, Record14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>>(row);
     }
-
     /**
      * Experimental method removed again.
      * <p>
@@ -10988,7 +10246,6 @@ public class DSL {
     private static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> Field<Record15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>> field(Row15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> row) {
         return new RowField<Row15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, Record15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>>(row);
     }
-
     /**
      * Experimental method removed again.
      * <p>
@@ -11007,7 +10264,6 @@ public class DSL {
     private static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> Field<Record16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>> field(Row16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> row) {
         return new RowField<Row16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>, Record16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>>(row);
     }
-
     /**
      * Experimental method removed again.
      * <p>
@@ -11026,7 +10282,6 @@ public class DSL {
     private static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> Field<Record17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>> field(Row17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> row) {
         return new RowField<Row17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>, Record17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>>(row);
     }
-
     /**
      * Experimental method removed again.
      * <p>
@@ -11045,7 +10300,6 @@ public class DSL {
     private static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18> Field<Record18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>> field(Row18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18> row) {
         return new RowField<Row18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>, Record18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>>(row);
     }
-
     /**
      * Experimental method removed again.
      * <p>
@@ -11064,7 +10318,6 @@ public class DSL {
     private static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19> Field<Record19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>> field(Row19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19> row) {
         return new RowField<Row19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>, Record19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>>(row);
     }
-
     /**
      * Experimental method removed again.
      * <p>
@@ -11083,7 +10336,6 @@ public class DSL {
     private static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20> Field<Record20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>> field(Row20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20> row) {
         return new RowField<Row20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>, Record20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>>(row);
     }
-
     /**
      * Experimental method removed again.
      * <p>
@@ -11102,7 +10354,6 @@ public class DSL {
     private static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21> Field<Record21<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21>> field(Row21<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21> row) {
         return new RowField<Row21<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21>, Record21<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21>>(row);
     }
-
     /**
      * Experimental method removed again.
      * <p>
@@ -11121,7 +10372,6 @@ public class DSL {
     private static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22> Field<Record22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22>> field(Row22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22> row) {
         return new RowField<Row22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22>, Record22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22>>(row);
     }
-
     /**
      * EXPERIMENTAL: Turn a row value expression of degree <code>1</code> into a {@code Field}.
      * <p>
@@ -11134,7 +10384,6 @@ public class DSL {
     public static <T1> Field<Record1<T1>> rowField(Row1<T1> row) {
         return new RowField<Row1<T1>, Record1<T1>>(row);
     }
-
     /**
      * EXPERIMENTAL: Turn a row value expression of degree <code>2</code> into a {@code Field}.
      * <p>
@@ -11147,7 +10396,6 @@ public class DSL {
     public static <T1, T2> Field<Record2<T1, T2>> rowField(Row2<T1, T2> row) {
         return new RowField<Row2<T1, T2>, Record2<T1, T2>>(row);
     }
-
     /**
      * EXPERIMENTAL: Turn a row value expression of degree <code>3</code> into a {@code Field}.
      * <p>
@@ -11160,7 +10408,6 @@ public class DSL {
     public static <T1, T2, T3> Field<Record3<T1, T2, T3>> rowField(Row3<T1, T2, T3> row) {
         return new RowField<Row3<T1, T2, T3>, Record3<T1, T2, T3>>(row);
     }
-
     /**
      * EXPERIMENTAL: Turn a row value expression of degree <code>4</code> into a {@code Field}.
      * <p>
@@ -11173,7 +10420,6 @@ public class DSL {
     public static <T1, T2, T3, T4> Field<Record4<T1, T2, T3, T4>> rowField(Row4<T1, T2, T3, T4> row) {
         return new RowField<Row4<T1, T2, T3, T4>, Record4<T1, T2, T3, T4>>(row);
     }
-
     /**
      * EXPERIMENTAL: Turn a row value expression of degree <code>5</code> into a {@code Field}.
      * <p>
@@ -11186,7 +10432,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5> Field<Record5<T1, T2, T3, T4, T5>> rowField(Row5<T1, T2, T3, T4, T5> row) {
         return new RowField<Row5<T1, T2, T3, T4, T5>, Record5<T1, T2, T3, T4, T5>>(row);
     }
-
     /**
      * EXPERIMENTAL: Turn a row value expression of degree <code>6</code> into a {@code Field}.
      * <p>
@@ -11199,7 +10444,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6> Field<Record6<T1, T2, T3, T4, T5, T6>> rowField(Row6<T1, T2, T3, T4, T5, T6> row) {
         return new RowField<Row6<T1, T2, T3, T4, T5, T6>, Record6<T1, T2, T3, T4, T5, T6>>(row);
     }
-
     /**
      * EXPERIMENTAL: Turn a row value expression of degree <code>7</code> into a {@code Field}.
      * <p>
@@ -11212,7 +10456,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7> Field<Record7<T1, T2, T3, T4, T5, T6, T7>> rowField(Row7<T1, T2, T3, T4, T5, T6, T7> row) {
         return new RowField<Row7<T1, T2, T3, T4, T5, T6, T7>, Record7<T1, T2, T3, T4, T5, T6, T7>>(row);
     }
-
     /**
      * EXPERIMENTAL: Turn a row value expression of degree <code>8</code> into a {@code Field}.
      * <p>
@@ -11225,7 +10468,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8> Field<Record8<T1, T2, T3, T4, T5, T6, T7, T8>> rowField(Row8<T1, T2, T3, T4, T5, T6, T7, T8> row) {
         return new RowField<Row8<T1, T2, T3, T4, T5, T6, T7, T8>, Record8<T1, T2, T3, T4, T5, T6, T7, T8>>(row);
     }
-
     /**
      * EXPERIMENTAL: Turn a row value expression of degree <code>9</code> into a {@code Field}.
      * <p>
@@ -11238,7 +10480,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Field<Record9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> rowField(Row9<T1, T2, T3, T4, T5, T6, T7, T8, T9> row) {
         return new RowField<Row9<T1, T2, T3, T4, T5, T6, T7, T8, T9>, Record9<T1, T2, T3, T4, T5, T6, T7, T8, T9>>(row);
     }
-
     /**
      * EXPERIMENTAL: Turn a row value expression of degree <code>10</code> into a {@code Field}.
      * <p>
@@ -11251,7 +10492,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> Field<Record10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>> rowField(Row10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> row) {
         return new RowField<Row10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>, Record10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>>(row);
     }
-
     /**
      * EXPERIMENTAL: Turn a row value expression of degree <code>11</code> into a {@code Field}.
      * <p>
@@ -11264,7 +10504,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> Field<Record11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>> rowField(Row11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> row) {
         return new RowField<Row11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>, Record11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>>(row);
     }
-
     /**
      * EXPERIMENTAL: Turn a row value expression of degree <code>12</code> into a {@code Field}.
      * <p>
@@ -11277,7 +10516,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> Field<Record12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>> rowField(Row12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> row) {
         return new RowField<Row12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>, Record12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>>(row);
     }
-
     /**
      * EXPERIMENTAL: Turn a row value expression of degree <code>13</code> into a {@code Field}.
      * <p>
@@ -11290,7 +10528,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> Field<Record13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>> rowField(Row13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> row) {
         return new RowField<Row13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>, Record13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>>(row);
     }
-
     /**
      * EXPERIMENTAL: Turn a row value expression of degree <code>14</code> into a {@code Field}.
      * <p>
@@ -11303,7 +10540,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> Field<Record14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>> rowField(Row14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> row) {
         return new RowField<Row14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>, Record14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>>(row);
     }
-
     /**
      * EXPERIMENTAL: Turn a row value expression of degree <code>15</code> into a {@code Field}.
      * <p>
@@ -11316,7 +10552,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> Field<Record15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>> rowField(Row15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> row) {
         return new RowField<Row15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>, Record15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>>(row);
     }
-
     /**
      * EXPERIMENTAL: Turn a row value expression of degree <code>16</code> into a {@code Field}.
      * <p>
@@ -11329,7 +10564,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> Field<Record16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>> rowField(Row16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> row) {
         return new RowField<Row16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>, Record16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>>(row);
     }
-
     /**
      * EXPERIMENTAL: Turn a row value expression of degree <code>17</code> into a {@code Field}.
      * <p>
@@ -11342,7 +10576,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> Field<Record17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>> rowField(Row17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> row) {
         return new RowField<Row17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>, Record17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>>(row);
     }
-
     /**
      * EXPERIMENTAL: Turn a row value expression of degree <code>18</code> into a {@code Field}.
      * <p>
@@ -11355,7 +10588,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18> Field<Record18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>> rowField(Row18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18> row) {
         return new RowField<Row18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>, Record18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>>(row);
     }
-
     /**
      * EXPERIMENTAL: Turn a row value expression of degree <code>19</code> into a {@code Field}.
      * <p>
@@ -11368,7 +10600,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19> Field<Record19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>> rowField(Row19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19> row) {
         return new RowField<Row19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>, Record19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>>(row);
     }
-
     /**
      * EXPERIMENTAL: Turn a row value expression of degree <code>20</code> into a {@code Field}.
      * <p>
@@ -11381,7 +10612,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20> Field<Record20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>> rowField(Row20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20> row) {
         return new RowField<Row20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>, Record20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>>(row);
     }
-
     /**
      * EXPERIMENTAL: Turn a row value expression of degree <code>21</code> into a {@code Field}.
      * <p>
@@ -11394,7 +10624,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21> Field<Record21<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21>> rowField(Row21<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21> row) {
         return new RowField<Row21<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21>, Record21<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21>>(row);
     }
-
     /**
      * EXPERIMENTAL: Turn a row value expression of degree <code>22</code> into a {@code Field}.
      * <p>
@@ -11407,9 +10636,7 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22> Field<Record22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22>> rowField(Row22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22> row) {
         return new RowField<Row22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22>, Record22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22>>(row);
     }
-
 // [jooq-tools] END [row-field]
-
     /**
      * Transform a subquery into a correlated subquery.
      */
@@ -11420,7 +10647,6 @@ public class DSL {
         else
             return select.<T>asField();
     }
-
     /**
      * Initialise a {@link Case} statement.
      * <p>
@@ -11433,7 +10659,6 @@ public class DSL {
     public static Case choose() {
         return decode();
     }
-
     /**
      * Initialise a {@link Case} statement.
      * <p>
@@ -11453,7 +10678,6 @@ public class DSL {
     public static <V> CaseValueStep<V> choose(V value) {
         return decode().value(value);
     }
-
     /**
      * Initialise a {@link Case} statement.
      * <p>
@@ -11473,7 +10697,6 @@ public class DSL {
     public static <V> CaseValueStep<V> choose(Field<V> value) {
         return decode().value(value);
     }
-
     /**
      * Initialise a {@link Case} statement.
      * <p>
@@ -11491,7 +10714,6 @@ public class DSL {
     public static <T> CaseConditionStep<T> when(Condition condition, T result) {
         return decode().when(condition, result);
     }
-
     /**
      * Initialise a {@link Case} statement.
      * <p>
@@ -11509,7 +10731,6 @@ public class DSL {
     public static <T> CaseConditionStep<T> when(Condition condition, Field<T> result) {
         return decode().when(condition, result);
     }
-
     /**
      * Initialise a {@link Case} statement.
      * <p>
@@ -11527,7 +10748,6 @@ public class DSL {
     public static <T> CaseConditionStep<T> when(Condition condition, Select<? extends Record1<T>> result) {
         return decode().when(condition, result);
     }
-
     /**
      * Initialise a {@link Case} statement.
      * <p>
@@ -11540,7 +10760,6 @@ public class DSL {
     public static Case decode() {
         return new CaseImpl();
     }
-
     /**
      * Gets the Oracle-style
      * <code>DECODE(expression, search, result[, search , result]... [, default])</code>
@@ -11552,7 +10771,6 @@ public class DSL {
     public static <Z, T> Field<Z> decode(T value, T search, Z result) {
         return decode(value, search, result, new Object[0]);
     }
-
     /**
      * Gets the Oracle-style
      * <code>DECODE(expression, search, result[, search , result]... [, default])</code>
@@ -11564,7 +10782,6 @@ public class DSL {
     public static <Z, T> Field<Z> decode(T value, T search, Z result, Object... more) {
         return decode(Tools.field(value), Tools.field(search), Tools.field(result), Tools.fields(more).toArray(EMPTY_FIELD));
     }
-
     /**
      * Gets the Oracle-style
      * <code>DECODE(expression, search, result[, search , result]... [, default])</code>
@@ -11576,7 +10793,10 @@ public class DSL {
     public static <Z, T> Field<Z> decode(Field<T> value, Field<T> search, Field<Z> result) {
         return decode(nullSafe(value), nullSafe(search), nullSafe(result), EMPTY_FIELD);
     }
-
+    @Support
+    public static <Z, T> Field<Z> decode(Field<T> value, Field<T> search, Field<Z> result, Field<?>... more) {
+        return new Decode<T, Z>(nullSafe(value), nullSafe(search), nullSafe(result), nullSafe(more));
+    }
     /**
      * Gets the Oracle-style
      * <code>DECODE(expression, search, result[, search , result]... [, default])</code>
@@ -11607,11 +10827,6 @@ public class DSL {
      *            If <code>more.length</code> is odd, then it is assumed that it
      *            contains more search/result pairs plus a default at the end.
      */
-    @Support
-    public static <Z, T> Field<Z> decode(Field<T> value, Field<T> search, Field<Z> result, Field<?>... more) {
-        return new Decode<T, Z>(nullSafe(value), nullSafe(search), nullSafe(result), nullSafe(more));
-    }
-
     /**
      * Coerce this field to the type of another field.
      *
@@ -11621,7 +10836,6 @@ public class DSL {
     public static <T> Field<T> coerce(Object value, Field<T> as) {
         return Tools.field(value).coerce(as);
     }
-
     /**
      * Coerce this field to another type.
      *
@@ -11631,7 +10845,6 @@ public class DSL {
     public static <T> Field<T> coerce(Object value, Class<T> as) {
         return Tools.field(value).coerce(as);
     }
-
     /**
      * Coerce a field to another type.
      *
@@ -11641,7 +10854,6 @@ public class DSL {
     public static <T> Field<T> coerce(Object value, DataType<T> as) {
         return Tools.field(value).coerce(as);
     }
-
     /**
      * Coerce this field to the type of another field.
      * <p>
@@ -11675,7 +10887,6 @@ public class DSL {
     public static <T> Field<T> coerce(Field<?> field, Field<T> as) {
         return nullSafe(field).coerce(as);
     }
-
     /**
      * Coerce this field to another type.
      * <p>
@@ -11709,7 +10920,6 @@ public class DSL {
     public static <T> Field<T> coerce(Field<?> field, Class<T> as) {
         return nullSafe(field).coerce(as);
     }
-
     /**
      * Coerce a field to another type.
      * <p>
@@ -11743,7 +10953,6 @@ public class DSL {
     public static <T> Field<T> coerce(Field<?> field, DataType<T> as) {
         return nullSafe(field).coerce(as);
     }
-
     /**
      * Cast a value to the type of another field.
      *
@@ -11756,7 +10965,6 @@ public class DSL {
     public static <T> Field<T> cast(Object value, Field<T> as) {
         return Tools.field(value, as).cast(as);
     }
-
     /**
      * Cast a field to the type of another field.
      *
@@ -11769,7 +10977,6 @@ public class DSL {
     public static <T> Field<T> cast(Field<?> field, Field<T> as) {
         return nullSafe(field).cast(as);
     }
-
     /**
      * Cast null to the type of another field.
      *
@@ -11781,7 +10988,6 @@ public class DSL {
     public static <T> Field<T> castNull(Field<T> as) {
         return NULL().cast(as);
     }
-
     /**
      * Cast a value to another type.
      *
@@ -11794,7 +11000,6 @@ public class DSL {
     public static <T> Field<T> cast(Object value, Class<T> type) {
         return Tools.field(value, type).cast(type);
     }
-
     /**
      * Cast a field to another type.
      *
@@ -11807,7 +11012,6 @@ public class DSL {
     public static <T> Field<T> cast(Field<?> field, Class<T> type) {
         return nullSafe(field).cast(type);
     }
-
     /**
      * Cast null to a type.
      *
@@ -11819,7 +11023,6 @@ public class DSL {
     public static <T> Field<T> castNull(DataType<T> type) {
         return NULL().cast(type);
     }
-
     /**
      * Cast a value to another type.
      *
@@ -11832,7 +11035,6 @@ public class DSL {
     public static <T> Field<T> cast(Object value, DataType<T> type) {
         return Tools.field(value).cast(type);
     }
-
     /**
      * Cast a field to another type.
      *
@@ -11845,7 +11047,6 @@ public class DSL {
     public static <T> Field<T> cast(Field<?> field, DataType<T> type) {
         return nullSafe(field).cast(type);
     }
-
     /**
      * Cast null to a type.
      *
@@ -11857,7 +11058,6 @@ public class DSL {
     public static <T> Field<T> castNull(Class<T> type) {
         return NULL().cast(type);
     }
-
     /**
      * Cast all fields that need casting.
      *
@@ -11875,7 +11075,6 @@ public class DSL {
 
         return (Field<T>[]) castFields;
     }
-
     /**
      * The <code>COALESCE(value1, value2, ... , value n)</code> function.
      *
@@ -11885,7 +11084,6 @@ public class DSL {
     public static <T> Field<T> coalesce(T value, T... values) {
         return coalesce0(Tools.field(value), Tools.fields(values).toArray(EMPTY_FIELD));
     }
-
     /**
      * The <code>COALESCE(field, value)</code> function.
      *
@@ -11895,7 +11093,6 @@ public class DSL {
     public static <T> Field<T> coalesce(Field<T> field, T value) {
         return coalesce0(field, Tools.field(value, field));
     }
-
     /**
      * The <code>COALESCE(field1, field2, ... , field n)</code> function.
      */
@@ -11903,13 +11100,11 @@ public class DSL {
     public static <T> Field<T> coalesce(Field<T> field, Field<?>... fields) {
         return coalesce0(field, fields);
     }
-
     // Java 8 is stricter than Java 7 with respect to generics and overload
     // resolution (http://stackoverflow.com/q/5361513/521799)
     static <T> Field<T> coalesce0(Field<T> field, Field<?>... fields) {
         return new Coalesce<T>(nullSafeDataType(field), nullSafe(combine(field, fields)));
     }
-
     /**
      * Gets the SQL Server-style ISNULL(value, defaultValue) function.
      *
@@ -11919,7 +11114,6 @@ public class DSL {
     public static <T> Field<T> isnull(T value, T defaultValue) {
         return nvl(value, defaultValue);
     }
-
     /**
      * Gets the SQL Server-style ISNULL(value, defaultValue) function.
      *
@@ -11929,7 +11123,6 @@ public class DSL {
     public static <T> Field<T> isnull(T value, Field<T> defaultValue) {
         return nvl(value, defaultValue);
     }
-
     /**
      * Gets the SQL Server-style ISNULL(value, defaultValue) function.
      *
@@ -11939,7 +11132,6 @@ public class DSL {
     public static <T> Field<T> isnull(Field<T> value, T defaultValue) {
         return nvl(value, defaultValue);
     }
-
     /**
      * Gets the SQL Server-style ISNULL(value, defaultValue) function.
      *
@@ -11949,7 +11141,6 @@ public class DSL {
     public static <T> Field<T> isnull(Field<T> value, Field<T> defaultValue) {
         return nvl(value, defaultValue);
     }
-
     /**
      * Gets the Oracle-style NVL(value, defaultValue) function.
      *
@@ -11959,7 +11150,6 @@ public class DSL {
     public static <T> Field<T> nvl(T value, T defaultValue) {
         return nvl0(Tools.field(value), Tools.field(defaultValue));
     }
-
     /**
      * Gets the Oracle-style NVL(value, defaultValue) function.
      *
@@ -11969,7 +11159,6 @@ public class DSL {
     public static <T> Field<T> nvl(T value, Field<T> defaultValue) {
         return nvl0(Tools.field(value), nullSafe(defaultValue));
     }
-
     /**
      * Gets the Oracle-style NVL(value, defaultValue) function.
      *
@@ -11979,7 +11168,6 @@ public class DSL {
     public static <T> Field<T> nvl(Field<T> value, T defaultValue) {
         return nvl0(nullSafe(value), Tools.field(defaultValue));
     }
-
     /**
      * Gets the Oracle-style NVL(value, defaultValue) function.
      * <p>
@@ -12012,7 +11200,6 @@ public class DSL {
     public static <T> Field<T> nvl(Field<T> value, Field<T> defaultValue) {
         return nvl0(value, defaultValue);
     }
-
     /**
      * The <code>IFNULL()</code> function, a synonym of <code>NVL()</code>.
      *
@@ -12022,7 +11209,6 @@ public class DSL {
     public static <T> Field<T> ifnull(T value, T defaultValue) {
         return nvl(value, defaultValue);
     }
-
     /**
      * The <code>IFNULL()</code> function, a synonym of <code>NVL()</code>.
      *
@@ -12032,7 +11218,6 @@ public class DSL {
     public static <T> Field<T> ifnull(T value, Field<T> defaultValue) {
         return nvl(value, defaultValue);
     }
-
     /**
      * The <code>IFNULL()</code> function, a synonym of <code>NVL()</code>.
      *
@@ -12042,7 +11227,6 @@ public class DSL {
     public static <T> Field<T> ifnull(Field<T> value, T defaultValue) {
         return nvl(value, defaultValue);
     }
-
     /**
      * The <code>IFNULL()</code> function, a synonym of <code>NVL()</code>.
      *
@@ -12052,13 +11236,11 @@ public class DSL {
     public static <T> Field<T> ifnull(Field<T> value, Field<T> defaultValue) {
         return nvl(value, defaultValue);
     }
-
     // Java 8 is stricter than Java 7 with respect to generics and overload
     // resolution (http://stackoverflow.com/q/5361513/521799)
     static <T> Field<T> nvl0(Field<T> value, Field<T> defaultValue) {
         return new Nvl<T>(nullSafe(value), nullSafe(defaultValue));
     }
-
     /**
      * Gets the Oracle-style NVL2(value, valueIfNotNull, valueIfNull) function.
      *
@@ -12068,7 +11250,6 @@ public class DSL {
     public static <Z> Field<Z> nvl2(Field<?> value, Z valueIfNotNull, Z valueIfNull) {
         return nvl20(nullSafe(value), Tools.field(valueIfNotNull), Tools.field(valueIfNull));
     }
-
     /**
      * Gets the Oracle-style NVL2(value, valueIfNotNull, valueIfNull) function.
      *
@@ -12078,7 +11259,6 @@ public class DSL {
     public static <Z> Field<Z> nvl2(Field<?> value, Z valueIfNotNull, Field<Z> valueIfNull) {
         return nvl20(nullSafe(value), Tools.field(valueIfNotNull), nullSafe(valueIfNull));
     }
-
     /**
      * Gets the Oracle-style NVL2(value, valueIfNotNull, valueIfNull) function.
      *
@@ -12088,7 +11268,6 @@ public class DSL {
     public static <Z> Field<Z> nvl2(Field<?> value, Field<Z> valueIfNotNull, Z valueIfNull) {
         return nvl20(nullSafe(value), nullSafe(valueIfNotNull), Tools.field(valueIfNull));
     }
-
     /**
      * Gets the Oracle-style NVL2(value, valueIfNotNull, valueIfNull) function.
      * <p>
@@ -12105,13 +11284,11 @@ public class DSL {
     public static <Z> Field<Z> nvl2(Field<?> value, Field<Z> valueIfNotNull, Field<Z> valueIfNull) {
         return nvl20(value, valueIfNotNull, valueIfNull);
     }
-
     // Java 8 is stricter than Java 7 with respect to generics and overload
     // resolution (http://stackoverflow.com/q/5361513/521799)
     static <Z> Field<Z> nvl20(Field<?> value, Field<Z> valueIfNotNull, Field<Z> valueIfNull) {
         return new Nvl2<Z>(nullSafe(value), nullSafe(valueIfNotNull), nullSafe(valueIfNull));
     }
-
     /**
      * Gets the Oracle-style NULLIF(value, other) function.
      *
@@ -12121,7 +11298,6 @@ public class DSL {
     public static <T> Field<T> nullif(T value, T other) {
         return nullif0(Tools.field(value), Tools.field(other));
     }
-
     /**
      * Gets the Oracle-style NULLIF(value, other) function.
      *
@@ -12131,7 +11307,6 @@ public class DSL {
     public static <T> Field<T> nullif(T value, Field<T> other) {
         return nullif0(Tools.field(value), nullSafe(other));
     }
-
     /**
      * Gets the Oracle-style NULLIF(value, other) function.
      *
@@ -12141,7 +11316,6 @@ public class DSL {
     public static <T> Field<T> nullif(Field<T> value, T other) {
         return nullif0(nullSafe(value), Tools.field(other));
     }
-
     /**
      * Gets the Oracle-style NULLIF(value, other) function.
      * <p>
@@ -12156,17 +11330,14 @@ public class DSL {
     public static <T> Field<T> nullif(Field<T> value, Field<T> other) {
         return nullif0(value, other);
     }
-
     // Java 8 is stricter than Java 7 with respect to generics and overload
     // resolution (http://stackoverflow.com/q/5361513/521799)
     static <T> Field<T> nullif0(Field<T> value, Field<T> other) {
         return new NullIf<T>(nullSafe(value), nullSafe(other));
     }
-
     // -------------------------------------------------------------------------
     // XXX String function factory
     // -------------------------------------------------------------------------
-
     /**
      * Get the upper(field) function.
      *
@@ -12176,7 +11347,6 @@ public class DSL {
     public static Field<String> upper(String value) {
         return upper(Tools.field(value));
     }
-
     /**
      * Get the upper(field) function.
      * <p>
@@ -12187,7 +11357,6 @@ public class DSL {
     public static Field<String> upper(Field<String> field) {
         return new Upper(nullSafe(field));
     }
-
     /**
      * Get the lower(field) function.
      *
@@ -12197,7 +11366,6 @@ public class DSL {
     public static Field<String> lower(String value) {
         return lower(Tools.field(value, String.class));
     }
-
     /**
      * Get the lower(field) function.
      * <p>
@@ -12208,7 +11376,6 @@ public class DSL {
     public static Field<String> lower(Field<String> field) {
         return new Lower(nullSafe(field));
     }
-
     /**
      * Get the trim(field) function.
      *
@@ -12218,7 +11385,6 @@ public class DSL {
     public static Field<String> trim(String value) {
         return trim(Tools.field(value, String.class));
     }
-
     /**
      * Get the trim(field) function.
      * <p>
@@ -12230,7 +11396,6 @@ public class DSL {
     public static Field<String> trim(Field<String> field) {
         return new Trim(nullSafe(field));
     }
-
     /**
      * Get the rtrim(field) function.
      *
@@ -12240,7 +11405,6 @@ public class DSL {
     public static Field<String> rtrim(String value) {
         return rtrim(Tools.field(value));
     }
-
     /**
      * Get the rtrim(field) function.
      * <p>
@@ -12251,7 +11415,6 @@ public class DSL {
     public static Field<String> rtrim(Field<String> field) {
         return new RTrim(nullSafe(field));
     }
-
     /**
      * Get the ltrim(field) function.
      *
@@ -12261,7 +11424,6 @@ public class DSL {
     public static Field<String> ltrim(String value) {
         return ltrim(Tools.field(value, String.class));
     }
-
     /**
      * Get the ltrim(field) function.
      * <p>
@@ -12272,7 +11434,6 @@ public class DSL {
     public static Field<String> ltrim(Field<String> field) {
         return new LTrim(nullSafe(field));
     }
-
     /**
      * Get the rpad(field, length) function.
      *
@@ -12282,7 +11443,6 @@ public class DSL {
     public static Field<String> rpad(Field<String> field, int length) {
         return rpad(nullSafe(field), Tools.field(length));
     }
-
     /**
      * Get the rpad(field, length) function.
      * <p>
@@ -12296,7 +11456,6 @@ public class DSL {
     public static Field<String> rpad(Field<String> field, Field<? extends Number> length) {
         return new Rpad(nullSafe(field), nullSafe(length));
     }
-
     /**
      * Get the rpad(field, length, character) function.
      *
@@ -12306,7 +11465,6 @@ public class DSL {
     public static Field<String> rpad(Field<String> field, int length, char character) {
         return rpad(field, length, Character.toString(character));
     }
-
     /**
      * Get the rpad(field, length, character) function.
      *
@@ -12316,7 +11474,6 @@ public class DSL {
     public static Field<String> rpad(Field<String> field, int length, String character) {
         return rpad(nullSafe(field), Tools.field(length), Tools.field(character, String.class));
     }
-
     /**
      * Get the rpad(field, length, character) function.
      * <p>
@@ -12333,7 +11490,6 @@ public class DSL {
     public static Field<String> rpad(Field<String> field, Field<? extends Number> length, Field<String> character) {
         return new Rpad(nullSafe(field), nullSafe(length), nullSafe(character));
     }
-
     /**
      * Get the lpad(field, length) function.
      *
@@ -12343,7 +11499,6 @@ public class DSL {
     public static Field<String> lpad(Field<String> field, int length) {
         return lpad(nullSafe(field), Tools.field(length));
     }
-
     /**
      * Get the lpad(field, length) function.
      * <p>
@@ -12357,7 +11512,6 @@ public class DSL {
     public static Field<String> lpad(Field<String> field, Field<? extends Number> length) {
         return new Lpad(nullSafe(field), nullSafe(length));
     }
-
     /**
      * Get the lpad(field, length, character) function.
      *
@@ -12367,7 +11521,6 @@ public class DSL {
     public static Field<String> lpad(Field<String> field, int length, char character) {
         return lpad(field, length, Character.toString(character));
     }
-
     /**
      * Get the lpad(field, length, character) function.
      *
@@ -12377,7 +11530,6 @@ public class DSL {
     public static Field<String> lpad(Field<String> field, int length, String character) {
         return lpad(nullSafe(field), Tools.field(length), Tools.field(character, String.class));
     }
-
     /**
      * Get the lpad(field, length, character) function.
      * <p>
@@ -12394,7 +11546,6 @@ public class DSL {
     public static Field<String> lpad(Field<String> field, Field<? extends Number> length, Field<String> character) {
         return new Lpad(nullSafe(field), nullSafe(length), nullSafe(character));
     }
-
     /**
      * Get the repeat(field, count) function.
      *
@@ -12404,7 +11555,6 @@ public class DSL {
     public static Field<String> repeat(String field, int count) {
         return repeat(Tools.field(field, String.class), Tools.field(count));
     }
-
     /**
      * Get the repeat(field, count) function.
      *
@@ -12414,7 +11564,6 @@ public class DSL {
     public static Field<String> repeat(String field, Field<? extends Number> count) {
         return repeat(Tools.field(field, String.class), nullSafe(count));
     }
-
     /**
      * Get the repeat(count) function.
      *
@@ -12424,7 +11573,6 @@ public class DSL {
     public static Field<String> repeat(Field<String> field, int count) {
         return repeat(nullSafe(field), Tools.field(count));
     }
-
     /**
      * Get the repeat(field, count) function.
      * <p>
@@ -12442,7 +11590,6 @@ public class DSL {
     public static Field<String> repeat(Field<String> field, Field<? extends Number> count) {
         return new Repeat(nullSafe(field), nullSafe(count));
     }
-
     /**
      * Get the SQL Server specific <code>SPACE()</code> function.
      * <p>
@@ -12456,7 +11603,6 @@ public class DSL {
     public static Field<String> space(int value) {
         return space(val(value));
     }
-
     /**
      * Get the SQL Server specific <code>SPACE()</code> function.
      * <p>
@@ -12470,7 +11616,6 @@ public class DSL {
     public static Field<String> space(Field<Integer> value) {
         return new Space(nullSafe(value));
     }
-
     /**
      * Get the <code>reverse(field)</code> function.
      */
@@ -12478,7 +11623,6 @@ public class DSL {
     public static Field<String> reverse(String value) {
         return reverse(val(value));
     }
-
     /**
      * Get the <code>reverse(field)</code> function.
      */
@@ -12486,7 +11630,6 @@ public class DSL {
     public static Field<String> reverse(Field<String> field) {
         return new Reverse(nullSafe(field));
     }
-
     /**
      * Convenience method for {@link #replace(Field, String, String)} to escape
      * data for use with {@link Field#like(Field, char)}.
@@ -12501,7 +11644,6 @@ public class DSL {
         String esc = "" + escape;
         return value.replace(esc, esc + esc).replace("%", esc + "%").replace("_", esc + "_");
     }
-
     /**
      * Convenience method for {@link #replace(Field, String, String)} to escape
      * data for use with {@link Field#like(Field, char)}.
@@ -12522,7 +11664,6 @@ public class DSL {
 
         return replace;
     }
-
     /**
      * Get the replace(field, search) function.
      *
@@ -12532,7 +11673,6 @@ public class DSL {
     public static Field<String> replace(Field<String> field, String search) {
         return replace(nullSafe(field), Tools.field(search, String.class));
     }
-
     /**
      * Get the replace(field, search) function.
      * <p>
@@ -12546,7 +11686,6 @@ public class DSL {
     public static Field<String> replace(Field<String> field, Field<String> search) {
         return new Replace(nullSafe(field), nullSafe(search));
     }
-
     /**
      * Get the replace(field, search, replace) function.
      *
@@ -12556,7 +11695,6 @@ public class DSL {
     public static Field<String> replace(Field<String> field, String search, String replace) {
         return replace(nullSafe(field), Tools.field(search, String.class), Tools.field(replace, String.class));
     }
-
     /**
      * Get the replace(field, search, replace) function.
      * <p>
@@ -12568,7 +11706,6 @@ public class DSL {
     public static Field<String> replace(Field<String> field, Field<String> search, Field<String> replace) {
         return new Replace(nullSafe(field), nullSafe(search), nullSafe(replace));
     }
-
     /**
      * Get the position(in, search) function.
      *
@@ -12578,7 +11715,6 @@ public class DSL {
     public static Field<Integer> position(String in, String search) {
         return position(Tools.field(in, String.class), Tools.field(search, String.class));
     }
-
     /**
      * Get the position(in, search) function.
      *
@@ -12588,7 +11724,6 @@ public class DSL {
     public static Field<Integer> position(String in, Field<String> search) {
         return position(Tools.field(in, String.class), nullSafe(search));
     }
-
     /**
      * Get the position(in, search) function.
      *
@@ -12598,7 +11733,6 @@ public class DSL {
     public static Field<Integer> position(Field<String> in, String search) {
         return position(nullSafe(in), Tools.field(search, String.class));
     }
-
     /**
      * Get the position(in, search) function.
      * <p>
@@ -12613,7 +11747,6 @@ public class DSL {
     public static Field<Integer> position(Field<String> in, Field<String> search) {
         return new Position(nullSafe(search), nullSafe(in));
     }
-
     /**
      * Get the position(in, search, startindex) function.
      *
@@ -12623,7 +11756,6 @@ public class DSL {
     public static Field<Integer> position(String in, String search, int startIndex) {
         return position(Tools.field(in, String.class), Tools.field(search, String.class), Tools.field(startIndex));
     }
-
     /**
      * Get the position(in, search, startindex) function.
      *
@@ -12633,7 +11765,6 @@ public class DSL {
     public static Field<Integer> position(String in, Field<String> search, int startIndex) {
         return position(Tools.field(in, String.class), nullSafe(search), Tools.field(startIndex));
     }
-
     /**
      * Get the position(in, search, startindex) function.
      *
@@ -12643,7 +11774,6 @@ public class DSL {
     public static Field<Integer> position(Field<String> in, String search, int startIndex) {
         return position(nullSafe(in), Tools.field(search, String.class), Tools.field(startIndex));
     }
-
     /**
      * Get the position(in, search, startindex) function.
      * <p>
@@ -12658,7 +11788,6 @@ public class DSL {
     public static Field<Integer> position(Field<String> in, Field<String> search, int startIndex) {
         return position(nullSafe(search), nullSafe(in), Tools.field(startIndex));
     }
-
     /**
      * Get the position(in, search, startindex) function.
      *
@@ -12668,7 +11797,6 @@ public class DSL {
     public static Field<Integer> position(String in, String search, Field<? extends Number> startIndex) {
         return position(Tools.field(in, String.class), Tools.field(search, String.class), nullSafe(startIndex));
     }
-
     /**
      * Get the position(in, search, startindex) function.
      *
@@ -12678,7 +11806,6 @@ public class DSL {
     public static Field<Integer> position(String in, Field<String> search, Field<? extends Number> startIndex) {
         return position(Tools.field(in, String.class), nullSafe(search), nullSafe(startIndex));
     }
-
     /**
      * Get the position(in, search, startindex) function.
      *
@@ -12688,7 +11815,6 @@ public class DSL {
     public static Field<Integer> position(Field<String> in, String search, Field<? extends Number> startIndex) {
         return position(nullSafe(in), Tools.field(search, String.class), nullSafe(startIndex));
     }
-
     /**
      * Get the position(in, search, startindex) function.
      * <p>
@@ -12703,7 +11829,6 @@ public class DSL {
     public static Field<Integer> position(Field<String> in, Field<String> search, Field<? extends Number> startIndex) {
         return new Position(nullSafe(search), nullSafe(in), nullSafe(startIndex));
     }
-
     /**
      * Get the ascii(field) function.
      *
@@ -12713,7 +11838,6 @@ public class DSL {
     public static Field<Integer> ascii(String field) {
         return ascii(Tools.field(field, String.class));
     }
-
     /**
      * Get the ascii(field) function.
      * <p>
@@ -12724,7 +11848,6 @@ public class DSL {
     public static Field<Integer> ascii(Field<String> field) {
         return new Ascii(nullSafe(field));
     }
-
     /**
      * Get the <code>concat(field, value)</code> function.
      *
@@ -12734,7 +11857,6 @@ public class DSL {
     public static Field<String> concat(Field<String> field, String value) {
         return concat(nullSafe(field), Tools.field(value, String.class));
     }
-
     /**
      * Get the <code>concat(value, field)</code> function.
      *
@@ -12744,7 +11866,6 @@ public class DSL {
     public static Field<String> concat(String value, Field<String> field) {
         return concat(Tools.field(value, String.class), nullSafe(field));
     }
-
     /**
      * Get the concat(value[, value, ...]) function.
      *
@@ -12754,7 +11875,6 @@ public class DSL {
     public static Field<String> concat(String... values) {
         return concat(Tools.fields(values).toArray(EMPTY_FIELD));
     }
-
     /**
      * Get the concat(field[, field, ...]) function.
      * <p>
@@ -12769,7 +11889,6 @@ public class DSL {
     public static Field<String> concat(Field<?>... fields) {
         return new Concat(nullSafe(fields));
     }
-
     /**
      * Get the substring(field, startingPosition) function.
      *
@@ -12779,7 +11898,6 @@ public class DSL {
     public static Field<String> substring(Field<String> field, int startingPosition) {
         return substring(nullSafe(field), Tools.field(startingPosition));
     }
-
     /**
      * Get the substring(field, startingPosition) function.
      * <p>
@@ -12791,7 +11909,6 @@ public class DSL {
     public static Field<String> substring(Field<String> field, Field<? extends Number> startingPosition) {
         return new Substring(nullSafe(field), nullSafe(startingPosition));
     }
-
     /**
      * Get the substring(field, startingPosition, length) function.
      *
@@ -12801,7 +11918,6 @@ public class DSL {
     public static Field<String> substring(Field<String> field, int startingPosition, int length) {
         return substring(nullSafe(field), Tools.field(startingPosition), Tools.field(length));
     }
-
     /**
      * Get the substring(field, startingPosition, length) function.
      * <p>
@@ -12813,7 +11929,6 @@ public class DSL {
     public static Field<String> substring(Field<String> field, Field<? extends Number> startingPosition, Field<? extends Number> length) {
         return new Substring(nullSafe(field), nullSafe(startingPosition), nullSafe(length));
     }
-
     /**
      * Get the mid(field, startingPosition, length) function.
      *
@@ -12823,7 +11938,6 @@ public class DSL {
     public static Field<String> mid(Field<String> field, int startingPosition, int length) {
         return substring(nullSafe(field), Tools.field(startingPosition), Tools.field(length));
     }
-
     /**
      * Get the mid(field, startingPosition, length) function.
      * <p>
@@ -12835,7 +11949,6 @@ public class DSL {
     public static Field<String> mid(Field<String> field, Field<? extends Number> startingPosition, Field<? extends Number> length) {
         return substring(nullSafe(field), nullSafe(startingPosition), nullSafe(length));
     }
-
     /**
      * Get the left outermost characters from a string.
      * <p>
@@ -12848,7 +11961,6 @@ public class DSL {
     public static Field<String> left(String field, int length) {
         return left(Tools.field(field), Tools.field(length));
     }
-
     /**
      * Get the left outermost characters from a string.
      * <p>
@@ -12861,7 +11973,6 @@ public class DSL {
     public static Field<String> left(String field, Field<? extends Number> length) {
         return left(Tools.field(field), nullSafe(length));
     }
-
     /**
      * Get the left outermost characters from a string.
      * <p>
@@ -12874,7 +11985,6 @@ public class DSL {
     public static Field<String> left(Field<String> field, int length) {
         return left(nullSafe(field), Tools.field(length));
     }
-
     /**
      * Get the left outermost characters from a string.
      * <p>
@@ -12887,7 +11997,6 @@ public class DSL {
     public static Field<String> left(Field<String> field, Field<? extends Number> length) {
         return new Left(field, length);
     }
-
     /**
      * Get the right outermost characters from a string.
      * <p>
@@ -12900,7 +12009,6 @@ public class DSL {
     public static Field<String> right(String field, int length) {
         return right(Tools.field(field), Tools.field(length));
     }
-
     /**
      * Get the right outermost characters from a string.
      * <p>
@@ -12913,7 +12021,6 @@ public class DSL {
     public static Field<String> right(String field, Field<? extends Number> length) {
         return right(Tools.field(field), nullSafe(length));
     }
-
     /**
      * Get the right outermost characters from a string.
      * <p>
@@ -12926,7 +12033,6 @@ public class DSL {
     public static Field<String> right(Field<String> field, int length) {
         return right(nullSafe(field), Tools.field(length));
     }
-
     /**
      * Get the right outermost characters from a string.
      * <p>
@@ -12939,7 +12045,6 @@ public class DSL {
     public static Field<String> right(Field<String> field, Field<? extends Number> length) {
         return new Right(field, length);
     }
-
     /**
      * Get the length of a <code>VARCHAR</code> type. This is a synonym for
      * {@link #charLength(String)}.
@@ -12950,7 +12055,6 @@ public class DSL {
     public static Field<Integer> length(String value) {
         return length(Tools.field(value, String.class));
     }
-
     /**
      * Get the length of a <code>VARCHAR</code> type. This is a synonym for
      * {@link #charLength(Field)}.
@@ -12961,7 +12065,6 @@ public class DSL {
     public static Field<Integer> length(Field<String> field) {
         return charLength(field);
     }
-
     /**
      * Get the char_length(field) function.
      * <p>
@@ -12971,7 +12074,6 @@ public class DSL {
     public static Field<Integer> charLength(String value) {
         return charLength(Tools.field(value));
     }
-
     /**
      * Get the char_length(field) function.
      * <p>
@@ -12981,7 +12083,6 @@ public class DSL {
     public static Field<Integer> charLength(Field<String> field) {
         return new org.jooq.impl.Function<Integer>(Term.CHAR_LENGTH, SQLDataType.INTEGER, nullSafe(field));
     }
-
     /**
      * Get the bit_length(field) function.
      * <p>
@@ -12991,7 +12092,6 @@ public class DSL {
     public static Field<Integer> bitLength(String value) {
         return bitLength(Tools.field(value));
     }
-
     /**
      * Get the bit_length(field) function.
      * <p>
@@ -13001,7 +12101,6 @@ public class DSL {
     public static Field<Integer> bitLength(Field<String> field) {
         return new org.jooq.impl.Function<Integer>(Term.BIT_LENGTH, SQLDataType.INTEGER, nullSafe(field));
     }
-
     /**
      * Get the octet_length(field) function.
      * <p>
@@ -13011,7 +12110,6 @@ public class DSL {
     public static Field<Integer> octetLength(String value) {
         return octetLength(Tools.field(value, String.class));
     }
-
     /**
      * Get the octet_length(field) function.
      * <p>
@@ -13021,11 +12119,9 @@ public class DSL {
     public static Field<Integer> octetLength(Field<String> field) {
         return new org.jooq.impl.Function<Integer>(Term.OCTET_LENGTH, SQLDataType.INTEGER, nullSafe(field));
     }
-
     // ------------------------------------------------------------------------
     // XXX Hash function factory
     // ------------------------------------------------------------------------
-
     /**
      * Get the MySQL-specific <code>MD5()</code> function.
      * <p>
@@ -13052,7 +12148,6 @@ public class DSL {
     public static Field<String> md5(String string) {
         return md5(Tools.field(string));
     }
-
     /**
      * Get the MySQL-specific <code>MD5()</code> function.
      * <p>
@@ -13079,11 +12174,9 @@ public class DSL {
     public static Field<String> md5(Field<String> string) {
         return new MD5(nullSafe(string));
     }
-
     // ------------------------------------------------------------------------
     // XXX Date and time functions
     // ------------------------------------------------------------------------
-
     /**
      * Get the current_date() function returning a SQL standard
      * {@link SQLDataType#DATE} type.
@@ -13100,7 +12193,6 @@ public class DSL {
     public static Field<Date> currentDate() {
         return new CurrentDate<Date>(SQLDataType.DATE);
     }
-
     /**
      * Get the current_time() function returning a SQL standard
      * {@link SQLDataType#TIME} type.
@@ -13111,7 +12203,6 @@ public class DSL {
     public static Field<Time> currentTime() {
         return new CurrentTime<Time>(SQLDataType.TIME);
     }
-
     /**
      * Get the current_timestamp() function returning a SQL standard
      * {@link SQLDataType#TIMESTAMP} type.
@@ -13122,8 +12213,6 @@ public class DSL {
     public static Field<Timestamp> currentTimestamp() {
         return new CurrentTimestamp<Timestamp>(SQLDataType.TIMESTAMP);
     }
-
-
     /**
      * Get the current_date() function returning a SQL standard
      * {@link SQLDataType#DATE} type.
@@ -13140,7 +12229,6 @@ public class DSL {
     public static Field<LocalDate> currentLocalDate() {
         return new CurrentDate<>(SQLDataType.LOCALDATE);
     }
-
     /**
      * Get the current_time() function returning a SQL standard
      * {@link SQLDataType#TIME} type.
@@ -13151,7 +12239,6 @@ public class DSL {
     public static Field<LocalTime> currentLocalTime() {
         return new CurrentTime<>(SQLDataType.LOCALTIME);
     }
-
     /**
      * Get the current_timestamp() function returning a SQL standard
      * {@link SQLDataType#TIMESTAMP} type.
@@ -13162,7 +12249,6 @@ public class DSL {
     public static Field<LocalDateTime> currentLocalDateTime() {
         return new CurrentTimestamp<>(SQLDataType.LOCALDATETIME);
     }
-
     /**
      * Get the current_time() function.
      * <p>
@@ -13172,7 +12258,6 @@ public class DSL {
     public static Field<OffsetTime> currentOffsetTime() {
         return currentTime().cast(SQLDataType.OFFSETTIME);
     }
-
     /**
      * Get the current_timestamp() function.
      * <p>
@@ -13182,8 +12267,6 @@ public class DSL {
     public static Field<OffsetDateTime> currentOffsetDateTime() {
         return currentTimestamp().cast(SQLDataType.OFFSETDATETIME);
     }
-
-
     /**
      * Get the date difference in number of days.
      * <p>
@@ -13195,7 +12278,6 @@ public class DSL {
     public static Field<Integer> dateDiff(Date date1, Date date2) {
         return dateDiff(Tools.field(date1), Tools.field(date2));
     }
-
     /**
      * Get the date difference in number of days.
      * <p>
@@ -13207,7 +12289,6 @@ public class DSL {
     public static Field<Integer> dateDiff(Field<Date> date1, Date date2) {
         return dateDiff(nullSafe(date1), Tools.field(date2));
     }
-
     /**
      * Get the date difference in number of days.
      * <p>
@@ -13219,7 +12300,6 @@ public class DSL {
     public static Field<Integer> dateDiff(Date date1, Field<Date> date2) {
         return dateDiff(Tools.field(date1), nullSafe(date2));
     }
-
     /**
      * Get the date difference in number of days.
      * <p>
@@ -13231,7 +12311,6 @@ public class DSL {
     public static Field<Integer> dateDiff(Field<Date> date1, Field<Date> date2) {
         return new DateDiff<Date>(nullSafe(date1), nullSafe(date2));
     }
-
     /**
      * Add an interval to a date.
      * <p>
@@ -13243,7 +12322,6 @@ public class DSL {
     public static Field<Date> dateAdd(Date date, Number interval) {
         return dateAdd(Tools.field(date), Tools.field(interval));
     }
-
     /**
      * Add an interval to a date.
      * <p>
@@ -13255,7 +12333,6 @@ public class DSL {
     public static Field<Date> dateAdd(Field<Date> date, Field<? extends Number> interval) {
         return nullSafe(date).add(interval);
     }
-
     /**
      * Add an interval to a date, given a date part.
      * <p>
@@ -13265,7 +12342,6 @@ public class DSL {
     public static Field<Date> dateAdd(Date date, Number interval, DatePart datePart) {
         return dateAdd(Tools.field(date), Tools.field(interval), datePart);
     }
-
     /**
      * Add an interval to a date, given a date part.
      * <p>
@@ -13275,7 +12351,6 @@ public class DSL {
     public static Field<Date> dateAdd(Date date, Field<? extends Number> interval, DatePart datePart) {
         return dateAdd(Tools.field(date), nullSafe(interval), datePart);
     }
-
     /**
      * Add an interval to a date, given a date part.
      * <p>
@@ -13285,7 +12360,6 @@ public class DSL {
     public static Field<Date> dateAdd(Field<Date> date, Number interval, DatePart datePart) {
         return dateAdd(nullSafe(date), Tools.field(interval), datePart);
     }
-
     /**
      * Add an interval to a date, given a date part.
      * <p>
@@ -13295,7 +12369,6 @@ public class DSL {
     public static Field<Date> dateAdd(Field<Date> date, Field<? extends Number> interval, DatePart datePart) {
         return new DateAdd<Date>(nullSafe(date), nullSafe(interval), datePart);
     }
-
     /**
      * Subtract an interval from a date.
      * <p>
@@ -13307,7 +12380,6 @@ public class DSL {
     public static Field<Date> dateSub(Date date, Number interval) {
         return dateSub(Tools.field(date), Tools.field(interval));
     }
-
     /**
      * Subtract an interval from a date.
      * <p>
@@ -13319,7 +12391,6 @@ public class DSL {
     public static Field<Date> dateSub(Field<Date> date, Field<? extends Number> interval) {
         return nullSafe(date).sub(interval);
     }
-
     /**
      * Subtract an interval from a date, given a date part.
      * <p>
@@ -13329,7 +12400,6 @@ public class DSL {
     public static Field<Date> dateSub(Date date, Number interval, DatePart datePart) {
         return dateSub(Tools.field(date), Tools.field(interval), datePart);
     }
-
     /**
      * Subtract an interval from a date, given a date part.
      * <p>
@@ -13339,7 +12409,6 @@ public class DSL {
     public static Field<Date> dateSub(Date date, Field<? extends Number> interval, DatePart datePart) {
         return dateSub(Tools.field(date), nullSafe(interval), datePart);
     }
-
     /**
      * Subtract an interval from a date, given a date part.
      * <p>
@@ -13349,7 +12418,6 @@ public class DSL {
     public static Field<Date> dateSub(Field<Date> date, Number interval, DatePart datePart) {
         return dateSub(nullSafe(date), Tools.field(interval), datePart);
     }
-
     /**
      * Subtract an interval from a date, given a date part.
      * <p>
@@ -13359,7 +12427,6 @@ public class DSL {
     public static Field<Date> dateSub(Field<Date> date, Field<? extends Number> interval, DatePart datePart) {
         return new DateAdd<Date>(nullSafe(date), nullSafe(interval).neg(), datePart);
     }
-
     /**
      * Add an interval to a timestamp.
      * <p>
@@ -13371,7 +12438,6 @@ public class DSL {
     public static Field<Timestamp> timestampAdd(Timestamp timestamp, Number interval) {
         return timestampAdd(Tools.field(timestamp), Tools.field(interval));
     }
-
     /**
      * Add an interval to a timestamp.
      * <p>
@@ -13383,7 +12449,6 @@ public class DSL {
     public static Field<Timestamp> timestampAdd(Field<Timestamp> timestamp, Field<? extends Number> interval) {
         return nullSafe(timestamp).add(interval);
     }
-
     /**
      * Add an interval to a timestamp, given a date part.
      * <p>
@@ -13393,7 +12458,6 @@ public class DSL {
     public static Field<Timestamp> timestampAdd(Timestamp date, Number interval, DatePart datePart) {
         return new DateAdd<Timestamp>(Tools.field(date), Tools.field(interval), datePart);
     }
-
     /**
      * Add an interval to a timestamp, given a date part.
      * <p>
@@ -13403,7 +12467,6 @@ public class DSL {
     public static Field<Timestamp> timestampAdd(Timestamp date, Field<? extends Number> interval, DatePart datePart) {
         return new DateAdd<Timestamp>(Tools.field(date), nullSafe(interval), datePart);
     }
-
     /**
      * Add an interval to a timestamp, given a date part.
      * <p>
@@ -13413,7 +12476,6 @@ public class DSL {
     public static Field<Timestamp> timestampAdd(Field<Timestamp> date, Number interval, DatePart datePart) {
         return new DateAdd<Timestamp>(nullSafe(date), Tools.field(interval), datePart);
     }
-
     /**
      * Add an interval to a timestamp, given a date part.
      * <p>
@@ -13423,7 +12485,6 @@ public class DSL {
     public static Field<Timestamp> timestampAdd(Field<Timestamp> date, Field<? extends Number> interval, DatePart datePart) {
         return new DateAdd<Timestamp>(nullSafe(date), nullSafe(interval), datePart);
     }
-
     /**
      * Get the timestamp difference as a <code>INTERVAL DAY TO SECOND</code>
      * type.
@@ -13436,7 +12497,6 @@ public class DSL {
     public static Field<DayToSecond> timestampDiff(Timestamp timestamp1, Timestamp timestamp2) {
         return timestampDiff(Tools.field(timestamp1), Tools.field(timestamp2));
     }
-
     /**
      * Get the timestamp difference as a <code>INTERVAL DAY TO SECOND</code>
      * type.
@@ -13449,7 +12509,6 @@ public class DSL {
     public static Field<DayToSecond> timestampDiff(Field<Timestamp> timestamp1, Timestamp timestamp2) {
         return timestampDiff(nullSafe(timestamp1), Tools.field(timestamp2));
     }
-
     /**
      * Get the timestamp difference as a <code>INTERVAL DAY TO SECOND</code>
      * type.
@@ -13462,7 +12521,6 @@ public class DSL {
     public static Field<DayToSecond> timestampDiff(Timestamp timestamp1, Field<Timestamp> timestamp2) {
         return timestampDiff(Tools.field(timestamp1), nullSafe(timestamp2));
     }
-
     /**
      * Get the timestamp difference as a <code>INTERVAL DAY TO SECOND</code>
      * type.
@@ -13475,9 +12533,6 @@ public class DSL {
     public static Field<DayToSecond> timestampDiff(Field<Timestamp> timestamp1, Field<Timestamp> timestamp2) {
         return new TimestampDiff(nullSafe(timestamp1), nullSafe(timestamp2));
     }
-
-
-
     /**
      * Get the date difference in number of days.
      * <p>
@@ -13489,7 +12544,6 @@ public class DSL {
     public static Field<Integer> localDateDiff(LocalDate date1, LocalDate date2) {
         return localDateDiff(Tools.field(date1), Tools.field(date2));
     }
-
     /**
      * Get the date difference in number of days.
      * <p>
@@ -13501,7 +12555,6 @@ public class DSL {
     public static Field<Integer> localDateDiff(Field<LocalDate> date1, LocalDate date2) {
         return localDateDiff(nullSafe(date1), Tools.field(date2));
     }
-
     /**
      * Get the date difference in number of days.
      * <p>
@@ -13513,7 +12566,6 @@ public class DSL {
     public static Field<Integer> localDateDiff(LocalDate date1, Field<LocalDate> date2) {
         return localDateDiff(Tools.field(date1), nullSafe(date2));
     }
-
     /**
      * Get the date difference in number of days.
      * <p>
@@ -13525,7 +12577,6 @@ public class DSL {
     public static Field<Integer> localDateDiff(Field<LocalDate> date1, Field<LocalDate> date2) {
         return new DateDiff<LocalDate>(nullSafe(date1), nullSafe(date2));
     }
-
     /**
      * Add an interval to a date.
      * <p>
@@ -13537,7 +12588,6 @@ public class DSL {
     public static Field<LocalDate> localDateAdd(LocalDate date, Number interval) {
         return localDateAdd(Tools.field(date), Tools.field(interval));
     }
-
     /**
      * Add an interval to a date.
      * <p>
@@ -13549,7 +12599,6 @@ public class DSL {
     public static Field<LocalDate> localDateAdd(Field<LocalDate> date, Field<? extends Number> interval) {
         return nullSafe(date).add(interval);
     }
-
     /**
      * Add an interval to a date, given a date part.
      * <p>
@@ -13559,7 +12608,6 @@ public class DSL {
     public static Field<LocalDate> localDateAdd(LocalDate date, Number interval, DatePart datePart) {
         return localDateAdd(Tools.field(date), Tools.field(interval), datePart);
     }
-
     /**
      * Add an interval to a date, given a date part.
      * <p>
@@ -13569,7 +12617,6 @@ public class DSL {
     public static Field<LocalDate> localDateAdd(LocalDate date, Field<? extends Number> interval, DatePart datePart) {
         return localDateAdd(Tools.field(date), nullSafe(interval), datePart);
     }
-
     /**
      * Add an interval to a date, given a date part.
      * <p>
@@ -13579,7 +12626,6 @@ public class DSL {
     public static Field<LocalDate> localDateAdd(Field<LocalDate> date, Number interval, DatePart datePart) {
         return localDateAdd(nullSafe(date), Tools.field(interval), datePart);
     }
-
     /**
      * Add an interval to a date, given a date part.
      * <p>
@@ -13589,7 +12635,6 @@ public class DSL {
     public static Field<LocalDate> localDateAdd(Field<LocalDate> date, Field<? extends Number> interval, DatePart datePart) {
         return new DateAdd<LocalDate>(nullSafe(date), nullSafe(interval), datePart);
     }
-
     /**
      * Subtract an interval from a date.
      * <p>
@@ -13601,7 +12646,6 @@ public class DSL {
     public static Field<LocalDate> localDateSub(LocalDate date, Number interval) {
         return localDateSub(Tools.field(date), Tools.field(interval));
     }
-
     /**
      * Subtract an interval from a date.
      * <p>
@@ -13613,7 +12657,6 @@ public class DSL {
     public static Field<LocalDate> localDateSub(Field<LocalDate> date, Field<? extends Number> interval) {
         return nullSafe(date).sub(interval);
     }
-
     /**
      * Subtract an interval from a date, given a date part.
      * <p>
@@ -13623,7 +12666,6 @@ public class DSL {
     public static Field<LocalDate> localDateSub(LocalDate date, Number interval, DatePart datePart) {
         return localDateSub(Tools.field(date), Tools.field(interval), datePart);
     }
-
     /**
      * Subtract an interval from a date, given a date part.
      * <p>
@@ -13633,7 +12675,6 @@ public class DSL {
     public static Field<LocalDate> localDateSub(LocalDate date, Field<? extends Number> interval, DatePart datePart) {
         return localDateSub(Tools.field(date), nullSafe(interval), datePart);
     }
-
     /**
      * Subtract an interval from a date, given a date part.
      * <p>
@@ -13643,7 +12684,6 @@ public class DSL {
     public static Field<LocalDate> localDateSub(Field<LocalDate> date, Number interval, DatePart datePart) {
         return localDateSub(nullSafe(date), Tools.field(interval), datePart);
     }
-
     /**
      * Subtract an interval from a date, given a date part.
      * <p>
@@ -13653,7 +12693,6 @@ public class DSL {
     public static Field<LocalDate> localDateSub(Field<LocalDate> date, Field<? extends Number> interval, DatePart datePart) {
         return new DateAdd<LocalDate>(nullSafe(date), nullSafe(interval).neg(), datePart);
     }
-
     /**
      * Add an interval to a timestamp.
      * <p>
@@ -13665,7 +12704,6 @@ public class DSL {
     public static Field<LocalDateTime> localDateTimeAdd(LocalDateTime timestamp, Number interval) {
         return localDateTimeAdd(Tools.field(timestamp), Tools.field(interval));
     }
-
     /**
      * Add an interval to a timestamp.
      * <p>
@@ -13677,7 +12715,6 @@ public class DSL {
     public static Field<LocalDateTime> localDateTimeAdd(Field<LocalDateTime> timestamp, Field<? extends Number> interval) {
         return nullSafe(timestamp).add(interval);
     }
-
     /**
      * Add an interval to a timestamp, given a date part.
      * <p>
@@ -13687,7 +12724,6 @@ public class DSL {
     public static Field<LocalDateTime> localDateTimeAdd(LocalDateTime date, Number interval, DatePart datePart) {
         return new DateAdd<LocalDateTime>(Tools.field(date), Tools.field(interval), datePart);
     }
-
     /**
      * Add an interval to a timestamp, given a date part.
      * <p>
@@ -13697,7 +12733,6 @@ public class DSL {
     public static Field<LocalDateTime> localDateTimeAdd(LocalDateTime date, Field<? extends Number> interval, DatePart datePart) {
         return new DateAdd<LocalDateTime>(Tools.field(date), nullSafe(interval), datePart);
     }
-
     /**
      * Add an interval to a timestamp, given a date part.
      * <p>
@@ -13707,7 +12742,6 @@ public class DSL {
     public static Field<LocalDateTime> localDateTimeAdd(Field<LocalDateTime> date, Number interval, DatePart datePart) {
         return new DateAdd<LocalDateTime>(nullSafe(date), Tools.field(interval), datePart);
     }
-
     /**
      * Add an interval to a timestamp, given a date part.
      * <p>
@@ -13717,7 +12751,6 @@ public class DSL {
     public static Field<LocalDateTime> localDateTimeAdd(Field<LocalDateTime> date, Field<? extends Number> interval, DatePart datePart) {
         return new DateAdd<LocalDateTime>(nullSafe(date), nullSafe(interval), datePart);
     }
-
     /**
      * Get the timestamp difference as a <code>INTERVAL DAY TO SECOND</code>
      * type.
@@ -13730,7 +12763,6 @@ public class DSL {
     public static Field<DayToSecond> localDateTimeDiff(LocalDateTime timestamp1, LocalDateTime timestamp2) {
         return localDateTimeDiff(Tools.field(timestamp1), Tools.field(timestamp2));
     }
-
     /**
      * Get the timestamp difference as a <code>INTERVAL DAY TO SECOND</code>
      * type.
@@ -13743,7 +12775,6 @@ public class DSL {
     public static Field<DayToSecond> localDateTimeDiff(Field<LocalDateTime> timestamp1, LocalDateTime timestamp2) {
         return localDateTimeDiff(nullSafe(timestamp1), Tools.field(timestamp2));
     }
-
     /**
      * Get the timestamp difference as a <code>INTERVAL DAY TO SECOND</code>
      * type.
@@ -13756,7 +12787,6 @@ public class DSL {
     public static Field<DayToSecond> localDateTimeDiff(LocalDateTime timestamp1, Field<LocalDateTime> timestamp2) {
         return localDateTimeDiff(Tools.field(timestamp1), nullSafe(timestamp2));
     }
-
     /**
      * Get the timestamp difference as a <code>INTERVAL DAY TO SECOND</code>
      * type.
@@ -13769,9 +12799,6 @@ public class DSL {
     public static Field<DayToSecond> localDateTimeDiff(Field<LocalDateTime> timestamp1, Field<LocalDateTime> timestamp2) {
         return new TimestampDiff(nullSafe(timestamp1), nullSafe(timestamp2));
     }
-
-
-
     /**
      * Truncate a date to the beginning of the day.
      */
@@ -13779,7 +12806,6 @@ public class DSL {
     public static Field<Date> trunc(Date date) {
         return trunc(date, DatePart.DAY);
     }
-
     /**
      * Truncate a date to a given datepart.
      */
@@ -13787,9 +12813,6 @@ public class DSL {
     public static Field<Date> trunc(Date date, DatePart part) {
         return trunc(Tools.field(date), part);
     }
-
-
-
     /**
      * Truncate a date to the beginning of the day.
      */
@@ -13797,7 +12820,6 @@ public class DSL {
     public static Field<LocalDate> trunc(LocalDate date) {
         return trunc(date, DatePart.DAY);
     }
-
     /**
      * Truncate a date to a given datepart.
      */
@@ -13805,9 +12827,6 @@ public class DSL {
     public static Field<LocalDate> trunc(LocalDate date, DatePart part) {
         return trunc(Tools.field(date), part);
     }
-
-
-
     /**
      * Truncate a timestamp to the beginning of the day.
      */
@@ -13815,7 +12834,6 @@ public class DSL {
     public static Field<Timestamp> trunc(Timestamp timestamp) {
         return trunc(timestamp, DatePart.DAY);
     }
-
     /**
      * Truncate a timestamp to a given datepart.
      */
@@ -13823,9 +12841,6 @@ public class DSL {
     public static Field<Timestamp> trunc(Timestamp timestamp, DatePart part) {
         return trunc(Tools.field(timestamp), part);
     }
-
-
-
     /**
      * Truncate a timestamp to the beginning of the day.
      */
@@ -13833,7 +12848,6 @@ public class DSL {
     public static Field<LocalDateTime> trunc(LocalDateTime timestamp) {
         return trunc(timestamp, DatePart.DAY);
     }
-
     /**
      * Truncate a timestamp to a given datepart.
      */
@@ -13841,9 +12855,6 @@ public class DSL {
     public static Field<LocalDateTime> trunc(LocalDateTime timestamp, DatePart part) {
         return trunc(Tools.field(timestamp), part);
     }
-
-
-
     /**
      * Truncate a date or a timestamp to the beginning of the day.
      */
@@ -13851,7 +12862,6 @@ public class DSL {
     public static <T> Field<T> trunc(Field<T> date) {
         return trunc(date, DatePart.DAY);
     }
-
     /**
      * Truncate a date or a timestamp to a given datepart.
      */
@@ -13859,9 +12869,7 @@ public class DSL {
     public static <T> Field<T> trunc(Field<T> date, DatePart part) {
         return new TruncDate<T>(date, part);
     }
-
     // -------------------------------------------------------------------------
-
     /**
      * Get the extract(field, datePart) function.
      * <p>
@@ -13871,9 +12879,6 @@ public class DSL {
     public static Field<Integer> extract(java.util.Date value, DatePart datePart) {
         return extract(Tools.field(Convert.convert(value, Timestamp.class)), datePart);
     }
-
-
-
     /**
      * Get the extract(field, datePart) function.
      * <p>
@@ -13883,9 +12888,6 @@ public class DSL {
     public static Field<Integer> extract(Temporal value, DatePart datePart) {
         return extract(Tools.field(value), datePart);
     }
-
-
-
     /**
      * Get the extract(field, datePart) function.
      * <p>
@@ -13895,7 +12897,6 @@ public class DSL {
     public static Field<Integer> extract(Field<?> field, DatePart datePart) {
         return new Extract(nullSafe(field), datePart);
     }
-
     /**
      * Get the year part of a date.
      * <p>
@@ -13906,9 +12907,6 @@ public class DSL {
     public static Field<Integer> year(java.util.Date value) {
         return extract(value, DatePart.YEAR);
     }
-
-
-
     /**
      * Get the year part of a date.
      * <p>
@@ -13919,9 +12917,6 @@ public class DSL {
     public static Field<Integer> year(Temporal value) {
         return extract(value, DatePart.YEAR);
     }
-
-
-
     /**
      * Get the year part of a date.
      * <p>
@@ -13932,7 +12927,6 @@ public class DSL {
     public static Field<Integer> year(Field<?> field) {
         return extract(field, DatePart.YEAR);
     }
-
     /**
      * Get the month part of a date.
      * <p>
@@ -13943,9 +12937,6 @@ public class DSL {
     public static Field<Integer> month(java.util.Date value) {
         return extract(value, DatePart.MONTH);
     }
-
-
-
     /**
      * Get the month part of a date.
      * <p>
@@ -13956,9 +12947,6 @@ public class DSL {
     public static Field<Integer> month(Temporal value) {
         return extract(value, DatePart.MONTH);
     }
-
-
-
     /**
      * Get the month part of a date.
      * <p>
@@ -13969,7 +12957,6 @@ public class DSL {
     public static Field<Integer> month(Field<?> field) {
         return extract(field, DatePart.MONTH);
     }
-
     /**
      * Get the day part of a date.
      * <p>
@@ -13980,9 +12967,6 @@ public class DSL {
     public static Field<Integer> day(java.util.Date value) {
         return extract(value, DatePart.DAY);
     }
-
-
-
     /**
      * Get the day part of a date.
      * <p>
@@ -13993,9 +12977,6 @@ public class DSL {
     public static Field<Integer> day(Temporal value) {
         return extract(value, DatePart.DAY);
     }
-
-
-
     /**
      * Get the day part of a date.
      * <p>
@@ -14006,7 +12987,6 @@ public class DSL {
     public static Field<Integer> day(Field<?> field) {
         return extract(field, DatePart.DAY);
     }
-
     /**
      * Get the hour part of a date.
      * <p>
@@ -14017,9 +12997,6 @@ public class DSL {
     public static Field<Integer> hour(java.util.Date value) {
         return extract(value, DatePart.HOUR);
     }
-
-
-
     /**
      * Get the hour part of a date.
      * <p>
@@ -14030,9 +13007,6 @@ public class DSL {
     public static Field<Integer> hour(Temporal value) {
         return extract(value, DatePart.HOUR);
     }
-
-
-
     /**
      * Get the hour part of a date.
      * <p>
@@ -14043,7 +13017,6 @@ public class DSL {
     public static Field<Integer> hour(Field<?> field) {
         return extract(field, DatePart.HOUR);
     }
-
     /**
      * Get the minute part of a date.
      * <p>
@@ -14054,9 +13027,6 @@ public class DSL {
     public static Field<Integer> minute(java.util.Date value) {
         return extract(value, DatePart.MINUTE);
     }
-
-
-
     /**
      * Get the minute part of a date.
      * <p>
@@ -14067,9 +13037,6 @@ public class DSL {
     public static Field<Integer> minute(Temporal value) {
         return extract(value, DatePart.MINUTE);
     }
-
-
-
     /**
      * Get the minute part of a date.
      * <p>
@@ -14080,7 +13047,6 @@ public class DSL {
     public static Field<Integer> minute(Field<?> field) {
         return extract(field, DatePart.MINUTE);
     }
-
     /**
      * Get the second part of a date.
      * <p>
@@ -14091,9 +13057,6 @@ public class DSL {
     public static Field<Integer> second(java.util.Date value) {
         return extract(value, DatePart.SECOND);
     }
-
-
-
     /**
      * Get the second part of a date.
      * <p>
@@ -14104,9 +13067,6 @@ public class DSL {
     public static Field<Integer> second(Temporal value) {
         return extract(value, DatePart.SECOND);
     }
-
-
-
     /**
      * Get the second part of a date.
      * <p>
@@ -14117,7 +13077,6 @@ public class DSL {
     public static Field<Integer> second(Field<?> field) {
         return extract(field, DatePart.SECOND);
     }
-
     /**
      * Convert a string value to a <code>DATE</code>.
      */
@@ -14125,7 +13084,6 @@ public class DSL {
     public static Field<Date> date(String value) {
         return Tools.field(Convert.convert(value, Date.class), SQLDataType.DATE);
     }
-
     /**
      * Convert a temporal value to a <code>DATE</code>.
      */
@@ -14133,7 +13091,6 @@ public class DSL {
     public static Field<Date> date(java.util.Date value) {
         return Tools.field(Convert.convert(value, Date.class), SQLDataType.DATE);
     }
-
     /**
      * Convert a temporal value to a <code>DATE</code>.
      */
@@ -14141,7 +13098,6 @@ public class DSL {
     public static Field<Date> date(Field<? extends java.util.Date> field) {
         return new DateOrTime<Date>(field, SQLDataType.DATE);
     }
-
     /**
      * Convert a string value to a <code>TIME</code>.
      */
@@ -14149,7 +13105,6 @@ public class DSL {
     public static Field<Time> time(String value) {
         return Tools.field(Convert.convert(value, Time.class), SQLDataType.TIME);
     }
-
     /**
      * Convert a temporal value to a <code>TIME</code>.
      */
@@ -14157,7 +13112,6 @@ public class DSL {
     public static Field<Time> time(java.util.Date value) {
         return Tools.field(Convert.convert(value, Time.class), SQLDataType.TIME);
     }
-
     /**
      * Convert a temporal value to a <code>TIME</code>.
      */
@@ -14165,7 +13119,6 @@ public class DSL {
     public static Field<Time> time(Field<? extends java.util.Date> field) {
         return new DateOrTime<Time>(field, SQLDataType.TIME);
     }
-
     /**
      * Convert a string value to a <code>TIMESTAMP</code>.
      */
@@ -14173,7 +13126,6 @@ public class DSL {
     public static Field<Timestamp> timestamp(String value) {
         return Tools.field(Convert.convert(value, Timestamp.class), SQLDataType.TIMESTAMP);
     }
-
     /**
      * Convert a temporal value to a <code>TIMESTAMP</code>.
      */
@@ -14181,7 +13133,6 @@ public class DSL {
     public static Field<Timestamp> timestamp(java.util.Date value) {
         return Tools.field(Convert.convert(value, Timestamp.class), SQLDataType.TIMESTAMP);
     }
-
     /**
      * Convert a temporal value to a <code>TIMESTAMP</code>.
      */
@@ -14189,8 +13140,6 @@ public class DSL {
     public static Field<Timestamp> timestamp(Field<? extends java.util.Date> field) {
         return new DateOrTime<Timestamp>(field, SQLDataType.TIMESTAMP);
     }
-
-
     /**
      * Convert a string value to a <code>DATE</code>.
      */
@@ -14198,7 +13147,6 @@ public class DSL {
     public static Field<LocalDate> localDate(String value) {
         return Tools.field(Convert.convert(value, LocalDate.class), SQLDataType.LOCALDATE);
     }
-
     /**
      * Convert a temporal value to a <code>DATE</code>.
      */
@@ -14206,7 +13154,6 @@ public class DSL {
     public static Field<LocalDate> localDate(LocalDate value) {
         return localDate(Tools.field(value));
     }
-
     /**
      * Convert a temporal value to a <code>DATE</code>.
      */
@@ -14214,7 +13161,6 @@ public class DSL {
     public static Field<LocalDate> localDate(Field<LocalDate> field) {
         return new DateOrTime<LocalDate>(field, SQLDataType.LOCALDATE);
     }
-
     /**
      * Convert a string value to a <code>TIME</code>.
      */
@@ -14222,7 +13168,6 @@ public class DSL {
     public static Field<LocalTime> localTime(String value) {
         return Tools.field(Convert.convert(value, LocalTime.class), SQLDataType.LOCALTIME);
     }
-
     /**
      * Convert a temporal value to a <code>TIME</code>.
      */
@@ -14230,7 +13175,6 @@ public class DSL {
     public static Field<LocalTime> localTime(LocalTime value) {
         return localTime(Tools.field(value));
     }
-
     /**
      * Convert a temporal value to a <code>TIME</code>.
      */
@@ -14238,7 +13182,6 @@ public class DSL {
     public static Field<LocalTime> localTime(Field<LocalTime> field) {
         return new DateOrTime<LocalTime>(field, SQLDataType.LOCALTIME);
     }
-
     /**
      * Convert a string value to a <code>TIMESTAMP</code>.
      */
@@ -14246,7 +13189,6 @@ public class DSL {
     public static Field<LocalDateTime> localDateTime(String value) {
         return Tools.field(Convert.convert(value, LocalDateTime.class), SQLDataType.LOCALDATETIME);
     }
-
     /**
      * Convert a temporal value to a <code>TIMESTAMP</code>.
      */
@@ -14254,7 +13196,6 @@ public class DSL {
     public static Field<LocalDateTime> localDateTime(LocalDateTime value) {
         return localDateTime(Tools.field(value));
     }
-
     /**
      * Convert a temporal value to a <code>TIMESTAMP</code>.
      */
@@ -14262,7 +13203,6 @@ public class DSL {
     public static Field<LocalDateTime> localDateTime(Field<LocalDateTime> field) {
         return new DateOrTime<LocalDateTime>(field, SQLDataType.LOCALDATETIME);
     }
-
     /**
      * Convert a string value to a <code>TIME WITH TIME ZONE</code>.
      * <p>
@@ -14276,7 +13216,6 @@ public class DSL {
     public static Field<OffsetTime> offsetTime(String value) {
         return Tools.field(Convert.convert(value, OffsetTime.class), SQLDataType.OFFSETTIME);
     }
-
     /**
      * Convert a temporal value to a <code>TIME WITH TIME ZONE</code>.
      * <p>
@@ -14290,7 +13229,6 @@ public class DSL {
     public static Field<OffsetTime> offsetTime(OffsetTime value) {
         return offsetTime(Tools.field(value));
     }
-
     /**
      * Convert a temporal value to a <code>TIME WITH TIME ZONE</code>.
      * <p>
@@ -14304,7 +13242,6 @@ public class DSL {
     public static Field<OffsetTime> offsetTime(Field<OffsetTime> field) {
         return new DateOrTime<OffsetTime>(field, SQLDataType.OFFSETTIME);
     }
-
     /**
      * Convert a string value to a <code>TIMESTAMP WITH TIME ZONE</code>.
      * <p>
@@ -14318,7 +13255,6 @@ public class DSL {
     public static Field<OffsetDateTime> offsetDateTime(String value) {
         return Tools.field(Convert.convert(value, OffsetDateTime.class), SQLDataType.OFFSETDATETIME);
     }
-
     /**
      * Convert a temporal value to a <code>TIMESTAMP WITH TIME ZONE</code>.
      * <p>
@@ -14332,7 +13268,6 @@ public class DSL {
     public static Field<OffsetDateTime> offsetDateTime(OffsetDateTime value) {
         return offsetDateTime(Tools.field(value));
     }
-
     /**
      * Convert a temporal value to a <code>TIMESTAMP WITH TIME ZONE</code>.
      * <p>
@@ -14346,8 +13281,6 @@ public class DSL {
     public static Field<OffsetDateTime> offsetDateTime(Field<OffsetDateTime> field) {
         return new DateOrTime<OffsetDateTime>(field, SQLDataType.OFFSETDATETIME);
     }
-
-
     /**
      * Parse a value to a <code>DATE</code>.
      *
@@ -14358,7 +13291,6 @@ public class DSL {
     public static Field<Date> toDate(String value, String format) {
         return toDate(Tools.field(value, SQLDataType.VARCHAR), Tools.field(format, SQLDataType.VARCHAR));
     }
-
     /**
      * Parse a value to a <code>DATE</code>.
      *
@@ -14369,7 +13301,6 @@ public class DSL {
     public static Field<Date> toDate(String value, Field<String> format) {
         return toDate(Tools.field(value, SQLDataType.VARCHAR), nullSafe(format));
     }
-
     /**
      * Parse a value to a <code>DATE</code>.
      *
@@ -14380,7 +13311,6 @@ public class DSL {
     public static Field<Date> toDate(Field<String> value, String format) {
         return toDate(nullSafe(value), Tools.field(format, SQLDataType.VARCHAR));
     }
-
     /**
      * Parse a value to a <code>DATE</code>.
      *
@@ -14391,7 +13321,6 @@ public class DSL {
     public static Field<Date> toDate(Field<String> value, Field<String> format) {
         return DSL.field("{to_date}({0}, {1})", SQLDataType.DATE, nullSafe(value), nullSafe(format));
     }
-
     /**
      * Parse a value to a <code>TIMESTAMP</code>.
      *
@@ -14402,7 +13331,6 @@ public class DSL {
     public static Field<Timestamp> toTimestamp(String value, String format) {
         return toTimestamp(Tools.field(value, SQLDataType.VARCHAR), Tools.field(format, SQLDataType.VARCHAR));
     }
-
     /**
      * Parse a value to a <code>TIMESTAMP</code>.
      *
@@ -14413,7 +13341,6 @@ public class DSL {
     public static Field<Timestamp> toTimestamp(String value, Field<String> format) {
         return toTimestamp(Tools.field(value, SQLDataType.VARCHAR), nullSafe(format));
     }
-
     /**
      * Parse a value to a <code>TIMESTAMP</code>.
      *
@@ -14424,7 +13351,6 @@ public class DSL {
     public static Field<Timestamp> toTimestamp(Field<String> value, String format) {
         return toTimestamp(nullSafe(value), Tools.field(format, SQLDataType.VARCHAR));
     }
-
     /**
      * Parse a value to a <code>TIMESTAMP</code>.
      *
@@ -14435,9 +13361,6 @@ public class DSL {
     public static Field<Timestamp> toTimestamp(Field<String> value, Field<String> format) {
         return DSL.field("{to_timestamp}({0}, {1})", SQLDataType.TIMESTAMP, nullSafe(value), nullSafe(format));
     }
-
-
-
     /**
      * Parse a value to a <code>DATE</code>.
      *
@@ -14448,7 +13371,6 @@ public class DSL {
     public static Field<LocalDate> toLocalDate(String value, String format) {
         return toDate(value, format).coerce(SQLDataType.LOCALDATE);
     }
-
     /**
      * Parse a value to a <code>DATE</code>.
      *
@@ -14459,7 +13381,6 @@ public class DSL {
     public static Field<LocalDate> toLocalDate(String value, Field<String> format) {
         return toDate(value, format).coerce(SQLDataType.LOCALDATE);
     }
-
     /**
      * Parse a value to a <code>DATE</code>.
      *
@@ -14470,7 +13391,6 @@ public class DSL {
     public static Field<LocalDate> toLocalDate(Field<String> value, String format) {
         return toDate(value, format).coerce(SQLDataType.LOCALDATE);
     }
-
     /**
      * Parse a value to a <code>DATE</code>.
      *
@@ -14481,7 +13401,6 @@ public class DSL {
     public static Field<LocalDate> toLocalDate(Field<String> value, Field<String> format) {
         return toDate(value, format).coerce(SQLDataType.LOCALDATE);
     }
-
     /**
      * Parse a value to a <code>TIMESTAMP</code>.
      *
@@ -14492,7 +13411,6 @@ public class DSL {
     public static Field<LocalDateTime> toLocalDateTime(String value, String format) {
         return toTimestamp(value, format).coerce(SQLDataType.LOCALDATETIME);
     }
-
     /**
      * Parse a value to a <code>TIMESTAMP</code>.
      *
@@ -14503,7 +13421,6 @@ public class DSL {
     public static Field<LocalDateTime> toLocalDateTime(String value, Field<String> format) {
         return toTimestamp(value, format).coerce(SQLDataType.LOCALDATETIME);
     }
-
     /**
      * Parse a value to a <code>TIMESTAMP</code>.
      *
@@ -14514,7 +13431,6 @@ public class DSL {
     public static Field<LocalDateTime> toLocalDateTime(Field<String> value, String format) {
         return toTimestamp(value, format).coerce(SQLDataType.LOCALDATETIME);
     }
-
     /**
      * Parse a value to a <code>TIMESTAMP</code>.
      *
@@ -14525,13 +13441,9 @@ public class DSL {
     public static Field<LocalDateTime> toLocalDateTime(Field<String> value, Field<String> format) {
         return toTimestamp(value, format).coerce(SQLDataType.LOCALDATETIME);
     }
-
-
-
     // ------------------------------------------------------------------------
     // XXX Construction of GROUPING SET functions
     // ------------------------------------------------------------------------
-
     /**
      * Create a ROLLUP(field1, field2, .., fieldn) grouping field.
      *
@@ -14541,7 +13453,6 @@ public class DSL {
     public static GroupField rollup(Field<?>... fields) {
         return rollup((FieldOrRow[]) nullSafe(fields));
     }
-
     /**
      * Create a ROLLUP(field1, field2, .., fieldn) grouping field.
      * <p>
@@ -14570,7 +13481,6 @@ public class DSL {
     public static GroupField rollup(FieldOrRow... fields) {
         return new Rollup(fields);
     }
-
     /**
      * Create a CUBE(field1, field2, .., fieldn) grouping field.
      *
@@ -14580,7 +13490,6 @@ public class DSL {
     public static GroupField cube(Field<?>... fields) {
         return cube((FieldOrRow[]) nullSafe(fields));
     }
-
     /**
      * Create a CUBE(field1, field2, .., fieldn) grouping field.
      * <p>
@@ -14607,7 +13516,6 @@ public class DSL {
     public static GroupField cube(FieldOrRow... fields) {
         return field("{cube}({0})", Object.class, new QueryPartList<FieldOrRow>(fields));
     }
-
     /**
      * Create a GROUPING SETS(field1, field2, .., fieldn) grouping field where
      * each grouping set only consists of a single field.
@@ -14641,30 +13549,6 @@ public class DSL {
 
         return groupingSets(array);
     }
-
-    /**
-     * Create a GROUPING SETS((field1a, field1b), (field2a), .., (fieldna,
-     * fieldnb)) grouping field.
-     * <p>
-     * This has been observed to work with the following databases:
-     * <ul>
-     * <li>DB2</li>
-     * <li>Oracle</li>
-     * <li>PostgreSQL 9.5</li>
-     * <li>SQL Server</li>
-     * <li>Sybase SQL Anywhere</li>
-     * </ul>
-     * <p>
-     * Please check the SQL Server documentation for a very nice explanation of
-     * <code>CUBE</code>, <code>ROLLUP</code>, and <code>GROUPING SETS</code>
-     * clauses in grouping contexts: <a
-     * href="http://msdn.microsoft.com/en-US/library/bb522495.aspx"
-     * >http://msdn.microsoft.com/en-US/library/bb522495.aspx</a>
-     *
-     * @param fieldSets The fields that are part of the <code>GROUPING SETS</code>
-     *            function
-     * @return A field to be used in a <code>GROUP BY</code> clause
-     */
     @Support({ POSTGRES_9_5 })
     public static GroupField groupingSets(Field<?>[]... fieldSets) {
         List<Field<?>>[] array = new List[fieldSets.length];
@@ -14675,7 +13559,16 @@ public class DSL {
 
         return groupingSets(array);
     }
+    @Support({ POSTGRES_9_5 })
+    public static GroupField groupingSets(Collection<? extends Field<?>>... fieldSets) {
+        WrappedList[] array = new WrappedList[fieldSets.length];
 
+        for (int i = 0; i < fieldSets.length; i++) {
+            array[i] = new WrappedList(new QueryPartList<Field<?>>(fieldSets[i]));
+        }
+
+        return new org.jooq.impl.Function<Object>("grouping sets", SQLDataType.OTHER, array);
+    }
     /**
      * Create a GROUPING SETS((field1a, field1b), (field2a), .., (fieldna,
      * fieldnb)) grouping field.
@@ -14699,33 +13592,29 @@ public class DSL {
      *            function
      * @return A field to be used in a <code>GROUP BY</code> clause
      */
-    @Support({ POSTGRES_9_5 })
-    public static GroupField groupingSets(Collection<? extends Field<?>>... fieldSets) {
-        WrappedList[] array = new WrappedList[fieldSets.length];
-
-        for (int i = 0; i < fieldSets.length; i++) {
-            array[i] = new WrappedList(new QueryPartList<Field<?>>(fieldSets[i]));
-        }
-
-        return new org.jooq.impl.Function<Object>("grouping sets", SQLDataType.OTHER, array);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    /**
+     * Create a GROUPING SETS((field1a, field1b), (field2a), .., (fieldna,
+     * fieldnb)) grouping field.
+     * <p>
+     * This has been observed to work with the following databases:
+     * <ul>
+     * <li>DB2</li>
+     * <li>Oracle</li>
+     * <li>PostgreSQL 9.5</li>
+     * <li>SQL Server</li>
+     * <li>Sybase SQL Anywhere</li>
+     * </ul>
+     * <p>
+     * Please check the SQL Server documentation for a very nice explanation of
+     * <code>CUBE</code>, <code>ROLLUP</code>, and <code>GROUPING SETS</code>
+     * clauses in grouping contexts: <a
+     * href="http://msdn.microsoft.com/en-US/library/bb522495.aspx"
+     * >http://msdn.microsoft.com/en-US/library/bb522495.aspx</a>
+     *
+     * @param fieldSets The fields that are part of the <code>GROUPING SETS</code>
+     *            function
+     * @return A field to be used in a <code>GROUP BY</code> clause
+     */
     /**
      * Create a GROUPING(field) aggregation field to be used along with
      * <code>CUBE</code>, <code>ROLLUP</code>, and <code>GROUPING SETS</code>
@@ -14749,7 +13638,6 @@ public class DSL {
     public static Field<Integer> grouping(Field<?> field) {
         return function("grouping", Integer.class, nullSafe(field));
     }
-
     /**
      * Create a GROUPING_ID(field1, field2, .., fieldn) aggregation field to be
      * used along with <code>CUBE</code>, <code>ROLLUP</code>, and
@@ -14770,11 +13658,9 @@ public class DSL {
     public static Field<Integer> groupingId(Field<?>... fields) {
         return function("grouping_id", Integer.class, nullSafe(fields));
     }
-
     // ------------------------------------------------------------------------
     // XXX Bitwise operations
     // ------------------------------------------------------------------------
-
     /**
      * The MySQL <code>BIT_COUNT(field)</code> function, counting the number of
      * bits that are set in this number.
@@ -14785,7 +13671,6 @@ public class DSL {
     public static Field<Integer> bitCount(Number value) {
         return bitCount(Tools.field(value));
     }
-
     /**
      * The MySQL <code>BIT_COUNT(field)</code> function, counting the number of
      * bits that are set in this number.
@@ -14807,7 +13692,6 @@ public class DSL {
     public static Field<Integer> bitCount(Field<? extends Number> field) {
         return new BitCount(nullSafe(field));
     }
-
     /**
      * The bitwise not operator.
      *
@@ -14817,7 +13701,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitNot(T value) {
         return bitNot(Tools.field(value));
     }
-
     /**
      * The bitwise not operator.
      * <p>
@@ -14828,7 +13711,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitNot(Field<T> field) {
         return new Neg<T>(nullSafe(field), ExpressionOperator.BIT_NOT);
     }
-
     /**
      * The bitwise and operator.
      *
@@ -14838,7 +13720,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitAnd(T value1, T value2) {
         return bitAnd(Tools.field(value1), Tools.field(value2));
     }
-
     /**
      * The bitwise and operator.
      *
@@ -14848,7 +13729,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitAnd(T value1, Field<T> value2) {
         return bitAnd(Tools.field(value1), nullSafe(value2));
     }
-
     /**
      * The bitwise and operator.
      *
@@ -14858,7 +13738,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitAnd(Field<T> value1, T value2) {
         return bitAnd(nullSafe(value1), Tools.field(value2));
     }
-
     /**
      * The bitwise and operator.
      * <p>
@@ -14873,7 +13752,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitAnd(Field<T> field1, Field<T> field2) {
         return new Expression<T>(ExpressionOperator.BIT_AND, nullSafe(field1), nullSafe(field2));
     }
-
     /**
      * The bitwise not and operator.
      *
@@ -14884,7 +13762,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitNand(T value1, T value2) {
         return bitNand(Tools.field(value1), Tools.field(value2));
     }
-
     /**
      * The bitwise not and operator.
      *
@@ -14895,7 +13772,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitNand(T value1, Field<T> value2) {
         return bitNand(Tools.field(value1), nullSafe(value2));
     }
-
     /**
      * The bitwise not and operator.
      *
@@ -14906,7 +13782,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitNand(Field<T> value1, T value2) {
         return bitNand(nullSafe(value1), Tools.field(value2));
     }
-
     /**
      * The bitwise not and operator.
      * <p>
@@ -14923,7 +13798,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitNand(Field<T> field1, Field<T> field2) {
         return new Expression<T>(ExpressionOperator.BIT_NAND, nullSafe(field1), nullSafe(field2));
     }
-
     /**
      * The bitwise or operator.
      *
@@ -14933,7 +13807,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitOr(T value1, T value2) {
         return bitOr(Tools.field(value1), Tools.field(value2));
     }
-
     /**
      * The bitwise or operator.
      *
@@ -14943,7 +13816,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitOr(T value1, Field<T> value2) {
         return bitOr(Tools.field(value1), nullSafe(value2));
     }
-
     /**
      * The bitwise or operator.
      *
@@ -14953,7 +13825,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitOr(Field<T> value1, T value2) {
         return bitOr(nullSafe(value1), Tools.field(value2));
     }
-
     /**
      * The bitwise or operator.
      * <p>
@@ -14968,7 +13839,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitOr(Field<T> field1, Field<T> field2) {
         return new Expression<T>(ExpressionOperator.BIT_OR, nullSafe(field1), nullSafe(field2));
     }
-
     /**
      * The bitwise not or operator.
      *
@@ -14999,7 +13869,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitNor(Field<T> value1, T value2) {
         return bitNor(nullSafe(value1), Tools.field(value2));
     }
-
     /**
      * The bitwise not or operator.
      * <p>
@@ -15016,7 +13885,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitNor(Field<T> field1, Field<T> field2) {
         return new Expression<T>(ExpressionOperator.BIT_NOR, nullSafe(field1), nullSafe(field2));
     }
-
     /**
      * The bitwise xor operator.
      *
@@ -15026,7 +13894,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitXor(T value1, T value2) {
         return bitXor(Tools.field(value1), Tools.field(value2));
     }
-
     /**
      * The bitwise xor operator.
      *
@@ -15036,7 +13903,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitXor(T value1, Field<T> value2) {
         return bitXor(Tools.field(value1), nullSafe(value2));
     }
-
     /**
      * The bitwise xor operator.
      *
@@ -15046,7 +13912,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitXor(Field<T> value1, T value2) {
         return bitXor(nullSafe(value1), Tools.field(value2));
     }
-
     /**
      * The bitwise xor operator.
      * <p>
@@ -15061,7 +13926,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitXor(Field<T> field1, Field<T> field2) {
         return new Expression<T>(ExpressionOperator.BIT_XOR, nullSafe(field1), nullSafe(field2));
     }
-
     /**
      * The bitwise not xor operator.
      *
@@ -15072,7 +13936,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitXNor(T value1, T value2) {
         return bitXNor(Tools.field(value1), Tools.field(value2));
     }
-
     /**
      * The bitwise not xor operator.
      *
@@ -15083,7 +13946,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitXNor(T value1, Field<T> value2) {
         return bitXNor(Tools.field(value1), nullSafe(value2));
     }
-
     /**
      * The bitwise not xor operator.
      *
@@ -15094,7 +13956,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitXNor(Field<T> value1, T value2) {
         return bitXNor(nullSafe(value1), Tools.field(value2));
     }
-
     /**
      * The bitwise not xor operator.
      * <p>
@@ -15109,7 +13970,6 @@ public class DSL {
     public static <T extends Number> Field<T> bitXNor(Field<T> field1, Field<T> field2) {
         return new Expression<T>(ExpressionOperator.BIT_XNOR, nullSafe(field1), nullSafe(field2));
     }
-
     /**
      * The bitwise left shift operator.
      *
@@ -15120,7 +13980,6 @@ public class DSL {
     public static <T extends Number> Field<T> shl(T value1, Number value2) {
         return shl(Tools.field(value1), Tools.field(value2));
     }
-
     /**
      * The bitwise left shift operator.
      *
@@ -15131,7 +13990,6 @@ public class DSL {
     public static <T extends Number> Field<T> shl(T value1, Field<? extends Number> value2) {
         return shl(Tools.field(value1), nullSafe(value2));
     }
-
     /**
      * The bitwise left shift operator.
      *
@@ -15142,7 +14000,6 @@ public class DSL {
     public static <T extends Number> Field<T> shl(Field<T> value1, Number value2) {
         return shl(nullSafe(value1), Tools.field(value2));
     }
-
     /**
      * The bitwise left shift operator.
      * <p>
@@ -15156,7 +14013,6 @@ public class DSL {
     public static <T extends Number> Field<T> shl(Field<T> field1, Field<? extends Number> field2) {
         return new Expression<T>(ExpressionOperator.SHL, nullSafe(field1), nullSafe(field2));
     }
-
     /**
      * The bitwise right shift operator.
      *
@@ -15167,7 +14023,6 @@ public class DSL {
     public static <T extends Number> Field<T> shr(T value1, Number value2) {
         return shr(Tools.field(value1), Tools.field(value2));
     }
-
     /**
      * The bitwise right shift operator.
      *
@@ -15178,7 +14033,6 @@ public class DSL {
     public static <T extends Number> Field<T> shr(T value1, Field<? extends Number> value2) {
         return shr(Tools.field(value1), nullSafe(value2));
     }
-
     /**
      * The bitwise right shift operator.
      *
@@ -15189,7 +14043,6 @@ public class DSL {
     public static <T extends Number> Field<T> shr(Field<T> value1, Number value2) {
         return shr(nullSafe(value1), Tools.field(value2));
     }
-
     /**
      * The bitwise right shift operator.
      * <p>
@@ -15203,11 +14056,9 @@ public class DSL {
     public static <T extends Number> Field<T> shr(Field<T> field1, Field<? extends Number> field2) {
         return new Expression<T>(ExpressionOperator.SHR, nullSafe(field1), nullSafe(field2));
     }
-
     // ------------------------------------------------------------------------
     // XXX Mathematical functions
     // ------------------------------------------------------------------------
-
     /**
      * Get the rand() function.
      */
@@ -15215,7 +14066,6 @@ public class DSL {
     public static Field<BigDecimal> rand() {
         return new Rand();
     }
-
     /**
      * Find the greatest among all values.
      * <p>
@@ -15231,7 +14081,6 @@ public class DSL {
     public static <T> Field<T> greatest(T value, T... values) {
         return greatest(Tools.field(value), Tools.fields(values).toArray(EMPTY_FIELD));
     }
-
     /**
      * Find the greatest among all values.
      * <p>
@@ -15245,7 +14094,6 @@ public class DSL {
     public static <T> Field<T> greatest(Field<T> field, Field<?>... others) {
         return new Greatest<T>(nullSafeDataType(field), nullSafe(combine(field, others)));
     }
-
     /**
      * Find the least among all values.
      * <p>
@@ -15261,7 +14109,6 @@ public class DSL {
     public static <T> Field<T> least(T value, T... values) {
         return least(Tools.field(value), Tools.fields(values).toArray(EMPTY_FIELD));
     }
-
     /**
      * Find the least among all values.
      * <p>
@@ -15275,7 +14122,6 @@ public class DSL {
     public static <T> Field<T> least(Field<T> field, Field<?>... others) {
         return new Least<T>(nullSafeDataType(field), nullSafe(combine(field, others)));
     }
-
     /**
      * Get the sign of a numeric field: sign(field).
      *
@@ -15285,7 +14131,6 @@ public class DSL {
     public static Field<Integer> sign(Number value) {
         return sign(Tools.field(value));
     }
-
     /**
      * Get the sign of a numeric field: sign(field).
      * <p>
@@ -15302,7 +14147,6 @@ public class DSL {
     public static Field<Integer> sign(Field<? extends Number> field) {
         return new Sign(nullSafe(field));
     }
-
     /**
      * Get the absolute value of a numeric field: abs(field).
      *
@@ -15312,7 +14156,6 @@ public class DSL {
     public static <T extends Number> Field<T> abs(T value) {
         return abs(Tools.field(value));
     }
-
     /**
      * Get the absolute value of a numeric field: abs(field).
      * <p>
@@ -15323,7 +14166,6 @@ public class DSL {
     public static <T extends Number> Field<T> abs(Field<T> field) {
         return function("abs", nullSafeDataType(field), nullSafe(field));
     }
-
     /**
      * Get rounded value of a numeric field: round(field).
      *
@@ -15333,7 +14175,6 @@ public class DSL {
     public static <T extends Number> Field<T> round(T value) {
         return round(Tools.field(value));
     }
-
     /**
      * Get rounded value of a numeric field: round(field).
      * <p>
@@ -15346,7 +14187,6 @@ public class DSL {
     public static <T extends Number> Field<T> round(Field<T> field) {
         return new Round<T>(nullSafe(field));
     }
-
     /**
      * Get rounded value of a numeric field: round(field, decimals).
      *
@@ -15356,7 +14196,6 @@ public class DSL {
     public static <T extends Number> Field<T> round(T value, int decimals) {
         return round(Tools.field(value), decimals);
     }
-
     /**
      * Get rounded value of a numeric field: round(field, decimals).
      * <p>
@@ -15368,7 +14207,6 @@ public class DSL {
     public static <T extends Number> Field<T> round(Field<T> field, int decimals) {
         return new Round<T>(nullSafe(field), decimals);
     }
-
     /**
      * Get the largest integer value not greater than [this].
      *
@@ -15378,7 +14216,6 @@ public class DSL {
     public static <T extends Number> Field<T> floor(T value) {
         return floor(Tools.field(value));
     }
-
     /**
      * Get the largest integer value not greater than [this].
      * <p>
@@ -15391,7 +14228,6 @@ public class DSL {
     public static <T extends Number> Field<T> floor(Field<T> field) {
         return new Floor<T>(nullSafe(field));
     }
-
     /**
      * Get the smallest integer value not less than [this].
      *
@@ -15401,7 +14237,6 @@ public class DSL {
     public static <T extends Number> Field<T> ceil(T value) {
         return ceil(Tools.field(value));
     }
-
     /**
      * Get the smallest integer value not less than [field].
      * <p>
@@ -15415,7 +14250,6 @@ public class DSL {
     public static <T extends Number> Field<T> ceil(Field<T> field) {
         return new Ceil<T>(nullSafe(field));
     }
-
     /**
      * Truncate a number to a given number of decimals.
      *
@@ -15425,7 +14259,6 @@ public class DSL {
     public static <T extends Number> Field<T> trunc(T number) {
         return trunc(Tools.field(number), inline(0));
     }
-
     /**
      * Truncate a number to a given number of decimals.
      *
@@ -15435,7 +14268,6 @@ public class DSL {
     public static <T extends Number> Field<T> trunc(T number, int decimals) {
         return trunc(Tools.field(number), inline(decimals));
     }
-
     /**
      * Truncate a number to a given number of decimals.
      *
@@ -15445,7 +14277,6 @@ public class DSL {
     public static <T extends Number> Field<T> trunc(Field<T> number, int decimals) {
         return trunc(nullSafe(number), inline(decimals));
     }
-
     /**
      * Truncate a number to a given number of decimals.
      *
@@ -15455,7 +14286,6 @@ public class DSL {
     public static <T extends Number> Field<T> trunc(T number, Field<Integer> decimals) {
         return trunc(Tools.field(number), nullSafe(decimals));
     }
-
     /**
      * Truncate a number to a given number of decimals.
      * <p>
@@ -15503,7 +14333,6 @@ public class DSL {
     public static <T extends Number> Field<T> trunc(Field<T> number, Field<Integer> decimals) {
         return new Trunc<T>(nullSafe(number), nullSafe(decimals));
     }
-
     /**
      * Get the sqrt(field) function.
      *
@@ -15513,7 +14342,6 @@ public class DSL {
     public static Field<BigDecimal> sqrt(Number value) {
         return sqrt(Tools.field(value));
     }
-
     /**
      * Get the sqrt(field) function.
      * <p>
@@ -15526,7 +14354,6 @@ public class DSL {
     public static Field<BigDecimal> sqrt(Field<? extends Number> field) {
         return new Sqrt(nullSafe(field));
     }
-
     /**
      * Get the exp(field) function, taking this field as the power of e.
      *
@@ -15536,7 +14363,6 @@ public class DSL {
     public static Field<BigDecimal> exp(Number value) {
         return exp(Tools.field(value));
     }
-
     /**
      * Get the exp(field) function, taking this field as the power of e.
      * <p>
@@ -15547,7 +14373,6 @@ public class DSL {
     public static Field<BigDecimal> exp(Field<? extends Number> field) {
         return function("exp", SQLDataType.NUMERIC, nullSafe(field));
     }
-
     /**
      * Get the ln(field) function, taking the natural logarithm of this field.
      *
@@ -15557,7 +14382,6 @@ public class DSL {
     public static Field<BigDecimal> ln(Number value) {
         return ln(Tools.field(value));
     }
-
     /**
      * Get the ln(field) function, taking the natural logarithm of this field.
      * <p>
@@ -15569,7 +14393,6 @@ public class DSL {
     public static Field<BigDecimal> ln(Field<? extends Number> field) {
         return new Ln(nullSafe(field));
     }
-
     /**
      * Get the log(field, base) function.
      *
@@ -15579,7 +14402,6 @@ public class DSL {
     public static Field<BigDecimal> log(Number value, int base) {
         return log(Tools.field(value), base);
     }
-
     /**
      * Get the log(field, base) function.
      * <p>
@@ -15592,7 +14414,6 @@ public class DSL {
     public static Field<BigDecimal> log(Field<? extends Number> field, int base) {
         return new Ln(nullSafe(field), base);
     }
-
     /**
      * Get the power(field, exponent) function.
      *
@@ -15602,7 +14423,6 @@ public class DSL {
     public static Field<BigDecimal> power(Number value, Number exponent) {
         return power(Tools.field(value), Tools.field(exponent));
     }
-
     /**
      * Get the power(field, exponent) function.
      *
@@ -15612,7 +14432,6 @@ public class DSL {
     public static Field<BigDecimal> power(Field<? extends Number> field, Number exponent) {
         return power(nullSafe(field), Tools.field(exponent));
     }
-
     /**
      * Get the power(field, exponent) function.
      *
@@ -15622,7 +14441,6 @@ public class DSL {
     public static Field<BigDecimal> power(Number value, Field<? extends Number> exponent) {
         return power(Tools.field(value), nullSafe(exponent));
     }
-
     /**
      * Get the power(field, exponent) function.
      * <p>
@@ -15635,7 +14453,6 @@ public class DSL {
     public static Field<BigDecimal> power(Field<? extends Number> field, Field<? extends Number> exponent) {
         return new Power(nullSafe(field), nullSafe(exponent));
     }
-
     /**
      * Get the arc cosine(field) function.
      *
@@ -15645,7 +14462,6 @@ public class DSL {
     public static Field<BigDecimal> acos(Number value) {
         return acos(Tools.field(value));
     }
-
     /**
      * Get the arc cosine(field) function.
      * <p>
@@ -15656,7 +14472,6 @@ public class DSL {
     public static Field<BigDecimal> acos(Field<? extends Number> field) {
         return new Acos(nullSafe(field));
     }
-
     /**
      * Get the arc sine(field) function.
      *
@@ -15666,7 +14481,6 @@ public class DSL {
     public static Field<BigDecimal> asin(Number value) {
         return asin(Tools.field(value));
     }
-
     /**
      * Get the arc sine(field) function.
      * <p>
@@ -15677,7 +14491,6 @@ public class DSL {
     public static Field<BigDecimal> asin(Field<? extends Number> field) {
         return new Asin(nullSafe(field));
     }
-
     /**
      * Get the arc tangent(field) function.
      *
@@ -15687,7 +14500,6 @@ public class DSL {
     public static Field<BigDecimal> atan(Number value) {
         return atan(Tools.field(value));
     }
-
     /**
      * Get the arc tangent(field) function.
      * <p>
@@ -15698,7 +14510,6 @@ public class DSL {
     public static Field<BigDecimal> atan(Field<? extends Number> field) {
         return new Atan(nullSafe(field));
     }
-
     /**
      * Get the atan2(field, y) function.
      *
@@ -15708,7 +14519,6 @@ public class DSL {
     public static Field<BigDecimal> atan2(Number x, Number y) {
         return atan2(Tools.field(x), Tools.field(y));
     }
-
     /**
      * Get the atan2(field, y) function.
      *
@@ -15718,7 +14528,6 @@ public class DSL {
     public static Field<BigDecimal> atan2(Number x, Field<? extends Number> y) {
         return atan2(Tools.field(x), nullSafe(y));
     }
-
     /**
      * Get the atan2(field, y) function.
       *
@@ -15728,7 +14537,6 @@ public class DSL {
     public static Field<BigDecimal> atan2(Field<? extends Number> x, Number y) {
         return atan2(nullSafe(x), Tools.field(y));
     }
-
     /**
      * Get the atan2(field, y) function.
      * <p>
@@ -15740,7 +14548,6 @@ public class DSL {
     public static Field<BigDecimal> atan2(Field<? extends Number> x, Field<? extends Number> y) {
         return new org.jooq.impl.Function<BigDecimal>(Term.ATAN2, SQLDataType.NUMERIC, nullSafe(x), nullSafe(y));
     }
-
     /**
      * Get the cosine(field) function.
      *
@@ -15750,7 +14557,6 @@ public class DSL {
     public static Field<BigDecimal> cos(Number value) {
         return cos(Tools.field(value));
     }
-
     /**
      * Get the cosine(field) function.
      * <p>
@@ -15761,7 +14567,6 @@ public class DSL {
     public static Field<BigDecimal> cos(Field<? extends Number> field) {
         return function("cos", SQLDataType.NUMERIC, nullSafe(field));
     }
-
     /**
      * Get the sine(field) function.
      *
@@ -15771,7 +14576,6 @@ public class DSL {
     public static Field<BigDecimal> sin(Number value) {
         return sin(Tools.field(value));
     }
-
     /**
      * Get the sine(field) function.
      * <p>
@@ -15782,7 +14586,6 @@ public class DSL {
     public static Field<BigDecimal> sin(Field<? extends Number> field) {
         return function("sin", SQLDataType.NUMERIC, nullSafe(field));
     }
-
     /**
      * Get the tangent(field) function.
      *
@@ -15792,7 +14595,6 @@ public class DSL {
     public static Field<BigDecimal> tan(Number value) {
         return tan(Tools.field(value));
     }
-
     /**
      * Get the tangent(field) function.
      * <p>
@@ -15803,7 +14605,6 @@ public class DSL {
     public static Field<BigDecimal> tan(Field<? extends Number> field) {
         return function("tan", SQLDataType.NUMERIC, nullSafe(field));
     }
-
     /**
      * Get the cotangent(field) function.
      *
@@ -15813,7 +14614,6 @@ public class DSL {
     public static Field<BigDecimal> cot(Number value) {
         return cot(Tools.field(value));
     }
-
     /**
      * Get the cotangent(field) function.
      * <p>
@@ -15825,7 +14625,6 @@ public class DSL {
     public static Field<BigDecimal> cot(Field<? extends Number> field) {
         return new Cot(nullSafe(field));
     }
-
     /**
      * Get the hyperbolic sine function: sinh(field).
      *
@@ -15835,7 +14634,6 @@ public class DSL {
     public static Field<BigDecimal> sinh(Number value) {
         return sinh(Tools.field(value));
     }
-
     /**
      * Get the hyperbolic sine function: sinh(field).
      * <p>
@@ -15847,7 +14645,6 @@ public class DSL {
     public static Field<BigDecimal> sinh(Field<? extends Number> field) {
         return new Sinh(nullSafe(field));
     }
-
     /**
      * Get the hyperbolic cosine function: cosh(field).
      *
@@ -15857,7 +14654,6 @@ public class DSL {
     public static Field<BigDecimal> cosh(Number value) {
         return cosh(Tools.field(value));
     }
-
     /**
      * Get the hyperbolic cosine function: cosh(field).
      * <p>
@@ -15869,7 +14665,6 @@ public class DSL {
     public static Field<BigDecimal> cosh(Field<? extends Number> field) {
         return new Cosh(nullSafe(field));
     }
-
     /**
      * Get the hyperbolic tangent function: tanh(field).
      *
@@ -15879,7 +14674,6 @@ public class DSL {
     public static Field<BigDecimal> tanh(Number value) {
         return tanh(Tools.field(value));
     }
-
     /**
      * Get the hyperbolic tangent function: tanh(field).
      * <p>
@@ -15892,7 +14686,6 @@ public class DSL {
     public static Field<BigDecimal> tanh(Field<? extends Number> field) {
         return new Tanh(nullSafe(field));
     }
-
     /**
      * Get the hyperbolic cotangent function: coth(field).
      *
@@ -15902,7 +14695,6 @@ public class DSL {
     public static Field<BigDecimal> coth(Number value) {
         return coth(Tools.field(value));
     }
-
     /**
      * Get the hyperbolic cotangent function: coth(field).
      * <p>
@@ -15914,7 +14706,6 @@ public class DSL {
         field = nullSafe(field);
         return exp(field.mul(2)).add(1).div(exp(field.mul(2)).sub(1));
     }
-
     /**
      * Calculate degrees from radians from this field.
      *
@@ -15924,7 +14715,6 @@ public class DSL {
     public static Field<BigDecimal> deg(Number value) {
         return deg(Tools.field(value));
     }
-
     /**
      * Calculate degrees from radians from this field.
      * <p>
@@ -15936,7 +14726,6 @@ public class DSL {
     public static Field<BigDecimal> deg(Field<? extends Number> field) {
         return new Degrees(nullSafe(field));
     }
-
     /**
      * Calculate radians from degrees from this field.
      *
@@ -15946,7 +14735,6 @@ public class DSL {
     public static Field<BigDecimal> rad(Number value) {
         return rad(Tools.field(value));
     }
-
     /**
      * Calculate radians from degrees from this field.
      * <p>
@@ -15958,11 +14746,9 @@ public class DSL {
     public static Field<BigDecimal> rad(Field<? extends Number> field) {
         return new Radians(nullSafe(field));
     }
-
     // -------------------------------------------------------------------------
     // Pseudo-fields and functions for use in the context of a CONNECT BY clause
     // -------------------------------------------------------------------------
-
     /**
      * Retrieve the Oracle-specific <code>LEVEL</code> pseudo-field (to be used
      * along with <code>CONNECT BY</code> clauses).
@@ -15971,7 +14757,6 @@ public class DSL {
     public static Field<Integer> level() {
         return field("level", Integer.class);
     }
-
     /**
      * Retrieve the Oracle-specific <code>CONNECT_BY_ISCYCLE</code> pseudo-field
      * (to be used along with <code>CONNECT BY</code> clauses).
@@ -15980,7 +14765,6 @@ public class DSL {
     public static Field<Boolean> connectByIsCycle() {
         return field("connect_by_iscycle", Boolean.class);
     }
-
     /**
      * Retrieve the Oracle-specific <code>CONNECT_BY_ISLEAF</code> pseudo-field
      * (to be used along with <code>CONNECT BY</code> clauses).
@@ -15989,7 +14773,6 @@ public class DSL {
     public static Field<Boolean> connectByIsLeaf() {
         return field("connect_by_isleaf", Boolean.class);
     }
-
     /**
      * Retrieve the Oracle-specific <code>CONNECT_BY_ROOT</code> pseudo-column
      * (to be used along with <code>CONNECT BY</code> clauses).
@@ -15998,7 +14781,6 @@ public class DSL {
     public static <T> Field<T> connectByRoot(Field<T> field) {
         return field("{connect_by_root} {0}", nullSafe(field).getDataType(), field);
     }
-
     /**
      * Retrieve the Oracle-specific
      * <code>SYS_CONNECT_BY_PATH(field, separator)</code> function (to be used
@@ -16008,7 +14790,6 @@ public class DSL {
     public static Field<String> sysConnectByPath(Field<?> field, String separator) {
         return field("{sys_connect_by_path}({0}, {1})", String.class, field, inline(separator));
     }
-
     /**
      * Add the Oracle-specific <code>PRIOR</code> unary operator before a field
      * (to be used along with <code>CONNECT BY</code> clauses).
@@ -16017,11 +14798,9 @@ public class DSL {
     public static <T> Field<T> prior(Field<T> field) {
         return new Prior<T>(field);
     }
-
     // -------------------------------------------------------------------------
     // Other pseudo-fields and functions
     // -------------------------------------------------------------------------
-
     /**
      * Retrieve the Oracle-specific <code>ROWNUM</code> pseudo-field.
      */
@@ -16029,11 +14808,9 @@ public class DSL {
     public static Field<Integer> rownum() {
         return field("rownum", Integer.class);
     }
-
     // -------------------------------------------------------------------------
     // XXX Aggregate functions
     // -------------------------------------------------------------------------
-
     /**
      * Get the count(*) function.
      */
@@ -16041,7 +14818,6 @@ public class DSL {
     public static AggregateFunction<Integer> count() {
         return count(org.jooq.impl.Function.ASTERISK);
     }
-
     /**
      * Get the count(field) function.
      */
@@ -16049,7 +14825,6 @@ public class DSL {
     public static AggregateFunction<Integer> count(Field<?> field) {
         return new org.jooq.impl.Function<Integer>("count", SQLDataType.INTEGER, nullSafe(field));
     }
-
     /**
      * Get the count(table) function.
      * <p>
@@ -16061,7 +14836,6 @@ public class DSL {
     public static AggregateFunction<Integer> count(Table<?> table) {
         return new CountTable(table, false);
     }
-
     /**
      * Get the count(distinct field) function.
      */
@@ -16069,7 +14843,6 @@ public class DSL {
     public static AggregateFunction<Integer> countDistinct(Field<?> field) {
         return new org.jooq.impl.Function<Integer>("count", true, SQLDataType.INTEGER, nullSafe(field));
     }
-
     /**
      * Get the count(distinct table) function.
      * <p>
@@ -16081,7 +14854,6 @@ public class DSL {
     public static AggregateFunction<Integer> countDistinct(Table<?> table) {
         return new CountTable(table, true);
     }
-
     /**
      * Get the count(distinct field1, field2) function.
      * <p>
@@ -16095,7 +14867,6 @@ public class DSL {
     public static AggregateFunction<Integer> countDistinct(Field<?>... fields) {
         return new org.jooq.impl.Function<Integer>("count", true, SQLDataType.INTEGER, nullSafe(fields));
     }
-
     /**
      * Get the every value over a field: every(field).
      * <p>
@@ -16105,7 +14876,6 @@ public class DSL {
     public static AggregateFunction<Boolean> every(Field<Boolean> field) {
         return boolAnd(field);
     }
-
     /**
      * Get the every value over a condition: every(condition).
      * <p>
@@ -16115,7 +14885,6 @@ public class DSL {
     public static AggregateFunction<Boolean> every(Condition condition) {
         return boolAnd(condition);
     }
-
     /**
      * Get the every value over a field: bool_and(field).
      */
@@ -16123,7 +14892,6 @@ public class DSL {
     public static AggregateFunction<Boolean> boolAnd(Field<Boolean> field) {
         return boolAnd(condition(nullSafe(field)));
     }
-
     /**
      * Get the every value over a condition: bool_and(condition).
      */
@@ -16131,7 +14899,6 @@ public class DSL {
     public static AggregateFunction<Boolean> boolAnd(Condition condition) {
         return new BoolAnd(condition);
     }
-
     /**
      * Get the every value over a field: bool_and(field).
      */
@@ -16139,7 +14906,6 @@ public class DSL {
     public static AggregateFunction<Boolean> boolOr(Field<Boolean> field) {
         return boolOr(condition(nullSafe(field)));
     }
-
     /**
      * Get the every value over a condition: bool_and(condition).
      */
@@ -16147,7 +14913,6 @@ public class DSL {
     public static AggregateFunction<Boolean> boolOr(Condition condition) {
         return new BoolOr(condition);
     }
-
     /**
      * Get the <code>array_agg()</code> aggregate function.
      */
@@ -16155,7 +14920,6 @@ public class DSL {
     public static <T> ArrayAggOrderByStep<T[]> arrayAgg(Field<T> field) {
         return new org.jooq.impl.Function<T[]>(Term.ARRAY_AGG, field.getDataType().getArrayDataType(), nullSafe(field));
     }
-
     /**
      * Get the <code>array_agg()</code> aggregate function.
      */
@@ -16163,63 +14927,6 @@ public class DSL {
     public static <T> ArrayAggOrderByStep<T[]> arrayAggDistinct(Field<T> field) {
         return new org.jooq.impl.Function<T[]>(Term.ARRAY_AGG, true, field.getDataType().getArrayDataType(), nullSafe(field));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Create an array literal.
      * <p>
@@ -16246,7 +14953,6 @@ public class DSL {
     public static <T> Field<T[]> array(T... values) {
         return array(Tools.fields(values));
     }
-
     /**
      * Create an array literal.
      * <p>
@@ -16269,14 +14975,12 @@ public class DSL {
      * </tr>
      * </table>
      */
-
     @SafeVarargs
 
     @Support({ H2, HSQLDB, POSTGRES })
     public static <T> Field<T[]> array(Field<T>... fields) {
         return array(Arrays.asList(fields));
     }
-
     /**
      * Create an array literal.
      * <p>
@@ -16303,7 +15007,6 @@ public class DSL {
     public static <T> Field<T[]> array(Collection<? extends Field<T>> fields) {
         return new Array<T>(fields);
     }
-
     /**
      * Get the max value over a field: max(field).
      */
@@ -16311,7 +15014,6 @@ public class DSL {
     public static <T> AggregateFunction<T> max(Field<T> field) {
         return new org.jooq.impl.Function<T>("max", nullSafeDataType(field), nullSafe(field));
     }
-
     /**
      * Get the max value over a field: max(distinct field).
      */
@@ -16319,7 +15021,6 @@ public class DSL {
     public static <T> AggregateFunction<T> maxDistinct(Field<T> field) {
         return new org.jooq.impl.Function<T>("max", true, nullSafeDataType(field), nullSafe(field));
     }
-
     /**
      * Get the min value over a field: min(field).
      */
@@ -16327,7 +15028,6 @@ public class DSL {
     public static <T> AggregateFunction<T> min(Field<T> field) {
         return new org.jooq.impl.Function<T>("min", nullSafeDataType(field), nullSafe(field));
     }
-
     /**
      * Get the min value over a field: min(distinct field).
      */
@@ -16335,7 +15035,6 @@ public class DSL {
     public static <T> AggregateFunction<T> minDistinct(Field<T> field) {
         return new org.jooq.impl.Function<T>("min", true, nullSafeDataType(field), nullSafe(field));
     }
-
     /**
      * Get the sum over a numeric field: sum(field).
      */
@@ -16343,7 +15042,6 @@ public class DSL {
     public static AggregateFunction<BigDecimal> sum(Field<? extends Number> field) {
         return new org.jooq.impl.Function<BigDecimal>("sum", SQLDataType.NUMERIC, nullSafe(field));
     }
-
     /**
      * Get the sum over a numeric field: sum(distinct field).
      */
@@ -16351,7 +15049,6 @@ public class DSL {
     public static AggregateFunction<BigDecimal> sumDistinct(Field<? extends Number> field) {
         return new org.jooq.impl.Function<BigDecimal>("sum", true, SQLDataType.NUMERIC, nullSafe(field));
     }
-
     /**
      * Get the average over a numeric field: avg(field).
      */
@@ -16359,7 +15056,6 @@ public class DSL {
     public static AggregateFunction<BigDecimal> avg(Field<? extends Number> field) {
         return new org.jooq.impl.Function<BigDecimal>("avg", SQLDataType.NUMERIC, nullSafe(field));
     }
-
     /**
      * Get the average over a numeric field: avg(distinct field).
      */
@@ -16367,7 +15063,6 @@ public class DSL {
     public static AggregateFunction<BigDecimal> avgDistinct(Field<? extends Number> field) {
         return new org.jooq.impl.Function<BigDecimal>("avg", true, SQLDataType.NUMERIC, nullSafe(field));
     }
-
     /**
      * Get the median over a numeric field: median(field).
      */
@@ -16375,7 +15070,6 @@ public class DSL {
     public static AggregateFunction<BigDecimal> median(Field<? extends Number> field) {
         return new org.jooq.impl.Function<BigDecimal>(Term.MEDIAN, SQLDataType.NUMERIC, nullSafe(field));
     }
-
     /**
      * Get the population standard deviation of a numeric field: stddev_pop(field).
      */
@@ -16383,7 +15077,6 @@ public class DSL {
     public static AggregateFunction<BigDecimal> stddevPop(Field<? extends Number> field) {
         return new org.jooq.impl.Function<BigDecimal>(Term.STDDEV_POP, SQLDataType.NUMERIC, nullSafe(field));
     }
-
     /**
      * Get the sample standard deviation of a numeric field: stddev_samp(field).
      */
@@ -16391,7 +15084,6 @@ public class DSL {
     public static AggregateFunction<BigDecimal> stddevSamp(Field<? extends Number> field) {
         return new org.jooq.impl.Function<BigDecimal>(Term.STDDEV_SAMP, SQLDataType.NUMERIC, nullSafe(field));
     }
-
     /**
      * Get the population variance of a numeric field: var_pop(field).
      */
@@ -16399,7 +15091,6 @@ public class DSL {
     public static AggregateFunction<BigDecimal> varPop(Field<? extends Number> field) {
         return new org.jooq.impl.Function<BigDecimal>(Term.VAR_POP, SQLDataType.NUMERIC, nullSafe(field));
     }
-
     /**
      * Get the sample variance of a numeric field: var_samp(field).
      */
@@ -16407,7 +15098,6 @@ public class DSL {
     public static AggregateFunction<BigDecimal> varSamp(Field<? extends Number> field) {
         return new org.jooq.impl.Function<BigDecimal>(Term.VAR_SAMP, SQLDataType.NUMERIC, nullSafe(field));
     }
-
     /**
      * Get the <code>REGR_SLOPE</code> linear regression function.
      * <p>
@@ -16422,7 +15112,6 @@ public class DSL {
     public static AggregateFunction<BigDecimal> regrSlope(Field<? extends Number> y, Field<? extends Number> x) {
         return new org.jooq.impl.Function<BigDecimal>("regr_slope", SQLDataType.NUMERIC, nullSafe(y), nullSafe(x));
     }
-
     /**
      * Get the <code>REGR_INTERCEPT</code> linear regression function.
      * <p>
@@ -16437,7 +15126,6 @@ public class DSL {
     public static AggregateFunction<BigDecimal> regrIntercept(Field<? extends Number> y, Field<? extends Number> x) {
         return new org.jooq.impl.Function<BigDecimal>("regr_intercept", SQLDataType.NUMERIC, nullSafe(y), nullSafe(x));
     }
-
     /**
      * Get the <code>REGR_COUNT</code> linear regression function.
      * <p>
@@ -16452,7 +15140,6 @@ public class DSL {
     public static AggregateFunction<BigDecimal> regrCount(Field<? extends Number> y, Field<? extends Number> x) {
         return new org.jooq.impl.Function<BigDecimal>("regr_count", SQLDataType.NUMERIC, nullSafe(y), nullSafe(x));
     }
-
     /**
      * Get the <code>REGR_R2</code> linear regression function.
      * <p>
@@ -16467,7 +15154,6 @@ public class DSL {
     public static AggregateFunction<BigDecimal> regrR2(Field<? extends Number> y, Field<? extends Number> x) {
         return new org.jooq.impl.Function<BigDecimal>("regr_r2", SQLDataType.NUMERIC, nullSafe(y), nullSafe(x));
     }
-
     /**
      * Get the <code>REGR_AVGX</code> linear regression function.
      * <p>
@@ -16482,7 +15168,6 @@ public class DSL {
     public static AggregateFunction<BigDecimal> regrAvgX(Field<? extends Number> y, Field<? extends Number> x) {
         return new org.jooq.impl.Function<BigDecimal>("regr_avgx", SQLDataType.NUMERIC, nullSafe(y), nullSafe(x));
     }
-
     /**
      * Get the <code>REGR_AVGY</code> linear regression function.
      * <p>
@@ -16497,7 +15182,6 @@ public class DSL {
     public static AggregateFunction<BigDecimal> regrAvgY(Field<? extends Number> y, Field<? extends Number> x) {
         return new org.jooq.impl.Function<BigDecimal>("regr_avgy", SQLDataType.NUMERIC, nullSafe(y), nullSafe(x));
     }
-
     /**
      * Get the <code>REGR_SXX</code> linear regression function.
      * <p>
@@ -16512,7 +15196,6 @@ public class DSL {
     public static AggregateFunction<BigDecimal> regrSXX(Field<? extends Number> y, Field<? extends Number> x) {
         return new org.jooq.impl.Function<BigDecimal>("regr_sxx", SQLDataType.NUMERIC, nullSafe(y), nullSafe(x));
     }
-
     /**
      * Get the <code>REGR_SYY</code> linear regression function.
      * <p>
@@ -16527,7 +15210,6 @@ public class DSL {
     public static AggregateFunction<BigDecimal> regrSYY(Field<? extends Number> y, Field<? extends Number> x) {
         return new org.jooq.impl.Function<BigDecimal>("regr_syy", SQLDataType.NUMERIC, nullSafe(y), nullSafe(x));
     }
-
     /**
      * Get the <code>REGR_SXY</code> linear regression function.
      * <p>
@@ -16542,7 +15224,6 @@ public class DSL {
     public static AggregateFunction<BigDecimal> regrSXY(Field<? extends Number> y, Field<? extends Number> x) {
         return new org.jooq.impl.Function<BigDecimal>("regr_sxy", SQLDataType.NUMERIC, nullSafe(y), nullSafe(x));
     }
-
     /**
      * Get the aggregated concatenation for a field.
      * <p>
@@ -16564,7 +15245,6 @@ public class DSL {
     public static OrderedAggregateFunction<String> listAgg(Field<?> field) {
         return new org.jooq.impl.Function<String>(Term.LIST_AGG, SQLDataType.VARCHAR, nullSafe(field));
     }
-
     /**
      * Get the aggregated concatenation for a field.
      * <p>
@@ -16586,7 +15266,6 @@ public class DSL {
     public static OrderedAggregateFunction<String> listAgg(Field<?> field, String separator) {
         return new org.jooq.impl.Function<String>(Term.LIST_AGG, SQLDataType.VARCHAR, nullSafe(field), inline(separator));
     }
-
     /**
      * Get the aggregated concatenation for a field.
      * <p>
@@ -16613,7 +15292,6 @@ public class DSL {
     public static GroupConcatOrderByStep groupConcat(Field<?> field) {
         return new GroupConcat(nullSafe(field));
     }
-
     /**
      * Get the aggregated concatenation for a field.
      * <p>
@@ -16640,7 +15318,6 @@ public class DSL {
     public static AggregateFunction<String> groupConcat(Field<?> field, String separator) {
         return new GroupConcat(nullSafe(field)).separator(separator);
     }
-
     /**
      * Get the aggregated concatenation for a field.
      * <p>
@@ -16664,11 +15341,9 @@ public class DSL {
     public static GroupConcatOrderByStep groupConcatDistinct(Field<?> field) {
         return new GroupConcat(nullSafe(field), true);
     }
-
     // -------------------------------------------------------------------------
     // XXX Ordered-set aggregate functions and hypothetical set functions
     // -------------------------------------------------------------------------
-
     /**
      * The <code>mode() within group (oder by [order clause])</code> ordered
      * aggregate function.
@@ -16677,7 +15352,6 @@ public class DSL {
     public static OrderedAggregateFunctionOfDeferredType mode() {
         return new Mode();
     }
-
     /**
      * The <code>rank(expr) within group (order by [order clause])</code>
      * ordered-set aggregate function.
@@ -16686,7 +15360,10 @@ public class DSL {
     public static OrderedAggregateFunction<Integer> rank(Field<?>... fields) {
         return new org.jooq.impl.Function<Integer>("rank", SQLDataType.INTEGER, fields);
     }
-
+    @Support({ CUBRID, FIREBIRD_3_0, MYSQL_8_0, POSTGRES })
+    public static WindowOverStep<Integer> rank() {
+        return new org.jooq.impl.Function<Integer>("rank", SQLDataType.INTEGER);
+    }
     /**
      * The <code>rank(expr) within group (order by [order clause])</code>
      * ordered-set aggregate function.
@@ -16695,7 +15372,6 @@ public class DSL {
     public static OrderedAggregateFunction<Integer> rank(Collection<? extends Field<?>> fields) {
         return new org.jooq.impl.Function<Integer>("rank", SQLDataType.INTEGER, fields.toArray(EMPTY_QUERYPART));
     }
-
     /**
      * The <code>dense_rank(expr) within group (order by [order clause])</code>
      * ordered-set aggregate function.
@@ -16704,7 +15380,10 @@ public class DSL {
     public static OrderedAggregateFunction<Integer> denseRank(Field<?>... fields) {
         return new org.jooq.impl.Function<Integer>("dense_rank", SQLDataType.INTEGER, fields);
     }
-
+    @Support({ CUBRID, FIREBIRD_3_0, MYSQL_8_0, POSTGRES })
+    public static WindowOverStep<Integer> denseRank() {
+        return new org.jooq.impl.Function<Integer>("dense_rank", SQLDataType.INTEGER);
+    }
     /**
      * The <code>dense_rank(expr) within group (order by [order clause])</code>
      * ordered-set aggregate function.
@@ -16713,7 +15392,6 @@ public class DSL {
     public static OrderedAggregateFunction<Integer> denseRank(Collection<? extends Field<?>> fields) {
         return new org.jooq.impl.Function<Integer>("dense_rank", SQLDataType.INTEGER, fields.toArray(EMPTY_QUERYPART));
     }
-
     /**
      * The <code>percent_rank(expr) within group (order by [order clause])</code>
      * ordered-set aggregate function.
@@ -16722,7 +15400,10 @@ public class DSL {
     public static OrderedAggregateFunction<Integer> percentRank(Field<?>... fields) {
         return new org.jooq.impl.Function<Integer>("percent_rank", SQLDataType.INTEGER, fields);
     }
-
+    @Support({ CUBRID, MYSQL_8_0, POSTGRES })
+    public static WindowOverStep<BigDecimal> percentRank() {
+        return new org.jooq.impl.Function<BigDecimal>("percent_rank", SQLDataType.NUMERIC);
+    }
     /**
      * The <code>percent_rank(expr) within group (order by [order clause])</code>
      * ordered-set aggregate function.
@@ -16731,7 +15412,6 @@ public class DSL {
     public static OrderedAggregateFunction<Integer> percentRank(Collection<? extends Field<?>> fields) {
         return new org.jooq.impl.Function<Integer>("percent_rank", SQLDataType.INTEGER, fields.toArray(EMPTY_QUERYPART));
     }
-
     /**
      * The <code>cume_dist(expr) within group (order by [order clause])</code>
      * ordered-set aggregate function.
@@ -16740,7 +15420,10 @@ public class DSL {
     public static OrderedAggregateFunction<BigDecimal> cumeDist(Field<?>... fields) {
         return new org.jooq.impl.Function<BigDecimal>("cume_dist", SQLDataType.NUMERIC, fields);
     }
-
+    @Support({ CUBRID, MYSQL_8_0, POSTGRES })
+    public static WindowOverStep<BigDecimal> cumeDist() {
+        return new org.jooq.impl.Function<BigDecimal>("cume_dist", SQLDataType.NUMERIC);
+    }
     /**
      * The <code>cume_dist(expr) within group (order by [order clause])</code>
      * ordered-set aggregate function.
@@ -16749,7 +15432,6 @@ public class DSL {
     public static OrderedAggregateFunction<BigDecimal> cumeDist(Collection<? extends Field<?>> fields) {
         return new org.jooq.impl.Function<BigDecimal>("cume_dist", SQLDataType.NUMERIC, fields.toArray(EMPTY_QUERYPART));
     }
-
     /**
      * The
      * <code>percentile_cont([number]) within group (order by [column])</code>
@@ -16763,7 +15445,6 @@ public class DSL {
     public static OrderedAggregateFunction<BigDecimal> percentileCont(Number number) {
         return percentileCont(val(number));
     }
-
     /**
      * The
      * <code>percentile_cont([number]) within group (order by [column])</code>
@@ -16777,7 +15458,6 @@ public class DSL {
     public static OrderedAggregateFunction<BigDecimal> percentileCont(Field<? extends Number> field) {
         return new org.jooq.impl.Function<BigDecimal>("percentile_cont", SQLDataType.NUMERIC, nullSafe(field));
     }
-
     /**
      * The
      * <code>percentile_disc([number]) within group (order by [column])</code>
@@ -16791,7 +15471,6 @@ public class DSL {
     public static OrderedAggregateFunction<BigDecimal> percentileDisc(Number number) {
         return percentileDisc(val(number));
     }
-
     /**
      * The
      * <code>percentile_disc([number]) within group (order by [column])</code>
@@ -16805,11 +15484,9 @@ public class DSL {
     public static OrderedAggregateFunction<BigDecimal> percentileDisc(Field<? extends Number> field) {
         return new org.jooq.impl.Function<BigDecimal>("percentile_disc", SQLDataType.NUMERIC, nullSafe(field));
     }
-
     // -------------------------------------------------------------------------
     // XXX Window clauses
     // -------------------------------------------------------------------------
-
     /**
      * Create a {@link WindowSpecification} with a <code>PARTITION BY</code> clause.
      */
@@ -16817,7 +15494,6 @@ public class DSL {
     public static WindowSpecificationOrderByStep partitionBy(Field<?>... fields) {
         return new WindowSpecificationImpl().partitionBy(fields);
     }
-
     /**
      * Create a {@link WindowSpecification} with a <code>PARTITION BY</code> clause.
      */
@@ -16825,7 +15501,6 @@ public class DSL {
     public static WindowSpecificationOrderByStep partitionBy(Collection<? extends Field<?>> fields) {
         return new WindowSpecificationImpl().partitionBy(fields);
     }
-
     /**
      * Create a {@link WindowSpecification} with an <code>ORDER BY</code> clause.
      */
@@ -16833,15 +15508,13 @@ public class DSL {
     public static WindowSpecificationRowsStep orderBy(Field<?>... fields) {
         return new WindowSpecificationImpl().orderBy(fields);
     }
-
-    /**
-     * Create a {@link WindowSpecification} with an <code>ORDER BY</code> clause.
-     */
     @Support({ CUBRID, FIREBIRD_3_0, MYSQL_8_0, POSTGRES })
     public static WindowSpecificationRowsStep orderBy(OrderField<?>... fields) {
         return new WindowSpecificationImpl().orderBy(fields);
     }
-
+    /**
+     * Create a {@link WindowSpecification} with an <code>ORDER BY</code> clause.
+     */
     /**
      * Create a {@link WindowSpecification} with an <code>ORDER BY</code> clause.
      */
@@ -16849,7 +15522,6 @@ public class DSL {
     public static WindowSpecificationRowsStep orderBy(Collection<? extends OrderField<?>> fields) {
         return new WindowSpecificationImpl().orderBy(fields);
     }
-
     /**
      * Create a {@link WindowSpecification} with a <code>ROWS</code> clause.
      */
@@ -16857,7 +15529,6 @@ public class DSL {
     public static WindowSpecificationFinalStep rowsUnboundedPreceding() {
         return new WindowSpecificationImpl().rowsUnboundedPreceding();
     }
-
     /**
      * Create a {@link WindowSpecification} with a <code>ROWS</code> clause.
      */
@@ -16865,7 +15536,6 @@ public class DSL {
     public static WindowSpecificationFinalStep rowsPreceding(int number) {
         return new WindowSpecificationImpl().rowsPreceding(number);
     }
-
     /**
      * Create a {@link WindowSpecification} with a <code>ROWS</code> clause.
      */
@@ -16873,7 +15543,6 @@ public class DSL {
     public static WindowSpecificationFinalStep rowsCurrentRow() {
         return new WindowSpecificationImpl().rowsCurrentRow();
     }
-
     /**
      * Create a {@link WindowSpecification} with a <code>ROWS</code> clause.
      */
@@ -16881,7 +15550,6 @@ public class DSL {
     public static WindowSpecificationFinalStep rowsUnboundedFollowing() {
         return new WindowSpecificationImpl().rowsUnboundedFollowing();
     }
-
     /**
      * Create a {@link WindowSpecification} with a <code>ROWS</code> clause.
      */
@@ -16889,7 +15557,6 @@ public class DSL {
     public static WindowSpecificationFinalStep rowsFollowing(int number) {
         return new WindowSpecificationImpl().rowsFollowing(number);
     }
-
     /**
      * Create a {@link WindowSpecification} with a <code>ROWS</code> clause.
      */
@@ -16897,7 +15564,6 @@ public class DSL {
     public static WindowSpecificationRowsAndStep rowsBetweenUnboundedPreceding() {
         return new WindowSpecificationImpl().rowsBetweenUnboundedPreceding();
     }
-
     /**
      * Create a {@link WindowSpecification} with a <code>ROWS</code> clause.
      */
@@ -16905,7 +15571,6 @@ public class DSL {
     public static WindowSpecificationRowsAndStep rowsBetweenPreceding(int number) {
         return new WindowSpecificationImpl().rowsBetweenPreceding(number);
     }
-
     /**
      * Create a {@link WindowSpecification} with a <code>ROWS</code> clause.
      */
@@ -16913,7 +15578,6 @@ public class DSL {
     public static WindowSpecificationRowsAndStep rowsBetweenCurrentRow() {
         return new WindowSpecificationImpl().rowsBetweenCurrentRow();
     }
-
     /**
      * Create a {@link WindowSpecification} with a <code>ROWS</code> clause.
      */
@@ -16921,7 +15585,6 @@ public class DSL {
     public static WindowSpecificationRowsAndStep rowsBetweenUnboundedFollowing() {
         return new WindowSpecificationImpl().rowsBetweenUnboundedFollowing();
     }
-
     /**
      * Create a {@link WindowSpecification} with a <code>ROWS</code> clause.
      */
@@ -16929,7 +15592,6 @@ public class DSL {
     public static WindowSpecificationRowsAndStep rowsBetweenFollowing(int number) {
         return new WindowSpecificationImpl().rowsBetweenFollowing(number);
     }
-
     /**
      * Create a {@link WindowSpecification} with a <code>RANGE</code> clause.
      */
@@ -16937,7 +15599,6 @@ public class DSL {
     public static WindowSpecificationFinalStep rangeUnboundedPreceding() {
         return new WindowSpecificationImpl().rangeUnboundedPreceding();
     }
-
     /**
      * Create a {@link WindowSpecification} with a <code>RANGE</code> clause.
      */
@@ -16945,7 +15606,6 @@ public class DSL {
     public static WindowSpecificationFinalStep rangePreceding(int number) {
         return new WindowSpecificationImpl().rangePreceding(number);
     }
-
     /**
      * Create a {@link WindowSpecification} with a <code>RANGE</code> clause.
      */
@@ -16953,7 +15613,6 @@ public class DSL {
     public static WindowSpecificationFinalStep rangeCurrentRow() {
         return new WindowSpecificationImpl().rangeCurrentRow();
     }
-
     /**
      * Create a {@link WindowSpecification} with a <code>RANGE</code> clause.
      */
@@ -16961,7 +15620,6 @@ public class DSL {
     public static WindowSpecificationFinalStep rangeUnboundedFollowing() {
         return new WindowSpecificationImpl().rangeUnboundedFollowing();
     }
-
     /**
      * Create a {@link WindowSpecification} with a <code>RANGE</code> clause.
      */
@@ -16969,7 +15627,6 @@ public class DSL {
     public static WindowSpecificationFinalStep rangeFollowing(int number) {
         return new WindowSpecificationImpl().rangeFollowing(number);
     }
-
     /**
      * Create a {@link WindowSpecification} with a <code>RANGE</code> clause.
      */
@@ -16977,7 +15634,6 @@ public class DSL {
     public static WindowSpecificationRowsAndStep rangeBetweenUnboundedPreceding() {
         return new WindowSpecificationImpl().rangeBetweenUnboundedPreceding();
     }
-
     /**
      * Create a {@link WindowSpecification} with a <code>RANGE</code> clause.
      */
@@ -16985,7 +15641,6 @@ public class DSL {
     public static WindowSpecificationRowsAndStep rangeBetweenPreceding(int number) {
         return new WindowSpecificationImpl().rangeBetweenPreceding(number);
     }
-
     /**
      * Create a {@link WindowSpecification} with a <code>RANGE</code> clause.
      */
@@ -16993,7 +15648,6 @@ public class DSL {
     public static WindowSpecificationRowsAndStep rangeBetweenCurrentRow() {
         return new WindowSpecificationImpl().rangeBetweenCurrentRow();
     }
-
     /**
      * Create a {@link WindowSpecification} with a <code>RANGE</code> clause.
      */
@@ -17001,7 +15655,6 @@ public class DSL {
     public static WindowSpecificationRowsAndStep rangeBetweenUnboundedFollowing() {
         return new WindowSpecificationImpl().rangeBetweenUnboundedFollowing();
     }
-
     /**
      * Create a {@link WindowSpecification} with a <code>RANGE</code> clause.
      */
@@ -17009,11 +15662,9 @@ public class DSL {
     public static WindowSpecificationRowsAndStep rangeBetweenFollowing(int number) {
         return new WindowSpecificationImpl().rangeBetweenFollowing(number);
     }
-
     // -------------------------------------------------------------------------
     // XXX Window functions
     // -------------------------------------------------------------------------
-
     /**
      * The <code>row_number() over ([analytic clause])</code> function.
      * <p>
@@ -17027,39 +15678,18 @@ public class DSL {
     public static WindowOverStep<Integer> rowNumber() {
         return new org.jooq.impl.Function<Integer>(ROW_NUMBER, SQLDataType.INTEGER);
     }
-
     /**
      * The <code>rank() over ([analytic clause])</code> function.
      */
-    @Support({ CUBRID, FIREBIRD_3_0, MYSQL_8_0, POSTGRES })
-    public static WindowOverStep<Integer> rank() {
-        return new org.jooq.impl.Function<Integer>("rank", SQLDataType.INTEGER);
-    }
-
     /**
      * The <code>dense_rank() over ([analytic clause])</code> function.
      */
-    @Support({ CUBRID, FIREBIRD_3_0, MYSQL_8_0, POSTGRES })
-    public static WindowOverStep<Integer> denseRank() {
-        return new org.jooq.impl.Function<Integer>("dense_rank", SQLDataType.INTEGER);
-    }
-
     /**
      * The <code>precent_rank() over ([analytic clause])</code> function.
      */
-    @Support({ CUBRID, MYSQL_8_0, POSTGRES })
-    public static WindowOverStep<BigDecimal> percentRank() {
-        return new org.jooq.impl.Function<BigDecimal>("percent_rank", SQLDataType.NUMERIC);
-    }
-
     /**
      * The <code>cume_dist() over ([analytic clause])</code> function.
      */
-    @Support({ CUBRID, MYSQL_8_0, POSTGRES })
-    public static WindowOverStep<BigDecimal> cumeDist() {
-        return new org.jooq.impl.Function<BigDecimal>("cume_dist", SQLDataType.NUMERIC);
-    }
-
     /**
      * The <code>ntile([number]) over ([analytic clause])</code> function.
      */
@@ -17067,7 +15697,6 @@ public class DSL {
     public static WindowOverStep<Integer> ntile(int number) {
         return new org.jooq.impl.Function<Integer>("ntile", SQLDataType.INTEGER, inline(number));
     }
-
     /**
      * The <code>ratio_to_report([expression]) over ([analytic clause])</code> function.
      */
@@ -17075,7 +15704,6 @@ public class DSL {
     public static WindowOverStep<BigDecimal> ratioToReport(Number number) {
         return ratioToReport(Tools.field(number));
     }
-
     /**
      * The <code>ratio_to_report([expression]) over ([analytic clause])</code> function.
      */
@@ -17083,7 +15711,6 @@ public class DSL {
     public static WindowOverStep<BigDecimal> ratioToReport(Field<? extends Number> field) {
         return new RatioToReport(nullSafe(field));
     }
-
     /**
      * The <code>first_value(field) over ([analytic clause])</code> function.
      */
@@ -17091,7 +15718,6 @@ public class DSL {
     public static <T> WindowIgnoreNullsStep<T> firstValue(Field<T> field) {
         return new org.jooq.impl.Function<T>("first_value", nullSafeDataType(field), nullSafe(field));
     }
-
     /**
      * The <code>last_value(field) over ([analytic clause])</code> function.
      */
@@ -17099,7 +15725,6 @@ public class DSL {
     public static <T> WindowIgnoreNullsStep<T> lastValue(Field<T> field) {
         return new org.jooq.impl.Function<T>("last_value", nullSafeDataType(field), nullSafe(field));
     }
-
     /**
      * The <code>nth_value(field) over ([analytic clause])</code> function.
      */
@@ -17107,7 +15732,6 @@ public class DSL {
     public static <T> WindowIgnoreNullsStep<T> nthValue(Field<T> field, int nth) {
         return nthValue(field, val(nth));
     }
-
     /**
      * The <code>nth_value(field) over ([analytic clause])</code> function.
      */
@@ -17115,7 +15739,6 @@ public class DSL {
     public static <T> WindowIgnoreNullsStep<T> nthValue(Field<T> field, Field<Integer> nth) {
         return new org.jooq.impl.Function<T>("nth_value", nullSafeDataType(field), nullSafe(field), nullSafe(nth));
     }
-
     /**
      * The <code>lead(field) over ([analytic clause])</code> function.
      */
@@ -17123,7 +15746,6 @@ public class DSL {
     public static <T> WindowIgnoreNullsStep<T> lead(Field<T> field) {
         return new LeadLag<T>("lead", nullSafe(field));
     }
-
     /**
      * The <code>lead(field, offset) over ([analytic clause])</code> function.
      */
@@ -17131,7 +15753,6 @@ public class DSL {
     public static <T> WindowIgnoreNullsStep<T> lead(Field<T> field, int offset) {
         return new LeadLag<T>("lead", nullSafe(field), offset);
     }
-
     /**
      * The
      * <code>lead(field, offset, defaultValue) over ([analytic clause])</code>
@@ -17141,7 +15762,6 @@ public class DSL {
     public static <T> WindowIgnoreNullsStep<T> lead(Field<T> field, int offset, T defaultValue) {
         return lead(nullSafe(field), offset, Tools.field(defaultValue));
     }
-
     /**
      * The
      * <code>lead(field, offset, defaultValue) over ([analytic clause])</code>
@@ -17151,7 +15771,6 @@ public class DSL {
     public static <T> WindowIgnoreNullsStep<T> lead(Field<T> field, int offset, Field<T> defaultValue) {
         return new LeadLag<T>("lead", nullSafe(field), offset, nullSafe(defaultValue));
     }
-
     /**
      * The <code>lag(field) over ([analytic clause])</code> function.
      */
@@ -17159,7 +15778,6 @@ public class DSL {
     public static <T> WindowIgnoreNullsStep<T> lag(Field<T> field) {
         return new LeadLag<T>("lag", nullSafe(field));
     }
-
     /**
      * The <code>lag(field, offset) over ([analytic clause])</code> function.
      */
@@ -17167,7 +15785,6 @@ public class DSL {
     public static <T> WindowIgnoreNullsStep<T> lag(Field<T> field, int offset) {
         return new LeadLag<T>("lag", nullSafe(field), offset);
     }
-
     /**
      * The
      * <code>lag(field, offset, defaultValue) over ([analytic clause])</code>
@@ -17177,7 +15794,6 @@ public class DSL {
     public static <T> WindowIgnoreNullsStep<T> lag(Field<T> field, int offset, T defaultValue) {
         return lag(nullSafe(field), offset, Tools.field(defaultValue));
     }
-
     /**
      * The
      * <code>lag(field, offset, defaultValue) over ([analytic clause])</code>
@@ -17187,11 +15803,9 @@ public class DSL {
     public static <T> WindowIgnoreNullsStep<T> lag(Field<T> field, int offset, Field<T> defaultValue) {
         return new LeadLag<T>("lag", nullSafe(field), offset, nullSafe(defaultValue));
     }
-
     // -------------------------------------------------------------------------
     // XXX Bind values
     // -------------------------------------------------------------------------
-
     /**
      * Create an unnamed parameter with a generic type ({@link Object} /
      * {@link SQLDataType#OTHER}) and no initial value.
@@ -17215,7 +15829,6 @@ public class DSL {
     public static <T> Param<Object> param() {
         return param(Object.class);
     }
-
     /**
      * Create an unnamed parameter with a defined type and no initial value.
      *
@@ -17225,7 +15838,6 @@ public class DSL {
     public static <T> Param<T> param(Class<T> type) {
         return param(DefaultDataType.getDataType(null, type));
     }
-
     /**
      * Create an unnamed parameter with a defined type and no initial value.
      *
@@ -17235,7 +15847,6 @@ public class DSL {
     public static <T> Param<T> param(DataType<T> type) {
         return new Val<T>(null, type);
     }
-
     /**
      * Create an unnamed parameter with the defined type of another field and no
      * initial value.
@@ -17246,7 +15857,6 @@ public class DSL {
     public static <T> Param<T> param(Field<T> field) {
         return param(field.getDataType());
     }
-
     /**
      * Create a named parameter with a generic type ({@link Object} /
      * {@link SQLDataType#OTHER}) and no initial value.
@@ -17270,7 +15880,6 @@ public class DSL {
     public static Param<Object> param(String name) {
         return param(name, Object.class);
     }
-
     /**
      * Create a named parameter with a defined type and no initial value.
      *
@@ -17280,7 +15889,6 @@ public class DSL {
     public static <T> Param<T> param(String name, Class<T> type) {
         return param(name, DefaultDataType.getDataType(null, type));
     }
-
     /**
      * Create a named parameter with a defined type and no initial value.
      *
@@ -17290,7 +15898,6 @@ public class DSL {
     public static <T> Param<T> param(String name, DataType<T> type) {
         return new Val<T>(null, type, name);
     }
-
     /**
      * Create a named parameter with a defined type of another field and no
      * initial value.
@@ -17301,7 +15908,6 @@ public class DSL {
     public static <T> Param<T> param(String name, Field<T> type) {
         return param(name, type.getDataType());
     }
-
     /**
      * Create a named parameter with an initial value.
      * <p>
@@ -17323,7 +15929,6 @@ public class DSL {
     public static <T> Param<T> param(String name, T value) {
         return new Val<T>(value, Tools.field(value).getDataType(), name);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17334,7 +15939,6 @@ public class DSL {
     public static <T> Param<T> value(T value) {
         return val(value);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17344,7 +15948,6 @@ public class DSL {
     public static Param<Byte> value(byte value) {
         return value((Object) value, SQLDataType.TINYINT);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17354,7 +15957,6 @@ public class DSL {
     public static Param<Byte> value(Byte value) {
         return value((Object) value, SQLDataType.TINYINT);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17364,7 +15966,6 @@ public class DSL {
     public static Param<UByte> value(UByte value) {
         return value((Object) value, SQLDataType.TINYINTUNSIGNED);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17374,7 +15975,6 @@ public class DSL {
     public static Param<Short> value(short value) {
         return value((Object) value, SQLDataType.SMALLINT);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17384,7 +15984,6 @@ public class DSL {
     public static Param<Short> value(Short value) {
         return value((Object) value, SQLDataType.SMALLINT);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17394,7 +15993,6 @@ public class DSL {
     public static Param<UShort> value(UShort value) {
         return value((Object) value, SQLDataType.SMALLINTUNSIGNED);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17404,7 +16002,6 @@ public class DSL {
     public static Param<Integer> value(int value) {
         return value((Object) value, SQLDataType.INTEGER);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17414,7 +16011,6 @@ public class DSL {
     public static Param<Integer> value(Integer value) {
         return value((Object) value, SQLDataType.INTEGER);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17424,7 +16020,6 @@ public class DSL {
     public static Param<UInteger> value(UInteger value) {
         return value((Object) value, SQLDataType.INTEGERUNSIGNED);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17434,7 +16029,6 @@ public class DSL {
     public static Param<Long> value(long value) {
         return value((Object) value, SQLDataType.BIGINT);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17444,7 +16038,6 @@ public class DSL {
     public static Param<Long> value(Long value) {
         return value((Object) value, SQLDataType.BIGINT);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17454,7 +16047,6 @@ public class DSL {
     public static Param<ULong> value(ULong value) {
         return value((Object) value, SQLDataType.BIGINTUNSIGNED);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17464,7 +16056,6 @@ public class DSL {
     public static Param<Float> value(float value) {
         return value((Object) value, SQLDataType.REAL);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17474,7 +16065,6 @@ public class DSL {
     public static Param<Float> value(Float value) {
         return value((Object) value, SQLDataType.REAL);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17484,7 +16074,6 @@ public class DSL {
     public static Param<Double> value(double value) {
         return value((Object) value, SQLDataType.DOUBLE);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17494,7 +16083,6 @@ public class DSL {
     public static Param<Double> value(Double value) {
         return value((Object) value, SQLDataType.DOUBLE);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17504,7 +16092,6 @@ public class DSL {
     public static Param<Boolean> value(boolean value) {
         return value((Object) value, SQLDataType.BOOLEAN);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17514,7 +16101,6 @@ public class DSL {
     public static Param<Boolean> value(Boolean value) {
         return value((Object) value, SQLDataType.BOOLEAN);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17524,7 +16110,6 @@ public class DSL {
     public static Param<BigDecimal> value(BigDecimal value) {
         return value((Object) value, SQLDataType.DECIMAL);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17534,7 +16119,6 @@ public class DSL {
     public static Param<BigInteger> value(BigInteger value) {
         return value((Object) value, SQLDataType.DECIMAL_INTEGER);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17544,7 +16128,6 @@ public class DSL {
     public static Param<byte[]> value(byte[] value) {
         return value((Object) value, SQLDataType.VARBINARY);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17554,7 +16137,6 @@ public class DSL {
     public static Param<String> value(String value) {
         return value((Object) value, SQLDataType.VARCHAR);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17564,7 +16146,6 @@ public class DSL {
     public static Param<Date> value(Date value) {
         return value((Object) value, SQLDataType.DATE);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17574,7 +16155,6 @@ public class DSL {
     public static Param<Time> value(Time value) {
         return value((Object) value, SQLDataType.TIME);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17584,8 +16164,6 @@ public class DSL {
     public static Param<Timestamp> value(Timestamp value) {
         return value((Object) value, SQLDataType.TIMESTAMP);
     }
-
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17595,7 +16173,6 @@ public class DSL {
     public static Param<LocalDate> value(LocalDate value) {
         return value((Object) value, SQLDataType.LOCALDATE);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17605,7 +16182,6 @@ public class DSL {
     public static Param<LocalTime> value(LocalTime value) {
         return value((Object) value, SQLDataType.LOCALTIME);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17615,7 +16191,6 @@ public class DSL {
     public static Param<LocalDateTime> value(LocalDateTime value) {
         return value((Object) value, SQLDataType.LOCALDATETIME);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17625,7 +16200,6 @@ public class DSL {
     public static Param<OffsetTime> value(OffsetTime value) {
         return value((Object) value, SQLDataType.OFFSETTIME);
     }
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17635,8 +16209,6 @@ public class DSL {
     public static Param<OffsetDateTime> value(OffsetDateTime value) {
         return value((Object) value, SQLDataType.OFFSETDATETIME);
     }
-
-
     /**
      * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17646,7 +16218,6 @@ public class DSL {
     public static Param<UUID> value(UUID value) {
         return value((Object) value, SQLDataType.UUID);
     }
-
     /**
      * A synonym for {@link #val(Object, Class)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17657,7 +16228,6 @@ public class DSL {
     public static <T> Param<T> value(Object value, Class<T> type) {
         return val(value, type);
     }
-
     /**
      * A synonym for {@link #val(Object, Field)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17668,7 +16238,6 @@ public class DSL {
     public static <T> Param<T> value(Object value, Field<T> field) {
         return val(value, field);
     }
-
     /**
      * A synonym for {@link #val(Object, DataType)} to be used in Scala and Groovy, where
      * <code>val</code> is a reserved keyword.
@@ -17679,7 +16248,6 @@ public class DSL {
     public static <T> Param<T> value(Object value, DataType<T> type) {
         return val(value, type);
     }
-
     /**
      * Create a bind value, that is always inlined.
      * <p>
@@ -17702,7 +16270,6 @@ public class DSL {
         val.setInline(true);
         return val;
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -17722,7 +16289,6 @@ public class DSL {
     public static Param<Byte> inline(byte value) {
         return inline((Object) value, SQLDataType.TINYINT);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -17742,7 +16308,6 @@ public class DSL {
     public static Param<Byte> inline(Byte value) {
         return inline((Object) value, SQLDataType.TINYINT);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -17762,7 +16327,6 @@ public class DSL {
     public static Param<UByte> inline(UByte value) {
         return inline((Object) value, SQLDataType.TINYINTUNSIGNED);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -17782,7 +16346,6 @@ public class DSL {
     public static Param<Short> inline(short value) {
         return inline((Object) value, SQLDataType.SMALLINT);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -17802,7 +16365,6 @@ public class DSL {
     public static Param<Short> inline(Short value) {
         return inline((Object) value, SQLDataType.SMALLINT);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -17822,7 +16384,6 @@ public class DSL {
     public static Param<UShort> inline(UShort value) {
         return inline((Object) value, SQLDataType.SMALLINTUNSIGNED);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -17842,7 +16403,6 @@ public class DSL {
     public static Param<Integer> inline(int value) {
         return inline((Object) value, SQLDataType.INTEGER);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -17862,7 +16422,6 @@ public class DSL {
     public static Param<Integer> inline(Integer value) {
         return inline((Object) value, SQLDataType.INTEGER);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -17882,7 +16441,6 @@ public class DSL {
     public static Param<UInteger> inline(UInteger value) {
         return inline((Object) value, SQLDataType.INTEGERUNSIGNED);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -17902,7 +16460,6 @@ public class DSL {
     public static Param<Long> inline(long value) {
         return inline((Object) value, SQLDataType.BIGINT);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -17922,7 +16479,6 @@ public class DSL {
     public static Param<Long> inline(Long value) {
         return inline((Object) value, SQLDataType.BIGINT);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -17942,7 +16498,6 @@ public class DSL {
     public static Param<ULong> inline(ULong value) {
         return inline((Object) value, SQLDataType.BIGINTUNSIGNED);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -17962,7 +16517,6 @@ public class DSL {
     public static Param<Float> inline(float value) {
         return inline((Object) value, SQLDataType.REAL);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -17982,7 +16536,6 @@ public class DSL {
     public static Param<Float> inline(Float value) {
         return inline((Object) value, SQLDataType.REAL);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -18002,7 +16555,6 @@ public class DSL {
     public static Param<Double> inline(double value) {
         return inline((Object) value, SQLDataType.DOUBLE);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -18022,7 +16574,6 @@ public class DSL {
     public static Param<Double> inline(Double value) {
         return inline((Object) value, SQLDataType.DOUBLE);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -18042,7 +16593,6 @@ public class DSL {
     public static Param<Boolean> inline(boolean value) {
         return inline((Object) value, SQLDataType.BOOLEAN);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -18062,7 +16612,6 @@ public class DSL {
     public static Param<Boolean> inline(Boolean value) {
         return inline((Object) value, SQLDataType.BOOLEAN);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -18082,7 +16631,6 @@ public class DSL {
     public static Param<BigDecimal> inline(BigDecimal value) {
         return inline((Object) value, SQLDataType.DECIMAL);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -18102,7 +16650,6 @@ public class DSL {
     public static Param<BigInteger> inline(BigInteger value) {
         return inline((Object) value, SQLDataType.DECIMAL_INTEGER);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -18122,7 +16669,6 @@ public class DSL {
     public static Param<byte[]> inline(byte[] value) {
         return inline((Object) value, SQLDataType.VARBINARY);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -18142,7 +16688,6 @@ public class DSL {
     public static Param<String> inline(String value) {
         return inline((Object) value, SQLDataType.VARCHAR);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -18162,7 +16707,6 @@ public class DSL {
     public static Param<Date> inline(Date value) {
         return inline((Object) value, SQLDataType.DATE);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -18182,7 +16726,6 @@ public class DSL {
     public static Param<Time> inline(Time value) {
         return inline((Object) value, SQLDataType.TIME);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -18202,8 +16745,6 @@ public class DSL {
     public static Param<Timestamp> inline(Timestamp value) {
         return inline((Object) value, SQLDataType.TIMESTAMP);
     }
-
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -18223,7 +16764,6 @@ public class DSL {
     public static Param<LocalDate> inline(LocalDate value) {
         return inline((Object) value, SQLDataType.LOCALDATE);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -18243,7 +16783,6 @@ public class DSL {
     public static Param<LocalTime> inline(LocalTime value) {
         return inline((Object) value, SQLDataType.LOCALTIME);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -18263,7 +16802,6 @@ public class DSL {
     public static Param<LocalDateTime> inline(LocalDateTime value) {
         return inline((Object) value, SQLDataType.LOCALDATETIME);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -18283,7 +16821,6 @@ public class DSL {
     public static Param<OffsetTime> inline(OffsetTime value) {
         return inline((Object) value, SQLDataType.OFFSETTIME);
     }
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -18303,8 +16840,6 @@ public class DSL {
     public static Param<OffsetDateTime> inline(OffsetDateTime value) {
         return inline((Object) value, SQLDataType.OFFSETDATETIME);
     }
-
-
     /**
      * Create a bind value that is always inlined.
      * <p>
@@ -18324,7 +16859,6 @@ public class DSL {
     public static Param<UUID> inline(UUID value) {
         return inline((Object) value, SQLDataType.UUID);
     }
-
     /**
      * Create a bind value, that is always inlined.
      * <p>
@@ -18338,7 +16872,6 @@ public class DSL {
     public static Param<String> inline(char character) {
         return inline("" + character);
     }
-
     /**
      * Create a bind value, that is always inlined.
      * <p>
@@ -18352,7 +16885,6 @@ public class DSL {
     public static Param<String> inline(Character character) {
         return inline((character == null) ? null : ("" + character));
     }
-
     /**
      * Create a bind value, that is always inlined.
      * <p>
@@ -18368,7 +16900,6 @@ public class DSL {
         // Delegate to inline(T)
         return (Param) inline((Object) ((character == null) ? null : ("" + character)));
     }
-
     /**
      * Create a bind value, that is always inlined.
      * <p>
@@ -18391,7 +16922,6 @@ public class DSL {
         val.setInline(true);
         return val;
     }
-
     /**
      * Create a bind value, that is always inlined.
      * <p>
@@ -18414,7 +16944,6 @@ public class DSL {
         val.setInline(true);
         return val;
     }
-
     /**
      * Create a bind value, that is always inlined.
      * <p>
@@ -18437,7 +16966,6 @@ public class DSL {
         val.setInline(true);
         return val;
     }
-
     /**
      * Get a bind value.
      * <p>
@@ -18467,7 +16995,6 @@ public class DSL {
         Class<?> type = (value == null) ? Object.class : value.getClass();
         return (Param<T>) val(value, getDataType(type));
     }
-
     /**
      * Get a bind value.
      *
@@ -18476,7 +17003,6 @@ public class DSL {
     public static Param<Byte> val(byte value) {
         return val((Object) value, SQLDataType.TINYINT);
     }
-
     /**
      * Get a bind value.
      *
@@ -18485,7 +17011,6 @@ public class DSL {
     public static Param<Byte> val(Byte value) {
         return val((Object) value, SQLDataType.TINYINT);
     }
-
     /**
      * Get a bind value.
      *
@@ -18494,7 +17019,6 @@ public class DSL {
     public static Param<UByte> val(UByte value) {
         return val((Object) value, SQLDataType.TINYINTUNSIGNED);
     }
-
     /**
      * Get a bind value.
      *
@@ -18503,7 +17027,6 @@ public class DSL {
     public static Param<Short> val(short value) {
         return val((Object) value, SQLDataType.SMALLINT);
     }
-
     /**
      * Get a bind value.
      *
@@ -18512,7 +17035,6 @@ public class DSL {
     public static Param<Short> val(Short value) {
         return val((Object) value, SQLDataType.SMALLINT);
     }
-
     /**
      * Get a bind value.
      *
@@ -18521,7 +17043,6 @@ public class DSL {
     public static Param<UShort> val(UShort value) {
         return val((Object) value, SQLDataType.SMALLINTUNSIGNED);
     }
-
     /**
      * Get a bind value.
      *
@@ -18530,7 +17051,6 @@ public class DSL {
     public static Param<Integer> val(int value) {
         return val((Object) value, SQLDataType.INTEGER);
     }
-
     /**
      * Get a bind value.
      *
@@ -18539,7 +17059,6 @@ public class DSL {
     public static Param<Integer> val(Integer value) {
         return val((Object) value, SQLDataType.INTEGER);
     }
-
     /**
      * Get a bind value.
      *
@@ -18548,7 +17067,6 @@ public class DSL {
     public static Param<UInteger> val(UInteger value) {
         return val((Object) value, SQLDataType.INTEGERUNSIGNED);
     }
-
     /**
      * Get a bind value.
      *
@@ -18557,7 +17075,6 @@ public class DSL {
     public static Param<Long> val(long value) {
         return val((Object) value, SQLDataType.BIGINT);
     }
-
     /**
      * Get a bind value.
      *
@@ -18566,7 +17083,6 @@ public class DSL {
     public static Param<Long> val(Long value) {
         return val((Object) value, SQLDataType.BIGINT);
     }
-
     /**
      * Get a bind value.
      *
@@ -18575,7 +17091,6 @@ public class DSL {
     public static Param<ULong> val(ULong value) {
         return val((Object) value, SQLDataType.BIGINTUNSIGNED);
     }
-
     /**
      * Get a bind value.
      *
@@ -18584,7 +17099,6 @@ public class DSL {
     public static Param<Float> val(float value) {
         return val((Object) value, SQLDataType.REAL);
     }
-
     /**
      * Get a bind value.
      *
@@ -18593,7 +17107,6 @@ public class DSL {
     public static Param<Float> val(Float value) {
         return val((Object) value, SQLDataType.REAL);
     }
-
     /**
      * Get a bind value.
      *
@@ -18602,7 +17115,6 @@ public class DSL {
     public static Param<Double> val(double value) {
         return val((Object) value, SQLDataType.DOUBLE);
     }
-
     /**
      * Get a bind value.
      *
@@ -18611,7 +17123,6 @@ public class DSL {
     public static Param<Double> val(Double value) {
         return val((Object) value, SQLDataType.DOUBLE);
     }
-
     /**
      * Get a bind value.
      *
@@ -18620,7 +17131,6 @@ public class DSL {
     public static Param<Boolean> val(boolean value) {
         return val((Object) value, SQLDataType.BOOLEAN);
     }
-
     /**
      * Get a bind value.
      *
@@ -18629,7 +17139,6 @@ public class DSL {
     public static Param<Boolean> val(Boolean value) {
         return val((Object) value, SQLDataType.BOOLEAN);
     }
-
     /**
      * Get a bind value.
      *
@@ -18638,7 +17147,6 @@ public class DSL {
     public static Param<BigDecimal> val(BigDecimal value) {
         return val((Object) value, SQLDataType.DECIMAL);
     }
-
     /**
      * Get a bind value.
      *
@@ -18647,7 +17155,6 @@ public class DSL {
     public static Param<BigInteger> val(BigInteger value) {
         return val((Object) value, SQLDataType.DECIMAL_INTEGER);
     }
-
     /**
      * Get a bind value.
      *
@@ -18656,7 +17163,6 @@ public class DSL {
     public static Param<byte[]> val(byte[] value) {
         return val((Object) value, SQLDataType.VARBINARY);
     }
-
     /**
      * Get a bind value.
      *
@@ -18665,7 +17171,6 @@ public class DSL {
     public static Param<String> val(String value) {
         return val((Object) value, SQLDataType.VARCHAR);
     }
-
     /**
      * Get a bind value.
      *
@@ -18674,7 +17179,6 @@ public class DSL {
     public static Param<Date> val(Date value) {
         return val((Object) value, SQLDataType.DATE);
     }
-
     /**
      * Get a bind value.
      *
@@ -18683,7 +17187,6 @@ public class DSL {
     public static Param<Time> val(Time value) {
         return val((Object) value, SQLDataType.TIME);
     }
-
     /**
      * Get a bind value.
      *
@@ -18692,8 +17195,6 @@ public class DSL {
     public static Param<Timestamp> val(Timestamp value) {
         return val((Object) value, SQLDataType.TIMESTAMP);
     }
-
-
     /**
      * Get a bind value.
      *
@@ -18702,7 +17203,6 @@ public class DSL {
     public static Param<LocalDate> val(LocalDate value) {
         return val((Object) value, SQLDataType.LOCALDATE);
     }
-
     /**
      * Get a bind value.
      *
@@ -18711,7 +17211,6 @@ public class DSL {
     public static Param<LocalTime> val(LocalTime value) {
         return val((Object) value, SQLDataType.LOCALTIME);
     }
-
     /**
      * Get a bind value.
      *
@@ -18720,7 +17219,6 @@ public class DSL {
     public static Param<LocalDateTime> val(LocalDateTime value) {
         return val((Object) value, SQLDataType.LOCALDATETIME);
     }
-
     /**
      * Get a bind value.
      *
@@ -18729,7 +17227,6 @@ public class DSL {
     public static Param<OffsetTime> val(OffsetTime value) {
         return val((Object) value, SQLDataType.OFFSETTIME);
     }
-
     /**
      * Get a bind value.
      *
@@ -18738,8 +17235,6 @@ public class DSL {
     public static Param<OffsetDateTime> val(OffsetDateTime value) {
         return val((Object) value, SQLDataType.OFFSETDATETIME);
     }
-
-
     /**
      * Get a bind value.
      *
@@ -18748,7 +17243,6 @@ public class DSL {
     public static Param<UUID> val(UUID value) {
         return val((Object) value, SQLDataType.UUID);
     }
-
     /**
      * Get a bind value with an associated type, taken from a field.
      *
@@ -18762,7 +17256,6 @@ public class DSL {
     public static <T> Param<T> val(Object value, Class<T> type) {
         return val(value, getDataType(type));
     }
-
     /**
      * Get a bind value with an associated type, taken from a field.
      *
@@ -18776,7 +17269,6 @@ public class DSL {
     public static <T> Param<T> val(Object value, Field<T> field) {
         return val(value, nullSafeDataType(field));
     }
-
     /**
      * Get a bind value with an associated type.
      * <p>
@@ -18809,7 +17301,6 @@ public class DSL {
             return new Val<T>(converted, mostSpecific(converted, type));
         }
     }
-
     /**
      * Get the "most specific" data type between a concrete value and an actual
      * coercion data type.
@@ -18844,23 +17335,19 @@ public class DSL {
 
         return dataType;
     }
-
     /**
      * Create a {@link RecordType} of an arbitrary degree.
      */
     public static <T1> RecordType<Record> recordType(Field<?>[] fields) {
         return new Fields(fields);
     }
-
     /**
      * Create a {@link RecordType} of an arbitrary degree.
      */
     public static <T1> RecordType<Record> recordType(Collection<? extends Field<?>> fields) {
         return new Fields(fields);
     }
-
     // [jooq-tools] START [record-type]
-
     /**
      * Create a {@link RecordType} of degree <code>1</code>.
      */
@@ -18868,7 +17355,6 @@ public class DSL {
     public static <T1> RecordType<Record1<T1>> recordType(Field<T1> field1) {
         return new Fields(field1);
     }
-
     /**
      * Create a {@link RecordType} of degree <code>2</code>.
      */
@@ -18876,7 +17362,6 @@ public class DSL {
     public static <T1, T2> RecordType<Record2<T1, T2>> recordType(Field<T1> field1, Field<T2> field2) {
         return new Fields(field1, field2);
     }
-
     /**
      * Create a {@link RecordType} of degree <code>3</code>.
      */
@@ -18884,7 +17369,6 @@ public class DSL {
     public static <T1, T2, T3> RecordType<Record3<T1, T2, T3>> recordType(Field<T1> field1, Field<T2> field2, Field<T3> field3) {
         return new Fields(field1, field2, field3);
     }
-
     /**
      * Create a {@link RecordType} of degree <code>4</code>.
      */
@@ -18892,7 +17376,6 @@ public class DSL {
     public static <T1, T2, T3, T4> RecordType<Record4<T1, T2, T3, T4>> recordType(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4) {
         return new Fields(field1, field2, field3, field4);
     }
-
     /**
      * Create a {@link RecordType} of degree <code>5</code>.
      */
@@ -18900,7 +17383,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5> RecordType<Record5<T1, T2, T3, T4, T5>> recordType(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5) {
         return new Fields(field1, field2, field3, field4, field5);
     }
-
     /**
      * Create a {@link RecordType} of degree <code>6</code>.
      */
@@ -18908,7 +17390,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6> RecordType<Record6<T1, T2, T3, T4, T5, T6>> recordType(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6) {
         return new Fields(field1, field2, field3, field4, field5, field6);
     }
-
     /**
      * Create a {@link RecordType} of degree <code>7</code>.
      */
@@ -18916,7 +17397,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7> RecordType<Record7<T1, T2, T3, T4, T5, T6, T7>> recordType(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7) {
         return new Fields(field1, field2, field3, field4, field5, field6, field7);
     }
-
     /**
      * Create a {@link RecordType} of degree <code>8</code>.
      */
@@ -18924,7 +17404,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8> RecordType<Record8<T1, T2, T3, T4, T5, T6, T7, T8>> recordType(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8) {
         return new Fields(field1, field2, field3, field4, field5, field6, field7, field8);
     }
-
     /**
      * Create a {@link RecordType} of degree <code>9</code>.
      */
@@ -18932,7 +17411,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9> RecordType<Record9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> recordType(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9) {
         return new Fields(field1, field2, field3, field4, field5, field6, field7, field8, field9);
     }
-
     /**
      * Create a {@link RecordType} of degree <code>10</code>.
      */
@@ -18940,7 +17418,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> RecordType<Record10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>> recordType(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10) {
         return new Fields(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10);
     }
-
     /**
      * Create a {@link RecordType} of degree <code>11</code>.
      */
@@ -18948,7 +17425,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> RecordType<Record11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>> recordType(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11) {
         return new Fields(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11);
     }
-
     /**
      * Create a {@link RecordType} of degree <code>12</code>.
      */
@@ -18956,7 +17432,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> RecordType<Record12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>> recordType(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12) {
         return new Fields(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12);
     }
-
     /**
      * Create a {@link RecordType} of degree <code>13</code>.
      */
@@ -18964,7 +17439,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> RecordType<Record13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>> recordType(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13) {
         return new Fields(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13);
     }
-
     /**
      * Create a {@link RecordType} of degree <code>14</code>.
      */
@@ -18972,7 +17446,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> RecordType<Record14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>> recordType(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14) {
         return new Fields(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14);
     }
-
     /**
      * Create a {@link RecordType} of degree <code>15</code>.
      */
@@ -18980,7 +17453,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> RecordType<Record15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>> recordType(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15) {
         return new Fields(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15);
     }
-
     /**
      * Create a {@link RecordType} of degree <code>16</code>.
      */
@@ -18988,7 +17460,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> RecordType<Record16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>> recordType(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16) {
         return new Fields(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16);
     }
-
     /**
      * Create a {@link RecordType} of degree <code>17</code>.
      */
@@ -18996,7 +17467,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> RecordType<Record17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>> recordType(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17) {
         return new Fields(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17);
     }
-
     /**
      * Create a {@link RecordType} of degree <code>18</code>.
      */
@@ -19004,7 +17474,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18> RecordType<Record18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>> recordType(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17, Field<T18> field18) {
         return new Fields(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18);
     }
-
     /**
      * Create a {@link RecordType} of degree <code>19</code>.
      */
@@ -19012,7 +17481,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19> RecordType<Record19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>> recordType(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17, Field<T18> field18, Field<T19> field19) {
         return new Fields(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19);
     }
-
     /**
      * Create a {@link RecordType} of degree <code>20</code>.
      */
@@ -19020,7 +17488,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20> RecordType<Record20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>> recordType(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17, Field<T18> field18, Field<T19> field19, Field<T20> field20) {
         return new Fields(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20);
     }
-
     /**
      * Create a {@link RecordType} of degree <code>21</code>.
      */
@@ -19028,7 +17495,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21> RecordType<Record21<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21>> recordType(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17, Field<T18> field18, Field<T19> field19, Field<T20> field20, Field<T21> field21) {
         return new Fields(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20, field21);
     }
-
     /**
      * Create a {@link RecordType} of degree <code>22</code>.
      */
@@ -19036,11 +17502,8 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22> RecordType<Record22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22>> recordType(Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5, Field<T6> field6, Field<T7> field7, Field<T8> field8, Field<T9> field9, Field<T10> field10, Field<T11> field11, Field<T12> field12, Field<T13> field13, Field<T14> field14, Field<T15> field15, Field<T16> field16, Field<T17> field17, Field<T18> field18, Field<T19> field19, Field<T20> field20, Field<T21> field21, Field<T22> field22) {
         return new Fields(field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20, field21, field22);
     }
-
 // [jooq-tools] END [record-type]
-
     // [jooq-tools] START [row-value]
-
     /**
      * Create a row value expression of degree <code>1</code>.
      * <p>
@@ -19053,7 +17516,6 @@ public class DSL {
     public static <T1> Row1<T1> row(T1 t1) {
         return row(Tools.field(t1));
     }
-
     /**
      * Create a row value expression of degree <code>2</code>.
      * <p>
@@ -19066,7 +17528,6 @@ public class DSL {
     public static <T1, T2> Row2<T1, T2> row(T1 t1, T2 t2) {
         return row(Tools.field(t1), Tools.field(t2));
     }
-
     /**
      * Create a row value expression of degree <code>3</code>.
      * <p>
@@ -19079,7 +17540,6 @@ public class DSL {
     public static <T1, T2, T3> Row3<T1, T2, T3> row(T1 t1, T2 t2, T3 t3) {
         return row(Tools.field(t1), Tools.field(t2), Tools.field(t3));
     }
-
     /**
      * Create a row value expression of degree <code>4</code>.
      * <p>
@@ -19092,7 +17552,6 @@ public class DSL {
     public static <T1, T2, T3, T4> Row4<T1, T2, T3, T4> row(T1 t1, T2 t2, T3 t3, T4 t4) {
         return row(Tools.field(t1), Tools.field(t2), Tools.field(t3), Tools.field(t4));
     }
-
     /**
      * Create a row value expression of degree <code>5</code>.
      * <p>
@@ -19105,7 +17564,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5> Row5<T1, T2, T3, T4, T5> row(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5) {
         return row(Tools.field(t1), Tools.field(t2), Tools.field(t3), Tools.field(t4), Tools.field(t5));
     }
-
     /**
      * Create a row value expression of degree <code>6</code>.
      * <p>
@@ -19118,7 +17576,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6> Row6<T1, T2, T3, T4, T5, T6> row(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6) {
         return row(Tools.field(t1), Tools.field(t2), Tools.field(t3), Tools.field(t4), Tools.field(t5), Tools.field(t6));
     }
-
     /**
      * Create a row value expression of degree <code>7</code>.
      * <p>
@@ -19131,7 +17588,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7> Row7<T1, T2, T3, T4, T5, T6, T7> row(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7) {
         return row(Tools.field(t1), Tools.field(t2), Tools.field(t3), Tools.field(t4), Tools.field(t5), Tools.field(t6), Tools.field(t7));
     }
-
     /**
      * Create a row value expression of degree <code>8</code>.
      * <p>
@@ -19144,7 +17600,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8> Row8<T1, T2, T3, T4, T5, T6, T7, T8> row(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8) {
         return row(Tools.field(t1), Tools.field(t2), Tools.field(t3), Tools.field(t4), Tools.field(t5), Tools.field(t6), Tools.field(t7), Tools.field(t8));
     }
-
     /**
      * Create a row value expression of degree <code>9</code>.
      * <p>
@@ -19157,7 +17612,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Row9<T1, T2, T3, T4, T5, T6, T7, T8, T9> row(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8, T9 t9) {
         return row(Tools.field(t1), Tools.field(t2), Tools.field(t3), Tools.field(t4), Tools.field(t5), Tools.field(t6), Tools.field(t7), Tools.field(t8), Tools.field(t9));
     }
-
     /**
      * Create a row value expression of degree <code>10</code>.
      * <p>
@@ -19170,7 +17624,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> Row10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> row(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8, T9 t9, T10 t10) {
         return row(Tools.field(t1), Tools.field(t2), Tools.field(t3), Tools.field(t4), Tools.field(t5), Tools.field(t6), Tools.field(t7), Tools.field(t8), Tools.field(t9), Tools.field(t10));
     }
-
     /**
      * Create a row value expression of degree <code>11</code>.
      * <p>
@@ -19183,7 +17636,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> Row11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> row(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8, T9 t9, T10 t10, T11 t11) {
         return row(Tools.field(t1), Tools.field(t2), Tools.field(t3), Tools.field(t4), Tools.field(t5), Tools.field(t6), Tools.field(t7), Tools.field(t8), Tools.field(t9), Tools.field(t10), Tools.field(t11));
     }
-
     /**
      * Create a row value expression of degree <code>12</code>.
      * <p>
@@ -19196,7 +17648,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> Row12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> row(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8, T9 t9, T10 t10, T11 t11, T12 t12) {
         return row(Tools.field(t1), Tools.field(t2), Tools.field(t3), Tools.field(t4), Tools.field(t5), Tools.field(t6), Tools.field(t7), Tools.field(t8), Tools.field(t9), Tools.field(t10), Tools.field(t11), Tools.field(t12));
     }
-
     /**
      * Create a row value expression of degree <code>13</code>.
      * <p>
@@ -19209,7 +17660,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> Row13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> row(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8, T9 t9, T10 t10, T11 t11, T12 t12, T13 t13) {
         return row(Tools.field(t1), Tools.field(t2), Tools.field(t3), Tools.field(t4), Tools.field(t5), Tools.field(t6), Tools.field(t7), Tools.field(t8), Tools.field(t9), Tools.field(t10), Tools.field(t11), Tools.field(t12), Tools.field(t13));
     }
-
     /**
      * Create a row value expression of degree <code>14</code>.
      * <p>
@@ -19222,7 +17672,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> Row14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> row(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8, T9 t9, T10 t10, T11 t11, T12 t12, T13 t13, T14 t14) {
         return row(Tools.field(t1), Tools.field(t2), Tools.field(t3), Tools.field(t4), Tools.field(t5), Tools.field(t6), Tools.field(t7), Tools.field(t8), Tools.field(t9), Tools.field(t10), Tools.field(t11), Tools.field(t12), Tools.field(t13), Tools.field(t14));
     }
-
     /**
      * Create a row value expression of degree <code>15</code>.
      * <p>
@@ -19235,7 +17684,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> Row15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> row(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8, T9 t9, T10 t10, T11 t11, T12 t12, T13 t13, T14 t14, T15 t15) {
         return row(Tools.field(t1), Tools.field(t2), Tools.field(t3), Tools.field(t4), Tools.field(t5), Tools.field(t6), Tools.field(t7), Tools.field(t8), Tools.field(t9), Tools.field(t10), Tools.field(t11), Tools.field(t12), Tools.field(t13), Tools.field(t14), Tools.field(t15));
     }
-
     /**
      * Create a row value expression of degree <code>16</code>.
      * <p>
@@ -19248,7 +17696,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> Row16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> row(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8, T9 t9, T10 t10, T11 t11, T12 t12, T13 t13, T14 t14, T15 t15, T16 t16) {
         return row(Tools.field(t1), Tools.field(t2), Tools.field(t3), Tools.field(t4), Tools.field(t5), Tools.field(t6), Tools.field(t7), Tools.field(t8), Tools.field(t9), Tools.field(t10), Tools.field(t11), Tools.field(t12), Tools.field(t13), Tools.field(t14), Tools.field(t15), Tools.field(t16));
     }
-
     /**
      * Create a row value expression of degree <code>17</code>.
      * <p>
@@ -19261,7 +17708,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> Row17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> row(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8, T9 t9, T10 t10, T11 t11, T12 t12, T13 t13, T14 t14, T15 t15, T16 t16, T17 t17) {
         return row(Tools.field(t1), Tools.field(t2), Tools.field(t3), Tools.field(t4), Tools.field(t5), Tools.field(t6), Tools.field(t7), Tools.field(t8), Tools.field(t9), Tools.field(t10), Tools.field(t11), Tools.field(t12), Tools.field(t13), Tools.field(t14), Tools.field(t15), Tools.field(t16), Tools.field(t17));
     }
-
     /**
      * Create a row value expression of degree <code>18</code>.
      * <p>
@@ -19274,7 +17720,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18> Row18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18> row(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8, T9 t9, T10 t10, T11 t11, T12 t12, T13 t13, T14 t14, T15 t15, T16 t16, T17 t17, T18 t18) {
         return row(Tools.field(t1), Tools.field(t2), Tools.field(t3), Tools.field(t4), Tools.field(t5), Tools.field(t6), Tools.field(t7), Tools.field(t8), Tools.field(t9), Tools.field(t10), Tools.field(t11), Tools.field(t12), Tools.field(t13), Tools.field(t14), Tools.field(t15), Tools.field(t16), Tools.field(t17), Tools.field(t18));
     }
-
     /**
      * Create a row value expression of degree <code>19</code>.
      * <p>
@@ -19287,7 +17732,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19> Row19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19> row(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8, T9 t9, T10 t10, T11 t11, T12 t12, T13 t13, T14 t14, T15 t15, T16 t16, T17 t17, T18 t18, T19 t19) {
         return row(Tools.field(t1), Tools.field(t2), Tools.field(t3), Tools.field(t4), Tools.field(t5), Tools.field(t6), Tools.field(t7), Tools.field(t8), Tools.field(t9), Tools.field(t10), Tools.field(t11), Tools.field(t12), Tools.field(t13), Tools.field(t14), Tools.field(t15), Tools.field(t16), Tools.field(t17), Tools.field(t18), Tools.field(t19));
     }
-
     /**
      * Create a row value expression of degree <code>20</code>.
      * <p>
@@ -19300,7 +17744,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20> Row20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20> row(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8, T9 t9, T10 t10, T11 t11, T12 t12, T13 t13, T14 t14, T15 t15, T16 t16, T17 t17, T18 t18, T19 t19, T20 t20) {
         return row(Tools.field(t1), Tools.field(t2), Tools.field(t3), Tools.field(t4), Tools.field(t5), Tools.field(t6), Tools.field(t7), Tools.field(t8), Tools.field(t9), Tools.field(t10), Tools.field(t11), Tools.field(t12), Tools.field(t13), Tools.field(t14), Tools.field(t15), Tools.field(t16), Tools.field(t17), Tools.field(t18), Tools.field(t19), Tools.field(t20));
     }
-
     /**
      * Create a row value expression of degree <code>21</code>.
      * <p>
@@ -19313,7 +17756,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21> Row21<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21> row(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8, T9 t9, T10 t10, T11 t11, T12 t12, T13 t13, T14 t14, T15 t15, T16 t16, T17 t17, T18 t18, T19 t19, T20 t20, T21 t21) {
         return row(Tools.field(t1), Tools.field(t2), Tools.field(t3), Tools.field(t4), Tools.field(t5), Tools.field(t6), Tools.field(t7), Tools.field(t8), Tools.field(t9), Tools.field(t10), Tools.field(t11), Tools.field(t12), Tools.field(t13), Tools.field(t14), Tools.field(t15), Tools.field(t16), Tools.field(t17), Tools.field(t18), Tools.field(t19), Tools.field(t20), Tools.field(t21));
     }
-
     /**
      * Create a row value expression of degree <code>22</code>.
      * <p>
@@ -19326,9 +17768,7 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22> Row22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22> row(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8, T9 t9, T10 t10, T11 t11, T12 t12, T13 t13, T14 t14, T15 t15, T16 t16, T17 t17, T18 t18, T19 t19, T20 t20, T21 t21, T22 t22) {
         return row(Tools.field(t1), Tools.field(t2), Tools.field(t3), Tools.field(t4), Tools.field(t5), Tools.field(t6), Tools.field(t7), Tools.field(t8), Tools.field(t9), Tools.field(t10), Tools.field(t11), Tools.field(t12), Tools.field(t13), Tools.field(t14), Tools.field(t15), Tools.field(t16), Tools.field(t17), Tools.field(t18), Tools.field(t19), Tools.field(t20), Tools.field(t21), Tools.field(t22));
     }
-
 // [jooq-tools] END [row-value]
-
     /**
      * Create a row value expression of degree <code>N > 22</code>.
      * <p>
@@ -19340,9 +17780,7 @@ public class DSL {
     public static RowN row(Object... values) {
         return row(Tools.fields(values).toArray(EMPTY_FIELD));
     }
-
 // [jooq-tools] START [row-expression]
-
     /**
      * Create a row value expression of degree <code>1</code>.
      * <p>
@@ -19355,7 +17793,6 @@ public class DSL {
     public static <T1> Row1<T1> row(Field<T1> t1) {
         return new RowImpl(t1);
     }
-
     /**
      * Create a row value expression of degree <code>2</code>.
      * <p>
@@ -19368,7 +17805,6 @@ public class DSL {
     public static <T1, T2> Row2<T1, T2> row(Field<T1> t1, Field<T2> t2) {
         return new RowImpl(t1, t2);
     }
-
     /**
      * Create a row value expression of degree <code>3</code>.
      * <p>
@@ -19381,7 +17817,6 @@ public class DSL {
     public static <T1, T2, T3> Row3<T1, T2, T3> row(Field<T1> t1, Field<T2> t2, Field<T3> t3) {
         return new RowImpl(t1, t2, t3);
     }
-
     /**
      * Create a row value expression of degree <code>4</code>.
      * <p>
@@ -19394,7 +17829,6 @@ public class DSL {
     public static <T1, T2, T3, T4> Row4<T1, T2, T3, T4> row(Field<T1> t1, Field<T2> t2, Field<T3> t3, Field<T4> t4) {
         return new RowImpl(t1, t2, t3, t4);
     }
-
     /**
      * Create a row value expression of degree <code>5</code>.
      * <p>
@@ -19407,7 +17841,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5> Row5<T1, T2, T3, T4, T5> row(Field<T1> t1, Field<T2> t2, Field<T3> t3, Field<T4> t4, Field<T5> t5) {
         return new RowImpl(t1, t2, t3, t4, t5);
     }
-
     /**
      * Create a row value expression of degree <code>6</code>.
      * <p>
@@ -19420,7 +17853,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6> Row6<T1, T2, T3, T4, T5, T6> row(Field<T1> t1, Field<T2> t2, Field<T3> t3, Field<T4> t4, Field<T5> t5, Field<T6> t6) {
         return new RowImpl(t1, t2, t3, t4, t5, t6);
     }
-
     /**
      * Create a row value expression of degree <code>7</code>.
      * <p>
@@ -19433,7 +17865,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7> Row7<T1, T2, T3, T4, T5, T6, T7> row(Field<T1> t1, Field<T2> t2, Field<T3> t3, Field<T4> t4, Field<T5> t5, Field<T6> t6, Field<T7> t7) {
         return new RowImpl(t1, t2, t3, t4, t5, t6, t7);
     }
-
     /**
      * Create a row value expression of degree <code>8</code>.
      * <p>
@@ -19446,7 +17877,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8> Row8<T1, T2, T3, T4, T5, T6, T7, T8> row(Field<T1> t1, Field<T2> t2, Field<T3> t3, Field<T4> t4, Field<T5> t5, Field<T6> t6, Field<T7> t7, Field<T8> t8) {
         return new RowImpl(t1, t2, t3, t4, t5, t6, t7, t8);
     }
-
     /**
      * Create a row value expression of degree <code>9</code>.
      * <p>
@@ -19459,7 +17889,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Row9<T1, T2, T3, T4, T5, T6, T7, T8, T9> row(Field<T1> t1, Field<T2> t2, Field<T3> t3, Field<T4> t4, Field<T5> t5, Field<T6> t6, Field<T7> t7, Field<T8> t8, Field<T9> t9) {
         return new RowImpl(t1, t2, t3, t4, t5, t6, t7, t8, t9);
     }
-
     /**
      * Create a row value expression of degree <code>10</code>.
      * <p>
@@ -19472,7 +17901,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> Row10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> row(Field<T1> t1, Field<T2> t2, Field<T3> t3, Field<T4> t4, Field<T5> t5, Field<T6> t6, Field<T7> t7, Field<T8> t8, Field<T9> t9, Field<T10> t10) {
         return new RowImpl(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
     }
-
     /**
      * Create a row value expression of degree <code>11</code>.
      * <p>
@@ -19485,7 +17913,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> Row11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> row(Field<T1> t1, Field<T2> t2, Field<T3> t3, Field<T4> t4, Field<T5> t5, Field<T6> t6, Field<T7> t7, Field<T8> t8, Field<T9> t9, Field<T10> t10, Field<T11> t11) {
         return new RowImpl(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
     }
-
     /**
      * Create a row value expression of degree <code>12</code>.
      * <p>
@@ -19498,7 +17925,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> Row12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> row(Field<T1> t1, Field<T2> t2, Field<T3> t3, Field<T4> t4, Field<T5> t5, Field<T6> t6, Field<T7> t7, Field<T8> t8, Field<T9> t9, Field<T10> t10, Field<T11> t11, Field<T12> t12) {
         return new RowImpl(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
     }
-
     /**
      * Create a row value expression of degree <code>13</code>.
      * <p>
@@ -19511,7 +17937,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> Row13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> row(Field<T1> t1, Field<T2> t2, Field<T3> t3, Field<T4> t4, Field<T5> t5, Field<T6> t6, Field<T7> t7, Field<T8> t8, Field<T9> t9, Field<T10> t10, Field<T11> t11, Field<T12> t12, Field<T13> t13) {
         return new RowImpl(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
     }
-
     /**
      * Create a row value expression of degree <code>14</code>.
      * <p>
@@ -19524,7 +17949,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> Row14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> row(Field<T1> t1, Field<T2> t2, Field<T3> t3, Field<T4> t4, Field<T5> t5, Field<T6> t6, Field<T7> t7, Field<T8> t8, Field<T9> t9, Field<T10> t10, Field<T11> t11, Field<T12> t12, Field<T13> t13, Field<T14> t14) {
         return new RowImpl(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
     }
-
     /**
      * Create a row value expression of degree <code>15</code>.
      * <p>
@@ -19537,7 +17961,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> Row15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> row(Field<T1> t1, Field<T2> t2, Field<T3> t3, Field<T4> t4, Field<T5> t5, Field<T6> t6, Field<T7> t7, Field<T8> t8, Field<T9> t9, Field<T10> t10, Field<T11> t11, Field<T12> t12, Field<T13> t13, Field<T14> t14, Field<T15> t15) {
         return new RowImpl(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
     }
-
     /**
      * Create a row value expression of degree <code>16</code>.
      * <p>
@@ -19550,7 +17973,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> Row16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> row(Field<T1> t1, Field<T2> t2, Field<T3> t3, Field<T4> t4, Field<T5> t5, Field<T6> t6, Field<T7> t7, Field<T8> t8, Field<T9> t9, Field<T10> t10, Field<T11> t11, Field<T12> t12, Field<T13> t13, Field<T14> t14, Field<T15> t15, Field<T16> t16) {
         return new RowImpl(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16);
     }
-
     /**
      * Create a row value expression of degree <code>17</code>.
      * <p>
@@ -19563,7 +17985,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> Row17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> row(Field<T1> t1, Field<T2> t2, Field<T3> t3, Field<T4> t4, Field<T5> t5, Field<T6> t6, Field<T7> t7, Field<T8> t8, Field<T9> t9, Field<T10> t10, Field<T11> t11, Field<T12> t12, Field<T13> t13, Field<T14> t14, Field<T15> t15, Field<T16> t16, Field<T17> t17) {
         return new RowImpl(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17);
     }
-
     /**
      * Create a row value expression of degree <code>18</code>.
      * <p>
@@ -19576,7 +17997,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18> Row18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18> row(Field<T1> t1, Field<T2> t2, Field<T3> t3, Field<T4> t4, Field<T5> t5, Field<T6> t6, Field<T7> t7, Field<T8> t8, Field<T9> t9, Field<T10> t10, Field<T11> t11, Field<T12> t12, Field<T13> t13, Field<T14> t14, Field<T15> t15, Field<T16> t16, Field<T17> t17, Field<T18> t18) {
         return new RowImpl(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18);
     }
-
     /**
      * Create a row value expression of degree <code>19</code>.
      * <p>
@@ -19589,7 +18009,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19> Row19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19> row(Field<T1> t1, Field<T2> t2, Field<T3> t3, Field<T4> t4, Field<T5> t5, Field<T6> t6, Field<T7> t7, Field<T8> t8, Field<T9> t9, Field<T10> t10, Field<T11> t11, Field<T12> t12, Field<T13> t13, Field<T14> t14, Field<T15> t15, Field<T16> t16, Field<T17> t17, Field<T18> t18, Field<T19> t19) {
         return new RowImpl(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19);
     }
-
     /**
      * Create a row value expression of degree <code>20</code>.
      * <p>
@@ -19602,7 +18021,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20> Row20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20> row(Field<T1> t1, Field<T2> t2, Field<T3> t3, Field<T4> t4, Field<T5> t5, Field<T6> t6, Field<T7> t7, Field<T8> t8, Field<T9> t9, Field<T10> t10, Field<T11> t11, Field<T12> t12, Field<T13> t13, Field<T14> t14, Field<T15> t15, Field<T16> t16, Field<T17> t17, Field<T18> t18, Field<T19> t19, Field<T20> t20) {
         return new RowImpl(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20);
     }
-
     /**
      * Create a row value expression of degree <code>21</code>.
      * <p>
@@ -19615,7 +18033,6 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21> Row21<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21> row(Field<T1> t1, Field<T2> t2, Field<T3> t3, Field<T4> t4, Field<T5> t5, Field<T6> t6, Field<T7> t7, Field<T8> t8, Field<T9> t9, Field<T10> t10, Field<T11> t11, Field<T12> t12, Field<T13> t13, Field<T14> t14, Field<T15> t15, Field<T16> t16, Field<T17> t17, Field<T18> t18, Field<T19> t19, Field<T20> t20, Field<T21> t21) {
         return new RowImpl(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21);
     }
-
     /**
      * Create a row value expression of degree <code>22</code>.
      * <p>
@@ -19628,9 +18045,7 @@ public class DSL {
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22> Row22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22> row(Field<T1> t1, Field<T2> t2, Field<T3> t3, Field<T4> t4, Field<T5> t5, Field<T6> t6, Field<T7> t7, Field<T8> t8, Field<T9> t9, Field<T10> t10, Field<T11> t11, Field<T12> t12, Field<T13> t13, Field<T14> t14, Field<T15> t15, Field<T16> t16, Field<T17> t17, Field<T18> t18, Field<T19> t19, Field<T20> t20, Field<T21> t21, Field<T22> t22) {
         return new RowImpl(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22);
     }
-
 // [jooq-tools] END [row-expression]
-
     /**
      * Create a row value expression of degree <code>N > 22</code>.
      * <p>
@@ -19642,7 +18057,6 @@ public class DSL {
     public static RowN row(Field<?>... values) {
         return new RowImpl(values);
     }
-
     /**
      * Create a row value expression of degree <code>N > 22</code>.
      * <p>
@@ -19659,11 +18073,9 @@ public class DSL {
 
         return new RowImpl(fields);
     }
-
     // -------------------------------------------------------------------------
     // XXX [#915] VALUES() table constructors
     // -------------------------------------------------------------------------
-
     /**
      * Create a <code>VALUES()</code> expression of arbitrary degree.
      * <p>
@@ -19702,9 +18114,7 @@ public class DSL {
 
         return new Values<Record>(rows).as("v", columns);
     }
-
 // [jooq-tools] START [values]
-
     /**
      * Create a <code>VALUES()</code> expression of degree <code>1</code>.
      * <p>
@@ -19731,7 +18141,6 @@ public class DSL {
      * Use {@link Table#as(String, String...)} to rename the resulting table and
      * its columns.
      */
-
     @SafeVarargs
 
     @Generated("This method was generated using jOOQ-tools")
@@ -19740,6 +18149,173 @@ public class DSL {
         return new Values<Record1<T1>>(rows).as("v", "c1");
     }
 
+    @SafeVarargs
+
+    @Generated("This method was generated using jOOQ-tools")
+    @Support
+    public static <T1, T2> Table<Record2<T1, T2>> values(Row2<T1, T2>... rows) {
+        return new Values<Record2<T1, T2>>(rows).as("v", "c1", "c2");
+    }
+
+    @SafeVarargs
+
+    @Generated("This method was generated using jOOQ-tools")
+    @Support
+    public static <T1, T2, T3> Table<Record3<T1, T2, T3>> values(Row3<T1, T2, T3>... rows) {
+        return new Values<Record3<T1, T2, T3>>(rows).as("v", "c1", "c2", "c3");
+    }
+
+    @SafeVarargs
+
+    @Generated("This method was generated using jOOQ-tools")
+    @Support
+    public static <T1, T2, T3, T4> Table<Record4<T1, T2, T3, T4>> values(Row4<T1, T2, T3, T4>... rows) {
+        return new Values<Record4<T1, T2, T3, T4>>(rows).as("v", "c1", "c2", "c3", "c4");
+    }
+
+    @SafeVarargs
+
+    @Generated("This method was generated using jOOQ-tools")
+    @Support
+    public static <T1, T2, T3, T4, T5> Table<Record5<T1, T2, T3, T4, T5>> values(Row5<T1, T2, T3, T4, T5>... rows) {
+        return new Values<Record5<T1, T2, T3, T4, T5>>(rows).as("v", "c1", "c2", "c3", "c4", "c5");
+    }
+
+    @SafeVarargs
+
+    @Generated("This method was generated using jOOQ-tools")
+    @Support
+    public static <T1, T2, T3, T4, T5, T6> Table<Record6<T1, T2, T3, T4, T5, T6>> values(Row6<T1, T2, T3, T4, T5, T6>... rows) {
+        return new Values<Record6<T1, T2, T3, T4, T5, T6>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6");
+    }
+
+    @SafeVarargs
+
+    @Generated("This method was generated using jOOQ-tools")
+    @Support
+    public static <T1, T2, T3, T4, T5, T6, T7> Table<Record7<T1, T2, T3, T4, T5, T6, T7>> values(Row7<T1, T2, T3, T4, T5, T6, T7>... rows) {
+        return new Values<Record7<T1, T2, T3, T4, T5, T6, T7>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7");
+    }
+
+    @SafeVarargs
+
+    @Generated("This method was generated using jOOQ-tools")
+    @Support
+    public static <T1, T2, T3, T4, T5, T6, T7, T8> Table<Record8<T1, T2, T3, T4, T5, T6, T7, T8>> values(Row8<T1, T2, T3, T4, T5, T6, T7, T8>... rows) {
+        return new Values<Record8<T1, T2, T3, T4, T5, T6, T7, T8>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8");
+    }
+
+    @SafeVarargs
+
+    @Generated("This method was generated using jOOQ-tools")
+    @Support
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Table<Record9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> values(Row9<T1, T2, T3, T4, T5, T6, T7, T8, T9>... rows) {
+        return new Values<Record9<T1, T2, T3, T4, T5, T6, T7, T8, T9>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9");
+    }
+
+    @SafeVarargs
+
+    @Generated("This method was generated using jOOQ-tools")
+    @Support
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> Table<Record10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>> values(Row10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>... rows) {
+        return new Values<Record10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10");
+    }
+
+    @SafeVarargs
+
+    @Generated("This method was generated using jOOQ-tools")
+    @Support
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> Table<Record11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>> values(Row11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>... rows) {
+        return new Values<Record11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11");
+    }
+
+    @SafeVarargs
+
+    @Generated("This method was generated using jOOQ-tools")
+    @Support
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> Table<Record12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>> values(Row12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>... rows) {
+        return new Values<Record12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12");
+    }
+
+    @SafeVarargs
+
+    @Generated("This method was generated using jOOQ-tools")
+    @Support
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> Table<Record13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>> values(Row13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>... rows) {
+        return new Values<Record13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13");
+    }
+
+    @SafeVarargs
+
+    @Generated("This method was generated using jOOQ-tools")
+    @Support
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> Table<Record14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>> values(Row14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>... rows) {
+        return new Values<Record14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13", "c14");
+    }
+
+    @SafeVarargs
+
+    @Generated("This method was generated using jOOQ-tools")
+    @Support
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> Table<Record15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>> values(Row15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>... rows) {
+        return new Values<Record15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13", "c14", "c15");
+    }
+
+    @SafeVarargs
+
+    @Generated("This method was generated using jOOQ-tools")
+    @Support
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> Table<Record16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>> values(Row16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>... rows) {
+        return new Values<Record16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13", "c14", "c15", "c16");
+    }
+
+    @SafeVarargs
+
+    @Generated("This method was generated using jOOQ-tools")
+    @Support
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> Table<Record17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>> values(Row17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>... rows) {
+        return new Values<Record17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13", "c14", "c15", "c16", "c17");
+    }
+
+    @SafeVarargs
+
+    @Generated("This method was generated using jOOQ-tools")
+    @Support
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18> Table<Record18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>> values(Row18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>... rows) {
+        return new Values<Record18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13", "c14", "c15", "c16", "c17", "c18");
+    }
+
+    @SafeVarargs
+
+    @Generated("This method was generated using jOOQ-tools")
+    @Support
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19> Table<Record19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>> values(Row19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>... rows) {
+        return new Values<Record19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13", "c14", "c15", "c16", "c17", "c18", "c19");
+    }
+
+    @SafeVarargs
+
+    @Generated("This method was generated using jOOQ-tools")
+    @Support
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20> Table<Record20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>> values(Row20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>... rows) {
+        return new Values<Record20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13", "c14", "c15", "c16", "c17", "c18", "c19", "c20");
+    }
+
+    @SafeVarargs
+
+    @Generated("This method was generated using jOOQ-tools")
+    @Support
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21> Table<Record21<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21>> values(Row21<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21>... rows) {
+        return new Values<Record21<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13", "c14", "c15", "c16", "c17", "c18", "c19", "c20", "c21");
+    }
+
+    @SafeVarargs
+
+    @Generated("This method was generated using jOOQ-tools")
+    @Support
+    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22> Table<Record22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22>> values(Row22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22>... rows) {
+        return new Values<Record22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13", "c14", "c15", "c16", "c17", "c18", "c19", "c20", "c21", "c22");
+    }
     /**
      * Create a <code>VALUES()</code> expression of degree <code>2</code>.
      * <p>
@@ -19766,15 +18342,6 @@ public class DSL {
      * Use {@link Table#as(String, String...)} to rename the resulting table and
      * its columns.
      */
-
-    @SafeVarargs
-
-    @Generated("This method was generated using jOOQ-tools")
-    @Support
-    public static <T1, T2> Table<Record2<T1, T2>> values(Row2<T1, T2>... rows) {
-        return new Values<Record2<T1, T2>>(rows).as("v", "c1", "c2");
-    }
-
     /**
      * Create a <code>VALUES()</code> expression of degree <code>3</code>.
      * <p>
@@ -19801,15 +18368,6 @@ public class DSL {
      * Use {@link Table#as(String, String...)} to rename the resulting table and
      * its columns.
      */
-
-    @SafeVarargs
-
-    @Generated("This method was generated using jOOQ-tools")
-    @Support
-    public static <T1, T2, T3> Table<Record3<T1, T2, T3>> values(Row3<T1, T2, T3>... rows) {
-        return new Values<Record3<T1, T2, T3>>(rows).as("v", "c1", "c2", "c3");
-    }
-
     /**
      * Create a <code>VALUES()</code> expression of degree <code>4</code>.
      * <p>
@@ -19836,15 +18394,6 @@ public class DSL {
      * Use {@link Table#as(String, String...)} to rename the resulting table and
      * its columns.
      */
-
-    @SafeVarargs
-
-    @Generated("This method was generated using jOOQ-tools")
-    @Support
-    public static <T1, T2, T3, T4> Table<Record4<T1, T2, T3, T4>> values(Row4<T1, T2, T3, T4>... rows) {
-        return new Values<Record4<T1, T2, T3, T4>>(rows).as("v", "c1", "c2", "c3", "c4");
-    }
-
     /**
      * Create a <code>VALUES()</code> expression of degree <code>5</code>.
      * <p>
@@ -19871,15 +18420,6 @@ public class DSL {
      * Use {@link Table#as(String, String...)} to rename the resulting table and
      * its columns.
      */
-
-    @SafeVarargs
-
-    @Generated("This method was generated using jOOQ-tools")
-    @Support
-    public static <T1, T2, T3, T4, T5> Table<Record5<T1, T2, T3, T4, T5>> values(Row5<T1, T2, T3, T4, T5>... rows) {
-        return new Values<Record5<T1, T2, T3, T4, T5>>(rows).as("v", "c1", "c2", "c3", "c4", "c5");
-    }
-
     /**
      * Create a <code>VALUES()</code> expression of degree <code>6</code>.
      * <p>
@@ -19906,15 +18446,6 @@ public class DSL {
      * Use {@link Table#as(String, String...)} to rename the resulting table and
      * its columns.
      */
-
-    @SafeVarargs
-
-    @Generated("This method was generated using jOOQ-tools")
-    @Support
-    public static <T1, T2, T3, T4, T5, T6> Table<Record6<T1, T2, T3, T4, T5, T6>> values(Row6<T1, T2, T3, T4, T5, T6>... rows) {
-        return new Values<Record6<T1, T2, T3, T4, T5, T6>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6");
-    }
-
     /**
      * Create a <code>VALUES()</code> expression of degree <code>7</code>.
      * <p>
@@ -19941,15 +18472,6 @@ public class DSL {
      * Use {@link Table#as(String, String...)} to rename the resulting table and
      * its columns.
      */
-
-    @SafeVarargs
-
-    @Generated("This method was generated using jOOQ-tools")
-    @Support
-    public static <T1, T2, T3, T4, T5, T6, T7> Table<Record7<T1, T2, T3, T4, T5, T6, T7>> values(Row7<T1, T2, T3, T4, T5, T6, T7>... rows) {
-        return new Values<Record7<T1, T2, T3, T4, T5, T6, T7>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7");
-    }
-
     /**
      * Create a <code>VALUES()</code> expression of degree <code>8</code>.
      * <p>
@@ -19976,15 +18498,6 @@ public class DSL {
      * Use {@link Table#as(String, String...)} to rename the resulting table and
      * its columns.
      */
-
-    @SafeVarargs
-
-    @Generated("This method was generated using jOOQ-tools")
-    @Support
-    public static <T1, T2, T3, T4, T5, T6, T7, T8> Table<Record8<T1, T2, T3, T4, T5, T6, T7, T8>> values(Row8<T1, T2, T3, T4, T5, T6, T7, T8>... rows) {
-        return new Values<Record8<T1, T2, T3, T4, T5, T6, T7, T8>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8");
-    }
-
     /**
      * Create a <code>VALUES()</code> expression of degree <code>9</code>.
      * <p>
@@ -20011,15 +18524,6 @@ public class DSL {
      * Use {@link Table#as(String, String...)} to rename the resulting table and
      * its columns.
      */
-
-    @SafeVarargs
-
-    @Generated("This method was generated using jOOQ-tools")
-    @Support
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9> Table<Record9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> values(Row9<T1, T2, T3, T4, T5, T6, T7, T8, T9>... rows) {
-        return new Values<Record9<T1, T2, T3, T4, T5, T6, T7, T8, T9>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9");
-    }
-
     /**
      * Create a <code>VALUES()</code> expression of degree <code>10</code>.
      * <p>
@@ -20046,15 +18550,6 @@ public class DSL {
      * Use {@link Table#as(String, String...)} to rename the resulting table and
      * its columns.
      */
-
-    @SafeVarargs
-
-    @Generated("This method was generated using jOOQ-tools")
-    @Support
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> Table<Record10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>> values(Row10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>... rows) {
-        return new Values<Record10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10");
-    }
-
     /**
      * Create a <code>VALUES()</code> expression of degree <code>11</code>.
      * <p>
@@ -20081,15 +18576,6 @@ public class DSL {
      * Use {@link Table#as(String, String...)} to rename the resulting table and
      * its columns.
      */
-
-    @SafeVarargs
-
-    @Generated("This method was generated using jOOQ-tools")
-    @Support
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> Table<Record11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>> values(Row11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>... rows) {
-        return new Values<Record11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11");
-    }
-
     /**
      * Create a <code>VALUES()</code> expression of degree <code>12</code>.
      * <p>
@@ -20116,15 +18602,6 @@ public class DSL {
      * Use {@link Table#as(String, String...)} to rename the resulting table and
      * its columns.
      */
-
-    @SafeVarargs
-
-    @Generated("This method was generated using jOOQ-tools")
-    @Support
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> Table<Record12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>> values(Row12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>... rows) {
-        return new Values<Record12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12");
-    }
-
     /**
      * Create a <code>VALUES()</code> expression of degree <code>13</code>.
      * <p>
@@ -20151,15 +18628,6 @@ public class DSL {
      * Use {@link Table#as(String, String...)} to rename the resulting table and
      * its columns.
      */
-
-    @SafeVarargs
-
-    @Generated("This method was generated using jOOQ-tools")
-    @Support
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> Table<Record13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>> values(Row13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>... rows) {
-        return new Values<Record13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13");
-    }
-
     /**
      * Create a <code>VALUES()</code> expression of degree <code>14</code>.
      * <p>
@@ -20186,15 +18654,6 @@ public class DSL {
      * Use {@link Table#as(String, String...)} to rename the resulting table and
      * its columns.
      */
-
-    @SafeVarargs
-
-    @Generated("This method was generated using jOOQ-tools")
-    @Support
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> Table<Record14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>> values(Row14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>... rows) {
-        return new Values<Record14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13", "c14");
-    }
-
     /**
      * Create a <code>VALUES()</code> expression of degree <code>15</code>.
      * <p>
@@ -20221,15 +18680,6 @@ public class DSL {
      * Use {@link Table#as(String, String...)} to rename the resulting table and
      * its columns.
      */
-
-    @SafeVarargs
-
-    @Generated("This method was generated using jOOQ-tools")
-    @Support
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> Table<Record15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>> values(Row15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>... rows) {
-        return new Values<Record15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13", "c14", "c15");
-    }
-
     /**
      * Create a <code>VALUES()</code> expression of degree <code>16</code>.
      * <p>
@@ -20256,15 +18706,6 @@ public class DSL {
      * Use {@link Table#as(String, String...)} to rename the resulting table and
      * its columns.
      */
-
-    @SafeVarargs
-
-    @Generated("This method was generated using jOOQ-tools")
-    @Support
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> Table<Record16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>> values(Row16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>... rows) {
-        return new Values<Record16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13", "c14", "c15", "c16");
-    }
-
     /**
      * Create a <code>VALUES()</code> expression of degree <code>17</code>.
      * <p>
@@ -20291,15 +18732,6 @@ public class DSL {
      * Use {@link Table#as(String, String...)} to rename the resulting table and
      * its columns.
      */
-
-    @SafeVarargs
-
-    @Generated("This method was generated using jOOQ-tools")
-    @Support
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> Table<Record17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>> values(Row17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>... rows) {
-        return new Values<Record17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13", "c14", "c15", "c16", "c17");
-    }
-
     /**
      * Create a <code>VALUES()</code> expression of degree <code>18</code>.
      * <p>
@@ -20326,15 +18758,6 @@ public class DSL {
      * Use {@link Table#as(String, String...)} to rename the resulting table and
      * its columns.
      */
-
-    @SafeVarargs
-
-    @Generated("This method was generated using jOOQ-tools")
-    @Support
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18> Table<Record18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>> values(Row18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>... rows) {
-        return new Values<Record18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13", "c14", "c15", "c16", "c17", "c18");
-    }
-
     /**
      * Create a <code>VALUES()</code> expression of degree <code>19</code>.
      * <p>
@@ -20361,15 +18784,6 @@ public class DSL {
      * Use {@link Table#as(String, String...)} to rename the resulting table and
      * its columns.
      */
-
-    @SafeVarargs
-
-    @Generated("This method was generated using jOOQ-tools")
-    @Support
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19> Table<Record19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>> values(Row19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>... rows) {
-        return new Values<Record19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13", "c14", "c15", "c16", "c17", "c18", "c19");
-    }
-
     /**
      * Create a <code>VALUES()</code> expression of degree <code>20</code>.
      * <p>
@@ -20396,15 +18810,6 @@ public class DSL {
      * Use {@link Table#as(String, String...)} to rename the resulting table and
      * its columns.
      */
-
-    @SafeVarargs
-
-    @Generated("This method was generated using jOOQ-tools")
-    @Support
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20> Table<Record20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>> values(Row20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>... rows) {
-        return new Values<Record20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13", "c14", "c15", "c16", "c17", "c18", "c19", "c20");
-    }
-
     /**
      * Create a <code>VALUES()</code> expression of degree <code>21</code>.
      * <p>
@@ -20431,15 +18836,6 @@ public class DSL {
      * Use {@link Table#as(String, String...)} to rename the resulting table and
      * its columns.
      */
-
-    @SafeVarargs
-
-    @Generated("This method was generated using jOOQ-tools")
-    @Support
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21> Table<Record21<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21>> values(Row21<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21>... rows) {
-        return new Values<Record21<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13", "c14", "c15", "c16", "c17", "c18", "c19", "c20", "c21");
-    }
-
     /**
      * Create a <code>VALUES()</code> expression of degree <code>22</code>.
      * <p>
@@ -20466,63 +18862,46 @@ public class DSL {
      * Use {@link Table#as(String, String...)} to rename the resulting table and
      * its columns.
      */
-
-    @SafeVarargs
-
-    @Generated("This method was generated using jOOQ-tools")
-    @Support
-    public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22> Table<Record22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22>> values(Row22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22>... rows) {
-        return new Values<Record22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22>>(rows).as("v", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13", "c14", "c15", "c16", "c17", "c18", "c19", "c20", "c21", "c22");
-    }
-
 // [jooq-tools] END [values]
-
     // -------------------------------------------------------------------------
     // XXX Literals
     // -------------------------------------------------------------------------
-
     /**
      * Get the null field.
      */
     static Field<?> NULL() {
         return field("null");
     }
-
     /**
      * Get the null field.
      */
     static <T> Field<T> NULL(Field<T> field) {
         return NULL(field.getDataType());
     }
-
     /**
      * Get the null field.
      */
     static <T> Field<T> NULL(DataType<T> type) {
         return field("null", type);
     }
-
     /**
      * Get the null field.
      */
     static <T> Field<T> NULL(Class<T> type) {
         return field("null", type);
     }
-
     /**
      * Null-safety of a field.
      */
     protected static <T> Field<T> nullSafe(Field<T> field) {
         return field == null ? val((T) null) : field;
     }
-
     /**
      * Null-safety of a field.
      */
     protected static <T> Field<T> nullSafe(Field<T> field, DataType<?> type) {
         return field == null ? (Field<T>) val((T) null, type) : field;
     }
-
     /**
      * Null-safety of a field.
      */
@@ -20538,14 +18917,12 @@ public class DSL {
 
         return result;
     }
-
     /**
      * Get a default data type if a field is null.
      */
     protected static <T> DataType<T> nullSafeDataType(Field<T> field) {
         return (DataType<T>) (field == null ? SQLDataType.OTHER : field.getDataType());
     }
-
     /**
      * A <code>0</code> literal.
      * <p>
@@ -20560,7 +18937,6 @@ public class DSL {
     public static Param<Integer> zero() {
         return inline(0);
     }
-
     /**
      * A <code>1</code> literal.
      * <p>
@@ -20575,7 +18951,6 @@ public class DSL {
     public static Param<Integer> one() {
         return inline(1);
     }
-
     /**
      * A <code>2</code> literal.
      * <p>
@@ -20588,7 +18963,6 @@ public class DSL {
     public static Param<Integer> two() {
         return inline(2);
     }
-
     /**
      * The <code>PI</code> literal.
      * <p>
@@ -20602,7 +18976,6 @@ public class DSL {
     public static Field<BigDecimal> pi() {
         return new Pi();
     }
-
     /**
      * The <code>E</code> literal (Euler number).
      * <p>
@@ -20616,11 +18989,9 @@ public class DSL {
     public static Field<BigDecimal> e() {
         return new Euler();
     }
-
     // -------------------------------------------------------------------------
     // XXX other functions
     // -------------------------------------------------------------------------
-
     /**
      * Get the <code>current_user()</code> function.
      */
@@ -20628,7 +18999,6 @@ public class DSL {
     public static Field<String> currentUser() {
         return new CurrentUser();
     }
-
     /**
      * Get the <code>current_schema()</code> function.
      */
@@ -20636,21 +19006,17 @@ public class DSL {
     public static Field<String> currentSchema() {
         return new CurrentSchema();
     }
-
     @Support
     public static <T extends Number> Field<T> widthBucket(Field<T> field, T low, T high, int buckets) {
         return widthBucket(field, Tools.field(low, field.getDataType()), Tools.field(high, field.getDataType()), Tools.field(buckets));
     }
-
     @Support
     public static <T extends Number> Field<T> widthBucket(Field<T> field, Field<T> low, Field<T> high, Field<Integer> buckets) {
         return new WidthBucket<T>(field, low, high, buckets);
     }
-
     // -------------------------------------------------------------------------
     // XXX utility API
     // -------------------------------------------------------------------------
-
     /**
      * Get the default data type for the {@link DSLContext}'s underlying
      * {@link SQLDialect} and a given Java type.
@@ -20663,14 +19029,12 @@ public class DSL {
     public static <T> DataType<T> getDataType(Class<T> type) {
         return DefaultDataType.getDataType(SQLDialect.DEFAULT, type);
     }
-
     /**
      * No instances.
      */
     protected DSL() {
         throw new UnsupportedOperationException();
     }
-
     /**
      * This constructor is no longer available in jOOQ 3.0.
      * <p>
@@ -20681,7 +19045,6 @@ public class DSL {
     private DSL(Connection connection, SQLDialect dialect) {
         throw new UnsupportedOperationException();
     }
-
     /**
      * This constructor is no longer available in jOOQ 3.0.
      * <p>
@@ -20692,7 +19055,6 @@ public class DSL {
     private DSL(Connection connection, SQLDialect dialect, Settings settings) {
         throw new UnsupportedOperationException();
     }
-
     /**
      * This constructor is no longer available in jOOQ 3.0.
      * <p>
@@ -20703,7 +19065,6 @@ public class DSL {
     private DSL(DataSource datasource, SQLDialect dialect) {
         throw new UnsupportedOperationException();
     }
-
     /**
      * This constructor is no longer available in jOOQ 3.0.
      * <p>
@@ -20714,7 +19075,6 @@ public class DSL {
     private DSL(DataSource datasource, SQLDialect dialect, Settings settings) {
         throw new UnsupportedOperationException();
     }
-
     /**
      * This constructor is no longer available in jOOQ 3.0.
      * <p>
@@ -20725,7 +19085,5513 @@ public class DSL {
     private DSL(SQLDialect dialect) {
         throw new UnsupportedOperationException();
     }
-
+    /**
+     * This constructor is no longer available in jOOQ 3.0.
+     * <p>
+     * <a href="http://www.jooq.org/doc/3.0/manual/reference/migrating-to-3.0/"
+     * >See the jOOQ manual's section about migrating to jOOQ 3.0</a>
+     */
+    // -------------------------------------------------------------------------
+    // XXX Contextual factory methods
+    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
+    // XXX Static subselect factory methods
+    // -------------------------------------------------------------------------
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    // [jooq-tools] START [with]
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     */
+// [jooq-tools] END [with]
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    // [jooq-tools] START [with-recursive]
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+    /**
+     * Create a <code>WITH</code> clause to supply subsequent
+     * <code>SELECT</code>, <code>UPDATE</code>, <code>INSERT</code>,
+     * <code>DELETE</code>, and <code>MERGE</code> statements with
+     * {@link CommonTableExpression}s.
+     * <p>
+     * The <code>RECURSIVE</code> keyword may be optional or unsupported in some
+     * databases, in case of which it will not be rendered. For optimal database
+     * interoperability and readability, however, it is suggested that you use
+     * {@link #with(String, String...)} for strictly non-recursive CTE
+     * and {@link #withRecursive(String, String...)} for strictly
+     * recursive CTE.
+     * <p>
+     * Note that the {@link SQLDialect#H2} database only supports single-table,
+     * <code>RECURSIVE</code> common table expression lists.
+     */
+// [jooq-tools] END [with-recursive]
+// [jooq-tools] START [select]
+// [jooq-tools] END [select]
+// [jooq-tools] START [selectDistinct]
+// [jooq-tools] END [selectDistinct]
+    // [jooq-tools] START [insert]
+// [jooq-tools] END [insert]
+    // [jooq-tools] START [merge]
+    /**
+     * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
+     * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
+     *
+     * @see DSLContext#mergeInto(Table, Field...)
+     */
+    /**
+     * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
+     * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
+     *
+     * @see DSLContext#mergeInto(Table, Field...)
+     */
+    /**
+     * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
+     * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
+     *
+     * @see DSLContext#mergeInto(Table, Field...)
+     */
+    /**
+     * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
+     * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
+     *
+     * @see DSLContext#mergeInto(Table, Field...)
+     */
+    /**
+     * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
+     * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
+     *
+     * @see DSLContext#mergeInto(Table, Field...)
+     */
+    /**
+     * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
+     * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
+     *
+     * @see DSLContext#mergeInto(Table, Field...)
+     */
+    /**
+     * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
+     * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
+     *
+     * @see DSLContext#mergeInto(Table, Field...)
+     */
+    /**
+     * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
+     * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
+     *
+     * @see DSLContext#mergeInto(Table, Field...)
+     */
+    /**
+     * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
+     * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
+     *
+     * @see DSLContext#mergeInto(Table, Field...)
+     */
+    /**
+     * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
+     * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
+     *
+     * @see DSLContext#mergeInto(Table, Field...)
+     */
+    /**
+     * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
+     * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
+     *
+     * @see DSLContext#mergeInto(Table, Field...)
+     */
+    /**
+     * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
+     * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
+     *
+     * @see DSLContext#mergeInto(Table, Field...)
+     */
+    /**
+     * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
+     * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
+     *
+     * @see DSLContext#mergeInto(Table, Field...)
+     */
+    /**
+     * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
+     * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
+     *
+     * @see DSLContext#mergeInto(Table, Field...)
+     */
+    /**
+     * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
+     * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
+     *
+     * @see DSLContext#mergeInto(Table, Field...)
+     */
+    /**
+     * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
+     * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
+     *
+     * @see DSLContext#mergeInto(Table, Field...)
+     */
+    /**
+     * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
+     * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
+     *
+     * @see DSLContext#mergeInto(Table, Field...)
+     */
+    /**
+     * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
+     * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
+     *
+     * @see DSLContext#mergeInto(Table, Field...)
+     */
+    /**
+     * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
+     * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
+     *
+     * @see DSLContext#mergeInto(Table, Field...)
+     */
+    /**
+     * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
+     * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
+     *
+     * @see DSLContext#mergeInto(Table, Field...)
+     */
+    /**
+     * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
+     * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
+     *
+     * @see DSLContext#mergeInto(Table, Field...)
+     */
+    /**
+     * Create a new DSL UPSERT statement ({@link SQLDialect#H2}
+     * <code>MERGE</code>) or {@link SQLDialect#HANA} <code>UPSERT</code>).
+     *
+     * @see DSLContext#mergeInto(Table, Field...)
+     */
+// [jooq-tools] END [merge]
+    // -------------------------------------------------------------------------
+    // XXX DDL Clauses
+    // -------------------------------------------------------------------------
+    /**
+     * Create a <code>CONSTRAINT</code> specification.
+     */
+    /**
+     * Create a <code>CONSTRAINT</code> specification.
+     */
+    /**
+     * Create an unnamed (system named) <code>PRIMARY KEY</code> constraint.
+     */
+    /**
+     * Create an unnamed (system named) <code>PRIMARY KEY</code> constraint.
+     */
+    /**
+     * Create an unnamed (system named) <code>PRIMARY KEY</code> constraint.
+     */
+    /**
+     * Add a <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add a <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add a <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    // [jooq-tools] START [foreignKey]
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+    /**
+     * Add an unnamed (system named) <code>FOREIGN KEY</code> clause to the <code>CONSTRAINT</code>.
+     */
+// [jooq-tools] END [foreignKey]
+    /**
+     * Create an unnamed (system named) <code>UNIQUE</code> constraint.
+     */
+    /**
+     * Create an unnamed (system named) <code>UNIQUE</code> constraint.
+     */
+    /**
+     * Create an unnamed (system named) <code>UNIQUE</code> constraint.
+     */
+    // -------------------------------------------------------------------------
+    // XXX DDL Statements
+    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
+    // XXX Quantified comparison predicate expressions
+    // -------------------------------------------------------------------------
+    /**
+     * Create an <code>ALL</code> quantified select to be used in quantified
+     * comparison predicate expressions.
+     * <p>
+     * This is natively supported by {@link SQLDialect#POSTGRES}. Other dialects
+     * will render a subselect unnesting the array.
+     *
+     * @see Field#equal(QuantifiedSelect)
+     * @see Field#notEqual(QuantifiedSelect)
+     * @see Field#greaterThan(QuantifiedSelect)
+     * @see Field#greaterOrEqual(QuantifiedSelect)
+     * @see Field#lessThan(QuantifiedSelect)
+     * @see Field#lessOrEqual(QuantifiedSelect)
+     */
+    /**
+     * Create an <code>ALL</code> quantified select to be used in quantified
+     * comparison predicate expressions.
+     * <p>
+     * This is natively supported by {@link SQLDialect#POSTGRES}. Other dialects
+     * will render a subselect unnesting the array.
+     *
+     * @see Field#equal(QuantifiedSelect)
+     * @see Field#notEqual(QuantifiedSelect)
+     * @see Field#greaterThan(QuantifiedSelect)
+     * @see Field#greaterOrEqual(QuantifiedSelect)
+     * @see Field#lessThan(QuantifiedSelect)
+     * @see Field#lessOrEqual(QuantifiedSelect)
+     */
+    /**
+     * Create an <code>ANY</code> quantified select to be used in quantified
+     * comparison predicate expressions.
+     * <p>
+     * This is natively supported by {@link SQLDialect#POSTGRES}. Other dialects
+     * will render a subselect unnesting the array.
+     *
+     * @see Field#equal(QuantifiedSelect)
+     * @see Field#notEqual(QuantifiedSelect)
+     * @see Field#greaterThan(QuantifiedSelect)
+     * @see Field#greaterOrEqual(QuantifiedSelect)
+     * @see Field#lessThan(QuantifiedSelect)
+     * @see Field#lessOrEqual(QuantifiedSelect)
+     */
+    /**
+     * Create an <code>ANY</code> quantified select to be used in quantified
+     * comparison predicate expressions.
+     * <p>
+     * This is natively supported by {@link SQLDialect#POSTGRES}. Other dialects
+     * will render a subselect unnesting the array.
+     *
+     * @see Field#equal(QuantifiedSelect)
+     * @see Field#notEqual(QuantifiedSelect)
+     * @see Field#greaterThan(QuantifiedSelect)
+     * @see Field#greaterOrEqual(QuantifiedSelect)
+     * @see Field#lessThan(QuantifiedSelect)
+     * @see Field#lessOrEqual(QuantifiedSelect)
+     */
+    // -------------------------------------------------------------------------
+    // XXX Access control
+    // -------------------------------------------------------------------------
+    /**
+     * Grant a privilege on table to user or role.
+     *
+     * <p>
+     * Example: <code><pre>
+     * import static org.jooq.impl.DSL.*;
+     *
+     * grant(privilege)
+     *   .on(table)
+     *   .to(user)
+     *
+     * grant(privilege)
+     *   .on(table)
+     *   .to(role)
+     * </pre></code>
+     *
+     * 
+     * @see #grant(Collection)
+     */
+    @Support
+    public static GrantStepOn grant(String privilege) {
+        return using(new DefaultConfiguration()).grant(privilege(privilege));
+    }
+    /**
+     * Grant a privilege on table to user or role.
+     *
+     * <p>
+     * Example: <code><pre>
+     * import static org.jooq.impl.DSL.*;
+     *
+     * grant(privileges)
+     *   .on(table)
+     *   .to(user)
+     *
+     * grant(privileges)
+     *   .on(table)
+     *   .to(role)
+     * </pre></code>
+     * <p>
+     *
+     * @see #grant(String)
+     */
+    @Support
+    public static GrantStepOn grant(Collection<? extends Privilege> privileges) {
+        return using(new DefaultConfiguration()).grant(privileges);
+    }
+    /**
+     * Revoke a privilege on table from user or role.
+     *
+     * <p>
+     * Example: <code><pre>
+     * import static org.jooq.impl.DSL.*;
+     *
+     * revoke(privilege)
+     *   .on(table)
+     *   .from(user)
+     *
+     * revoke(privilege)
+     *   .on(table)
+     *   .from(role)
+     * </pre></code>
+     * <p>
+     *
+     * @see #revoke(Collection)
+     */
+    @Support
+    public static RevokeStepOn revoke(String privilege) {
+        return using(new DefaultConfiguration()).revoke(privilege(privilege));
+    }
+    /**
+     * Revoke a privilege on table from user or role.
+     *
+     * <p>
+     * Example: <code><pre>
+     * import static org.jooq.impl.DSL.*;
+     *
+     * revoke(privileges)
+     *   .on(table)
+     *   .from(user)
+     *
+     * revoke(privileges)
+     *   .on(table)
+     *   .from(role)
+     * </pre></code>
+     * <p>
+     *
+     * @see #revoke(String)
+     */
+    @Support
+    public static RevokeStepOn revoke(Collection<? extends Privilege> privileges) {
+        return using(new DefaultConfiguration()).revoke(privileges);
+    }
+    /**
+     * Create a new privilege reference.
+     *
+     * @see #privilege(Keyword)
+     */
+    public static Privilege privilege(String privilege) {
+        return privilege(keyword(privilege));
+    }
+    /**
+     * Create a new privilege reference.
+     */
+    public static Privilege privilege(Keyword privilege) {
+        return new PrivilegeImpl(privilege);
+    }
+    // -------------------------------------------------------------------------
+    // XXX Conversion of objects into tables
+    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
+    // XXX Table functions
+    // -------------------------------------------------------------------------
+    /**
+     * A table function generating a series of values from <code>from</code> to
+     * <code>to</code> (inclusive).
+     * <p>
+     * This function is inspired by PostgreSQL's
+     * <code>GENERATE_SERIES(from, to)</code> function. Other SQL dialects may
+     * be capable of emulating this behaviour, e.g. Oracle: <code><pre>
+     * -- PostgreSQL
+     * SELECT * FROM GENERATE_SERIES(a, b)
+     *
+     * -- Oracle
+     * SELECT * FROM (SELECT a + LEVEL - 1 FROM DUAL CONNECT BY a + LEVEL - 1 &lt;= b)
+     * </pre></code>
+     */
+    /**
+     * A table function generating a series of values from <code>from</code> to
+     * <code>to</code> (inclusive).
+     * <p>
+     * This function is inspired by PostgreSQL's
+     * <code>GENERATE_SERIES(from, to)</code> function. Other SQL dialects may
+     * be capable of emulating this behaviour, e.g. Oracle: <code><pre>
+     * -- PostgreSQL
+     * SELECT * FROM GENERATE_SERIES(a, b)
+     *
+     * -- Oracle
+     * SELECT * FROM (SELECT a + LEVEL - 1 FROM DUAL CONNECT BY a + LEVEL - 1 &lt;= b)
+     * </pre></code>
+     */
+    /**
+     * A table function generating a series of values from <code>from</code> to
+     * <code>to</code> (inclusive).
+     * <p>
+     * This function is inspired by PostgreSQL's
+     * <code>GENERATE_SERIES(from, to)</code> function. Other SQL dialects may
+     * be capable of emulating this behaviour, e.g. Oracle: <code><pre>
+     * -- PostgreSQL
+     * SELECT * FROM GENERATE_SERIES(a, b)
+     *
+     * -- Oracle
+     * SELECT * FROM (SELECT a + LEVEL - 1 FROM DUAL CONNECT BY a + LEVEL - 1 &lt;= b)
+     * </pre></code>
+     */
+    /**
+     * A table function generating a series of values from <code>from</code> to
+     * <code>to</code> (inclusive).
+     * <p>
+     * This function is inspired by PostgreSQL's
+     * <code>GENERATE_SERIES(from, to)</code> function. Other SQL dialects may
+     * be capable of emulating this behaviour, e.g. Oracle: <code><pre>
+     * -- PostgreSQL
+     * SELECT * FROM GENERATE_SERIES(a, b)
+     *
+     * -- Oracle
+     * SELECT * FROM (SELECT a + LEVEL - 1 FROM DUAL CONNECT BY a + LEVEL - 1 &lt;= b)
+     * </pre></code>
+     */
+    // -------------------------------------------------------------------------
+    // XXX SQL keywords
+    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
+    // XXX Names
+    // -------------------------------------------------------------------------
+    /**
+     * Create a new SQL identifier using a qualified name.
+     * <p>
+     * Use this method to construct syntax-safe, SQL-injection-safe SQL
+     * identifiers for use in plain SQL where {@link QueryPart} objects are
+     * accepted. For instance, this can be used with any of these methods:
+     * <ul>
+     * <li> {@link #field(Name)}</li>
+     * <li> {@link #field(Name, Class)}</li>
+     * <li> {@link #field(Name, DataType)}</li>
+     * </ul>
+     * <p>
+     * An example: <code><pre>
+     * // This qualified name here
+     * name("book", "title");
+     *
+     * // ... will render this SQL on SQL Server with RenderNameStyle.QUOTED set
+     * [book].[title]
+     * </pre></code>
+     *
+     * @param qualifiedName The SQL identifier's qualified name parts
+     * @return A {@link QueryPart} that will render the SQL identifier
+     */
+    /**
+     * Create a new SQL identifier using a qualified name.
+     * <p>
+     * Use this method to construct syntax-safe, SQL-injection-safe SQL
+     * identifiers for use in plain SQL where {@link QueryPart} objects are
+     * accepted. For instance, this can be used with any of these methods:
+     * <ul>
+     * <li> {@link #field(Name)}</li>
+     * <li> {@link #field(Name, Class)}</li>
+     * <li> {@link #field(Name, DataType)}</li>
+     * </ul>
+     * <p>
+     * An example: <code><pre>
+     * // This qualified name here
+     * name("book", "title");
+     *
+     * // ... will render this SQL on SQL Server with RenderNameStyle.QUOTED set
+     * [book].[title]
+     * </pre></code>
+     *
+     * @param qualifiedName The SQL identifier's qualified name parts
+     * @return A {@link QueryPart} that will render the SQL identifier
+     */
+    /**
+     * Create a new SQL identifier using an unqualified, quoted name.
+     * <p>
+     * This works like {@link #name(String...)}, except that generated
+     * identifiers will be guaranteed to be quoted in databases that support
+     * quoted identifiers.
+     *
+     * @param unqualifiedName The SQL identifier's unqualified name
+     * @return A {@link QueryPart} that will render the SQL identifier
+     */
+    /**
+     * Create a new SQL identifier using a qualified, quoted name.
+     * <p>
+     * This works like {@link #name(String...)}, except that generated
+     * identifiers will be guaranteed to be quoted in databases that support
+     * quoted identifiers.
+     *
+     * @param qualifiedName The SQL identifier's qualified name parts
+     * @return A {@link QueryPart} that will render the SQL identifier
+     */
+    /**
+     * Create a new SQL identifier using a qualified, quoted name.
+     * <p>
+     * This works like {@link #name(Collection)}, except that generated
+     * identifiers will be guaranteed to be quoted in databases that support
+     * quoted identifiers.
+     *
+     * @param qualifiedName The SQL identifier's qualified name parts
+     * @return A {@link QueryPart} that will render the SQL identifier
+     */
+    /**
+     * Create a new SQL identifier using an unqualified, quoted name.
+     * <p>
+     * This works like {@link #name(String...)}, except that generated
+     * identifiers will be guaranteed to be quoted in databases that support
+     * quoted identifiers.
+     *
+     * @param unqualifiedName The SQL identifier's unqualified name
+     * @return A {@link QueryPart} that will render the SQL identifier
+     */
+    /**
+     * Create a new SQL identifier using a qualified, quoted name.
+     * <p>
+     * This works like {@link #name(String...)}, except that generated
+     * identifiers will be guaranteed to be quoted in databases that support
+     * quoted identifiers.
+     *
+     * @param qualifiedName The SQL identifier's qualified name parts
+     * @return A {@link QueryPart} that will render the SQL identifier
+     */
+    /**
+     * Create a new SQL identifier using a qualified, quoted name.
+     * <p>
+     * This works like {@link #name(Collection)}, except that generated
+     * identifiers will be guaranteed to be quoted in databases that support
+     * quoted identifiers.
+     *
+     * @param qualifiedName The SQL identifier's qualified name parts
+     * @return A {@link QueryPart} that will render the SQL identifier
+     */
+    // -------------------------------------------------------------------------
+    // XXX QueryPart composition
+    // -------------------------------------------------------------------------
+    /**
+     * Compose a list of <code>QueryParts</code> into a new
+     * <code>QueryPart</code>, with individual parts being comma-separated.
+     */
+    /**
+     * Compose a list of <code>QueryParts</code> into a new
+     * <code>QueryPart</code>, with individual parts being comma-separated.
+     */
+    // -------------------------------------------------------------------------
+    // XXX SQL identifiers
+    // -------------------------------------------------------------------------
+    /**
+     * Create a <code>DEFAULT</code> keyword for use with <code>INSERT</code>,
+     * <code>UPDATE</code>, or <code>MERGE</code> statements.
+     */
+    /**
+     * Create a <code>DEFAULT</code> keyword for use with <code>INSERT</code>,
+     * <code>UPDATE</code>, or <code>MERGE</code> statements.
+     */
+    /**
+     * Create a <code>DEFAULT</code> keyword for use with <code>INSERT</code>,
+     * <code>UPDATE</code>, or <code>MERGE</code> statements.
+     */
+    /**
+     * Create a qualified sequence, given its sequence name.
+     * <p>
+     * This constructs a sequence reference given the sequence's qualified name.
+     * jOOQ will render the sequence name according to your
+     * {@link Settings#getRenderNameStyle()} settings. Choose
+     * {@link RenderNameStyle#QUOTED} to prevent syntax errors and/or SQL
+     * injection.
+     * <p>
+     * Example: <code><pre>
+     * // This sequence...
+     * sequence(name("MY_SCHEMA", "MY_SEQUENCE"));
+     *
+     * // ... will render this SQL on SQL Server with RenderNameStyle.QUOTED set
+     * [MY_SCHEMA].[MY_SEQUENCE]
+     * </pre></code>
+     */
+    /**
+     * Create a qualified sequence, given its sequence name.
+     * <p>
+     * This constructs a sequence reference given the sequence's qualified name.
+     * jOOQ will render the sequence name according to your
+     * {@link Settings#getRenderNameStyle()} settings. Choose
+     * {@link RenderNameStyle#QUOTED} to prevent syntax errors and/or SQL
+     * injection.
+     * <p>
+     * Example: <code><pre>
+     * // This sequence...
+     * sequence(name("MY_SCHEMA", "MY_SEQUENCE"));
+     *
+     * // ... will render this SQL on SQL Server with RenderNameStyle.QUOTED set
+     * [MY_SCHEMA].[MY_SEQUENCE]
+     * </pre></code>
+     */
+    /**
+     * Create a qualified sequence, given its sequence name.
+     * <p>
+     * This constructs a sequence reference given the sequence's qualified name.
+     * jOOQ will render the sequence name according to your
+     * {@link Settings#getRenderNameStyle()} settings. Choose
+     * {@link RenderNameStyle#QUOTED} to prevent syntax errors and/or SQL
+     * injection.
+     * <p>
+     * Example: <code><pre>
+     * // This sequence...
+     * sequence(name("MY_SCHEMA", "MY_SEQUENCE"));
+     *
+     * // ... will render this SQL on SQL Server with RenderNameStyle.QUOTED set
+     * [MY_SCHEMA].[MY_SEQUENCE]
+     * </pre></code>
+     */
+    /**
+     * Create a qualified field, given its (qualified) field name.
+     * <p>
+     * This constructs a field reference given the field's qualified name. jOOQ
+     * will render the field name according to your
+     * {@link Settings#getRenderNameStyle()} settings. Choose
+     * {@link RenderNameStyle#QUOTED} to prevent syntax errors and/or SQL
+     * injection.
+     * <p>
+     * Example: <code><pre>
+     * // This field...
+     * field(name("MY_SCHEMA", "MY_TABLE", "MY_FIELD"));
+     *
+     * // ... will render this SQL on SQL Server with RenderNameStyle.QUOTED set
+     * [MY_SCHEMA].[MY_TABLE].[MY_FIELD]
+     * </pre></code>
+     * <p>
+     * Another example: <code><pre>
+     * create.select(field("length({1})", Integer.class, field(name("TITLE"))))
+     *       .from(table(name("T_BOOK")))
+     *       .fetch();
+     *
+     * // ... will execute this SQL on SQL Server:
+     * select length([TITLE]) from [T_BOOK]
+     * </pre></code>
+     */
+    /**
+     * Create a qualified field, given its (qualified) field name.
+     * <p>
+     * This constructs a field reference given the field's qualified name. jOOQ
+     * will render the field name according to your
+     * {@link Settings#getRenderNameStyle()} settings. Choose
+     * {@link RenderNameStyle#QUOTED} to prevent syntax errors and/or SQL
+     * injection.
+     * <p>
+     * Example: <code><pre>
+     * // This field...
+     * field(name("MY_SCHEMA", "MY_TABLE", "MY_FIELD"));
+     *
+     * // ... will render this SQL on SQL Server with RenderNameStyle.QUOTED set
+     * [MY_SCHEMA].[MY_TABLE].[MY_FIELD]
+     * </pre></code>
+     * <p>
+     * Another example: <code><pre>
+     * create.select(field("length({1})", Integer.class, field(name("TITLE"))))
+     *       .from(table(name("T_BOOK")))
+     *       .fetch();
+     *
+     * // ... will execute this SQL on SQL Server:
+     * select length([TITLE]) from [T_BOOK]
+     * </pre></code>
+     */
+    /**
+     * Create a qualified field, given its (qualified) field name.
+     * <p>
+     * This constructs a field reference given the field's qualified name. jOOQ
+     * will render the field name according to your
+     * {@link Settings#getRenderNameStyle()} settings. Choose
+     * {@link RenderNameStyle#QUOTED} to prevent syntax errors and/or SQL
+     * injection.
+     * <p>
+     * Example: <code><pre>
+     * // This field...
+     * field(name("MY_SCHEMA", "MY_TABLE", "MY_FIELD"));
+     *
+     * // ... will render this SQL on SQL Server with RenderNameStyle.QUOTED set
+     * [MY_SCHEMA].[MY_TABLE].[MY_FIELD]
+     * </pre></code>
+     * <p>
+     * Another example: <code><pre>
+     * create.select(field("length({1})", Integer.class, field(name("TITLE"))))
+     *       .from(table(name("T_BOOK")))
+     *       .fetch();
+     *
+     * // ... will execute this SQL on SQL Server:
+     * select length([TITLE]) from [T_BOOK]
+     * </pre></code>
+     */
+    // -------------------------------------------------------------------------
+    // XXX: Queries
+    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
+    // XXX Plain SQL object factory
+    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
+    // XXX Plain SQL API
+    // -------------------------------------------------------------------------
+    /**
+     * Create a new query holding plain SQL. There must not be any binding
+     * variables contained in the SQL.
+     * <p>
+     * Example:
+     * <p>
+     * <code><pre>
+     * String sql = "SET SCHEMA 'abc'";</pre></code>
+     * <p>
+     * <b>NOTE</b>: When inserting plain SQL into jOOQ objects, you must
+     * guarantee syntax integrity. You may also create the possibility of
+     * malicious SQL injection. Be sure to properly use bind variables and/or
+     * escape literals when concatenated into SQL clauses!
+     *
+     * @param sql The SQL
+     * @return A query wrapping the plain SQL
+     * @see SQL
+     */
+    /**
+     * Create a new query holding plain SQL. There must not be any binding
+     * variables contained in the SQL.
+     * <p>
+     * Example:
+     * <p>
+     * <code><pre>
+     * String sql = "SET SCHEMA 'abc'";</pre></code>
+     * <p>
+     * <b>NOTE</b>: When inserting plain SQL into jOOQ objects, you must
+     * guarantee syntax integrity. You may also create the possibility of
+     * malicious SQL injection. Be sure to properly use bind variables and/or
+     * escape literals when concatenated into SQL clauses!
+     *
+     * @param sql The SQL
+     * @return A query wrapping the plain SQL
+     * @see SQL
+     */
+    /**
+     * Create a new query holding plain SQL.
+     * <p>
+     * There must not be any bind variables contained in the SQL
+     * <p>
+     * Use this method, when you want to take advantage of the many ways to
+     * fetch results in jOOQ, using {@link ResultQuery}. Some examples:
+     * <p>
+     * <table border="1">
+     * <tr>
+     * <td> {@link ResultQuery#fetchLazy()}</td>
+     * <td>Open a cursor and fetch records one by one</td>
+     * </tr>
+     * <tr>
+     * <td> {@link ResultQuery#fetchInto(Class)}</td>
+     * <td>Fetch records into a custom POJO (optionally annotated with JPA
+     * annotations)</td>
+     * </tr>
+     * <tr>
+     * <td> {@link ResultQuery#fetchInto(RecordHandler)}</td>
+     * <td>Fetch records into a custom callback (similar to Spring's RowMapper)</td>
+     * </tr>
+     * </table>
+     * <p>
+     * Example (Postgres):
+     * <p>
+     * <code><pre>
+     * String sql = "FETCH ALL IN \"<unnamed cursor 1>\"";</pre></code> Example
+     * (SQLite):
+     * <p>
+     * <code><pre>
+     * String sql = "pragma table_info('my_table')";</pre></code>
+     * <p>
+     * <b>NOTE</b>: When inserting plain SQL into jOOQ objects, you must
+     * guarantee syntax integrity. You may also create the possibility of
+     * malicious SQL injection. Be sure to properly use bind variables and/or
+     * escape literals when concatenated into SQL clauses!
+     *
+     * @param sql The SQL
+     * @return An executable query
+     * @see SQL
+     */
+    /**
+     * Create a new query holding plain SQL.
+     * <p>
+     * There must not be any bind variables contained in the SQL
+     * <p>
+     * Use this method, when you want to take advantage of the many ways to
+     * fetch results in jOOQ, using {@link ResultQuery}. Some examples:
+     * <p>
+     * <table border="1">
+     * <tr>
+     * <td> {@link ResultQuery#fetchLazy()}</td>
+     * <td>Open a cursor and fetch records one by one</td>
+     * </tr>
+     * <tr>
+     * <td> {@link ResultQuery#fetchInto(Class)}</td>
+     * <td>Fetch records into a custom POJO (optionally annotated with JPA
+     * annotations)</td>
+     * </tr>
+     * <tr>
+     * <td> {@link ResultQuery#fetchInto(RecordHandler)}</td>
+     * <td>Fetch records into a custom callback (similar to Spring's RowMapper)</td>
+     * </tr>
+     * </table>
+     * <p>
+     * Example (Postgres):
+     * <p>
+     * <code><pre>
+     * String sql = "FETCH ALL IN \"<unnamed cursor 1>\"";</pre></code> Example
+     * (SQLite):
+     * <p>
+     * <code><pre>
+     * String sql = "pragma table_info('my_table')";</pre></code>
+     * <p>
+     * <b>NOTE</b>: When inserting plain SQL into jOOQ objects, you must
+     * guarantee syntax integrity. You may also create the possibility of
+     * malicious SQL injection. Be sure to properly use bind variables and/or
+     * escape literals when concatenated into SQL clauses!
+     *
+     * @param sql The SQL
+     * @return An executable query
+     * @see SQL
+     */
+    /**
+     * A custom SQL clause that can render arbitrary table expressions.
+     * <p>
+     * A plain SQL table is a table that can contain user-defined plain SQL,
+     * because sometimes it is easier to express things directly in SQL, for
+     * instance complex, but static subqueries or tables from different schemas.
+     * <p>
+     * Example
+     * <p>
+     * <code><pre>
+     * String sql = "SELECT * FROM USER_TABLES WHERE OWNER = 'MY_SCHEMA'";
+     * </pre></code>
+     * <p>
+     * <b>NOTE</b>: When inserting plain SQL into jOOQ objects, you must
+     * guarantee syntax integrity. You may also create the possibility of
+     * malicious SQL injection. Be sure to properly use bind variables and/or
+     * escape literals when concatenated into SQL clauses!
+     *
+     * @param sql The SQL
+     * @return A table wrapping the plain SQL
+     * @see SQL
+     */
+    /**
+     * A custom SQL clause that can render arbitrary table expressions.
+     * <p>
+     * A plain SQL table is a table that can contain user-defined plain SQL,
+     * because sometimes it is easier to express things directly in SQL, for
+     * instance complex, but static subqueries or tables from different schemas.
+     * <p>
+     * Example
+     * <p>
+     * <code><pre>
+     * String sql = "SELECT * FROM USER_TABLES WHERE OWNER = 'MY_SCHEMA'";
+     * </pre></code>
+     * <p>
+     * <b>NOTE</b>: When inserting plain SQL into jOOQ objects, you must
+     * guarantee syntax integrity. You may also create the possibility of
+     * malicious SQL injection. Be sure to properly use bind variables and/or
+     * escape literals when concatenated into SQL clauses!
+     *
+     * @param sql The SQL
+     * @return A table wrapping the plain SQL
+     * @see SQL
+     */
+    /**
+     * Create a "plain SQL" field.
+     * <p>
+     * A PlainSQLField is a field that can contain user-defined plain SQL,
+     * because sometimes it is easier to express things directly in SQL, for
+     * instance complex proprietary functions. There must not be any binding
+     * variables contained in the SQL.
+     * <p>
+     * Example:
+     * <p>
+     * <code><pre>
+     * String sql = "DECODE(MY_FIELD, 1, 100, 200)";
+     * </pre></code>
+     * <p>
+     * <b>NOTE</b>: When inserting plain SQL into jOOQ objects, you must
+     * guarantee syntax integrity. You may also create the possibility of
+     * malicious SQL injection. Be sure to properly use bind variables and/or
+     * escape literals when concatenated into SQL clauses!
+     *
+     * @param sql The SQL
+     * @return A field wrapping the plain SQL
+     * @see SQL
+     */
+    /**
+     * Create a "plain SQL" field.
+     * <p>
+     * A PlainSQLField is a field that can contain user-defined plain SQL,
+     * because sometimes it is easier to express things directly in SQL, for
+     * instance complex proprietary functions. There must not be any binding
+     * variables contained in the SQL.
+     * <p>
+     * Example:
+     * <p>
+     * <code><pre>
+     * String sql = "DECODE(MY_FIELD, 1, 100, 200)";
+     * </pre></code>
+     * <p>
+     * <b>NOTE</b>: When inserting plain SQL into jOOQ objects, you must
+     * guarantee syntax integrity. You may also create the possibility of
+     * malicious SQL injection. Be sure to properly use bind variables and/or
+     * escape literals when concatenated into SQL clauses!
+     *
+     * @param sql The SQL
+     * @return A field wrapping the plain SQL
+     * @see SQL
+     */
+    /**
+     * Create a "plain SQL" field.
+     * <p>
+     * A PlainSQLField is a field that can contain user-defined plain SQL,
+     * because sometimes it is easier to express things directly in SQL, for
+     * instance complex proprietary functions. There must not be any binding
+     * variables contained in the SQL.
+     * <p>
+     * Example:
+     * <p>
+     * <code><pre>
+     * String sql = "DECODE(MY_FIELD, 1, 100, 200)";
+     * </pre></code>
+     * <p>
+     * <b>NOTE</b>: When inserting plain SQL into jOOQ objects, you must
+     * guarantee syntax integrity. You may also create the possibility of
+     * malicious SQL injection. Be sure to properly use bind variables and/or
+     * escape literals when concatenated into SQL clauses!
+     *
+     * @param sql The SQL
+     * @param type The field type
+     * @return A field wrapping the plain SQL
+     * @see SQL
+     */
+    /**
+     * Create a "plain SQL" field.
+     * <p>
+     * A PlainSQLField is a field that can contain user-defined plain SQL,
+     * because sometimes it is easier to express things directly in SQL, for
+     * instance complex proprietary functions. There must not be any binding
+     * variables contained in the SQL.
+     * <p>
+     * Example:
+     * <p>
+     * <code><pre>
+     * String sql = "DECODE(MY_FIELD, 1, 100, 200)";
+     * </pre></code>
+     * <p>
+     * <b>NOTE</b>: When inserting plain SQL into jOOQ objects, you must
+     * guarantee syntax integrity. You may also create the possibility of
+     * malicious SQL injection. Be sure to properly use bind variables and/or
+     * escape literals when concatenated into SQL clauses!
+     *
+     * @param sql The SQL
+     * @param type The field type
+     * @return A field wrapping the plain SQL
+     * @see SQL
+     */
+    /**
+     * Create a "plain SQL" field.
+     * <p>
+     * A PlainSQLField is a field that can contain user-defined plain SQL,
+     * because sometimes it is easier to express things directly in SQL, for
+     * instance complex proprietary functions. There must be as many binding
+     * variables contained in the SQL, as passed in the bindings parameter
+     * <p>
+     * Example:
+     * <p>
+     * <code><pre>
+     * String sql = "DECODE(MY_FIELD, ?, ?, ?)";
+     * Object[] bindings = new Object[] { 1, 100, 200 };</pre></code>
+     * <p>
+     * <b>NOTE</b>: When inserting plain SQL into jOOQ objects, you must
+     * guarantee syntax integrity. You may also create the possibility of
+     * malicious SQL injection. Be sure to properly use bind variables and/or
+     * escape literals when concatenated into SQL clauses!
+     *
+     * @param sql The SQL
+     * @param type The field type
+     * @param bindings The bindings for the field
+     * @return A field wrapping the plain SQL
+     * @see SQL
+     * @see DSL#sql(String, Object...)
+     */
+    /**
+     * Create a "plain SQL" field.
+     * <p>
+     * A PlainSQLField is a field that can contain user-defined plain SQL,
+     * because sometimes it is easier to express things directly in SQL, for
+     * instance complex proprietary functions. There must not be any binding
+     * variables contained in the SQL.
+     * <p>
+     * Example:
+     * <p>
+     * <code><pre>
+     * String sql = "DECODE(MY_FIELD, 1, 100, 200)";
+     * </pre></code>
+     * <p>
+     * <b>NOTE</b>: When inserting plain SQL into jOOQ objects, you must
+     * guarantee syntax integrity. You may also create the possibility of
+     * malicious SQL injection. Be sure to properly use bind variables and/or
+     * escape literals when concatenated into SQL clauses!
+     *
+     * @param sql The SQL
+     * @param type The field type
+     * @return A field wrapping the plain SQL
+     * @see SQL
+     */
+    /**
+     * Create a "plain SQL" field.
+     * <p>
+     * A PlainSQLField is a field that can contain user-defined plain SQL,
+     * because sometimes it is easier to express things directly in SQL, for
+     * instance complex proprietary functions. There must not be any binding
+     * variables contained in the SQL.
+     * <p>
+     * Example:
+     * <p>
+     * <code><pre>
+     * String sql = "DECODE(MY_FIELD, 1, 100, 200)";
+     * </pre></code>
+     * <p>
+     * <b>NOTE</b>: When inserting plain SQL into jOOQ objects, you must
+     * guarantee syntax integrity. You may also create the possibility of
+     * malicious SQL injection. Be sure to properly use bind variables and/or
+     * escape literals when concatenated into SQL clauses!
+     *
+     * @param sql The SQL
+     * @param type The field type
+     * @return A field wrapping the plain SQL
+     * @see SQL
+     */
+    /**
+     * Create a "plain SQL" field.
+     * <p>
+     * A PlainSQLField is a field that can contain user-defined plain SQL,
+     * because sometimes it is easier to express things directly in SQL, for
+     * instance complex proprietary functions. There must be as many binding
+     * variables contained in the SQL, as passed in the bindings parameter
+     * <p>
+     * Example:
+     * <p>
+     * <code><pre>
+     * String sql = "DECODE(MY_FIELD, ?, ?, ?)";
+     * Object[] bindings = new Object[] { 1, 100, 200 };</pre></code>
+     * <p>
+     * <b>NOTE</b>: When inserting plain SQL into jOOQ objects, you must
+     * guarantee syntax integrity. You may also create the possibility of
+     * malicious SQL injection. Be sure to properly use bind variables and/or
+     * escape literals when concatenated into SQL clauses!
+     *
+     * @param sql The SQL
+     * @param type The field type
+     * @param bindings The bindings for the field
+     * @return A field wrapping the plain SQL
+     * @see SQL
+     * @see DSL#sql(String, Object...)
+     */
+    /**
+     * <code>function()</code> can be used to access native or user-defined
+     * functions that are not yet or insufficiently supported by jOOQ.
+     * <p>
+     * <b>NOTE</b>: When inserting plain SQL into jOOQ objects, you must
+     * guarantee syntax integrity. You may also create the possibility of
+     * malicious SQL injection. Be sure to properly use bind variables and/or
+     * escape literals when concatenated into SQL clauses!
+     *
+     * @param name The function name (without parentheses)
+     * @param type The function return type
+     * @param arguments The function arguments
+     * @see SQL
+     */
+    /**
+     * <code>function()</code> can be used to access native or user-defined
+     * functions that are not yet or insufficiently supported by jOOQ.
+     * <p>
+     * <b>NOTE</b>: When inserting plain SQL into jOOQ objects, you must
+     * guarantee syntax integrity. You may also create the possibility of
+     * malicious SQL injection. Be sure to properly use bind variables and/or
+     * escape literals when concatenated into SQL clauses!
+     *
+     * @param name The function name (without parentheses)
+     * @param type The function return type
+     * @param arguments The function arguments
+     * @see SQL
+     */
+    /**
+     * <code>function()</code> can be used to access native or user-defined
+     * functions that are not yet or insufficiently supported by jOOQ.
+     *
+     * @param name The function name (possibly qualified)
+     * @param type The function return type
+     * @param arguments The function arguments
+     */
+    /**
+     * <code>function()</code> can be used to access native or user-defined
+     * functions that are not yet or insufficiently supported by jOOQ.
+     *
+     * @param name The function name (possibly qualified)
+     * @param type The function return type
+     * @param arguments The function arguments
+     */
+    /**
+     * Create a new condition holding plain SQL.
+     * <p>
+     * There must not be any bind variables contained in the SQL.
+     * <p>
+     * Example:
+     * <p>
+     * <code><pre>
+     * String sql = "(X = 1 and Y = 2)";</pre></code>
+     * <p>
+     * <b>NOTE</b>: When inserting plain SQL into jOOQ objects, you must
+     * guarantee syntax integrity. You may also create the possibility of
+     * malicious SQL injection. Be sure to properly use bind variables and/or
+     * escape literals when concatenated into SQL clauses!
+     *
+     * @param sql The SQL
+     * @return A condition wrapping the plain SQL
+     * @see SQL
+     */
+    /**
+     * Create a new condition holding plain SQL.
+     * <p>
+     * There must not be any bind variables contained in the SQL.
+     * <p>
+     * Example:
+     * <p>
+     * <code><pre>
+     * String sql = "(X = 1 and Y = 2)";</pre></code>
+     * <p>
+     * <b>NOTE</b>: When inserting plain SQL into jOOQ objects, you must
+     * guarantee syntax integrity. You may also create the possibility of
+     * malicious SQL injection. Be sure to properly use bind variables and/or
+     * escape literals when concatenated into SQL clauses!
+     *
+     * @param sql The SQL
+     * @return A condition wrapping the plain SQL
+     * @see SQL
+     */
+    // -------------------------------------------------------------------------
+    // XXX Global Condition factory
+    // -------------------------------------------------------------------------
+    /**
+     * Return a <code>Condition</code> that connects all argument
+     * <code>conditions</code> with {@link Operator#AND}.
+     */
+    /**
+     * Return a <code>Condition</code> that connects all argument
+     * <code>conditions</code> with {@link Operator#AND}.
+     */
+    /**
+     * Return a <code>Condition</code> that connects all argument
+     * <code>conditions</code> with {@link Operator#AND}.
+     */
+    /**
+     * Return a <code>Condition</code> that connects all argument
+     * <code>conditions</code> with {@link Operator#OR}.
+     */
+    /**
+     * Return a <code>Condition</code> that connects all argument
+     * <code>conditions</code> with {@link Operator#OR}.
+     */
+    /**
+     * Return a <code>Condition</code> that connects all argument
+     * <code>conditions</code> with {@link Operator#OR}.
+     */
+    /**
+     * Return a <code>Condition</code> that connects all argument
+     * <code>conditions</code> with <code>Operator</code>.
+     */
+    /**
+     * Return a <code>Condition</code> that connects all argument
+     * <code>conditions</code> with <code>Operator</code>.
+     */
+    /**
+     * Return a <code>Condition</code> that connects all argument
+     * <code>conditions</code> with <code>Operator</code>.
+     */
+    // -------------------------------------------------------------------------
+    // XXX Global Field and Function factory
+    // -------------------------------------------------------------------------
+    // [jooq-tools] START [row-field]
+// [jooq-tools] END [row-field]
+    /**
+     * Initialise a {@link Case} statement.
+     * <p>
+     * This API can be used to create expressions of the type <code><pre>
+     * CASE value WHEN 1 THEN 'one'
+     *            WHEN 2 THEN 'two'
+     *            ELSE        'three'
+     * END
+     * </pre></code>
+     * <p>
+     * Choose is used as a method name to avoid name clashes with Java's
+     * reserved literal "case".
+     *
+     * @see Case
+     */
+    /**
+     * Initialise a {@link Case} statement.
+     * <p>
+     * This API can be used to create expressions of the type <code><pre>
+     * CASE value WHEN 1 THEN 'one'
+     *            WHEN 2 THEN 'two'
+     *            ELSE        'three'
+     * END
+     * </pre></code>
+     * <p>
+     * Choose is used as a method name to avoid name clashes with Java's
+     * reserved literal "case".
+     *
+     * @see Case
+     */
+    /**
+     * Initialise a {@link Case} statement.
+     * <p>
+     * This API can be used to create expressions of the type <code><pre>
+     * CASE WHEN x &lt; 1  THEN 'one'
+     *      WHEN x &gt;= 2 THEN 'two'
+     *      ELSE            'three'
+     * END
+     * </pre></code>
+     * <p>
+     * Choose is used as a method name to avoid name clashes with Java's
+     * reserved literal "case".
+     */
+    /**
+     * Initialise a {@link Case} statement.
+     * <p>
+     * This API can be used to create expressions of the type <code><pre>
+     * CASE WHEN x &lt; 1  THEN 'one'
+     *      WHEN x &gt;= 2 THEN 'two'
+     *      ELSE            'three'
+     * END
+     * </pre></code>
+     * <p>
+     * Choose is used as a method name to avoid name clashes with Java's
+     * reserved literal "case".
+     */
+    /**
+     * Initialise a {@link Case} statement.
+     * <p>
+     * This API can be used to create expressions of the type <code><pre>
+     * CASE WHEN x &lt; 1  THEN 'one'
+     *      WHEN x &gt;= 2 THEN 'two'
+     *      ELSE            'three'
+     * END
+     * </pre></code>
+     * <p>
+     * Choose is used as a method name to avoid name clashes with Java's
+     * reserved literal "case".
+     */
+    /**
+     * Gets the Oracle-style
+     * <code>DECODE(expression, search, result[, search , result]... [, default])</code>
+     * function.
+     *
+     * @see #decode(Field, Field, Field, Field[])
+     */
+    /**
+     * Gets the Oracle-style
+     * <code>DECODE(expression, search, result[, search , result]... [, default])</code>
+     * function.
+     *
+     * @see #decode(Field, Field, Field, Field[])
+     */
+    /**
+     * Gets the Oracle-style
+     * <code>DECODE(expression, search, result[, search , result]... [, default])</code>
+     * function.
+     *
+     * @see #decode(Field, Field, Field, Field[])
+     */
+    /**
+     * Cast a value to another type.
+     *
+     * @param <T> The generic type of the cast field
+     * @param value The value to cast
+     * @param type The type that is used for the cast
+     * @return The cast field
+     */
+    /**
+     * Cast null to a type.
+     *
+     * @param <T> The generic type of the cast field
+     * @param type The type that is used for the cast
+     * @return The cast field
+     */
+    /**
+     * Cast a value to another type.
+     *
+     * @param <T> The generic type of the cast field
+     * @param value The value to cast
+     * @param type The type that is used for the cast
+     * @return The cast field
+     */
+    /**
+     * Cast null to a type.
+     *
+     * @param <T> The generic type of the cast field
+     * @param type The type that is used for the cast
+     * @return The cast field
+     */
+    // Java 8 is stricter than Java 7 with respect to generics and overload
+    // resolution (http://stackoverflow.com/q/5361513/521799)
+    /**
+     * Gets the SQL Server-style ISNULL(value, defaultValue) function.
+     *
+     * @see #nvl(Field, Field)
+     */
+    /**
+     * Gets the SQL Server-style ISNULL(value, defaultValue) function.
+     *
+     * @see #nvl(Field, Field)
+     */
+    /**
+     * Gets the SQL Server-style ISNULL(value, defaultValue) function.
+     *
+     * @see #nvl(Field, Field)
+     */
+    /**
+     * Gets the SQL Server-style ISNULL(value, defaultValue) function.
+     *
+     * @see #nvl(Field, Field)
+     */
+    /**
+     * Gets the Oracle-style NVL(value, defaultValue) function.
+     *
+     * @see #nvl(Field, Field)
+     */
+    /**
+     * Gets the Oracle-style NVL(value, defaultValue) function.
+     *
+     * @see #nvl(Field, Field)
+     */
+    /**
+     * Gets the Oracle-style NVL(value, defaultValue) function.
+     *
+     * @see #nvl(Field, Field)
+     */
+    /**
+     * The <code>IFNULL()</code> function, a synonym of <code>NVL()</code>.
+     *
+     * @see #nvl(Field, Field)
+     */
+    /**
+     * The <code>IFNULL()</code> function, a synonym of <code>NVL()</code>.
+     *
+     * @see #nvl(Field, Field)
+     */
+    /**
+     * The <code>IFNULL()</code> function, a synonym of <code>NVL()</code>.
+     *
+     * @see #nvl(Field, Field)
+     */
+    // Java 8 is stricter than Java 7 with respect to generics and overload
+    // resolution (http://stackoverflow.com/q/5361513/521799)
+    /**
+     * Gets the Oracle-style NVL2(value, valueIfNotNull, valueIfNull) function.
+     *
+     * @see #nvl2(Field, Field, Field)
+     */
+    /**
+     * Gets the Oracle-style NVL2(value, valueIfNotNull, valueIfNull) function.
+     *
+     * @see #nvl2(Field, Field, Field)
+     */
+    /**
+     * Gets the Oracle-style NVL2(value, valueIfNotNull, valueIfNull) function.
+     *
+     * @see #nvl2(Field, Field, Field)
+     */
+    // Java 8 is stricter than Java 7 with respect to generics and overload
+    // resolution (http://stackoverflow.com/q/5361513/521799)
+    /**
+     * Gets the Oracle-style NULLIF(value, other) function.
+     *
+     * @see #nullif(Field, Field)
+     */
+    /**
+     * Gets the Oracle-style NULLIF(value, other) function.
+     *
+     * @see #nullif(Field, Field)
+     */
+    /**
+     * Gets the Oracle-style NULLIF(value, other) function.
+     *
+     * @see #nullif(Field, Field)
+     */
+    // Java 8 is stricter than Java 7 with respect to generics and overload
+    // resolution (http://stackoverflow.com/q/5361513/521799)
+    // -------------------------------------------------------------------------
+    // XXX String function factory
+    // -------------------------------------------------------------------------
+    /**
+     * Get the rpad(field, length, character) function.
+     *
+     * @see #rpad(Field, Field, Field)
+     */
+    /**
+     * Get the rpad(field, length, character) function.
+     *
+     * @see #rpad(Field, Field, Field)
+     */
+    /**
+     * Get the lpad(field, length, character) function.
+     *
+     * @see #lpad(Field, Field, Field)
+     */
+    /**
+     * Get the lpad(field, length, character) function.
+     *
+     * @see #lpad(Field, Field, Field)
+     */
+    /**
+     * Get the repeat(field, count) function.
+     *
+     * @see #repeat(Field, Field)
+     */
+    /**
+     * Get the repeat(field, count) function.
+     *
+     * @see #repeat(Field, Field)
+     */
+    /**
+     * Get the SQL Server specific <code>SPACE()</code> function.
+     * <p>
+     * This function can be emulated using {@link #repeat(String, int)} in
+     * dialects that do not ship with a native <code>SPACE()</code> function.
+     *
+     * @see <a
+     *      href="http://technet.microsoft.com/en-us/library/ms187950.aspx">http://technet.microsoft.com/en-us/library/ms187950.aspx</a>
+     */
+    /**
+     * Get the SQL Server specific <code>SPACE()</code> function.
+     * <p>
+     * This function can be emulated using {@link #repeat(String, int)} in
+     * dialects that do not ship with a native <code>SPACE()</code> function.
+     *
+     * @see <a
+     *      href="http://technet.microsoft.com/en-us/library/ms187950.aspx">http://technet.microsoft.com/en-us/library/ms187950.aspx</a>
+     */
+    /**
+     * Get the <code>reverse(field)</code> function.
+     */
+    /**
+     * Get the <code>reverse(field)</code> function.
+     */
+    /**
+     * Convenience method for {@link #replace(Field, String, String)} to escape
+     * data for use with {@link Field#like(Field, char)}.
+     * <p>
+     * Essentially, this escapes <code>%</code> and <code>_</code> characters
+     *
+     * @see #replace(Field, String, String)
+     * @see Field#like(Field, char)
+     */
+    /**
+     * Convenience method for {@link #replace(Field, String, String)} to escape
+     * data for use with {@link Field#like(Field, char)}.
+     * <p>
+     * Essentially, this escapes <code>%</code> and <code>_</code> characters
+     *
+     * @see #replace(Field, String, String)
+     * @see Field#like(Field, char)
+     */
+    /**
+     * Get the position(in, search) function.
+     *
+     * @see #position(Field, Field)
+     */
+    /**
+     * Get the position(in, search) function.
+     *
+     * @see #position(Field, Field)
+     */
+    /**
+     * Get the position(in, search) function.
+     *
+     * @see #position(Field, Field)
+     */
+    /**
+     * Get the position(in, search, startindex) function.
+     *
+     * @see #position(Field, Field, Field)
+     */
+    /**
+     * Get the position(in, search, startindex) function.
+     *
+     * @see #position(Field, Field, Field)
+     */
+    /**
+     * Get the position(in, search, startindex) function.
+     *
+     * @see #position(Field, Field)
+     */
+    /**
+     * Get the position(in, search, startindex) function.
+     * <p>
+     * This renders the position or any equivalent function:
+     * <code><pre>position([search] in [in]) or
+     * locate([in], [search]) or
+     * locate([search], [in]) or
+     * instr([in], [search]) or
+     * charindex([search], [in])</pre></code>
+     */
+    /**
+     * Get the position(in, search, startindex) function.
+     *
+     * @see #position(Field, Field, Field)
+     */
+    /**
+     * Get the position(in, search, startindex) function.
+     *
+     * @see #position(Field, Field, Field)
+     */
+    /**
+     * Get the position(in, search, startindex) function.
+     *
+     * @see #position(Field, Field)
+     */
+    /**
+     * Get the position(in, search, startindex) function.
+     * <p>
+     * This renders the position or any equivalent function:
+     * <code><pre>position([search] in [in]) or
+     * locate([in], [search]) or
+     * locate([search], [in]) or
+     * instr([in], [search]) or
+     * charindex([search], [in])</pre></code>
+     */
+    /**
+     * Get the left outermost characters from a string.
+     * <p>
+     * Example:
+     * <code><pre>
+     * 'abc' = LEFT('abcde', 3)
+     * </pre></code>
+     */
+    /**
+     * Get the left outermost characters from a string.
+     * <p>
+     * Example:
+     * <code><pre>
+     * 'abc' = LEFT('abcde', 3)
+     * </pre></code>
+     */
+    /**
+     * Get the left outermost characters from a string.
+     * <p>
+     * Example:
+     * <code><pre>
+     * 'abc' = LEFT('abcde', 3)
+     * </pre></code>
+     */
+    /**
+     * Get the left outermost characters from a string.
+     * <p>
+     * Example:
+     * <code><pre>
+     * 'abc' = LEFT('abcde', 3)
+     * </pre></code>
+     */
+    /**
+     * Get the right outermost characters from a string.
+     * <p>
+     * Example:
+     * <code><pre>
+     * 'cde' = RIGHT('abcde', 3)
+     * </pre></code>
+     */
+    /**
+     * Get the right outermost characters from a string.
+     * <p>
+     * Example:
+     * <code><pre>
+     * 'cde' = RIGHT('abcde', 3)
+     * </pre></code>
+     */
+    /**
+     * Get the right outermost characters from a string.
+     * <p>
+     * Example:
+     * <code><pre>
+     * 'cde' = RIGHT('abcde', 3)
+     * </pre></code>
+     */
+    /**
+     * Get the right outermost characters from a string.
+     * <p>
+     * Example:
+     * <code><pre>
+     * 'cde' = RIGHT('abcde', 3)
+     * </pre></code>
+     */
+    /**
+     * Get the char_length(field) function.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Get the char_length(field) function.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Get the bit_length(field) function.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Get the bit_length(field) function.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Get the octet_length(field) function.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Get the octet_length(field) function.
+     * <p>
+     * This translates into any dialect
+     */
+    // ------------------------------------------------------------------------
+    // XXX Hash function factory
+    // ------------------------------------------------------------------------
+    /**
+     * Get the MySQL-specific <code>MD5()</code> function.
+     * <p>
+     * These are the implementations for various databases:
+     * <p>
+     * <table border="1">
+     * <tr>
+     * <th>Database</th>
+     * <th>Implementation</th>
+     * </tr>
+     * <tr>
+     * <td>MySQL</td>
+     * <td><code>MD5( ... )</code></td>
+     * </tr>
+     * <tr>
+     * <td>Oracle</td>
+     * <td>
+     * <code>LOWER(RAWTOHEX(SYS.DBMS_CRYPTO.HASH(UTL_RAW.CAST_TO_RAW( ... ), SYS.DBMS_CRYPTO.HASH_MD5)))</code>
+     * </td>
+     * </tr>
+     * </table>
+     */
+    /**
+     * Get the MySQL-specific <code>MD5()</code> function.
+     * <p>
+     * These are the implementations for various databases:
+     * <p>
+     * <table border="1">
+     * <tr>
+     * <th>Database</th>
+     * <th>Implementation</th>
+     * </tr>
+     * <tr>
+     * <td>MySQL</td>
+     * <td><code>MD5( ... )</code></td>
+     * </tr>
+     * <tr>
+     * <td>Oracle</td>
+     * <td>
+     * <code>LOWER(RAWTOHEX(SYS.DBMS_CRYPTO.HASH(UTL_RAW.CAST_TO_RAW( ... ), SYS.DBMS_CRYPTO.HASH_MD5)))</code>
+     * </td>
+     * </tr>
+     * </table>
+     */
+    // ------------------------------------------------------------------------
+    // XXX Date and time functions
+    // ------------------------------------------------------------------------
+    /**
+     * Get the current_date() function returning a SQL standard
+     * {@link SQLDataType#DATE} type.
+     * <p>
+     * Note, while there is a <code>CURRENT_DATE</code> function in
+     * {@link SQLDialect#ORACLE}, that function returns a seconds-precision
+     * {@link SQLDataType#TIMESTAMP}, which is undesired from a vendor
+     * agnosticity perspective. This function thus produces an expression that
+     * conforms to the SQL standard idea of a {@link SQLDataType#DATE} type.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Get the current_time() function returning a SQL standard
+     * {@link SQLDataType#TIME} type.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Get the current_timestamp() function returning a SQL standard
+     * {@link SQLDataType#TIMESTAMP} type.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Get the current_date() function returning a SQL standard
+     * {@link SQLDataType#DATE} type.
+     * <p>
+     * Note, while there is a <code>CURRENT_DATE</code> function in
+     * {@link SQLDialect#ORACLE}, that function returns a seconds-precision
+     * {@link SQLDataType#TIMESTAMP}, which is undesired from a vendor
+     * agnosticity perspective. This function thus produces an expression that
+     * conforms to the SQL standard idea of a {@link SQLDataType#DATE} type.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Get the current_time() function returning a SQL standard
+     * {@link SQLDataType#TIME} type.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Get the current_timestamp() function returning a SQL standard
+     * {@link SQLDataType#TIMESTAMP} type.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Get the date difference in number of days.
+     * <p>
+     * This translates into any dialect
+     *
+     * @see Field#sub(Field)
+     */
+    /**
+     * Get the date difference in number of days.
+     * <p>
+     * This translates into any dialect
+     *
+     * @see Field#sub(Field)
+     */
+    /**
+     * Get the date difference in number of days.
+     * <p>
+     * This translates into any dialect
+     *
+     * @see Field#sub(Field)
+     */
+    /**
+     * Get the date difference in number of days.
+     * <p>
+     * This translates into any dialect
+     *
+     * @see Field#sub(Field)
+     */
+    /**
+     * Add an interval to a date.
+     * <p>
+     * This translates into any dialect
+     *
+     * @see Field#add(Number)
+     */
+    /**
+     * Add an interval to a date.
+     * <p>
+     * This translates into any dialect
+     *
+     * @see Field#add(Field)
+     */
+    /**
+     * Add an interval to a date, given a date part.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Add an interval to a date, given a date part.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Add an interval to a date, given a date part.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Add an interval to a date, given a date part.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Subtract an interval from a date.
+     * <p>
+     * This translates into any dialect
+     *
+     * @see Field#add(Number)
+     */
+    /**
+     * Subtract an interval from a date.
+     * <p>
+     * This translates into any dialect
+     *
+     * @see Field#add(Field)
+     */
+    /**
+     * Subtract an interval from a date, given a date part.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Subtract an interval from a date, given a date part.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Subtract an interval from a date, given a date part.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Subtract an interval from a date, given a date part.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Add an interval to a timestamp, given a date part.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Add an interval to a timestamp, given a date part.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Add an interval to a timestamp, given a date part.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Add an interval to a timestamp, given a date part.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Get the timestamp difference as a <code>INTERVAL DAY TO SECOND</code>
+     * type.
+     * <p>
+     * This translates into any dialect
+     *
+     * @see Field#sub(Field)
+     */
+    /**
+     * Get the timestamp difference as a <code>INTERVAL DAY TO SECOND</code>
+     * type.
+     * <p>
+     * This translates into any dialect
+     *
+     * @see Field#sub(Field)
+     */
+    /**
+     * Get the timestamp difference as a <code>INTERVAL DAY TO SECOND</code>
+     * type.
+     * <p>
+     * This translates into any dialect
+     *
+     * @see Field#sub(Field)
+     */
+    /**
+     * Get the timestamp difference as a <code>INTERVAL DAY TO SECOND</code>
+     * type.
+     * <p>
+     * This translates into any dialect
+     *
+     * @see Field#sub(Field)
+     */
+    /**
+     * Get the date difference in number of days.
+     * <p>
+     * This translates into any dialect
+     *
+     * @see Field#sub(Field)
+     */
+    /**
+     * Get the date difference in number of days.
+     * <p>
+     * This translates into any dialect
+     *
+     * @see Field#sub(Field)
+     */
+    /**
+     * Get the date difference in number of days.
+     * <p>
+     * This translates into any dialect
+     *
+     * @see Field#sub(Field)
+     */
+    /**
+     * Get the date difference in number of days.
+     * <p>
+     * This translates into any dialect
+     *
+     * @see Field#sub(Field)
+     */
+    /**
+     * Add an interval to a date.
+     * <p>
+     * This translates into any dialect
+     *
+     * @see Field#add(Number)
+     */
+    /**
+     * Add an interval to a date.
+     * <p>
+     * This translates into any dialect
+     *
+     * @see Field#add(Field)
+     */
+    /**
+     * Add an interval to a date, given a date part.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Add an interval to a date, given a date part.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Add an interval to a date, given a date part.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Add an interval to a date, given a date part.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Subtract an interval from a date.
+     * <p>
+     * This translates into any dialect
+     *
+     * @see Field#add(Number)
+     */
+    /**
+     * Subtract an interval from a date.
+     * <p>
+     * This translates into any dialect
+     *
+     * @see Field#add(Field)
+     */
+    /**
+     * Subtract an interval from a date, given a date part.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Subtract an interval from a date, given a date part.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Subtract an interval from a date, given a date part.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Subtract an interval from a date, given a date part.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Truncate a date to the beginning of the day.
+     */
+    /**
+     * Truncate a date to a given datepart.
+     */
+    /**
+     * Truncate a date to the beginning of the day.
+     */
+    /**
+     * Truncate a date to a given datepart.
+     */
+    /**
+     * Truncate a timestamp to the beginning of the day.
+     */
+    /**
+     * Truncate a timestamp to a given datepart.
+     */
+    /**
+     * Truncate a timestamp to the beginning of the day.
+     */
+    /**
+     * Truncate a timestamp to a given datepart.
+     */
+    // -------------------------------------------------------------------------
+    /**
+     * Get the extract(field, datePart) function.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Get the extract(field, datePart) function.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Get the extract(field, datePart) function.
+     * <p>
+     * This translates into any dialect
+     */
+    /**
+     * Convert a string value to a <code>DATE</code>.
+     */
+    /**
+     * Convert a temporal value to a <code>DATE</code>.
+     */
+    /**
+     * Convert a temporal value to a <code>DATE</code>.
+     */
+    /**
+     * Convert a string value to a <code>TIME</code>.
+     */
+    /**
+     * Convert a temporal value to a <code>TIME</code>.
+     */
+    /**
+     * Convert a temporal value to a <code>TIME</code>.
+     */
+    /**
+     * Convert a string value to a <code>TIMESTAMP</code>.
+     */
+    /**
+     * Convert a temporal value to a <code>TIMESTAMP</code>.
+     */
+    /**
+     * Convert a temporal value to a <code>TIMESTAMP</code>.
+     */
+    /**
+     * Convert a string value to a <code>DATE</code>.
+     */
+    /**
+     * Convert a temporal value to a <code>DATE</code>.
+     */
+    /**
+     * Convert a temporal value to a <code>DATE</code>.
+     */
+    /**
+     * Convert a string value to a <code>TIME</code>.
+     */
+    /**
+     * Convert a temporal value to a <code>TIME</code>.
+     */
+    /**
+     * Convert a temporal value to a <code>TIME</code>.
+     */
+    /**
+     * Convert a string value to a <code>TIMESTAMP</code>.
+     */
+    /**
+     * Convert a temporal value to a <code>TIMESTAMP</code>.
+     */
+    /**
+     * Convert a temporal value to a <code>TIMESTAMP</code>.
+     */
+    /**
+     * Convert a temporal value to a <code>TIME WITH TIME ZONE</code>.
+     * <p>
+     * Depending on whether the database preserves the time zone information
+     * (e.g. {@link SQLDialect#ORACLE}) or not (e.g.
+     * {@link SQLDialect#POSTGRES}), the resulting value might be converted to
+     * UTC. Regardless of this fact, the result should be the same
+     * {@link Instant} (in UTC) as the input.
+     */
+    /**
+     * Convert a temporal value to a <code>TIME WITH TIME ZONE</code>.
+     * <p>
+     * Depending on whether the database preserves the time zone information
+     * (e.g. {@link SQLDialect#ORACLE}) or not (e.g.
+     * {@link SQLDialect#POSTGRES}), the resulting value might be converted to
+     * UTC. Regardless of this fact, the result should be the same
+     * {@link Instant} (in UTC) as the input.
+     */
+    /**
+     * Convert a temporal value to a <code>TIMESTAMP WITH TIME ZONE</code>.
+     * <p>
+     * Depending on whether the database preserves the time zone information
+     * (e.g. {@link SQLDialect#ORACLE}) or not (e.g.
+     * {@link SQLDialect#POSTGRES}), the resulting value might be converted to
+     * UTC. Regardless of this fact, the result should be the same
+     * {@link Instant} (in UTC) as the input.
+     */
+    /**
+     * Convert a temporal value to a <code>TIMESTAMP WITH TIME ZONE</code>.
+     * <p>
+     * Depending on whether the database preserves the time zone information
+     * (e.g. {@link SQLDialect#ORACLE}) or not (e.g.
+     * {@link SQLDialect#POSTGRES}), the resulting value might be converted to
+     * UTC. Regardless of this fact, the result should be the same
+     * {@link Instant} (in UTC) as the input.
+     */
+    /**
+     * Parse a value to a <code>DATE</code>.
+     *
+     * @param value The formatted <code>DATE</code> value.
+     * @param format The vendor-specific formatting string.
+     */
+    /**
+     * Parse a value to a <code>DATE</code>.
+     *
+     * @param value The formatted <code>DATE</code> value.
+     * @param format The vendor-specific formatting string.
+     */
+    /**
+     * Parse a value to a <code>DATE</code>.
+     *
+     * @param value The formatted <code>DATE</code> value.
+     * @param format The vendor-specific formatting string.
+     */
+    /**
+     * Parse a value to a <code>DATE</code>.
+     *
+     * @param value The formatted <code>DATE</code> value.
+     * @param format The vendor-specific formatting string.
+     */
+    /**
+     * Parse a value to a <code>TIMESTAMP</code>.
+     *
+     * @param value The formatted <code>TIMESTAMP</code> value.
+     * @param format The vendor-specific formatting string.
+     */
+    /**
+     * Parse a value to a <code>TIMESTAMP</code>.
+     *
+     * @param value The formatted <code>TIMESTAMP</code> value.
+     * @param format The vendor-specific formatting string.
+     */
+    /**
+     * Parse a value to a <code>TIMESTAMP</code>.
+     *
+     * @param value The formatted <code>TIMESTAMP</code> value.
+     * @param format The vendor-specific formatting string.
+     */
+    /**
+     * Parse a value to a <code>TIMESTAMP</code>.
+     *
+     * @param value The formatted <code>TIMESTAMP</code> value.
+     * @param format The vendor-specific formatting string.
+     */
+    /**
+     * Parse a value to a <code>DATE</code>.
+     *
+     * @param value The formatted <code>DATE</code> value.
+     * @param format The vendor-specific formatting string.
+     */
+    /**
+     * Parse a value to a <code>DATE</code>.
+     *
+     * @param value The formatted <code>DATE</code> value.
+     * @param format The vendor-specific formatting string.
+     */
+    /**
+     * Parse a value to a <code>DATE</code>.
+     *
+     * @param value The formatted <code>DATE</code> value.
+     * @param format The vendor-specific formatting string.
+     */
+    /**
+     * Parse a value to a <code>DATE</code>.
+     *
+     * @param value The formatted <code>DATE</code> value.
+     * @param format The vendor-specific formatting string.
+     */
+    /**
+     * Parse a value to a <code>TIMESTAMP</code>.
+     *
+     * @param value The formatted <code>TIMESTAMP</code> value.
+     * @param format The vendor-specific formatting string.
+     */
+    /**
+     * Parse a value to a <code>TIMESTAMP</code>.
+     *
+     * @param value The formatted <code>TIMESTAMP</code> value.
+     * @param format The vendor-specific formatting string.
+     */
+    /**
+     * Parse a value to a <code>TIMESTAMP</code>.
+     *
+     * @param value The formatted <code>TIMESTAMP</code> value.
+     * @param format The vendor-specific formatting string.
+     */
+    /**
+     * Parse a value to a <code>TIMESTAMP</code>.
+     *
+     * @param value The formatted <code>TIMESTAMP</code> value.
+     * @param format The vendor-specific formatting string.
+     */
+    // ------------------------------------------------------------------------
+    // XXX Construction of GROUPING SET functions
+    // ------------------------------------------------------------------------
+    /**
+     * Create a GROUPING SETS((field1a, field1b), (field2a), .., (fieldna,
+     * fieldnb)) grouping field.
+     * <p>
+     * This has been observed to work with the following databases:
+     * <ul>
+     * <li>DB2</li>
+     * <li>Oracle</li>
+     * <li>PostgreSQL 9.5</li>
+     * <li>SQL Server</li>
+     * <li>Sybase SQL Anywhere</li>
+     * </ul>
+     * <p>
+     * Please check the SQL Server documentation for a very nice explanation of
+     * <code>CUBE</code>, <code>ROLLUP</code>, and <code>GROUPING SETS</code>
+     * clauses in grouping contexts: <a
+     * href="http://msdn.microsoft.com/en-US/library/bb522495.aspx"
+     * >http://msdn.microsoft.com/en-US/library/bb522495.aspx</a>
+     *
+     * @param fieldSets The fields that are part of the <code>GROUPING SETS</code>
+     *            function
+     * @return A field to be used in a <code>GROUP BY</code> clause
+     */
+    /**
+     * Create a GROUPING SETS((field1a, field1b), (field2a), .., (fieldna,
+     * fieldnb)) grouping field.
+     * <p>
+     * This has been observed to work with the following databases:
+     * <ul>
+     * <li>DB2</li>
+     * <li>Oracle</li>
+     * <li>PostgreSQL 9.5</li>
+     * <li>SQL Server</li>
+     * <li>Sybase SQL Anywhere</li>
+     * </ul>
+     * <p>
+     * Please check the SQL Server documentation for a very nice explanation of
+     * <code>CUBE</code>, <code>ROLLUP</code>, and <code>GROUPING SETS</code>
+     * clauses in grouping contexts: <a
+     * href="http://msdn.microsoft.com/en-US/library/bb522495.aspx"
+     * >http://msdn.microsoft.com/en-US/library/bb522495.aspx</a>
+     *
+     * @param fieldSets The fields that are part of the <code>GROUPING SETS</code>
+     *            function
+     * @return A field to be used in a <code>GROUP BY</code> clause
+     */
+    // ------------------------------------------------------------------------
+    // XXX Bitwise operations
+    // ------------------------------------------------------------------------
+    /**
+     * The bitwise and operator.
+     *
+     * @see #bitAnd(Field, Field)
+     */
+    /**
+     * The bitwise and operator.
+     *
+     * @see #bitAnd(Field, Field)
+     */
+    /**
+     * The bitwise and operator.
+     *
+     * @see #bitAnd(Field, Field)
+     */
+    /**
+     * The bitwise not and operator.
+     *
+     * @see #bitNand(Field, Field)
+     * @see #bitNot(Field)
+     */
+    /**
+     * The bitwise not and operator.
+     *
+     * @see #bitNand(Field, Field)
+     * @see #bitNot(Field)
+     */
+    /**
+     * The bitwise not and operator.
+     *
+     * @see #bitNand(Field, Field)
+     * @see #bitNot(Field)
+     */
+    /**
+     * The bitwise or operator.
+     *
+     * @see #bitOr(Field, Field)
+     */
+    /**
+     * The bitwise or operator.
+     *
+     * @see #bitOr(Field, Field)
+     */
+    /**
+     * The bitwise or operator.
+     *
+     * @see #bitOr(Field, Field)
+     */
+    /**
+     * The bitwise not or operator.
+     *
+     * @see #bitNor(Field, Field)
+     * @see #bitNot(Field)
+     */
+    /**
+     * The bitwise not or operator.
+     *
+     * @see #bitNor(Field, Field)
+     * @see #bitNot(Field)
+     */
+    /**
+     * The bitwise not or operator.
+     *
+     * @see #bitNor(Field, Field)
+     * @see #bitNot(Field)
+     */
+    /**
+     * The bitwise xor operator.
+     *
+     * @see #bitXor(Field, Field)
+     */
+    /**
+     * The bitwise xor operator.
+     *
+     * @see #bitXor(Field, Field)
+     */
+    /**
+     * The bitwise xor operator.
+     *
+     * @see #bitXor(Field, Field)
+     */
+    /**
+     * The bitwise not xor operator.
+     *
+     * @see #bitXNor(Field, Field)
+     * @see #bitNot(Field)
+     */
+    /**
+     * The bitwise not xor operator.
+     *
+     * @see #bitXNor(Field, Field)
+     * @see #bitNot(Field)
+     */
+    /**
+     * The bitwise not xor operator.
+     *
+     * @see #bitXNor(Field, Field)
+     * @see #bitNot(Field)
+     */
+    /**
+     * The bitwise left shift operator.
+     *
+     * @see #shl(Field, Field)
+     * @see #power(Field, Number)
+     */
+    /**
+     * The bitwise left shift operator.
+     *
+     * @see #shl(Field, Field)
+     * @see #power(Field, Number)
+     */
+    /**
+     * The bitwise left shift operator.
+     *
+     * @see #shl(Field, Field)
+     * @see #power(Field, Number)
+     */
+    /**
+     * The bitwise right shift operator.
+     *
+     * @see #shr(Field, Field)
+     * @see #power(Field, Number)
+     */
+    /**
+     * The bitwise right shift operator.
+     *
+     * @see #shr(Field, Field)
+     * @see #power(Field, Number)
+     */
+    /**
+     * The bitwise right shift operator.
+     *
+     * @see #shr(Field, Field)
+     * @see #power(Field, Number)
+     */
+    // ------------------------------------------------------------------------
+    // XXX Mathematical functions
+    // ------------------------------------------------------------------------
+    /**
+     * Truncate a number to a given number of decimals.
+     *
+     * @see #trunc(Field, Field)
+     */
+    /**
+     * Truncate a number to a given number of decimals.
+     *
+     * @see #trunc(Field, Field)
+     */
+    /**
+     * Truncate a number to a given number of decimals.
+     *
+     * @see #trunc(Field, Field)
+     */
+    /**
+     * Truncate a number to a given number of decimals.
+     *
+     * @see #trunc(Field, Field)
+     */
+    /**
+     * Get the power(field, exponent) function.
+     *
+     * @see #power(Field, Field)
+     */
+    /**
+     * Get the power(field, exponent) function.
+     *
+     * @see #power(Field, Field)
+     */
+    /**
+     * Get the power(field, exponent) function.
+     *
+     * @see #power(Field, Field)
+     */
+    /**
+     * Get the atan2(field, y) function.
+     *
+     * @see #atan2(Field, Field)
+     */
+    /**
+     * Get the atan2(field, y) function.
+     *
+     * @see #atan2(Field, Field)
+     */
+    /**
+     * Get the atan2(field, y) function.
+      *
+     * @see #atan2(Field, Field)
+     */
+    // -------------------------------------------------------------------------
+    // Pseudo-fields and functions for use in the context of a CONNECT BY clause
+    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
+    // Other pseudo-fields and functions
+    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
+    // XXX Aggregate functions
+    // -------------------------------------------------------------------------
+    /**
+     * Get the every value over a field: bool_and(field).
+     */
+    /**
+     * Get the every value over a condition: bool_and(condition).
+     */
+    /**
+     * Get the every value over a field: bool_and(field).
+     */
+    /**
+     * Get the every value over a condition: bool_and(condition).
+     */
+    /**
+     * Get the <code>array_agg()</code> aggregate function.
+     */
+    /**
+     * Get the <code>array_agg()</code> aggregate function.
+     */
+    /**
+     * Create an array literal.
+     * <p>
+     * This translates to the following databases and syntaxes:
+     * <table>
+     * <tr>
+     * <th><code>SQLDialect</code></th>
+     * <th>Java</th>
+     * <th>SQL</th>
+     * </tr>
+     * <tr>
+     * <td>{@link SQLDialect#H2}</td>
+     * <td>array(1, 2)</td>
+     * <td>(1, 2)</td>
+     * </tr>
+     * <tr>
+     * <td>{@link SQLDialect#HSQLDB}, {@link SQLDialect#POSTGRES}</td>
+     * <td>array(1, 2)</td>
+     * <td>array[1, 2]</td>
+     * </tr>
+     * </table>
+     */
+    /**
+     * Create an array literal.
+     * <p>
+     * This translates to the following databases and syntaxes:
+     * <table>
+     * <tr>
+     * <th><code>SQLDialect</code></th>
+     * <th>Java</th>
+     * <th>SQL</th>
+     * </tr>
+     * <tr>
+     * <td>{@link SQLDialect#H2}</td>
+     * <td>array(1, 2)</td>
+     * <td>(1, 2)</td>
+     * </tr>
+     * <tr>
+     * <td>{@link SQLDialect#HSQLDB}, {@link SQLDialect#POSTGRES}</td>
+     * <td>array(1, 2)</td>
+     * <td>array[1, 2]</td>
+     * </tr>
+     * </table>
+     */
+    /**
+     * Create an array literal.
+     * <p>
+     * This translates to the following databases and syntaxes:
+     * <table>
+     * <tr>
+     * <th><code>SQLDialect</code></th>
+     * <th>Java</th>
+     * <th>SQL</th>
+     * </tr>
+     * <tr>
+     * <td>{@link SQLDialect#H2}</td>
+     * <td>array(1, 2)</td>
+     * <td>(1, 2)</td>
+     * </tr>
+     * <tr>
+     * <td>{@link SQLDialect#HSQLDB}, {@link SQLDialect#POSTGRES}</td>
+     * <td>array(1, 2)</td>
+     * <td>array[1, 2]</td>
+     * </tr>
+     * </table>
+     */
+    // -------------------------------------------------------------------------
+    // XXX Ordered-set aggregate functions and hypothetical set functions
+    // -------------------------------------------------------------------------
+    /**
+     * The <code>rank(expr) within group (order by [order clause])</code>
+     * ordered-set aggregate function.
+     */
+    /**
+     * The <code>rank(expr) within group (order by [order clause])</code>
+     * ordered-set aggregate function.
+     */
+    /**
+     * The <code>dense_rank(expr) within group (order by [order clause])</code>
+     * ordered-set aggregate function.
+     */
+    /**
+     * The <code>dense_rank(expr) within group (order by [order clause])</code>
+     * ordered-set aggregate function.
+     */
+    /**
+     * The <code>percent_rank(expr) within group (order by [order clause])</code>
+     * ordered-set aggregate function.
+     */
+    /**
+     * The <code>percent_rank(expr) within group (order by [order clause])</code>
+     * ordered-set aggregate function.
+     */
+    /**
+     * The <code>cume_dist(expr) within group (order by [order clause])</code>
+     * ordered-set aggregate function.
+     */
+    /**
+     * The <code>cume_dist(expr) within group (order by [order clause])</code>
+     * ordered-set aggregate function.
+     */
+    /**
+     * The
+     * <code>percentile_cont([number]) within group (order by [column])</code>
+     * function.
+     * <p>
+     * While {@link SQLDialect#ORACLE} and {@link SQLDialect#POSTGRES} support
+     * this as an aggregate function, {@link SQLDialect#SQLSERVER} and
+     * {@link SQLDialect#REDSHIFT} support only its window function variant.
+     */
+    /**
+     * The
+     * <code>percentile_cont([number]) within group (order by [column])</code>
+     * function.
+     * <p>
+     * While {@link SQLDialect#ORACLE} and {@link SQLDialect#POSTGRES} support
+     * this as an aggregate function, {@link SQLDialect#SQLSERVER} and
+     * {@link SQLDialect#REDSHIFT} support only its window function variant.
+     */
+    /**
+     * The
+     * <code>percentile_disc([number]) within group (order by [column])</code>
+     * function.
+     * <p>
+     * While {@link SQLDialect#ORACLE} and {@link SQLDialect#POSTGRES} support
+     * this as an aggregate function, {@link SQLDialect#SQLSERVER} and
+     * {@link SQLDialect#REDSHIFT} support only its window function variant.
+     */
+    /**
+     * The
+     * <code>percentile_disc([number]) within group (order by [column])</code>
+     * function.
+     * <p>
+     * While {@link SQLDialect#ORACLE} and {@link SQLDialect#POSTGRES} support
+     * this as an aggregate function, {@link SQLDialect#SQLSERVER} and
+     * {@link SQLDialect#REDSHIFT} support only its window function variant.
+     */
+    // -------------------------------------------------------------------------
+    // XXX Window clauses
+    // -------------------------------------------------------------------------
+    /**
+     * Create a {@link WindowSpecification} with a <code>PARTITION BY</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with a <code>PARTITION BY</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with an <code>ORDER BY</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with an <code>ORDER BY</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with an <code>ORDER BY</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with a <code>ROWS</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with a <code>ROWS</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with a <code>ROWS</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with a <code>ROWS</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with a <code>ROWS</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with a <code>ROWS</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with a <code>ROWS</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with a <code>ROWS</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with a <code>ROWS</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with a <code>ROWS</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with a <code>RANGE</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with a <code>RANGE</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with a <code>RANGE</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with a <code>RANGE</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with a <code>RANGE</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with a <code>RANGE</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with a <code>RANGE</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with a <code>RANGE</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with a <code>RANGE</code> clause.
+     */
+    /**
+     * Create a {@link WindowSpecification} with a <code>RANGE</code> clause.
+     */
+    // -------------------------------------------------------------------------
+    // XXX Window functions
+    // -------------------------------------------------------------------------
+    /**
+     * The <code>ratio_to_report([expression]) over ([analytic clause])</code> function.
+     */
+    /**
+     * The <code>ratio_to_report([expression]) over ([analytic clause])</code> function.
+     */
+    /**
+     * The <code>nth_value(field) over ([analytic clause])</code> function.
+     */
+    /**
+     * The <code>nth_value(field) over ([analytic clause])</code> function.
+     */
+    /**
+     * The
+     * <code>lead(field, offset, defaultValue) over ([analytic clause])</code>
+     * function.
+     */
+    /**
+     * The
+     * <code>lead(field, offset, defaultValue) over ([analytic clause])</code>
+     * function.
+     */
+    /**
+     * The
+     * <code>lag(field, offset, defaultValue) over ([analytic clause])</code>
+     * function.
+     */
+    /**
+     * The
+     * <code>lag(field, offset, defaultValue) over ([analytic clause])</code>
+     * function.
+     */
+    // -------------------------------------------------------------------------
+    // XXX Bind values
+    // -------------------------------------------------------------------------
+    /**
+     * Create an unnamed parameter with a defined type and no initial value.
+     *
+     * @see #param(String, Object)
+     */
+    /**
+     * Create an unnamed parameter with a defined type and no initial value.
+     *
+     * @see #param(String, Object)
+     */
+    /**
+     * Create a named parameter with a defined type and no initial value.
+     *
+     * @see #param(String, Object)
+     */
+    /**
+     * Create a named parameter with a defined type and no initial value.
+     *
+     * @see #param(String, Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * A synonym for {@link #val(Object)} to be used in Scala and Groovy, where
+     * <code>val</code> is a reserved keyword.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value that is always inlined.
+     * <p>
+     * The resulting bind value is always inlined, regardless of the
+     * {@link Settings#getStatementType()} property of the rendering factory.
+     * Unlike with {@link #field(String)}, you can expect <code>value</code> to
+     * be properly escaped for SQL syntax correctness and SQL injection
+     * prevention. For example:
+     * <ul>
+     * <li><code>inline("abc'def")</code> renders <code>'abc''def'</code></li>
+     * <li><code>field("abc'def")</code> renders <code>abc'def</code></li>
+     * </ul>
+     *
+     * @see #inline(Object)
+     * @see #val(Object)
+     */
+    /**
+     * Create a bind value, that is always inlined.
+     * <p>
+     * This is a convenience method for {@link #inline(Object)}, returning
+     * <code>Field&lt;String&gt;</code>, rather than
+     * <code>Field&lt;Character&gt;</code>
+     *
+     * @see #inline(Object)
+     */
+    /**
+     * Create a bind value, that is always inlined.
+     * <p>
+     * This is a convenience method for {@link #inline(Object)}, returning
+     * <code>Field&lt;String&gt;</code>, rather than
+     * <code>Field&lt;Character&gt;</code>
+     *
+     * @see #inline(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Get a bind value.
+     *
+     * @see #val(Object)
+     */
+    /**
+     * Create a {@link RecordType} of an arbitrary degree.
+     */
+    /**
+     * Create a {@link RecordType} of an arbitrary degree.
+     */
+    // [jooq-tools] START [record-type]
+// [jooq-tools] END [record-type]
+    // [jooq-tools] START [row-value]
+    /**
+     * Create a row value expression of degree <code>1</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>2</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>3</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>4</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>5</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>6</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>7</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>8</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>9</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>10</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>11</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>12</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>13</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>14</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>15</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>16</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>17</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>18</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>19</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>20</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>21</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>22</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+// [jooq-tools] END [row-value]
+    /**
+     * Create a row value expression of degree <code>N > 22</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+// [jooq-tools] START [row-expression]
+    /**
+     * Create a row value expression of degree <code>1</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>2</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>3</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>4</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>5</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>6</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>7</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>8</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>9</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>10</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>11</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>12</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>13</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>14</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>15</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>16</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>17</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>18</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>19</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>20</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>21</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>22</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+// [jooq-tools] END [row-expression]
+    /**
+     * Create a row value expression of degree <code>N > 22</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    /**
+     * Create a row value expression of degree <code>N > 22</code>.
+     * <p>
+     * Note: Not all databases support row value expressions, but many row value
+     * expression operations can be emulated on all databases. See relevant row
+     * value expression method Javadocs for details.
+     */
+    // -------------------------------------------------------------------------
+    // XXX [#915] VALUES() table constructors
+    // -------------------------------------------------------------------------
+// [jooq-tools] START [values]
+// [jooq-tools] END [values]
+    // -------------------------------------------------------------------------
+    // XXX Literals
+    // -------------------------------------------------------------------------
+    /**
+     * Get the null field.
+     */
+    /**
+     * Get the null field.
+     */
+    /**
+     * Get the null field.
+     */
+    /**
+     * Get the null field.
+     */
+    /**
+     * Null-safety of a field.
+     */
+    /**
+     * Null-safety of a field.
+     */
+    /**
+     * Null-safety of a field.
+     */
+    // -------------------------------------------------------------------------
+    // XXX other functions
+    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
+    // XXX utility API
+    // -------------------------------------------------------------------------
+    /**
+     * This constructor is no longer available in jOOQ 3.0.
+     * <p>
+     * <a href="http://www.jooq.org/doc/3.0/manual/reference/migrating-to-3.0/"
+     * >See the jOOQ manual's section about migrating to jOOQ 3.0</a>
+     */
+    /**
+     * This constructor is no longer available in jOOQ 3.0.
+     * <p>
+     * <a href="http://www.jooq.org/doc/3.0/manual/reference/migrating-to-3.0/"
+     * >See the jOOQ manual's section about migrating to jOOQ 3.0</a>
+     */
+    /**
+     * This constructor is no longer available in jOOQ 3.0.
+     * <p>
+     * <a href="http://www.jooq.org/doc/3.0/manual/reference/migrating-to-3.0/"
+     * >See the jOOQ manual's section about migrating to jOOQ 3.0</a>
+     */
+    /**
+     * This constructor is no longer available in jOOQ 3.0.
+     * <p>
+     * <a href="http://www.jooq.org/doc/3.0/manual/reference/migrating-to-3.0/"
+     * >See the jOOQ manual's section about migrating to jOOQ 3.0</a>
+     */
+    /**
+     * This constructor is no longer available in jOOQ 3.0.
+     * <p>
+     * <a href="http://www.jooq.org/doc/3.0/manual/reference/migrating-to-3.0/"
+     * >See the jOOQ manual's section about migrating to jOOQ 3.0</a>
+     */
     /**
      * This constructor is no longer available in jOOQ 3.0.
      * <p>
