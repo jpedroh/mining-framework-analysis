@@ -1,4 +1,3 @@
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -125,14 +124,37 @@ public class VerbalExpression {
             return this;
         }
 
-        public Builder range(String... pArgs) {
+<<<<<<< /usr/src/app/output/verbalexpressions/javaverbalexpressions/663787fc4d17acf0d36e04fc4fd869cb94d8a204/src/main/java/VerbalExpression.java/left.java
+        public Builder range(final Object[] pArgs) {
+||||||| /usr/src/app/output/verbalexpressions/javaverbalexpressions/663787fc4d17acf0d36e04fc4fd869cb94d8a204/src/main/java/VerbalExpression.java/base.java
+        public VerbalExpression range(Object[] args) {
+=======
+        public VerbalExpression range(String... args) {
+>>>>>>> /usr/src/app/output/verbalexpressions/javaverbalexpressions/663787fc4d17acf0d36e04fc4fd869cb94d8a204/src/main/java/VerbalExpression.java/right.java
             String value = "[";
-            for (int _to = 1; _to < pArgs.length; _to += 2) {
-                String from = sanitize((String)pArgs[_to - 1]);
-                String to = sanitize((String)pArgs[_to]);
+<<<<<<< /usr/src/app/output/verbalexpressions/javaverbalexpressions/663787fc4d17acf0d36e04fc4fd869cb94d8a204/src/main/java/VerbalExpression.java/left.java
+            for (int _from = 0; _from < pArgs.length; _from += 2) {
+                int _to = _from + 1;
+                if (pArgs.length <= _to) {
+                    break;
+                }
+                int from = Integer.getInteger(sanitize((String) pArgs[_from]));
+                int to = Integer.getInteger(sanitize((String) pArgs[_to]));
+||||||| /usr/src/app/output/verbalexpressions/javaverbalexpressions/663787fc4d17acf0d36e04fc4fd869cb94d8a204/src/main/java/VerbalExpression.java/base.java
+            for(int _from = 0; _from < args.length; _from += 2) {
+                int _to = _from+1;
+                if (args.length <= _to) break;
+                int from = Integer.getInteger(sanitize((String)args[_from]));
+                int to = Integer.getInteger(sanitize((String)args[_to]));
+=======
+            for (int _to = 1; _to < args.length; _to += 2) {
+                String from = sanitize((String)args[_to - 1]);
+                String to = sanitize((String)args[_to]);
+>>>>>>> /usr/src/app/output/verbalexpressions/javaverbalexpressions/663787fc4d17acf0d36e04fc4fd869cb94d8a204/src/main/java/VerbalExpression.java/right.java
 
                 value += from + "-" + to;
             }
+
             value += "]";
 
             this.add(value);
