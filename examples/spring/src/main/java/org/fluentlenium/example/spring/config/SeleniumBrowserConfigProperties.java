@@ -26,15 +26,13 @@ public class SeleniumBrowserConfigProperties {
     private String edgeDriverPath;
     @Value("${operadriver.path}")
     private String operaDriverPath;
-
     public BrowserConfig getBrowserConfig() {
         return new BrowserConfig(browserType, useHub, hubLocation);
     }
-
     public String getPageUrl() {
         return pageUrl;
     }
-
+<<<<<<< /usr/src/app/output/fluentlenium/fluentlenium/66d1ddb3128c56fa065ebd928b1831cf2cb21da5/examples/spring/src/main/java/org/fluentlenium/example/spring/config/SeleniumBrowserConfigProperties.java/left.java
     public String getDriverExecutablePath() {
         switch (browserType) {
             case SAFARI:
@@ -51,4 +49,21 @@ public class SeleniumBrowserConfigProperties {
                 return chromeDriverPath;
         }
     }
+||||||| /usr/src/app/output/fluentlenium/fluentlenium/66d1ddb3128c56fa065ebd928b1831cf2cb21da5/examples/spring/src/main/java/org/fluentlenium/example/spring/config/SeleniumBrowserConfigProperties.java/base.java
+=======
+    public String getDriverExecutablePath() {
+        switch (browserType) {
+            case SAFARI:
+                return safariDriverPath;
+            case FIREFOX:
+                return firefoxDriverPath;
+            case IE:
+                return ieDriverPath;
+            case EDGE:
+                return edgeDriverPath;
+            default:
+                return chromeDriverPath;
+        }
+    }
+>>>>>>> /usr/src/app/output/fluentlenium/fluentlenium/66d1ddb3128c56fa065ebd928b1831cf2cb21da5/examples/spring/src/main/java/org/fluentlenium/example/spring/config/SeleniumBrowserConfigProperties.java/right.java
 }

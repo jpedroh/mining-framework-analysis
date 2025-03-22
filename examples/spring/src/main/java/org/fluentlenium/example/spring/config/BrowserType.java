@@ -29,6 +29,7 @@ public enum BrowserType {
         }
 
         @Override
+<<<<<<< /usr/src/app/output/fluentlenium/fluentlenium/66d1ddb3128c56fa065ebd928b1831cf2cb21da5/examples/spring/src/main/java/org/fluentlenium/example/spring/config/BrowserType.java/left.java
         protected MutableCapabilities getBrowserCapabilities() {
             return new ChromeOptions();
         }
@@ -116,6 +117,82 @@ public enum BrowserType {
         @Override
         public String getDriverSystemPropertyName() {
             return "webdriver.opera.driver";
+||||||| /usr/src/app/output/fluentlenium/fluentlenium/66d1ddb3128c56fa065ebd928b1831cf2cb21da5/examples/spring/src/main/java/org/fluentlenium/example/spring/config/BrowserType.java/base.java
+        protected DesiredCapabilities getBrowserCapabilities() {
+            return chrome();
+=======
+        protected MutableCapabilities getBrowserCapabilities() {
+            return new ChromeOptions();
+        }
+
+        @Override
+        public String getDriverSystemPropertyName() {
+            return "webdriver.chrome.driver";
+        }
+    },
+    SAFARI() {
+        @Override
+        public WebDriver getWebDriver() {
+            return new SafariDriver();
+        }
+
+        @Override
+        protected MutableCapabilities getBrowserCapabilities() {
+            return new SafariOptions();
+        }
+
+        @Override
+        public String getDriverSystemPropertyName() {
+            return "webdriver.safari.driver";
+        }
+    },
+    FIREFOX() {
+        @Override
+        public WebDriver getWebDriver() {
+            return new FirefoxDriver();
+        }
+
+        @Override
+        protected MutableCapabilities getBrowserCapabilities() {
+            return new FirefoxOptions();
+        }
+
+        @Override
+        public String getDriverSystemPropertyName() {
+            return "webdriver.gecko.driver";
+        }
+    },
+    IE() {
+        @Override
+        public WebDriver getWebDriver() {
+            return new InternetExplorerDriver();
+        }
+
+        @Override
+        protected MutableCapabilities getBrowserCapabilities() {
+            return new InternetExplorerOptions();
+        }
+
+        @Override
+        public String getDriverSystemPropertyName() {
+            return "webdriver.ie.driver";
+        }
+    },
+    EDGE() {
+        @Override
+        public WebDriver getWebDriver() {
+            return new EdgeDriver();
+        }
+
+        @Override
+        protected MutableCapabilities getBrowserCapabilities() {
+            return new EdgeOptions();
+        }
+
+        @Override
+        public String getDriverSystemPropertyName() {
+            return "webdriver.edge.driver";
+>>>>>>> /usr/src/app/output/fluentlenium/fluentlenium/66d1ddb3128c56fa065ebd928b1831cf2cb21da5/examples/spring/src/main/java/org/fluentlenium/example/spring/config/BrowserType.java/right.java
         }
     };
 
