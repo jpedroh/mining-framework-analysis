@@ -8,7 +8,9 @@ import com.salesmanager.core.business.configuration.CoreApplicationConfiguration
 import com.salesmanager.shop.filter.AdminFilter;
 import com.salesmanager.shop.filter.CorsFilter;
 import com.salesmanager.shop.filter.StoreFilter;
+import com.salesmanager.shop.utils.ImageFilePath;
 import com.salesmanager.shop.utils.LabelUtils;
+import com.salesmanager.shop.utils.LocalImageFilePathUtils;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -193,4 +195,20 @@ public class ShopApplicationConfiguration extends WebMvcConfigurerAdapter {
     return new LabelUtils();
   }
 
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/d6c9e148840f85d4426ea278fdb832236d757ec9/sm-shop/src/main/java/com/salesmanager/shop/application/config/ShopApplicationConfiguration.java/left.java
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/d6c9e148840f85d4426ea278fdb832236d757ec9/sm-shop/src/main/java/com/salesmanager/shop/application/config/ShopApplicationConfiguration.java/base.java
+  @Bean
+  public LocalImageFilePathUtils img() {
+    LocalImageFilePathUtils localImageFilePathUtils = new LocalImageFilePathUtils();
+    localImageFilePathUtils.setBasePath("/static");
+    return localImageFilePathUtils;
+  }
+=======
+  @Bean
+  public ImageFilePath img() {
+    LocalImageFilePathUtils localImageFilePathUtils = new LocalImageFilePathUtils();
+    localImageFilePathUtils.setBasePath("/static");
+    return localImageFilePathUtils;
+  }
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/d6c9e148840f85d4426ea278fdb832236d757ec9/sm-shop/src/main/java/com/salesmanager/shop/application/config/ShopApplicationConfiguration.java/right.java
 }
