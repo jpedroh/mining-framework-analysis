@@ -1,14 +1,17 @@
 package org.junit.internal.runners;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.InvalidTestClassError;
 import org.junit.runners.model.InitializationError;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.List;
+
+import static java.util.Collections.singletonList;
 
 import static java.util.Collections.singletonList;
 
