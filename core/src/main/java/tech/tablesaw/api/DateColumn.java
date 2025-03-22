@@ -51,7 +51,7 @@ import java.util.function.Supplier;
 public class DateColumn extends AbstractColumn<LocalDate> implements DateFilters, DateFillers<DateColumn>,
             DateMapFunctions, CategoricalColumn<LocalDate> {
 
-    public static final int MISSING_VALUE = (Integer) DateColumnType.missingValueIndicator();
+    public static final int MISSING_VALUE = (Integer) ColumnType.LOCAL_DATE.getMissingValueIndicator();
 
     private final IntComparator reverseIntComparator = DescendingIntComparator.instance();
 
@@ -317,11 +317,21 @@ public class DateColumn extends AbstractColumn<LocalDate> implements DateFilters
 
     @Override
     public DateColumn appendObj(Object obj) {
+<<<<<<< /usr/src/app/output/jtablesaw/tablesaw/107b41139ec9db652d16c15a42367f74ce58b82e/core/src/main/java/tech/tablesaw/api/DateColumn.java/left.java
         if (obj == null) {
             return appendMissing();
         }
         if (!(obj instanceof LocalDate)) {
             throw new IllegalArgumentException("Cannot append " + obj.getClass().getName() + " to DateColumn");
+||||||| /usr/src/app/output/jtablesaw/tablesaw/107b41139ec9db652d16c15a42367f74ce58b82e/core/src/main/java/tech/tablesaw/api/DateColumn.java/base.java
+        if (!(obj instanceof LocalDate)) {
+            throw new IllegalArgumentException();
+=======
+        if (obj == null) {
+            return appendMissing();
+        } else if (!(obj instanceof LocalDate)) {
+            throw new IllegalArgumentException();
+>>>>>>> /usr/src/app/output/jtablesaw/tablesaw/107b41139ec9db652d16c15a42367f74ce58b82e/core/src/main/java/tech/tablesaw/api/DateColumn.java/right.java
         }
         return append((LocalDate) obj);
     }

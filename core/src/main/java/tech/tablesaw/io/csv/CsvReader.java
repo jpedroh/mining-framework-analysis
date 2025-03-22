@@ -398,7 +398,7 @@ public class CsvReader {
             while ((nextLine = csvParser.parseNext()) != null) {
                 // initialize the arrays to hold the strings. we don't know how many we need until we read the first row
                 if (rowCount == 0) {
-                    for (int i = 0; i < nextLine.length; i++) {
+                    for (String aNextLine : nextLine) {
                         columnData.add(new ArrayList<>());
                     }
                 }
