@@ -1,13 +1,10 @@
 package org.telegram.telegrambots.api.objects;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
-
 import org.json.JSONObject;
 import org.telegram.telegrambots.api.interfaces.IBotApiObject;
-
 import java.io.IOException;
 
 /**
@@ -17,95 +14,89 @@ import java.io.IOException;
  * @date 20 of June of 2015
  */
 public class Contact implements IBotApiObject {
+  private static final String PHONENUMBER_FIELD = "phone_number";
 
-    private static final String PHONENUMBER_FIELD = "phone_number";
-    private static final String FIRSTNAME_FIELD = "first_name";
-    private static final String LASTNAME_FIELD = "last_name";
-    private static final String USERID_FIELD = "user_id";
-    @JsonProperty(PHONENUMBER_FIELD)
-    private String phoneNumber; ///< Contact's phone number
-    @JsonProperty(FIRSTNAME_FIELD)
-    private String firstName; ///< Contact's first name
-    @JsonProperty(LASTNAME_FIELD)
-    private String lastName; ///< Optional. Contact's last name
-    @JsonProperty(USERID_FIELD)
-    private Integer userID; ///< Optional. Contact's user identifier in Telegram
+  private static final String FIRSTNAME_FIELD = "first_name";
 
-    public Contact() {
-        super();
+  private static final String LASTNAME_FIELD = "last_name";
+
+  private static final String USERID_FIELD = "user_id";
+
+  @JsonProperty(value = PHONENUMBER_FIELD) private String phoneNumber;
+
+  @JsonProperty(value = FIRSTNAME_FIELD) private String firstName;
+
+  @JsonProperty(value = LASTNAME_FIELD) private String lastName;
+
+  @JsonProperty(value = USERID_FIELD) private Integer userID;
+
+  public Contact() {
+    super();
+  }
+
+  public Contact(JSONObject jsonObject) {
+    super();
+    this.phoneNumber = jsonObject.getString(PHONENUMBER_FIELD);
+    this.firstName = jsonObject.getString(FIRSTNAME_FIELD);
+    if (jsonObject.has(LASTNAME_FIELD)) {
+      this.lastName = jsonObject.getString(LASTNAME_FIELD);
     }
-
-    public Contact(JSONObject jsonObject) {
-        super();
-        this.phoneNumber = jsonObject.getString(PHONENUMBER_FIELD);
-        this.firstName = jsonObject.getString(FIRSTNAME_FIELD);
-        if (jsonObject.has(LASTNAME_FIELD)) {
-            this.lastName = jsonObject.getString(LASTNAME_FIELD);
-        }
-        if (jsonObject.has(USERID_FIELD)) {
-            this.userID = jsonObject.getInt(USERID_FIELD);
-        }
+    if (jsonObject.has(USERID_FIELD)) {
+      this.userID = jsonObject.getInt(USERID_FIELD);
     }
+  }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
+  public String getPhoneNumber() {
+    return phoneNumber;
+  }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
+  public void setPhoneNumber(String phoneNumber) {
+    this.phoneNumber = phoneNumber;
+  }
 
-    public String getFirstName() {
-        return firstName;
-    }
+  public String getFirstName() {
+    return firstName;
+  }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
 
-    public String getLastName() {
-        return lastName;
-    }
+  public String getLastName() {
+    return lastName;
+  }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
+  }
 
-    public Integer getUserID() {
-        return userID;
-    }
+  public Integer getUserID() {
+    return userID;
+  }
 
-    public void setUserID(Integer userID) {
-        this.userID = userID;
-    }
+  public void setUserID(Integer userID) {
+    this.userID = userID;
+  }
 
-    @Override
-    public void serialize(JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        gen.writeStartObject();
-        gen.writeStringField(PHONENUMBER_FIELD, phoneNumber);
-        gen.writeStringField(FIRSTNAME_FIELD, firstName);
-        if (lastName != null) {
-            gen.writeStringField(LASTNAME_FIELD, lastName);
-        }
-        if (userID != null) {
-            gen.writeNumberField(USERID_FIELD, userID);
-        }
-        gen.writeEndObject();
-        gen.flush();
+  @Override public void serialize(JsonGenerator gen, SerializerProvider serializers) throws IOException {
+    gen.writeStartObject();
+    gen.writeStringField(PHONENUMBER_FIELD, phoneNumber);
+    gen.writeStringField(FIRSTNAME_FIELD, firstName);
+    if (lastName != null) {
+      gen.writeStringField(LASTNAME_FIELD, lastName);
     }
+    if (userID != null) {
+      gen.writeNumberField(USERID_FIELD, userID);
+    }
+    gen.writeEndObject();
+    gen.flush();
+  }
 
-    @Override
-    public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        serialize(gen, serializers);
-    }
+  @Override public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
+    serialize(gen, serializers);
+  }
 
-    @Override
-    public String toString() {
-        return "Contact{" +
-                "phoneNumber='" + phoneNumber + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", userID=" + userID +
-                '}';
-    }
+  @Override public String toString() {
+    return "Contact{" + "phoneNumber=\'" + phoneNumber + '\'' + ", firstName=\'" + firstName + '\'' + ", lastName=\'" + lastName + '\'' + ", userID=" + userID + '}';
+  }
 }
