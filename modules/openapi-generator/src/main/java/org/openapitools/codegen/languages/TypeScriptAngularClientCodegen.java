@@ -462,7 +462,13 @@ public class TypeScriptAngularClientCodegen extends AbstractTypeScriptClientCode
         if (name.length() == 0) {
             return "default.service";
         }
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/3c436a83518c2050d9e0adb32db72173adeb810b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/TypeScriptAngularClientCodegen.java/left.java
         return this.convertUsingFileNamingConvention(name) + serviceFileSuffix;
+||||||| /usr/src/app/output/openapitools/openapi-generator/3c436a83518c2050d9e0adb32db72173adeb810b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/TypeScriptAngularClientCodegen.java/base.java
+        return camelize(removeModelSuffixIfNecessary(name), true) + serviceFileSuffix;
+=======
+        return org.openapitools.codegen.utils.StringUtils.camelize(removeModelSuffixIfNecessary(name), true) + serviceFileSuffix;
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/3c436a83518c2050d9e0adb32db72173adeb810b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/TypeScriptAngularClientCodegen.java/right.java
     }
 
     @Override
@@ -472,7 +478,15 @@ public class TypeScriptAngularClientCodegen extends AbstractTypeScriptClientCode
 
     @Override
     public String toModelFilename(String name) {
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/3c436a83518c2050d9e0adb32db72173adeb810b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/TypeScriptAngularClientCodegen.java/left.java
         return this.convertUsingFileNamingConvention(name) + modelFileSuffix;
+||||||| /usr/src/app/output/openapitools/openapi-generator/3c436a83518c2050d9e0adb32db72173adeb810b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/TypeScriptAngularClientCodegen.java/base.java
+        String modelName = toModelName(name);
+        return camelize(removeModelSuffixIfNecessary(modelName), true) + modelFileSuffix;
+=======
+        String modelName = toModelName(name);
+        return org.openapitools.codegen.utils.StringUtils.camelize(removeModelSuffixIfNecessary(modelName), true) + modelFileSuffix;
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/3c436a83518c2050d9e0adb32db72173adeb810b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/TypeScriptAngularClientCodegen.java/right.java
     }
 
     @Override
