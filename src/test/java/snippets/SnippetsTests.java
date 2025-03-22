@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.OptionalInt;
 import java.util.stream.IntStream;
+import java.util.LinkedHashMap;
+import org.assertj.core.api.Assertions;
 
 import org.junit.Test;
 
@@ -328,12 +330,24 @@ public class SnippetsTests {
         obj.put("b", 2);    
         obj.put("c", 3);    
       
+        Map<String, Integer> picked = Snippets.pick(obj, new String[]{"a", "c"});    
+        Map<String, Integer> expected = new LinkedHashMap<>(); 
+        expected.put("a", 1); 
+        expected.put("c", 3); 
+        Assertions.assertThat(picked).isEqualTo(expected); 
+
+<<<<<<< /usr/src/app/output/biezhi/30-seconds-of-java8/6b515ec5c78bdea3f3175bc443ad871d41a8eccf/src/test/java/snippets/SnippetsTests.java/left.java
         Map<String, Integer> expected = new HashMap<>();
         expected.put("a", 1);
         expected.put("c", 3);
 
         Map<String, Integer> picked = Snippets.pick(obj, new String[]{"a", "c"});
         assertThat(picked).containsAllEntriesOf(expected);
+||||||| /usr/src/app/output/biezhi/30-seconds-of-java8/6b515ec5c78bdea3f3175bc443ad871d41a8eccf/src/test/java/snippets/SnippetsTests.java/base.java
+        Map<String, Integer> picked = Snippets.pick(obj, new String[]{"a", "c"});
+        assertThat(picked).containsExactly(new SimpleEntry<>("a", 1), new SimpleEntry<>("c", 3));
+=======
+>>>>>>> /usr/src/app/output/biezhi/30-seconds-of-java8/6b515ec5c78bdea3f3175bc443ad871d41a8eccf/src/test/java/snippets/SnippetsTests.java/right.java
     }
 
     @Test
