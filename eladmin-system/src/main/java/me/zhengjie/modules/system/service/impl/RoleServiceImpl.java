@@ -126,7 +126,18 @@ public class RoleServiceImpl implements RoleService {
         List<User> users = userRepository.findByRoleId(role.getId());
         // 更新菜单
         role.setMenus(resources.getMenus());
+<<<<<<< /usr/src/app/output/elunez/eladmin/4f42a08867e26194aa12472b6784e117976683ed/eladmin-system/src/main/java/me/zhengjie/modules/system/service/impl/RoleServiceImpl.java/left.java
         cleanCache(resources, users);
+||||||| /usr/src/app/output/elunez/eladmin/4f42a08867e26194aa12472b6784e117976683ed/eladmin-system/src/main/java/me/zhengjie/modules/system/service/impl/RoleServiceImpl.java/base.java
+        // 清理缓存
+        redisUtils.delByKeys("menu::user:",userIds);
+        redisUtils.del("role::id:" + resources.getId());
+=======
+        // 清理缓存
+        redisUtils.delByKeys("menu::user:",userIds);
+        redisUtils.delByKeys("role::auth:",userIds);
+        redisUtils.del("role::id:" + resources.getId());
+>>>>>>> /usr/src/app/output/elunez/eladmin/4f42a08867e26194aa12472b6784e117976683ed/eladmin-system/src/main/java/me/zhengjie/modules/system/service/impl/RoleServiceImpl.java/right.java
         roleRepository.save(role);
     }
 
