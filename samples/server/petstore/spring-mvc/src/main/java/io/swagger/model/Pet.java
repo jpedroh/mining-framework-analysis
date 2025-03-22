@@ -1,5 +1,4 @@
 package io.swagger.model;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
@@ -8,79 +7,83 @@ import io.swagger.model.Category;
 import io.swagger.model.Tag;
 import java.util.ArrayList;
 import java.util.List;
-
 import io.swagger.annotations.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.Objects;
 
-
-@ApiModel(description = "")
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.SpringMVCServerCodegen", date = "2016-04-14T23:14:04.836+08:00")
-public class Pet  {
-  
+@ApiModel(description = "") @javax.annotation.Generated(value = { "class io.swagger.codegen.languages.SpringMVCServerCodegen" }, date = 
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/a0b429d69050b57653cad214daaa352685e8c449/samples/server/petstore/spring-mvc/src/main/java/io/swagger/model/Pet.java/left.java
+"2016-04-15T00:38:43.027+08:00"
+=======
+"2016-04-14T23:14:04.836+08:00"
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/a0b429d69050b57653cad214daaa352685e8c449/samples/server/petstore/spring-mvc/src/main/java/io/swagger/model/Pet.java/right.java
+) public class Pet {
   private Long id = null;
+
   private Category category = null;
+
   private String name = null;
+
   private List<String> photoUrls = new ArrayList<String>();
+
   private List<Tag> tags = new ArrayList<Tag>();
+
   public enum StatusEnum {
-     available,  pending,  sold, 
-  };
-  
+    available,
+    pending,
+    sold
+  }
+
+
+
   private StatusEnum status = null;
 
   /**
    **/
-  @ApiModelProperty(value = "")
-  @JsonProperty("id")
-  public Long getId() {
+  @ApiModelProperty(value = "") @JsonProperty(value = "id") public Long getId() {
     return id;
   }
+
   public void setId(Long id) {
     this.id = id;
   }
 
   /**
    **/
-  @ApiModelProperty(value = "")
-  @JsonProperty("category")
-  public Category getCategory() {
+  @ApiModelProperty(value = "") @JsonProperty(value = "category") public Category getCategory() {
     return category;
   }
+
   public void setCategory(Category category) {
     this.category = category;
   }
 
   /**
    **/
-  @ApiModelProperty(required = true, value = "")
-  @JsonProperty("name")
-  public String getName() {
+  @ApiModelProperty(required = true, value = "") @JsonProperty(value = "name") public String getName() {
     return name;
   }
+
   public void setName(String name) {
     this.name = name;
   }
 
   /**
    **/
-  @ApiModelProperty(required = true, value = "")
-  @JsonProperty("photoUrls")
-  public List<String> getPhotoUrls() {
+  @ApiModelProperty(required = true, value = "") @JsonProperty(value = "photoUrls") public List<String> getPhotoUrls() {
     return photoUrls;
   }
+
   public void setPhotoUrls(List<String> photoUrls) {
     this.photoUrls = photoUrls;
   }
 
   /**
    **/
-  @ApiModelProperty(value = "")
-  @JsonProperty("tags")
-  public List<Tag> getTags() {
+  @ApiModelProperty(value = "") @JsonProperty(value = "tags") public List<Tag> getTags() {
     return tags;
   }
+
   public void setTags(List<Tag> tags) {
     this.tags = tags;
   }
@@ -88,18 +91,15 @@ public class Pet  {
   /**
    * pet status in the store
    **/
-  @ApiModelProperty(value = "pet status in the store")
-  @JsonProperty("status")
-  public StatusEnum getStatus() {
+  @ApiModelProperty(value = "pet status in the store") @JsonProperty(value = "status") public StatusEnum getStatus() {
     return status;
   }
+
   public void setStatus(StatusEnum status) {
     this.status = status;
   }
 
-
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -107,24 +107,16 @@ public class Pet  {
       return false;
     }
     Pet pet = (Pet) o;
-    return Objects.equals(id, pet.id) &&
-        Objects.equals(category, pet.category) &&
-        Objects.equals(name, pet.name) &&
-        Objects.equals(photoUrls, pet.photoUrls) &&
-        Objects.equals(tags, pet.tags) &&
-        Objects.equals(status, pet.status);
+    return Objects.equals(id, pet.id) && Objects.equals(category, pet.category) && Objects.equals(name, pet.name) && Objects.equals(photoUrls, pet.photoUrls) && Objects.equals(tags, pet.tags) && Objects.equals(status, pet.status);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(id, category, name, photoUrls, tags, status);
   }
 
-  @Override
-  public String toString()  {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Pet {\n");
-    
     sb.append("  id: ").append(id).append("\n");
     sb.append("  category: ").append(category).append("\n");
     sb.append("  name: ").append(name).append("\n");

@@ -1,101 +1,100 @@
 package io.swagger.model;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
 import io.swagger.annotations.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.Objects;
 
-
-@ApiModel(description = "")
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.SpringMVCServerCodegen", date = "2016-04-14T23:14:04.836+08:00")
-public class User  {
-  
+@ApiModel(description = "") @javax.annotation.Generated(value = { "class io.swagger.codegen.languages.SpringMVCServerCodegen" }, date = 
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/a0b429d69050b57653cad214daaa352685e8c449/samples/server/petstore/spring-mvc/src/main/java/io/swagger/model/User.java/left.java
+"2016-04-15T00:38:43.027+08:00"
+=======
+"2016-04-14T23:14:04.836+08:00"
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/a0b429d69050b57653cad214daaa352685e8c449/samples/server/petstore/spring-mvc/src/main/java/io/swagger/model/User.java/right.java
+) public class User {
   private Long id = null;
+
   private String username = null;
+
   private String firstName = null;
+
   private String lastName = null;
+
   private String email = null;
+
   private String password = null;
+
   private String phone = null;
+
   private Integer userStatus = null;
 
   /**
    **/
-  @ApiModelProperty(value = "")
-  @JsonProperty("id")
-  public Long getId() {
+  @ApiModelProperty(value = "") @JsonProperty(value = "id") public Long getId() {
     return id;
   }
+
   public void setId(Long id) {
     this.id = id;
   }
 
   /**
    **/
-  @ApiModelProperty(value = "")
-  @JsonProperty("username")
-  public String getUsername() {
+  @ApiModelProperty(value = "") @JsonProperty(value = "username") public String getUsername() {
     return username;
   }
+
   public void setUsername(String username) {
     this.username = username;
   }
 
   /**
    **/
-  @ApiModelProperty(value = "")
-  @JsonProperty("firstName")
-  public String getFirstName() {
+  @ApiModelProperty(value = "") @JsonProperty(value = "firstName") public String getFirstName() {
     return firstName;
   }
+
   public void setFirstName(String firstName) {
     this.firstName = firstName;
   }
 
   /**
    **/
-  @ApiModelProperty(value = "")
-  @JsonProperty("lastName")
-  public String getLastName() {
+  @ApiModelProperty(value = "") @JsonProperty(value = "lastName") public String getLastName() {
     return lastName;
   }
+
   public void setLastName(String lastName) {
     this.lastName = lastName;
   }
 
   /**
    **/
-  @ApiModelProperty(value = "")
-  @JsonProperty("email")
-  public String getEmail() {
+  @ApiModelProperty(value = "") @JsonProperty(value = "email") public String getEmail() {
     return email;
   }
+
   public void setEmail(String email) {
     this.email = email;
   }
 
   /**
    **/
-  @ApiModelProperty(value = "")
-  @JsonProperty("password")
-  public String getPassword() {
+  @ApiModelProperty(value = "") @JsonProperty(value = "password") public String getPassword() {
     return password;
   }
+
   public void setPassword(String password) {
     this.password = password;
   }
 
   /**
    **/
-  @ApiModelProperty(value = "")
-  @JsonProperty("phone")
-  public String getPhone() {
+  @ApiModelProperty(value = "") @JsonProperty(value = "phone") public String getPhone() {
     return phone;
   }
+
   public void setPhone(String phone) {
     this.phone = phone;
   }
@@ -103,18 +102,15 @@ public class User  {
   /**
    * User Status
    **/
-  @ApiModelProperty(value = "User Status")
-  @JsonProperty("userStatus")
-  public Integer getUserStatus() {
+  @ApiModelProperty(value = "User Status") @JsonProperty(value = "userStatus") public Integer getUserStatus() {
     return userStatus;
   }
+
   public void setUserStatus(Integer userStatus) {
     this.userStatus = userStatus;
   }
 
-
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -122,26 +118,16 @@ public class User  {
       return false;
     }
     User user = (User) o;
-    return Objects.equals(id, user.id) &&
-        Objects.equals(username, user.username) &&
-        Objects.equals(firstName, user.firstName) &&
-        Objects.equals(lastName, user.lastName) &&
-        Objects.equals(email, user.email) &&
-        Objects.equals(password, user.password) &&
-        Objects.equals(phone, user.phone) &&
-        Objects.equals(userStatus, user.userStatus);
+    return Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(phone, user.phone) && Objects.equals(userStatus, user.userStatus);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(id, username, firstName, lastName, email, password, phone, userStatus);
   }
 
-  @Override
-  public String toString()  {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class User {\n");
-    
     sb.append("  id: ").append(id).append("\n");
     sb.append("  username: ").append(username).append("\n");
     sb.append("  firstName: ").append(firstName).append("\n");
