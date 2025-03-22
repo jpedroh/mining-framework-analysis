@@ -194,7 +194,13 @@ public class EmojiManagerTest {
 
     // THEN
     // We know the number of distinct tags int the...!
+<<<<<<< /usr/src/app/output/vdurmont/emoji-java/d8952758be36cca3d760dc922f17b9a135edaa64/src/test/java/com/vdurmont/emoji/EmojiManagerTest.java/left.java
+    assertEquals(595, tags.size());
+||||||| /usr/src/app/output/vdurmont/emoji-java/d8952758be36cca3d760dc922f17b9a135edaa64/src/test/java/com/vdurmont/emoji/EmojiManagerTest.java/base.java
+    assertEquals(594, tags.size());
+=======
     assertEquals(604, tags.size());
+>>>>>>> /usr/src/app/output/vdurmont/emoji-java/d8952758be36cca3d760dc922f17b9a135edaa64/src/test/java/com/vdurmont/emoji/EmojiManagerTest.java/right.java
   }
 
   @Test
