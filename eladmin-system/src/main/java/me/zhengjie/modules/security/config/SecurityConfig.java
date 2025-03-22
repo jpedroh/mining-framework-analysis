@@ -1,5 +1,4 @@
 package me.zhengjie.modules.security.config;
-
 import me.zhengjie.annotation.AnonymousAccess;
 import me.zhengjie.modules.security.security.JwtAuthenticationEntryPoint;
 import me.zhengjie.modules.security.security.JwtAuthorizationTokenFilter;
@@ -25,109 +24,60 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-@Configuration
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@Configuration @EnableWebSecurity @EnableGlobalMethodSecurity(prePostEnabled = true) public class SecurityConfig extends WebSecurityConfigurerAdapter {
+  private final JwtAuthenticationEntryPoint unauthorizedHandler;
 
-    private final JwtAuthenticationEntryPoint unauthorizedHandler;
+  private final JwtUserDetailsService jwtUserDetailsService;
 
-    private final JwtUserDetailsService jwtUserDetailsService;
+  private final ApplicationContext applicationContext;
 
-    private final ApplicationContext applicationContext;
+  private final JwtAuthorizationTokenFilter authenticationTokenFilter;
 
-    // 自定义基于JWT的安全过滤器
-    private final JwtAuthorizationTokenFilter authenticationTokenFilter;
+  @Value(value = "${jwt.header}") private String tokenHeader;
 
-    @Value("${jwt.header}")
-    private String tokenHeader;
+  public SecurityConfig(JwtAuthenticationEntryPoint unauthorizedHandler, JwtUserDetailsService jwtUserDetailsService, JwtAuthorizationTokenFilter authenticationTokenFilter, ApplicationContext applicationContext) {
+    this.unauthorizedHandler = unauthorizedHandler;
+    this.jwtUserDetailsService = jwtUserDetailsService;
+    this.authenticationTokenFilter = authenticationTokenFilter;
+    this.applicationContext = applicationContext;
+  }
 
-    public SecurityConfig(JwtAuthenticationEntryPoint unauthorizedHandler, JwtUserDetailsService jwtUserDetailsService, JwtAuthorizationTokenFilter authenticationTokenFilter, ApplicationContext applicationContext) {
-        this.unauthorizedHandler = unauthorizedHandler;
-        this.jwtUserDetailsService = jwtUserDetailsService;
-        this.authenticationTokenFilter = authenticationTokenFilter;
-        this.applicationContext = applicationContext;
-    }
+  @Autowired public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+    auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoderBean());
+  }
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .userDetailsService(jwtUserDetailsService)
-                .passwordEncoder(passwordEncoderBean());
-    }
+  @Bean GrantedAuthorityDefaults grantedAuthorityDefaults() {
+    return new GrantedAuthorityDefaults("");
+  }
 
-    @Bean
-    GrantedAuthorityDefaults grantedAuthorityDefaults() {
-        // Remove the ROLE_ prefix
-        return new GrantedAuthorityDefaults("");
-    }
+  @Bean public PasswordEncoder passwordEncoderBean() {
+    return new BCryptPasswordEncoder();
+  }
 
-    @Bean
-    public PasswordEncoder passwordEncoderBean() {
-        return new BCryptPasswordEncoder();
-    }
+  @Bean @Override public AuthenticationManager authenticationManagerBean() throws Exception {
+    return super.authenticationManagerBean();
+  }
 
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
-    @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
-        // 搜寻 匿名标记 url： PreAuthorize("hasAnyRole('anonymous')") 和 PreAuthorize("@el.check('anonymous')") 和 AnonymousAccess
-        Map<RequestMappingInfo, HandlerMethod> handlerMethodMap = applicationContext.getBean(RequestMappingHandlerMapping.class).getHandlerMethods();
-        Set<String> anonymousUrls = new HashSet<>();
-        for (Map.Entry<RequestMappingInfo, HandlerMethod> infoEntry : handlerMethodMap.entrySet()) {
-            HandlerMethod handlerMethod = infoEntry.getValue();
-            AnonymousAccess anonymousAccess = handlerMethod.getMethodAnnotation(AnonymousAccess.class);
-            PreAuthorize preAuthorize = handlerMethod.getMethodAnnotation(PreAuthorize.class);
-            if (null != preAuthorize && preAuthorize.value().toLowerCase().contains("anonymous")) {
-                anonymousUrls.addAll(infoEntry.getKey().getPatternsCondition().getPatterns());
-            } else if (null != anonymousAccess && null == preAuthorize) {
-                anonymousUrls.addAll(infoEntry.getKey().getPatternsCondition().getPatterns());
-            }
+  @Override protected void configure(HttpSecurity httpSecurity) throws Exception {
+    Map<RequestMappingInfo, HandlerMethod> handlerMethodMap = applicationContext.getBean(RequestMappingHandlerMapping.class).getHandlerMethods();
+    Set<String> anonymousUrls = new HashSet<>();
+    for (Map.Entry<RequestMappingInfo, HandlerMethod> infoEntry : handlerMethodMap.entrySet()) {
+      HandlerMethod handlerMethod = infoEntry.getValue();
+      AnonymousAccess anonymousAccess = handlerMethod.getMethodAnnotation(AnonymousAccess.class);
+      PreAuthorize preAuthorize = handlerMethod.getMethodAnnotation(PreAuthorize.class);
+      if (null != preAuthorize && preAuthorize.value().toLowerCase().contains("anonymous")) {
+        anonymousUrls.addAll(infoEntry.getKey().getPatternsCondition().getPatterns());
+      } else {
+        if (null != anonymousAccess && null == preAuthorize) {
+          anonymousUrls.addAll(infoEntry.getKey().getPatternsCondition().getPatterns());
         }
-        httpSecurity
-                // 禁用 CSRF
-                .csrf().disable()
-                // 授权异常
-                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-                // 不创建会话
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                // 过滤请求
-                .authorizeRequests()
-                .antMatchers(
-                        HttpMethod.GET,
-                        "/*.html",
-                        "/**/*.html",
-                        "/**/*.css",
-                        "/**/*.js"
-                ).anonymous()
-                // swagger start
-                .antMatchers("/swagger-ui.html").permitAll()
-                .antMatchers("/swagger-resources/**").permitAll()
-                .antMatchers("/webjars/**").permitAll()
-                .antMatchers("/*/api-docs").permitAll()
-                // swagger end
-                // 文件
-                .antMatchers("/avatar/**").permitAll()
-                .antMatchers("/file/**").permitAll()
-                // 放行OPTIONS请求
-                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .antMatchers("/druid/**").permitAll()
-                // 自定义匿名访问所有url放行 ： 允许 匿名和带权限以及登录用户访问
-                .antMatchers(anonymousUrls.toArray(new String[0])).permitAll()
-                // 所有请求都需要认证
-                .anyRequest().authenticated()
-                // 防止iframe 造成跨域
-                .and().headers().frameOptions().disable();
-        httpSecurity
-                .addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+      }
     }
+    httpSecurity.csrf().disable().exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests().antMatchers(HttpMethod.GET, "/*.html", "/**/*.html", "/**/*.css", "/**/*.js").anonymous().antMatchers("/swagger-ui.html").permitAll().antMatchers("/swagger-resources/**").permitAll().antMatchers("/webjars/**").permitAll().antMatchers("/*/api-docs").permitAll().antMatchers("/avatar/**").permitAll().antMatchers("/file/**").permitAll().antMatchers(HttpMethod.OPTIONS, "/**").permitAll().antMatchers("/druid/**").permitAll().antMatchers(anonymousUrls.toArray(new String[0])).permitAll().anyRequest().authenticated().and().headers().frameOptions().disable();
+    httpSecurity.addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+  }
 }
