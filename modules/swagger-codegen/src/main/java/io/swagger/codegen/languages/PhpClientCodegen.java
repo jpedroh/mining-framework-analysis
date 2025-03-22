@@ -23,25 +23,39 @@ public class PhpClientCodegen extends DefaultCodegen implements CodegenConfig {
     protected String invokerPackage = "Swagger\\Client";
     protected String groupId = "swagger";
     protected String artifactId = "swagger-client";
-    protected String artifactVersion = null;
     protected String rootNamespace;
     protected String invokerNamespace;
     protected String modelNamespace;
     protected String apiNamespace;
-
     public PhpClientCodegen() {
         super();
 
+<<<<<<< /usr/src/app/output/swagger-api/swagger-codegen/b8b003bc838197c1b5cfe92820fa2822451f3baa/modules/swagger-codegen/src/main/java/io/swagger/codegen/languages/PhpClientCodegen.java/left.java
         rootNamespace = "Swagger";
         invokerPackage = "Client";
         modelPackage = "Models";
         apiPackage = "Api";
+||||||| /usr/src/app/output/swagger-api/swagger-codegen/b8b003bc838197c1b5cfe92820fa2822451f3baa/modules/swagger-codegen/src/main/java/io/swagger/codegen/languages/PhpClientCodegen.java/base.java
+        invokerPackage = camelize("SwaggerClient");
+
+        String packagePath = invokerPackage + "-php";
+
+        modelPackage = packagePath + "/lib/models";
+        apiPackage = packagePath + "/lib";
+=======
+>>>>>>> /usr/src/app/output/swagger-api/swagger-codegen/b8b003bc838197c1b5cfe92820fa2822451f3baa/modules/swagger-codegen/src/main/java/io/swagger/codegen/languages/PhpClientCodegen.java/right.java
         outputFolder = "generated-code/php";
         modelTemplateFiles.put("model.mustache", ".php");
         apiTemplateFiles.put("api.mustache", ".php");
         templateDir = "php";
+<<<<<<< /usr/src/app/output/swagger-api/swagger-codegen/b8b003bc838197c1b5cfe92820fa2822451f3baa/modules/swagger-codegen/src/main/java/io/swagger/codegen/languages/PhpClientCodegen.java/left.java
+    
+        setNamespacesFromPackages();
+||||||| /usr/src/app/output/swagger-api/swagger-codegen/b8b003bc838197c1b5cfe92820fa2822451f3baa/modules/swagger-codegen/src/main/java/io/swagger/codegen/languages/PhpClientCodegen.java/base.java
+=======
         apiPackage = invokerPackage + "\\Api";
         modelPackage = invokerPackage + "\\Model";
+>>>>>>> /usr/src/app/output/swagger-api/swagger-codegen/b8b003bc838197c1b5cfe92820fa2822451f3baa/modules/swagger-codegen/src/main/java/io/swagger/codegen/languages/PhpClientCodegen.java/right.java
 
         reservedWords = new HashSet<String>(
                 Arrays.asList(
@@ -94,15 +108,28 @@ public class PhpClientCodegen extends DefaultCodegen implements CodegenConfig {
         typeMapping.put("list", "array");
         typeMapping.put("object", "object");
         typeMapping.put("DateTime", "\\DateTime");
-        
+
+<<<<<<< /usr/src/app/output/swagger-api/swagger-codegen/b8b003bc838197c1b5cfe92820fa2822451f3baa/modules/swagger-codegen/src/main/java/io/swagger/codegen/languages/PhpClientCodegen.java/left.java
         cliOptions.add(new CliOption("rootNamespace", "root namespace from which other namespaces derive"));
         cliOptions.add(new CliOption("invokerPackage", "namespace for core, non-api-specific classes"));
+||||||| /usr/src/app/output/swagger-api/swagger-codegen/b8b003bc838197c1b5cfe92820fa2822451f3baa/modules/swagger-codegen/src/main/java/io/swagger/codegen/languages/PhpClientCodegen.java/base.java
+        supportingFiles.add(new SupportingFile("composer.mustache", packagePath.replace('/', File.separatorChar), "composer.json"));
+        supportingFiles.add(new SupportingFile("configuration.mustache", (packagePath + "/lib").replace('/', File.separatorChar), "Configuration.php"));
+        supportingFiles.add(new SupportingFile("ApiClient.mustache", (packagePath + "/lib").replace('/', File.separatorChar), "ApiClient.php"));
+        supportingFiles.add(new SupportingFile("ApiException.mustache", (packagePath + "/lib").replace('/', File.separatorChar), "ApiException.php"));
+        supportingFiles.add(new SupportingFile("require.mustache", packagePath.replace('/', File.separatorChar), invokerPackage + ".php"));
+=======
+        supportingFiles.add(new SupportingFile("composer.mustache", getPackagePath(), "composer.json"));
+        supportingFiles.add(new SupportingFile("configuration.mustache", toPackagePath(invokerPackage, "lib"), "Configuration.php"));
+        supportingFiles.add(new SupportingFile("ApiClient.mustache", toPackagePath(invokerPackage, "lib"), "ApiClient.php"));
+        supportingFiles.add(new SupportingFile("ApiException.mustache", toPackagePath(invokerPackage, "lib"), "ApiException.php"));
+        supportingFiles.add(new SupportingFile("autoload.mustache", getPackagePath(), "autoload.php"));
+>>>>>>> /usr/src/app/output/swagger-api/swagger-codegen/b8b003bc838197c1b5cfe92820fa2822451f3baa/modules/swagger-codegen/src/main/java/io/swagger/codegen/languages/PhpClientCodegen.java/right.java
     }
-
+    protected String artifactVersion = null;
     public String getPackagePath() {
         return "SwaggerClient-php";
     }
-
     public String toPackagePath(String packageName, String basePath) {
         packageName = packageName.replace(invokerPackage, "");
         if (basePath != null && basePath.length() > 0) {
@@ -142,22 +169,15 @@ public class PhpClientCodegen extends DefaultCodegen implements CodegenConfig {
             this.setRootNamespace((String) additionalProperties.get("rootNamespace"));
         }
 
+        setNamespacesFromPackages();
         prefixPackages();
 
-        // theirs
-        supportingFiles.add(new SupportingFile("composer.mustache", getPackagePath(), "composer.json"));
-        supportingFiles.add(new SupportingFile("configuration.mustache", toPackagePath(invokerPackage, "lib"), "Configuration.php"));
-        supportingFiles.add(new SupportingFile("ApiClient.mustache", toPackagePath(invokerPackage, "lib"), "ApiClient.php"));
-        supportingFiles.add(new SupportingFile("ApiException.mustache", toPackagePath(invokerPackage, "lib"), "ApiException.php"));
-        supportingFiles.add(new SupportingFile("autoload.mustache", getPackagePath(), "autoload.php"));
-        
-        // mine
-        supportingFiles.add(new SupportingFile("ApiClientConfiguration.mustache", toPackagePath(invokerPackage, "lib"), "ApiClientConfiguration.php"));
-        supportingFiles.add(new SupportingFile("ApiClient.mustache", toPackagePath(invokerPackage, "lib"), "ApiClient.php"));
-        supportingFiles.add(new SupportingFile("ApiException.mustache", toPackagePath(invokerPackage, "lib"), "ApiException.php"));
-        supportingFiles.add(new SupportingFile("ObjectSerializer.mustache", toPackagePath(invokerPackage, "lib"), "ObjectSerializer.php"));
-        supportingFiles.add(new SupportingFile("composer.mustache", getPackagePath(), "composer.json"));
-        supportingFiles.add(new SupportingFile("autoload.mustache", getPackagePath(), "autoload.php"));
+        supportingFiles.add(new SupportingFile("ApiClientConfiguration.mustache", invokerPackage.replace('/', File.separatorChar), "ApiClientConfiguration.php"));
+        supportingFiles.add(new SupportingFile("ApiClient.mustache", invokerPackage.replace('/', File.separatorChar), "ApiClient.php"));
+        supportingFiles.add(new SupportingFile("ApiException.mustache", invokerPackage.replace('/', File.separatorChar), "ApiException.php"));
+        supportingFiles.add(new SupportingFile("ObjectSerializer.mustache", invokerPackage.replace('/', File.separatorChar), "ObjectSerializer.php"));
+        supportingFiles.add(new SupportingFile("composer.mustache", "", "composer.json"));
+        supportingFiles.add(new SupportingFile("autoload.mustache", "", "autoload.php"));
     }
 
     protected String getSrcDir(String packageName) {
@@ -194,11 +214,19 @@ public class PhpClientCodegen extends DefaultCodegen implements CodegenConfig {
             MapProperty mp = (MapProperty) p;
             Property inner = mp.getAdditionalProperties();
             return getSwaggerType(p) + "[string," + getTypeDeclaration(inner) + "]";
+<<<<<<< /usr/src/app/output/swagger-api/swagger-codegen/b8b003bc838197c1b5cfe92820fa2822451f3baa/modules/swagger-codegen/src/main/java/io/swagger/codegen/languages/PhpClientCodegen.java/left.java
+        } else if (p instanceof RefProperty) {
+            return "\\\\" + modelNamespace.replace("\\", "\\\\") + "\\\\" + getSwaggerType(p);
+        }
+||||||| /usr/src/app/output/swagger-api/swagger-codegen/b8b003bc838197c1b5cfe92820fa2822451f3baa/modules/swagger-codegen/src/main/java/io/swagger/codegen/languages/PhpClientCodegen.java/base.java
+        } 
+=======
         } else if (p instanceof RefProperty) {
             String type = super.getTypeDeclaration(p);
             return (!languageSpecificPrimitives.contains(type))
                     ? "\\" + modelPackage + "\\" + type : type;
         }
+>>>>>>> /usr/src/app/output/swagger-api/swagger-codegen/b8b003bc838197c1b5cfe92820fa2822451f3baa/modules/swagger-codegen/src/main/java/io/swagger/codegen/languages/PhpClientCodegen.java/right.java
         return super.getTypeDeclaration(p);
     }
 
