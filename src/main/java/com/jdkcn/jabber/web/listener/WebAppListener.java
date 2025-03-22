@@ -104,28 +104,28 @@ public class WebAppListener extends GuiceServletContextListener {
 
             Roster roster = connection.getRoster();
             roster.setSubscriptionMode(SubscriptionMode.reject_all);
-            roster.addRosterListener(new RosterListener() {
-                @Override
-                public void presenceChanged(Presence presence) {
-                    logger.info("Presence changed: " + presence.getFrom() + " " + presence);
-                }
+        	roster.addRosterListener(new RosterListener() {
+        		@Override
+        		public void presenceChanged(Presence presence) {
+//							 logger.info("Presence changed: " + presence.getFrom() + " " + presence);
+        		}
 
-                @Override
-                public void entriesUpdated(Collection<String> addresses) {
-                    logger.info("entries want updated:" + addresses);
-                }
+        		@Override
+        		public void entriesUpdated(Collection<String> addresses) {
+//							logger.info("entries want updated:" + addresses);
+        		}
 
-                @Override
-                public void entriesDeleted(Collection<String> addresses) {
-                    logger.info("entries want deleted:" + addresses);
-                }
+        		@Override
+        		public void entriesDeleted(Collection<String> addresses) {
+        		    logger.info("entries want deleted:" + addresses);
+        		}
 
-                @Override
-                public void entriesAdded(Collection<String> addresses) {
-                    logger.info("entries want added:" + addresses);
-                }
-            });
-            final Collection<RosterEntry> entries = roster.getEntries();
+        		@Override
+        		public void entriesAdded(Collection<String> addresses) {
+//							logger.info("entries want added:" + addresses);
+        		}
+        	});
+        	final Collection<RosterEntry> entries = roster.getEntries();
             logger.info(" robot {} online now.", username);
 
             robot.setStartTime(new Date());
@@ -134,13 +134,16 @@ public class WebAppListener extends GuiceServletContextListener {
 
             ChatManager chatManager = connection.getChatManager();
             final MessageListener messageListener = new RobotMessageListener(robot, sendOfflineMessage);
-
-            chatManager.addChatListener(new ChatManagerListener() {
-                @Override
-                public void chatCreated(Chat chat, boolean createdLocally) {
-                    chat.addMessageListener(messageListener);
-                }
-            });
+        	
+        	chatManager.addChatListener(new ChatManagerListener() {
+        		@Override
+        		public void chatCreated(Chat chat, boolean createdLocally) {
+        			if (!createdLocally) {
+        				logger.info(chat.toString() + " 's messageListener:[" + chat.getListeners().size() + "]" + chat.getListeners());
+        				chat.addMessageListener(messageListener);
+        			}
+        		}
+        	});
         } catch (Exception e) {
             logger.error(String.format(" robot[%s] connect error.", username), e);
             e.printStackTrace();
