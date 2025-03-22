@@ -19,19 +19,25 @@
 
 package com.esotericsoftware.kryo.serializers;
 
+import static org.junit.Assert.*;
+
+import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoTestCase;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.serializers.GenericsTest.A.DontPassToSuper;
 import com.esotericsoftware.kryo.serializers.GenericsTest.ClassWithMap.MapKey;
+import com.esotericsoftware.kryo.util.NoGenericsHandler;
 
 import java.io.Serializable;
+import java.util.function.Supplier;
 import java.lang.invoke.SerializedLambda;
 import java.util.*;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+
 
 public class GenericsTest extends KryoTestCase {
 	{
@@ -125,8 +131,50 @@ public class GenericsTest extends KryoTestCase {
 		kryo.register(DontPassToSuper.class);
 		kryo.copy(new DontPassToSuper());
 	}
+	
+	
+
+	@Test
+	public void testComplicatedGenerics() {
+
+		final Kryo kryo = new Kryo();
+		kryo.setRegistrationRequired(false);
+
+		//Right now, this test case only works with the NoGenericsHandler
+		kryo.setGenerics(NoGenericsHandler.INSTANCE);
+		final Output output = new Output(1024);
+		kryo.writeClassAndObject(output, new StringSupplierContainer());
+		Object result = kryo.readClassAndObject(new Input(output.getBuffer()));
+		assertTrue(result instanceof StringSupplierContainer);
+		assertTrue(((StringSupplierContainer) result).input instanceof EmptyStringSupplier);
+	}
+
+	static class EmptyStringSupplier implements Supplier<String>, Serializable {
+
+		public String get() {
+			return "";
+		}
+		
+	}
+
+	static class StringSupplierContainer extends SupplierContainer<String> {
+
+		StringSupplierContainer() {
+			super(new EmptyStringSupplier());
+		}
+	}
+
+	static class SupplierContainer<T> {
+
+		public final Supplier<T> input;
+
+		SupplierContainer(Supplier<T> input) {
+			this.input = input;
+		}
+	}
 
 	// Test for https://github.com/EsotericSoftware/kryo/issues/654
+
 	@Test
 	public void testFieldWithGenericInterface () {
 		ClassWithGenericInterfaceField o = new ClassWithGenericInterfaceField();
@@ -144,6 +192,7 @@ public class GenericsTest extends KryoTestCase {
 	}
 
 	// Test for https://github.com/EsotericSoftware/kryo/issues/655
+
 	@Test
 	public void testFieldWithGenericArrayType() {
 		final ClassArrayHolder o = new ClassArrayHolder(new Class[]{});
@@ -154,6 +203,7 @@ public class GenericsTest extends KryoTestCase {
 	}
 
 	// Test for https://github.com/EsotericSoftware/kryo/issues/655
+
 	@Test
 	public void testClassWithMultipleGenericTypes() {
 		final HolderWithAdditionalGenericType<String, Integer> o = new HolderWithAdditionalGenericType<>(1);
