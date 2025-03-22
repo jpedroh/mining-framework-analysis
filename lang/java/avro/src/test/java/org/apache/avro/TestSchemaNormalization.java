@@ -1,26 +1,7 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.apache.avro;
-
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,7 +12,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.LinkedHashSet;
 import java.util.Arrays;
-
 import org.apache.avro.util.CaseFinder;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -39,20 +19,14 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(Enclosed.class)
-public class TestSchemaNormalization {
+@RunWith(value = Enclosed.class) public class TestSchemaNormalization {
+  private static String PARSER_DATA_FILE = (System.getProperty("share.dir", "../../../share") + "/test/data/schema-tests.txt");
 
-  private static String PARSER_DATA_FILE = (System.getProperty("share.dir", "../../../share")
-      + "/test/data/schema-tests.txt");
+  private static String STANDARD_CANONICAL_DATA_FILE = (System.getProperty("share.dir", "../../../share") + "/test/data/standard-schema-tests.txt");
 
-  private static String STANDARD_CANONICAL_DATA_FILE = (System.getProperty("share.dir", "../../../share")
-      + "/test/data/standard-schema-tests.txt");
+  private static String CUSTOM_CANONICAL_DATA_FILE = (System.getProperty("share.dir", "../../../share") + "/test/data/custom-schema-tests.txt");
 
-  private static String CUSTOM_CANONICAL_DATA_FILE = (System.getProperty("share.dir", "../../../share")
-      + "/test/data/custom-schema-tests.txt");
-
-  @RunWith(Parameterized.class)
-  public static class TestParserCanonicalSchema {
+  @RunWith(value = Parameterized.class) public static class TestParserCanonicalSchema {
     String input, expectedOutput;
 
     public TestParserCanonicalSchema(String i, String o) {
@@ -60,19 +34,16 @@ public class TestSchemaNormalization {
       expectedOutput = o;
     }
 
-    @Parameters
-    public static List<Object[]> cases() throws IOException {
+    @Parameters public static List<Object[]> cases() throws IOException {
       return CaseFinder.find(data(PARSER_DATA_FILE), "canonical", new ArrayList<>());
     }
 
-    @Test
-    public void testCanonicalization() throws Exception {
+    @Test public void testCanonicalization() throws Exception {
       assertEquals(SchemaNormalization.toParsingForm(new Schema.Parser().parse(input)), expectedOutput);
     }
   }
 
-  @RunWith(Parameterized.class)
-  public static class TestStandardCanonicalSchema {
+  @RunWith(value = Parameterized.class) public static class TestStandardCanonicalSchema {
     String input, expectedOutput;
 
     public TestStandardCanonicalSchema(String i, String o) {
@@ -80,20 +51,18 @@ public class TestSchemaNormalization {
       expectedOutput = o;
     }
 
-    @Parameters
-    public static List<Object[]> cases() throws IOException {
+    @Parameters public static List<Object[]> cases() throws IOException {
       return CaseFinder.find(data(STANDARD_CANONICAL_DATA_FILE), "canonical", new ArrayList<>());
     }
 
-    @Test
-    public void testCanonicalization() throws Exception {
+    @Test public void testCanonicalization() throws Exception {
       assertEquals(SchemaNormalization.toCanonicalForm(new Schema.Parser().parse(input)), expectedOutput);
     }
   }
 
-  @RunWith(Parameterized.class)
-  public static class TestCustomCanonicalSchema {
+  @RunWith(value = Parameterized.class) public static class TestCustomCanonicalSchema {
     String input, expectedOutput;
+
     LinkedHashSet<String> properties = new LinkedHashSet<>(Arrays.asList("format"));
 
     public TestCustomCanonicalSchema(String i, String o) {
@@ -101,19 +70,16 @@ public class TestSchemaNormalization {
       expectedOutput = o;
     }
 
-    @Parameters
-    public static List<Object[]> cases() throws IOException {
+    @Parameters public static List<Object[]> cases() throws IOException {
       return CaseFinder.find(data(CUSTOM_CANONICAL_DATA_FILE), "canonical", new ArrayList<>());
     }
 
-    @Test
-    public void testCanonicalization() throws Exception {
+    @Test public void testCanonicalization() throws Exception {
       assertEquals(SchemaNormalization.toCanonicalForm(new Schema.Parser().parse(input), properties), expectedOutput);
     }
   }
 
-  @RunWith(Parameterized.class)
-  public static class TestFingerprint {
+  @RunWith(value = Parameterized.class) public static class TestFingerprint {
     String input, expectedOutput;
 
     public TestFingerprint(String i, String o) {
@@ -121,13 +87,11 @@ public class TestSchemaNormalization {
       expectedOutput = o;
     }
 
-    @Parameters
-    public static List<Object[]> cases() throws IOException {
+    @Parameters public static List<Object[]> cases() throws IOException {
       return CaseFinder.find(data(PARSER_DATA_FILE), "fingerprint", new ArrayList<>());
     }
 
-    @Test
-    public void testCanonicalization() throws Exception {
+    @Test public void testCanonicalization() throws Exception {
       Schema s = new Schema.Parser().parse(input);
       long carefulFP = altFingerprint(SchemaNormalization.toParsingForm(s));
       assertEquals(carefulFP, Long.parseLong(expectedOutput));
@@ -135,9 +99,7 @@ public class TestSchemaNormalization {
     }
   }
 
-  // see AVRO-1493
-  @RunWith(Parameterized.class)
-  public static class TestFingerprintInternationalization {
+  @RunWith(value = Parameterized.class) public static class TestFingerprintInternationalization {
     String input, expectedOutput;
 
     public TestFingerprintInternationalization(String i, String o) {
@@ -145,13 +107,11 @@ public class TestSchemaNormalization {
       expectedOutput = o;
     }
 
-    @Parameters
-    public static List<Object[]> cases() throws IOException {
+    @Parameters public static List<Object[]> cases() throws IOException {
       return CaseFinder.find(data(PARSER_DATA_FILE), "fingerprint", new ArrayList<>());
     }
 
-    @Test
-    public void testCanonicalization() throws Exception {
+    @Test public void testCanonicalization() throws Exception {
       Locale originalDefaultLocale = Locale.getDefault();
       Locale.setDefault(Locale.forLanguageTag("tr"));
       Schema s = new Schema.Parser().parse(input);
@@ -172,12 +132,6 @@ public class TestSchemaNormalization {
    * Broder93 ("Some applications of Rabin's fingerprinting method").
    */
   public static long altFingerprint(String s) {
-    // In our algorithm, we multiply all inputs by x^64 (which is
-    // equivalent to prepending it with a single "1" bit followed
-    // by 64 zero bits). This both deals with the fact that
-    // CRCs ignore leading zeros, and also ensures some degree of
-    // randomness for small inputs
-
     long tmp = altExtend(SchemaNormalization.EMPTY64, 64, ONE, s.getBytes(UTF_8));
     return altExtend(SchemaNormalization.EMPTY64, 64, tmp, POSTFIX);
   }
@@ -188,10 +142,11 @@ public class TestSchemaNormalization {
       for (int j = 1; j < 129; j = j << 1) {
         boolean overflow = (0 != (fp & overflowBit));
         fp >>>= 1;
-        if (0 != (j & b1))
-          fp |= ONE; // shift in the input bit
+        if (0 != (j & b1)) {
+          fp |= ONE;
+        }
         if (overflow) {
-          fp ^= poly; // hi-order coeff of poly kills overflow bit
+          fp ^= poly;
         }
       }
     }
@@ -199,6 +154,7 @@ public class TestSchemaNormalization {
   }
 
   private static final long ONE = 0x8000000000000000L;
+
   private static final byte[] POSTFIX = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
   private static void assertEqHex(long expected, long actual) {
