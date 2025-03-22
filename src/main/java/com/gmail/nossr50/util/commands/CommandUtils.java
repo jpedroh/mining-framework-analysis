@@ -297,21 +297,25 @@ public final class CommandUtils {
         for (OfflinePlayer offlinePlayer : mcMMO.p.getServer().getOfflinePlayers()) {
             String playerName = offlinePlayer.getName();
             
+<<<<<<< /usr/src/app/output/mcmmo-dev/mcmmo/31e80149c2f2f340732d081b7209b49424b13b02/src/main/java/com/gmail/nossr50/util/commands/CommandUtils.java/left.java
             if (playerName == null) { //Do null checking here to detect corrupted data before sending it throuogh .equals
-<<<<<<< HEAD
             	System.err.println("[McMMO] Player data file with UIID " + offlinePlayer.getUniqueId() + " is missing a player name. This may be a legacy file from before bukkit.lastKnownName. This should be okay to ignore.");
-=======
-            	System.err.println("[McMMO] Bad player data file with UIID " + offlinePlayer.getUniqueId() );
->>>>>>> 848080b413785a6f4d31e7760e1238bb7536b24b
             	continue; //Don't let an error here interrupt the loop
             }
+||||||| /usr/src/app/output/mcmmo-dev/mcmmo/31e80149c2f2f340732d081b7209b49424b13b02/src/main/java/com/gmail/nossr50/util/commands/CommandUtils.java/base.java
+=======
+            if (playerName == null) { //Do null checking here to detect corrupted data before sending it throuogh .equals
+            	System.err.println("[McMMO] Bad player data file with UIID " + offlinePlayer.getUniqueId() );
+            	continue; //Don't let an error here interrupt the loop
+            }
+>>>>>>> /usr/src/app/output/mcmmo-dev/mcmmo/31e80149c2f2f340732d081b7209b49424b13b02/src/main/java/com/gmail/nossr50/util/commands/CommandUtils.java/right.java
 
             if (partialName.equalsIgnoreCase(playerName)) {
-                // Exact match
-                matchedPlayers.clear();
-                matchedPlayers.add(playerName);
-                break;
-            }
+            // Exact match
+            matchedPlayers.clear();
+            matchedPlayers.add(playerName);
+            break;
+        }
 
             if (playerName.toLowerCase().contains(partialName.toLowerCase())) {
                 // Partial match
