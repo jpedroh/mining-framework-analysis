@@ -1,60 +1,30 @@
-/**
- * Copyright (C) 2010, 2011 by Arne Kesting, Martin Treiber,
- *                             Ralph Germ, Martin Budden
- *                             <info@movsim.org>
- * ----------------------------------------------------------------------
- * 
- *  This file is part of 
- *  
- *  MovSim - the multi-model open-source vehicular-traffic simulator 
- *
- *  MovSim is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  MovSim is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with MovSim.  If not, see <http://www.gnu.org/licenses/> or
- *  <http://www.movsim.org>.
- *  
- * ----------------------------------------------------------------------
- */
 package org.movsim.simulator.vehicles;
-
 import java.util.List;
-
 import org.movsim.simulator.roadSection.TrafficLight;
 import org.movsim.simulator.vehicles.lanechanging.impl.LaneChangingModelImpl;
 import org.movsim.simulator.vehicles.longmodel.accelerationmodels.AccelerationModel;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface Vehicle.
  */
 public interface Vehicle extends Moveable {
-
-    /**
+  /**
      * Sets the speedlimit.
      * 
      * @param speedlimit
      *            the new speedlimit
      */
-    void setSpeedlimit(double speedlimit);
+  void setSpeedlimit(double speedlimit);
 
-    /**
+  /**
      * Sets the veh number.
      * 
      * @param vehNumber
      *            the new veh number
      */
-    void setVehNumber(int vehNumber);
+  void setVehNumber(int vehNumber);
 
-    /**
+  /**
      * Inits the.
      * 
      * @param pos
@@ -64,17 +34,17 @@ public interface Vehicle extends Moveable {
      * @param lane
      *            the lane
      */
-    void init(double pos, double v, int lane);
+  void init(double pos, double v, int lane);
 
-    /**
+  /**
      * Update postion and speed.
      * 
      * @param dt
      *            the dt
      */
-    void updatePostionAndSpeed(double dt);
+  void updatePostionAndSpeed(double dt);
 
-    /**
+  /**
      * Calc acceleration.
      * 
      * @param dt
@@ -86,9 +56,9 @@ public interface Vehicle extends Moveable {
      * @param alphaV0
      *            the alpha v0
      */
-    void calcAcceleration(double dt, VehicleContainer vehContainer, VehicleContainer vehContainerLeftLane, double alphaT, double alphaV0);
+  void calcAcceleration(double dt, VehicleContainer vehContainer, VehicleContainer vehContainerLeftLane, double alphaT, double alphaV0);
 
-    /**
+  /**
      * Update traffic light.
      * 
      * @param time
@@ -96,64 +66,26 @@ public interface Vehicle extends Moveable {
      * @param trafficLight
      *            the traffic light
      */
-    void updateTrafficLight(double time, TrafficLight trafficLight);
+  void updateTrafficLight(double time, TrafficLight trafficLight);
 
-    /**
+  /**
      * Removes the observers.
      */
-    void removeObservers();
+  void removeObservers();
 
-    /**
-     * Gets the lane changing model.
-     *
-     * @return the lane changing model
-     */
-    LaneChangingModelImpl getLaneChangingModel();
+  LaneChangingModelImpl getLaneChangingModel();
 
-    /**
-     * Gets the acceleration model.
-     *
-     * @return the acceleration model
-     */
-    AccelerationModel getAccelerationModel();
+  AccelerationModel getAccelerationModel();
 
-    /**
-     * Sets the position.
-     *
-     * @param newPos the new position
-     */
-    void setPosition(double newPos);
+  void setPosition(double newPos);
 
-    /**
-     * Consider lane changing.
-     *
-     * @param dt the dt
-     * @param vehContainers the veh containers
-     * @return true, if successful
-     */
-    boolean considerLaneChanging(double dt, final List<VehicleContainer> vehContainers);
+  boolean considerLaneChanging(double dt, final List<VehicleContainer> vehContainers);
 
-    /**
-     * Gets the target lane.
-     *
-     * @return the target lane
-     */
-    int getTargetLane();
+  int getTargetLane();
 
-    /**
-     * In process of lane changing.
-     *
-     * @return true, if successful
-     */
-    boolean inProcessOfLaneChanging();
+  boolean inProcessOfLaneChanging();
 
-    /**
-     * Inits the lane change from ramp.
-     *
-     * @param oldLane the old lane
-     */
-    void initLaneChangeFromRamp(int oldLane);
-    
-    // for lane-changing decision
-    double calcAccModel(final VehicleContainer vehContainer, final VehicleContainer vehContainerLeftLane);
+  void initLaneChangeFromRamp(int oldLane);
+
+  double calcAccModel(final VehicleContainer vehContainer, final VehicleContainer vehContainerLeftLane);
 }
