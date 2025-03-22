@@ -1,5 +1,4 @@
 package com.salesmanager.core.model.catalog.product.description;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -8,106 +7,84 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.UniqueConstraint;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.salesmanager.core.constants.SchemaConstant;
 import com.salesmanager.core.model.catalog.product.Product;
 import com.salesmanager.core.model.common.description.Description;
 
-@Entity
-@Table(name = "PRODUCT_DESCRIPTION", schema=SchemaConstant.SALESMANAGER_SCHEMA, uniqueConstraints={
-	@UniqueConstraint(columnNames={
-			"PRODUCT_ID",
-			"LANGUAGE_ID"
-		})
-	}
-)
+@Entity @Table(name = "PRODUCT_DESCRIPTION", schema = SchemaConstant.SALESMANAGER_SCHEMA, uniqueConstraints = { @UniqueConstraint(columnNames = { "PRODUCT_ID", "LANGUAGE_ID" }) }) @TableGenerator(name = "description_gen", table = "SM_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "product_description_seq", allocationSize = SchemaConstant.DESCRIPTION_ID_ALLOCATION_SIZE, initialValue = SchemaConstant.DESCRIPTION_ID_START_VALUE) public class ProductDescription extends Description {
+  private static final long serialVersionUID = 1L;
 
-@TableGenerator(name = "description_gen", table = "SM_SEQUENCER", pkColumnName = "SEQ_NAME", valueColumnName = "SEQ_COUNT", pkColumnValue = "product_description_seq", allocationSize = SchemaConstant.DESCRIPTION_ID_ALLOCATION_SIZE, initialValue = SchemaConstant.DESCRIPTION_ID_START_VALUE)
-//@SequenceGenerator(name = "description_gen", sequenceName = "product_description_seq", allocationSize = SchemaConstant.DESCRIPTION_ID_SEQUENCE_START)
-public class ProductDescription extends Description {
-	private static final long serialVersionUID = 1L;
-	
-	@JsonIgnore
-	@ManyToOne(targetEntity = Product.class)
-	@JoinColumn(name = "PRODUCT_ID", nullable = false)
-	private Product product;
-	
-	@Column(name = "PRODUCT_HIGHLIGHT")
-	private String productHighlight;
+  @JsonIgnore @ManyToOne(targetEntity = Product.class) @JoinColumn(name = "PRODUCT_ID", nullable = false) private Product product;
 
-	@Column(name = "DOWNLOAD_LNK")
-	private String productExternalDl;
+  @Column(name = "PRODUCT_HIGHLIGHT") private String productHighlight;
 
-	@Column(name = "SEF_URL")
-	private String seUrl;
+  @Column(name = "DOWNLOAD_LNK") private String productExternalDl;
 
-	@Column(name = "META_TITLE")
-	private String metatagTitle;
+  @Column(name = "SEF_URL") private String seUrl;
 
-	@Column(name = "META_KEYWORDS")
-	private String metatagKeywords;
+  @Column(name = "META_TITLE") private String metatagTitle;
 
-	@Column(name = "META_DESCRIPTION")
-	private String metatagDescription;
+  @Column(name = "META_KEYWORDS") private String metatagKeywords;
 
-	public ProductDescription() {
-	}
+  @Column(name = "META_DESCRIPTION") private String metatagDescription;
 
-	public String getProductHighlight() {
-		return productHighlight;
-	}
+  public ProductDescription() {
+  }
 
-	public void setProductHighlight(String productHighlight) {
-		this.productHighlight = productHighlight;
-	}
+  public String getProductHighlight() {
+    return productHighlight;
+  }
 
-	public String getProductExternalDl() {
-		return productExternalDl;
-	}
+  public void setProductHighlight(String productHighlight) {
+    this.productHighlight = productHighlight;
+  }
 
-	public void setProductExternalDl(String productExternalDl) {
-		this.productExternalDl = productExternalDl;
-	}
+  public String getProductExternalDl() {
+    return productExternalDl;
+  }
 
-	public String getSeUrl() {
-		return seUrl;
-	}
+  public void setProductExternalDl(String productExternalDl) {
+    this.productExternalDl = productExternalDl;
+  }
 
-	public void setSeUrl(String seUrl) {
-		this.seUrl = seUrl;
-	}
+  public String getSeUrl() {
+    return seUrl;
+  }
 
-	public String getMetatagTitle() {
-		return metatagTitle;
-	}
+  public void setSeUrl(String seUrl) {
+    this.seUrl = seUrl;
+  }
 
-	public void setMetatagTitle(String metatagTitle) {
-		this.metatagTitle = metatagTitle;
-	}
+  public String getMetatagTitle() {
+    return metatagTitle;
+  }
 
-	public String getMetatagKeywords() {
-		return metatagKeywords;
-	}
+  public void setMetatagTitle(String metatagTitle) {
+    this.metatagTitle = metatagTitle;
+  }
 
-	public void setMetatagKeywords(String metatagKeywords) {
-		this.metatagKeywords = metatagKeywords;
-	}
+  public String getMetatagKeywords() {
+    return metatagKeywords;
+  }
 
-	public String getMetatagDescription() {
-		return metatagDescription;
-	}
+  public void setMetatagKeywords(String metatagKeywords) {
+    this.metatagKeywords = metatagKeywords;
+  }
 
-	public void setMetatagDescription(String metatagDescription) {
-		this.metatagDescription = metatagDescription;
-	}
+  public String getMetatagDescription() {
+    return metatagDescription;
+  }
 
-	public Product getProduct() {
-		return product;
-	}
+  public void setMetatagDescription(String metatagDescription) {
+    this.metatagDescription = metatagDescription;
+  }
 
-	public void setProduct(Product product) {
-		this.product = product;
-	}
+  public Product getProduct() {
+    return product;
+  }
 
+  public void setProduct(Product product) {
+    this.product = product;
+  }
 }
