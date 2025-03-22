@@ -102,7 +102,6 @@ public class GoodsController {
 		params.put("goodsSellStatus", Constants.SELL_STATUS_UP);
 		// 封装商品数据
 
-
 		PageQueryUtil pageUtil = new PageQueryUtil(params);
 
 		request.setAttribute("pageResult", newBeeMallGoodsService.searchNewBeeMallGoods(pageUtil));
@@ -305,7 +304,7 @@ public class GoodsController {
             	return ResultGenerator.genSuccessResult("点赞成功");
     		}
             
-
+        }
 	
 	
 	@RequestMapping(value = "/goods/insertGoodsQa", method = RequestMethod.POST)
@@ -389,5 +388,42 @@ public class GoodsController {
 	
     }
 
+<<<<<<< /usr/src/app/output/newbee-ltd/newbee-mall/0710125767852fddddaf0ab338c25793f492f68d/src/main/java/ltd/newbee/mall/controller/mall/GoodsController.java/left.java
+||||||| /usr/src/app/output/newbee-ltd/newbee-mall/0710125767852fddddaf0ab338c25793f492f68d/src/main/java/ltd/newbee/mall/controller/mall/GoodsController.java/base.java
+    @GetMapping("/goods/detail/{goodsId}")
+    public String detailPage(@PathVariable("goodsId") Long goodsId, HttpServletRequest request) {
+        if (goodsId < 1) {
+            return "error/error_5xx";
+        }
+        NewBeeMallGoods goods = newBeeMallGoodsService.getNewBeeMallGoodsById(goodsId);
+        if (goods == null) {
+            NewBeeMallException.fail(ServiceResultEnum.GOODS_NOT_EXIST.getResult());
+        }
+        if (Constants.SELL_STATUS_UP != goods.getGoodsSellStatus()) {
+            NewBeeMallException.fail(ServiceResultEnum.GOODS_PUT_DOWN.getResult());
+        }
+        NewBeeMallGoodsDetailVO goodsDetailVO = new NewBeeMallGoodsDetailVO();
+        BeanUtil.copyProperties(goods, goodsDetailVO);
+        goodsDetailVO.setGoodsCarouselList(goods.getGoodsCarousel().split(","));
+        request.setAttribute("goodsDetail", goodsDetailVO);
+        return "mall/detail";
+    }
+=======
+    @GetMapping("/goods/detail/{goodsId}")
+    public String detailPage(@PathVariable("goodsId") Long goodsId, HttpServletRequest request) {
+        if (goodsId < 1) {
+            NewBeeMallException.fail("参数异常");
+        }
+        NewBeeMallGoods goods = newBeeMallGoodsService.getNewBeeMallGoodsById(goodsId);
+        if (Constants.SELL_STATUS_UP != goods.getGoodsSellStatus()) {
+            NewBeeMallException.fail(ServiceResultEnum.GOODS_PUT_DOWN.getResult());
+        }
+        NewBeeMallGoodsDetailVO goodsDetailVO = new NewBeeMallGoodsDetailVO();
+        BeanUtil.copyProperties(goods, goodsDetailVO);
+        goodsDetailVO.setGoodsCarouselList(goods.getGoodsCarousel().split(","));
+        request.setAttribute("goodsDetail", goodsDetailVO);
+        return "mall/detail";
+    }
+>>>>>>> /usr/src/app/output/newbee-ltd/newbee-mall/0710125767852fddddaf0ab338c25793f492f68d/src/main/java/ltd/newbee/mall/controller/mall/GoodsController.java/right.java
 
 

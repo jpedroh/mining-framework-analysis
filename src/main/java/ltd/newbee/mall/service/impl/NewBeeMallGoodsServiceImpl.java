@@ -9,7 +9,7 @@
 package ltd.newbee.mall.service.impl;
 
 import ltd.newbee.mall.common.NewBeeMallCategoryLevelEnum;
-
+import ltd.newbee.mall.common.NewBeeMallException;
 import ltd.newbee.mall.common.ServiceResultEnum;
 import ltd.newbee.mall.controller.vo.NewBeeMallSearchGoodsVO;
 import ltd.newbee.mall.dao.GoodsCategoryMapper;
@@ -26,8 +26,6 @@ import ltd.newbee.mall.entity.InsertGoodsReviewLike;
 import ltd.newbee.mall.entity.InsertSearchHistoryEntity;
 
 import ltd.newbee.mall.entity.GoodsPageEntity;
-import ltd.newbee.mall.entity.GoodsQa;
-import ltd.newbee.mall.entity.GoodsReview;
 
 import ltd.newbee.mall.entity.NewBeeMallGoods;
 import ltd.newbee.mall.entity.RecentChkHistory;
