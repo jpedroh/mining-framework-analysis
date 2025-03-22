@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.commafeed.backend.HttpGetter;
+import com.commafeed.backend.dao.FeedDAO;
 import com.commafeed.backend.feeds.FeedRefreshTaskGiver;
 import com.commafeed.backend.feeds.FeedUtils;
 import com.commafeed.backend.model.Feed;
@@ -37,11 +38,20 @@ public class SubscriptionHandler {
 
 	public void subscribe(Feed feed) {
 
+<<<<<<< /usr/src/app/output/athou/commafeed/6133497a29ab62720d03c3a62637410ece53fee5/src/main/java/com/commafeed/backend/pubsubhubbub/SubscriptionHandler.java/left.java
+		try {
+			// make sure the feed has been updated for the callback to work
+			Thread.sleep(30000);
+		} catch (InterruptedException e1) {
+||||||| /usr/src/app/output/athou/commafeed/6133497a29ab62720d03c3a62637410ece53fee5/src/main/java/com/commafeed/backend/pubsubhubbub/SubscriptionHandler.java/base.java
+		try  catch (InterruptedException e1) {
+=======
 		try {
 			// make sure the feed has been updated in the database so that the
 			// callback works
 			Thread.sleep(30000);
 		} catch (InterruptedException e1) {
+>>>>>>> /usr/src/app/output/athou/commafeed/6133497a29ab62720d03c3a62637410ece53fee5/src/main/java/com/commafeed/backend/pubsubhubbub/SubscriptionHandler.java/right.java
 			// do nothing
 		}
 
