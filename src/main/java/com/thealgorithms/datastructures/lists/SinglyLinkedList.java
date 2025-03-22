@@ -103,7 +103,6 @@ public class SinglyLinkedList extends Node{
         currentA.next = currentB.next;
         currentB.next = temp;
     }
-
     /**
      * Reverse a singly linked list from a given node till the end
      *
