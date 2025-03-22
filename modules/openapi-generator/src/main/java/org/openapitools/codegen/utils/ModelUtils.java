@@ -1458,6 +1458,7 @@ public class ModelUtils {
             if (maxProperties != null) target.setMaxProperties(maxProperties);
         }
     }
+
     /**
      * Check if the contentType is for form parameters or not.
      *
@@ -1510,4 +1511,3 @@ public class ModelUtils {
     }
 
 }
-
