@@ -59,70 +59,57 @@ public class TestReflect {
     check(Void.TYPE, "\"null\"");
     check(Void.class, "\"null\"");
   }
-
   @Test public void testBoolean() {
     check(Boolean.TYPE, "\"boolean\"");
     check(Boolean.class, "\"boolean\"");
   }
-
   @Test public void testInt() {
     check(Integer.TYPE, "\"int\"");
     check(Integer.class, "\"int\"");
   }
-
   @Test public void testByte() {
     check(Byte.TYPE, "{\"type\":\"int\",\"java-class\":\"java.lang.Byte\"}");
     check(Byte.class, "{\"type\":\"int\",\"java-class\":\"java.lang.Byte\"}");
   }
-
   @Test public void testShort() {
     check(Short.TYPE, "{\"type\":\"int\",\"java-class\":\"java.lang.Short\"}");
     check(Short.class, "{\"type\":\"int\",\"java-class\":\"java.lang.Short\"}");
   }
-
   @Test public void testChar() {
     check(Character.TYPE, "{\"type\":\"int\",\"java-class\":\"java.lang.Character\"}");
     check(Character.class, "{\"type\":\"int\",\"java-class\":\"java.lang.Character\"}");
   }
-
   @Test public void testLong() {
     check(Long.TYPE, "\"long\"");
     check(Long.class, "\"long\"");
   }
-
   @Test public void testFloat() {
     check(Float.TYPE, "\"float\"");
     check(Float.class, "\"float\"");
   }
-
   @Test public void testDouble() {
     check(Double.TYPE, "\"double\"");
     check(Double.class, "\"double\"");
   }
-
   @Test public void testString() {
     check("Foo", "\"string\"");
   }
-
   @Test public void testBytes() {
     check(ByteBuffer.allocate(0), "\"bytes\"");
     check(new byte[0], "{\"type\":\"bytes\",\"java-class\":\"[B\"}");
   }
-
   @Test public void testUnionWithCollection() {
     Schema s = new Schema.Parser().parse
       ("[\"null\", {\"type\":\"array\",\"items\":\"float\"}]");
     GenericData data = ReflectData.get();
     assertEquals(1, data.resolveUnion(s, new ArrayList<Float>()));
   }
-
   @Test public void testUnionWithMap() {
     Schema s = new Schema.Parser().parse
       ("[\"null\", {\"type\":\"map\",\"values\":\"float\"}]");
     GenericData data = ReflectData.get();
     assertEquals(1, data.resolveUnion(s, new HashMap<String,Float>()));
   }
-
   @Test public void testUnionWithFixed() {
     Schema s = new Schema.Parser().parse
         ("[\"null\", {\"type\":\"fixed\",\"name\":\"f\",\"size\":1}]");
@@ -130,7 +117,6 @@ public class TestReflect {
     GenericData data = ReflectData.get();
     assertEquals(1, data.resolveUnion(s, new GenericData.Fixed(f)));
   }
-
   @Test public void testUnionWithEnum() {
     Schema s = new Schema.Parser().parse
         ("[\"null\", {\"type\":\"enum\",\"name\":\"E\",\"namespace\":" +
@@ -138,13 +124,11 @@ public class TestReflect {
     GenericData data = ReflectData.get();
     assertEquals(1, data.resolveUnion(s, E.A));
   }
-
   @Test public void testUnionWithBytes() {
     Schema s = new Schema.Parser().parse ("[\"null\", \"bytes\"]");
     GenericData data = ReflectData.get();
     assertEquals(1, data.resolveUnion(s, ByteBuffer.wrap(new byte[]{1})));
   }
-
   // test map, array and list type inference
   public static class R1 {
     private Map<String,String> mapField = new HashMap<String,String>();
@@ -165,12 +149,10 @@ public class TestReflect {
         &&  listField.equals(that.listField);
     }
   }
-
   @Test public void testMap() throws Exception {
     check(R1.class.getDeclaredField("mapField").getGenericType(),
           "{\"type\":\"map\",\"values\":\"string\"}");
   }
-
   @Test public void testArray() throws Exception {
     check(R1.class.getDeclaredField("arrayField").getGenericType(),
           "{\"type\":\"array\",\"items\":\"string\",\"java-class\":\"[Ljava.lang.String;\"}");
@@ -180,11 +162,9 @@ public class TestReflect {
           "{\"type\":\"array\",\"items\":\"string\""
           +",\"java-class\":\"java.util.List\"}");
   }
-
   @Test public void testR1() throws Exception {
     checkReadWrite(new R1());
   }
-
   // test record, array and list i/o
   public static class R2 {
     private String[] arrayField;
@@ -198,7 +178,6 @@ public class TestReflect {
         &&  collectionField.equals(that.collectionField);
     }
   }
-
   @Test public void testR2() throws Exception {
     R2 r2 = new R2();
     r2.arrayField = new String[] {"foo"};
@@ -206,7 +185,6 @@ public class TestReflect {
     r2.collectionField.add("foo");
     checkReadWrite(r2);
   }
-
   // test array i/o of unboxed type
   public static class R3 {
     private int[] intArray;
@@ -218,13 +196,11 @@ public class TestReflect {
       return Arrays.equals(this.intArray, that.intArray);
     }
   }
-
   @Test public void testR3() throws Exception {
     R3 r3 = new R3();
     r3.intArray = new int[] {1};
     checkReadWrite(r3);
   }
-
   // test inherited fields & short datatype
   public static class R4 {
     public short value;
@@ -242,9 +218,7 @@ public class TestReflect {
         && this.c == that.c;
     }
   }
-
   public static class R5 extends R4 {}
-
   @Test public void testR5() throws Exception {
     R5 r5 = new R5();
     r5.value = 1;
@@ -253,11 +227,9 @@ public class TestReflect {
     r5.c = 'a';
     checkReadWrite(r5);
   }
-
   // test union annotation on a class
   @Union({R7.class, R8.class})
   public static class R6 {}
-
   public static class R7 extends R6 {
     public int value;
     @Override
@@ -274,7 +246,6 @@ public class TestReflect {
       return this.value == ((R8)o).value;
     }
   }
-
   // test arrays of union annotated class
   public static class R9  {
     public R6[] r6s;
@@ -284,7 +255,6 @@ public class TestReflect {
       return Arrays.equals(this.r6s, ((R9)o).r6s);
     }
   }
-
   @Test public void testR6() throws Exception {
     R7 r7 = new R7();
     r7.value = 1;
@@ -296,13 +266,11 @@ public class TestReflect {
     r9.r6s = new R6[] {r7, r8};
     checkReadWrite(r9, ReflectData.get().getSchema(R9.class));
   }
-
   // test union annotation on methods and parameters
   public static interface P0 {
     @Union({Void.class,String.class})
       String foo(@Union({Void.class,String.class}) String s);
   }
-
   @Test public void testP0() throws Exception {
     Protocol p0 = ReflectData.get().getProtocol(P0.class);
     Protocol.Message message = p0.getMessages().get("foo");
@@ -323,7 +291,6 @@ public class TestReflect {
     assertEquals(String.class, ReflectData.get().getClass(response));
     assertEquals(String.class, ReflectData.get().getClass(param));
   }
-
   // test Stringable annotation
   @Stringable public static class R10 {
     private String text;
@@ -336,14 +303,12 @@ public class TestReflect {
       return this.text.equals(((R10)o).text);
     }
   }
-
   @Test public void testR10() throws Exception {
     Schema r10Schema = ReflectData.get().getSchema(R10.class);
     assertEquals(Schema.Type.STRING, r10Schema.getType());
     assertEquals(R10.class.getName(), r10Schema.getProp("java-class"));
     checkReadWrite(new R10("foo"), r10Schema);
   }
-
   // test Nullable annotation on field
   public static class R11 {
     @Nullable private String text;
@@ -355,7 +320,6 @@ public class TestReflect {
       return this.text.equals(that.text);
     }
   }
-
   @Test public void testR11() throws Exception {
     Schema r11Record = ReflectData.get().getSchema(R11.class);
     assertEquals(Schema.Type.RECORD, r11Record.getType());
@@ -371,12 +335,10 @@ public class TestReflect {
     r11.text = "foo";
     checkReadWrite(r11, r11Record);
   }
-
   // test nullable annotation on methods and parameters
   public static interface P1 {
     @Nullable String foo(@Nullable String s);
   }
-
   @Test public void testP1() throws Exception {
     Protocol p1 = ReflectData.get().getProtocol(P1.class);
     Protocol.Message message = p1.getMessages().get("foo");
@@ -397,7 +359,6 @@ public class TestReflect {
     assertEquals(String.class, ReflectData.get().getClass(response));
     assertEquals(String.class, ReflectData.get().getClass(param));
   }
-
   // test AvroSchema annotation
   public static class R12 {                       // fields
     @AvroSchema("\"int\"")
@@ -406,8 +367,6 @@ public class TestReflect {
     @AvroSchema("{\"type\":\"array\",\"items\":[\"null\",\"string\"]}")
       List<String> strings;
   }
-
-
   @Test public void testR12() throws Exception {
     Schema s = ReflectData.get().getSchema(R12.class);
     assertEquals(Schema.Type.INT, s.getField("x").schema().getType());
@@ -415,20 +374,16 @@ public class TestReflect {
                  ("{\"type\":\"array\",\"items\":[\"null\",\"string\"]}"),
                  s.getField("strings").schema());
   }
-
   @AvroSchema("\"null\"")                          // record
   public class R13 {}
-
   @Test public void testR13() throws Exception {
     Schema s = ReflectData.get().getSchema(R13.class);
     assertEquals(Schema.Type.NULL, s.getType());
   }
-
   public interface P4 {
     @AvroSchema("\"int\"")                        // message value
     Object foo(@AvroSchema("\"int\"")Object x);   // message param
   }
-
   @Test public void testP4() throws Exception {
     Protocol p = ReflectData.get().getProtocol(P4.class);
     Protocol.Message message = p.getMessages().get("foo");
@@ -436,14 +391,12 @@ public class TestReflect {
     Field field = message.getRequest().getField("x");
     assertEquals(Schema.Type.INT, field.schema().getType());
   }
-
   // test error
   @SuppressWarnings("serial")
   public static class E1 extends Exception {}
   public static interface P2 {
     void error() throws E1;
   }
-
   @Test public void testP2() throws Exception {
     Schema e1 = ReflectData.get().getSchema(E1.class);
     assertEquals(Schema.Type.RECORD, e1.getType());
@@ -463,13 +416,11 @@ public class TestReflect {
     assertEquals(Schema.Type.STRING, response.getTypes().get(0).getType());
     assertEquals(e1, response.getTypes().get(1));
   }
-
   @Test public void testNoPackage() throws Exception {
     Class<?> noPackage = Class.forName("NoPackage");
     Schema s = ReflectData.get().getSchema(noPackage);
     assertEquals(noPackage.getName(), ReflectData.getClassName(s));
   }
-
   void checkReadWrite(Object object) throws Exception {
     checkReadWrite(object, ReflectData.get().getSchema(object.getClass()));
   }
@@ -493,13 +444,12 @@ public class TestReflect {
       assertEquals("setField", object, copy);
     }
   }
-
-  public static enum E { A, B };
+  public static enum E { A, B }
+;
   @Test public void testEnum() throws Exception {
     check(E.class, "{\"type\":\"enum\",\"name\":\"E\",\"namespace\":"
           +"\"org.apache.avro.reflect.TestReflect$\",\"symbols\":[\"A\",\"B\"]}");
   }
-
   public static class R { int a; long b; }
   @Test public void testRecord() throws Exception {
     check(R.class, "{\"type\":\"record\",\"name\":\"R\",\"namespace\":"
@@ -507,27 +457,23 @@ public class TestReflect {
           +"{\"name\":\"a\",\"type\":\"int\"},"
           +"{\"name\":\"b\",\"type\":\"long\"}]}");
   }
-
   public static class RAvroIgnore { @AvroIgnore int a; }
   @Test public void testAnnotationAvroIgnore() throws Exception {
     check(RAvroIgnore.class, "{\"type\":\"record\",\"name\":\"RAvroIgnore\",\"namespace\":"
           +"\"org.apache.avro.reflect.TestReflect$\",\"fields\":[]}");
   }
-
   public static class RAvroMeta { @AvroMeta(key="K", value="V") int a; }
   @Test public void testAnnotationAvroMeta() throws Exception {
     check(RAvroMeta.class, "{\"type\":\"record\",\"name\":\"RAvroMeta\",\"namespace\":"
           +"\"org.apache.avro.reflect.TestReflect$\",\"fields\":["
           +"{\"name\":\"a\",\"type\":\"int\",\"K\":\"V\"}]}");
   }
-
   public static class RAvroName { @AvroName("b") int a; }
   @Test public void testAnnotationAvroName() throws Exception {
     check(RAvroName.class, "{\"type\":\"record\",\"name\":\"RAvroName\",\"namespace\":"
           +"\"org.apache.avro.reflect.TestReflect$\",\"fields\":["
           +"{\"name\":\"b\",\"type\":\"int\"}]}");
   }
-
   public static class RAvroNameCollide { @AvroName("b") int a; int b; }
   @Test(expected=Exception.class)
   public void testAnnotationAvroNameCollide() throws Exception {
@@ -536,25 +482,18 @@ public class TestReflect {
           +"{\"name\":\"b\",\"type\":\"int\"},"
           +"{\"name\":\"b\",\"type\":\"int\"}]}");
   }
-
   public static class RAvroStringableField { @Stringable int a; }
   public void testAnnotationAvroStringableFields() throws Exception {
     check(RAvroStringableField.class, "{\"type\":\"record\",\"name\":\"RAvroNameCollide\",\"namespace\":"
           +"\"org.apache.avro.reflect.TestReflect$\",\"fields\":["
           +"{\"name\":\"a\",\"type\":\"String\"}]}");
   }
-
-
-
-
   private void check(Object o, String schemaJson) {
     check(o.getClass(), schemaJson);
   }
-
   private void check(Type type, String schemaJson) {
     assertEquals(schemaJson, ReflectData.get().getSchema(type).toString());
   }
-
   @Test
   public void testRecordIO() throws IOException {
     Schema schm = ReflectData.get().getSchema(SampleRecord.class);
@@ -572,7 +511,6 @@ public class TestReflect {
           out.toByteArray(), null));
     assertEquals(record, decoded);
   }
-
   public static class AvroEncRecord {
     @AvroEncode(using=DateAsLongEncoding.class)
     java.util.Date date;
@@ -583,7 +521,6 @@ public class TestReflect {
       return date.equals(((AvroEncRecord)o).date);
     }
   }
-
   public static class multipleAnnotationRecord {
     @AvroIgnore
     @Stringable
@@ -631,7 +568,6 @@ public class TestReflect {
     @AvroEncode(using=DateAsLongEncoding.class)
     java.util.Date i11;
   }
-
   @Test
   public void testMultipleAnnotations() throws IOException {
     Schema schm = ReflectData.get().getSchema(multipleAnnotationRecord.class);
@@ -669,8 +605,6 @@ public class TestReflect {
     assertTrue(decoded.i10.getTime() == 10);
     assertTrue(decoded.i11.getTime() == 11);
   }
-
-
   @Test
   public void testAvroEncodeInducing() throws IOException {
     Schema schm = ReflectData.get().getSchema(AvroEncRecord.class);
@@ -678,7 +612,6 @@ public class TestReflect {
       "\":\"org.apache.avro.reflect.TestReflect$\",\"fields\":[{\"name\":\"date\"," +
       "\"type\":{\"type\":\"long\",\"CustomEncoding\":\"DateAsLongEncoding\"}}]}");
   }
-
   @Test
   public void testAvroEncodeIO() throws IOException {
     Schema schm = ReflectData.get().getSchema(AvroEncRecord.class);
@@ -695,7 +628,6 @@ public class TestReflect {
           out.toByteArray(), null));
     assertEquals(record, decoded);
   }
-
   @Test
   public void testRecordWithNullIO() throws IOException {
     ReflectData reflectData = ReflectData.AllowNull.get();
@@ -719,7 +651,6 @@ public class TestReflect {
     decoded = reader.read(null, d);
     assertEquals(b, decoded);
   }
-
   @Test public void testDisableUnsafe() throws Exception {
     String saved = System.getProperty("avro.disable.unsafe");
     try {
@@ -737,7 +668,6 @@ public class TestReflect {
       ReflectionUtil.resetFieldAccess();
     }
   }
-
   public static class SampleRecord {
     public int x = 1;
     private int y = 2;
@@ -799,13 +729,11 @@ public class TestReflect {
       }
     }
   }
-
   public static class X { int i; }
   public static class B1 { X x; }
   public static class B2 { X x; }
   public static class A { B1 b1; B2 b2; }
   public static interface C { void foo(A a); }
-
   @Test
   public void testForwardReference() {
     ReflectData data = ReflectData.get();
@@ -817,31 +745,25 @@ public class TestReflect {
     assert(reparsed.getTypes().contains(data.getSchema(B2.class)));
     assert(reparsed.getTypes().contains(data.getSchema(X.class)));
   }
-
   public static interface P3 {
     void m1();
     void m1(int x);
   }
-
   @Test(expected=AvroTypeException.class)
   public void testOverloadedMethod() {
     ReflectData.get().getProtocol(P3.class);
   }
-
   @Test
   public void testNoPackageSchema() throws Exception {
     ReflectData.get().getSchema(Class.forName("NoPackage"));
   }
-
   @Test
   public void testNoPackageProtocol() throws Exception {
     ReflectData.get().getProtocol(Class.forName("NoPackage"));
   }
-
   public static class Y {
     int i;
   }
-
   @Test
   /** Test nesting of reflect data within generic. */
   public void testReflectWithinGeneric() throws Exception {
@@ -861,17 +783,14 @@ public class TestReflect {
     // test that this instance can be written & re-read
     checkBinary(schema, record);
   }
-
   @Test
   public void testPrimitiveArray() throws Exception {
     testPrimitiveArrays(false);
   }
-
   @Test
   public void testPrimitiveArrayBlocking() throws Exception {
     testPrimitiveArrays(true);
   }
-
   private void testPrimitiveArrays(boolean blocking) throws Exception {
     testPrimitiveArray(boolean.class, blocking);
     testPrimitiveArray(byte.class, blocking);
@@ -882,7 +801,6 @@ public class TestReflect {
     testPrimitiveArray(float.class, blocking);
     testPrimitiveArray(double.class, blocking);
   }
-
   private void testPrimitiveArray(Class<?> c, boolean blocking) throws Exception {
     ReflectData data = new ReflectData();
     Random r = new Random();
@@ -894,7 +812,6 @@ public class TestReflect {
     }
     checkBinary(data, s, array, false, blocking);
   }
-
   private Object randomFor(Class<?> c, Random r) {
     if (c == boolean.class)
       return r.nextBoolean();
@@ -914,7 +831,6 @@ public class TestReflect {
       return (short)r.nextInt();
     return null;
   }
-
   /** Test union of null and an array. */
   @Test
   public void testNullArray() throws Exception {
@@ -922,7 +838,6 @@ public class TestReflect {
     Schema schema = new Schema.Parser().parse(json);
     checkBinary(schema, null);
   }
-
   /** Test stringable classes. */
   @Test public void testStringables() throws Exception {
     checkStringable(java.math.BigDecimal.class, "10");
@@ -931,7 +846,6 @@ public class TestReflect {
     checkStringable(java.net.URL.class, "http://bar:9000/baz");
     checkStringable(java.io.File.class, "foo.bar");
   }
-
   @SuppressWarnings({ "unchecked", "rawtypes" })
   public void checkStringable(Class c, String value) throws Exception {
     ReflectData data = new ReflectData();
@@ -941,14 +855,12 @@ public class TestReflect {
        schema.toString());
     checkBinary(schema, c.getConstructor(String.class).newInstance(value));
   }
-
   public static class M1 {
     Map<Integer, String> integerKeyMap;
     Map<java.math.BigInteger, String> bigIntegerKeyMap;
     Map<java.math.BigDecimal, String> bigDecimalKeyMap;
     Map<java.io.File, String> fileKeyMap;
   }
-
   /** Test Map with stringable key classes. */
   @Test public void testStringableMapKeys() throws Exception {
     M1 record = new M1();
@@ -968,11 +880,9 @@ public class TestReflect {
 
     checkBinary(data, data.getSchema(M1.class), record, true);
   }
-
   public static class NullableStringable {
     java.math.BigDecimal number;
   }
-
   @Test public void testNullableStringableField() throws Exception {
     NullableStringable datum = new NullableStringable();
     datum.number = java.math.BigDecimal.TEN;
@@ -980,12 +890,10 @@ public class TestReflect {
     Schema schema = ReflectData.AllowNull.get().getSchema(NullableStringable.class);
     checkBinary(schema, datum);
   }
-
   public static void checkBinary(ReflectData reflectData, Schema schema,
       Object datum, boolean equals) throws IOException {
     checkBinary(reflectData, schema, datum, equals, false);
   }
-
   private static void checkBinary(ReflectData reflectData, Schema schema,
       Object datum, boolean equals, boolean blocking) throws IOException {
     ReflectDatumWriter<Object> writer = new ReflectDatumWriter<Object>(schema);
@@ -1005,12 +913,10 @@ public class TestReflect {
 
     assertEquals(0, reflectData.compare(datum, decoded, schema, equals));
   }
-
   public static void checkBinary(Schema schema, Object datum)
     throws IOException {
     checkBinary(ReflectData.get(), schema, datum, false);
   }
-
   /** Test that the error message contains the name of the class. */
   @Test
   public void testReflectFieldError() throws Exception {
@@ -1021,31 +927,26 @@ public class TestReflect {
       assertTrue(e.getMessage().contains(datum.getClass().getName()));
     }
   }
-
   @AvroAlias(alias="a", space="b")
   private static class AliasA { }
   @AvroAlias(alias="a", space="")
   private static class AliasB { }
   @AvroAlias(alias="a")
   private static class AliasC { }
-
   @Test
   public void testAvroAliasOnClass() {
     check(AliasA.class, "{\"type\":\"record\",\"name\":\"AliasA\",\"namespace\":\"org.apache.avro.reflect.TestReflect$\",\"fields\":[],\"aliases\":[\"b.a\"]}");
     check(AliasB.class, "{\"type\":\"record\",\"name\":\"AliasB\",\"namespace\":\"org.apache.avro.reflect.TestReflect$\",\"fields\":[],\"aliases\":[\"a\"]}");
     check(AliasC.class, "{\"type\":\"record\",\"name\":\"AliasC\",\"namespace\":\"org.apache.avro.reflect.TestReflect$\",\"fields\":[],\"aliases\":[\"a\"]}");
   }
-
   private static class ClassWithAliasOnField {
     @AvroAlias(alias = "aliasName")
     int primitiveField;
   }
-
   private static class ClassWithAliasAndNamespaceOnField {
     @AvroAlias(alias = "aliasName", space = "forbidden.space.entry")
     int primitiveField;
   }
-
   @Test
   public void testAvroAliasOnField() {
 
@@ -1055,17 +956,14 @@ public class TestReflect {
 
     check(ClassWithAliasOnField.class, expectedSchema.toString());
   }
-
   @Test(expected = AvroRuntimeException.class)
   public void namespaceDefinitionOnFieldAliasMustThrowException() {
     ReflectData.get().getSchema(ClassWithAliasAndNamespaceOnField.class);
   }
-
   private static class DefaultTest {
     @AvroDefault("1")
     int foo;
   }
-
   @Test
   public void testAvroDefault() {
     check(DefaultTest.class,
@@ -1073,34 +971,6 @@ public class TestReflect {
           +"\"namespace\":\"org.apache.avro.reflect.TestReflect$\",\"fields\":["
           +"{\"name\":\"foo\",\"type\":\"int\",\"default\":1}]}");
   }
-
-  private enum DocTestEnum {
-    ENUM_1,
-    ENUM_2
-  }
-
-  private static class DocTest {
-    @AvroDoc("Some Documentation")
-    int foo;
-
-    @AvroDoc("Some other Documentation")
-    DocTestEnum enums;
-
-    @AvroDoc("And again")
-    DefaultTest defaultTest;
-  }
-
-  @Test
-  public void testAvroDoc() {
-    check(DocTest.class,
-            "{\"type\":\"record\",\"name\":\"DocTest\",\"namespace\":\"org.apache.avro.reflect.TestReflect$\","
-                    + "\"fields\":[{\"name\":\"foo\",\"type\":\"int\",\"doc\":\"Some Documentation\"},"
-                    + "{\"name\":\"enums\",\"type\":{\"type\":\"enum\",\"name\":\"DocTestEnum\","
-                    + "\"symbols\":[\"ENUM_1\",\"ENUM_2\"]},\"doc\":\"Some other Documentation\"},"
-                    + "{\"name\":\"defaultTest\",\"type\":{\"type\":\"record\",\"name\":\"DefaultTest\","
-                    + "\"fields\":[{\"name\":\"foo\",\"type\":\"int\",\"default\":1}]},\"doc\":\"And again\"}]}");
-  }
-
   public static class NullableBytesTest {
     @Nullable
     byte[] bytes;
@@ -1118,12 +988,10 @@ public class TestReflect {
               && Arrays.equals(((NullableBytesTest) obj).bytes, this.bytes);
     }
   }
-
   @Test
   public void testNullableByteArrayNotNullValue() throws Exception {
     checkReadWrite(new NullableBytesTest("foo".getBytes()));
   }
-
   @Test
   public void testNullableByteArrayNullValue() throws Exception {
     checkReadWrite(new NullableBytesTest());
@@ -1132,7 +1000,6 @@ public class TestReflect {
     ENUM_1,
     ENUM_2
   }
-
   private static class DocTest {
     @AvroDoc("Some Documentation")
     int foo;
@@ -1143,7 +1010,6 @@ public class TestReflect {
     @AvroDoc("And again")
     DefaultTest defaultTest;
   }
-
   @Test
   public void testAvroDoc() {
     check(DocTest.class,
@@ -1154,5 +1020,22 @@ public class TestReflect {
                     + "{\"name\":\"defaultTest\",\"type\":{\"type\":\"record\",\"name\":\"DefaultTest\","
                     + "\"fields\":[{\"name\":\"foo\",\"type\":\"int\",\"default\":1}]},\"doc\":\"And again\"}]}");
   }
+  // test primitive type inference
+  // test map, array and list type inference
+  // test record, array and list i/o
+  // test array i/o of unboxed type
+  // test inherited fields & short datatype
+  // test union annotation on a class
+  // test arrays of union annotated class
+  // test union annotation on methods and parameters
+  // test Stringable annotation
+  // test Nullable annotation on field
+  // test nullable annotation on methods and parameters
+  // test AvroSchema annotation
+  // test error
+  /** Test union of null and an array. */
+  /** Test stringable classes. */
+  /** Test Map with stringable key classes. */
+  /** Test that the error message contains the name of the class. */
 
 }
