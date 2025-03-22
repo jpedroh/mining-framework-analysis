@@ -14,7 +14,13 @@ import com.lambdaworks.redis.api.sync.RedisCommands;
 /**
  * @author <a href="mailto:mpaluch@paluch.biz">Mark Paluch</a>
  */
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/ClientOptionsTest.java/left.java
+public class ClientOptionsTest extends AbstractCommandTest {
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/ClientOptionsTest.java/base.java
+public class ClientOptionsTest  {
+=======
 public class ClientOptionsTest extends AbstractRedisClientTest {
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/ClientOptionsTest.java/right.java
 
     @Test
     public void testNew() throws Exception {
@@ -37,6 +43,147 @@ public class ClientOptionsTest extends AbstractRedisClientTest {
         assertThat(sut.isPingBeforeActivateConnection()).isEqualTo(false);
         assertThat(sut.isSuspendReconnectOnProtocolFailure()).isEqualTo(false);
         assertThat(sut.getDisconnectedBehavior()).isEqualTo(ClientOptions.DisconnectedBehavior.DEFAULT);
+    }
+
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/ClientOptionsTest.java/left.java
+    @Test
+    public void pingBeforeConnectWithAuthentication() throws Exception {
+
+        new WithPasswordRequired() {
+            @Override
+            protected void run(RedisClient client) throws Exception {
+
+                client.setOptions(new ClientOptions.Builder().pingBeforeActivateConnection(true).build());
+                RedisURI redisURI = new RedisURI.Builder().redis(host, port).withPassword(passwd).build();
+
+                RedisConnection<String, String> connection = client.connect(redisURI);
+
+                try {
+                    String result = connection.info();
+                    assertThat(result).contains("memory");
+                } finally {
+                    connection.close();
+                }
+
+            }
+        };
+    }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/ClientOptionsTest.java/base.java
+=======
+    @Test
+    public void pingBeforeConnectWithAuthentication() throws Exception {
+
+        new WithPasswordRequired() {
+            @Override
+            protected void run(RedisClient client) throws Exception {
+
+                client.setOptions(new ClientOptions.Builder().pingBeforeActivateConnection(true).build());
+                RedisURI redisURI = new RedisURI.Builder().redis(host, port).withPassword(passwd).build();
+
+                RedisCommands<String, String> connection = client.connect(redisURI).sync();
+
+                try {
+                    String result = connection.info();
+                    assertThat(result).contains("memory");
+                } finally {
+                    connection.close();
+                }
+
+            }
+        };
+    }
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/ClientOptionsTest.java/right.java
+
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/ClientOptionsTest.java/left.java
+    @Test
+    public void pingBeforeConnectWithSslAndAuthentication() throws Exception {
+
+        new WithPasswordRequired() {
+            @Override
+            protected void run(RedisClient client) throws Exception {
+
+                client.setOptions(new ClientOptions.Builder().pingBeforeActivateConnection(true).build());
+                RedisURI redisURI = new RedisURI.Builder().redis(host, 6443).withPassword(passwd).withVerifyPeer(false)
+                        .withSsl(true).build();
+
+                RedisConnection<String, String> connection = client.connect(redisURI);
+
+                try {
+                    String result = connection.info();
+                    assertThat(result).contains("memory");
+                } finally {
+                    connection.close();
+                }
+
+            }
+        };
+    }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/ClientOptionsTest.java/base.java
+=======
+    @Test
+    public void pingBeforeConnectWithSslAndAuthentication() throws Exception {
+
+        new WithPasswordRequired() {
+            @Override
+            protected void run(RedisClient client) throws Exception {
+
+                client.setOptions(new ClientOptions.Builder().pingBeforeActivateConnection(true).build());
+                RedisURI redisURI = new RedisURI.Builder().redis(host, 6443).withPassword(passwd).withVerifyPeer(false)
+                        .withSsl(true).build();
+
+                RedisCommands<String, String> connection = client.connect(redisURI).sync();
+
+                try {
+                    String result = connection.info();
+                    assertThat(result).contains("memory");
+                } finally {
+                    connection.close();
+                }
+
+            }
+        };
+    }
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/ClientOptionsTest.java/right.java
+
+    @Test
+    public void pingBeforeConnectWithAuthenticationFails() throws Exception {
+
+        new WithPasswordRequired() {
+            @Override
+            protected void run(RedisClient client) throws Exception {
+
+                client.setOptions(new ClientOptions.Builder().pingBeforeActivateConnection(true).build());
+                RedisURI redisURI = new RedisURI.Builder().redis(host, port).build();
+
+                try {
+                    client.connect(redisURI);
+                    fail("Missing RedisConnectionException");
+                } catch (RedisConnectionException e) {
+                    assertThat(e).hasRootCauseInstanceOf(RedisCommandExecutionException.class);
+                }
+            }
+        };
+    }
+
+    @Test
+    public void pingBeforeConnectWithSslAndAuthenticationFails() throws Exception {
+
+        new WithPasswordRequired() {
+            @Override
+            protected void run(RedisClient client) throws Exception {
+
+                client.setOptions(new ClientOptions.Builder().pingBeforeActivateConnection(true).build());
+                RedisURI redisURI = new RedisURI.Builder().redis(host, 6443).withVerifyPeer(false).withSsl(true).build();
+
+                try {
+                    client.connect(redisURI);
+                    fail("Missing RedisConnectionException");
+                } catch (RedisConnectionException e) {
+                    assertThat(e).hasRootCauseInstanceOf(RedisCommandExecutionException.class);
+                }
+
+            }
+        };
     }
 
     @Test
@@ -147,91 +294,4 @@ public class ClientOptionsTest extends AbstractRedisClientTest {
         }
     }
 
-    @Test
-    public void pingBeforeConnectWithAuthentication() throws Exception {
-
-        new WithPasswordRequired() {
-            @Override
-            protected void run(RedisClient client) throws Exception {
-
-                client.setOptions(new ClientOptions.Builder().pingBeforeActivateConnection(true).build());
-                RedisURI redisURI = new RedisURI.Builder().redis(host, port).withPassword(passwd).build();
-
-                RedisCommands<String, String> connection = client.connect(redisURI).sync();
-
-                try {
-                    String result = connection.info();
-                    assertThat(result).contains("memory");
-                } finally {
-                    connection.close();
-                }
-
-            }
-        };
-    }
-
-    @Test
-    public void pingBeforeConnectWithSslAndAuthentication() throws Exception {
-
-        new WithPasswordRequired() {
-            @Override
-            protected void run(RedisClient client) throws Exception {
-
-                client.setOptions(new ClientOptions.Builder().pingBeforeActivateConnection(true).build());
-                RedisURI redisURI = new RedisURI.Builder().redis(host, 6443).withPassword(passwd).withVerifyPeer(false)
-                        .withSsl(true).build();
-
-                RedisCommands<String, String> connection = client.connect(redisURI).sync();
-
-                try {
-                    String result = connection.info();
-                    assertThat(result).contains("memory");
-                } finally {
-                    connection.close();
-                }
-
-            }
-        };
-    }
-
-    @Test
-    public void pingBeforeConnectWithAuthenticationFails() throws Exception {
-
-        new WithPasswordRequired() {
-            @Override
-            protected void run(RedisClient client) throws Exception {
-
-                client.setOptions(new ClientOptions.Builder().pingBeforeActivateConnection(true).build());
-                RedisURI redisURI = new RedisURI.Builder().redis(host, port).build();
-
-                try {
-                    client.connect(redisURI);
-                    fail("Missing RedisConnectionException");
-                } catch (RedisConnectionException e) {
-                    assertThat(e).hasRootCauseInstanceOf(RedisCommandExecutionException.class);
-                }
-            }
-        };
-    }
-
-    @Test
-    public void pingBeforeConnectWithSslAndAuthenticationFails() throws Exception {
-
-        new WithPasswordRequired() {
-            @Override
-            protected void run(RedisClient client) throws Exception {
-
-                client.setOptions(new ClientOptions.Builder().pingBeforeActivateConnection(true).build());
-                RedisURI redisURI = new RedisURI.Builder().redis(host, 6443).withVerifyPeer(false).withSsl(true).build();
-
-                try {
-                    client.connect(redisURI);
-                    fail("Missing RedisConnectionException");
-                } catch (RedisConnectionException e) {
-                    assertThat(e).hasRootCauseInstanceOf(RedisCommandExecutionException.class);
-                }
-
-            }
-        };
-    }
 }

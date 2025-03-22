@@ -9,6 +9,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.Ignore;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.PropertyConfigurator;
@@ -63,6 +64,7 @@ public class LettucePerformanceTest {
      * @throws Exception
      */
     @Test
+    @Ignore("Run me manually")
     public void testSyncAsyncPerformance() throws Exception {
 
         // TWEAK ME

@@ -25,9 +25,9 @@ import com.lambdaworks.redis.codec.Utf8StringCodec;
 import com.lambdaworks.redis.protocol.CommandHandler;
 import com.lambdaworks.redis.protocol.RedisCommand;
 import com.lambdaworks.redis.pubsub.PubSubCommandHandler;
+import com.lambdaworks.redis.resource.ClientResources;
 import com.lambdaworks.redis.pubsub.StatefulRedisPubSubConnection;
 import com.lambdaworks.redis.pubsub.StatefulRedisPubSubConnectionImpl;
-import com.lambdaworks.redis.resource.ClientResources;
 import com.lambdaworks.redis.sentinel.StatefulRedisSentinelConnectionImpl;
 import com.lambdaworks.redis.sentinel.api.StatefulRedisSentinelConnection;
 import com.lambdaworks.redis.sentinel.api.async.RedisSentinelAsyncCommands;
@@ -53,8 +53,14 @@ public class RedisClient extends AbstractRedisClient {
     /**
      * Creates a uri-less RedisClient. You can connect to different Redis servers but you must supply a {@link RedisURI} on
      * connecting. Methods without having a {@link RedisURI} will fail with a {@link java.lang.IllegalStateException}.
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+     *  
+     * @deprecated Use the factory method {@link #create()}
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+=======
      *
      * @deprecated Use the factory method {@link #create()}
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
      */
     @Deprecated
     public RedisClient() {
@@ -105,17 +111,16 @@ public class RedisClient extends AbstractRedisClient {
      * Creates a uri-less RedisClient with default {@link ClientResources}. You can connect to different Redis servers but you
      * must supply a {@link RedisURI} on connecting. Methods without having a {@link RedisURI} will fail with a
      * {@link java.lang.IllegalStateException}.
-     *
+     * 
      * @return a new instance of {@link RedisClient}
      */
     public static RedisClient create() {
         return new RedisClient(null, null);
     }
-
     /**
      * Create a new client that connects to the supplied {@link RedisURI uri} with default {@link ClientResources}. You can
      * connect to different Redis servers but you must supply a {@link RedisURI} on connecting.
-     *
+     * 
      * @param redisURI the Redis URI, must not be {@literal null}
      * @return a new instance of {@link RedisClient}
      */
@@ -123,7 +128,6 @@ public class RedisClient extends AbstractRedisClient {
         assertNotNull(redisURI);
         return new RedisClient(null, redisURI);
     }
-
     /**
      * Create a new client that connects to the supplied uri with default {@link ClientResources}. You can connect to different
      * Redis servers but you must supply a {@link RedisURI} on connecting.
@@ -135,7 +139,6 @@ public class RedisClient extends AbstractRedisClient {
         checkArgument(uri != null, "uri must not be null");
         return new RedisClient(null, RedisURI.create(uri));
     }
-
     /**
      * Creates a uri-less RedisClient with shared {@link ClientResources}. You need to shut down the {@link ClientResources}
      * upon shutting down your application. You can connect to different Redis servers but you must supply a {@link RedisURI} on
@@ -148,7 +151,6 @@ public class RedisClient extends AbstractRedisClient {
         assertNotNull(clientResources);
         return new RedisClient(clientResources, null);
     }
-
     /**
      * Create a new client that connects to the supplied uri with shared {@link ClientResources}.You need to shut down the
      * {@link ClientResources} upon shutting down your application. You can connect to different Redis servers but you must
@@ -164,12 +166,11 @@ public class RedisClient extends AbstractRedisClient {
         checkArgument(uri != null, "uri must not be null");
         return create(clientResources, RedisURI.create(uri));
     }
-
     /**
      * Create a new client that connects to the supplied {@link RedisURI uri} with shared {@link ClientResources}. You need to
      * shut down the {@link ClientResources} upon shutting down your application.You can connect to different Redis servers but
      * you must supply a {@link RedisURI} on connecting.
-     *
+     * 
      * @param clientResources the client resources, must not be {@literal null}
      * @param redisURI the Redis URI, must not be {@literal null}
      * @return a new instance of {@link RedisClient}
@@ -179,7 +180,6 @@ public class RedisClient extends AbstractRedisClient {
         assertNotNull(redisURI);
         return new RedisClient(clientResources, redisURI);
     }
-
     /**
      * Creates a connection pool for synchronous connections. 5 max idle connections and 20 max active connections. Please keep
      * in mind to free all collections and close the pool once you do not need it anymore.
@@ -189,7 +189,6 @@ public class RedisClient extends AbstractRedisClient {
     public RedisConnectionPool<RedisCommands<String, String>> pool() {
         return pool(5, 20);
     }
-
     /**
      * Creates a connection pool for synchronous connections. Please keep in mind to free all collections and close the pool
      * once you do not need it anymore.
@@ -201,7 +200,6 @@ public class RedisClient extends AbstractRedisClient {
     public RedisConnectionPool<RedisCommands<String, String>> pool(int maxIdle, int maxActive) {
         return pool(newStringStringCodec(), maxIdle, maxActive);
     }
-
     /**
      * Creates a connection pool for synchronous connections. Please keep in mind to free all collections and close the pool
      * once you do not need it anymore.
@@ -215,8 +213,8 @@ public class RedisClient extends AbstractRedisClient {
      */
     @SuppressWarnings("unchecked")
     public <K, V> RedisConnectionPool<RedisCommands<K, V>> pool(final RedisCodec<K, V> codec, int maxIdle, int maxActive) {
-
         checkForRedisURI();
+        checkArgument(codec != null, "RedisCodec must not be null");
 
         long maxWait = makeTimeout();
         RedisConnectionPool<RedisCommands<K, V>> pool = new RedisConnectionPool<>(
@@ -239,16 +237,13 @@ public class RedisClient extends AbstractRedisClient {
 
         return pool;
     }
-
     protected long makeTimeout() {
         return TimeUnit.MILLISECONDS.convert(timeout, unit);
     }
-
     private void checkForRedisURI() {
         checkState(this.redisURI != null,
                 "RedisURI is not available. Use RedisClient(Host), RedisClient(Host, Port) or RedisClient(RedisURI) to construct your client.");
     }
-
     /**
      * Creates a connection pool for asynchronous connections. 5 max idle connections and 20 max active connections. Please keep
      * in mind to free all collections and close the pool once you do not need it anymore.
@@ -258,7 +253,6 @@ public class RedisClient extends AbstractRedisClient {
     public RedisConnectionPool<RedisAsyncCommands<String, String>> asyncPool() {
         return asyncPool(5, 20);
     }
-
     /**
      * Creates a connection pool for asynchronous connections. Please keep in mind to free all collections and close the pool
      * once you do not need it anymore.
@@ -270,7 +264,6 @@ public class RedisClient extends AbstractRedisClient {
     public RedisConnectionPool<RedisAsyncCommands<String, String>> asyncPool(int maxIdle, int maxActive) {
         return asyncPool(newStringStringCodec(), maxIdle, maxActive);
     }
-
     /**
      * Creates a connection pool for asynchronous connections. Please keep in mind to free all collections and close the pool
      * once you do not need it anymore.
@@ -308,43 +301,72 @@ public class RedisClient extends AbstractRedisClient {
 
         return pool;
     }
-
     /**
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+     * Open a new synchronous connection to a Redis server that treats keys and values as UTF-8 strings.
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+     * Open a new synchronous connection to the redis server that treats keys and values as UTF-8 strings.
+=======
      * Open a new connection to a Redis server that treats keys and values as UTF-8 strings.
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
      * 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+     * @return A new connection
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+     * @return A new connection.
+=======
      * @return A new stateful Redis connection
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
      */
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+    public RedisConnection<String, String> connect() {
+        return connect(newStringStringCodec());
+    }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+=======
     public StatefulRedisConnection<String, String> connect() {
         return connect(newStringStringCodec());
     }
-
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
     /**
-     * Open a new connection to a Redis server. Use the supplied {@link RedisCodec codec} to encode/decode keys and values.
+     * Open a new synchronous connection to a Redis server. Use the supplied {@link RedisCodec codec} to encode/decode keys and
+     * values.
      * 
      * @param codec Use this codec to encode/decode keys and values, must not be {@literal null}
      * @param <K> Key type
      * @param <V> Value type
-     * @return A new stateful Redis connection
+     * @return A new connection
      */
     public <K, V> StatefulRedisConnection<K, V> connect(RedisCodec<K, V> codec) {
         checkForRedisURI();
         return connect(codec, this.redisURI);
     }
-
     /**
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+     * Open a new synchronous connection to a Redis server using the supplied {@link RedisURI} that treats keys and values as
+     * UTF-8 strings.
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+     * Open a new synchronous connection to the supplied {@link RedisURI} that treats keys and values as UTF-8 strings.
+=======
      * Open a new connection to a Redis server using the supplied {@link RedisURI} that treats keys and values as UTF-8 strings.
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
      *
      * @param redisURI the Redis server to connect to, must not be {@literal null}
      * @return A new connection
      */
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+    @SuppressWarnings("unchecked")
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+=======
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
     public StatefulRedisConnection<String, String> connect(RedisURI redisURI) {
         checkValidRedisURI(redisURI);
         return connect(newStringStringCodec(), redisURI);
     }
-
     /**
-     * Open a new connection to a Redis server using the supplied {@link RedisURI} and the supplied {@link RedisCodec codec} to
-     * encode/decode keys.
+     * Open a new synchronous connection to a Redis server using the supplied {@link RedisURI} and the supplied
+     * {@link RedisCodec codec} to encode/decode keys.
      *
      * @param codec Use this codec to encode/decode keys and values, must not be {@literal null}
      * @param redisURI the Redis server to connect to, must not be {@literal null}
@@ -352,20 +374,29 @@ public class RedisClient extends AbstractRedisClient {
      * @param <V> Value type
      * @return A new connection
      */
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public <K, V> RedisConnection connect(RedisCodec<K, V> codec, RedisURI redisURI) {
+        return (RedisConnection<K, V>) syncHandler((RedisChannelHandler<K, V>) connectAsync(codec, redisURI),
+                RedisConnection.class, RedisClusterConnection.class);
+    }
     public <K, V> StatefulRedisConnection<K, V> connect(RedisCodec<K, V> codec, RedisURI redisURI) {
         return connectStandalone(codec, redisURI);
     }
-
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+    public <K, V> StatefulRedisConnection<K, V> connect(RedisCodec<K, V> codec, RedisURI redisURI) {
+        return connectStandalone(codec, redisURI);
+    }
+=======
+    public <K, V> StatefulRedisConnection<K, V> connect(RedisCodec<K, V> codec, RedisURI redisURI) {
+        return connectStandalone(codec, redisURI);
+    }
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
     /**
      * Open a new asynchronous connection to a Redis server that treats keys and values as UTF-8 strings.
      * 
      * @return A new connection
      */
-    @Deprecated
-    public RedisAsyncCommands<String, String> connectAsync() {
-        return connect(newStringStringCodec()).async();
-    }
-
     /**
      * Open a new asynchronous connection to a Redis server. Use the supplied {@link RedisCodec codec} to encode/decode keys and
      * values.
@@ -374,28 +405,33 @@ public class RedisClient extends AbstractRedisClient {
      * @param <K> Key type
      * @param <V> Value type
      * @return A new connection
-     * @deprecated Use {@code connect(codec).async()}
      */
     @Deprecated
     public <K, V> RedisAsyncCommands<K, V> connectAsync(RedisCodec<K, V> codec) {
         checkForRedisURI();
         return connect(codec, redisURI).async();
     }
-
     /**
      * Open a new asynchronous connection to a Redis server using the supplied {@link RedisURI} that treats keys and values as
      * UTF-8 strings.
      *
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+     * @param redisURI the Redis server to connect to, must not be {@literal null}
+     * @return A new connection
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+     * @param redisURI the redis server to connect to, must not be {@literal null}
+     * @return A new connection.
+=======
      * @param redisURI the Redis server to connect to, must not be {@literal null}
      * @return A new connection
      * @deprecated Use {@code connect(redisURI).async()}
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
      */
     @Deprecated
     public RedisAsyncCommands<String, String> connectAsync(RedisURI redisURI) {
         checkValidRedisURI(redisURI);
         return connect(newStringStringCodec(), redisURI).async();
     }
-
     /**
      * Open a new asynchronous connection to a Redis server using the supplied {@link RedisURI} and the supplied
      * {@link RedisCodec codec} to encode/decode keys.
@@ -405,17 +441,31 @@ public class RedisClient extends AbstractRedisClient {
      * @param <K> Key type
      * @param <V> Value type
      * @return A new connection
-     * @deprecated Use {@code connect(codec, redisURI).async()}
      */
-    @Deprecated
-    public <K, V> RedisAsyncCommands<K, V> connectAsync(RedisCodec<K, V> codec, RedisURI redisURI) {
-        checkValidRedisURI(redisURI);
-        return connect(codec, redisURI).async();
-    }
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+    public <K, V> RedisAsyncConnection<K, V> connectStandalone(RedisCodec<K, V> codec, RedisURI redisURI) {
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+    public <K, V> RedisAsyncConnectionImpl<K, V> connectStandalone(RedisCodec<K, V> codec, RedisURI redisURI) {
+=======
+    public <K, V> StatefulRedisConnection<K, V> connectStandalone(RedisCodec<K, V> codec, RedisURI redisURI) {
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+        checkArgument(codec != null, "RedisCodec must not be null");
+        assertNotNull(redisURI);
 
-    private <K, V> StatefulRedisConnection<K, V> connectStandalone(RedisCodec<K, V> codec, RedisURI redisURI) {
+        Queue<RedisCommand<K, V, ?>> queue = new ArrayDeque<RedisCommand<K, V, ?>>();
+
+        CommandHandler<K, V> handler = new CommandHandler<K, V>(clientOptions, clientResources, queue);
+        RedisAsyncConnectionImpl<K, V> connection = newRedisAsyncConnectionImpl(handler, codec, timeout, unit);
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+        BlockingQueue<RedisCommand<K, V, ?>> queue = new LinkedBlockingQueue<RedisCommand<K, V, ?>>();
+
+        CommandHandler<K, V> handler = new CommandHandler<K, V>(clientOptions, queue);
+        RedisAsyncConnectionImpl<K, V> connection = newRedisAsyncConnectionImpl(handler, codec, timeout, unit);
+=======
         assertNotNull(codec);
         assertNotNull(redisURI);
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
 
         Queue<RedisCommand<K, V, ?>> queue = new ArrayDeque<>();
 
@@ -425,7 +475,6 @@ public class RedisClient extends AbstractRedisClient {
         connectStateful(handler, connection, redisURI);
         return connection;
     }
-
     private <K, V> void connectStateful(CommandHandler<K, V> handler, StatefulRedisConnectionImpl<K, V> connection,
             RedisURI redisURI) {
 
@@ -453,42 +502,62 @@ public class RedisClient extends AbstractRedisClient {
         }
 
     }
-
     /**
      * Open a new pub/sub connection to a Redis server that treats keys and values as UTF-8 strings.
      *
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+     * @return A new pub/sub connection
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+     * @return A new connection.
+=======
      * @return A new stateful pub/sub connection
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
      */
     public StatefulRedisPubSubConnection<String, String> connectPubSub() {
         return connectPubSub(newStringStringCodec());
     }
-
     /**
      * Open a new pub/sub connection to a Redis server using the supplied {@link RedisURI} that treats keys and values as UTF-8
      * strings.
      *
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+     * @param redisURI the Redis server to connect to, must not be {@literal null}
+     * @return A new pub/sub connection
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+     * @param redisURI the redis server to connect to, must not be {@literal null}
+     * @return A new connection.
+=======
      * @param redisURI the Redis server to connect to, must not be {@literal null}
      * @return A new stateful pub/sub connection
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
      */
     public StatefulRedisPubSubConnection<String, String> connectPubSub(RedisURI redisURI) {
         checkValidRedisURI(redisURI);
         return connectPubSub(newStringStringCodec(), redisURI);
     }
-
     /**
      * Open a new pub/sub connection to the Redis server using the supplied {@link RedisURI} and use the supplied
      * {@link RedisCodec codec} to encode/decode keys and values.
      *
      * @param codec Use this codec to encode/decode keys and values, must not be {@literal null}
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+     * @param <K> Key type
+     * @param <V> Value type
+     * @return A new pub/sub connection
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+     * @param <K> Key type.
+     * @param <V> Value type.
+     * @return A new pub/sub connection.
+=======
      * @param <K> Key type
      * @param <V> Value type
      * @return A new stateful pub/sub connection
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
      */
     public <K, V> StatefulRedisPubSubConnection<K, V> connectPubSub(RedisCodec<K, V> codec) {
         checkForRedisURI();
         return connectPubSub(codec, redisURI);
     }
-
     /**
      * Open a new pub/sub connection to the Redis server using the supplied {@link RedisURI} and use the supplied
      * {@link RedisCodec codec} to encode/decode keys and values.
@@ -499,6 +568,21 @@ public class RedisClient extends AbstractRedisClient {
      * @param <V> Value type
      * @return A new connection
      */
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+    public <K, V> RedisPubSubConnection<K, V> connectPubSub(RedisCodec<K, V> codec, RedisURI redisURI) {
+        checkArgument(codec != null, "RedisCodec must not be null");
+        assertNotNull(redisURI);
+
+        Queue<RedisCommand<K, V, ?>> queue = new ArrayDeque<RedisCommand<K, V, ?>>();
+        PubSubCommandHandler<K, V> handler = new PubSubCommandHandler<K, V>(clientOptions, clientResources, queue, codec);
+        RedisPubSubConnectionImpl<K, V> connection = newRedisPubSubConnectionImpl(handler, codec, timeout, unit);
+
+        connectStateful(handler, connection, redisURI);
+
+        return connection;
+    }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+=======
     public <K, V> StatefulRedisPubSubConnection<K, V> connectPubSub(RedisCodec<K, V> codec, RedisURI redisURI) {
 
         assertNotNull(codec);
@@ -512,33 +596,69 @@ public class RedisClient extends AbstractRedisClient {
 
         return connection;
     }
-
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
     /**
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+     * Open a new asynchronous connection to a Redis Sentinel that treats keys and values as UTF-8 strings. You must supply a
+     * valid RedisURI containing one or more sentinels.
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+     * Creates an asynchronous connection to Sentinel. You must supply a valid RedisURI containing one or more sentinels.
+=======
      * Open a connection to a Redis Sentinel that treats keys and values as UTF-8 strings.
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
      * 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+     * @return a new connection
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+     * @return a new connection.
+=======
      * @return A new stateful Redis Sentinel connection
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
      */
     public StatefulRedisSentinelConnection<String, String> connectSentinel() {
         return connectSentinel(newStringStringCodec());
     }
-
     /**
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+     * Open a new asynchronous connection to a Redis Sentinela nd use the supplied {@link RedisCodec codec} to encode/decode
+     * keys and values. You must supply a valid RedisURI containing one or more sentinels.
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+     * Creates an asynchronous connection to Sentinel. You must supply a valid RedisURI containing one or more sentinels.
+=======
      * Open a connection to a Redis Sentinel that treats keys and use the supplied {@link RedisCodec codec} to encode/decode
      * keys and values. The client {@link RedisURI} must contain one or more sentinels.
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
      * 
      * @param codec Use this codec to encode/decode keys and values, must not be {@literal null}
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+     * @param <K> Key type
+     * @param <V> Value type
+     * @return a new connection
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+     * @param <K> Key type.
+     * @param <V> Value type.
+     * @return a new connection.
+=======
      * @param <K> Key type
      * @param <V> Value type
      * @return A new stateful Redis Sentinel connection
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
      */
     public <K, V> StatefulRedisSentinelConnection<K, V> connectSentinel(RedisCodec<K, V> codec) {
         checkForRedisURI();
         return connectSentinelImpl(codec, redisURI);
     }
-
     /**
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+     * Open a new asynchronous connection to a Redis Sentinel using the supplied {@link RedisURI} that treats keys and values as
+     * UTF-8 strings. You must supply a valid RedisURI containing a redis host or one or more sentinels.
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+     * Creates an asynchronous connection to Sentinel. You must supply a valid RedisURI containing a redis host or one or more
+     * sentinels.
+=======
      * Open a connection to a Redis Sentinel using the supplied {@link RedisURI} that treats keys and values as UTF-8 strings.
      * The client {@link RedisURI} must contain one or more sentinels.
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
      *
      * @param redisURI the Redis server to connect to, must not be {@literal null}
      * @return A new connection
@@ -546,62 +666,6 @@ public class RedisClient extends AbstractRedisClient {
     public StatefulRedisSentinelConnection<String, String> connectSentinel(RedisURI redisURI) {
         return connectSentinelImpl(newStringStringCodec(), redisURI);
     }
-
-    /**
-     * Open a connection to a Redis Sentinel using the supplied {@link RedisURI} and use the supplied {@link RedisCodec codec}
-     * to encode/decode keys and values. The client {@link RedisURI} must contain one or more sentinels.
-     *
-     * @param codec the Redis server to connect to, must not be {@literal null}
-     * @param redisURI the Redis server to connect to, must not be {@literal null}
-     * @param <K> Key type
-     * @param <V> Value type
-     * @return A new connection
-     */
-    public <K, V> StatefulRedisSentinelConnection<K, V> connectSentinel(RedisCodec<K, V> codec, RedisURI redisURI) {
-        return connectSentinelImpl(codec, redisURI);
-    }
-
-    /**
-     * Open a new asynchronous connection to a Redis Sentinel that treats keys and values as UTF-8 strings. You must supply a
-     * valid RedisURI containing one or more sentinels.
-     * 
-     * @return a new connection
-     * @deprecated Use {@code connectSentinel().async()}
-     */
-    @Deprecated
-    public RedisSentinelAsyncCommands<String, String> connectSentinelAsync() {
-        return connectSentinel(newStringStringCodec()).async();
-    }
-
-    /**
-     * Open a new asynchronous connection to a Redis Sentinela nd use the supplied {@link RedisCodec codec} to encode/decode
-     * keys and values. You must supply a valid RedisURI containing one or more sentinels.
-     * 
-     * @param codec Use this codec to encode/decode keys and values, must not be {@literal null}
-     * @param <K> Key type
-     * @param <V> Value type
-     * @return a new connection
-     * @deprecated Use {@code connectSentinel(codec).async()}
-     */
-    @Deprecated
-    public <K, V> RedisSentinelAsyncCommands<K, V> connectSentinelAsync(RedisCodec<K, V> codec) {
-        checkForRedisURI();
-        return connectSentinelImpl(codec, redisURI).async();
-    }
-
-    /**
-     * Open a new asynchronous connection to a Redis Sentinel using the supplied {@link RedisURI} that treats keys and values as
-     * UTF-8 strings. You must supply a valid RedisURI containing a redis host or one or more sentinels.
-     *
-     * @param redisURI the Redis server to connect to, must not be {@literal null}
-     * @return A new connection
-     * @deprecated Use {@code connectSentinel(redisURI).async()}
-     */
-    @Deprecated
-    public RedisSentinelAsyncCommands<String, String> connectSentinelAsync(RedisURI redisURI) {
-        return connectSentinelImpl(newStringStringCodec(), redisURI).async();
-    }
-
     /**
      * Open a new asynchronous connection to a Redis Sentinel using the supplied {@link RedisURI} and use the supplied
      * {@link RedisCodec codec} to encode/decode keys and values. You must supply a valid RedisURI containing a redis host or
@@ -612,26 +676,51 @@ public class RedisClient extends AbstractRedisClient {
      * @param <K> Key type
      * @param <V> Value type
      * @return A new connection
-     * @deprecated Use {@code connectSentinel(codec, redisURI).async()}
      */
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+    public <K, V> RedisSentinelAsyncConnection<K, V> connectSentinelAsync(RedisCodec<K, V> codec, RedisURI redisURI) {
+        return connectSentinelAsyncImpl(codec, redisURI);
+    }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+=======
     @Deprecated
     public <K, V> RedisSentinelAsyncCommands<K, V> connectSentinelAsync(RedisCodec<K, V> codec, RedisURI redisURI) {
         return connectSentinelImpl(codec, redisURI).async();
     }
-
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
     private <K, V> StatefulRedisSentinelConnection<K, V> connectSentinelImpl(RedisCodec<K, V> codec, RedisURI redisURI) {
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+    
+        assertNotNull(codec);
+        assertNotNull(redisURI);
+
+        Queue<RedisCommand<K, V, ?>> queue = new ArrayDeque<RedisCommand<K, V, ?>>();
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+        BlockingQueue<RedisCommand<K, V, ?>> queue = new LinkedBlockingQueue<RedisCommand<K, V, ?>>();
+=======
         assertNotNull(codec);
         assertNotNull(redisURI);
 
         Queue<RedisCommand<K, V, ?>> queue = new ArrayDeque<>();
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
 
         ConnectionBuilder connectionBuilder = ConnectionBuilder.connectionBuilder();
         connectionBuilder.clientOptions(ClientOptions.copyOf(getOptions()));
         connectionBuilder.clientResources(clientResources);
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+        final CommandHandler<K, V> commandHandler = new CommandHandler<K, V>(clientOptions, clientResources, queue);
+        final RedisSentinelAsyncConnectionImpl<K, V> connection = newRedisSentinelAsyncConnectionImpl(commandHandler, codec,
+                timeout, unit);
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+        final CommandHandler<K, V> commandHandler = new CommandHandler<K, V>(clientOptions, queue);
+        final RedisSentinelAsyncConnectionImpl<K, V> connection = newRedisSentinelAsyncConnectionImpl(commandHandler, codec,
+                timeout, unit);
+=======
         final CommandHandler<K, V> commandHandler = new CommandHandler<>(clientOptions, clientResources, queue);
 
         StatefulRedisSentinelConnectionImpl<K, V> connection = newStatefulRedisSentinelConnection(commandHandler, codec);
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
 
         logger.debug("Trying to get a Sentinel connection for one of: " + redisURI.getSentinels());
 
@@ -671,7 +760,6 @@ public class RedisClient extends AbstractRedisClient {
 
         return connection;
     }
-
     /**
      * Create a new instance of {@link StatefulRedisPubSubConnectionImpl} or a subclass.
      * 
@@ -685,7 +773,6 @@ public class RedisClient extends AbstractRedisClient {
             PubSubCommandHandler<K, V> commandHandler, RedisCodec<K, V> codec) {
         return new StatefulRedisPubSubConnectionImpl<>(commandHandler, codec, timeout, unit);
     }
-
     /**
      * Create a new instance of {@link StatefulRedisSentinelConnectionImpl} or a subclass.
      * 
@@ -699,7 +786,6 @@ public class RedisClient extends AbstractRedisClient {
             CommandHandler<K, V> commandHandler, RedisCodec<K, V> codec) {
         return new StatefulRedisSentinelConnectionImpl<>(commandHandler, codec, timeout, unit);
     }
-
     /**
      * Create a new instance of {@link StatefulRedisConnectionImpl} or a subclass.
      * 
@@ -713,7 +799,6 @@ public class RedisClient extends AbstractRedisClient {
             RedisCodec<K, V> codec) {
         return new StatefulRedisConnectionImpl<>(commandHandler, codec, timeout, unit);
     }
-
     private void validateUrisAreOfSameConnectionType(List<RedisURI> redisUris) {
         boolean unixDomainSocket = false;
         boolean inetSocket = false;
@@ -729,9 +814,19 @@ public class RedisClient extends AbstractRedisClient {
         if (unixDomainSocket && inetSocket) {
             throw new RedisConnectionException("You cannot mix unix domain socket and IP socket URI's");
         }
-
     }
-
+    /**
+     * Construct a new {@link RedisAsyncConnectionImpl}. Can be overridden in order to construct a subclass of
+     * {@link RedisAsyncConnectionImpl}
+     * 
+     * @param channelWriter the channel writer
+     * @param codec the codec to use
+     * @param timeout Timeout value
+     * @param unit Timeout unit
+     * @param <K> Key type.
+     * @param <V> Value type.
+     * @return RedisAsyncConnectionImpl&lt;K, V&gt; instance
+     */
     private Supplier<SocketAddress> getSocketAddressSupplier(final RedisURI redisURI) {
         return () -> {
             try {
@@ -744,7 +839,6 @@ public class RedisClient extends AbstractRedisClient {
             }
         };
     }
-
     /**
      * Returns the {@link ClientResources} which are used with that client.
      *
@@ -753,7 +847,11 @@ public class RedisClient extends AbstractRedisClient {
     public ClientResources getResources() {
         return clientResources;
     }
-
+    /**
+     * Returns the {@link ClientResources} which are used with that client.
+     *
+     * @return the {@link ClientResources} for this client
+     */
     protected SocketAddress getSocketAddress(RedisURI redisURI) throws InterruptedException, TimeoutException,
             ExecutionException {
         SocketAddress redisAddress;
@@ -773,7 +871,6 @@ public class RedisClient extends AbstractRedisClient {
         }
         return redisAddress;
     }
-
     private SocketAddress lookupRedis(RedisURI sentinelUri) throws InterruptedException, TimeoutException,
             ExecutionException {
         RedisSentinelAsyncCommands<String, String> connection = connectSentinel(sentinelUri).async();
@@ -783,27 +880,195 @@ public class RedisClient extends AbstractRedisClient {
             connection.close();
         }
     }
-
     private void checkValidRedisURI(RedisURI redisURI) {
         checkArgument(redisURI != null && isNotEmpty(redisURI.getHost()), "A valid RedisURI with a host is needed");
     }
-
     protected Utf8StringCodec newStringStringCodec() {
         return new Utf8StringCodec();
     }
-
     private static <K, V> void assertNotNull(RedisCodec<K, V> codec) {
         checkArgument(codec != null, "RedisCodec must not be null");
     }
-
     private static void assertNotNull(RedisURI redisURI) {
         checkArgument(redisURI != null, "RedisURI must not be null");
     }
-
     private static void assertNotNull(ClientResources clientResources) {
         checkArgument(clientResources != null, "ClientResources must not be null");
     }
-
+    /**
+     * Creates a uri-less RedisClient with default {@link ClientResources}. You can connect to different Redis servers but you
+     * must supply a {@link RedisURI} on connecting. Methods without having a {@link RedisURI} will fail with a
+     * {@link java.lang.IllegalStateException}.
+     *
+     * @return a new instance of {@link RedisClient}
+     */
+    /**
+     * Create a new client that connects to the supplied {@link RedisURI uri} with default {@link ClientResources}. You can
+     * connect to different Redis servers but you must supply a {@link RedisURI} on connecting.
+     *
+     * @param redisURI the Redis URI, must not be {@literal null}
+     * @return a new instance of {@link RedisClient}
+     */
+    /**
+     * Create a new client that connects to the supplied uri with default {@link ClientResources}. You can connect to different
+     * Redis servers but you must supply a {@link RedisURI} on connecting.
+     *
+     * @param uri the Redis URI, must not be {@literal null}
+     * @return a new instance of {@link RedisClient}
+     */
+    /**
+     * Creates a uri-less RedisClient with shared {@link ClientResources}. You need to shut down the {@link ClientResources}
+     * upon shutting down your application. You can connect to different Redis servers but you must supply a {@link RedisURI} on
+     * connecting. Methods without having a {@link RedisURI} will fail with a {@link java.lang.IllegalStateException}.
+     *
+     * @param clientResources the client resources, must not be {@literal null}
+     * @return a new instance of {@link RedisClient}
+     */
+    /**
+     * Create a new client that connects to the supplied uri with shared {@link ClientResources}.You need to shut down the
+     * {@link ClientResources} upon shutting down your application. You can connect to different Redis servers but you must
+     * supply a {@link RedisURI} on connecting.
+     *
+     * @param clientResources the client resources, must not be {@literal null}
+     * @param uri the Redis URI, must not be {@literal null}
+     *
+     * @return a new instance of {@link RedisClient}
+     */
+    /**
+     * Create a new client that connects to the supplied {@link RedisURI uri} with shared {@link ClientResources}. You need to
+     * shut down the {@link ClientResources} upon shutting down your application.You can connect to different Redis servers but
+     * you must supply a {@link RedisURI} on connecting.
+     *
+     * @param clientResources the client resources, must not be {@literal null}
+     * @param redisURI the Redis URI, must not be {@literal null}
+     * @return a new instance of {@link RedisClient}
+     */
+    /**
+     * Open a new connection to a Redis server. Use the supplied {@link RedisCodec codec} to encode/decode keys and values.
+     * 
+     * @param codec Use this codec to encode/decode keys and values, must not be {@literal null}
+     * @param <K> Key type
+     * @param <V> Value type
+     * @return A new stateful Redis connection
+     */
+    /**
+     * Open a new connection to a Redis server using the supplied {@link RedisURI} and the supplied {@link RedisCodec codec} to
+     * encode/decode keys.
+     *
+     * @param codec Use this codec to encode/decode keys and values, must not be {@literal null}
+     * @param redisURI the Redis server to connect to, must not be {@literal null}
+     * @param <K> Key type
+     * @param <V> Value type
+     * @return A new connection
+     */
+    /**
+     * Open a new asynchronous connection to a Redis server that treats keys and values as UTF-8 strings.
+     * 
+     * @return A new connection
+     */
+    @Deprecated
+    public RedisAsyncCommands<String, String> connectAsync() {
+        return connect(newStringStringCodec()).async();
+    }
+    /**
+     * Open a new asynchronous connection to a Redis server. Use the supplied {@link RedisCodec codec} to encode/decode keys and
+     * values.
+     * 
+     * @param codec Use this codec to encode/decode keys and values, must not be {@literal null}
+     * @param <K> Key type
+     * @param <V> Value type
+     * @return A new connection
+     * @deprecated Use {@code connect(codec).async()}
+     */
+    /**
+     * Open a new asynchronous connection to a Redis server using the supplied {@link RedisURI} and the supplied
+     * {@link RedisCodec codec} to encode/decode keys.
+     *
+     * @param codec Use this codec to encode/decode keys and values, must not be {@literal null}
+     * @param redisURI the Redis server to connect to, must not be {@literal null}
+     * @param <K> Key type
+     * @param <V> Value type
+     * @return A new connection
+     * @deprecated Use {@code connect(codec, redisURI).async()}
+     */
+    @Deprecated
+    public <K, V> RedisAsyncCommands<K, V> connectAsync(RedisCodec<K, V> codec, RedisURI redisURI) {
+        checkValidRedisURI(redisURI);
+        return connect(codec, redisURI).async();
+    }
+    /**
+     * Open a new pub/sub connection to the Redis server using the supplied {@link RedisURI} and use the supplied
+     * {@link RedisCodec codec} to encode/decode keys and values.
+     *
+     * @param codec Use this codec to encode/decode keys and values, must not be {@literal null}
+     * @param redisURI the redis server to connect to, must not be {@literal null}
+     * @param <K> Key type
+     * @param <V> Value type
+     * @return A new connection
+     */
+    /**
+     * Open a connection to a Redis Sentinel using the supplied {@link RedisURI} and use the supplied {@link RedisCodec codec}
+     * to encode/decode keys and values. The client {@link RedisURI} must contain one or more sentinels.
+     *
+     * @param codec the Redis server to connect to, must not be {@literal null}
+     * @param redisURI the Redis server to connect to, must not be {@literal null}
+     * @param <K> Key type
+     * @param <V> Value type
+     * @return A new connection
+     */
+    public <K, V> StatefulRedisSentinelConnection<K, V> connectSentinel(RedisCodec<K, V> codec, RedisURI redisURI) {
+        return connectSentinelImpl(codec, redisURI);
+    }
+    /**
+     * Open a new asynchronous connection to a Redis Sentinel that treats keys and values as UTF-8 strings. You must supply a
+     * valid RedisURI containing one or more sentinels.
+     * 
+     * @return a new connection
+     * @deprecated Use {@code connectSentinel().async()}
+     */
+    @Deprecated
+    public RedisSentinelAsyncCommands<String, String> connectSentinelAsync() {
+        return connectSentinel(newStringStringCodec()).async();
+    }
+    /**
+     * Open a new asynchronous connection to a Redis Sentinela nd use the supplied {@link RedisCodec codec} to encode/decode
+     * keys and values. You must supply a valid RedisURI containing one or more sentinels.
+     * 
+     * @param codec Use this codec to encode/decode keys and values, must not be {@literal null}
+     * @param <K> Key type
+     * @param <V> Value type
+     * @return a new connection
+     * @deprecated Use {@code connectSentinel(codec).async()}
+     */
+    @Deprecated
+    public <K, V> RedisSentinelAsyncCommands<K, V> connectSentinelAsync(RedisCodec<K, V> codec) {
+        checkForRedisURI();
+        return connectSentinelImpl(codec, redisURI).async();
+    }
+    /**
+     * Open a new asynchronous connection to a Redis Sentinel using the supplied {@link RedisURI} that treats keys and values as
+     * UTF-8 strings. You must supply a valid RedisURI containing a redis host or one or more sentinels.
+     *
+     * @param redisURI the Redis server to connect to, must not be {@literal null}
+     * @return A new connection
+     * @deprecated Use {@code connectSentinel(redisURI).async()}
+     */
+    @Deprecated
+    public RedisSentinelAsyncCommands<String, String> connectSentinelAsync(RedisURI redisURI) {
+        return connectSentinelImpl(newStringStringCodec(), redisURI).async();
+    }
+    /**
+     * Open a new asynchronous connection to a Redis Sentinel using the supplied {@link RedisURI} and use the supplied
+     * {@link RedisCodec codec} to encode/decode keys and values. You must supply a valid RedisURI containing a redis host or
+     * one or more sentinels.
+     *
+     * @param codec Use this codec to encode/decode keys and values, must not be {@literal null}
+     * @param redisURI the Redis server to connect to, must not be {@literal null}
+     * @param <K> Key type
+     * @param <V> Value type
+     * @return A new connection
+     * @deprecated Use {@code connectSentinel(codec, redisURI).async()}
+     */
     /**
      * Set the {@link ClientOptions} for the client.
      *

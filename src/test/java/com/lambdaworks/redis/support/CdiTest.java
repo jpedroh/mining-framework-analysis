@@ -2,22 +2,19 @@ package com.lambdaworks.redis.support;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
-
-import com.lambdaworks.redis.AbstractRedisClientTest;
-import com.lambdaworks.redis.FastShutdown;
 import org.apache.webbeans.cditest.CdiTestContainer;
 import org.apache.webbeans.cditest.CdiTestContainerLoader;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import com.lambdaworks.redis.RedisConnectionStateListener;
 import com.lambdaworks.redis.RedisURI;
 import com.lambdaworks.redis.resource.ClientResources;
 import com.lambdaworks.redis.resource.DefaultClientResources;
+import com.lambdaworks.redis.AbstractRedisClientTest;
+import com.lambdaworks.redis.FastShutdown;
 
 /**
  * @author <a href="mailto:mpaluch@paluch.biz">Mark Paluch</a>
@@ -35,10 +32,22 @@ public class CdiTest {
         container.startApplicationScope();
     }
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/support/CdiTest.java/left.java
+    @Produces
+    public RedisURI redisURI() {
+        return RedisURI.Builder.redis(AbstractCommandTest.host, AbstractCommandTest.port).build();
+    }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/support/CdiTest.java/base.java
+    @Produces
+    public RedisURI redisURI() {
+        return RedisURI.Builder.redis(AbstractCommandTest.host, AbstractCommandTest.port).build();
+    }
+=======
     @Produces
     public RedisURI redisURI() {
         return RedisURI.Builder.redis(AbstractRedisClientTest.host, AbstractRedisClientTest.port).build();
     }
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/support/CdiTest.java/right.java
 
     @Produces
     @PersonDB
@@ -46,37 +55,58 @@ public class CdiTest {
         return DefaultClientResources.create();
     }
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/support/CdiTest.java/left.java
+    public void shutdownClientResources(@Disposes ClientResources clientResources) throws Exception {
+        clientResources.shutdown().get();
+    }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/support/CdiTest.java/base.java
+=======
     public void shutdownClientResources(@Disposes ClientResources clientResources) throws Exception {
         FastShutdown.shutdown(clientResources);
     }
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/support/CdiTest.java/right.java
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/support/CdiTest.java/left.java
+    @PersonDB
+    @Produces
+    public RedisURI redisURIQualified() {
+        return RedisURI.Builder.redis(AbstractCommandTest.host, AbstractCommandTest.port + 1).build();
+    }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/support/CdiTest.java/base.java
+    @PersonDB
+    @Produces
+    public RedisURI redisURIQualified() {
+        return RedisURI.Builder.redis(AbstractCommandTest.host, AbstractCommandTest.port + 1).build();
+    }
+=======
     @PersonDB
     @Produces
     public RedisURI redisURIQualified() {
         return RedisURI.Builder.redis(AbstractRedisClientTest.host, AbstractRedisClientTest.port + 1).build();
     }
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/support/CdiTest.java/right.java
 
     @Test
-    public void testInjection() {
+public void testInjection() {
 
-        InjectedClient injectedClient = container.getInstance(InjectedClient.class);
-        assertThat(injectedClient.redisClient).isNotNull();
-        assertThat(injectedClient.redisClusterClient).isNotNull();
+    InjectedClient injectedClient = container.getInstance(InjectedClient.class);
+    assertThat(injectedClient.redisClient).isNotNull();
+    assertThat(injectedClient.redisClusterClient).isNotNull();
 
-        assertThat(injectedClient.qualifiedRedisClient).isNotNull();
-        assertThat(injectedClient.qualifiedRedisClusterClient).isNotNull();
+    assertThat(injectedClient.qualifiedRedisClient).isNotNull();
+    assertThat(injectedClient.qualifiedRedisClusterClient).isNotNull();
 
-        RedisConnectionStateListener mock = mock(RedisConnectionStateListener.class);
+    RedisConnectionStateListener mock = mock(RedisConnectionStateListener.class);
 
-        // do some interaction to force the container a creation of the repositories.
-        injectedClient.redisClient.addListener(mock);
-        injectedClient.redisClusterClient.addListener(mock);
+    // do some interaction to force the container a creation of the repositories.
+    injectedClient.redisClient.addListener(mock);
+    injectedClient.redisClusterClient.addListener(mock);
 
-        injectedClient.qualifiedRedisClient.addListener(mock);
-        injectedClient.qualifiedRedisClusterClient.addListener(mock);
+    injectedClient.qualifiedRedisClient.addListener(mock);
+    injectedClient.qualifiedRedisClusterClient.addListener(mock);
 
-        injectedClient.pingRedis();
-    }
+    injectedClient.pingRedis();
+}
 
     @AfterClass
     public static void afterClass() throws Exception {

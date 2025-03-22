@@ -27,6 +27,90 @@ import com.google.common.net.HostAndPort;
 import com.lambdaworks.redis.protocol.LettuceCharsets;
 
 /**
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisURI.java/left.java
+ * Redis URI. Contains connection details for the Redis/Sentinel connections. You can provide the database, password and
+ * timeouts within the RedisURI.
+ * 
+ * You have following possibilities to create a {@link RedisURI}:
+ * 
+ * <ul>
+ * <li>Use an URI:
+ * <p>
+ * {@code RedisURI.create("redis://localhost/");}
+ * </p>
+ * See {@link #create(String)} for more options</li>
+ * <li>Use the Builder:
+ * <p>
+ * {@code RedisURI.Builder.redis("localhost", 6379).auth("password").database(1).build(); }
+ * </p>
+ * See {@link com.lambdaworks.redis.RedisURI.Builder#redis(String)} and
+ * {@link com.lambdaworks.redis.RedisURI.Builder#sentinel(String)} for more options.</li>
+ * <li>Construct your own instance:
+ * <p>
+ * {@code new RedisURI("localhost", 6379, 60, TimeUnit.SECONDS);}
+ * </p>
+ * or
+ * <p>
+ *     {@code RedisURI uri = new RedisURI();
+ *     uri.setHost("localhost");
+ *     }
+ * </p>
+ * </li>
+ * </ul>
+ *
+ * <h3>URI syntax</h3>
+ *
+ * <b>Redis Standalone</b> <blockquote> <i>redis</i><b>{@code ://}</b>[<i>password@</i>]<i>host</i> [<b>{@code :}
+ * </b><i>port</i>][<b>{@code /}</b><i>database</i>][<b>{@code ?}</b>
+ * [<i>timeout=timeout</i>[<i>d|h|m|s|ms|us|ns</i>]] [<i>&database=database</i>]] </blockquote>
+ *
+ * <b>Redis Standalone (SSL)</b> <blockquote> <i>rediss</i><b>{@code ://}</b>[<i>password@</i>]<i>host</i> [<b>{@code :}
+ * </b><i>port</i>][<b>{@code /}</b><i>database</i>][<b>{@code ?}</b>
+ * [<i>timeout=timeout</i>[<i>d|h|m|s|ms|us|ns</i>]] [<i>&database=database</i>]] </blockquote>
+ *
+ * Redis Standalone (Unix Domain Sockets)</b> <blockquote> <i>redis-socket</i><b>{@code ://}
+ * </b>[<i>password@</i>]<i>path</i>[<b>{@code ?}</b>[<i>timeout=timeout</i>[<i>d|h|m|s|ms|us|ns</i>]][<i>&database=database</i>]]
+ * </blockquote>
+ *
+ * <b>Redis Sentinel</b> <blockquote> <i>redis-sentinel</i><b>{@code ://}</b>[<i>password@</i>]<i>host1</i> [<b>{@code :}
+ * </b><i>port1</i>][, <i>host2</i> [<b>{@code :}</b><i>port2</i>]][, <i>hostN</i> [<b>{@code :}</b><i>portN</i>]][<b>{@code /}
+ * </b><i>database</i>][<b>{@code ?}
+ * </b>[<i>timeout=timeout</i>[<i>d|h|m|s|ms|us|ns</i>]] [<i>&sentinelMasterId=sentinelMasterId</i>] [<i>&database=database</i>]]
+ * </blockquote>
+ *
+ * <p>
+ * <b>Schemes</b>
+ * </p>
+ * <ul>
+ * <li><b>redis</b> Redis Standalone</li>
+ * <li><b>rediss</b> Redis Standalone SSL</li>
+ * <li><b>redis-socket</b> Redis Standalone Unix Domain Socket</li>
+ * <li><b>redis-sentinel</b> Redis Sentinel</li>
+ * </ul>
+ *
+ * <p>
+ * <b>Timeout units</b>
+ * </p>
+ * <ul>
+ * <li><b>d</b> Days</li>
+ * <li><b>h</b> Hours</li>
+ * <li><b>m</b> Minutes</li>
+ * <li><b>s</b> Seconds</li>
+ * <li><b>ms</b> Milliseconds</li>
+ * <li><b>us</b> Microseconds</li>
+ * <li><b>ns</b> Nanoseconds</li>
+ * </ul>
+ *
+ * <p>
+ * Hint: The database parameter within the query part has higher precedence than the database in the path.
+ * </p>
+ * 
+ * 
+ * RedisURI supports Redis Standalone, Redis Sentinel and Redis Cluster with plain, SSL, TLS and unix domain socket connections.
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisURI.java/base.java
+ * Redis URI. Contains connection details for the Redis/Sentinel connections. You can provide as well the database, password and
+ * timeouts within the RedisURI. Either build your self the object
+=======
  * Redis URI. Contains connection details for the Redis/Sentinel connections. You can provide the database, password and
  * timeouts within the RedisURI.
  *
@@ -106,6 +190,7 @@ import com.lambdaworks.redis.protocol.LettuceCharsets;
  * 
  * 
  * RedisURI supports Redis Standalone, Redis Sentinel and Redis Cluster with plain, SSL, TLS and unix domain socket connections.
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisURI.java/right.java
  * 
  * @author <a href="mailto:mpaluch@paluch.biz">Mark Paluch</a>
  * @since 3.0

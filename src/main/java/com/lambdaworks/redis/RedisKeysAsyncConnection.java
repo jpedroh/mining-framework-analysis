@@ -35,6 +35,14 @@ public interface RedisKeysAsyncConnection<K, V> {
     RedisFuture<Long> unlink(K... keys);
 
     /**
+     * Unlink one or more keys (non blocking DEL).
+     *
+     * @param keys the keys
+     * @return RedisFuture&lt;Long&gt; integer-reply The number of keys that were removed.
+     */
+    RedisFuture<Long> unlink(K... keys);
+
+    /**
      * Return a serialized version of the value stored at the specified key.
      *
      * @param key the key
@@ -53,6 +61,14 @@ public interface RedisKeysAsyncConnection<K, V> {
      */
     @Deprecated
     RedisFuture<Boolean> exists(K key);
+
+    /**
+     * Determine how many keys exist.
+     *
+     * @param keys the keys
+     * @return Long integer-reply specifically: Number of existing keys
+     */
+    RedisFuture<Long> exists(K... keys);
 
     /**
      * Determine how many keys exist.

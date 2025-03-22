@@ -1,14 +1,11 @@
 package com.lambdaworks.redis.cluster;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.lambdaworks.redis.RedisChannelWriter;
 import com.lambdaworks.redis.protocol.AsyncCommand;
 import com.lambdaworks.redis.protocol.CommandArgs;
 import com.lambdaworks.redis.protocol.CommandKeyword;
-import com.lambdaworks.redis.protocol.CommandWrapper;
 import com.lambdaworks.redis.protocol.ProtocolKeyword;
+import com.lambdaworks.redis.protocol.CommandWrapper;
 import com.lambdaworks.redis.protocol.RedisCommand;
 import io.netty.buffer.ByteBuf;
 
@@ -21,7 +18,6 @@ class ClusterCommand<K, V, T> extends CommandWrapper<K, V, T> implements RedisCo
     private RedisChannelWriter<K, V> retry;
     private int executions;
     private int executionLimit;
-    private boolean completed;
 
     ClusterCommand(RedisCommand<K, V, T> command, RedisChannelWriter<K, V> retry, int executionLimit) {
         super(command);
@@ -33,12 +29,18 @@ class ClusterCommand<K, V, T> extends CommandWrapper<K, V, T> implements RedisCo
     public void complete() {
         executions++;
 
-        if (executions < executionLimit && (isMoved() || isAsk())) {
-            try {
-                retry.write(this);
-            } catch (Exception e) {
-                completeExceptionally(e);
+        try {
+            if (executions < executionLimit && (isMoved() || isAsk())) {
+                try {
+                    retry.write(this);
+                } catch (Exception e) {
+                    completeExceptionally(e);
+                }
+                return;
             }
+        } catch (Exception e) {
+            setException(e);
+            command.complete();
             return;
         }
         super.complete();
@@ -103,6 +105,11 @@ class ClusterCommand<K, V, T> extends CommandWrapper<K, V, T> implements RedisCo
     }
 
     @Override
+    public boolean setException(Throwable exception) {
+        return command.setException(exception);
+    }
+
+    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
@@ -111,4 +118,6 @@ class ClusterCommand<K, V, T> extends CommandWrapper<K, V, T> implements RedisCo
         sb.append(']');
         return sb.toString();
     }
+
+    private boolean completed;
 }

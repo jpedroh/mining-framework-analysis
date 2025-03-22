@@ -3,39 +3,75 @@ package com.lambdaworks.redis;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.io.Closeable;
+
 import java.net.SocketAddress;
+
 import java.util.List;
+
 import java.util.Map;
+
 import java.util.Set;
+
 import java.util.concurrent.ConcurrentHashMap;
+
 import java.util.concurrent.TimeUnit;
+
 import java.util.concurrent.TimeoutException;
 
 import com.google.common.base.Supplier;
+
 import com.google.common.collect.Lists;
+
 import com.google.common.collect.Sets;
+
 import com.lambdaworks.redis.protocol.CommandHandler;
+
 import com.lambdaworks.redis.pubsub.PubSubCommandHandler;
 
 import com.lambdaworks.redis.resource.ClientResources;
+
 import com.lambdaworks.redis.resource.DefaultClientResources;
+
 import io.netty.bootstrap.Bootstrap;
+
 import io.netty.buffer.PooledByteBufAllocator;
+
 import io.netty.channel.*;
+
 import io.netty.channel.group.ChannelGroup;
+
 import io.netty.channel.group.ChannelGroupFuture;
+
 import io.netty.channel.group.DefaultChannelGroup;
+
 import io.netty.channel.nio.NioEventLoopGroup;
+
 import io.netty.channel.socket.nio.NioSocketChannel;
+
 import io.netty.util.HashedWheelTimer;
-import io.netty.util.concurrent.DefaultEventExecutorGroup;
+
 import io.netty.util.concurrent.EventExecutorGroup;
+
 import io.netty.util.concurrent.Future;
-import io.netty.util.internal.SystemPropertyUtil;
+
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 
 /**
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/AbstractRedisClient.java/left.java
+ * Base Redis client. This class holds the netty infrastructure, {@link ClientOptions} and the basic connection procedure. This
+ * class creates the netty {@link EventLoopGroup}s for NIO ({@link NioEventLoopGroup}) and EPoll (
+ * {@link io.netty.channel.epoll.EpollEventLoopGroup}) with a default of {@code Runtime.getRuntime().availableProcessors() * 4}
+ * threads. Reuse the instance as much as possible since the {@link EventLoopGroup} instances are expensive and can consume a
+ * huge part of your resources, if you create multiple instances.
+ * <p>
+ * You can set the number of threads per {@link NioEventLoopGroup} by setting the {@code io.netty.eventLoopThreads} system
+ * property to a reasonable number of threads.
+ * </p>
+ * 
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/AbstractRedisClient.java/base.java
+=======
  * Base Redis client. This class holds the netty infrastructure, {@link ClientOptions} and the basic connection procedure. This
  * class creates the netty {@link EventLoopGroup}s for NIO ({@link NioEventLoopGroup}) and EPoll (
  * {@link io.netty.channel.epoll.EpollEventLoopGroup}) with a default of {@code Runtime.getRuntime().availableProcessors() * 4}
@@ -46,6 +82,7 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
  * property to a reasonable number of threads.
  * </p>
  *
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/AbstractRedisClient.java/right.java
  * @author <a href="mailto:mpaluch@paluch.biz">Mark Paluch</a>
  * @since 3.0
  */
@@ -53,15 +90,14 @@ public abstract class AbstractRedisClient {
 
     protected static final PooledByteBufAllocator BUF_ALLOCATOR = PooledByteBufAllocator.DEFAULT;
     protected static final InternalLogger logger = InternalLoggerFactory.getInstance(RedisClient.class);
-
     /**
      * @deprecated use map eventLoopGroups instead.
      */
     @Deprecated
     protected EventLoopGroup eventLoopGroup;
     protected EventExecutorGroup genericWorkerPool;
-
-    protected final Map<Class<? extends EventLoopGroup>, EventLoopGroup> eventLoopGroups = new ConcurrentHashMap<Class<? extends EventLoopGroup>, EventLoopGroup>();;
+    protected final Map<Class<? extends EventLoopGroup>, EventLoopGroup> eventLoopGroups = new ConcurrentHashMap<Class<? extends EventLoopGroup>, EventLoopGroup>();
+;
     protected final HashedWheelTimer timer;
     protected final ChannelGroup channels;
     protected final ClientResources clientResources;
@@ -69,11 +105,8 @@ public abstract class AbstractRedisClient {
     protected TimeUnit unit;
     protected ConnectionEvents connectionEvents = new ConnectionEvents();
     protected Set<Closeable> closeableResources = Sets.newConcurrentHashSet();
-
-    protected volatile ClientOptions clientOptions = new ClientOptions.Builder().build();
-
+    protected volatile volatile ClientOptions clientOptions = new ClientOptions.Builder().build();
     private final boolean sharedResources;
-
     /**
      * @deprecated use {@link #AbstractRedisClient(ClientResources)}
      */
@@ -81,10 +114,9 @@ public abstract class AbstractRedisClient {
     protected AbstractRedisClient() {
         this(null);
     }
-
     /**
      * Create a new instance with client resources.
-     *
+     * 
      * @param clientResources the client resources. If {@literal null}, the client will create a new dedicated instance of
      *        client resources and keep track of them.
      */
@@ -103,7 +135,6 @@ public abstract class AbstractRedisClient {
         channels = new DefaultChannelGroup(genericWorkerPool.next());
         timer = new HashedWheelTimer();
     }
-
     /**
      * Set the default timeout for {@link com.lambdaworks.redis.RedisConnection connections} created by this client. The timeout
      * applies to connection attempts and non-blocking commands.
@@ -115,7 +146,6 @@ public abstract class AbstractRedisClient {
         this.timeout = timeout;
         this.unit = unit;
     }
-
     @SuppressWarnings("unchecked")
     protected <K, V, T extends RedisChannelHandler<K, V>> T connectAsyncImpl(final CommandHandler<K, V> handler,
             final T connection, final Supplier<SocketAddress> socketAddressSupplier) {
@@ -127,7 +157,6 @@ public abstract class AbstractRedisClient {
         channelType(connectionBuilder, null);
         return (T) initializeChannel(connectionBuilder);
     }
-
     /**
      * Populate connection builder with necessary resources.
      * 
@@ -160,7 +189,6 @@ public abstract class AbstractRedisClient {
         connectionBuilder.commandHandler(handler).socketAddressSupplier(socketAddressSupplier).connection(connection);
         connectionBuilder.workerPool(genericWorkerPool);
     }
-
     protected void channelType(ConnectionBuilder connectionBuilder, ConnectionPoint connectionPoint) {
 
         connectionBuilder.bootstrap().group(getEventLoopGroup(connectionPoint));
@@ -172,7 +200,6 @@ public abstract class AbstractRedisClient {
             connectionBuilder.bootstrap().channel(NioSocketChannel.class);
         }
     }
-
     private synchronized EventLoopGroup getEventLoopGroup(ConnectionPoint connectionPoint) {
 
         if ((connectionPoint == null || connectionPoint.getSocket() == null)
@@ -205,11 +232,9 @@ public abstract class AbstractRedisClient {
 
         throw new IllegalStateException("This should not have happened in a binary decision. Please file a bug.");
     }
-
     private void checkForEpollLibrary() {
         EpollProvider.checkForEpollLibrary();
     }
-
     @SuppressWarnings("unchecked")
     protected <K, V, T extends RedisChannelHandler<K, V>> T initializeChannel(ConnectionBuilder connectionBuilder) {
 
@@ -250,7 +275,6 @@ public abstract class AbstractRedisClient {
             throw new RedisConnectionException("Unable to connect to " + redisAddress, e);
         }
     }
-
     /**
      * Shutdown this client and close all open connections. The client should be discarded after calling shutdown. The shutdown
      * has 2 secs quiet time and a timeout of 15 secs.
@@ -258,7 +282,6 @@ public abstract class AbstractRedisClient {
     public void shutdown() {
         shutdown(2, 15, TimeUnit.SECONDS);
     }
-
     /**
      * Shutdown this client and close all open connections. The client should be discarded after calling shutdown.
      * 
@@ -312,7 +335,8 @@ public abstract class AbstractRedisClient {
         } else {
             for (EventLoopGroup eventExecutors : eventLoopGroups.values()) {
                 Future<?> groupCloseFuture = clientResources.eventLoopGroupProvider().release(eventExecutors, quietPeriod,
-                        timeout, timeUnit);
+                        timeout,
+                        timeUnit);
                 closeFutures.add(groupCloseFuture);
             }
         }
@@ -325,15 +349,15 @@ public abstract class AbstractRedisClient {
             }
         }
     }
-
     protected int getResourceCount() {
         return closeableResources.size();
     }
-
     protected int getChannelCount() {
+        if (channels == null) {
+            return 0;
+        }
         return channels.size();
     }
-
     /**
      * Add a listener for the RedisConnectionState. The listener is notified every time a connect/disconnect/IO exception
      * happens. The listeners are not bound to a specific connection, so every time a connection event happens on any
@@ -346,7 +370,6 @@ public abstract class AbstractRedisClient {
         checkArgument(listener != null, "RedisConnectionStateListener must not be null");
         connectionEvents.addListener(listener);
     }
-
     /**
      * Removes a listener.
      * 
@@ -357,7 +380,6 @@ public abstract class AbstractRedisClient {
         checkArgument(listener != null, "RedisConnectionStateListener must not be null");
         connectionEvents.removeListener(listener);
     }
-
     /**
      * Returns the {@link ClientOptions} which are valid for that client. Connections inherit the current options at the moment
      * the connection is created. Changes to options will not affect existing connections.
@@ -367,7 +389,21 @@ public abstract class AbstractRedisClient {
     public ClientOptions getOptions() {
         return clientOptions;
     }
-
+    /**
+     * Set the {@link ClientOptions} for the client.
+     * 
+     * @param clientOptions client options for the client and connections that are created after setting the options
+     */
+;
+    /**
+     * @deprecated use {@link #AbstractRedisClient(ClientResources)}
+     */
+    /**
+     * Create a new instance with client resources.
+     *
+     * @param clientResources the client resources. If {@literal null}, the client will create a new dedicated instance of
+     *        client resources and keep track of them.
+     */
     /**
      * Set the {@link ClientOptions} for the client.
      * 

@@ -109,6 +109,7 @@ public class AsyncConnectionTest extends AbstractRedisClientTest {
 
         RedisFuture<String> set = connection.set(key, value);
         set.get();
+        assertThat(set.get()).isEqualTo("OK");
 
         set.thenRun(listener);
 

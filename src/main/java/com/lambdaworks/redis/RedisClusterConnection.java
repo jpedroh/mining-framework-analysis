@@ -17,9 +17,24 @@ import com.lambdaworks.redis.api.sync.BaseRedisCommands;
 @Deprecated
 public interface RedisClusterConnection<K, V> extends RedisHashesConnection<K, V>, RedisKeysConnection<K, V>,
         RedisStringsConnection<K, V>, RedisListsConnection<K, V>, RedisSetsConnection<K, V>, RedisSortedSetsConnection<K, V>,
-        RedisScriptingConnection<K, V>, RedisServerConnection<K, V>, RedisHLLConnection<K, V>, RedisGeoConnection<K, V>,
-        BaseRedisConnection<K, V>, AutoCloseable {
+        RedisScriptingConnection<K, V>, RedisServerConnection<K, V>, RedisHLLConnection<K, V>, RedisGeoConnection<K, V>, BaseRedisConnection<K, V>, AutoCloseable {
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClusterConnection.java/left.java
+    /**
+     * Close the connection. The connection will become not usable anymore as soon as this method was called.
+     */
+    void close();
+
+    /**
+     * Meet another cluster node to include the node into the cluster. The command starts the cluster handshake and returns with
+     * {@literal OK} when the node was added to the cluster.
+     *
+     * @param ip IP address of the host
+     * @param port port number.
+     * @return String simple-string-reply
+     */
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClusterConnection.java/base.java
+=======
     /**
      * Set the default timeout for operations.
      *
@@ -44,6 +59,8 @@ public interface RedisClusterConnection<K, V> extends RedisHashesConnection<K, V
      * @param port port number.
      * @return String simple-string-reply
      */
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClusterConnection.java/right.java
+
     String clusterMeet(String ip, int port);
 
     /**

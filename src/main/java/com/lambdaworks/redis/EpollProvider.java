@@ -4,8 +4,8 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.lang.reflect.Constructor;
 import java.net.SocketAddress;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.Callable;
 
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
@@ -42,6 +42,7 @@ public class EpollProvider {
      * @param <T> Expected return type for casting.
      * @return instance of {@literal className} or null
      */
+    @SuppressWarnings("unchecked")
     private static <T> Class<T> getClass(String className) {
         try {
             return (Class) JavaRuntime.forName(className);
@@ -81,9 +82,18 @@ public class EpollProvider {
         }
     }
 
-    private static <V> V get(Callable<V> supplier) {
+    public private static <V> V get(Callable<V> supplier, ThreadFactory threadFactory) {
         try {
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/EpollProvider.java/left.java
+            Constructor<EventLoopGroup> constructor = epollEventLoopGroupClass
+                    .getConstructor(Integer.TYPE, ThreadFactory.class);
+            return constructor.newInstance(nThreads, threadFactory);
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/EpollProvider.java/base.java
+            Constructor<EventLoopGroup> constructor = epollEventLoopGroupClass.getConstructor(Integer.TYPE);
+            return constructor.newInstance(nThreads);
+=======
             return supplier.call();
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/EpollProvider.java/right.java
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }

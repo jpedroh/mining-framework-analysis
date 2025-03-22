@@ -4,16 +4,12 @@ package com.lambdaworks.redis;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
+import com.lambdaworks.redis.protocol.SetArgs;
 import com.lambdaworks.redis.api.StatefulRedisConnection;
 import com.lambdaworks.redis.api.sync.RedisCommands;
 import org.junit.Test;
@@ -25,6 +21,22 @@ import rx.observers.TestSubscriber;
 
 public class CustomCodecTest extends AbstractRedisClientTest {
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/CustomCodecTest.java/left.java
+    @Test
+    public void testJavaSerializer() throws Exception {
+        RedisConnection<String, Object> connection = client.connect(new SerializedObjectCodec());
+
+        List<String> list = list("one", "two");
+        connection.set(key, list);
+
+        assertThat(connection.get(key)).isEqualTo(list);
+        assertThat(connection.set(key, list)).isEqualTo("OK");
+        assertThat(connection.set(key, list, SetArgs.Builder.ex(1))).isEqualTo("OK");
+
+        connection.close();
+    }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/CustomCodecTest.java/base.java
+=======
     @Test
     public void testJavaSerializer() throws Exception {
         StatefulRedisConnection<String, Object> redisConnection = client.connect(new SerializedObjectCodec());
@@ -38,6 +50,7 @@ public class CustomCodecTest extends AbstractRedisClientTest {
 
         redisConnection.close();
     }
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/CustomCodecTest.java/right.java
 
     @Test
     public void testJavaSerializerRx() throws Exception {
@@ -56,8 +69,8 @@ public class CustomCodecTest extends AbstractRedisClientTest {
 
     @Test
     public void testDeflateCompressedJavaSerializer() throws Exception {
-        RedisCommands<String, Object> connection = client.connect(
-                CompressionCodec.valueCompressor(new SerializedObjectCodec(), CompressionCodec.CompressionType.DEFLATE)).sync();
+        RedisConnection<String, Object> connection = client.connect(CompressionCodec.valueCompressor(
+                new SerializedObjectCodec(), CompressionCodec.CompressionType.DEFLATE));
         List<String> list = list("one", "two");
         connection.set(key, list);
         assertThat(connection.get(key)).isEqualTo(list);
@@ -67,8 +80,15 @@ public class CustomCodecTest extends AbstractRedisClientTest {
 
     @Test
     public void testGzipompressedJavaSerializer() throws Exception {
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/CustomCodecTest.java/left.java
+        RedisConnection<String, Object> connection = client.connect(CompressionCodec.valueCompressor(
+                new SerializedObjectCodec(), CompressionCodec.CompressionType.GZIP));
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/CustomCodecTest.java/base.java
+         ;
+=======
         RedisCommands<String, Object> connection = client.connect(
                 CompressionCodec.valueCompressor(new SerializedObjectCodec(), CompressionCodec.CompressionType.GZIP)).sync();
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/CustomCodecTest.java/right.java
         List<String> list = list("one", "two");
         connection.set(key, list);
         assertThat(connection.get(key)).isEqualTo(list);

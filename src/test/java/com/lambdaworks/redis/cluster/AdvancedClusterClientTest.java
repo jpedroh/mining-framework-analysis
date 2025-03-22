@@ -3,19 +3,18 @@ package com.lambdaworks.redis.cluster;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
+import com.lambdaworks.redis.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.lambdaworks.redis.cluster.models.partitions.Partitions;
+import java.util.Map;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.lambdaworks.redis.*;
 import com.lambdaworks.redis.api.StatefulRedisConnection;
 import com.lambdaworks.redis.cluster.api.StatefulRedisClusterConnection;
 import com.lambdaworks.redis.cluster.api.async.RedisAdvancedClusterAsyncCommands;
@@ -23,7 +22,6 @@ import com.lambdaworks.redis.cluster.api.rx.RedisAdvancedClusterReactiveCommands
 import com.lambdaworks.redis.cluster.api.rx.RedisClusterReactiveCommands;
 import com.lambdaworks.redis.cluster.api.sync.RedisAdvancedClusterCommands;
 import com.lambdaworks.redis.cluster.api.sync.RedisClusterCommands;
-import com.lambdaworks.redis.cluster.models.partitions.Partitions;
 import com.lambdaworks.redis.cluster.models.partitions.RedisClusterNode;
 
 /**
@@ -40,10 +38,33 @@ public class AdvancedClusterClientTest extends AbstractClusterTest {
 
     @Before
     public void before() throws Exception {
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/cluster/AdvancedClusterClientTest.java/left.java
+
+        WaitFor.waitOrTimeout(new Condition() {
+            @Override
+            public boolean isSatisfied() {
+                return clusterRule.isStable();
+            }
+        }, timeout(seconds(5)), new ThreadSleep(Duration.millis(500)));
+
+        clusterClient.reloadPartitions();
+        connection = clusterClient.connectClusterAsync();
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/cluster/AdvancedClusterClientTest.java/base.java
+
+        WaitFor.waitOrTimeout(new Condition() {
+            @Override
+            public boolean isSatisfied() {
+                return clusterRule.isStable();
+            }
+        }, timeout(seconds(5)), new ThreadSleep(Duration.millis(500)));
+
+        connection = clusterClient.connectClusterAsync();
+=======
         clusterClient.reloadPartitions();
         clusterConnection = clusterClient.connect();
         commands = clusterConnection.async();
         syncCommands = clusterConnection.sync();
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/cluster/AdvancedClusterClientTest.java/right.java
     }
 
     @After
@@ -61,6 +82,18 @@ public class AdvancedClusterClientTest extends AbstractClusterTest {
 
             String myid = nodeConnection.clusterMyId().get();
             assertThat(myid).isEqualTo(redisClusterNode.getNodeId());
+        }
+    }
+
+    @Test
+    public void differentConnections() throws Exception {
+
+        for (RedisClusterNode redisClusterNode : clusterClient.getPartitions()) {
+            RedisClusterAsyncConnection<String, String> nodeId = connection.getConnection(redisClusterNode.getNodeId());
+            RedisClusterAsyncConnection<String, String> hostAndPort = connection.getConnection(redisClusterNode.getUri()
+                    .getHost(), redisClusterNode.getUri().getPort());
+
+            assertThat(nodeId).isNotSameAs(hostAndPort);
         }
     }
 
@@ -92,8 +125,17 @@ public class AdvancedClusterClientTest extends AbstractClusterTest {
 
             nodeConnection.close();
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/cluster/AdvancedClusterClientTest.java/left.java
+            RedisClusterAsyncConnection<String, String> nextConnection = connection.getConnection(redisClusterNode.getNodeId());
+            assertThat(connection).isNotSameAs(nextConnection);
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/cluster/AdvancedClusterClientTest.java/base.java
+            RedisClusterAsyncConnection<String, String> nextConnection = connection.getConnection(redisClusterNode.getNodeId());
+            assertThat(connection).isNotSameAs(nextConnection);
+
+=======
             RedisClusterAsyncConnection<String, String> nextConnection = commands.getConnection(redisClusterNode.getNodeId());
             assertThat(commands).isNotSameAs(nextConnection);
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/cluster/AdvancedClusterClientTest.java/right.java
         }
     }
 
@@ -137,6 +179,109 @@ public class AdvancedClusterClientTest extends AbstractClusterTest {
 
             assertThat(nodeId).isNotSameAs(hostAndPort);
         }
+    }
+
+    @Test
+    public void noAddr() throws Exception {
+
+        RedisAdvancedClusterConnection<String, String> sync = clusterClient.connectCluster();
+        try {
+
+            Partitions partitions = clusterClient.getPartitions();
+            for (RedisClusterNode partition : partitions) {
+                partition.setUri(RedisURI.create("redis://non.existent.host:1234"));
+            }
+
+            sync.set("A", "value");// 6373
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(RedisException.class).hasMessageContaining("Unable to connect to");
+        }
+        sync.close();
+    }
+
+    @Test
+    public void forbiddenHostOnRedirect() throws Exception {
+
+        RedisAdvancedClusterConnection<String, String> sync = clusterClient.connectCluster();
+        try {
+
+            Partitions partitions = clusterClient.getPartitions();
+            for (RedisClusterNode partition : partitions) {
+                partition.setSlots(ImmutableList.of(0));
+                if (partition.getUri().getPort() == 7380) {
+                    partition.setSlots(ImmutableList.of(6373));
+                } else {
+                    partition.setUri(RedisURI.create("redis://non.existent.host:1234"));
+                }
+            }
+
+            partitions.updateCache();
+
+            sync.set("A", "value");// 6373
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(RedisException.class).hasMessageContaining("not allowed");
+        }
+        sync.close();
+    }
+
+    @Test
+    public void getConnectionToNotAClusterMemberForbidden() throws Exception {
+
+        RedisAdvancedClusterConnection<String, String> sync = clusterClient.connectCluster();
+        try {
+            sync.getConnection(TestSettings.host(), TestSettings.port());
+        } catch (RedisException e) {
+            assertThat(e).hasRootCauseExactlyInstanceOf(IllegalArgumentException.class);
+        }
+        sync.close();
+    }
+
+
+    @Test
+    public void getConnectionToNotAClusterMemberAllowed() throws Exception {
+
+        clusterClient.setOptions(new ClusterClientOptions.Builder().validateClusterNodeMembership(false).build());
+        RedisAdvancedClusterConnection<String, String> sync = clusterClient.connectCluster();
+        sync.getConnection(TestSettings.host(), TestSettings.port());
+        sync.close();
+    }
+
+    @Test
+    public void pipelining() throws Exception {
+
+        RedisAdvancedClusterConnection<String, String> verificationConnection = clusterClient.connectCluster();
+
+        // preheat the first connection
+        connection.get(key(0)).get();
+
+        int iterations = 1000;
+        connection.setAutoFlushCommands(false);
+        List<RedisFuture<?>> futures = Lists.newArrayList();
+        for (int i = 0; i < iterations; i++) {
+            futures.add(connection.set(key(i), value(i)));
+        }
+
+        for (int i = 0; i < iterations; i++) {
+            assertThat(verificationConnection.get(key(i))).as("Key " + key(i) + " must be null").isNull();
+        }
+
+        connection.flushCommands();
+        boolean result = LettuceFutures.awaitAll(5, TimeUnit.SECONDS, futures.toArray(new RedisFuture[futures.size()]));
+        assertThat(result).isTrue();
+
+        for (int i = 0; i < iterations; i++) {
+            assertThat(verificationConnection.get(key(i))).as("Key " + key(i) + " must be " + value(i)).isEqualTo(value(i));
+        }
+
+        verificationConnection.close();
+    }
+
+    protected String value(int i) {
+        return value + "-" + i;
+    }
+
+    protected String key(int i) {
+        return key + "-" + i;
     }
 
     @Test

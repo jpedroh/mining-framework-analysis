@@ -20,6 +20,22 @@ public interface RedisClusterAsyncConnection<K, V> extends RedisHashesAsyncConne
         RedisSortedSetsAsyncConnection<K, V>, RedisScriptingAsyncConnection<K, V>, RedisServerAsyncConnection<K, V>,
         RedisHLLAsyncConnection<K, V>, RedisGeoAsyncConnection<K, V>, BaseRedisAsyncConnection<K, V> {
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClusterAsyncConnection.java/left.java
+    /**
+     * Close the connection. The connection will become not usable anymore as soon as this method was called.
+     */
+    void close();
+
+    /**
+     * Meet another cluster node to include the node into the cluster. The command starts the cluster handshake and returns with
+     * {@literal OK} when the node was added to the cluster.
+     *
+     * @param ip IP address of the host
+     * @param port port number.
+     * @return String simple-string-reply
+     */
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClusterAsyncConnection.java/base.java
+=======
     /**
      * Set the default timeout for operations.
      *
@@ -44,6 +60,7 @@ public interface RedisClusterAsyncConnection<K, V> extends RedisHashesAsyncConne
      * @param port port number.
      * @return String simple-string-reply
      */
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClusterAsyncConnection.java/right.java
     RedisFuture<String> clusterMeet(String ip, int port);
 
     /**
@@ -129,6 +146,25 @@ public interface RedisClusterAsyncConnection<K, V> extends RedisHashesAsyncConne
      */
     RedisFuture<String> clusterNodes();
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClusterAsyncConnection.java/left.java
+    /**
+     * List slaves for a certain node identified by its {@code nodeId}. Can be parsed using
+     * {@link com.lambdaworks.redis.cluster.models.partitions.ClusterPartitionParser#parse}
+     *
+     * @param nodeId node id of the master node
+     * @return List&lt;String&gt; array-reply list of slaves. The command returns data in the same format as {@link #clusterNodes()} but one line per slave.
+     */
+    RedisFuture<List<String>> clusterSlaves(String nodeId);
+
+    /**
+     * Retrieve the list of keys within the {@code slot}.
+     *
+     * @param slot the slot
+     * @param count maximal number of keys
+     * @return List&lt;K&gt; array-reply list of keys
+     */
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClusterAsyncConnection.java/base.java
+=======
     /**
      * List slaves for a certain node identified by its {@code nodeId}. Can be parsed using
      * {@link com.lambdaworks.redis.cluster.models.partitions.ClusterPartitionParser#parse}
@@ -146,6 +182,7 @@ public interface RedisClusterAsyncConnection<K, V> extends RedisHashesAsyncConne
      * @param count maximal number of keys
      * @return List&lt;K&gt; array-reply list of keys
      */
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClusterAsyncConnection.java/right.java
     RedisFuture<List<K>> clusterGetKeysInSlot(int slot, int count);
 
     /**
@@ -202,10 +239,26 @@ public interface RedisClusterAsyncConnection<K, V> extends RedisHashesAsyncConne
      */
     RedisFuture<List<Object>> clusterSlots();
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClusterAsyncConnection.java/left.java
+    /**
+     * The asking command is required after a {@code -ASK} redirection. The client should issue {@code ASKING} before to actually send the
+     * command to the target instance. See the Redis Cluster specification for more information.
+     * 
+     * @return String simple-string-reply
+     */
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClusterAsyncConnection.java/base.java
+    RedisFuture<String> clusterSetSlotNode(int slot, String nodeId);
+
+    RedisFuture<String> clusterSetSlotMigrating(int slot, String nodeId);
+
+    RedisFuture<String> clusterSetSlotImporting(int slot, String nodeId);
+
+=======
     /**
      *
      * @return String simple-string-reply
      */
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisClusterAsyncConnection.java/right.java
     RedisFuture<String> asking();
 
     /**

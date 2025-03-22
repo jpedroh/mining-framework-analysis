@@ -101,8 +101,8 @@ public abstract class RedisChannelHandler<K, V> extends ChannelInboundHandlerAda
 
     }
 
-    protected <T, C extends RedisCommand<K, V, T>> C dispatch(C cmd) {
-        logger.debug("dispatching command {}", cmd);
+    protected <T> RedisCommand<K, V, T> dispatch(RedisCommand<K, V, T> cmd) {
+
         return channelWriter.write(cmd);
     }
 
@@ -112,6 +112,7 @@ public abstract class RedisChannelHandler<K, V> extends ChannelInboundHandlerAda
      * @param registry registry of closeables
      * @param closeables closeables to register
      */
+
     public void registerCloseables(final Collection<Closeable> registry, final Closeable... closeables) {
         registry.addAll(Arrays.asList(closeables));
 
@@ -140,6 +141,7 @@ public abstract class RedisChannelHandler<K, V> extends ChannelInboundHandlerAda
      * 
      * @return true if the connection is closed (final state in the connection lifecyle).
      */
+
     public boolean isClosed() {
         return closed;
     }
@@ -147,6 +149,7 @@ public abstract class RedisChannelHandler<K, V> extends ChannelInboundHandlerAda
     /**
      * Notification when the connection becomes active (connected).
      */
+
     public void activated() {
         synchronized (this) {
             active = true;
@@ -157,6 +160,7 @@ public abstract class RedisChannelHandler<K, V> extends ChannelInboundHandlerAda
     /**
      * Notification when the connection becomes inactive (disconnected).
      */
+
     public void deactivated() {
         active = false;
     }
@@ -165,6 +169,7 @@ public abstract class RedisChannelHandler<K, V> extends ChannelInboundHandlerAda
      * 
      * @return the channel writer
      */
+
     public RedisChannelWriter<K, V> getChannelWriter() {
         return channelWriter;
     }
@@ -173,6 +178,7 @@ public abstract class RedisChannelHandler<K, V> extends ChannelInboundHandlerAda
      * 
      * @return true if the connection is active and not closed.
      */
+
     public boolean isOpen() {
         return active;
     }
@@ -200,16 +206,21 @@ public abstract class RedisChannelHandler<K, V> extends ChannelInboundHandlerAda
         return unit;
     }
 
-    protected <T> T syncHandler(Object asyncApi, Class<?>... interfaces) {
-        FutureSyncInvocationHandler<K, V> h = new FutureSyncInvocationHandler<>((StatefulConnection) this, asyncApi);
-        return (T) Proxy.newProxyInstance(AbstractRedisClient.class.getClassLoader(), interfaces, h);
-    }
-
     public void setAutoFlushCommands(boolean autoFlush) {
         getChannelWriter().setAutoFlushCommands(autoFlush);
     }
 
     public void flushCommands() {
         getChannelWriter().flushCommands();
+    }
+
+    protected <T, C extends RedisCommand<K, V, T>> C dispatch(C cmd) {
+        logger.debug("dispatching command {}", cmd);
+        return channelWriter.write(cmd);
+    }
+
+    protected <T> T syncHandler(Object asyncApi, Class<?>... interfaces) {
+        FutureSyncInvocationHandler<K, V> h = new FutureSyncInvocationHandler<>((StatefulConnection) this, asyncApi);
+        return (T) Proxy.newProxyInstance(AbstractRedisClient.class.getClassLoader(), interfaces, h);
     }
 }

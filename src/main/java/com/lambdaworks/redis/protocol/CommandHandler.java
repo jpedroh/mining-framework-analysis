@@ -8,21 +8,34 @@ import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.channels.ClosedChannelException;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.MapMaker;
-import com.lambdaworks.redis.*;
+import com.lambdaworks.redis.ClientOptions;
+import com.lambdaworks.redis.ConnectionEvents;
+import com.lambdaworks.redis.RedisChannelHandler;
+import com.lambdaworks.redis.RedisChannelWriter;
+import com.lambdaworks.redis.RedisException;
 import com.lambdaworks.redis.resource.ClientResources;
-
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelDuplexHandler;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
 import io.netty.channel.local.LocalAddress;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.internal.logging.InternalLogLevel;
+import java.util.*;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 
@@ -198,7 +211,27 @@ public class CommandHandler<K, V> extends ChannelDuplexHandler implements RedisC
 
     @Override
     public <T, C extends RedisCommand<K, V, T>> C write(C command) {
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/CommandHandler.java/left.java
+    
+        checkArgument(command != null, "command must not be null");
 
+        if (lifecycleState == LifecycleState.CLOSED) {
+            throw new RedisException("Connection is closed");
+        }
+
+        if (commandBuffer.size() + queue.size() >= clientOptions.getRequestQueueSize()) {
+            throw new RedisException("Request queue size exceeded: " + clientOptions.getRequestQueueSize()
+                    + ". Commands are not accepted until the queue size drops.");
+        }
+
+        if ((channel == null || !isConnected()) && !clientOptions.isAutoReconnect()) {
+            throw new RedisException(
+                    "Connection is in a disconnected state and reconnect is disabled. Commands are not accepted.");
+        }
+
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/CommandHandler.java/base.java
+=======
+    
         checkArgument(command != null, "command must not be null");
 
         if (lifecycleState == LifecycleState.CLOSED) {
@@ -214,6 +247,7 @@ public class CommandHandler<K, V> extends ChannelDuplexHandler implements RedisC
             throw new RedisException("Currently not connected. Commands are rejected.");
         }
 
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/CommandHandler.java/right.java
         try {
             /**
              * This lock causes safety for connection activation and somehow netty gets more stable and predictable performance
@@ -240,10 +274,54 @@ public class CommandHandler<K, V> extends ChannelDuplexHandler implements RedisC
                     }
                 } else {
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/CommandHandler.java/left.java
                     if (commandBuffer.contains(command) || queue.contains(command)) {
                         return command;
                     }
 
+                    if (connectionError != null) {
+                        if (debugEnabled) {
+                            logger.debug("{} write() completing Command {} due to connection error", logPrefix(), command);
+                        }
+                        command.setException(connectionError);
+                        command.complete();
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/CommandHandler.java/base.java
+                    if (connectionError != null) {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("[" + this + "] write() completing Command " + command + " due to connection error");
+                        }
+                        command.setException(connectionError);
+                        command.complete();
+=======
+                    if (commandBuffer.contains(command) || queue.contains(command)) {
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/CommandHandler.java/right.java
+                        return command;
+                    }
+
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/CommandHandler.java/left.java
+                    bufferCommand(command);
+                }
+            } else {
+                bufferCommand(command);
+            }
+        } finally {
+            writeLock.unlock();
+            if (debugEnabled) {
+                logger.debug("{} write() done", logPrefix());
+            }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/CommandHandler.java/base.java
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("[" + this + "] write() buffering Command " + command);
+                    }
+                    commandBuffer.put(command);
+                }
+            } finally {
+                writeLock.unlock();
+            }
+
+        } catch (InterruptedException e) {
+            throw new RedisCommandInterruptedException(e);
+=======
                     if (connectionError != null) {
                         if (debugEnabled) {
                             logger.debug("{} write() completing Command {} due to connection error", logPrefix(), command);
@@ -264,32 +342,10 @@ public class CommandHandler<K, V> extends ChannelDuplexHandler implements RedisC
             if (debugEnabled) {
                 logger.debug("{} write() done", logPrefix());
             }
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/CommandHandler.java/right.java
         }
 
         return command;
-    }
-
-    private boolean isRejectCommand() {
-
-        if (clientOptions == null) {
-            return false;
-        }
-
-        switch (clientOptions.getDisconnectedBehavior()) {
-            case REJECT_COMMANDS:
-                return true;
-
-            case ACCEPT_COMMANDS:
-                return false;
-
-            default:
-            case DEFAULT:
-                if (!clientOptions.isAutoReconnect()) {
-                    return true;
-                }
-
-                return false;
-        }
     }
 
     private <T> void bufferCommand(RedisCommand<K, V, T> command) {
@@ -337,6 +393,7 @@ public class CommandHandler<K, V> extends ChannelDuplexHandler implements RedisC
      * @see io.netty.channel.ChannelDuplexHandler#write(io.netty.channel.ChannelHandlerContext, java.lang.Object,
      *      io.netty.channel.ChannelPromise)
      */
+
     @Override
     @SuppressWarnings("unchecked")
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
@@ -369,11 +426,22 @@ public class CommandHandler<K, V> extends ChannelDuplexHandler implements RedisC
                 sentTimes.put(cmd, new SentReceived(nanoTime()));
                 queue.add(cmd);
             }
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/CommandHandler.java/left.java
+        } catch (Exception e) {
+            cmd.setException(e);
+            cmd.cancel(true);
+            promise.setFailure(e);
+            throw e;
+        }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/CommandHandler.java/base.java
+        } 
+=======
         } catch (Exception e) {
             cmd.completeExceptionally(e);
             promise.setFailure(e);
             throw e;
         }
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/CommandHandler.java/right.java
     }
 
     private long nanoTime() {
@@ -456,6 +524,7 @@ public class CommandHandler<K, V> extends ChannelDuplexHandler implements RedisC
      * 
      * @see io.netty.channel.ChannelInboundHandlerAdapter#channelInactive(io.netty.channel.ChannelHandlerContext)
      */
+
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         if (debugEnabled) {
@@ -562,9 +631,44 @@ public class CommandHandler<K, V> extends ChannelDuplexHandler implements RedisC
         logger.log(logLevel, "{} Unexpected exception during request: {}", logPrefix, cause.toString(), cause);
     }
 
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+
+        InternalLogLevel logLevel = InternalLogLevel.WARN;
+
+        if (!queue.isEmpty()) {
+            RedisCommand<K, V, ?> command = queue.poll();
+            sentTimes.remove(command);
+            if (debugEnabled) {
+                logger.debug("{} Storing exception in {}", logPrefix(), command);
+            }
+            logLevel = InternalLogLevel.DEBUG;
+            command.setException(cause);
+            command.complete();
+        }
+
+        if (channel == null || !channel.isActive() || !isConnected()) {
+            if (debugEnabled) {
+                logger.debug("{} Storing exception in connectionError", logPrefix());
+            }
+            logLevel = InternalLogLevel.DEBUG;
+            connectionError = cause;
+        }
+
+        if (cause instanceof IOException && logLevel.ordinal() > InternalLogLevel.INFO.ordinal()) {
+            logLevel = InternalLogLevel.INFO;
+            if (SUPPRESS_IO_EXCEPTION_MESSAGES.contains(cause.getMessage())) {
+                logLevel = InternalLogLevel.DEBUG;
+            }
+        }
+
+        logger.log(logLevel, "{} Unexpected exception during request: {}", logPrefix, cause.toString(), cause);
+    }
+
     /**
      * Close the connection.
      */
+
     @Override
     public void close() {
 
@@ -604,6 +708,7 @@ public class CommandHandler<K, V> extends ChannelDuplexHandler implements RedisC
      * Reset the writer state. Queued commands will be canceled and the internal state will be reset. This is useful when the
      * internal state machine gets out of sync with the connection.
      */
+
     @Override
     public void reset() {
         if (debugEnabled) {
@@ -619,22 +724,6 @@ public class CommandHandler<K, V> extends ChannelDuplexHandler implements RedisC
         if (buffer != null) {
             rsm.reset();
             buffer.clear();
-        }
-    }
-
-    /**
-     * Reset the command-handler to the initial not-connected state.
-     */
-    public void initialState() {
-        setState(LifecycleState.NOT_CONNECTED);
-        queue.clear();
-        commandBuffer.clear();
-
-        Channel currentChannel = this.channel;
-        if (currentChannel != null) {
-            currentChannel.pipeline().fireUserEventTriggered(new ConnectionEvents.PrepareClose());
-            currentChannel.pipeline().fireUserEventTriggered(new ConnectionEvents.Close());
-            currentChannel.pipeline().close();
         }
     }
 
@@ -691,13 +780,22 @@ public class CommandHandler<K, V> extends ChannelDuplexHandler implements RedisC
         }
 
         @Override
-        public void operationComplete(ChannelFuture future) throws Exception {
+        public
+        @Override void operationComplete(ChannelFuture future) throws Exception {
             future.await();
             if (future.cause() != null) {
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/CommandHandler.java/left.java
+                for (RedisCommand<?, ?, ?> sentCommand : sentCommands) {
+                    sentCommand.setException(future.cause());
+                    sentCommand.cancel(true);
+                }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/CommandHandler.java/base.java
+=======
                 for (RedisCommand<?, ?, ?> sentCommand : sentCommands) {
                     sentCommand.completeExceptionally(future.cause());
                 }
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/CommandHandler.java/right.java
 
                 queue.removeAll(sentCommands);
 
@@ -712,6 +810,7 @@ public class CommandHandler<K, V> extends ChannelDuplexHandler implements RedisC
      * A generic future listener which logs unsuccessful writes.
      *
      */
+
     static class WriteLogListener implements GenericFutureListener<Future<Void>> {
 
         @Override
@@ -729,7 +828,6 @@ public class CommandHandler<K, V> extends ChannelDuplexHandler implements RedisC
                 logger.log(logLevel, message, cause.toString(), cause);
             }
         }
-
     }
 
     static class SentReceived {
@@ -741,4 +839,55 @@ public class CommandHandler<K, V> extends ChannelDuplexHandler implements RedisC
             this.sent = sent;
         }
     }
+
+    private boolean isRejectCommand() {
+
+        if (clientOptions == null) {
+            return false;
+        }
+
+        switch (clientOptions.getDisconnectedBehavior()) {
+            case REJECT_COMMANDS:
+                return true;
+
+            case ACCEPT_COMMANDS:
+                return false;
+
+            default:
+            case DEFAULT:
+                if (!clientOptions.isAutoReconnect()) {
+                    return true;
+                }
+
+                return false;
+        }
+    }
+
+    /**
+     *
+     * @see io.netty.channel.ChannelDuplexHandler#write(io.netty.channel.ChannelHandlerContext, java.lang.Object,
+     *      io.netty.channel.ChannelPromise)
+     */
+
+    /**
+     * Reset the command-handler to the initial not-connected state.
+     */
+
+    public void initialState() {
+        setState(LifecycleState.NOT_CONNECTED);
+        queue.clear();
+        commandBuffer.clear();
+
+        Channel currentChannel = this.channel;
+        if (currentChannel != null) {
+            currentChannel.pipeline().fireUserEventTriggered(new ConnectionEvents.PrepareClose());
+            currentChannel.pipeline().fireUserEventTriggered(new ConnectionEvents.Close());
+            currentChannel.pipeline().close();
+        }
+    }
+
+    /**
+     * A generic future listener which logs unsuccessful writes.
+     *
+     */
 }

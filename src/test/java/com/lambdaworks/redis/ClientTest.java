@@ -4,24 +4,33 @@ package com.lambdaworks.redis;
 
 import static com.google.code.tempusfugit.temporal.Duration.seconds;
 import static com.google.code.tempusfugit.temporal.WaitFor.waitOrTimeout;
-import static com.lambdaworks.Connections.getConnectionWatchdog;
-import static com.lambdaworks.Connections.getStatefulConnection;
+import static com.lambdaworks.redis.ScriptOutputType.STATUS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
-
-import java.util.concurrent.CancellationException;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
-import org.junit.FixMethodOrder;
+import java.util.concurrent.TimeoutException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runners.MethodSorters;
 import org.springframework.test.util.ReflectionTestUtils;
-
+import rx.Subscription;
+import rx.observers.TestSubscriber;
 import com.google.code.tempusfugit.temporal.Condition;
 import com.google.code.tempusfugit.temporal.Timeout;
+import com.google.code.tempusfugit.temporal.WaitFor;
+import com.lambdaworks.redis.event.Event;
+import com.lambdaworks.redis.event.EventBus;
+import com.lambdaworks.redis.event.connection.ConnectedEvent;
+import com.lambdaworks.redis.event.connection.ConnectionActivatedEvent;
+import com.lambdaworks.redis.event.connection.ConnectionDeactivatedEvent;
+import com.lambdaworks.redis.event.connection.DisconnectedEvent;
+import static com.lambdaworks.Connections.getConnectionWatchdog;
+import static com.lambdaworks.Connections.getStatefulConnection;
+import java.util.concurrent.CancellationException;
+import org.junit.FixMethodOrder;
 import com.lambdaworks.Wait;
 import com.lambdaworks.redis.ClientOptions.DisconnectedBehavior;
 import com.lambdaworks.redis.api.StatefulRedisConnection;
@@ -30,7 +39,7 @@ import com.lambdaworks.redis.protocol.ConnectionWatchdog;
 import com.lambdaworks.redis.server.RandomResponseServer;
 import io.netty.channel.Channel;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@SuppressWarnings("unchecked") @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ClientTest extends AbstractRedisClientTest {
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -57,25 +66,191 @@ public class ClientTest extends AbstractRedisClientTest {
     }
 
     @Test
-    public void statefulConnectionFromAsync() throws Exception {
-        RedisAsyncCommands<String, String> async = client.connect().async();
-        assertThat(async.getStatefulConnection().async()).isSameAs(async);
+    public void requestQueueSize() throws Exception {
+
+        client.setOptions(new ClientOptions.Builder().requestQueueSize(10).build());
+
+        final RedisAsyncConnectionImpl<String, String> connection = (RedisAsyncConnectionImpl) client.connectAsync();
+
+        Channel channel = (Channel) ReflectionTestUtils.getField(connection.getChannelWriter(), "channel");
+        ConnectionWatchdog connectionWatchdog = channel.pipeline().get(ConnectionWatchdog.class);
+        connectionWatchdog.setListenOnChannelInactive(false);
+        connection.quit();
+        waitUntilDisconnected(connection);
+
+        for (int i = 0; i < 10; i++) {
+            connection.ping();
+        }
+
+        try {
+            connection.ping();
+            fail("missing RedisException");
+        } catch (RedisException e) {
+            assertThat(e).hasMessageContaining("Request queue size exceeded");
+        }
+
+        connection.close();
     }
 
-    @Test
-    public void statefulConnectionFromReactive() throws Exception {
-        RedisAsyncCommands<String, String> async = client.connect().async();
-        assertThat(async.getStatefulConnection().reactive().getStatefulConnection()).isSameAs(async.getStatefulConnection());
+    protected void waitUntilDisconnected(final RedisAsyncConnectionImpl<String, String> connection)
+            throws InterruptedException, TimeoutException {
+        Thread.sleep(200);
+        WaitFor.waitOrTimeout(new Condition() {
+            @Override
+            public boolean isSatisfied() {
+                return !connection.isOpen();
+            }
+        }, Timeout.timeout(seconds(5)));
     }
 
+    @Test(timeout = 10000)
+    public void disconnectedConnectionWithoutReconnect() throws Exception {
 
+        client.setOptions(new ClientOptions.Builder().autoReconnect(false).build());
+
+        RedisAsyncConnectionImpl<String, String> connection = (RedisAsyncConnectionImpl) client.connectAsync();
+
+        Channel channel = (Channel) ReflectionTestUtils.getField(connection.getChannelWriter(), "channel");
+        ConnectionWatchdog connectionWatchdog = channel.pipeline().get(ConnectionWatchdog.class);
+        assertThat(connectionWatchdog).isNull();
+
+        connection.quit();
+        waitUntilDisconnected(connection);
+        try {
+            connection.get(key);
+        } catch (RedisException e) {
+            assertThat(e).hasMessageContaining("Connection is in a disconnected state and reconnect is disabled");
+        } finally {
+            connection.close();
+        }
+    }
+
+    /**
+     * Expect to run into Invalid first byte exception instead of timeout.
+     * 
+     * @throws Exception
+     */
+
+    @Test(timeout = 120000)
+    public void pingBeforeConnectFailOnReconnect() throws Exception {
+
+        client.setOptions(new ClientOptions.Builder().pingBeforeActivateConnection(true)
+                .suspendReconnectOnProtocolFailure(true).build());
+
+        RandomResponseServer ts = getRandomResponseServer();
+
+        RedisURI redisUri = getDefaultRedisURI();
+        redisUri.setTimeout(5);
+        redisUri.setUnit(TimeUnit.SECONDS);
+
+        try {
+            RedisAsyncConnectionImpl<String, String> connection = (RedisAsyncConnectionImpl) client.connectAsync(redisUri);
+
+            Channel channel = (Channel) ReflectionTestUtils.getField(connection.getChannelWriter(), "channel");
+            ConnectionWatchdog connectionWatchdog = channel.pipeline().get(ConnectionWatchdog.class);
+
+            assertThat(connectionWatchdog.isListenOnChannelInactive()).isTrue();
+            assertThat(connectionWatchdog.isReconnectSuspended()).isFalse();
+
+            connection.set(key, value);
+
+            Thread.sleep(100);
+            redisUri.setPort(TestSettings.port(500));
+
+            connection.quit();
+            waitUntilDisconnected(connection);
+
+            Thread.sleep(500);
+            assertThat(connection.isOpen()).isFalse();
+            assertThat(connectionWatchdog.isListenOnChannelInactive()).isTrue();
+            assertThat(connectionWatchdog.isReconnectSuspended()).isTrue();
+
+            try {
+                connection.info().get(1, TimeUnit.MINUTES);
+            } catch (ExecutionException e) {
+                assertThat(e).hasRootCauseExactlyInstanceOf(RedisException.class);
+                assertThat(e.getCause()).hasMessageStartingWith("Invalid first byte");
+            }
+        } finally {
+            ts.shutdown();
+        }
+    }
+
+    @Test(timeout = 10000)
+    public void cancelCommandsOnReconnectFailure() throws Exception {
+
+        client.setOptions(new ClientOptions.Builder().pingBeforeActivateConnection(true).cancelCommandsOnReconnectFailure(true)
+                .build());
+
+        RandomResponseServer ts = getRandomResponseServer();
+
+        RedisURI redisUri = getDefaultRedisURI();
+
+        try {
+            RedisAsyncConnectionImpl<String, String> connection = (RedisAsyncConnectionImpl) client.connectAsync(redisUri);
+
+            Channel channel = (Channel) ReflectionTestUtils.getField(connection.getChannelWriter(), "channel");
+            ConnectionWatchdog connectionWatchdog = channel.pipeline().get(ConnectionWatchdog.class);
+
+            assertThat(connectionWatchdog.isListenOnChannelInactive()).isTrue();
+
+            connectionWatchdog.setReconnectSuspended(true);
+            redisUri.setPort(TestSettings.port(500));
+
+            connection.quit();
+            waitUntilDisconnected(connection);
+
+            assertThat(connection.isOpen()).isFalse();
+
+            RedisFuture<String> set1 = connection.set(key, value);
+            RedisFuture<String> set2 = connection.set(key, value);
+
+            assertThat(set1.isDone()).isFalse();
+            assertThat(set1.isCancelled()).isFalse();
+
+            assertThat(connection.isOpen()).isFalse();
+            connectionWatchdog.setReconnectSuspended(false);
+            connectionWatchdog.run(null);
+            Thread.sleep(500);
+            assertThat(connection.isOpen()).isFalse();
+
+            try {
+                set1.get();
+            } catch (ExecutionException e) {
+                assertThat(e).hasRootCauseExactlyInstanceOf(RedisException.class);
+                assertThat(e.getCause()).hasMessageStartingWith("Reset");
+            }
+
+            try {
+                set2.get();
+            } catch (ExecutionException e) {
+                assertThat(e).hasRootCauseExactlyInstanceOf(RedisException.class);
+                assertThat(e.getCause()).hasMessageStartingWith("Reset");
+            }
+
+            try {
+                connection.info().get();
+            } catch (ExecutionException e) {
+                assertThat(e).hasRootCauseExactlyInstanceOf(RedisException.class);
+                assertThat(e.getCause()).hasMessageStartingWith("Invalid first byte");
+            }
+        } finally {
+            ts.shutdown();
+        }
+    }
 
     @Test
     public void listenerTest() throws Exception {
 
         final TestConnectionListener listener = new TestConnectionListener();
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/ClientTest.java/left.java
+        RedisClient client = RedisClient.create(resources, RedisURI.Builder.redis(host, port).build());
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/ClientTest.java/base.java
+        RedisClient client = new RedisClient(host, port);
+=======
         RedisClient client = RedisClient.create(RedisURI.Builder.redis(host, port).build());
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/ClientTest.java/right.java
 
         client.addListener(listener);
 
@@ -115,7 +290,13 @@ public class ClientTest extends AbstractRedisClientTest {
         final TestConnectionListener removedListener = new TestConnectionListener();
         final TestConnectionListener retainedListener = new TestConnectionListener();
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/ClientTest.java/left.java
+        RedisClient client = RedisClient.create(resources, RedisURI.Builder.redis(host, port).build());
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/ClientTest.java/base.java
+        RedisClient client = new RedisClient(host, port);
+=======
         RedisClient client = RedisClient.create(RedisURI.Builder.redis(host, port).build());
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/ClientTest.java/right.java
         client.addListener(removedListener);
         client.addListener(retainedListener);
         client.removeListener(removedListener);
@@ -205,7 +386,7 @@ public class ClientTest extends AbstractRedisClientTest {
     @Test
     public void emptyClient() throws Exception {
 
-        RedisClient client = new RedisClient();
+        RedisClient client = RedisClient.create();
         try {
             client.connect();
         } catch (IllegalStateException e) {
@@ -259,6 +440,53 @@ public class ClientTest extends AbstractRedisClientTest {
         assertThat(eval.isDone()).isTrue();
 
         connection.close();
+    }
+
+    @Test
+    public void clientEvents() throws Exception {
+
+        RedisClient myClient = RedisClient.create(resources, RedisURI.Builder.redis(host, port).build());
+
+        EventBus eventBus = client.getResources().eventBus();
+        final TestSubscriber<Event> eventTestSubscriber = new TestSubscriber<Event>();
+
+        Subscription subscribe = eventBus.get().subscribe(eventTestSubscriber);
+
+        RedisAsyncConnection<String, String> async = client.connectAsync();
+        async.set(key, value).get();
+        async.close();
+
+        WaitFor.waitOrTimeout(new Condition() {
+            @Override
+            public boolean isSatisfied() {
+                return eventTestSubscriber.getOnNextEvents().size() >= 4;
+            }
+
+        }, Timeout.timeout(seconds(5)));
+
+        subscribe.unsubscribe();
+        List<Event> events = eventTestSubscriber.getOnNextEvents();
+        assertThat(events).hasSize(4);
+
+        assertThat(events.get(0)).isInstanceOf(ConnectedEvent.class);
+        assertThat(events.get(1)).isInstanceOf(ConnectionActivatedEvent.class);
+        assertThat(events.get(2)).isInstanceOf(DisconnectedEvent.class);
+        assertThat(events.get(3)).isInstanceOf(ConnectionDeactivatedEvent.class);
+
+        myClient.shutdown();
+
+    }
+
+    @Test
+    public void statefulConnectionFromAsync() throws Exception {
+        RedisAsyncCommands<String, String> async = client.connect().async();
+        assertThat(async.getStatefulConnection().async()).isSameAs(async);
+    }
+
+    @Test
+    public void statefulConnectionFromReactive() throws Exception {
+        RedisAsyncCommands<String, String> async = client.connect().async();
+        assertThat(async.getStatefulConnection().reactive().getStatefulConnection()).isSameAs(async.getStatefulConnection());
     }
 
 

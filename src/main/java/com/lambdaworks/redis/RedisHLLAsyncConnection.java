@@ -32,8 +32,16 @@ public interface RedisHLLAsyncConnection<K, V> {
      * @param destkey the destination key
      * @param sourcekey the source key
      * @param moreSourceKeys more source keys
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisHLLAsyncConnection.java/left.java
+     * 
+     * @return RedisFuture&lt;String&gt; simple-string-reply The command just returns {@code OK}.
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisHLLAsyncConnection.java/base.java
+     * 
+     * @return RedisFuture&lt;Long&gt; simple-string-reply The command just returns {@code OK}.
+=======
      *
      * @return RedisFuture&lt;String&gt; simple-string-reply The command just returns {@code OK}.
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/RedisHLLAsyncConnection.java/right.java
      */
     RedisFuture<String> pfmerge(K destkey, K sourcekey, K... moreSourceKeys);
 

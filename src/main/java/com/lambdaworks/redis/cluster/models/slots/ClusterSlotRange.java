@@ -80,12 +80,10 @@ public class ClusterSlotRange implements Serializable {
         this.masterNode = masterNode;
         this.slaveNodes = slaveNodes;
     }
-
     private HostAndPort toHostAndPort(RedisClusterNode redisClusterNode) {
         RedisURI uri = redisClusterNode.getUri();
         return HostAndPort.fromParts(uri.getHost(), uri.getPort());
     }
-
     private List<HostAndPort> toHostAndPorts(List<RedisClusterNode> nodes) {
          List<HostAndPort> result = Lists.newArrayList();
         for (RedisClusterNode node : nodes) {
@@ -93,7 +91,17 @@ public class ClusterSlotRange implements Serializable {
         }
         return result;
     }
-
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/models/slots/ClusterSlotRange.java/left.java
+    private RedisClusterNode toRedisClusterNode(HostAndPort hostAndPort, String slaveOf, Set<RedisClusterNode.NodeFlag> flags) {
+        RedisClusterNode redisClusterNode = new RedisClusterNode();
+        redisClusterNode.setUri(new RedisURI
+                .Builder().redis(hostAndPort.getHostText(), hostAndPort.getPortOrDefault(RedisURI.DEFAULT_REDIS_PORT)).build());
+        redisClusterNode.setSlaveOf(slaveOf);
+        redisClusterNode.setFlags(flags);
+        return redisClusterNode;
+    }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/models/slots/ClusterSlotRange.java/base.java
+=======
     private RedisClusterNode toRedisClusterNode(HostAndPort hostAndPort, String slaveOf, Set<RedisClusterNode.NodeFlag> flags) {
         RedisClusterNode redisClusterNode = new RedisClusterNode();
         redisClusterNode.setUri(RedisURI
@@ -102,7 +110,7 @@ public class ClusterSlotRange implements Serializable {
         redisClusterNode.setFlags(flags);
         return redisClusterNode;
     }
-
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/models/slots/ClusterSlotRange.java/right.java
     private List<RedisClusterNode> toRedisClusterNodes(List<HostAndPort> hostAndPorts, String slaveOf, Set<RedisClusterNode.NodeFlag> flags) {
         List<RedisClusterNode> result = Lists.newArrayList();
         for (HostAndPort hostAndPort : hostAndPorts) {
@@ -110,6 +118,14 @@ public class ClusterSlotRange implements Serializable {
         }
         return result;
     }
+    /**
+     * Constructs a {@link ClusterSlotRange}
+     *
+     * @param from from slot
+     * @param to to slot
+     * @param masterNode master for the slots, may be {@literal null}
+     * @param slaveNodes list of slaves must not be {@literal null} but may be empty
+     */
 
     public int getFrom() {
         return from;

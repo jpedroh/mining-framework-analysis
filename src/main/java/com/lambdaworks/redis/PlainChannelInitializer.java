@@ -24,7 +24,14 @@ import io.netty.channel.ChannelPipeline;
  */
 class PlainChannelInitializer extends io.netty.channel.ChannelInitializer<Channel> implements RedisChannelInitializer {
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/PlainChannelInitializer.java/left.java
+    final static RedisCommandBuilder<String, String> INITIALIZING_CMD_BUILDER = new RedisCommandBuilder<String, String>(
+            new Utf8StringCodec());
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/PlainChannelInitializer.java/base.java
+    final static RedisCommandBuilder INITIALIZING_CMD_BUILDER = new RedisCommandBuilder(new Utf8StringCodec());
+=======
     final static RedisCommandBuilder<String, String> INITIALIZING_CMD_BUILDER = new RedisCommandBuilder<>(new Utf8StringCodec());
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/PlainChannelInitializer.java/right.java
 
     protected boolean pingBeforeActivate;
     protected SettableFuture<Boolean> initializedFuture = SettableFuture.create();
@@ -83,11 +90,21 @@ class PlainChannelInitializer extends io.netty.channel.ChannelInitializer<Channe
                 public void channelActive(final ChannelHandlerContext ctx) throws Exception {
                     eventBus.publish(new ConnectedEvent(local(ctx), remote(ctx)));
                     if (pingBeforeActivate) {
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/PlainChannelInitializer.java/left.java
+                        if (password != null && password.length != 0) {
+                            pingCommand = INITIALIZING_CMD_BUILDER.auth(new String(password));
+                        } else {
+                            pingCommand = INITIALIZING_CMD_BUILDER.ping();
+                        }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/PlainChannelInitializer.java/base.java
+                        pingCommand = INITIALIZING_CMD_BUILDER.ping();
+=======
                         if (password != null && password.length != 0) {
                             pingCommand = new AsyncCommand<>(INITIALIZING_CMD_BUILDER.auth(new String(password)));
                         } else {
                             pingCommand = new AsyncCommand<>(INITIALIZING_CMD_BUILDER.ping());
                         }
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/PlainChannelInitializer.java/right.java
                         pingBeforeActivate(pingCommand, initializedFuture, ctx, handlers);
                     } else {
                         super.channelActive(ctx);
@@ -112,6 +129,21 @@ class PlainChannelInitializer extends io.netty.channel.ChannelInitializer<Channe
 
     static void pingBeforeActivate(final AsyncCommand<?, ?, ?> cmd, final SettableFuture<Boolean> initializedFuture,
             final ChannelHandlerContext ctx, final List<ChannelHandler> handlers) throws Exception {
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/PlainChannelInitializer.java/left.java
+        cmd.addListener(new PingResponseListener(initializedFuture, cmd, ctx), ctx.executor());
+
+        ctx.channel().writeAndFlush(cmd);
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/PlainChannelInitializer.java/base.java
+        cmd.addListener(new PingResponseListener(initializedFuture, cmd, ctx), ctx.executor());
+
+        for (ChannelHandler handler : handlers) {
+            if (handler instanceof CommandHandler) {
+                CommandHandler ch = (CommandHandler) handler;
+                ch.write(ctx, cmd, ctx.newPromise());
+                ctx.flush();
+            }
+        }
+=======
         cmd.handle((o, throwable) -> {
             if (throwable == null) {
                 initializedFuture.set(true);
@@ -123,6 +155,7 @@ class PlainChannelInitializer extends io.netty.channel.ChannelInitializer<Channe
         });
 
         ctx.channel().writeAndFlush(cmd);
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/PlainChannelInitializer.java/right.java
     }
 
     static void removeIfExists(ChannelPipeline pipeline, Class<? extends ChannelHandler> handlerClass) {
@@ -137,4 +170,63 @@ class PlainChannelInitializer extends io.netty.channel.ChannelInitializer<Channe
         return initializedFuture;
     }
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/PlainChannelInitializer.java/left.java
+    private static class PingResponseListener implements Runnable {
+
+        private final SettableFuture<Boolean> initializedFuture;
+        private final Command<?, ?, ?> cmd;
+        private final ChannelHandlerContext ctx;
+
+        public PingResponseListener(SettableFuture<Boolean> initializedFuture, Command<?, ?, ?> cmd, ChannelHandlerContext ctx) {
+            this.initializedFuture = initializedFuture;
+            this.cmd = cmd;
+            this.ctx = ctx;
+        }
+
+        @Override
+        public void run() {
+            if (!initializedFuture.isDone()) {
+                if (cmd.getException() != null) {
+                    initializedFuture.setException(cmd.getException());
+                    return;
+                }
+
+                if (cmd.getError() != null) {
+                    initializedFuture.setException(new RedisCommandExecutionException(cmd.getError()));
+                    return;
+                }
+
+                initializedFuture.set(true);
+                ctx.fireChannelActive();
+            }
+        }
+    }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/PlainChannelInitializer.java/base.java
+    private static class PingResponseListener implements Runnable {
+
+        private final SettableFuture<Boolean> initializedFuture;
+        private final Command<?, ?, ?> cmd;
+        private final ChannelHandlerContext ctx;
+
+        public PingResponseListener(SettableFuture<Boolean> initializedFuture, Command<?, ?, ?> cmd, ChannelHandlerContext ctx) {
+            this.initializedFuture = initializedFuture;
+            this.cmd = cmd;
+            this.ctx = ctx;
+        }
+
+        @Override
+        public void run() {
+            if (!initializedFuture.isDone()) {
+                if (cmd.getException() != null) {
+                    initializedFuture.setException(cmd.getException());
+                    return;
+                }
+
+                initializedFuture.set(true);
+                ctx.fireChannelActive();
+            }
+        }
+    }
+=======
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/PlainChannelInitializer.java/right.java
 }

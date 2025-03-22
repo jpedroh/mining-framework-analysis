@@ -229,6 +229,27 @@ public class RedisClusterNode implements Serializable, RedisNodeDescription {
     }
 
     /**
+     * Returns the {@link com.lambdaworks.redis.models.role.RedisInstance.Role} of the Redis Cluster node based on the
+     * {@link #getFlags() flags}.
+     * 
+     * @return the Redis Cluster node role
+     */
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/models/partitions/RedisClusterNode.java/left.java
+    @Override
+    public Role getRole() {
+        return getFlags().contains(NodeFlag.MASTER) ? Role.MASTER : Role.SLAVE;
+    }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/models/partitions/RedisClusterNode.java/base.java
+=======
+    @Override
+    public Role getRole() {
+        return is(NodeFlag.MASTER) ? Role.MASTER : Role.SLAVE;
+    }
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/models/partitions/RedisClusterNode.java/right.java
+    /**
+     * Redis Cluster node flags.
+     */
+    /**
      * 
      * @param nodeFlag the node flag
      * @return true if the {@linkplain NodeFlag} is contained within the flags.
@@ -236,7 +257,6 @@ public class RedisClusterNode implements Serializable, RedisNodeDescription {
     public boolean is(NodeFlag nodeFlag) {
         return getFlags().contains(nodeFlag);
     }
-
     /**
      * 
      * @param slot the slot hash
@@ -245,18 +265,12 @@ public class RedisClusterNode implements Serializable, RedisNodeDescription {
     public boolean hasSlot(int slot) {
         return getSlots().contains(slot);
     }
-
     /**
      * Returns the {@link com.lambdaworks.redis.models.role.RedisInstance.Role} of the Redis Cluster node based on the
      * {@link #getFlags() flags}.
      * 
      * @return the Redis Cluster node role
      */
-    @Override
-    public Role getRole() {
-        return is(NodeFlag.MASTER) ? Role.MASTER : Role.SLAVE;
-    }
-
     /**
      * Redis Cluster node flags.
      */

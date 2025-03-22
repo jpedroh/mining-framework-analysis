@@ -3,6 +3,7 @@
 package com.lambdaworks.redis.protocol;
 
 import java.net.SocketAddress;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -40,38 +41,43 @@ public class ConnectionWatchdog extends ChannelInboundHandlerAdapter implements 
 
     public static final long LOGGING_QUIET_TIME_MS = TimeUnit.MILLISECONDS.convert(5, TimeUnit.SECONDS);
     public static final int RETRY_TIMEOUT_MAX = 14;
-
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(ConnectionWatchdog.class);
-
     private final EventExecutorGroup reconnectWorkers;
     private final ClientOptions clientOptions;
     private final Bootstrap bootstrap;
     private boolean listenOnChannelInactive;
     private boolean reconnectSuspended;
-
     private Channel channel;
     private final Timer timer;
-
     private final Supplier<SocketAddress> socketAddressSupplier;
     private SocketAddress remoteAddress;
     private int attempts;
     private long lastReconnectionLogging = -1;
     private String logPrefix;
-
     private TimeUnit timeoutUnit = TimeUnit.SECONDS;
     private long timeout = 60;
-
     private volatile ChannelFuture currentFuture;
-
+    /**
+     * Create a new watchdog that adds to new connections to the supplied {@link ChannelGroup} and establishes a new
+     * {@link Channel} when disconnected, while reconnect is true.
+     * 
+     * @param clientOptions client options for the current connection
+     * @param bootstrap Configuration for new channels.
+     * @param reconnectWorkers executor group for reconnect tasks.
+     * @param timer Timer used for delayed reconnect.
+     */
+    public ConnectionWatchdog(ClientOptions clientOptions, Bootstrap bootstrap, EventExecutorGroup reconnectWorkers, Timer timer) {
+        this(clientOptions, bootstrap, timer, reconnectWorkers, null);
+    }
     /**
      * Create a new watchdog that adds to new connections to the supplied {@link ChannelGroup} and establishes a new
      * {@link Channel} when disconnected, while reconnect is true. The socketAddressSupplier can supply the reconnect address.
      *
-     * @param clientOptions client options for the current connection, must not be {@literal null}
-     * @param bootstrap Configuration for new channels, must not be {@literal null}
-     * @param timer Timer used for delayed reconnect, must not be {@literal null}
-     * @param reconnectWorkers executor group for reconnect tasks, must not be {@literal null}
-     * @param socketAddressSupplier the socket address supplier to obtain an address for reconnection, may be {@literal null}
+     * @param clientOptions client options for the current connection
+     * @param bootstrap Configuration for new channels.
+     * @param timer Timer used for delayed reconnect.
+     * @param reconnectWorkers executor group for reconnect tasks.
+     * @param socketAddressSupplier the socket address suplier for gaining an address to reconnect to
      */
     public ConnectionWatchdog(ClientOptions clientOptions, Bootstrap bootstrap, Timer timer,
             EventExecutorGroup reconnectWorkers, Supplier<SocketAddress> socketAddressSupplier) {
@@ -86,10 +92,15 @@ public class ConnectionWatchdog extends ChannelInboundHandlerAdapter implements 
         this.reconnectWorkers = reconnectWorkers;
         this.socketAddressSupplier = socketAddressSupplier;
     }
-
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/ConnectionWatchdog.java/left.java
+        logger.debug("{} userEventTriggered({}, {})", logPrefix, ctx, evt);
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/ConnectionWatchdog.java/base.java
+        logger.debug("userEventTriggered(" + ctx + ", " + evt + ")");
+=======
         logger.debug("{} userEventTriggered({}, {})", logPrefix(), ctx, evt);
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/ConnectionWatchdog.java/right.java
         if (evt instanceof ConnectionEvents.PrepareClose) {
 
             ConnectionEvents.PrepareClose prepareClose = (ConnectionEvents.PrepareClose) evt;
@@ -103,20 +114,47 @@ public class ConnectionWatchdog extends ChannelInboundHandlerAdapter implements 
         }
         super.userEventTriggered(ctx, evt);
     }
-
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/ConnectionWatchdog.java/left.java
+        logger.debug("{} channelActive({})", logPrefix, ctx);
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/ConnectionWatchdog.java/base.java
+        logger.debug("channelActive(" + ctx + ")");
+=======
         logger.debug("{} channelActive({})", logPrefix(), ctx);
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/ConnectionWatchdog.java/right.java
         channel = ctx.channel();
         attempts = 0;
         remoteAddress = channel.remoteAddress();
 
         super.channelActive(ctx);
     }
-
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    public
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/ConnectionWatchdog.java/left.java
+    @Override void channelInactive(ChannelHandlerContext ctx) throws Exception {
+
+        logger.debug("{} channelInactive({})", logPrefix, ctx);
+        channel = null;
+        if (listenOnChannelInactive && !reconnectSuspended) {
+            RedisChannelHandler<?, ?> channelHandler = ctx.pipeline().get(RedisChannelHandler.class);
+            if (channelHandler != null) {
+                timeout = channelHandler.getTimeout();
+                timeoutUnit = channelHandler.getTimeoutUnit();
+            }
+
+            scheduleReconnect();
+        } else {
+            logger.debug("{} Reconnect scheduling disabled", logPrefix(), ctx);
+            logger.debug("");
+        }
+        super.channelInactive(ctx);
+    }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/ConnectionWatchdog.java/base.java
+    @Override void channelInactive(ChannelHandlerContext ctx) throws Exception 
+=======
+    @Override void channelInactive(ChannelHandlerContext ctx) throws Exception {
 
         logger.debug("{} channelInactive({})", logPrefix(), ctx);
         channel = null;
@@ -134,10 +172,53 @@ public class ConnectionWatchdog extends ChannelInboundHandlerAdapter implements 
         }
         super.channelInactive(ctx);
     }
-
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/ConnectionWatchdog.java/right.java
     /**
      * Schedule reconnect if channel is not available/not active.
      */
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/ConnectionWatchdog.java/left.java
+    public void scheduleReconnect() {
+        logger.debug("{} scheduleReconnect()", logPrefix);
+
+        if (!isEventLoopGroupActive()) {
+            logger.debug("isEventLoopGroupActive() == false");
+            return;
+        }
+
+        if (channel == null || !channel.isActive()) {
+            if (attempts < RETRY_TIMEOUT_MAX) {
+                attempts++;
+            }
+            int timeout = 2 << attempts;
+            timer.newTimeout(new TimerTask() {
+                @Override
+                public void run(final Timeout timeout) throws Exception {
+
+                    if (!isEventLoopGroupActive()) {
+                        logger.debug("isEventLoopGroupActive() == false");
+                        return;
+                    }
+
+                    if (reconnectWorkers != null) {
+                        ConnectionWatchdog.this.run(timeout);
+                        return;
+                    }
+
+                    reconnectWorkers.submit(new Callable<Object>() {
+                        @Override
+                        public Object call() throws Exception {
+                            ConnectionWatchdog.this.run(timeout);
+                            return null;
+                        }
+                    });
+                }
+            }, timeout, TimeUnit.MILLISECONDS);
+        } else {
+            logger.debug("{} Skipping scheduleReconnect() because I have an active channel", logPrefix);
+        }
+    }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/ConnectionWatchdog.java/base.java
+=======
     public void scheduleReconnect() {
         logger.debug("{} scheduleReconnect()", logPrefix());
 
@@ -170,7 +251,7 @@ public class ConnectionWatchdog extends ChannelInboundHandlerAdapter implements 
             logger.debug("{} Skipping scheduleReconnect() because I have an active channel", logPrefix());
         }
     }
-
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/ConnectionWatchdog.java/right.java
     /**
      * Reconnect to the remote address that the closed channel was connected to. This creates a new {@link ChannelPipeline} with
      * the same handler instances contained in the old channel's pipeline.
@@ -210,7 +291,6 @@ public class ConnectionWatchdog extends ChannelInboundHandlerAdapter implements 
             }
         }
     }
-
     private void reconnect(InternalLogLevel infoLevel, InternalLogLevel warnLevel) throws Exception {
 
         logger.log(infoLevel, "Reconnecting, last destination was " + remoteAddress);
@@ -275,13 +355,26 @@ public class ConnectionWatchdog extends ChannelInboundHandlerAdapter implements 
             currentFuture = null;
         }
     }
-
     private void closeChannel() {
         if (channel != null && channel.isOpen()) {
             channel.close();
         }
     }
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/ConnectionWatchdog.java/left.java
+    private boolean isEventLoopGroupActive() {
+        if (bootstrap.group().isShutdown() || bootstrap.group().isTerminated() || bootstrap.group().isShuttingDown()) {
+            return false;
+        }
 
+        if (reconnectWorkers != null
+                && (reconnectWorkers.isShutdown() || reconnectWorkers.isTerminated() || reconnectWorkers.isShuttingDown())) {
+            return false;
+        }
+
+        return true;
+    }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/ConnectionWatchdog.java/base.java
+=======
     private boolean isEventLoopGroupActive() {
         if (!isEventLoopGroupActive(bootstrap.group()) || !isEventLoopGroupActive(reconnectWorkers)) {
             return false;
@@ -289,15 +382,7 @@ public class ConnectionWatchdog extends ChannelInboundHandlerAdapter implements 
 
         return true;
     }
-
-    private boolean isEventLoopGroupActive(EventExecutorGroup executorService){
-      if (executorService.isShutdown() || executorService.isTerminated() || executorService.isShuttingDown()) {
-            return false;
-        }
-
-        return true;
-    }
-
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/ConnectionWatchdog.java/right.java
     private boolean shouldLog() {
 
         long quietUntil = lastReconnectionLogging + LOGGING_QUIET_TIME_MS;
@@ -308,23 +393,23 @@ public class ConnectionWatchdog extends ChannelInboundHandlerAdapter implements 
 
         return true;
     }
-
+    /**
+     * @deprecated use {@link #setListenOnChannelInactive(boolean)}
+     * @param reconnect {@literal true} if reconnect is active
+     */
     public void setListenOnChannelInactive(boolean listenOnChannelInactive) {
         this.listenOnChannelInactive = listenOnChannelInactive;
     }
-
     public boolean isListenOnChannelInactive() {
         return listenOnChannelInactive;
     }
-
     public boolean isReconnectSuspended() {
         return reconnectSuspended;
     }
-
     public void setReconnectSuspended(boolean reconnectSuspended) {
+
         this.reconnectSuspended = reconnectSuspended;
     }
-
     private String logPrefix() {
         if (logPrefix != null) {
             return logPrefix;
@@ -332,5 +417,22 @@ public class ConnectionWatchdog extends ChannelInboundHandlerAdapter implements 
         StringBuffer buffer = new StringBuffer(64);
         buffer.append('[').append(ChannelLogDescriptor.logDescriptor(channel)).append(']');
         return logPrefix = buffer.toString();
+    }
+    /**
+     * Create a new watchdog that adds to new connections to the supplied {@link ChannelGroup} and establishes a new
+     * {@link Channel} when disconnected, while reconnect is true. The socketAddressSupplier can supply the reconnect address.
+     *
+     * @param clientOptions client options for the current connection, must not be {@literal null}
+     * @param bootstrap Configuration for new channels, must not be {@literal null}
+     * @param timer Timer used for delayed reconnect, must not be {@literal null}
+     * @param reconnectWorkers executor group for reconnect tasks, must not be {@literal null}
+     * @param socketAddressSupplier the socket address supplier to obtain an address for reconnection, may be {@literal null}
+     */
+    private boolean isEventLoopGroupActive(EventExecutorGroup executorService){
+      if (executorService.isShutdown() || executorService.isTerminated() || executorService.isShuttingDown()) {
+            return false;
+        }
+
+        return true;
     }
 }

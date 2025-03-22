@@ -7,8 +7,13 @@ import java.security.NoSuchAlgorithmException;
 import com.lambdaworks.codec.Base16;
 
 /**
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/LettuceStrings.java/left.java
+ * Helper for {@link String} checks.
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/LettuceStrings.java/base.java
+=======
  * Helper for {@link String} checks.
  * 
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/LettuceStrings.java/right.java
  * @author <a href="mailto:mpaluch@paluch.biz">Mark Paluch</a>
  * @since 3.0
  */

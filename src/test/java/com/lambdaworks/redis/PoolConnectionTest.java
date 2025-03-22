@@ -12,6 +12,7 @@ import com.google.common.base.Stopwatch;
 import com.lambdaworks.redis.api.async.RedisAsyncCommands;
 import com.lambdaworks.redis.api.sync.RedisCommands;
 
+@SuppressWarnings("unchecked")
 public class PoolConnectionTest extends AbstractRedisClientTest {
 
     @Test
@@ -52,24 +53,56 @@ public class PoolConnectionTest extends AbstractRedisClientTest {
         RedisConnectionPool<RedisCommands<String, String>> pool = client.pool();
         RedisConnection<String, String> c1 = pool.allocateConnection();
         c1.close();
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/PoolConnectionTest.java/left.java
+        RedisConnection<?, ?> actualConnection1 = assertConnectionStillThere(c1);
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/PoolConnectionTest.java/base.java
+        RedisConnection actualConnection1 = assertConnectionStillThere(c1);
+=======
         RedisConnection<String, String> actualConnection1 = assertConnectionStillThere(c1);
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/PoolConnectionTest.java/right.java
 
         RedisConnection<String, String> c2 = pool.allocateConnection();
         assertThat(c2).isSameAs(c1);
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/PoolConnectionTest.java/left.java
+        RedisConnection<?, ?> actualConnection2 = assertConnectionStillThere(c2);
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/PoolConnectionTest.java/base.java
+        RedisConnection actualConnection2 = assertConnectionStillThere(c2);
+=======
         RedisConnection<String, String> actualConnection2 = assertConnectionStillThere(c2);
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/PoolConnectionTest.java/right.java
         assertThat(actualConnection1).isSameAs(actualConnection2);
     }
 
     @SuppressWarnings("unchecked")
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/PoolConnectionTest.java/left.java
+    private RedisConnection<?, ?> assertConnectionStillThere(RedisConnection<String, String> c1) {
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/PoolConnectionTest.java/base.java
+    private RedisConnection assertConnectionStillThere(RedisConnection<String, String> c1) {
+=======
     private RedisConnection<String, String> assertConnectionStillThere(RedisConnection<String, String> c1) {
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/PoolConnectionTest.java/right.java
         // unwrap code from RedisConnectionPool destroyObject
         if (Proxy.isProxyClass(c1.getClass())) {
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/PoolConnectionTest.java/left.java
+            RedisConnectionPool.PooledConnectionInvocationHandler<RedisConnection<?, ?>> invocationHandler = (PooledConnectionInvocationHandler<RedisConnection<?, ?>>) Proxy
+                    .getInvocationHandler(c1);
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/PoolConnectionTest.java/base.java
+            RedisConnectionPool.PooledConnectionInvocationHandler<RedisConnection> invocationHandler = (PooledConnectionInvocationHandler<RedisConnection>) Proxy
+                    .getInvocationHandler(c1);
+=======
             RedisConnectionPool.PooledConnectionInvocationHandler<RedisConnection<String, String>> invocationHandler;
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/PoolConnectionTest.java/right.java
             invocationHandler = (RedisConnectionPool.PooledConnectionInvocationHandler<RedisConnection<String, String>>) Proxy
                     .getInvocationHandler(c1);
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/PoolConnectionTest.java/left.java
+            RedisConnection<?, ?> connection = invocationHandler.getConnection();
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/PoolConnectionTest.java/base.java
+            RedisConnection connection = invocationHandler.getConnection();
+=======
             RedisConnection<String, String> connection = invocationHandler.getConnection();
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/test/java/com/lambdaworks/redis/PoolConnectionTest.java/right.java
             assertThat(connection).isNotNull();
             return connection;
         }

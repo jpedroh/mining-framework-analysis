@@ -41,6 +41,15 @@ public interface RedisCommand<K, V, T> {
     CommandArgs<K, V> getArgs();
 
     /**
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/RedisCommand.java/left.java
+     *
+     * @return the redis command type like {@literal SADD}, {@literal HMSET}, {@literal QUIT}.
+     */
+    ProtocolKeyword getType();
+
+    /**
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/RedisCommand.java/base.java
+=======
      *
      * @param throwable the exception
      * @return {@code true} if this invocation caused this CompletableFuture to transition to a completed state, else
@@ -55,6 +64,7 @@ public interface RedisCommand<K, V, T> {
     ProtocolKeyword getType();
 
     /**
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/RedisCommand.java/right.java
      * Encode the command.
      *
      * @param buf byte buffer to operate on.

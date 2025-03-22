@@ -6,9 +6,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/LettuceFutures.java/left.java
+ * Utility to {@link #awaitAll(long, TimeUnit, Future[])} futures until they are done and to synchronize future execution using
+ * {@link #awaitOrCancel(RedisCommand, long, TimeUnit)}.
+ * 
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/LettuceFutures.java/base.java
+=======
  * Utility to {@link #awaitAll(long, TimeUnit, Future[])} futures until they are done and to synchronize future execution using
  * {@link #awaitOrCancel(RedisFuture, long, TimeUnit)}.
  *
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/LettuceFutures.java/right.java
  * @author <a href="mailto:mpaluch@paluch.biz">Mark Paluch</a>
  * @since 3.0
  */
@@ -20,11 +27,12 @@ public class LettuceFutures {
 
     /**
      * Wait until futures are complete or the supplied timeout is reached. Commands are not canceled (in contrast to
-     * {@link #awaitOrCancel(RedisFuture, long, TimeUnit)}) when the timeout expires.
-     *
+     * {@link #await(RedisCommand, long, TimeUnit)}) when the timeout expires.
+     * 
      * @param timeout Maximum time to wait for futures to complete.
      * @param unit Unit of time for the timeout.
      * @param futures Futures to wait for.
+     * 
      * @return {@literal true} if all futures complete in time, otherwise {@literal false}
      */
     public static boolean awaitAll(long timeout, TimeUnit unit, Future<?>... futures) {
@@ -58,7 +66,59 @@ public class LettuceFutures {
 
         return complete;
     }
-
+    /**
+     * Wait until futures are complete or the supplied timeout is reached. Commands are canceled if the timeout is reached but
+     * the command is not finished.
+     * 
+     * @param cmd Command to wait for.
+     * @param timeout Maximum time to wait for futures to complete.
+     * @param unit Unit of time for the timeout.
+     * @param <K> Key type.
+     * @param <V> Value type.
+     * @param <T> Result type.
+     * 
+     * @return Result of the command.
+     */
+    public static <K, V, T> T awaitOrCancel(RedisCommand<K, V, T> cmd, long timeout, TimeUnit unit) {
+        return await(cmd, timeout, unit);
+    }
+    /**
+     * Wait until futures are complete or the supplied timeout is reached. Commands are canceled if the timeout is reached but
+     * the command is not finished.
+     * 
+     * @param cmd Command to wait for.
+     * @param timeout Maximum time to wait for futures to complete.
+     * @param unit Unit of time for the timeout.
+     * @param <K> Key type.
+     * @param <V> Value type.
+     * @param <T> Result type.
+     * @deprecated The method name does not reflect what the method is doing, therefore it is deprecated. Use
+     *             {@link #awaitOrCancel(RedisCommand, long, TimeUnit)} instead. The semantics did not change and
+     *             {@link #awaitOrCancel(RedisCommand, long, TimeUnit)} simply calls this method.
+     * 
+     * @return Result of the command.
+     */
+    @Deprecated
+    public static <K, V, T> T await(RedisCommand<K, V, T> cmd, long timeout, TimeUnit unit) {
+        if (!cmd.await(timeout, unit)) {
+            cmd.cancel(true);
+            throw new RedisCommandTimeoutException();
+        }
+        CommandOutput<K, V, T> output = cmd.getOutput();
+        if (output.hasError()) {
+            throw new RedisCommandExecutionException(output.getError());
+        }
+        return output.get();
+    }
+    /**
+     * Wait until futures are complete or the supplied timeout is reached. Commands are not canceled (in contrast to
+     * {@link #awaitOrCancel(RedisFuture, long, TimeUnit)}) when the timeout expires.
+     *
+     * @param timeout Maximum time to wait for futures to complete.
+     * @param unit Unit of time for the timeout.
+     * @param futures Futures to wait for.
+     * @return {@literal true} if all futures complete in time, otherwise {@literal false}
+     */
     /**
      * Wait until futures are complete or the supplied timeout is reached. Commands are canceled if the timeout is reached but
      * the command is not finished.
@@ -73,7 +133,6 @@ public class LettuceFutures {
     public static <T> T awaitOrCancel(RedisFuture<T> cmd, long timeout, TimeUnit unit) {
         return await(timeout, unit, cmd);
     }
-
     /**
      * Wait until futures are complete or the supplied timeout is reached. Commands are canceled if the timeout is reached but
      * the command is not finished.

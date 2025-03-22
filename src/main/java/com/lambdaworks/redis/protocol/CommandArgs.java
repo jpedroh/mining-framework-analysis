@@ -2,8 +2,8 @@
 
 package com.lambdaworks.redis.protocol;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.lang.Math.max;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
@@ -25,10 +25,11 @@ public class CommandArgs<K, V> {
     private ByteBuffer buffer;
     private ByteBuffer firstEncodedKey;
     private int count;
-
+    private final List<ProtocolKeyword> keywords = new ArrayList<ProtocolKeyword>(8);
+    private K firstKey;
+    private byte[] encodedFirstKey;
     private Long firstInteger;
     private String firstString;
-
     /**
      *
      * @param codec Codec used to encode/decode keys and values, must not be {@literal null}.
@@ -38,51 +39,47 @@ public class CommandArgs<K, V> {
         this.codec = codec;
         this.buffer = ByteBuffer.allocate(32);
     }
-
     ByteBuffer buffer() {
         buffer.flip();
         return buffer;
     }
-
     public int count() {
         return count;
     }
-
     public CommandArgs<K, V> addKey(K key) {
-
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/CommandArgs.java/left.java
+        if (firstKey == null) {
+            firstKey = key;
+        }
+        byte[] b = codec.encodeKey(key);
+        if (encodedFirstKey == null) {
+            encodedFirstKey = b;
+        }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/CommandArgs.java/base.java
+        keys.add(key);
+=======
         if (firstEncodedKey == null) {
             firstEncodedKey = codec.encodeKey(key);
             return write(firstEncodedKey.duplicate());
         }
-
-        return write(codec.encodeKey(key));
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/CommandArgs.java/right.java
+        return write(b);
     }
-
-    public CommandArgs<K, V> addKeys(Iterable<K> keys) {
-        for (K key : keys) {
-            addKey(key);
-        }
-        return this;
-    }
-
     public CommandArgs<K, V> addKeys(K... keys) {
         for (K key : keys) {
             addKey(key);
         }
         return this;
     }
-
     public CommandArgs<K, V> addValue(V value) {
         return write(codec.encodeValue(value));
     }
-
     public CommandArgs<K, V> addValues(V... values) {
         for (V value : values) {
             addValue(value);
         }
         return this;
     }
-
     public CommandArgs<K, V> add(Map<K, V> map) {
         if (map.size() > 2) {
             realloc(buffer.capacity() + 16 * map.size());
@@ -102,41 +99,33 @@ public class CommandArgs<K, V> {
 
         return this;
     }
-
     public CommandArgs<K, V> add(String s) {
         if (firstString == null) {
             firstString = s;
         }
         return write(s);
     }
-
     public CommandArgs<K, V> add(long n) {
         if (firstInteger == null) {
             firstInteger = n;
         }
         return write(Long.toString(n));
     }
-
     public CommandArgs<K, V> add(double n) {
         return write(Double.toString(n));
     }
-
     public CommandArgs<K, V> add(byte[] value) {
         return write(value);
     }
-
     public CommandArgs<K, V> add(CommandKeyword keyword) {
         return write(keyword.bytes);
     }
-
     public CommandArgs<K, V> add(CommandType type) {
         return write(type.bytes);
     }
-
     public CommandArgs<K, V> add(ProtocolKeyword keyword) {
         return write(keyword.getBytes());
     }
-
     private CommandArgs<K, V> write(ByteBuffer arg) {
         buffer.mark();
 
@@ -163,7 +152,6 @@ public class CommandArgs<K, V> {
         count++;
         return this;
     }
-
     private CommandArgs<K, V> write(byte[] arg) {
         buffer.mark();
 
@@ -189,7 +177,6 @@ public class CommandArgs<K, V> {
         count++;
         return this;
     }
-
     private CommandArgs<K, V> write(String arg) {
         int length = arg.length();
 
@@ -219,7 +206,6 @@ public class CommandArgs<K, V> {
         count++;
         return this;
     }
-
     private void write(int value) {
         if (value < 10) {
             buffer.put((byte) ('0' + value));
@@ -231,7 +217,6 @@ public class CommandArgs<K, V> {
             buffer.put((byte) asString.charAt(i));
         }
     }
-
     private void realloc(int size) {
         ByteBuffer newBuffer = ByteBuffer.allocate(size);
         this.buffer.flip();
@@ -239,7 +224,18 @@ public class CommandArgs<K, V> {
         newBuffer.mark();
         this.buffer = newBuffer;
     }
-
+    public byte[] getEncodedKey() {
+        return encodedFirstKey;
+    }
+    public List<ProtocolKeyword> getKeywords() {
+        return keywords;
+    }
+    public CommandArgs<K, V> addKeys(Iterable<K> keys) {
+        for (K key : keys) {
+            addKey(key);
+        }
+        return this;
+    }
     public ByteBuffer getFirstEncodedKey() {
         if (firstEncodedKey != null) {
             return firstEncodedKey.duplicate();
@@ -251,7 +247,17 @@ public class CommandArgs<K, V> {
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/CommandArgs.java/left.java
+        sb.append(" [firstKey=").append(firstKey);
+        sb.append(", keywords=").append(keywords);
+        sb.append(", buffer=").append(new String(buffer.array()));
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/CommandArgs.java/base.java
+        sb.append(" [keys=").append(keys);
+        sb.append(", keywords=").append(keywords);
+        sb.append(", buffer=").append(new String(buffer.array()));
+=======
         sb.append(" [buffer=").append(new String(buffer.array()));
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/protocol/CommandArgs.java/right.java
         sb.append(']');
         return sb.toString();
     }

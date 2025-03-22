@@ -1,5 +1,6 @@
 package com.lambdaworks.redis.cluster;
 
+import com.lambdaworks.redis.ReadFrom;
 import com.lambdaworks.redis.RedisClusterAsyncConnection;
 import com.lambdaworks.redis.RedisException;
 import com.lambdaworks.redis.cluster.api.StatefulRedisClusterConnection;
@@ -51,9 +52,26 @@ public interface RedisAdvancedClusterAsyncConnection<K, V> extends RedisClusterA
      */
     RedisClusterAsyncConnection<K, V> getConnection(String host, int port);
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/RedisAdvancedClusterAsyncConnection.java/left.java
+    /**
+     * Set from which nodes data is read. The setting is used as default for read operations on this connection. See the
+     * documentation for {@link ReadFrom} for more information.
+     * 
+     * @param readFrom the read from setting, must not be {@literal null}
+     */
+    void setReadFrom(ReadFrom readFrom);
+
+    /**
+     * Gets the {@link ReadFrom} setting for this connection. Defaults to {@link ReadFrom#MASTER} if not set.
+     * 
+     * @return the read from setting or {@literal null}
+     */
+    ReadFrom getReadFrom();
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/RedisAdvancedClusterAsyncConnection.java/base.java
+=======
     /**
      * @return the underlying connection.
      */
     StatefulRedisClusterConnection<K, V> getStatefulConnection();
-
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/RedisAdvancedClusterAsyncConnection.java/right.java
 }

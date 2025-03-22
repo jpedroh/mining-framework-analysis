@@ -10,6 +10,9 @@ import java.nio.ByteBuffer;
  */
 public class ByteArrayCodec implements RedisCodec<byte[], byte[]> {
 
+    /**
+     * Static held instance ready to use. The {@link ByteArrayCodec} is thread-safe.
+     */
     public final static ByteArrayCodec INSTANCE = new ByteArrayCodec();
 
     @Override

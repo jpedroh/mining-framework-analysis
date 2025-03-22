@@ -112,7 +112,6 @@ public class ClusterSlotsParser {
             int port = Ints.checkedCast(getLongFromIterator(hostAndPortIterator, 0));
             String nodeId;
 
-
             if (hostAndPortIterator.hasNext()) {
                 nodeId = (String) hostAndPortIterator.next();
 
@@ -135,24 +134,34 @@ public class ClusterSlotsParser {
         return redisClusterNode;
     }
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/models/slots/ClusterSlotsParser.java/left.java
+    private static RedisClusterNode createNode(String host, int port) {
+        RedisClusterNode redisClusterNode = new RedisClusterNode();
+        redisClusterNode.setUri(new RedisURI.Builder().redis(host, port).build());
+        redisClusterNode.setSlots(new ArrayList<Integer>());
+        return redisClusterNode;
+    }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/models/slots/ClusterSlotsParser.java/base.java
+=======
     private static RedisClusterNode createNode(String host, int port) {
         RedisClusterNode redisClusterNode = new RedisClusterNode();
         redisClusterNode.setUri(RedisURI.create(host, port));
         redisClusterNode.setSlots(new ArrayList<Integer>());
         return redisClusterNode;
     }
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/models/slots/ClusterSlotsParser.java/right.java
 
     private static long getLongFromIterator(Iterator<?> iterator, long defaultValue) {
-        if (iterator.hasNext()) {
-            Object object = iterator.next();
-            if (object instanceof String) {
-                return Long.parseLong((String) object);
-            }
-
-            if (object instanceof Number) {
-                return ((Number) object).longValue();
-            }
+    if (iterator.hasNext()) {
+        Object object = iterator.next();
+        if (object instanceof String) {
+            return Long.parseLong((String) object);
         }
-        return defaultValue;
+
+        if (object instanceof Number) {
+            return ((Number) object).longValue();
+        }
     }
+    return defaultValue;
+}
 }

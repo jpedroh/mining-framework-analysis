@@ -155,4 +155,5 @@ public class RedisURIBuilderTest {
         assertThat(result.getPort()).isEqualTo(0);
         assertThat(result.isSsl()).isFalse();
     }
+
 }

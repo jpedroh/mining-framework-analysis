@@ -3,23 +3,18 @@ package com.lambdaworks.redis;
 import static com.google.common.base.Preconditions.checkState;
 import static com.lambdaworks.redis.ConnectionEventTrigger.local;
 import static com.lambdaworks.redis.ConnectionEventTrigger.remote;
-import static com.lambdaworks.redis.PlainChannelInitializer.INITIALIZING_CMD_BUILDER;
-import static com.lambdaworks.redis.PlainChannelInitializer.pingBeforeActivate;
-import static com.lambdaworks.redis.PlainChannelInitializer.removeIfExists;
-
 import java.util.List;
 import java.util.concurrent.Future;
-
 import javax.net.ssl.SSLEngine;
-import javax.net.ssl.SSLException;
-import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLParameters;
-
 import com.google.common.util.concurrent.SettableFuture;
 import com.lambdaworks.redis.event.EventBus;
 import com.lambdaworks.redis.event.connection.ConnectedEvent;
 import com.lambdaworks.redis.event.connection.ConnectionActivatedEvent;
 import com.lambdaworks.redis.event.connection.DisconnectedEvent;
+import static com.lambdaworks.redis.PlainChannelInitializer.INITIALIZING_CMD_BUILDER;
+import static com.lambdaworks.redis.PlainChannelInitializer.pingBeforeActivate;
+import static com.lambdaworks.redis.PlainChannelInitializer.removeIfExists;
 import com.lambdaworks.redis.protocol.AsyncCommand;
 
 import io.netty.channel.Channel;
@@ -121,7 +116,6 @@ public class SslConnectionBuilder extends ConnectionBuilder {
 
             SslHandler sslHandler = new SslHandler(sslEngine, redisURI.isStartTls());
             channel.pipeline().addLast(sslHandler);
-
             if (channel.pipeline().get("channelActivator") == null) {
                 channel.pipeline().addLast("channelActivator", new RedisChannelInitializerImpl() {
 
@@ -154,9 +148,15 @@ public class SslConnectionBuilder extends ConnectionBuilder {
                             if (event.isSuccess()) {
                                 if (pingBeforeActivate) {
                                     if (redisURI.getPassword() != null && redisURI.getPassword().length != 0) {
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/SslConnectionBuilder.java/left.java
+                                        pingCommand = INITIALIZING_CMD_BUILDER.auth(new String(redisURI.getPassword()));
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/SslConnectionBuilder.java/base.java
+                                        ;
+=======
                                         pingCommand = new AsyncCommand<>(INITIALIZING_CMD_BUILDER.auth(new String(redisURI.getPassword())));
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/SslConnectionBuilder.java/right.java
                                     } else {
-                                        pingCommand = new AsyncCommand<>(INITIALIZING_CMD_BUILDER.ping());
+                                    pingCommand = new AsyncCommand<>(INITIALIZING_CMD_BUILDER.ping());
                                     }
                                     pingBeforeActivate(pingCommand, initializedFuture, ctx, handlers);
                                 } else {
@@ -185,7 +185,8 @@ public class SslConnectionBuilder extends ConnectionBuilder {
 
                     @Override
                     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-                        if (cause instanceof SSLHandshakeException || cause.getCause() instanceof SSLException) {
+
+                        if (!initializedFuture.isDone()) {
                             initializedFuture.setException(cause);
                         }
                         super.exceptionCaught(ctx, cause);

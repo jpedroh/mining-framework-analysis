@@ -2,7 +2,6 @@ package com.lambdaworks.redis.support;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -30,6 +29,51 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
 
 /**
  * A portable CDI extension which registers beans for lettuce. If there are no RedisURIs there are also no registrations for
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/support/LettuceCdiExtension.java/left.java
+ * {@link RedisClient RedisClients}. The extension allows to create {@link RedisClient} and {@link RedisClusterClient}
+ * instances. Client instances are provided under the same qualifiers as the {@link RedisURI}. {@link ClientResources} can be
+ * shared across multiple client instances (Standalone, Cluster) by providing a {@link ClientResources} bean with the same
+ * qualifiers as the {@link RedisURI}.
+ * 
+ * <p>
+ * <strong>Example:</strong>
+ * </p>
+ * 
+ * <pre>
+ * <code>
+ *  public class Producers {
+ *     &#64;Produces
+ *     public RedisURI redisURI() {
+ *         return RedisURI.Builder.redis("localhost", 6379).build();
+ *     }
+ *     
+ *     &#64;Produces
+ *     public ClientResources clientResources() {
+ *         return DefaultClientResources.create()
+ *     }
+ *     
+ *     public void shutdownClientResources(@Disposes ClientResources clientResources) throws Exception {
+ *         clientResources.shutdown().get();
+ *     }
+ * }
+ * </code>
+ * </pre>
+ * 
+ *
+ * <pre>
+ *  <code>
+ *   public class Consumer {
+ *      &#64;Inject
+ *      private RedisClient client;
+ *      
+ *      &#64;Inject
+ *      private RedisClusterClient clusterClient;
+ * }     
+ *  </code>
+ * </pre>
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/support/LettuceCdiExtension.java/base.java
+ * RedisClients.
+=======
  * {@link RedisClient RedisClients}. The extension allows to create {@link RedisClient} and {@link RedisClusterClient}
  * instances. Client instances are provided under the same qualifiers as the {@link RedisURI}. {@link ClientResources} can be
  * shared across multiple client instances (Standalone, Cluster) by providing a {@link ClientResources} bean with the same
@@ -71,6 +115,7 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
  * }
  *  </code>
  * </pre>
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/support/LettuceCdiExtension.java/right.java
  * 
  * @author <a href="mailto:mpaluch@paluch.biz">Mark Paluch</a>
  */

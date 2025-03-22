@@ -1,11 +1,10 @@
 package com.lambdaworks.redis.cluster;
 
 import java.io.Closeable;
-
 import com.lambdaworks.redis.ReadFrom;
 import com.lambdaworks.redis.RedisException;
-import com.lambdaworks.redis.api.StatefulRedisConnection;
 import com.lambdaworks.redis.cluster.models.partitions.Partitions;
+import com.lambdaworks.redis.api.StatefulRedisConnection;
 
 /**
  * Connection provider for cluster operations.
@@ -14,18 +13,77 @@ import com.lambdaworks.redis.cluster.models.partitions.Partitions;
  * @since 3.0
  */
 interface ClusterConnectionProvider extends Closeable {
-
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterConnectionProvider.java/left.java
     /**
      * Provide a connection for the intent and cluster slot. The underlying connection is bound to the nodeId. If the slot
      * responsibility changes, the connection will not point to the updated nodeId.
      * 
+     * @param intent Connection intent {@literal READ} or {@literal WRITE}
+     * @param slot the slot-hash of the key, see {@link SlotHash}
+     * @return a valid connection which handles the slot.
+     * @throws RedisException if no host is handling the slot
+     */
+    <K, V> RedisAsyncConnectionImpl<K, V> getConnection(Intent intent, int slot);
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterConnectionProvider.java/base.java
+    /**
+     * Provide a connection for the intent and cluster slot.
+     * 
+     * @param intent
+     * @param slot
+     * @return a valid connection which handles the slot.
+     */
+    <K, V> RedisAsyncConnectionImpl<K, V> getConnection(Intent intent, int slot);
+=======
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterConnectionProvider.java/right.java
+
+    /**
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterConnectionProvider.java/left.java
+     * Provide a connection for the intent and host/port. The connection can survive cluster topology updates. The connection *
+     * will be closed if the node identified by {@code host} and {@code port} is no longer part of the cluster.
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterConnectionProvider.java/base.java
+     * Provide a connection for the intent and host/port.
+=======
+     * Provide a connection for the intent and cluster slot. The underlying connection is bound to the nodeId. If the slot
+     * responsibility changes, the connection will not point to the updated nodeId.
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterConnectionProvider.java/right.java
+     * 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterConnectionProvider.java/left.java
+     * @param intent Connection intent {@literal READ} or {@literal WRITE}
+     * @param host the host
+     * @param port the port
+     * @return a valid connection to the given host.
+     * @throws RedisException if the host is not part of the cluster
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterConnectionProvider.java/base.java
+     * @param intent
+     * @param host
+     * @param port
+     * @return a valid connection to the given host.
+=======
      * @param intent {@link com.lambdaworks.redis.cluster.ClusterConnectionProvider.Intent#READ} or
      *        {@link com.lambdaworks.redis.cluster.ClusterConnectionProvider.Intent#WRITE} {@literal READ} connections will be
      *        provided in {@literal READONLY} mode
      * @param slot the slot-hash of the key, see {@link SlotHash}
      * @return a valid connection which handles the slot.
      * @throws RedisException if no know node can be found for the slot
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterConnectionProvider.java/right.java
      */
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterConnectionProvider.java/left.java
+    <K, V> RedisAsyncConnectionImpl<K, V> getConnection(Intent intent, String host, int port);
+
+    /**
+     * Provide a connection for the intent and nodeId. The connection can survive cluster topology updates. The connection will
+     * be closed if the node identified by {@code nodeId} is no longer part of the cluster.
+     * 
+     *
+     * @param intent Connection intent {@literal READ} or {@literal WRITE}
+     * @param nodeId the nodeId of the cluster node
+     * @return a valid connection to the given nodeId.
+     * @throws RedisException if the {@code nodeId} is not part of the cluster
+     */
+    <K, V> RedisAsyncConnectionImpl<K, V> getConnection(Intent intent, String nodeId);
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterConnectionProvider.java/base.java
+    <K, V> RedisAsyncConnectionImpl<K, V> getConnection(Intent intent, String host, int port);
+=======
     <K, V> StatefulRedisConnection<K, V> getConnection(Intent intent, int slot);
 
     /**
@@ -53,6 +111,7 @@ interface ClusterConnectionProvider extends Closeable {
      * @throws RedisException if the {@code nodeId} is not part of the cluster
      */
     <K, V> StatefulRedisConnection<K, V> getConnection(Intent intent, String nodeId);
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterConnectionProvider.java/right.java
 
     /**
      * Close the connections and free all resources.
@@ -65,6 +124,48 @@ interface ClusterConnectionProvider extends Closeable {
      * internal state machine gets out of sync with the connection.
      */
     void reset();
+
+    /**
+     * Close connections that are not in use anymore/not part of the cluster.
+     */
+    void closeStaleConnections();
+
+    /**
+     * Update partitions.
+     * 
+     * @param partitions
+     */
+    void setPartitions(Partitions partitions);
+
+    /**
+     * Disable or enable auto-flush behavior. Default is {@literal true}. If autoFlushCommands is disabled, multiple commands
+     * can be issued without writing them actually to the transport. Commands are buffered until a {@link #flushCommands()} is
+     * issued. After calling {@link #flushCommands()} commands are sent to the transport and executed by Redis.
+     *
+     * @param autoFlush state of autoFlush.
+     */
+    void setAutoFlushCommands(boolean autoFlush);
+
+    /**
+     * Flush pending commands. This commands forces a flush on the channel and can be used to buffer ("pipeline") commands to
+     * achieve batching. No-op if channel is not connected.
+     */
+    void flushCommands();
+
+    /**
+     * Set from which nodes data is read. The setting is used as default for read operations on this connection. See the
+     * documentation for {@link ReadFrom} for more information.
+     * 
+     * @param readFrom the read from setting, must not be {@literal null}
+     */
+    void setReadFrom(ReadFrom readFrom);
+
+    /**
+     * Gets the {@link ReadFrom} setting for this connection. Defaults to {@link ReadFrom#MASTER} if not set.
+     * 
+     * @return the read from setting
+     */
+    ReadFrom getReadFrom();
 
     /**
      * Close connections that are not in use anymore/not part of the cluster.

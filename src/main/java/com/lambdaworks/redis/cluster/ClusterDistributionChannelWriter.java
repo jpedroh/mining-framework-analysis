@@ -1,22 +1,34 @@
 package com.lambdaworks.redis.cluster;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.lambdaworks.redis.cluster.SlotHash.getSlot;
 
 import java.util.List;
 
 import com.google.common.base.Splitter;
+
 import com.google.common.net.HostAndPort;
+
 import com.lambdaworks.redis.LettuceStrings;
+
 import com.lambdaworks.redis.ReadFrom;
+
 import com.lambdaworks.redis.RedisChannelHandler;
+
 import com.lambdaworks.redis.RedisChannelWriter;
-import com.lambdaworks.redis.RedisException;
-import com.lambdaworks.redis.api.StatefulRedisConnection;
+
 import com.lambdaworks.redis.cluster.models.partitions.Partitions;
+
 import com.lambdaworks.redis.protocol.CommandArgs;
+
 import com.lambdaworks.redis.protocol.CommandKeyword;
+
 import com.lambdaworks.redis.protocol.ProtocolKeyword;
+
+import static com.lambdaworks.redis.cluster.SlotHash.getSlot;
+
+import com.lambdaworks.redis.RedisException;
+
+import com.lambdaworks.redis.api.StatefulRedisConnection;
 import com.lambdaworks.redis.protocol.RedisCommand;
 
 /**
@@ -39,55 +51,51 @@ class ClusterDistributionChannelWriter<K, V> implements RedisChannelWriter<K, V>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T, C extends RedisCommand<K, V, T>> C write(C command) {
+    public <T> RedisCommand<K, V, T> write(RedisCommand<K, V, T> command) {
 
         checkArgument(command != null, "command must not be null");
 
-        if (closed) {
-            throw new RedisException("Connection is closed");
-        }
-
         RedisCommand<K, V, T> commandToSend = command;
         CommandArgs<K, V> args = command.getArgs();
-
-        if (!(command instanceof ClusterCommand)) {
-            RedisCommand<K, V, T> singleCommand = command;
-            commandToSend = new ClusterCommand<>(singleCommand, this, executionLimit);
-        }
-
         RedisChannelWriter<K, V> channelWriter = null;
 
-        if (commandToSend instanceof ClusterCommand && !commandToSend.isDone()) {
+        if (command instanceof Command) {
+            Command<K, V, T> singleCommand = (Command<K, V, T>) command;
+            if (!singleCommand.isMulti()) {
+                commandToSend = new ClusterCommand<K, V, T>(singleCommand, this, executionLimit);
+            }
+        }
+
+        if (commandToSend instanceof ClusterCommand) {
             ClusterCommand<K, V, T> clusterCommand = (ClusterCommand<K, V, T>) commandToSend;
-            if (clusterCommand.isMoved() || clusterCommand.isAsk()) {
-                HostAndPort target;
+            if (!clusterCommand.isDone()) {
                 if (clusterCommand.isMoved()) {
-                    target = getMoveTarget(clusterCommand.getError());
-                } else {
-                    target = getAskTarget(clusterCommand.getError());
+                    HostAndPort moveTarget = getMoveTarget(clusterCommand.getError());
+                    commandToSend.getOutput().setError((String) null);
+                    RedisAsyncConnectionImpl<K, V> connection = clusterConnectionProvider.getConnection(
+                            ClusterConnectionProvider.Intent.WRITE, moveTarget.getHostText(), moveTarget.getPort());
+                    channelWriter = connection.getChannelWriter();
                 }
 
-                commandToSend.getOutput().setError((String) null);
-                RedisChannelHandler<K, V> connection = (RedisChannelHandler<K, V>) clusterConnectionProvider.getConnection(
-                        ClusterConnectionProvider.Intent.WRITE, target.getHostText(), target.getPort());
-                channelWriter = connection.getChannelWriter();
-
                 if (clusterCommand.isAsk()) {
+                    HostAndPort askTarget = getAskTarget(clusterCommand.getError());
+                    commandToSend.getOutput().setError((String) null);
+                    RedisAsyncConnectionImpl<K, V> connection = clusterConnectionProvider.getConnection(
+                            ClusterConnectionProvider.Intent.WRITE, askTarget.getHostText(), askTarget.getPort());
+                    channelWriter = connection.getChannelWriter();
+
                     // set asking bit
-                    StatefulRedisConnection<K, V> statefulRedisConnection = (StatefulRedisConnection<K, V>) connection;
-                    statefulRedisConnection.async().asking();
+                    connection.asking();
                 }
             }
         }
 
-        if (channelWriter == null && args != null && args.getFirstEncodedKey() != null) {
-            int hash = getSlot(args.getFirstEncodedKey());
+        if (channelWriter == null && args != null && args.getEncodedKey() != null) {
+            int hash = getHash(args.getEncodedKey());
+
             ClusterConnectionProvider.Intent intent = getIntent(command.getType());
 
-            RedisChannelHandler<K, V> connection = (RedisChannelHandler<K, V>) clusterConnectionProvider.getConnection(intent,
-                    hash);
-
+            RedisAsyncConnectionImpl<K, V> connection = clusterConnectionProvider.getConnection(intent, hash);
             channelWriter = connection.getChannelWriter();
         }
 
@@ -96,14 +104,11 @@ class ClusterDistributionChannelWriter<K, V> implements RedisChannelWriter<K, V>
             channelWriter = writer.defaultWriter;
         }
 
-        commandToSend.getOutput().setError((String) null);
         if (channelWriter != null && channelWriter != this && channelWriter != defaultWriter) {
-            return channelWriter.write((C) commandToSend);
+            return channelWriter.write(commandToSend);
         }
 
-        defaultWriter.write((C) commandToSend);
-
-        return command;
+        return defaultWriter.write(commandToSend);
     }
 
     private ClusterConnectionProvider.Intent getIntent(ProtocolKeyword type) {
@@ -199,6 +204,7 @@ class ClusterDistributionChannelWriter<K, V> implements RedisChannelWriter<K, V>
      *
      * @param readFrom the read from setting, must not be {@literal null}
      */
+
     public void setReadFrom(ReadFrom readFrom) {
         clusterConnectionProvider.setReadFrom(readFrom);
     }
@@ -208,7 +214,95 @@ class ClusterDistributionChannelWriter<K, V> implements RedisChannelWriter<K, V>
      * 
      * @return the read from setting
      */
+
     public ReadFrom getReadFrom() {
         return clusterConnectionProvider.getReadFrom();
     }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T, C extends RedisCommand<K, V, T>> C write(C command) {
+
+        checkArgument(command != null, "command must not be null");
+
+        if (closed) {
+            throw new RedisException("Connection is closed");
+        }
+
+        RedisCommand<K, V, T> commandToSend = command;
+        CommandArgs<K, V> args = command.getArgs();
+
+        if (!(command instanceof ClusterCommand)) {
+            RedisCommand<K, V, T> singleCommand = command;
+            commandToSend = new ClusterCommand<>(singleCommand, this, executionLimit);
+        }
+
+        RedisChannelWriter<K, V> channelWriter = null;
+
+        if (commandToSend instanceof ClusterCommand && !commandToSend.isDone()) {
+            ClusterCommand<K, V, T> clusterCommand = (ClusterCommand<K, V, T>) commandToSend;
+            if (clusterCommand.isMoved() || clusterCommand.isAsk()) {
+                HostAndPort target;
+                if (clusterCommand.isMoved()) {
+                    target = getMoveTarget(clusterCommand.getError());
+                } else {
+                    target = getAskTarget(clusterCommand.getError());
+                }
+
+                commandToSend.getOutput().setError((String) null);
+                RedisChannelHandler<K, V> connection = (RedisChannelHandler<K, V>) clusterConnectionProvider.getConnection(
+                        ClusterConnectionProvider.Intent.WRITE, target.getHostText(), target.getPort());
+                channelWriter = connection.getChannelWriter();
+
+                if (clusterCommand.isAsk()) {
+                    // set asking bit
+                    StatefulRedisConnection<K, V> statefulRedisConnection = (StatefulRedisConnection<K, V>) connection;
+                    statefulRedisConnection.async().asking();
+                }
+            }
+        }
+
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterDistributionChannelWriter.java/left.java
+        if (channelWriter == null && args != null && args.getEncodedKey() != null) {
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterDistributionChannelWriter.java/base.java
+        if (channelWriter == null && args != null && !args.getKeys().isEmpty()) {
+=======
+        if (channelWriter == null && args != null && args.getFirstEncodedKey() != null) {
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterDistributionChannelWriter.java/right.java
+            int hash = getSlot(args.getFirstEncodedKey());
+            ClusterConnectionProvider.Intent intent = getIntent(command.getType());
+
+            RedisChannelHandler<K, V> connection = (RedisChannelHandler<K, V>) clusterConnectionProvider.getConnection(intent,
+                    hash);
+
+            channelWriter = connection.getChannelWriter();
+        }
+
+        if (channelWriter instanceof ClusterDistributionChannelWriter) {
+            ClusterDistributionChannelWriter<K, V> writer = (ClusterDistributionChannelWriter<K, V>) channelWriter;
+            channelWriter = writer.defaultWriter;
+        }
+
+        commandToSend.getOutput().setError((String) null);
+        if (channelWriter != null && channelWriter != this && channelWriter != defaultWriter) {
+            return channelWriter.write((C) commandToSend);
+        }
+
+        defaultWriter.write((C) commandToSend);
+
+        return command;
+    }
+
+    /**
+     * Set from which nodes data is read. The setting is used as default for read operations on this connection. See the
+     * documentation for {@link ReadFrom} for more information.
+     *
+     * @param readFrom the read from setting, must not be {@literal null}
+     */
+
+    /**
+     * Gets the {@link ReadFrom} setting for this connection. Defaults to {@link ReadFrom#MASTER} if not set.
+     * 
+     * @return the read from setting
+     */
 }
