@@ -48,7 +48,6 @@ public class HostSystem {
     public static final String SUCCESS_STATUS="SUCCESS";
     public static final String HOST_FAIL_STATUS="HOSTFAIL";
 	public static final String PRIVAT_KEY_FAIL_STATUS = "PRIVATKEYFAIL";
-	
 	//EC2 Status
 	public static final String PENDING_STATUS="PENDING";
 	public static final String RUNNING_STATUS="RUNNING";

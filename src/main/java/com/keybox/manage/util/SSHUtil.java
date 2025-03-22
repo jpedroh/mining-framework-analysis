@@ -227,9 +227,16 @@ public class SSHUtil {
 				hostSystem.setStatusCd(HostSystem.PUBLIC_KEY_FAIL_STATUS);
 			} else if (e.getMessage().toLowerCase().contains("auth fail") || e.getMessage().toLowerCase().contains("auth cancel")) {
 				hostSystem.setStatusCd(HostSystem.AUTH_FAIL_STATUS);
+<<<<<<< /usr/src/app/output/bastillion-io/bastillion/54d9987984366bbbac292633db398a742da14a29/src/main/java/com/keybox/manage/util/SSHUtil.java/left.java
 			} else if (e.getMessage().toLowerCase().contains("unknownhostexception")){
 				hostSystem.setErrorMsg("DNS Lookup Failed");
 				hostSystem.setStatusCd(HostSystem.HOST_FAIL_STATUS);
+||||||| /usr/src/app/output/bastillion-io/bastillion/54d9987984366bbbac292633db398a742da14a29/src/main/java/com/keybox/manage/util/SSHUtil.java/base.java
+=======
+			} else if (e.getMessage().toLowerCase().contains("unknownhostexception")){
+				hostSystem.setErrorMsg("DNS lookup Failed");
+				hostSystem.setStatusCd(HostSystem.HOST_FAIL_STATUS);
+>>>>>>> /usr/src/app/output/bastillion-io/bastillion/54d9987984366bbbac292633db398a742da14a29/src/main/java/com/keybox/manage/util/SSHUtil.java/right.java
 			} else {
 				hostSystem.setStatusCd(HostSystem.GENERIC_FAIL_STATUS);
 			}
@@ -575,9 +582,16 @@ public class SSHUtil {
 				hostSystem.setStatusCd(HostSystem.PUBLIC_KEY_FAIL_STATUS);
 			} else if (e.getMessage().toLowerCase().contains("auth fail") || e.getMessage().toLowerCase().contains("auth cancel")) {
 				hostSystem.setStatusCd(HostSystem.AUTH_FAIL_STATUS);
+<<<<<<< /usr/src/app/output/bastillion-io/bastillion/54d9987984366bbbac292633db398a742da14a29/src/main/java/com/keybox/manage/util/SSHUtil.java/left.java
 			} else if (e.getMessage().toLowerCase().contains("unknownhostexception")){
 				hostSystem.setErrorMsg("DNS Lookup Failed");
 				hostSystem.setStatusCd(HostSystem.HOST_FAIL_STATUS);	
+||||||| /usr/src/app/output/bastillion-io/bastillion/54d9987984366bbbac292633db398a742da14a29/src/main/java/com/keybox/manage/util/SSHUtil.java/base.java
+=======
+			} else if (e.getMessage().toLowerCase().contains("unknownhostexception")){
+				hostSystem.setErrorMsg("DNS lookup Failed");
+				hostSystem.setStatusCd(HostSystem.HOST_FAIL_STATUS);	
+>>>>>>> /usr/src/app/output/bastillion-io/bastillion/54d9987984366bbbac292633db398a742da14a29/src/main/java/com/keybox/manage/util/SSHUtil.java/right.java
 			} else {
 				hostSystem.setStatusCd(HostSystem.GENERIC_FAIL_STATUS);
 			}
