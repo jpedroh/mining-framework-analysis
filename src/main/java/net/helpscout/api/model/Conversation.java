@@ -1,5 +1,4 @@
 package net.helpscout.api.model;
-
 import net.helpscout.api.cbo.ConversationType;
 import net.helpscout.api.cbo.Status;
 import net.helpscout.api.model.ref.CustomerRef;
@@ -7,147 +6,173 @@ import net.helpscout.api.model.ref.MailboxRef;
 import net.helpscout.api.model.ref.PersonRef;
 import net.helpscout.api.model.ref.UserRef;
 import net.helpscout.api.model.thread.LineItem;
-
 import java.util.Calendar;
 import java.util.List;
 
 public class Conversation {
-	private int id;
-	private ConversationType type;
-	private int folderId;
-	private boolean isDraft;
-	private int number;
-	private Source source;
+  private int id;
 
-	private UserRef owner;
-	private MailboxRef mailbox;
-	private CustomerRef customer;
-	private int threadCount;
-	private Status status;
-	private String subject;
-	private String preview;
-	private Calendar createdAt;
-	private Calendar modifiedAt;
-	private String closedAt;
-	private UserRef closedBy;
 
-	private PersonRef createdBy;
+<<<<<<< /usr/src/app/output/helpscout/helpscout-api-java/397295ddede909edd6af0276694088841a9d5039/src/main/java/net/helpscout/api/model/Conversation.java/left.java
+  private ConversationType type;
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
 
-	private List<String> ccList;
-	private List<String> bccList;
-	private List<String> tags;
 
-	private List<LineItem> threads;
+  private int folderId;
 
-	public int getId() {
-		return id;
-	}
+  private boolean isDraft;
 
-	public ConversationType getType() {
-		return type;
-	}
+  private int number;
 
-	public void setType(ConversationType type) {
-		this.type = type;
-	}
+  private Source source;
 
-	public int getFolderId() {
-		return folderId;
-	}
+  private UserRef owner;
 
-	public boolean isDraft() {
-		return isDraft;
-	}
+  private MailboxRef mailbox;
 
-	public int getNumber() {
-		return number;
-	}
+  private CustomerRef customer;
 
-	public UserRef getOwner() {
-		return owner;
-	}
+  private int threadCount;
 
-	public MailboxRef getMailbox() {
-		return mailbox;
-	}
+  private Status status;
 
-	public CustomerRef getCustomer() {
-		return customer;
-	}
+  private String subject;
 
-	public int getThreadCount() {
-		return threadCount;
-	}
+  private String preview;
 
-	public Status getStatus() {
-		return status;
-	}
+  private Calendar createdAt;
 
-	public String getSubject() {
-		return subject;
-	}
+  private Calendar modifiedAt;
 
-	public String getPreview() {
-		return preview;
-	}
+  private String closedAt;
 
-	public Source getSource() {
-		return source;
-	}
+  private UserRef closedBy;
 
-	public PersonRef getCreatedBy() {
-		return createdBy;
-	}
+  private PersonRef createdBy;
 
-	public boolean isCreatedByCustomer() {
-		return createdBy != null && createdBy instanceof CustomerRef;
-	}
+  private List<String> ccList;
 
-	public Calendar getCreatedAt() {
-		return createdAt;
-	}
+  private List<String> bccList;
 
-	public Calendar getModifiedAt() {
-		return modifiedAt;
-	}
+  private List<String> tags;
 
-	public String getClosedAt() {
-		return closedAt;
-	}
+  private List<LineItem> threads;
 
-	public UserRef getClosedBy() {
-		return closedBy;
-	}
+  public int getId() {
+    return id;
+  }
 
-	public boolean hasCcList() {
-		return ccList != null && ccList.size() > 0;
-	}
 
-	public List<String> getCcList() {
-		return ccList;
-	}
+<<<<<<< /usr/src/app/output/helpscout/helpscout-api-java/397295ddede909edd6af0276694088841a9d5039/src/main/java/net/helpscout/api/model/Conversation.java/left.java
+  public ConversationType getType() {
+    return type;
+  }
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
 
-	public boolean hasBccList() {
-		return bccList != null && bccList.size() > 0;
-	}
 
-	public List<String> getBccList() {
-		return bccList;
-	}
+  public void setType(ConversationType type) {
+    this.type = type;
+  }
 
-	public boolean hasTags() {
-		return tags != null && tags.size() > 0;
-	}
+  public int getFolderId() {
+    return folderId;
+  }
 
-	public List<String> getTags() {
-		return tags;
-	}
+  public boolean isDraft() {
+    return isDraft;
+  }
 
-	public boolean hasThreads() {
-		return threads != null && threads.size() > 0;
-	}
+  public int getNumber() {
+    return number;
+  }
 
-	public List<LineItem> getThreads() {
-		return threads;
-	}
+  public UserRef getOwner() {
+    return owner;
+  }
+
+  public MailboxRef getMailbox() {
+    return mailbox;
+  }
+
+  public CustomerRef getCustomer() {
+    return customer;
+  }
+
+  public int getThreadCount() {
+    return threadCount;
+  }
+
+  public Status getStatus() {
+    return status;
+  }
+
+  public String getSubject() {
+    return subject;
+  }
+
+  public String getPreview() {
+    return preview;
+  }
+
+  public Source getSource() {
+    return source;
+  }
+
+  public PersonRef getCreatedBy() {
+    return createdBy;
+  }
+
+  public boolean isCreatedByCustomer() {
+    return createdBy != null && createdBy instanceof CustomerRef;
+  }
+
+  public Calendar getCreatedAt() {
+    return createdAt;
+  }
+
+  public Calendar getModifiedAt() {
+    return modifiedAt;
+  }
+
+  public String getClosedAt() {
+    return closedAt;
+  }
+
+  public UserRef getClosedBy() {
+    return closedBy;
+  }
+
+  public boolean hasCcList() {
+    return ccList != null && ccList.size() > 0;
+  }
+
+  public List<String> getCcList() {
+    return ccList;
+  }
+
+  public boolean hasBccList() {
+    return bccList != null && bccList.size() > 0;
+  }
+
+  public List<String> getBccList() {
+    return bccList;
+  }
+
+  public boolean hasTags() {
+    return tags != null && tags.size() > 0;
+  }
+
+  public List<String> getTags() {
+    return tags;
+  }
+
+  public boolean hasThreads() {
+    return threads != null && threads.size() > 0;
+  }
+
+  public List<LineItem> getThreads() {
+    return threads;
+  }
 }
