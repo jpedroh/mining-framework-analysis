@@ -62,8 +62,16 @@ import java.util.*;
  * 
  * @param <V> the graph vertex type
  * @param <E> the graph edge type
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/e4b14a0a901a208e338c05443aedc14f62a0cf96/jgrapht-core/src/main/java/org/jgrapht/alg/NaiveLcaFinder.java/left.java
  *
- * @see org.jgrapht.alg.lca.NaiveLCAFinder
+ * @see org.jgrapht.alg.lca.NaiveLCAFinder 
+||||||| /usr/src/app/output/jgrapht/jgrapht/e4b14a0a901a208e338c05443aedc14f62a0cf96/jgrapht-core/src/main/java/org/jgrapht/alg/NaiveLcaFinder.java/base.java
+ *  
+=======
+ *
+ * @deprecated
+ * @see org.jgrapht.alg.lca.NaiveLCAFinder 
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/e4b14a0a901a208e338c05443aedc14f62a0cf96/jgrapht-core/src/main/java/org/jgrapht/alg/NaiveLcaFinder.java/right.java
  */
 @Deprecated public class NaiveLcaFinder<V, E>
 {

@@ -30,7 +30,15 @@ import java.util.*;
  *
  * @author Leo Crawford
  *
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/e4b14a0a901a208e338c05443aedc14f62a0cf96/jgrapht-core/src/main/java/org/jgrapht/alg/TarjanLowestCommonAncestor.java/left.java
  * @see org.jgrapht.alg.lca.TarjanLCAFinder
+||||||| /usr/src/app/output/jgrapht/jgrapht/e4b14a0a901a208e338c05443aedc14f62a0cf96/jgrapht-core/src/main/java/org/jgrapht/alg/TarjanLowestCommonAncestor.java/base.java
+ * @deprecated
+ * @see
+=======
+ * @deprecated
+ * @see org.jgrapht.alg.lca.TarjanLCAFinder
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/e4b14a0a901a208e338c05443aedc14f62a0cf96/jgrapht-core/src/main/java/org/jgrapht/alg/TarjanLowestCommonAncestor.java/right.java
  */
 @Deprecated public class TarjanLowestCommonAncestor<V, E>
 {
