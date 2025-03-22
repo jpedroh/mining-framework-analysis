@@ -112,7 +112,6 @@ public class DockerHostSshDriver extends AbstractSoftwareProcessSshDriver implem
 
         return imageId;
     }
-
     /** {@inheritDoc} */
     @Override
     public String layerSshableImageOn(String fullyQualifiedImageName) {
@@ -124,6 +123,8 @@ public class DockerHostSshDriver extends AbstractSoftwareProcessSshDriver implem
 
         return sshdImageId;
     }
+    /** {@inheritDoc} */
+    /** {@inheritDoc} */
 
     private String buildDockerfileDirectory(String name) {
         String build = format("build --rm -t %s %s",
@@ -327,6 +328,18 @@ public class DockerHostSshDriver extends AbstractSoftwareProcessSshDriver implem
         //This will be used for docker registrt etc.
         String hostnameOfFirstEntity = entity.sensors().get(AbstractGroup.FIRST).sensors().get(Attributes.HOSTNAME);
         String repoCAPath = "/etc/docker/certs.d/" + hostnameOfFirstEntity + ":5000";
+
+        //Add the CA cert as an authorised docker CA for the first host.
+        //This will be used for docker registrt etc.
+        String hostnameOfFirstEntity = entity.sensors().get(AbstractGroup.FIRST).sensors().get(Attributes.HOSTNAME);
+        String repoCAPath = "/etc/docker/certs.d/" + hostnameOfFirstEntity + ":5000";
+
+        newScript(CUSTOMIZING)
+                .body.append(
+                chainGroup(sudo("mkdir -p " + repoCAPath),
+                        sudo("cp ca.pem " + repoCAPath + "/ca.crt")))
+                .failOnNonZeroResultCode()
+                .execute();
 
         newScript(CUSTOMIZING)
                 .body.append(
