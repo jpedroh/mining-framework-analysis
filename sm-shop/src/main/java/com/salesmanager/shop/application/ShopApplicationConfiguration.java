@@ -89,6 +89,11 @@ public class ShopApplicationConfiguration extends WebMvcConfigurerAdapter{
         return resolver;
     }
     
+/*    @Bean
+    CorsFilter corsFilter() {
+        CorsFilter filter = new CorsFilter();
+        return filter;
+    }*/
     @Bean
 	CorsConfigurationSource privateUrlsCorsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
@@ -98,12 +103,6 @@ public class ShopApplicationConfiguration extends WebMvcConfigurerAdapter{
 		privateSource.registerCorsConfiguration("/api/v1/private/**", configuration);
 		return privateSource;
 	}
-    
-/*    @Bean
-    CorsFilter corsFilter() {
-        CorsFilter filter = new CorsFilter();
-        return filter;
-    }*/
     
 /*    @Bean
     public ConnectionFactoryLocator connectionFactoryLocator() {
