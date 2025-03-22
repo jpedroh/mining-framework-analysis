@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 LinkedIn, Inc
+ * Copyright (c) 2011 LinkedIn, Inc
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -45,6 +45,7 @@ public class AvroStoreBusClientHttp<K> extends StoreBusClientHttp<K, GenericReco
         return ret;
     }
     
+
     /**
      * @return the Avro schema of a remote store.
      */
@@ -64,6 +65,7 @@ public class AvroStoreBusClientHttp<K> extends StoreBusClientHttp<K, GenericReco
      * @author dbuthay
      * @since 04/16, 2012
      */
+    
     private class LazyAvroGenericRecordSerializer implements Serializer<GenericRecord> {
         private AvroGenericRecordSerializer _delegate = null;
         private Schema _schema = null;
@@ -118,4 +120,17 @@ public class AvroStoreBusClientHttp<K> extends StoreBusClientHttp<K, GenericReco
             }
         }
     }
+    
+    /**
+     * A {@link Serializer} implementation that will lazily negotiate an avro {@link Schema} with
+     * the remote krati store.
+     * 
+     * It will keep negotiating until it succeeds once. After that, it will ALWAYS use the same
+     * {@link Schema}.
+     * All {@link #serialize(GenericRecord)} and {@link #deserialize(byte[])} calls will throw an 
+     * {@link IllegalStateException} if a {@link Schema} has not been negotiated yet.
+     * 
+     * @author dbuthay
+     *
+     */
 }
