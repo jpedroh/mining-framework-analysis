@@ -586,7 +586,8 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
                  * Therefore, we need to send the event.
                  */
                 encode(logEvent.event, outputStream);
-            } else if (hasKeepAliveDurationElapsed(lastSendEndNanoTime, startNanoTime)) {
+            } 
+            else if (hasKeepAliveDurationElapsed(lastSendEndNanoTime, startNanoTime)) {
                 /*
                  * This is a keep alive event, and the keepAliveDuration has passed,
                  * Therefore, we need to send the keepAliveMessage.
@@ -617,10 +618,11 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
         @SuppressWarnings("unchecked")
         private void encode(Event event, OutputStream outputStream) throws IOException {
             if (encoder instanceof StreamingEncoder) {
-                ((StreamingEncoder<Event>) encoder).encode(event, outputStream);
-            } else {
+                ((StreamingEncoder<Event>)encoder).encode(event, outputStream);
+            }
+            else {
                 byte[] data = encoder.encode(event);
-                if (data != null) {
+                if (data!=null) {
                     outputStream.write(data);
                 }
             }

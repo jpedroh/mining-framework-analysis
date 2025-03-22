@@ -49,12 +49,12 @@ public abstract class CompositeJsonLayout<Event extends DeferredProcessingAware>
     private String lineSeparator;
 
     /**
-     * The minimum size of the byte buffer used when encoding events in logback versions
+     * The minimum size of the byte buffer used when encoding events in logback versions 
      * greater than or equal to 1.2.0. The buffer is reused by subsequent invocations of
-     * the encoder.
-     *
-     * <p>The buffer automatically grows above the {@code #minBufferSize} when needed to
-     * accommodate with larger events. However, only the first {@code minBufferSize} bytes
+     * the encoder. 
+     * 
+     * <p>The buffer automatically grows above the {@code #minBufferSize} when needed to 
+     * accommodate with larger events. However, only the first {@code minBufferSize} bytes 
      * will be reused by subsequent invocations. It is therefore strongly advised to set
      * the minimum size at least equal to the average size of the encoded events to reduce
      * unnecessary memory allocations and reduce pressure on the garbage collector.
@@ -83,33 +83,35 @@ public abstract class CompositeJsonLayout<Event extends DeferredProcessingAware>
         }
         
         ReusableByteBuffer buffer = this.bufferPool.getBuffer();
-        try (OutputStreamWriter writer = new OutputStreamWriter(buffer)) {
-            writeLayout(prefix, writer, event);
-            writeFormatter(writer, event);
-            writeLayout(suffix, writer, event);
-           
-            if (lineSeparator != null) {
+        try(OutputStreamWriter writer = new OutputStreamWriter(buffer)) {
+            writeLayout(   prefix, writer, event);
+            writeFormatter(        writer, event);
+            writeLayout(   suffix, writer, event);
+            
+            if (lineSeparator!=null) {
                 writer.write(lineSeparator);
             }
             writer.flush();
 
             return new String(buffer.toByteArray());
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             addWarn("Error formatting logging event", e);
             return null;
-        } finally {
+        }
+        finally {
             bufferPool.releaseBuffer(buffer);
         }
     }
 
     
     private void writeLayout(Layout<Event> wrapped, Writer writer, Event event) throws IOException {
-        if (wrapped == null) {
+        if (wrapped==null) {
             return;
         }
         
         String str = wrapped.doLayout(event);
-        if (str != null) {
+        if (str!=null) {
             writer.write(str);
         }
     }
@@ -118,7 +120,7 @@ public abstract class CompositeJsonLayout<Event extends DeferredProcessingAware>
         this.formatter.writeEventToWriter(event, writer);
     }
 
-
+    
     @Override
     public void start() {
         super.start();
@@ -241,18 +243,18 @@ public abstract class CompositeJsonLayout<Event extends DeferredProcessingAware>
     public int getMinBufferSize() {
         return minBufferSize;
     }
-   
+    
     /**
-     * The minimum size of the byte buffer used when encoding events in logback versions
+     * The minimum size of the byte buffer used when encoding events in logback versions 
      * greater than or equal to 1.2.0. The buffer is reused by subsequent invocations of
-     * the encoder.
-     *
-     * <p>The buffer automatically grows above the {@code #minBufferSize} when needed to
-     * accommodate with larger events. However, only the first {@code minBufferSize} bytes
+     * the encoder. 
+     * 
+     * <p>The buffer automatically grows above the {@code #minBufferSize} when needed to 
+     * accommodate with larger events. However, only the first {@code minBufferSize} bytes 
      * will be reused by subsequent invocations. It is therefore strongly advised to set
      * the minimum size at least equal to the average size of the encoded events to reduce
      * unnecessary memory allocations and reduce pressure on the garbage collector.
-     *
+     * 
      * <p>Note: changes to the buffer size will not be taken into account after the encoder
      *          is started.
      */

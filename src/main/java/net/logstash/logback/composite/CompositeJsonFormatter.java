@@ -48,7 +48,7 @@ import ch.qos.logback.core.spi.LifeCycle;
  */
 public abstract class CompositeJsonFormatter<Event extends DeferredProcessingAware>
         extends ContextAwareBase implements LifeCycle {
-
+    
     /**
      * Used to create the necessary {@link JsonGenerator}s for generating JSON.
      */

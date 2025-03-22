@@ -32,26 +32,45 @@ import ch.qos.logback.core.spi.DeferredProcessingAware;
 
 public abstract class CompositeJsonEncoder<Event extends DeferredProcessingAware>
         extends EncoderBase<Event> implements StreamingEncoder<Event> {
+
     private static final byte[] EMPTY_BYTES = new byte[0];
 
     /**
-     * The minimum size of the byte buffer used when encoding events in logback versions
+<<<<<<< /usr/src/app/output/logstash/logstash-logback-encoder/d0ca2ff424176b80125c1c3a83e5ed9c04798724/src/main/java/net/logstash/logback/encoder/CompositeJsonEncoder.java/left.java
+     * The minimum size of the byte buffer used when encoding events in logback versions 
      * greater than or equal to 1.2.0. The buffer is reused by subsequent invocations of
-     * the encoder.
-     *
-     * <p>The buffer automatically grows above the {@code #minBufferSize} when needed to
-     * accommodate with larger events. However, only the first {@code minBufferSize} bytes
+     * the encoder. 
+     * 
+     * <p>The buffer automatically grows above the {@code #minBufferSize} when needed to 
+     * accommodate with larger events. However, only the first {@code minBufferSize} bytes 
      * will be reused by subsequent invocations. It is therefore strongly advised to set
      * the minimum size at least equal to the average size of the encoded events to reduce
      * unnecessary memory allocations and reduce pressure on the garbage collector.
+||||||| /usr/src/app/output/logstash/logstash-logback-encoder/d0ca2ff424176b80125c1c3a83e5ed9c04798724/src/main/java/net/logstash/logback/encoder/CompositeJsonEncoder.java/base.java
+     * The minimum size of the byte array buffer used when 
+     * encoding events in logback versions greater than or equal to 1.2.0.
+     * 
+     * The actual buffer size will be the {@link #minBufferSize}
+     * plus the prefix, suffix, and line separators sizes.
+=======
+     * The minimum size of the byte array buffer used when
+     * encoding events in logback versions greater than or equal to 1.2.0.
+     *
+     * The actual buffer size will be the {@link #minBufferSize}
+     * plus the prefix, suffix, and line separators sizes.
+>>>>>>> /usr/src/app/output/logstash/logstash-logback-encoder/d0ca2ff424176b80125c1c3a83e5ed9c04798724/src/main/java/net/logstash/logback/encoder/CompositeJsonEncoder.java/right.java
      */
     private int minBufferSize = 1024;
+<<<<<<< /usr/src/app/output/logstash/logstash-logback-encoder/d0ca2ff424176b80125c1c3a83e5ed9c04798724/src/main/java/net/logstash/logback/encoder/CompositeJsonEncoder.java/left.java
     
     /**
      * Provides reusable byte buffers (initialized when the encoder is started).
      */
     private ReusableByteBuffers bufferPool;
-
+    
+||||||| /usr/src/app/output/logstash/logstash-logback-encoder/d0ca2ff424176b80125c1c3a83e5ed9c04798724/src/main/java/net/logstash/logback/encoder/CompositeJsonEncoder.java/base.java
+=======
+>>>>>>> /usr/src/app/output/logstash/logstash-logback-encoder/d0ca2ff424176b80125c1c3a83e5ed9c04798724/src/main/java/net/logstash/logback/encoder/CompositeJsonEncoder.java/right.java
     private Encoder<Event> prefix;
     private Encoder<Event> suffix;
 
@@ -62,7 +81,10 @@ public abstract class CompositeJsonEncoder<Event extends DeferredProcessingAware
     private byte[] lineSeparatorBytes;
 
     private Charset charset;
-
+<<<<<<< /usr/src/app/output/logstash/logstash-logback-encoder/d0ca2ff424176b80125c1c3a83e5ed9c04798724/src/main/java/net/logstash/logback/encoder/CompositeJsonEncoder.java/left.java
+||||||| /usr/src/app/output/logstash/logstash-logback-encoder/d0ca2ff424176b80125c1c3a83e5ed9c04798724/src/main/java/net/logstash/logback/encoder/CompositeJsonEncoder.java/base.java
+=======
+>>>>>>> /usr/src/app/output/logstash/logstash-logback-encoder/d0ca2ff424176b80125c1c3a83e5ed9c04798724/src/main/java/net/logstash/logback/encoder/CompositeJsonEncoder.java/right.java
     public CompositeJsonEncoder() {
         super();
         this.formatter = createFormatter();
@@ -88,25 +110,95 @@ public abstract class CompositeJsonEncoder<Event extends DeferredProcessingAware
         if (!isStarted()) {
             throw new IllegalStateException("Encoder is not started");
         }
+<<<<<<< /usr/src/app/output/logstash/logstash-logback-encoder/d0ca2ff424176b80125c1c3a83e5ed9c04798724/src/main/java/net/logstash/logback/encoder/CompositeJsonEncoder.java/left.java
         
         ReusableByteBuffer buffer = bufferPool.getBuffer();
+||||||| /usr/src/app/output/logstash/logstash-logback-encoder/d0ca2ff424176b80125c1c3a83e5ed9c04798724/src/main/java/net/logstash/logback/encoder/CompositeJsonEncoder.java/base.java
+        byte[] prefixBytes = doEncodeWrappedToBytes(prefix, event);
+        byte[] suffixBytes = doEncodeWrappedToBytes(suffix, event);
+        
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(
+                minBufferSize
+                + (prefixBytes == null ? 0 : prefixBytes.length)
+                + (suffixBytes == null ? 0 : suffixBytes.length)
+                + lineSeparatorBytes.length);
+=======
+        byte[] prefixBytes = doEncodeWrappedToBytes(prefix, event);
+        byte[] suffixBytes = doEncodeWrappedToBytes(suffix, event);
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(
+                minBufferSize
+                + (prefixBytes == null ? 0 : prefixBytes.length)
+                + (suffixBytes == null ? 0 : suffixBytes.length)
+                + lineSeparatorBytes.length);
+>>>>>>> /usr/src/app/output/logstash/logstash-logback-encoder/d0ca2ff424176b80125c1c3a83e5ed9c04798724/src/main/java/net/logstash/logback/encoder/CompositeJsonEncoder.java/right.java
         try {
+<<<<<<< /usr/src/app/output/logstash/logstash-logback-encoder/d0ca2ff424176b80125c1c3a83e5ed9c04798724/src/main/java/net/logstash/logback/encoder/CompositeJsonEncoder.java/left.java
             encode(event, buffer);
             return buffer.toByteArray();
-        } catch (IOException e) {
+        }
+        catch(IOException e) {
             addWarn("Error encountered while encoding log event. Event: " + event, e);
+||||||| /usr/src/app/output/logstash/logstash-logback-encoder/d0ca2ff424176b80125c1c3a83e5ed9c04798724/src/main/java/net/logstash/logback/encoder/CompositeJsonEncoder.java/base.java
+            if (prefixBytes != null) {
+                outputStream.write(prefixBytes);
+            }   
+            
+            formatter.writeEventToOutputStream(event, outputStream);
+            
+            if (suffixBytes != null) {
+                outputStream.write(suffixBytes);
+            }
+            
+            outputStream.write(lineSeparatorBytes);
+            
+            return outputStream.toByteArray();
+        } catch (IOException e) {
+            addWarn("Error encountered while encoding log event. "
+                    + "Event: " + event, e);
+=======
+            if (prefixBytes != null) {
+                outputStream.write(prefixBytes);
+            }
+
+            formatter.writeEventToOutputStream(event, outputStream);
+
+            if (suffixBytes != null) {
+                outputStream.write(suffixBytes);
+            }
+
+            outputStream.write(lineSeparatorBytes);
+
+            return outputStream.toByteArray();
+        } catch (IOException e) {
+            addWarn("Error encountered while encoding log event. "
+                    + "Event: " + event, e);
+>>>>>>> /usr/src/app/output/logstash/logstash-logback-encoder/d0ca2ff424176b80125c1c3a83e5ed9c04798724/src/main/java/net/logstash/logback/encoder/CompositeJsonEncoder.java/right.java
             return EMPTY_BYTES;
-        } finally {
+        }
+        finally {
             bufferPool.releaseBuffer(buffer);
         }
     }
+<<<<<<< /usr/src/app/output/logstash/logstash-logback-encoder/d0ca2ff424176b80125c1c3a83e5ed9c04798724/src/main/java/net/logstash/logback/encoder/CompositeJsonEncoder.java/left.java
     
     private void encode(Encoder<Event> encoder, Event event, OutputStream outputStream) throws IOException {
-        if (encoder != null) {
+        if (encoder!=null) {
             byte[] data = encoder.encode(event);
-            if (data != null) {
+            if (data!=null) {
                 outputStream.write(data);
             }
+||||||| /usr/src/app/output/logstash/logstash-logback-encoder/d0ca2ff424176b80125c1c3a83e5ed9c04798724/src/main/java/net/logstash/logback/encoder/CompositeJsonEncoder.java/base.java
+    
+    private byte[] doEncodeWrappedToBytes(Encoder<Event> wrapped, Event event) {
+        if (wrapped != null) {
+            return wrapped.encode(event);
+=======
+
+    private byte[] doEncodeWrappedToBytes(Encoder<Event> wrapped, Event event) {
+        if (wrapped != null) {
+            return wrapped.encode(event);
+>>>>>>> /usr/src/app/output/logstash/logstash-logback-encoder/d0ca2ff424176b80125c1c3a83e5ed9c04798724/src/main/java/net/logstash/logback/encoder/CompositeJsonEncoder.java/right.java
         }
     }
 
@@ -254,18 +346,32 @@ public abstract class CompositeJsonEncoder<Event extends DeferredProcessingAware
     }
     
     /**
-     * The minimum size of the byte buffer used when encoding events in logback versions
+<<<<<<< /usr/src/app/output/logstash/logstash-logback-encoder/d0ca2ff424176b80125c1c3a83e5ed9c04798724/src/main/java/net/logstash/logback/encoder/CompositeJsonEncoder.java/left.java
+     * The minimum size of the byte buffer used when encoding events in logback versions 
      * greater than or equal to 1.2.0. The buffer is reused by subsequent invocations of
-     * the encoder.
-     *
-     * <p>The buffer automatically grows above the {@code #minBufferSize} when needed to
-     * accommodate with larger events. However, only the first {@code minBufferSize} bytes
+     * the encoder. 
+     * 
+     * <p>The buffer automatically grows above the {@code #minBufferSize} when needed to 
+     * accommodate with larger events. However, only the first {@code minBufferSize} bytes 
      * will be reused by subsequent invocations. It is therefore strongly advised to set
      * the minimum size at least equal to the average size of the encoded events to reduce
      * unnecessary memory allocations and reduce pressure on the garbage collector.
-     *
+     * 
      * <p>Note: changes to the buffer size will not be taken into account after the encoder
      *          is started.
+||||||| /usr/src/app/output/logstash/logstash-logback-encoder/d0ca2ff424176b80125c1c3a83e5ed9c04798724/src/main/java/net/logstash/logback/encoder/CompositeJsonEncoder.java/base.java
+     * Sets the minimum size of the byte array buffer used when 
+     * encoding events in logback versions greater than or equal to 1.2.0.
+     * 
+     * The actual buffer size will be the {@link #minBufferSize}
+     * plus the prefix, suffix, and line separators sizes.
+=======
+     * Sets the minimum size of the byte array buffer used when
+     * encoding events in logback versions greater than or equal to 1.2.0.
+     *
+     * The actual buffer size will be the {@link #minBufferSize}
+     * plus the prefix, suffix, and line separators sizes.
+>>>>>>> /usr/src/app/output/logstash/logstash-logback-encoder/d0ca2ff424176b80125c1c3a83e5ed9c04798724/src/main/java/net/logstash/logback/encoder/CompositeJsonEncoder.java/right.java
      */
     public void setMinBufferSize(int minBufferSize) {
         this.minBufferSize = minBufferSize;
