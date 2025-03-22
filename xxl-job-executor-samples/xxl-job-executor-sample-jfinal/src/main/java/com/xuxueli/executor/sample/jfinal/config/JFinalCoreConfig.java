@@ -1,5 +1,4 @@
 package com.xuxueli.executor.sample.jfinal.config;
-
 import com.jfinal.config.*;
 import com.jfinal.kit.Prop;
 import com.jfinal.kit.PropKit;
@@ -15,78 +14,60 @@ import org.slf4j.LoggerFactory;
  * @author xuxueli 2017-08-11 14:17:41
  */
 public class JFinalCoreConfig extends JFinalConfig {
-	private Logger logger = LoggerFactory.getLogger(JFinalCoreConfig.class);
+  private Logger logger = LoggerFactory.getLogger(JFinalCoreConfig.class);
 
-	// ---------------------- xxl-job executor ----------------------
-	private XxlJobExecutor xxlJobExecutor = null;
+  private XxlJobExecutor xxlJobExecutor = null;
 
-	/**
+  /**
 	 * 初始化执行器
 	 */
-	private void initXxlJobExecutor() {
+  private void initXxlJobExecutor() {
+    XxlJobExecutor.registJobHandler("demoJobHandler", new DemoJobHandler());
+    XxlJobExecutor.registJobHandler("shardingJobHandler", new ShardingJobHandler());
+    XxlJobExecutor.registJobHandler("httpJobHandler", new HttpJobHandler());
+    Prop xxlJobProp = PropKit.use("xxl-job-executor.properties");
+    xxlJobExecutor = new XxlJobExecutor();
+    xxlJobExecutor.setAdminAddresses(xxlJobProp.get("xxl.job.admin.addresses"));
+    xxlJobExecutor.setAppName(xxlJobProp.get("xxl.job.executor.appname"));
+    xxlJobExecutor.setIp(xxlJobProp.get("xxl.job.executor.ip"));
+    xxlJobExecutor.setPort(xxlJobProp.getInt("xxl.job.executor.port"));
+    xxlJobExecutor.setAccessToken(xxlJobProp.get("xxl.job.accessToken"));
+    xxlJobExecutor.setLogPath(xxlJobProp.get("xxl.job.executor.logpath"));
+    xxlJobExecutor.setLogRetentionDays(xxlJobProp.getInt("xxl.job.executor.logretentiondays"));
+    try {
+      xxlJobExecutor.start();
+    } catch (Exception e) {
+      logger.error(e.getMessage(), e);
+    }
+  }
 
-		// registry jobhandler
-		XxlJobExecutor.registJobHandler("demoJobHandler", new DemoJobHandler());
-		XxlJobExecutor.registJobHandler("shardingJobHandler", new ShardingJobHandler());
-		XxlJobExecutor.registJobHandler("httpJobHandler", new HttpJobHandler());
+  private void destoryXxlJobExecutor() {
+    if (xxlJobExecutor != null) {
+      xxlJobExecutor.destroy();
+    }
+  }
 
-		// load executor prop
-		Prop xxlJobProp = PropKit.use("xxl-job-executor.properties");
+  @Override public void configRoute(Routes route) {
+    route.add("/", IndexController.class);
+  }
 
-		// init executor
-		xxlJobExecutor = new XxlJobExecutor();
-		xxlJobExecutor.setAdminAddresses(xxlJobProp.get("xxl.job.admin.addresses"));
-		xxlJobExecutor.setAppName(xxlJobProp.get("xxl.job.executor.appname"));
-		xxlJobExecutor.setIp(xxlJobProp.get("xxl.job.executor.ip"));
-		xxlJobExecutor.setPort(xxlJobProp.getInt("xxl.job.executor.port"));
-		xxlJobExecutor.setAccessToken(xxlJobProp.get("xxl.job.accessToken"));
-		xxlJobExecutor.setLogPath(xxlJobProp.get("xxl.job.executor.logpath"));
-		xxlJobExecutor.setLogRetentionDays(xxlJobProp.getInt("xxl.job.executor.logretentiondays"));
+  @Override public void afterJFinalStart() {
+    initXxlJobExecutor();
+  }
 
-		// start executor
-		try {
-			xxlJobExecutor.start();
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-		}
-	}
-	private void destoryXxlJobExecutor() {
-		if (xxlJobExecutor != null) {
-			xxlJobExecutor.destroy();
-		}
-	}
+  @Override public void beforeJFinalStop() {
+    destoryXxlJobExecutor();
+  }
 
-	// ---------------------- jfinal ----------------------
-	@Override
-	public void configRoute(Routes route) {
-		route.add("/", IndexController.class);
-	}
+  @Override public void configConstant(Constants constants) {
+  }
 
-	@Override
-	public void afterJFinalStart() {
-		initXxlJobExecutor();
-	}
+  @Override public void configPlugin(Plugins plugins) {
+  }
 
-	@Override
-	public void beforeJFinalStop() {
-		destoryXxlJobExecutor();
-	}
-	@Override
-	public void configConstant(Constants constants) {
+  @Override public void configInterceptor(Interceptors interceptors) {
+  }
 
-	}
-	@Override
-	public void configPlugin(Plugins plugins) {
-
-	}
-	@Override
-	public void configInterceptor(Interceptors interceptors) {
-
-	}
-	@Override
-	public void configHandler(Handlers handlers) {
-
-	}
-
-
+  @Override public void configHandler(Handlers handlers) {
+  }
 }
