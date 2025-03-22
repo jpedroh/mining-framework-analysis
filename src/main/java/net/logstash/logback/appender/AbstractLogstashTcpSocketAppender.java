@@ -471,12 +471,22 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
                          * This is a standard (non-keepAlive) event.
                          * Therefore, we need to send the event.
                          */
+<<<<<<< /usr/src/app/output/logstash/logstash-logback-encoder/31ee1e9abd6543018fd43eec2571f71eeb863b6a/src/main/java/net/logstash/logback/appender/AbstractLogstashTcpSocketAppender.java/left.java
                         if (Logback11Support.isLogback11OrBefore()) {
                             Logback11Support.doEncode(encoder, logEvent.event);
                         } else {
                             outputStream.write(encoder.encode(logEvent.event));
                         }
                         roundRobin();
+||||||| /usr/src/app/output/logstash/logstash-logback-encoder/31ee1e9abd6543018fd43eec2571f71eeb863b6a/src/main/java/net/logstash/logback/appender/AbstractLogstashTcpSocketAppender.java/base.java
+                        encoder.doEncode(logEvent.event);
+=======
+                        if (Logback11Support.isLogback11OrBefore()) {
+                            Logback11Support.doEncode(encoder, logEvent.event);
+                        } else {
+                            outputStream.write(encoder.encode(logEvent.event));
+                        }
+>>>>>>> /usr/src/app/output/logstash/logstash-logback-encoder/31ee1e9abd6543018fd43eec2571f71eeb863b6a/src/main/java/net/logstash/logback/appender/AbstractLogstashTcpSocketAppender.java/right.java
                     } else if (hasKeepAliveDurationElapsed(lastSentTimestamp, currentTime)){
                         /*
                          * This is a keep alive event, and the keepAliveDuration has passed,
