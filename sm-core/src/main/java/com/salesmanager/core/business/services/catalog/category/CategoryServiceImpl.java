@@ -449,11 +449,15 @@ public class CategoryServiceImpl extends SalesManagerEntityServiceImpl<Long, Cat
   }
 
   @Override
-  public Page<Category> getListByDepth(MerchantStore store, Language language, String name,
+  public
+  @Override Page<Category> getListByDepth(MerchantStore store, Language language, String name,
       int depth, int page, int count) {
-
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-core/src/main/java/com/salesmanager/core/business/services/catalog/category/CategoryServiceImpl.java/left.java
+    Pageable pageRequest = new PageRequest(page, count);
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-core/src/main/java/com/salesmanager/core/business/services/catalog/category/CategoryServiceImpl.java/base.java
+=======
     Pageable pageRequest = PageRequest.of(page, count);
-
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-core/src/main/java/com/salesmanager/core/business/services/catalog/category/CategoryServiceImpl.java/right.java
     return pageableCategoryRepository.listByStore(store.getId(), language.getId(), name, pageRequest);
   }
 

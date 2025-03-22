@@ -63,14 +63,15 @@ public class CustomerApi {
       return customerFacade.create(customer, merchantStore);
 
   }
-  
-/*  *//**
+/*  */
+/**
    * Update authenticated customer adresses
    * @param userName
    * @param merchantStore
    * @param customer
    * @return
-   *//*
+   */
+/*
   @PutMapping("/auth/customer/{id}")
   @ApiOperation(
       httpMethod = "PUT",
@@ -88,10 +89,6 @@ public class CustomerApi {
       // TODO more validation
       return customerFacade.update(customer, merchantStore);
   }*/
-  
-  
-  
-
   @PutMapping("/private/customer/{id}")
   @ApiOperation(
       httpMethod = "PUT",
@@ -110,7 +107,6 @@ public class CustomerApi {
       customer.setId(id);
       return customerFacade.update(customer, merchantStore);
   }
-  
   @PatchMapping("/private/customer/{id}/address")
   @ApiOperation(
       httpMethod = "PATCH",
@@ -129,7 +125,6 @@ public class CustomerApi {
       customer.setId(id);
       customerFacade.updateAddress(customer, merchantStore);
   }
-
   @DeleteMapping("/private/customer/{id}")
   @ApiOperation(
       httpMethod = "DELETE",
@@ -137,14 +132,14 @@ public class CustomerApi {
       notes = "Requires administration access")
   @ApiImplicitParams({
     @ApiImplicitParam(name = "store", dataType = "string", defaultValue = "DEFAULT")
+  }) @ApiImplicitParams({
+    @ApiImplicitParam(name = "store", dataType = "string", defaultValue = "DEFAULT")
   })
   public void delete(
       @PathVariable Long id,
-      @ApiIgnore MerchantStore merchantStore
-      ) {
+      @ApiIgnore MerchantStore merchantStore) {
     customerFacade.deleteById(id);
   }
-
   /**
    * Get all customers
    *
@@ -167,14 +162,12 @@ public class CustomerApi {
     CustomerCriteria customerCriteria = createCustomerCriteria(start, count);
     return customerFacade.getListByStore(merchantStore, customerCriteria, language);
   }
-
   private CustomerCriteria createCustomerCriteria(Integer start, Integer count) {
     CustomerCriteria customerCriteria = new CustomerCriteria();
     Optional.ofNullable(start).ifPresent(customerCriteria::setStartIndex);
     Optional.ofNullable(count).ifPresent(customerCriteria::setMaxCount);
     return customerCriteria;
   }
-
   @GetMapping("/private/customer/{id}")
   @ApiImplicitParams({
       @ApiImplicitParam(name = "store", dataType = "string", defaultValue = "DEFAULT"),
@@ -186,7 +179,6 @@ public class CustomerApi {
       @ApiIgnore Language language) {
       return customerFacade.getCustomerById(id, merchantStore, language);
   }
-
   /**
    * Get logged in customer profile
    * @param merchantStore
@@ -194,7 +186,13 @@ public class CustomerApi {
    * @param request
    * @return
    */
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/customer/CustomerApi.java/left.java
   @GetMapping("/private/customer/profile")
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/customer/CustomerApi.java/base.java
+  @GetMapping("/auth/customers/profile")
+=======
+  @GetMapping("/auth/customer/profile")
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/customer/CustomerApi.java/right.java
   @ApiImplicitParams({
       @ApiImplicitParam(name = "store", dataType = "string", defaultValue = "DEFAULT"),
       @ApiImplicitParam(name = "lang", dataType = "string", defaultValue = "en")
@@ -207,7 +205,6 @@ public class CustomerApi {
     String userName = principal.getName();
     return customerFacade.getCustomerByNick(userName, merchantStore, language);
   }
-  
   @PatchMapping("/auth/customer/address")
   @ApiOperation(
       httpMethod = "PATCH",
@@ -229,7 +226,6 @@ public class CustomerApi {
       customerFacade.updateAddress(userName, customer, merchantStore);
   
   }
-  
   @PutMapping("/auth/customer/{id}")
   @ApiOperation(
       httpMethod = "PUT",
@@ -250,6 +246,38 @@ public class CustomerApi {
 
       return customerFacade.update(userName, customer, merchantStore);
   }
-  
-  
+  /** Create new customer for a given MerchantStore */
+/*  */
+/**
+   * Update authenticated customer adresses
+   * @param userName
+   * @param merchantStore
+   * @param customer
+   * @return
+   */
+/*
+  @PutMapping("/auth/customer/{id}")
+  @ApiOperation(
+      httpMethod = "PUT",
+      value = "Updates a customer",
+      produces = "application/json",
+      response = PersistableCustomer.class)
+  @ApiImplicitParams({
+      @ApiImplicitParam(name = "store", dataType = "string", defaultValue = "DEFAULT")
+  })
+  public PersistableCustomer update(
+      @PathVariable String userName,
+      @ApiIgnore MerchantStore merchantStore,
+      @Valid @RequestBody PersistableCustomer customer) {
+      // TODO customer.setUserName
+      // TODO more validation
+      return customerFacade.update(customer, merchantStore);
+  }*/
+  /**
+   * Get logged in customer profile
+   * @param merchantStore
+   * @param language
+   * @param request
+   * @return
+   */
 }

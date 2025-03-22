@@ -2,6 +2,7 @@ package com.salesmanager.shop.store.controller.store.facade;
 
 import java.util.List;
 import java.util.Optional;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.salesmanager.core.model.content.InputContentFile;
@@ -36,16 +37,25 @@ public interface StoreFacade {
   MerchantStore getByCode(String code);
 
   ReadableMerchantStore getByCode(String code, String lang);
-
+  
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/controller/store/facade/StoreFacade.java/left.java
   ReadableMerchantStoreList findAll(MerchantStoreCriteria criteria, Language language, int page, int count);
-
+  
   /**
    * List child stores
    * @param code
    * @return
    */
   ReadableMerchantStoreList getChildStores(Language language, String code, int start, int count);
-
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/controller/store/facade/StoreFacade.java/base.java
+=======
+  /**
+   * List child stores
+   * @param code
+   * @return
+   */
+  List<ReadableMerchantStore> getChildStores(Language language, String code);
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/controller/store/facade/StoreFacade.java/right.java
 
   ReadableMerchantStore getByCode(String code, Language lang);
 

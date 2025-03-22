@@ -143,15 +143,19 @@ public class UserApi {
 	@ResponseStatus(HttpStatus.OK)
 	// @PutMapping(value = {"/private/{store}/user/{id}","/private/user/{id}"},
 	// produces = MediaType.APPLICATION_JSON_VALUE)
-	@PutMapping(value = { "/private/user/{id}" }, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(value = {"/private/{store}/user/{id}","/private/user/{id}" }, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiImplicitParams({ @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
 			@ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en") })
 	@ApiOperation(httpMethod = "PUT", value = "Updates a user", notes = "", response = ReadableUser.class)
-	public ReadableUser update(@Valid @RequestBody PersistableUser user, @PathVariable Long id,
-			@ApiIgnore MerchantStore merchantStore, @ApiIgnore Language language
+	public ReadableUser update(
+	    @Valid @RequestBody PersistableUser user, 
+	    @PathVariable Long id,
+	    @ApiParam(name = "store", value = "Optional - Store code", required = false,
+	    defaultValue = "DEFAULT") 
+	    @PathVariable Optional<String> store
+	    ) {
 
-	) {
-
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/user/UserApi.java/left.java
 		String authenticatedUser = userFacade.authenticatedUser();// requires
 																	// user
 																	// doing
@@ -160,6 +164,22 @@ public class UserApi {
 		userFacade.authorizedGroups(authenticatedUser, user);
 
 		return userFacade.update(id, authenticatedUser, merchantStore.getCode(), user);
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/user/UserApi.java/base.java
+	  String storeCd = merchantStore.getCode();
+	  String authenticatedUser = userFacade.authenticatedUser();
+	  if (authenticatedUser == null) {
+	    throw new UnauthorizedException();
+	  }
+	  return userFacade.update(id, authenticatedUser, storeCd, user);
+=======
+	  String storeCd = Constants.DEFAULT_STORE;
+	  if (store.isPresent()) {
+	    storeCd = store.get();
+	  }
+	  String authenticatedUser = userFacade.authenticatedUser();//requires user doing action
+
+	  return userFacade.update(id, authenticatedUser, storeCd, user);
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/user/UserApi.java/right.java
 	}
 
 	@ResponseStatus(HttpStatus.OK)

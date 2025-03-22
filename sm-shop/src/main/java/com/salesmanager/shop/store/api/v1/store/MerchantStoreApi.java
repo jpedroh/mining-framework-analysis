@@ -47,6 +47,7 @@ import com.salesmanager.shop.store.api.exception.UnauthorizedException;
 import com.salesmanager.shop.store.controller.store.facade.StoreFacade;
 import com.salesmanager.shop.store.controller.user.facade.UserFacade;
 import com.salesmanager.shop.utils.ServiceRequestCriteriaBuilderUtils;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -81,6 +82,16 @@ public class MerchantStoreApi {
   public ReadableMerchantStore store(@PathVariable String code,
       @RequestParam(value = "lang", required = false) String lang) {
     return storeFacade.getByCode(code, lang);
+  }
+  
+  @GetMapping(value = {"/merchant/{store}/stores"}, produces = MediaType.APPLICATION_JSON_VALUE)
+  @ApiOperation(httpMethod = "GET", value = "Get stores attached to merchant", notes = "Merchant (retailer) can have multiple stores",
+      response = ReadableMerchantStore.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en")})
+  public List<ReadableMerchantStore> stores(@PathVariable String merchant,
+      @ApiIgnore Language language) {
+    return storeFacade.getChildStores(language, merchant);
   }
   
   @GetMapping(value = {"/private/merchant/{code}/stores"}, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -142,6 +153,7 @@ public class MerchantStoreApi {
 
 	  return storeFacade.getMerchantStoreNames();
   }
+  
 
 
   @ResponseStatus(HttpStatus.OK)
@@ -188,6 +200,29 @@ public class MerchantStoreApi {
     String userName = getUserFromRequest(request);
     validateUserPermission(userName, code);
     return storeFacade.getBrand(code);
+  }
+  
+  /**
+   * List child stores
+   * @param code
+   * @param request
+   * @return
+   */
+  @ResponseStatus(HttpStatus.OK)
+  @GetMapping(value = {"/private/merchant/{merchant}/children"},
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  @ApiOperation(httpMethod = "GET", value = "Get child stores", notes = "",
+      response = List.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en")})
+  public List<ReadableMerchantStore> children(
+      @PathVariable String merchant,
+      @ApiIgnore Language language,
+      HttpServletRequest request) {
+    
+    String userName = getUserFromRequest(request);
+    validateUserPermission(userName, merchant);
+    return storeFacade.getChildStores(language, merchant);
   }
   
   /**
@@ -295,6 +330,23 @@ public class MerchantStoreApi {
   }
 
 
+
+/*  @ResponseStatus(HttpStatus.OK)
+  @GetMapping(value = {"/private/stores"}, produces = MediaType.APPLICATION_JSON_VALUE)
+  @ApiOperation(httpMethod = "GET", value = "Check list of stores", notes = "",
+      response = ReadableMerchantStoreList.class)
+  public ReadableMerchantStoreList list(
+      @RequestParam(value = "start", required = false) Integer start,
+      @RequestParam(value = "length", required = false) Integer count,
+      HttpServletRequest request) {
+
+    MerchantStoreCriteria criteria = createMerchantStoreCriteria(start, count, request);
+
+
+    return storeFacade
+    		.getByCriteria(criteria, drawParam, languageService.defaultLanguage());
+  }*/
+
   private MerchantStoreCriteria createMerchantStoreCriteria(Integer start, Integer count,
       HttpServletRequest request) {
     MerchantStoreCriteria criteria = (MerchantStoreCriteria) ServiceRequestCriteriaBuilderUtils
@@ -316,6 +368,7 @@ public class MerchantStoreApi {
   
   private MerchantStoreCriteria filter(HttpServletRequest request) {
 	    Criteria criteria = ServiceRequestCriteriaBuilderUtils.buildRequest(MAPPING_FIELDS, request);
+
 	    return (MerchantStoreCriteria)criteria;
    }
 

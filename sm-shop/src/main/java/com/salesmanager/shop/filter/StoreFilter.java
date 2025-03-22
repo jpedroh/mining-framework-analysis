@@ -558,12 +558,21 @@ public class StoreFilter extends HandlerInterceptorAdapter {
 
       if (objects == null) {
         // load categories
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/filter/StoreFilter.java/left.java
         ReadableCategoryList categoryList = categoryFacade.getCategoryHierarchy(store, null, 0, language, null, 0, 200);// null
         loadedCategories = categoryList.getCategories();
-
+        
         //filter out invisible category
         loadedCategories.stream().filter(cat -> cat.isVisible()==true).collect(Collectors.toList());
-
+                                                                                         
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/filter/StoreFilter.java/base.java
+        loadedCategories = categoryFacade.getCategoryHierarchy(store, 0, language, null);// null
+                                                                                         // filter
+=======
+        ReadableCategoryList categoryList = categoryFacade.getCategoryHierarchy(store, null, 0, language, null, 0, 200);// null
+        loadedCategories = categoryList.getCategories();
+                                                                                         // filter
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/filter/StoreFilter.java/right.java
         objects = new ConcurrentHashMap<String, List<ReadableCategory>>();
         objects.put(language.getCode(), loadedCategories);
         webApplicationCache.putInCache(categoriesKey.toString(), objects);

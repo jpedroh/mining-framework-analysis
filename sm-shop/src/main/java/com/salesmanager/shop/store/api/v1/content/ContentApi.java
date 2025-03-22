@@ -33,7 +33,7 @@ import com.salesmanager.shop.model.content.ContentFile;
 import com.salesmanager.shop.model.content.ContentFolder;
 import com.salesmanager.shop.model.content.ContentName;
 import com.salesmanager.shop.model.content.PersistableContentEntity;
-
+import com.salesmanager.shop.model.content.PersistableContent;
 import com.salesmanager.shop.model.content.ReadableContentBox;
 import com.salesmanager.shop.model.content.ReadableContentEntity;
 import com.salesmanager.shop.model.content.ReadableContentFull;
@@ -122,9 +122,30 @@ public class ContentApi {
       @ApiIgnore MerchantStore merchantStore,
       @ApiIgnore Language language) {
 
-
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/content/ContentApi.java/left.java
+  
       return contentFacade.getContentPage(code, merchantStore, language);
 
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/content/ContentApi.java/base.java
+    MerchantStore merchantStore = storeFacade.get(store);
+    Language language = languageUtils.getRESTLanguage(request, merchantStore);
+    ReadableContentPage page = null;
+    try {
+      page = contentFacade.getContentPage(code, merchantStore, language);
+    } catch (ResourceNotFoundException e) {
+      LOGGER.debug("Resource not found [" + code + "] for store [" + store + "]");
+    }
+    return page;
+=======
+  
+    ReadableContentPage page = null;
+    try {
+      page = contentFacade.getContentPage(code, merchantStore, language);
+    } catch (ResourceNotFoundException e) {
+      LOGGER.debug("Resource not found [" + code + "] for store [" + merchantStore + "]");
+    }
+    return page;
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/content/ContentApi.java/right.java
   }
   
   @GetMapping(value = "/content/pages/name/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -175,7 +196,7 @@ public class ContentApi {
     return contentFacade.getContents(op, merchantStore, language);
 
   }
-
+  
   @GetMapping(value = "/content/boxes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ApiOperation(httpMethod = "GET",
       value = "Get box content by code for a code and a given MerchantStore", notes = "",
@@ -189,7 +210,7 @@ public class ContentApi {
       @ApiIgnore Language language) {
     return contentFacade.getContentBox(code, merchantStore, language);
   }
-
+  
   @GetMapping(value = "/content/folder", produces = MediaType.APPLICATION_JSON_VALUE)
   @ApiImplicitParams({
       @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
@@ -199,8 +220,7 @@ public class ContentApi {
     String decodedPath = decodeContentPath(path);
     return contentFacade.getContentFolder(decodedPath, merchantStore);
   }
-
-
+  
   /**
    * @param code
    * @param path
@@ -209,6 +229,7 @@ public class ContentApi {
    * @return
    * @throws Exception
    */
+  
   @GetMapping(value = "/content/images", produces = MediaType.APPLICATION_JSON_VALUE)
   @ApiOperation(httpMethod = "GET", value = "Get store content images", notes = "",
       response = ContentFolder.class)
@@ -226,8 +247,7 @@ public class ContentApi {
     ContentFolder folder = contentFacade.getContentFolder(decodedPath, merchantStore);
     return folder;
   }
-
-
+  
   private String decodeContentPath(String path) throws UnsupportedEncodingException {
     try {
       return StringUtils.isBlank(path) ? path : URLDecoder.decode(path, "UTF-8");
@@ -236,12 +256,13 @@ public class ContentApi {
     }
 
   }
-
+  
   /**
    * Need type, name and entity
    *
    * @param file
    */
+  
   @PostMapping(value = "/private/file")
   @ResponseStatus(HttpStatus.CREATED)
   @ApiImplicitParams({
@@ -286,9 +307,8 @@ public class ContentApi {
         throw new ServiceRuntimeException("Error while getting file bytes");
       }
     }
-
   }
-
+  
   /**
    * Create content page
    * @param page
@@ -296,31 +316,47 @@ public class ContentApi {
    * @param language
    * @param pageCode
    */
+  
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/content/ContentApi.java/left.java
   @PostMapping(value = "/private/content")
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/content/ContentApi.java/base.java
+  @PostMapping(value = "/private/{code}/content/pages/{pageCode}")
+=======
+  @PostMapping(value = "/private/content/page")
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/content/ContentApi.java/right.java
   @ResponseStatus(HttpStatus.OK)
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/content/ContentApi.java/left.java
   @ApiOperation(httpMethod = "POST", value = "Create content (page or box)", notes = "content type is by default BOX, when creating a page specify contentType:PAGE",
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/content/ContentApi.java/base.java
+  @ApiOperation(httpMethod = "POST", value = "Create content (page or box)", notes = "",
+=======
+  @ApiOperation(httpMethod = "POST", value = "Create content (page or box)", notes = "In order to create a page other than store default language, append ?lang=<LANGUAGE CODE> to post request",
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/content/ContentApi.java/right.java
       response = Void.class)
   @ApiImplicitParams({
       @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
       @ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en")})
   public void savePage(
       @RequestBody @Valid 
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/content/ContentApi.java/left.java
       PersistableContentEntity page,
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/content/ContentApi.java/base.java
+      PersistableContentPage page,
+=======
+      PersistableContent page,
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/content/ContentApi.java/right.java
       @ApiIgnore MerchantStore merchantStore, @ApiIgnore Language language) {
     
 	  contentFacade.saveContentPage(page, merchantStore, language);
   }
   
-  
   @PutMapping(value = "/private/content/{id}")
   @ResponseStatus(HttpStatus.OK)
-  @ApiOperation(httpMethod = "PUT", value = "Update content page", notes = "Updates a content page",
-
+  @ApiOperation(httpMethod = "PUT", value = "Create content page", notes = "Updates a content page",
       response = Void.class)
   @ApiImplicitParams({
       @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
       @ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en")})
-
   public void updatePage(
 	  @PathVariable Long id,
       @RequestBody @Valid PersistableContentEntity page,
@@ -334,8 +370,10 @@ public class ContentApi {
    *
    * @param name
    */
+  
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/content/ContentApi.java/left.java
   @DeleteMapping(value = "/private/content/{id}")
-  @ApiOperation(httpMethod = "DETETE", value = "Deletes a content from CMS", notes = "Delete a content box or page",
+  @ApiOperation(httpMethod = "DETETE", value = "Deletes a conyent from CMS", notes = "Delete a content box or page",
   response = Void.class)
   @ApiImplicitParams({
       @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT")})
@@ -344,22 +382,60 @@ public class ContentApi {
       @ApiIgnore MerchantStore merchantStore) {
     contentFacade.delete(merchantStore, id);
   }
-  
-/*  *//**
-   * Deletes a content from CMS
-   *
-   * @param name
-   *//*
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/content/ContentApi.java/base.java
+=======
   @DeleteMapping(value = "/private/content/page/{id}")
   @ApiOperation(httpMethod = "DETETE", value = "Deletes a file from CMS", notes = "Delete a file from server",
   response = Void.class)
   @ApiImplicitParams({
       @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT")})
-  public void deleteFile(
+  public void deleteContent(
       Long id, 
       @ApiIgnore MerchantStore merchantStore) {
     contentFacade.deletePage(merchantStore, id);
+  }
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/content/ContentApi.java/right.java
+  
+/*  */
+  
+/**
+   * @param code
+   * @param path
+   * @param request
+   * @param merchantStore
+   * @param language
+   * @return
+   */
+  
+/*
+  @GetMapping(value = "/content/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ApiOperation(httpMethod = "GET", value = "Get store content based on content code", notes = "",
+      response = ContentFolder.class)
+  @ApiImplicitParams({
+      @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
+      @ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en")})
+  public ReadableContentBox content(
+      @PathVariable String code,
+      @RequestParam(value = "path", required = false) String path, 
+      HttpServletRequest request,
+      @ApiIgnore MerchantStore merchantStore, 
+      @ApiIgnore Language language) {
+    return contentFacade.getContentBox(code, merchantStore, language);
   }*/
+  
+  /**
+   * Create content page
+   * @param page
+   * @param merchantStore
+   * @param language
+   * @param pageCode
+   */
+  
+  /**
+   * Deletes a content from CMS
+   *
+   * @param name
+   */
 
 
   /**

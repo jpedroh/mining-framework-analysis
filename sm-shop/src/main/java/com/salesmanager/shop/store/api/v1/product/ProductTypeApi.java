@@ -45,6 +45,7 @@ public class ProductTypeApi {
       notes = "", produces = "application/json", response = List.class)
   @ApiImplicitParams({
       @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/product/ProductTypeApi.java/left.java
       @ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en")})
   public List<ReadableProductType> getTypes(
       @ApiIgnore MerchantStore merchantStore,
@@ -52,9 +53,40 @@ public class ProductTypeApi {
     
     return productTypeFacade.getByMerchant(merchantStore.getCode(), language);
     
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/product/ProductTypeApi.java/base.java
+      @ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en")
+  })
+  public @ResponseBody PersistableProduct create(
+      @Valid @RequestBody PersistableProduct product,
+  			@ApiIgnore MerchantStore merchantStore,
+  			@ApiIgnore Language language,
+      HttpServletRequest request,
+      HttpServletResponse response) {
+
+    try {
+      productFacade.saveProduct(merchantStore, product, language);
+      return product;
+    } catch (Exception e) {
+      LOGGER.error("Error while creating product", e);
+      try {
+        response.sendError(503, "Error while creating product " + e.getMessage());
+      } catch (Exception ignore) {
+      }
+
+      return null;
+    }
+=======
+      @ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en")})
+  public List<ReadableProductType> getContentPages(
+      @ApiIgnore MerchantStore merchantStore,
+      @ApiIgnore Language language) {
+    
+    return productTypeFacade.getByMerchant(merchantStore.getCode(), language);
+    
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/product/ProductTypeApi.java/right.java
   }
   
-/*  @GetMapping(value = "/products/type/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/products/type/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ApiOperation(httpMethod = "GET", value = "Get product type",
       notes = "", produces = "application/json", response = ReadableProductType.class)
   @ApiImplicitParams({
@@ -67,8 +99,7 @@ public class ProductTypeApi {
     //return productTypeFacade.getByMerchant(merchantStore.getCode(), language);
     return null;
     
-  }*/
-
+  }
 
 
 }

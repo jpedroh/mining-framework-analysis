@@ -32,7 +32,6 @@ import com.salesmanager.core.model.catalog.product.review.ProductReview;
 import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.reference.language.Language;
 import com.salesmanager.shop.constants.Constants;
-
 import com.salesmanager.shop.model.catalog.product.LightPersistableProduct;
 import com.salesmanager.shop.model.catalog.product.PersistableProduct;
 import com.salesmanager.shop.model.catalog.product.PersistableProductReview;
@@ -533,7 +532,6 @@ public class ProductFacadeImpl implements ProductFacade {
     return exists;
   }
 
-<<<<<<< HEAD
 @Override
 public Product getProduct(String sku, MerchantStore store) {
 	return productService.getByCode(sku, store.getDefaultLanguage());
@@ -565,7 +563,5 @@ public void deleteProduct(Long id, MerchantStore store) {
 }
 
 
-=======
->>>>>>> origin/sb2.2
 
 }

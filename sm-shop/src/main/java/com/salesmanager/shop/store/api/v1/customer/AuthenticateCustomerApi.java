@@ -76,7 +76,13 @@ public class AuthenticateCustomerApi {
     /**
      * Create new customer for a given MerchantStore, then authenticate that customer
      */
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/customer/AuthenticateCustomerApi.java/left.java
     @RequestMapping( value={"/customer/register"}, method=RequestMethod.POST, produces ={ "application/json" })
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/customer/AuthenticateCustomerApi.java/base.java
+    @RequestMapping( value={"/customer/register"}, method=RequestMethod.POST, produces ={ "application/json", "application/xml" })
+=======
+    @RequestMapping( value={"/auth/register"}, method=RequestMethod.POST, produces ={ "application/json" })
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/customer/AuthenticateCustomerApi.java/right.java
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(httpMethod = "POST", value = "Registers a customer to the application", notes = "Used as self-served operation",response = AuthenticationResponse.class)
     @ResponseBody
@@ -126,6 +132,17 @@ public class AuthenticateCustomerApi {
             // Return the token
             return ResponseEntity.ok(new AuthenticationResponse(customer.getId(),token));
 
+            
+        //} catch (Exception e) {
+         //   LOGGER.error("Error while registering customer",e);
+         //   try {
+         //       response.sendError(503, "Error while registering customer " + e.getMessage());
+         //   } catch (Exception ignore) {
+         //   }
+            
+        //    return null;
+       // }
+
         
     }
 
@@ -136,7 +153,13 @@ public class AuthenticateCustomerApi {
      * @return
      * @throws AuthenticationException
      */
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/customer/AuthenticateCustomerApi.java/left.java
     @RequestMapping(value = "/customer/login", method = RequestMethod.POST, produces ={ "application/json" })
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/customer/AuthenticateCustomerApi.java/base.java
+    @RequestMapping(value = "/customer/login", method = RequestMethod.POST, produces ={ "application/json", "application/xml" })
+=======
+    @RequestMapping(value = "/auth/login", method = RequestMethod.POST, produces ={ "application/json" })
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/customer/AuthenticateCustomerApi.java/right.java
     @ApiOperation(httpMethod = "POST", value = "Authenticates a customer to the application", notes = "Customer can authenticate after registration, request is {\"username\":\"admin\",\"password\":\"password\"}",response = ResponseEntity.class)
     @ResponseBody
     public ResponseEntity<?> authenticate(@RequestBody @Valid AuthenticationRequest authenticationRequest, Device device) throws AuthenticationException {
@@ -190,11 +213,19 @@ public class AuthenticateCustomerApi {
         }
     }
     
-
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/customer/AuthenticateCustomerApi.java/left.java
     @RequestMapping(value = "/customer/password/reset", method = RequestMethod.PUT, produces ={ "application/json" })
     @ApiOperation(httpMethod = "POST", value = "Change customer password", notes = "Change password request object is {\"username\":\"test@email.com\"}",response = ResponseEntity.class)
     public ResponseEntity<?> resetPassword(@RequestBody @Valid AuthenticationRequest authenticationRequest, HttpServletRequest request) {
-
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/customer/AuthenticateCustomerApi.java/base.java
+    @RequestMapping(value = "/customer/password/reset", method = RequestMethod.POST, produces ={ "application/json", "application/xml" })
+    @ApiOperation(httpMethod = "POST", value = "Sends a request to reset password", notes = "Password reset request is {\"username\":\"test@email.com\"}",response = ResponseEntity.class)
+    public ResponseEntity<?> resetPassword(@RequestBody @Valid AuthenticationRequest authenticationRequest, HttpServletRequest request) {
+=======
+    @RequestMapping(value = "/auth/customer/password/reset", method = RequestMethod.PUT, produces ={ "application/json" })
+    @ApiOperation(httpMethod = "PUT", value = "Change customer password", notes = "Change password request object is {\"username\":\"test@email.com\"}",response = ResponseEntity.class)
+    public ResponseEntity<?> changePassword(@RequestBody @Valid AuthenticationRequest authenticationRequest, HttpServletRequest request) {
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/customer/AuthenticateCustomerApi.java/right.java
 
         try {
             
@@ -214,12 +245,18 @@ public class AuthenticateCustomerApi {
             return ResponseEntity.badRequest().body("Exception when reseting password "+e.getMessage());
         }
     }
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/customer/AuthenticateCustomerApi.java/left.java
     
-
     @RequestMapping(value = "/customer/password", method = RequestMethod.POST, produces ={ "application/json" })
     @ApiOperation(httpMethod = "PUT", value = "Sends a request to reset password", notes = "Password reset request is {\"username\":\"test@email.com\"}",response = ResponseEntity.class)
     public ResponseEntity<?> changePassword(@RequestBody @Valid PasswordRequest passwordRequest, HttpServletRequest request) {
-
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/customer/AuthenticateCustomerApi.java/base.java
+=======
+    
+    @RequestMapping(value = "/auth/customer/password", method = RequestMethod.POST, produces ={ "application/json" })
+    @ApiOperation(httpMethod = "POST", value = "Sends a request to reset password", notes = "Password reset request is {\"username\":\"test@email.com\"}",response = ResponseEntity.class)
+    public ResponseEntity<?> resetPassword(@RequestBody @Valid PasswordRequest passwordRequest, HttpServletRequest request) {
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/customer/AuthenticateCustomerApi.java/right.java
 
         try {
             

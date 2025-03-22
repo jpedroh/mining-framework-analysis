@@ -38,7 +38,6 @@ import com.salesmanager.shop.model.catalog.product.attribute.ReadableProductAttr
 import com.salesmanager.shop.model.catalog.product.attribute.ReadableProductAttributeValue;
 import com.salesmanager.shop.model.catalog.product.attribute.ReadableProductOption;
 import com.salesmanager.shop.model.catalog.product.attribute.api.ReadableProductOptionValueEntity;
-
 import com.salesmanager.shop.model.catalog.product.type.ReadableProductType;
 import com.salesmanager.shop.utils.DateUtil;
 import com.salesmanager.shop.utils.ImageFilePath;
@@ -86,30 +85,36 @@ public class ReadableProductPopulator extends
 			throws ConversionException {
 		Validate.notNull(pricingService, "Requires to set PricingService");
 		Validate.notNull(imageUtils, "Requires to set imageUtils");
-
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/populator/catalog/ReadableProductPopulator.java/left.java
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/populator/catalog/ReadableProductPopulator.java/base.java
+		Validate.notNull(language, "Language cannot be null");
+=======
+		//Validate.notNull(language, "Language cannot be null");
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/populator/catalog/ReadableProductPopulator.java/right.java
 		
 		try {
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/populator/catalog/ReadableProductPopulator.java/left.java
 		  
 	        List<com.salesmanager.shop.model.catalog.product.ProductDescription> fulldescriptions = new ArrayList<com.salesmanager.shop.model.catalog.product.ProductDescription>();
 	        if(language == null) {
 	          target = new ReadableProductFull();
 	        }
-
+	        
 	        if(target==null) {
 	        	target = new ReadableProduct();
 	        }
-
+	        
 	        ProductDescription description = source.getProductDescription();
 	        
 	        if(source.getDescriptions()!=null && source.getDescriptions().size()>0) {
 	          for(ProductDescription desc : source.getDescriptions()) {
-                if(language != null && desc.getLanguage()!=null && desc.getLanguage().getId().intValue() == language.getId().intValue()) {
-                    description = desc;
-                    break;
-                } else {
-                  fulldescriptions.add(populateDescription(desc));
-                }
-              }
+	                if(language != null && desc.getLanguage()!=null && desc.getLanguage().getId().intValue() == language.getId().intValue()) {
+	                    description = desc;
+	                    break;
+	                } else {
+	                  fulldescriptions.add(populateDescription(desc));
+	                }
+	              }
 	        }
 	        
 		     if(target instanceof ReadableProductFull) {
@@ -119,9 +124,42 @@ public class ReadableProductPopulator extends
 		        if(language == null) {
 			          language = store.getDefaultLanguage();
 			    }
+			
+
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/populator/catalog/ReadableProductPopulator.java/base.java
+			
+
+			ProductDescription description = source.getProductDescription();
+			
+			Set<ProductDescription> descriptions = source.getDescriptions();
+			for(ProductDescription desc : descriptions) {
+				if(desc.getLanguage()!=null && desc.getLanguage().getId().intValue() == language.getId().intValue()) {
+					description = desc;
+					break;
+				}
+			}
+=======
+		  
+	        List<com.salesmanager.shop.model.catalog.product.ProductDescription> fulldescriptions = new ArrayList<com.salesmanager.shop.model.catalog.product.ProductDescription>();
+	        if(language == null) {
+	          target = new ReadableProductFull();
+	        }
+	        
+	        ProductDescription description = source.getProductDescription();
+	        
+	        if(source.getDescriptions()!=null && source.getDescriptions().size()>0) {
+	          for(ProductDescription desc : source.getDescriptions()) {
+	                if(language != null && desc.getLanguage()!=null && desc.getLanguage().getId().intValue() == language.getId().intValue()) {
+	                    description = desc;
+	                    break;
+	                } else {
+	                  fulldescriptions.add(populateDescription(desc));
+	                }
+	              }
+	        }
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/populator/catalog/ReadableProductPopulator.java/right.java
 
 
-	
 			target.setId(source.getId());
 			target.setAvailable(source.isAvailable());
 			
@@ -203,7 +241,7 @@ public class ReadableProductPopulator extends
 			if(description!=null) {
 				//com.salesmanager.shop.model.catalog.product.ProductDescription tragetDescription = new com.salesmanager.shop.model.catalog.product.ProductDescription();
 			    com.salesmanager.shop.model.catalog.product.ProductDescription tragetDescription = populateDescription(description);
-/*				tragetDescription.setFriendlyUrl(description.getSeUrl());
+	/*				tragetDescription.setFriendlyUrl(description.getSeUrl());
 				tragetDescription.setName(description.getName());
 				tragetDescription.setId(description.getId());
 				if(!StringUtils.isBlank(description.getMetatagTitle())) {
@@ -425,7 +463,7 @@ public class ReadableProductPopulator extends
 
 			
 			//remove products from invisible category -> set visible = false
-/*			Set<Category> categories = source.getCategories();
+	/*			Set<Category> categories = source.getCategories();
 			boolean isVisible = true;
 			if(!CollectionUtils.isEmpty(categories)) {
 				for(Category c : categories) {
@@ -440,9 +478,9 @@ public class ReadableProductPopulator extends
 			
 			//target.setVisible(isVisible);
 			
-	
+
 			target.setSku(source.getSku());
-	
+
 			FinalPrice price = pricingService.calculateProductPrice(source);
 			
 			if(price != null) {
@@ -456,7 +494,7 @@ public class ReadableProductPopulator extends
 				}
 			
 			}
-	
+
 
 			//availability
 			for(ProductAvailability availability : source.getAvailabilities()) {
@@ -469,10 +507,11 @@ public class ReadableProductPopulator extends
 					}
 				//}
 			}
-
+			
 		     if(target instanceof ReadableProductFull) {
 		          ((ReadableProductFull)target).setDescriptions(fulldescriptions);
-		      }
+		        }
+			
 
 			
 			return target;
@@ -559,6 +598,7 @@ public class ReadableProductPopulator extends
 		return null;
 	}
 	
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/populator/catalog/ReadableProductPopulator.java/left.java
     com.salesmanager.shop.model.catalog.product.ProductDescription populateDescription(ProductDescription description) {
       if(description == null) {
         return null;
@@ -578,11 +618,37 @@ public class ReadableProductPopulator extends
       tragetDescription.setHighlights(description.getProductHighlight());
       tragetDescription.setLanguage(description.getLanguage().getCode());
       tragetDescription.setKeyWords(description.getMetatagKeywords());
-
       if(description.getLanguage() != null) {
         tragetDescription.setLanguage(description.getLanguage().getCode());
       }
       return tragetDescription;
     }
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/populator/catalog/ReadableProductPopulator.java/base.java
+    com.salesmanager.shop.model.catalog.product.ProductDescription populateDescription(ProductDescription description) 
+=======
+    com.salesmanager.shop.model.catalog.product.ProductDescription populateDescription(ProductDescription description) {
+      if(description == null) {
+        return null;
+      }
+     
+      com.salesmanager.shop.model.catalog.product.ProductDescription tragetDescription = new com.salesmanager.shop.model.catalog.product.ProductDescription();
+      tragetDescription.setFriendlyUrl(description.getSeUrl());
+      tragetDescription.setName(description.getName());
+      tragetDescription.setId(description.getId());
+      if(!StringUtils.isBlank(description.getMetatagTitle())) {
+          tragetDescription.setTitle(description.getMetatagTitle());
+      } else {
+          tragetDescription.setTitle(description.getName());
+      }
+      tragetDescription.setMetaDescription(description.getMetatagDescription());
+      tragetDescription.setDescription(description.getDescription());
+      tragetDescription.setHighlights(description.getProductHighlight());
+      tragetDescription.setLanguage(description.getLanguage().getCode());
+      if(description.getLanguage() != null) {
+        tragetDescription.setLanguage(description.getLanguage().getCode());
+      }
+      return tragetDescription;
+    }
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/populator/catalog/ReadableProductPopulator.java/right.java
 
 }

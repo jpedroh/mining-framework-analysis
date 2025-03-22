@@ -34,7 +34,6 @@ import com.salesmanager.shop.model.catalog.category.ReadableCategoryList;
 import com.salesmanager.shop.model.entity.EntityExists;
 import com.salesmanager.shop.model.entity.ListCriteria;
 import com.salesmanager.shop.store.api.exception.UnauthorizedException;
-
 import com.salesmanager.shop.store.controller.category.facade.CategoryFacade;
 import com.salesmanager.shop.store.controller.store.facade.StoreFacade;
 import com.salesmanager.shop.store.controller.user.facade.UserFacade;
@@ -61,32 +60,65 @@ public class CategoryApi {
 
 	@Inject
 	private CategoryFacade categoryFacade;
+	@Inject
+	private StoreFacade storeFacade;
+	@Inject
+	private LanguageUtils languageUtils;
 
 	@Inject
 	private UserFacade userFacade;
 
-	@GetMapping(value = "/category/{id}", produces = { APPLICATION_JSON_VALUE })
-	@ApiOperation(httpMethod = "GET", value = "Get category list for an given Category id", notes = "List current Category and child category")
-	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "List of category found", response = ReadableCategory.class) })
-	@ApiImplicitParams({ @ApiImplicitParam(name = "store", dataType = "string", defaultValue = "DEFAULT"),
-			@ApiImplicitParam(name = "lang", dataType = "string", defaultValue = "en") })
-	public ReadableCategory get(@PathVariable(name = "id") Long categoryId, @ApiIgnore MerchantStore merchantStore,
-			@ApiIgnore Language language) {
-		ReadableCategory category = categoryFacade.getById(merchantStore, categoryId, language);
-		return category;
-	}
+  @GetMapping(value = "/category/{id}", produces = { APPLICATION_JSON_VALUE })
+  @ApiOperation(httpMethod = "GET", value = "Get category list for an given Category id", notes = "List current Category and child category")
+  @ApiResponses(value = {
+  		@ApiResponse(code = 200, message = "List of category found", response = ReadableCategory.class) })
+  @ApiImplicitParams({ @ApiImplicitParam(name = "store", dataType = "string", defaultValue = "DEFAULT"),
+  		@ApiImplicitParam(name = "lang", dataType = "string", defaultValue = "en") })
+  public ReadableCategory get(@PathVariable(name = "id") Long categoryId, @ApiIgnore MerchantStore merchantStore,
+  		@ApiIgnore Language language) {
+  	ReadableCategory category = categoryFacade.getById(merchantStore, categoryId, language);
+  	return category;
+  }
 
-	@ResponseStatus(HttpStatus.OK)
-	@GetMapping(value = { "/private/category/unique" }, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiImplicitParams({ @ApiImplicitParam(name = "store", dataType = "string", defaultValue = "DEFAULT"),
-			@ApiImplicitParam(name = "lang", dataType = "string", defaultValue = "en") })
-	@ApiOperation(httpMethod = "GET", value = "Check if category code already exists", notes = "", response = EntityExists.class)
-	public ResponseEntity<EntityExists> exists(@RequestParam(value = "code") String code,
-			@ApiIgnore MerchantStore merchantStore, @ApiIgnore Language language) {
-		boolean isCategoryExist = categoryFacade.existByCode(merchantStore, code);
-		return new ResponseEntity<EntityExists>(new EntityExists(isCategoryExist), HttpStatus.OK);
-	}
+  @ResponseStatus(HttpStatus.OK)
+  @GetMapping(value = {"/private/category/unique"}, produces = MediaType.APPLICATION_JSON_VALUE)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "store", dataType = "string", defaultValue = "DEFAULT"),
+    @ApiImplicitParam(name = "lang", dataType = "string", defaultValue = "en")
+  })
+  @ApiOperation(httpMethod = "GET", value = "Check if category code already exists", notes = "",
+      response = EntityExists.class)
+  public ResponseEntity<EntityExists> exists(
+      @RequestParam(value = "code") String code,
+      @ApiIgnore MerchantStore merchantStore, 
+      @ApiIgnore Language language) {
+    boolean isCategoryExist = categoryFacade.existByCode(merchantStore,code);
+    return new ResponseEntity<EntityExists>(new EntityExists(isCategoryExist), HttpStatus.OK);
+  }
+
+  @GetMapping(
+      value = "/category",
+      produces = {APPLICATION_JSON_VALUE})
+  @ApiOperation(
+      httpMethod = "GET",
+      value = "Get category hierarchy from root. Supports filtering FEATURED_CATEGORIES and VISIBLE ONLY by adding ?filter=[featured] or ?filter=[visible] or ? filter=[featured,visible",
+      notes = "Does not return any product attached")
+  @ApiImplicitParams({
+      @ApiImplicitParam(name = "store", dataType = "string", defaultValue = "DEFAULT"),
+      @ApiImplicitParam(name = "lang", dataType = "string", defaultValue = "en")
+  })
+  public ReadableCategoryList getFiltered(
+      @RequestParam(value = "filter", required = false) List<String> filter,
+      @RequestParam(value = "name", required = false) String name,
+      @ApiIgnore MerchantStore merchantStore,
+      @ApiIgnore Language language,
+      @RequestParam(value = "page", required = false, defaultValue="0") Integer page,
+      @RequestParam(value = "count", required = false, defaultValue="10") Integer count) {
+    ListCriteria criteria = new ListCriteria();
+    criteria.setName(name);
+    return categoryFacade.getCategoryHierarchy(
+        merchantStore, criteria, DEFAULT_CATEGORY_DEPTH, language, filter, page, count);
+  }
 
 	/**
 	 * Get all category starting from root filter can be used for filtering on
@@ -94,20 +126,6 @@ public class CategoryApi {
 	 *
 	 * @return
 	 */
-	@GetMapping(value = "/category", produces = { APPLICATION_JSON_VALUE })
-	@ApiOperation(httpMethod = "GET", value = "Get category hierarchy from root. Supports filtering FEATURED_CATEGORIES and VISIBLE ONLY by adding ?filter=[featured] or ?filter=[visible] or ? filter=[featured,visible", notes = "Does not return any product attached")
-	@ApiImplicitParams({ @ApiImplicitParam(name = "store", dataType = "string", defaultValue = "DEFAULT"),
-			@ApiImplicitParam(name = "lang", dataType = "string", defaultValue = "en") })
-	public ReadableCategoryList getFiltered(@RequestParam(value = "filter", required = false) List<String> filter,
-			@RequestParam(value = "name", required = false) String name, @ApiIgnore MerchantStore merchantStore,
-			@ApiIgnore Language language,
-			@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
-			@RequestParam(value = "count", required = false, defaultValue = "10") Integer count) {
-		ListCriteria criteria = new ListCriteria();
-		criteria.setName(name);
-		return categoryFacade.getCategoryHierarchy(merchantStore, criteria, DEFAULT_CATEGORY_DEPTH, language, filter,
-				page, count);
-	}
 
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping(value = "/private/category", produces = { APPLICATION_JSON_VALUE })

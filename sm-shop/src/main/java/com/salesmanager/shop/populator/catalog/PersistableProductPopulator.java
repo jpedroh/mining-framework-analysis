@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.salesmanager.core.business.constants.Constants;
-
 import com.salesmanager.core.business.exception.ConversionException;
 import com.salesmanager.core.business.services.catalog.category.CategoryService;
 import com.salesmanager.core.business.services.catalog.product.attribute.ProductOptionService;
@@ -139,8 +138,8 @@ public class PersistableProductPopulator extends
 				  ProductDescription productDescription = new ProductDescription();
 				  Language lang = languageService.getByCode(description.getLanguage());
 	              if(lang==null) {
-	                    throw new ConversionException("Language code " + description.getLanguage() + " is invalid, use ISO code (en, fr ...)");
-	               }
+				      throw new ConversionException("Language code " + description.getLanguage() + " is invalid, use ISO code (en, fr ...)");
+				 }
 				   if(!CollectionUtils.isEmpty(target.getDescriptions())) {
 				      for(ProductDescription desc : target.getDescriptions()) {
 				        if(desc.getLanguage().getCode().equals(description.getLanguage())) {
@@ -152,9 +151,22 @@ public class PersistableProductPopulator extends
 
 					productDescription.setProduct(target);
 					productDescription.setDescription(description.getDescription());
-
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/populator/catalog/PersistableProductPopulator.java/left.java
 					productDescription.setProductHighlight(description.getHighlights());
-
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/populator/catalog/PersistableProductPopulator.java/base.java
+					if(description.getId() != null && description.getId().longValue() ==0) {
+						productDescription.setId(null);
+					} else {
+						productDescription.setId(description.getId());
+					}
+=======
+					/*					if(description.getId() != null && description.getId().longValue() ==0) {
+						productDescription.setId(null);
+					} else {
+						productDescription.setId(description.getId());
+					}*/
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/populator/catalog/PersistableProductPopulator.java/right.java
+					
 					productDescription.setName(description.getName());
 					productDescription.setSeUrl(description.getFriendlyUrl());
 					productDescription.setMetatagKeywords(description.getKeyWords());
@@ -210,10 +222,10 @@ public class PersistableProductPopulator extends
 				//get product availability
 			  
 			    //create new ProductAvailability
-			    ProductAvailability productAvailability = new ProductAvailability();
+				
+				ProductAvailability productAvailability = new ProductAvailability();
 
 			    productAvailability.setRegion(Constants.ALL_REGIONS);
-
 				productAvailability.setProductQuantity(source.getQuantity());
 				productAvailability.setProduct(target);
 				productAvailability.setProductQuantityOrderMin(1);
@@ -252,17 +264,17 @@ public class PersistableProductPopulator extends
 			    ProductPrice defaultPrice = null;
 			    if(!CollectionUtils.isEmpty(target.getAvailabilities())) {
 			      for(ProductAvailability avail : target.getAvailabilities()) {
-    			        Set<ProductPrice> prices = avail.getPrices();
-    			        for(ProductPrice p : prices) {
-    			          if(p.isDefaultPrice()) {
-    			            if(productAvailability == null) {
-    			              productAvailability = avail;
-    			              defaultPrice = p;
-    			              break;
-    			            }
-    			            p.setDefaultPrice(false);
-    			          }
-    			        }
+			    			        Set<ProductPrice> prices = avail.getPrices();
+			    			        for(ProductPrice p : prices) {
+			    			          if(p.isDefaultPrice()) {
+			    			            if(productAvailability == null) {
+			    			              productAvailability = avail;
+			    			              defaultPrice = p;
+			    			              break;
+			    			            }
+			    			            p.setDefaultPrice(false);
+			    			          }
+			    			        }
 			      }
 			    }
 				
@@ -275,8 +287,8 @@ public class PersistableProductPopulator extends
 				productAvailability.setProductQuantity(source.getQuantity());
 				productAvailability.setProductQuantityOrderMin(1);
 				productAvailability.setProductQuantityOrderMax(1);
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/populator/catalog/PersistableProductPopulator.java/left.java
 				productAvailability.setRegion(Constants.ALL_REGIONS);
-
 
 				if(defaultPrice != null) {
 				  defaultPrice.setProductPriceAmount(source.getPrice());
@@ -286,15 +298,50 @@ public class PersistableProductPopulator extends
 				    defaultPrice.setProductPriceAmount(source.getPrice());
 				    defaultPrice.setCode(ProductPriceEntity.DEFAULT_PRICE_CODE);
 				    defaultPrice.setProductAvailability(productAvailability);
-	                productAvailability.getPrices().add(defaultPrice);
-	                for(Language lang : languages) {
-	                
-                      ProductPriceDescription ppd = new ProductPriceDescription();
-                      ppd.setProductPrice(defaultPrice);
-                      ppd.setLanguage(lang);
-                      ppd.setName(ProductPriceDescription.DEFAULT_PRICE_DESCRIPTION);
-                      defaultPrice.getDescriptions().add(ppd);
-                    }
+				                productAvailability.getPrices().add(defaultPrice);
+				                for(Language lang : languages) {
+				                
+			                      ProductPriceDescription ppd = new ProductPriceDescription();
+			                      ppd.setProductPrice(defaultPrice);
+			                      ppd.setLanguage(lang);
+			                      ppd.setName(ProductPriceDescription.DEFAULT_PRICE_DESCRIPTION);
+			                      defaultPrice.getDescriptions().add(ppd);
+			                    }
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/populator/catalog/PersistableProductPopulator.java/base.java
+				
+				ProductPrice price = new ProductPrice();
+				price.setDefaultPrice(true);
+				price.setProductPriceAmount(source.getPrice());
+				price.setCode(ProductPriceEntity.DEFAULT_PRICE_CODE);
+				price.setProductAvailability(productAvailability);
+				productAvailability.getPrices().add(price);
+				target.getAvailabilities().add(productAvailability);
+				for(Language lang : languages) {
+					ProductPriceDescription ppd = new ProductPriceDescription();
+					ppd.setProductPrice(price);
+					ppd.setLanguage(lang);
+					ppd.setName(ProductPriceDescription.DEFAULT_PRICE_DESCRIPTION);
+					price.getDescriptions().add(ppd);
+=======
+			
+				if(defaultPrice != null) {
+				  defaultPrice.setProductPriceAmount(source.getPrice());
+				} else {
+				    defaultPrice = new ProductPrice();
+				    defaultPrice.setDefaultPrice(true);
+				    defaultPrice.setProductPriceAmount(source.getPrice());
+				    defaultPrice.setCode(ProductPriceEntity.DEFAULT_PRICE_CODE);
+				    defaultPrice.setProductAvailability(productAvailability);
+				                productAvailability.getPrices().add(defaultPrice);
+				                for(Language lang : languages) {
+				                
+			                      ProductPriceDescription ppd = new ProductPriceDescription();
+			                      ppd.setProductPrice(defaultPrice);
+			                      ppd.setLanguage(lang);
+			                      ppd.setName(ProductPriceDescription.DEFAULT_PRICE_DESCRIPTION);
+			                      defaultPrice.getDescriptions().add(ppd);
+			                    }
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/populator/catalog/PersistableProductPopulator.java/right.java
 				}
 
 				

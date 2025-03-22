@@ -154,7 +154,13 @@ public class OrderTotalApi {
    * @return
    */
   @RequestMapping(
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/order/OrderTotalApi.java/left.java
+      value = {"/cart/{code}/total"},
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/order/OrderTotalApi.java/base.java
+      value = {"/cart/{code}/payment"},
+=======
       value = {"/cart/{id}/total"},
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/order/OrderTotalApi.java/right.java
       method = RequestMethod.GET)
   @ResponseBody
   @ApiImplicitParams({
@@ -172,9 +178,7 @@ public class OrderTotalApi {
       ShoppingCart shoppingCart = shoppingCartFacade.getShoppingCartModel(id, merchantStore);
 
       if (shoppingCart == null) {
-
-        response.sendError(404, "Cart code " + id + " does not exist");
-
+        response.sendError(404, "Cart code " + id+ " does not exist");
         return null;
       }
 

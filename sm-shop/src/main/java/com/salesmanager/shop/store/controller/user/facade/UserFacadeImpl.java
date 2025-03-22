@@ -313,6 +313,7 @@ public class UserFacadeImpl implements UserFacade {
 		Validate.notNull(user, "User cannot be null");
 
 		try {
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/controller/user/facade/UserFacadeImpl.java/left.java
 			User userModel = userService.getById(id);
 			if (userModel == null) {
 				throw new ServiceRuntimeException("Cannot find user [" + user.getUserName() + "]");
@@ -341,7 +342,90 @@ public class UserFacadeImpl implements UserFacade {
 				throw new ResourceNotFoundException("Store with code [" + storeCode + "] was not found");
 			}
 			userModel = converPersistabletUserToUser(store, languageService.defaultLanguage(), userModel, user);
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/controller/user/facade/UserFacadeImpl.java/base.java
+		  User userModel = userService.findByStore(id, storeCode);
+		  if (userModel == null) {
+		    throw new ServiceRuntimeException("Cannot find user [" + user.getUserName() + "]");
+		  }
+		  if(userModel.getId().longValue() != id.longValue()) {
+		    throw new ServiceRuntimeException("Cannot find user [" + user.getUserName() + "] id or name does not match");
+		  }
+		  User auth = userService.getByUserName(authenticatedUser);
+		  if (auth == null) {
+		    throw new ServiceRuntimeException("Cannot find user [" + authenticatedUser + "]");
+		  }
+		  boolean isActive = userModel.isActive();
+		  List<Group> originalGroups = userModel.getGroups();
+		  Group superadmin = originalGroups.stream()
+		      .filter(group -> Constants.GROUP_SUPERADMIN.equals(group.getGroupName()))
+		      .findAny()
+		      .orElse(null);
+		  MerchantStore store = merchantStoreService.getByCode(storeCode);
+		  userModel = converPersistabletUserToUser(store, languageService.defaultLanguage(), userModel, user);
+		  
+		  //if superadmin set original permissions, prevent removing super admin
+		  if(superadmin!=null) {
+		    userModel.setGroups(originalGroups);
+		  }
+		  
+		  Group adminGroup = auth.getGroups().stream()
+		      .filter((group) -> Constants.GROUP_SUPERADMIN.equals(group.getGroupName()) || Constants.GROUP_SUPERADMIN.equals(group.getGroupName()))
+		      .findAny()
+		      .orElse(null);
+		  
+		  if(adminGroup == null) {
+		    userModel.setGroups(originalGroups);
+		    userModel.setActive(isActive);
+		  }
+		  
+=======
+		  User userModel = userService.getById(id);
+		  if (userModel == null) {
+		    throw new ServiceRuntimeException("Cannot find user [" + user.getUserName() + "]");
+		  }
+		  if(userModel.getId().longValue() != id.longValue()) {
+		    throw new ServiceRuntimeException("Cannot find user [" + user.getUserName() + "] id or name does not match");
+		  }
+		  User auth = userService.getByUserName(authenticatedUser);
+		  if (auth == null) {
+		    throw new ServiceRuntimeException("Cannot find user [" + authenticatedUser + "]");
+		  }
+		  User adminName = getByUserName(user.getUserName());
+		  if(adminName != null) {
+		    if(adminName.getId().longValue() != userModel.getId().longValue()) {
+		      throw new ServiceRuntimeException("User id [" + userModel.getId() + "] does not match [" + user.getUserName() + "]");
+		    }
+		  }
+		  boolean isActive = userModel.isActive();
+		  List<Group> originalGroups = userModel.getGroups();
+		  Group superadmin = originalGroups.stream()
+		      .filter(group -> Constants.GROUP_SUPERADMIN.equals(group.getGroupName()))
+		      .findAny()
+		      .orElse(null);
+		  MerchantStore store = merchantStoreService.getByCode(storeCode);
+		  if(store == null) {
+		    throw new ResourceNotFoundException("Store with code [" + storeCode + "] was not found");
+		  }
+		  userModel = converPersistabletUserToUser(store, languageService.defaultLanguage(), userModel, user);
+		  
+		  //if superadmin set original permissions, prevent removing super admin
+		  if(superadmin!=null) {
+		    userModel.setGroups(originalGroups);
+		  }
+		  
+		  Group adminGroup = auth.getGroups().stream()
+		      .filter((group) -> Constants.GROUP_SUPERADMIN.equals(group.getGroupName()) || Constants.GROUP_SUPERADMIN.equals(group.getGroupName()))
+		      .findAny()
+		      .orElse(null);
+		  
+		  if(adminGroup == null) {
+		    userModel.setGroups(originalGroups);
+		    userModel.setActive(isActive);
+		  }
+		  
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/controller/user/facade/UserFacadeImpl.java/right.java
 
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/controller/user/facade/UserFacadeImpl.java/left.java
 			// if superadmin set original permissions, prevent removing super
 			// admin
 			if (superadmin != null) {
@@ -361,6 +445,15 @@ public class UserFacadeImpl implements UserFacade {
 			user.setPassword(userModel.getAdminPassword());
 			userService.update(userModel);
 			return this.convertUserToReadableUser(languageService.defaultLanguage(), userModel);
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/controller/user/facade/UserFacadeImpl.java/base.java
+		  user.setPassword(userModel.getAdminPassword());
+		  userService.saveOrUpdate(userModel);
+		  return this.convertUserToReadableUser(languageService.defaultLanguage(), userModel);
+=======
+		  user.setPassword(userModel.getAdminPassword());
+		  userService.update(userModel);
+		  return this.convertUserToReadableUser(languageService.defaultLanguage(), userModel);
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/controller/user/facade/UserFacadeImpl.java/right.java
 		} catch (ServiceException e) {
 			throw new ServiceRuntimeException("Cannot update user [" + user.getUserName() + "]", e);
 		}
@@ -508,6 +601,5 @@ public class UserFacadeImpl implements UserFacade {
 		return roles.size() > 0;
 
 	}
-
 
 }

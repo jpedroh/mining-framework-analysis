@@ -8,9 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.Validate;
 import org.slf4j.Logger;
@@ -18,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-
 import com.salesmanager.core.business.exception.ServiceException;
 import com.salesmanager.core.business.services.content.ContentService;
 import com.salesmanager.core.business.services.reference.language.LanguageService;
@@ -43,10 +40,10 @@ import com.salesmanager.shop.store.api.exception.ServiceRuntimeException;
 import com.salesmanager.shop.store.controller.content.facade.ContentFacade;
 import com.salesmanager.shop.utils.FilePathUtils;
 import com.salesmanager.shop.utils.ImageFilePath;
+import com.salesmanager.shop.model.content.PersistableContent;
 
 @Component("contentFacade")
 public class ContentFacadeImpl implements ContentFacade {
-
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContentFacade.class);
 
@@ -58,75 +55,75 @@ public class ContentFacadeImpl implements ContentFacade {
 	@Inject
 	private LanguageService languageService;
 
-	@Inject
-	@Qualifier("img")
-	private ImageFilePath imageUtils;
+  @Inject
+  @Qualifier("img")
+  private ImageFilePath imageUtils;
 
-	@Inject
-	private FilePathUtils fileUtils;
+  @Inject
+  private FilePathUtils fileUtils;
 
-	@Override
-	public ContentFolder getContentFolder(String folder, MerchantStore store) throws Exception {
-		try {
-			List<String> imageNames = Optional
-					.ofNullable(contentService.getContentFilesNames(store.getCode(), FileContentType.IMAGE))
-					.orElseThrow(() -> new ResourceNotFoundException("No Folder found for path : " + folder));
+  @Override
+  public ContentFolder getContentFolder(String folder, MerchantStore store) throws Exception {
+  	try {
+  		List<String> imageNames = Optional
+  				.ofNullable(contentService.getContentFilesNames(store.getCode(), FileContentType.IMAGE))
+  				.orElseThrow(() -> new ResourceNotFoundException("No Folder found for path : " + folder));
 
-			// images from CMS
-			List<ContentImage> contentImages = imageNames.stream().map(name -> convertToContentImage(name, store))
-					.collect(Collectors.toList());
+  		// images from CMS
+  		List<ContentImage> contentImages = imageNames.stream().map(name -> convertToContentImage(name, store))
+  				.collect(Collectors.toList());
 
-			ContentFolder contentFolder = new ContentFolder();
-			if (!StringUtils.isBlank(folder)) {
-				contentFolder.setPath(URLEncoder.encode(folder, "UTF-8"));
-			}
-			contentFolder.getContent().addAll(contentImages);
-			return contentFolder;
+  		ContentFolder contentFolder = new ContentFolder();
+  		if (!StringUtils.isBlank(folder)) {
+  			contentFolder.setPath(URLEncoder.encode(folder, "UTF-8"));
+  		}
+  		contentFolder.getContent().addAll(contentImages);
+  		return contentFolder;
 
-		} catch (ServiceException e) {
-			throw new ServiceRuntimeException("Error while getting folder " + e.getMessage(), e);
-		}
-	}
+  	} catch (ServiceException e) {
+  		throw new ServiceRuntimeException("Error while getting folder " + e.getMessage(), e);
+  	}
+  }
 
-	private ContentImage convertToContentImage(String name, MerchantStore store) {
-		String path = absolutePath(store, null);
-		ContentImage contentImage = new ContentImage();
-		contentImage.setName(name);
-		contentImage.setPath(path);
-		return contentImage;
-	}
+  private ContentImage convertToContentImage(String name, MerchantStore store) {
+  	String path = absolutePath(store, null);
+  	ContentImage contentImage = new ContentImage();
+  	contentImage.setName(name);
+  	contentImage.setPath(path);
+  	return contentImage;
+  }
 
-	@Override
-	public String absolutePath(MerchantStore store, String file) {
-		return new StringBuilder().append(imageUtils.getContextPath())
-				.append(imageUtils.buildStaticImageUtils(store, file)).toString();
-	}
+  @Override
+  public String absolutePath(MerchantStore store, String file) {
+  	return new StringBuilder().append(imageUtils.getContextPath())
+  			.append(imageUtils.buildStaticImageUtils(store, file)).toString();
+  }
 
-	@Override
-	public void delete(MerchantStore store, String fileName, String fileType) {
-		Validate.notNull(store, "MerchantStore cannot be null");
-		Validate.notNull(fileName, "File name cannot be null");
-		try {
-			FileContentType t = FileContentType.valueOf(fileType);
-			contentService.removeFile(store.getCode(), t, fileName);
-		} catch (ServiceException e) {
-			throw new ServiceRuntimeException(e);
-		}
-	}
+  @Override
+  public void delete(MerchantStore store, String fileName, String fileType) {
+  	Validate.notNull(store, "MerchantStore cannot be null");
+  	Validate.notNull(fileName, "File name cannot be null");
+  	try {
+  		FileContentType t = FileContentType.valueOf(fileType);
+  		contentService.removeFile(store.getCode(), t, fileName);
+  	} catch (ServiceException e) {
+  		throw new ServiceRuntimeException(e);
+  	}
+  }
 
-	@Override
-	public List<ReadableContentPage> getContentPage(MerchantStore store, Language language) {
-		Validate.notNull(store, "MerchantStore cannot be null");
-		Validate.notNull(language, "Language cannot be null");
+  @Override
+  public List<ReadableContentPage> getContentPage(MerchantStore store, Language language) {
+  	Validate.notNull(store, "MerchantStore cannot be null");
+  	Validate.notNull(language, "Language cannot be null");
 
-		try {
-			return contentService.listByType(ContentType.PAGE, store, language).stream().filter(Content::isVisible)
-					.map(content -> convertContentToReadableContentPage(store, language, content))
-					.collect(Collectors.toList());
-		} catch (ServiceException e) {
-			throw new ServiceRuntimeException("Error while getting content " + e.getMessage(), e);
-		}
-	}
+  	try {
+  		return contentService.listByType(ContentType.PAGE, store, language).stream().filter(Content::isVisible)
+  				.map(content -> convertContentToReadableContentPage(store, language, content))
+  				.collect(Collectors.toList());
+  	} catch (ServiceException e) {
+  		throw new ServiceRuntimeException("Error while getting content " + e.getMessage(), e);
+  	}
+  }
 
 	private ReadableContentPage convertContentToReadableContentPage(MerchantStore store, Language language,
 			Content content) {
@@ -150,7 +147,7 @@ public class ContentFacadeImpl implements ContentFacade {
 		return page;*/
 		return null;
 	}
-	
+
 	private ReadableContentPage contentDescriptionToReadableContent(MerchantStore store, Content content, ContentDescription contentDescription) {
 		
 		ReadableContentPage page = new ReadableContentPage();
@@ -177,8 +174,13 @@ public class ContentFacadeImpl implements ContentFacade {
 		ReadableContentFull contentFull = new ReadableContentFull();
 
 		try {
-			List<ContentDescriptionEntity> descriptions = this.createContentDescriptionEntitys(store, content,
-					language);
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/left.java
+			List<ContentDescriptionEntity> descriptions = this.createContentDescriptionEntitys(store, contentModel, content);
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/base.java
+			ContentDescription descriptions = this.createContentDescriptionEntitys(store, contentModel, content);
+=======
+			List<ContentDescription> descriptions = this.createContentDescriptionEntitys(store, contentModel, content);
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/right.java
 
 			contentFull.setDescriptions(descriptions);
 			contentFull.setId(content.getId());
@@ -214,21 +216,53 @@ public class ContentFacadeImpl implements ContentFacade {
 
 	}
 
-	private Content convertContentPageToContent(MerchantStore store, Language language,
-			PersistableContentEntity content) throws ServiceException {
-		Content contentModel = new Content();
+  private Content convertContentPageToContent(MerchantStore store, Language language,
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/left.java
+  		PersistableContentEntity content) throws ServiceException {
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/base.java
+  		PersistableContentPage content) throws ServiceException {
+=======
+  		PersistableContent content) throws ServiceException {
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/right.java
+  	Content contentModel = new Content();
 
-		List<ContentDescription> descriptions = createContentDescription(store, contentModel, content);
-		descriptions.stream().forEach(c -> c.setContent(contentModel));
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/left.java
+  	List<ContentDescription> descriptions = createContentDescription(store, contentModel, content);
+  	descriptions.stream().forEach(c -> c.setContent(contentModel));
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/base.java
+    ContentDescription contentDescription = createContentDescription(store, content, language);
+    contentDescription.setContent(contentModel);
+=======
+    List<ContentDescription> descriptions = createContentDescription(store, contentModel, content);
+    descriptions.stream().forEach(c -> c.setContent(contentModel));
 
-		contentModel.setCode(content.getCode());
-		contentModel.setContentType(ContentType.PAGE);
-		contentModel.setMerchantStore(store);
-		contentModel.setLinkToMenu(content.isDisplayedInMenu());
-		contentModel.setVisible(true);// force visible
-		contentModel.setDescriptions(descriptions);
-		return contentModel;
-	}
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/right.java
+
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/left.java
+  	contentModel.setCode(content.getCode());
+  	contentModel.setContentType(ContentType.PAGE);
+  	contentModel.setMerchantStore(store);
+  	contentModel.setLinkToMenu(content.isDisplayedInMenu());
+  	contentModel.setVisible(true);// force visible
+  	contentModel.setDescriptions(descriptions);
+  	return contentModel;
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/base.java
+    contentModel.setCode(content.getCode());
+    contentModel.setContentType(ContentType.PAGE);
+    contentModel.setMerchantStore(store);
+    contentModel.setVisible(true);
+
+    return contentModel;
+=======
+    contentModel.setCode(content.getCode());
+    contentModel.setContentType(ContentType.PAGE);
+    contentModel.setMerchantStore(store);
+    contentModel.setLinkToMenu(content.isDisplayedInMenu());
+    contentModel.setVisible(true);//force visibe
+    contentModel.setDescriptions(descriptions);
+    return contentModel;
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/right.java
+  }
 
 	private Content convertContentPageToContent(MerchantStore store, Language language, Content content,
 			PersistableContentEntity contentPage) throws ServiceException {
@@ -295,13 +329,20 @@ public class ContentFacadeImpl implements ContentFacade {
 
 	}
 
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/left.java
 	private List<ContentDescription> createContentDescription(MerchantStore store, Content contentModel,
 			PersistableContentEntity content) throws ServiceException {
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/base.java
+	private List<ContentDescription> createContentDescription throws ServiceException {
+=======
+	private List<ContentDescription> createContentDescription(MerchantStore store, Content contentModel, PersistableContent content) throws ServiceException {
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/right.java
 
 		if (contentModel != null) {
 
 		}
 		List<ContentDescription> descriptions = new ArrayList<ContentDescription>();
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/left.java
 		for (ContentDescriptionEntity objectContent : content.getDescriptions()) {
 			Language lang = languageService.getByCode(objectContent.getLanguage());
 			ContentDescription contentDescription = new ContentDescription();
@@ -317,6 +358,24 @@ public class ContentFacadeImpl implements ContentFacade {
 			contentDescription.setMetatagTitle(objectContent.getTitle());
 			descriptions.add(contentDescription);
 		}
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/base.java
+=======
+		for(ObjectContent objectContent : content.getDescriptions()) {
+		  Language lang = languageService.getByCode(objectContent.getLanguage());
+		  ContentDescription contentDescription = new ContentDescription();
+		  if(contentModel != null) {
+		    setContentDescriptionToContentModel(contentModel,contentDescription,lang);
+		  }
+		  contentDescription.setLanguage(lang);
+		  contentDescription.setMetatagDescription(objectContent.getMetaDetails());
+		  contentDescription.setTitle(objectContent.getTitle());
+		  contentDescription.setName(objectContent.getName());
+		  contentDescription.setSeUrl(objectContent.getSlug());
+		  contentDescription.setDescription(objectContent.getPageContent());
+		  contentDescription.setMetatagTitle(objectContent.getTitle());
+		  descriptions.add(contentDescription);
+		}
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/right.java
 		return descriptions;
 	}
 
@@ -340,155 +399,173 @@ public class ContentFacadeImpl implements ContentFacade {
 
 	}
 
-	@Override
-	public ReadableContentPage getContentPage(String code, MerchantStore store, Language language) {
+  @Override
+  public ReadableContentPage getContentPage(String code, MerchantStore store, Language language) {
 
-		Validate.notNull(code, "Content code cannot be null");
-		Validate.notNull(store, "MerchantStore cannot be null");
+  	Validate.notNull(code, "Content code cannot be null");
+  	Validate.notNull(store, "MerchantStore cannot be null");
 
-		try {
-			Content content = null;
-			
-			if(language == null) {
-				content = Optional.ofNullable(contentService.getByCode(code, store))
-				.orElseThrow(() -> new ResourceNotFoundException("No page found : " + code));
-			} else {
-				content = Optional.ofNullable(contentService.getByCode(code, store, language))
-				.orElseThrow(() -> new ResourceNotFoundException("No page found : " + code));
-			}
+  	try {
+  		Content content = null;
+  		
+  		if(language == null) {
+  			content = Optional.ofNullable(contentService.getByCode(code, store))
+  			.orElseThrow(() -> new ResourceNotFoundException("No page found : " + code));
+  		} else {
+  			content = Optional.ofNullable(contentService.getByCode(code, store, language))
+  			.orElseThrow(() -> new ResourceNotFoundException("No page found : " + code));
+  		}
 
-			return convertContentToReadableContentPage(store, language, content);
+  		return convertContentToReadableContentPage(store, language, content);
 
-		} catch (ServiceException e) {
-			throw new ServiceRuntimeException("Error while getting page " + e.getMessage(), e);
-		}
-	}
+  	} catch (ServiceException e) {
+  		throw new ServiceRuntimeException("Error while getting page " + e.getMessage(), e);
+  	}
+  }
 
-	@Override
-	public List<ReadableContentBox> getContentBoxes(ContentType type, String codePrefix, MerchantStore store,
-			Language language) {
+  @Override
+  public List<ReadableContentBox> getContentBoxes(ContentType type, String codePrefix, MerchantStore store,
+  		Language language) {
 
-		Validate.notNull(codePrefix, "content code prefix cannot be null");
-		Validate.notNull(store, "MerchantStore cannot be null");
-		Validate.notNull(language, "Language cannot be null");
+  	Validate.notNull(codePrefix, "content code prefix cannot be null");
+  	Validate.notNull(store, "MerchantStore cannot be null");
+  	Validate.notNull(language, "Language cannot be null");
 
-		return contentService.getByCodeLike(type, codePrefix, store, language).stream()
-				.map(content -> convertContentToReadableContentBox(store, language, content))
-				.collect(Collectors.toList());
-	}
+  	return contentService.getByCodeLike(type, codePrefix, store, language).stream()
+  			.map(content -> convertContentToReadableContentBox(store, language, content))
+  			.collect(Collectors.toList());
+  }
 
-	@Override
-	public void addContentFile(ContentFile file, String merchantStoreCode) {
-		try {
-			byte[] payload = file.getFile();
-			String fileName = file.getName();
+  @Override
+  public void addContentFile(ContentFile file, String merchantStoreCode) {
+  	try {
+  		byte[] payload = file.getFile();
+  		String fileName = file.getName();
 
-			try (InputStream targetStream = new ByteArrayInputStream(payload)) {
+  		try (InputStream targetStream = new ByteArrayInputStream(payload)) {
 
-				String type = file.getContentType().split(FILE_CONTENT_DELIMETER)[0];
-				FileContentType fileType = getFileContentType(type);
+  			String type = file.getContentType().split(FILE_CONTENT_DELIMETER)[0];
+  			FileContentType fileType = getFileContentType(type);
 
-				InputContentFile cmsContent = new InputContentFile();
-				cmsContent.setFileName(fileName);
-				cmsContent.setMimeType(file.getContentType());
-				cmsContent.setFile(targetStream);
-				cmsContent.setFileContentType(fileType);
+  			InputContentFile cmsContent = new InputContentFile();
+  			cmsContent.setFileName(fileName);
+  			cmsContent.setMimeType(file.getContentType());
+  			cmsContent.setFile(targetStream);
+  			cmsContent.setFileContentType(fileType);
 
-				contentService.addContentFile(merchantStoreCode, cmsContent);
-			}
-		} catch (ServiceException | IOException e) {
-			throw new ServiceRuntimeException(e);
-		}
-	}
+  			contentService.addContentFile(merchantStoreCode, cmsContent);
+  		}
+  	} catch (ServiceException | IOException e) {
+  		throw new ServiceRuntimeException(e);
+  	}
+  }
 
-	private FileContentType getFileContentType(String type) {
-		FileContentType fileType = FileContentType.STATIC_FILE;
-		if (type.equals("image")) {
-			fileType = FileContentType.IMAGE;
-		}
-		return fileType;
-	}
+  private FileContentType getFileContentType(String type) {
+  	FileContentType fileType = FileContentType.STATIC_FILE;
+  	if (type.equals("image")) {
+  		fileType = FileContentType.IMAGE;
+  	}
+  	return fileType;
+  }
 
-	private ReadableContentBox convertContentToReadableContentBox(MerchantStore store, Language language,
-			Content content) {
-		ReadableContentBox box = new ReadableContentBox();
-		Optional<ContentDescription> contentDescription = findAppropriateContentDescription(content.getDescriptions(),
-				language);
-		if (contentDescription.isPresent()) {
-			box.setName(contentDescription.get().getName());
-			box.setBoxContent(contentDescription.get().getDescription());
-		}
-		String staticImageFilePath = imageUtils.buildStaticImageUtils(store, content.getCode() + ".jpg");
-		box.setImage(staticImageFilePath);
-		return box;
-	}
+  private ReadableContentBox convertContentToReadableContentBox(MerchantStore store, Language language,
+  		Content content) {
+  	ReadableContentBox box = new ReadableContentBox();
+  	Optional<ContentDescription> contentDescription = findAppropriateContentDescription(content.getDescriptions(),
+  			language);
+  	if (contentDescription.isPresent()) {
+  		box.setName(contentDescription.get().getName());
+  		box.setBoxContent(contentDescription.get().getDescription());
+  	}
+  	String staticImageFilePath = imageUtils.buildStaticImageUtils(store, content.getCode() + ".jpg");
+  	box.setImage(staticImageFilePath);
+  	return box;
+  }
 
-	private Optional<ContentDescription> findAppropriateContentDescription(List<ContentDescription> contentDescriptions,
-			Language language) {
-		return contentDescriptions.stream()
-				.filter(description -> description.getLanguage().getCode().equals(language.getCode())).findFirst();
-	}
+  private Optional<ContentDescription> findAppropriateContentDescription(List<ContentDescription> contentDescriptions,
+  		Language language) {
+  	return contentDescriptions.stream()
+  			.filter(description -> description.getLanguage().getCode().equals(language.getCode())).findFirst();
+  }
 
-	@Override
-	public ReadableContentBox getContentBox(String code, MerchantStore store, Language language) {
-		Validate.notNull(code, "Content code cannot be null");
-		Validate.notNull(store, "MerchantStore cannot be null");
-		Validate.notNull(language, "Language cannot be null");
+  @Override
+  public ReadableContentBox getContentBox(String code, MerchantStore store, Language language) {
+  	Validate.notNull(code, "Content code cannot be null");
+  	Validate.notNull(store, "MerchantStore cannot be null");
+  	Validate.notNull(language, "Language cannot be null");
 
-		try {
-			Content content = Optional.ofNullable(contentService.getByCode(code, store, language))
-					.orElseThrow(() -> new ResourceNotFoundException(
-							"Resource not found [" + code + "] for store [" + store.getCode() + "]"));
+  	try {
+  		Content content = Optional.ofNullable(contentService.getByCode(code, store, language))
+  				.orElseThrow(() -> new ResourceNotFoundException(
+  						"Resource not found [" + code + "] for store [" + store.getCode() + "]"));
 
-			Optional<ContentDescription> contentDescription = findAppropriateContentDescription(
-					content.getDescriptions(), language);
+  		Optional<ContentDescription> contentDescription = findAppropriateContentDescription(
+  				content.getDescriptions(), language);
 
-			ReadableContentBox box = new ReadableContentBox();
-			if (contentDescription.isPresent()) {
-				box.setName(contentDescription.get().getSeUrl());
-				box.setBoxContent("<![CDATA["
-						+ contentDescription.get().getDescription().replaceAll("\r\n", "").replaceAll("\t", "")
-						+ "]]>");
-			}
-			return box;
-		} catch (ServiceException e) {
-			throw new ServiceRuntimeException(e);
-		}
-	}
+  		ReadableContentBox box = new ReadableContentBox();
+  		if (contentDescription.isPresent()) {
+  			box.setName(contentDescription.get().getSeUrl());
+  			box.setBoxContent("<![CDATA["
+  					+ contentDescription.get().getDescription().replaceAll("\r\n", "").replaceAll("\t", "")
+  					+ "]]>");
+  		}
+  		return box;
+  	} catch (ServiceException e) {
+  		throw new ServiceRuntimeException(e);
+  	}
+  }
 
-	@Override
-	public void saveContentPage(PersistableContentEntity page, MerchantStore merchantStore, Language language) {
-		Validate.notNull(page);
-		Validate.notNull(merchantStore);
+  @Override
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/left.java
+  public void saveContentPage(PersistableContentEntity page, MerchantStore merchantStore, Language language) {
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/base.java
+  public void saveContentPage(PersistableContentPage page, MerchantStore merchantStore, Language language) {
+=======
+  public void saveContentPage(PersistableContent page, MerchantStore merchantStore, Language language) {
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/right.java
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/left.java
+  	Validate.notNull(page);
+  	Validate.notNull(merchantStore);
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/base.java
+    Validate.notNull(page);
+    Validate.notNull(merchantStore);
+    Validate.notNull(page.getCode());
+=======
+    Validate.notNull(page);
+    Validate.notNull(merchantStore);
+    Validate.notNull(page.getCode());
+    //Validate.notNull(page.getName());
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/right.java
 
-		try {
-			Content content = null;
-			if (page.getId() != null && page.getId() > 0) {
-				content = contentService.getById(page.getId());
-			} else {
-				Validate.notNull(page.getCode(), "Content code must not be null");
-				content = contentService.getByCode(page.getCode(), merchantStore);
-			}
-			if (content != null) {
-				content = convertContentPageToContent(merchantStore, language, content, page);
-			} else {
-				content = convertContentPageToContent(merchantStore, language, page);
-			}
-			contentService.saveOrUpdate(content);
-		} catch (Exception e) {
-			throw new ServiceRuntimeException(e);
-		}
+  	try {
+  		Content content = null;
+  		if (page.getId() != null && page.getId() > 0) {
+  			content = contentService.getById(page.getId());
+  		} else {
+  			Validate.notNull(page.getCode(), "Content code must not be null");
+  			content = contentService.getByCode(page.getCode(), merchantStore);
+  		}
+  		if (content != null) {
+  			content = convertContentPageToContent(merchantStore, language, content, page);
+  		} else {
+  			content = convertContentPageToContent(merchantStore, language, page);
+  		}
+  		contentService.saveOrUpdate(content);
+  	} catch (Exception e) {
+  		throw new ServiceRuntimeException(e);
+  	}
 
-	}
+  }
 
-	@Override
-	public void addContentFiles(List<ContentFile> files, String merchantStoreCode) {
-		for (ContentFile file : files) {
-			addContentFile(file, merchantStoreCode);
-		}
+  @Override
+  public void addContentFiles(List<ContentFile> files, String merchantStoreCode) {
+  	for (ContentFile file : files) {
+  		addContentFile(file, merchantStoreCode);
+  	}
 
-	}
+  }
 
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/left.java
 	@Override
 	public void delete(MerchantStore store, Long id) {
 		Validate.notNull(store, "MerchantStore not null");
@@ -509,6 +586,28 @@ public class ContentFacadeImpl implements ContentFacade {
 		}
 
 	}
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/base.java
+=======
+	@Override
+	public void deletePage(MerchantStore store, Long id) {
+	  Validate.notNull(store,"MerchantStore not null");
+	  Validate.notNull(id,"Content id must not be null");
+	  //select content first
+	  Content content = contentService.getById(id);
+	  if(content != null) {
+	    if(content.getMerchantStore().getId().intValue() != store.getId().intValue()) {
+	      throw new ResourceNotFoundException("No content found with id [" + id + "] for store [" + store.getCode() + "]");
+	    }
+	  }
+	  
+	  try {
+	    contentService.delete(content);
+	  } catch (ServiceException e) {
+	    throw new ServiceRuntimeException("Exception while deleting content " + e.getMessage(),e);
+	  }
+	  
+	}
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java/right.java
 
 	@Override
 	public ReadableContentFull getContent(String code, MerchantStore store, Language language) {
@@ -570,4 +669,24 @@ public class ContentFacadeImpl implements ContentFacade {
 		}
 	}
 
+  private Content convertContentPageToContent(MerchantStore store, Language language,
+      Content content, PersistableContent contentPage) throws ServiceException {
+    
+    List<ContentDescription> descriptions = createContentDescription(store, content, contentPage);
+  	descriptions.stream().forEach(c -> c.setContent(content));
+
+  	content.setDescriptions(descriptions);
+
+    //ContentDescription contentDescription = createContentDescription(store, contentPage, language);
+    //setContentDescriptionToContentModel(content,contentDescription,language);
+ 
+    //contentDescription.setContent(content);
+
+    content.setVisible(true);//force visibe
+    content.setLinkToMenu(contentPage.isDisplayedInMenu());
+    types.add(ContentType.PAGE);
+    content.setMerchantStore(store);
+
+  	return content;
+  }
 }

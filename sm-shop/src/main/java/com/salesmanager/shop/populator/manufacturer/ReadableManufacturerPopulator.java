@@ -20,16 +20,63 @@ public class ReadableManufacturerPopulator extends
   public ReadableManufacturer populate(
       com.salesmanager.core.model.catalog.product.manufacturer.Manufacturer source,
       ReadableManufacturer target, MerchantStore store, Language language)
-      throws ConversionException {
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/populator/manufacturer/ReadableManufacturerPopulator.java/left.java
+      throws ConversionException{
+			
+				Set<ManufacturerDescription> descriptions = source.getDescriptions();
+				ManufacturerDescription description = null;
+				for(ManufacturerDescription desc : descriptions) {
+					if(desc.getLanguage().getCode().equals(language.getCode())) {
+						description = desc;
+						break;
+					}
+				}
+				
+				target.setOrder(source.getOrder());
+				target.setId(source.getId());
+				target.setCode(source.getCode());
+				
+				if (description != null) {
+					com.salesmanager.shop.model.catalog.manufacturer.ManufacturerDescription d = new com.salesmanager.shop.model.catalog.manufacturer.ManufacturerDescription();
+					d.setName(description.getName());
+					d.setDescription(description.getDescription());
+					d.setId(description.getId());
+					target.setDescription(d);
+				}
 
+		}
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/populator/manufacturer/ReadableManufacturerPopulator.java/base.java
+      throws ConversionException{
+		target.setId(source.getId());
+		if(source.getDescriptions()!=null && source.getDescriptions().size()>0) {
+			
+				Set<ManufacturerDescription> descriptions = source.getDescriptions();
+				ManufacturerDescription description = null;
+				for(ManufacturerDescription desc : descriptions) {
+					if(desc.getLanguage().getCode().equals(language.getCode())) {
+						description = desc;
+						break;
+					}
+				}
+				
+				target.setOrder(source.getOrder());
+				target.setId(source.getId());
+				target.setCode(source.getCode());
+				
+				if (description != null) {
+					com.salesmanager.shop.model.catalog.manufacturer.ManufacturerDescription d = new com.salesmanager.shop.model.catalog.manufacturer.ManufacturerDescription();
+					d.setName(description.getName());
+					d.setDescription(description.getDescription());
+					d.setId(description.getId());
+					target.setDescription(d);
+				}
 
-    if (language == null) {
-      target = new ReadableManufacturerFull();
-    }
-    target.setOrder(source.getOrder());
-    target.setId(source.getId());
-    target.setCode(source.getCode());
-    if (source.getDescriptions() != null && source.getDescriptions().size() > 0) {
+		}
+
+		return target;
+	}
+=======
+      throws ConversionException{
 
       List<com.salesmanager.shop.model.catalog.manufacturer.ManufacturerDescription> fulldescriptions =
           new ArrayList<com.salesmanager.shop.model.catalog.manufacturer.ManufacturerDescription>();
@@ -58,11 +105,7 @@ public class ReadableManufacturerPopulator extends
       }
 
     }
-
-
-
-    return target;
-  }
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/populator/manufacturer/ReadableManufacturerPopulator.java/right.java
 
   @Override
   protected ReadableManufacturer createTarget() {
@@ -85,5 +128,4 @@ public class ReadableManufacturerPopulator extends
     }
     return d;
   }
-
 }

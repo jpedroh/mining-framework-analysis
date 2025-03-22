@@ -54,19 +54,21 @@ public class ManufacturerApi {
 	@Inject
 	private ManufacturerService manufacturerService;
 
-	@Inject
-	private ManufacturerFacade manufacturerFacade;
+  @Inject
+  private ManufacturerFacade manufacturerFacade;
 
-	/**
-	 * Method for creating a manufacturer
-	 *
-	 * @param manufacturer
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value = "/private/manufacturer", method = RequestMethod.POST)
+  /**
+   * Method for creating a manufacturer
+   *
+   * @param manufacturer
+   * @param request
+   * @param response
+   * @return
+   * @throws Exception
+   */
+
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/product/ManufacturerApi.java/left.java
+  @RequestMapping(value = "/private/manufacturer", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
 	@ApiImplicitParams({ @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
@@ -90,34 +92,6 @@ public class ManufacturerApi {
 		}
 	}
 
-	@RequestMapping(value = "/manufacturers/{id}", method = RequestMethod.GET)
-	@ResponseStatus(HttpStatus.OK)
-	@ResponseBody
-	@ApiImplicitParams({ @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
-			@ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en") })
-	public ReadableManufacturer get(@PathVariable Long id, @ApiIgnore MerchantStore merchantStore,
-			@ApiIgnore Language language, HttpServletResponse response) {
-
-		try {
-			ReadableManufacturer manufacturer = manufacturerFacade.getManufacturer(id, merchantStore, language);
-
-			if (manufacturer == null) {
-				response.sendError(404, "No Manufacturer found for ID : " + id);
-			}
-
-			return manufacturer;
-
-		} catch (Exception e) {
-			LOGGER.error("Error while getting manufacturer", e);
-			try {
-				response.sendError(503, "Error while getting manufacturer " + e.getMessage());
-			} catch (Exception ignore) {
-			}
-		}
-
-		return null;
-	}
-
 	@RequestMapping(value = "/manufacturers/", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
@@ -133,6 +107,114 @@ public class ManufacturerApi {
 		listCriteria.setName(name);
 		return manufacturerFacade.getAllManufacturers(merchantStore, language, listCriteria, page, count);
 	}
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/product/ManufacturerApi.java/base.java
+  @RequestMapping(value = "/private/manufacturer", method = RequestMethod.POST)
+  @ResponseStatus(HttpStatus.CREATED)
+  @ResponseBody
+  @ApiImplicitParams({
+      @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
+      @ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en")
+  })
+  public PersistableManufacturer create(
+      @Valid @RequestBody PersistableManufacturer manufacturer,
+      @ApiIgnore MerchantStore merchantStore,
+      @ApiIgnore Language language,
+      HttpServletResponse response) {
+
+    try {
+      productFacade.saveOrUpdateManufacturer(manufacturer, merchantStore, language);
+
+      return manufacturer;
+
+    } catch (Exception e) {
+      LOGGER.error("Error while creating manufacturer", e);
+      try {
+        response.sendError(503, "Error while creating manufacturer " + e.getMessage());
+      } catch (Exception ignore) {
+      }
+
+      return null;
+    }
+  }
+=======
+  @RequestMapping(value = "/private/manufacturer", method = RequestMethod.POST)
+  @ResponseStatus(HttpStatus.CREATED)
+  @ResponseBody
+  @ApiImplicitParams({
+      @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
+      @ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en")
+  })
+  public PersistableManufacturer create(
+      @Valid @RequestBody PersistableManufacturer manufacturer,
+      @ApiIgnore MerchantStore merchantStore,
+      @ApiIgnore Language language,
+      HttpServletResponse response) {
+
+    try {
+      manufacturerFacade.saveOrUpdateManufacturer(manufacturer, merchantStore, language);
+
+      return manufacturer;
+
+    } catch (Exception e) {
+      LOGGER.error("Error while creating manufacturer", e);
+      try {
+        response.sendError(503, "Error while creating manufacturer " + e.getMessage());
+      } catch (Exception ignore) {
+      }
+
+      return null;
+    }
+  }
+
+  @RequestMapping(value = "/manufacturers/", method = RequestMethod.GET)
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  @ApiImplicitParams({
+      @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
+      @ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en")
+  })
+  @ApiOperation(httpMethod = "GET", value = "List manufacturers by store", notes = "This request supports paging or not. Paging supports page number and request count",
+  response = ReadableManufacturerList.class)
+  public ReadableManufacturerList getAll(
+      @ApiIgnore MerchantStore merchantStore,
+      @ApiIgnore Language language,
+      @RequestParam(value = "name", required = false) String name,
+      @RequestParam(value = "page", required = false, defaultValue="0") Integer page,
+      @RequestParam(value = "count", required = false, defaultValue="10") Integer count) {
+
+        ListCriteria listCriteria = new ListCriteria();
+        listCriteria.setName(name);
+        return manufacturerFacade.getAllManufacturers(merchantStore, language, listCriteria, page, count);
+  }
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/product/ManufacturerApi.java/right.java
+
+  @RequestMapping(value = "/manufacturers/{id}", method = RequestMethod.GET)
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  @ApiImplicitParams({ @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
+  		@ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en") })
+  public ReadableManufacturer get(@PathVariable Long id, @ApiIgnore MerchantStore merchantStore,
+  		@ApiIgnore Language language, HttpServletResponse response) {
+
+  	try {
+  		ReadableManufacturer manufacturer = manufacturerFacade.getManufacturer(id, merchantStore, language);
+
+  		if (manufacturer == null) {
+  			response.sendError(404, "No Manufacturer found for ID : " + id);
+  		}
+
+  		return manufacturer;
+
+  	} catch (Exception e) {
+  		LOGGER.error("Error while getting manufacturer", e);
+  		try {
+  			response.sendError(503, "Error while getting manufacturer " + e.getMessage());
+  		} catch (Exception ignore) {
+  		}
+  	}
+
+  	return null;
+  }
 
 	@ResponseStatus(HttpStatus.OK)
 	@GetMapping(value = { "/private/manufacturer/unique" }, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -146,6 +228,7 @@ public class ManufacturerApi {
 
 	}
 
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/product/ManufacturerApi.java/left.java
 	@RequestMapping(value = "/private/manufacturer/{id}", method = RequestMethod.PUT)
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
@@ -166,32 +249,63 @@ public class ManufacturerApi {
 			}
 		}
 	}
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/product/ManufacturerApi.java/base.java
+=======
+	@RequestMapping(value = "/private/manufacturer/{id}", method = RequestMethod.PUT)
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  @ApiImplicitParams({
+      @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
+      @ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en")
+  })
+  public PersistableManufacturer update(
+      @PathVariable Long id,
+      @Valid @RequestBody PersistableManufacturer manufacturer,
+      @ApiIgnore MerchantStore merchantStore,
+      @ApiIgnore Language language,
+      HttpServletRequest request,
+      HttpServletResponse response) {
 
-	@RequestMapping(value = "/manufacturer/{id}", method = RequestMethod.DELETE)
-	@ResponseStatus(HttpStatus.OK)
-	@ResponseBody
-	@ApiImplicitParams({ @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
-			@ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en") })
-	public void delete(@PathVariable Long id, @ApiIgnore MerchantStore merchantStore, @ApiIgnore Language language,
-			HttpServletResponse response) {
+    try {
+      manufacturerFacade.saveOrUpdateManufacturer(manufacturer, merchantStore, language);
+      return manufacturer;
+    } catch (Exception e) {
+      LOGGER.error("Error while creating manufacturer", e);
+      try {
+        response.sendError(503, "Error while creating manufacturer " + e.getMessage());
+      } catch (Exception ignore) {
+      }
 
+      return null;
+    }
+  }
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/product/ManufacturerApi.java/right.java
+
+  @RequestMapping(value = "/manufacturer/{id}", method = RequestMethod.DELETE)
+@ResponseStatus(HttpStatus.OK)
+@ResponseBody
+@ApiImplicitParams({ @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
+		@ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en") })
+public void delete(@PathVariable Long id, @ApiIgnore MerchantStore merchantStore, @ApiIgnore Language language,
+		HttpServletResponse response) {
+
+	try {
+		Manufacturer manufacturer = manufacturerService.getById(id);
+
+		if (manufacturer != null) {
+			manufacturerFacade.deleteManufacturer(manufacturer, merchantStore, language);
+		} else {
+			response.sendError(404, "No Manufacturer found for ID : " + id);
+		}
+
+	} catch (Exception e) {
+		LOGGER.error("Error while deleting manufacturer id " + id, e);
 		try {
-			Manufacturer manufacturer = manufacturerService.getById(id);
-
-			if (manufacturer != null) {
-				manufacturerFacade.deleteManufacturer(manufacturer, merchantStore, language);
-			} else {
-				response.sendError(404, "No Manufacturer found for ID : " + id);
-			}
-
-		} catch (Exception e) {
-			LOGGER.error("Error while deleting manufacturer id " + id, e);
-			try {
-				response.sendError(503, "Error while deleting manufacturer id " + id + " - " + e.getMessage());
-			} catch (Exception ignore) {
-			}
+			response.sendError(503, "Error while deleting manufacturer id " + id + " - " + e.getMessage());
+		} catch (Exception ignore) {
 		}
 	}
+}
 
 	@RequestMapping(value = "/category/{id}/manufacturers", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)

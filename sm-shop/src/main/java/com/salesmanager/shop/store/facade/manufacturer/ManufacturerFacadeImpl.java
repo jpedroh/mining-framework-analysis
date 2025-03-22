@@ -75,6 +75,7 @@ public class ManufacturerFacadeImpl implements ManufacturerFacade {
 
   }
 
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/manufacturer/ManufacturerFacadeImpl.java/left.java
   @Override
   public void saveOrUpdateManufacturer(PersistableManufacturer manufacturer, MerchantStore store,
       Language language) throws Exception {
@@ -84,7 +85,7 @@ public class ManufacturerFacadeImpl implements ManufacturerFacade {
 
 
     Manufacturer manuf = new Manufacturer();
-  
+    
     if(manufacturer.getId() != null && manufacturer.getId().longValue() > 0) {
     	manuf = manufacturerService.getById(manufacturer.getId());
     	if(manuf == null) {
@@ -103,6 +104,25 @@ public class ManufacturerFacadeImpl implements ManufacturerFacade {
     manufacturer.setId(manuf.getId());
 
   }
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/manufacturer/ManufacturerFacadeImpl.java/base.java
+=======
+  @Override
+  public void saveOrUpdateManufacturer(PersistableManufacturer manufacturer, MerchantStore store,
+      Language language) throws Exception {
+
+    PersistableManufacturerPopulator populator = new PersistableManufacturerPopulator();
+    populator.setLanguageService(languageService);
+
+
+    Manufacturer manuf = new Manufacturer();
+    populator.populate(manufacturer, manuf, store, language);
+
+    manufacturerService.saveOrUpdate(manuf);
+
+    manufacturer.setId(manuf.getId());
+
+  }
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/manufacturer/ManufacturerFacadeImpl.java/right.java
 
   @Override
   public void deleteManufacturer(Manufacturer manufacturer, MerchantStore store, Language language)
@@ -135,6 +155,7 @@ public class ManufacturerFacadeImpl implements ManufacturerFacade {
     return readableManufacturer;
   }
 
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/manufacturer/ManufacturerFacadeImpl.java/left.java
   @Override
   public ReadableManufacturerList getAllManufacturers(MerchantStore store, Language language, ListCriteria criteria, int page, int count) {
 
@@ -143,21 +164,20 @@ public class ManufacturerFacadeImpl implements ManufacturerFacade {
       /**
        * Is this a pageable request
        */
-
+     
       List<Manufacturer> manufacturers = null;
       if(page == 0 && count == 0) {
     	//need total count
         int total = manufacturerService.count(store);
-
         if(language != null) {
           manufacturers = manufacturerService.listByStore(store, language);
         } else {
           manufacturers = manufacturerService.listByStore(store);
         }
+
         readableList.setRecordsTotal(total);
         readableList.setNumber(manufacturers.size());
       } else {
-
         Page<Manufacturer> m = null;
         if(language != null) {
           m = manufacturerService.listByStore(store, language, criteria.getName(), page, count);
@@ -173,7 +193,7 @@ public class ManufacturerFacadeImpl implements ManufacturerFacade {
       
       ReadableManufacturerPopulator populator = new ReadableManufacturerPopulator();
       List<ReadableManufacturer> returnList = new ArrayList<ReadableManufacturer>();
-  
+
       for (Manufacturer m : manufacturers) {
         ReadableManufacturer readableManufacturer = new ReadableManufacturer();
         populator.populate(m, readableManufacturer, store, language);
@@ -187,7 +207,55 @@ public class ManufacturerFacadeImpl implements ManufacturerFacade {
       throw new ServiceRuntimeException("Error while get manufacturers",e);
     }
   }
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/manufacturer/ManufacturerFacadeImpl.java/base.java
+=======
+  @Override
+  public ReadableManufacturerList getAllManufacturers(MerchantStore store, Language language, ListCriteria criteria, int page, int count) {
 
+    ReadableManufacturerList readableList = new ReadableManufacturerList();
+    try {
+      /**
+       * Is this a pageable request
+       */
+      //need total count
+      int total = manufacturerService.count(store);
+      List<Manufacturer> manufacturers = null;
+      if(page == 0 && count == 0) {
+        if(language != null) {
+          manufacturers = manufacturerService.listByStore(store, language);
+        } else {
+          manufacturers = manufacturerService.listByStore(store);
+        }
+      } else {
+        readableList.setRecordsTotal(total);
+        Page<Manufacturer> m = null;
+        if(language != null) {
+          m = manufacturerService.listByStore(store, language, criteria.getName(), page, count);
+        } else {
+          m = manufacturerService.listByStore(store, criteria.getName(), page, count);
+        }
+        manufacturers = m.getContent();
+      }
+      readableList.setTotalCount(total);
+      readableList.setRecordsTotal(manufacturers.size());
+      
+      ReadableManufacturerPopulator populator = new ReadableManufacturerPopulator();
+      List<ReadableManufacturer> returnList = new ArrayList<ReadableManufacturer>();
+
+      for (Manufacturer m : manufacturers) {
+        ReadableManufacturer readableManufacturer = new ReadableManufacturer();
+        populator.populate(m, readableManufacturer, store, language);
+        returnList.add(readableManufacturer);
+      }
+
+      readableList.setManufacturers(returnList);
+      return readableList;
+      
+    } catch (Exception e) {
+      throw new ServiceRuntimeException("Error while get manufacturers",e);
+    }
+  }
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/manufacturer/ManufacturerFacadeImpl.java/right.java
 
   @Override
   public boolean manufacturerExist(MerchantStore store, String manufacturerCode) {

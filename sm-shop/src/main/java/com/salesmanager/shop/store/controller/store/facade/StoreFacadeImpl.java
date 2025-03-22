@@ -422,7 +422,13 @@ public class StoreFacadeImpl implements StoreFacade {
 				throw new ResourceNotFoundException("Merchant [" + code + "] not found");
 			}
 
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/controller/store/facade/StoreFacadeImpl.java/left.java
 			if (retailer.isRetailer() == null || !retailer.isRetailer().booleanValue()) {
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/controller/store/facade/StoreFacadeImpl.java/base.java
+			if  {
+=======
+			if (!retailer.isRetailer().booleanValue()) {
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/controller/store/facade/StoreFacadeImpl.java/right.java
 				throw new ResourceNotFoundException("Merchant [" + code + "] not a retailer");
 			}
 
@@ -430,7 +436,13 @@ public class StoreFacadeImpl implements StoreFacade {
 			Page<MerchantStore> children = merchantStoreService.listChildren(code, page, count);
 			List<ReadableMerchantStore> readableStores = new ArrayList<ReadableMerchantStore>();
 			ReadableMerchantStoreList readableList = new ReadableMerchantStoreList();
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/controller/store/facade/StoreFacadeImpl.java/left.java
 			if (!CollectionUtils.isEmpty(children.getContent())) {
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/controller/store/facade/StoreFacadeImpl.java/base.java
+			if  {
+=======
+			if (!CollectionUtils.isEmpty(children)) {
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/controller/store/facade/StoreFacadeImpl.java/right.java
 				for (MerchantStore store : children)
 					readableStores.add(convertMerchantStoreToReadableMerchantStore(language, store));
 			}
@@ -445,11 +457,17 @@ public class StoreFacadeImpl implements StoreFacade {
 			
 			
 /*			List<MerchantStore> children = merchantStoreService.listChildren(code);
+			
 			List<ReadableMerchantStore> readableStores = new ArrayList<ReadableMerchantStore>();
+			
 			if (!CollectionUtils.isEmpty(children)) {
+			
 				for (MerchantStore store : children)
+			
 					readableStores.add(convertMerchantStoreToReadableMerchantStore(language, store));
+			
 			}
+			
 			return readableStores;*/
 		} catch (ServiceException e) {
 			throw new ServiceRuntimeException(e);
@@ -491,7 +509,7 @@ public class StoreFacadeImpl implements StoreFacade {
 
 
 	}
-	
+
 	private ReadableMerchantStore convertStoreName(MerchantStore store) {
 		ReadableMerchantStore convert = new ReadableMerchantStore();
 		convert.setId(store.getId());
@@ -522,19 +540,31 @@ public class StoreFacadeImpl implements StoreFacade {
       
       //first check if store is retailer
       MerchantStore retailer = this.getByCode(code);
-      if(retailer==null) {
-        throw new ResourceNotFoundException("Merchant [" + code + "] not found");
-      }
-      
-      if(!retailer.isRetailer().booleanValue()) {
-        throw new ResourceNotFoundException("Merchant [" + code + "] not a retailer");
-      }
+    	if (retailer == null) {
+    		throw new ResourceNotFoundException("Merchant [" + code + "] not found");
+    	}
+
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/controller/store/facade/StoreFacadeImpl.java/left.java
+    	if (retailer.isRetailer() == null || !retailer.isRetailer().booleanValue()) {
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/controller/store/facade/StoreFacadeImpl.java/base.java
+    	if  {
+=======
+    	if (!retailer.isRetailer().booleanValue()) {
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/controller/store/facade/StoreFacadeImpl.java/right.java
+    		throw new ResourceNotFoundException("Merchant [" + code + "] not a retailer");
+    	}
 
       List<MerchantStore> children = merchantStoreService.listChildren(code);
       List<ReadableMerchantStore> readableStores = new ArrayList<ReadableMerchantStore>();
-      if(!CollectionUtils.isEmpty(children)) {
-        for(MerchantStore store : children)
-        readableStores.add(convertMerchantStoreToReadableMerchantStore(language, store));
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/controller/store/facade/StoreFacadeImpl.java/left.java
+      if (!CollectionUtils.isEmpty(children.getContent())) {
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/controller/store/facade/StoreFacadeImpl.java/base.java
+      if  {
+=======
+      if (!CollectionUtils.isEmpty(children)) {
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/controller/store/facade/StoreFacadeImpl.java/right.java
+      	for (MerchantStore store : children)
+      		readableStores.add(convertMerchantStoreToReadableMerchantStore(language, store));
       }
       return readableStores;
     } catch (ServiceException e) {

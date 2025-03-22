@@ -60,9 +60,18 @@ public class CategoryFacadeImpl implements CategoryFacade {
 	private static final String VISIBLE_CATEGORY = "visible";
 
 	@Override
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/category/CategoryFacadeImpl.java/left.java
 	public ReadableCategoryList getCategoryHierarchy(MerchantStore store, ListCriteria criteria, int depth,
 			Language language, List<String> filter, int page, int count) {
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/category/CategoryFacadeImpl.java/base.java
+	public ReadableCategoryList getCategoryHierarchy(MerchantStore store, int depth,
+	    Language language, List<String> filter) {
+=======
+	public ReadableCategoryList getCategoryHierarchy(MerchantStore store, ListCriteria criteria, int depth,
+	    Language language, List<String> filter, int page, int count) {
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/category/CategoryFacadeImpl.java/right.java
 
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/category/CategoryFacadeImpl.java/left.java
 		List<Category> categories = null;
 		ReadableCategoryList returnList = new ReadableCategoryList();
 		// total count
@@ -79,6 +88,23 @@ public class CategoryFacadeImpl implements CategoryFacade {
 			returnList.setRecordsTotal(pageable.getTotalElements());
 			returnList.setNumber(pageable.getNumber());
 		}
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/category/CategoryFacadeImpl.java/base.java
+	  List<Category> categories = getCategories(store, depth, language, filter);
+=======
+	  List<Category> categories = null;
+	  ReadableCategoryList returnList = new ReadableCategoryList();
+	  //total count
+	  int total = categoryService.count(store);
+	  returnList.setTotalCount(total);
+	  if (!CollectionUtils.isEmpty(filter) && filter.contains(FEATURED_CATEGORY)) {
+	    categories = categoryService.getListByDepthFilterByFeatured(store, depth, language);
+	  } else {
+	    org.springframework.data.domain.Page<Category> pageable =  categoryService.getListByDepth(store, language, criteria != null ? criteria.getName(): null, depth, page, count);
+	    categories = pageable.getContent();
+	  }
+	  
+	  returnList.setRecordsTotal(categories.size());
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/category/CategoryFacadeImpl.java/right.java
 
 
 
@@ -96,6 +122,7 @@ public class CategoryFacadeImpl implements CategoryFacade {
 		Map<Long, ReadableCategory> readableCategoryMap = readableCategories.stream()
 				.collect(Collectors.toMap(ReadableCategory::getId, Function.identity()));
 
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/category/CategoryFacadeImpl.java/left.java
 		readableCategories.stream()
 				// .filter(ReadableCategory::isVisible)
 				.filter(cat -> Objects.nonNull(cat.getParent()))
@@ -112,6 +139,17 @@ public class CategoryFacadeImpl implements CategoryFacade {
 		returnList.setCategories(filteredList);
 
 		return returnList;
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/category/CategoryFacadeImpl.java/base.java
+	  return readableCategoryMap.values().stream().filter(cat -> cat.getDepth() == 0)
+	      .sorted(Comparator.comparing(ReadableCategory::getSortOrder)).collect(Collectors.toList());
+=======
+	  List<ReadableCategory> filteredList =  readableCategoryMap.values().stream().filter(cat -> cat.getDepth() == 0)
+	      .sorted(Comparator.comparing(ReadableCategory::getSortOrder)).collect(Collectors.toList());
+	  
+	  returnList.setCategories(filteredList);
+	  
+	  return returnList;
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/e992f347e0b4f6502966d46fffa4c60cb4c89211/sm-shop/src/main/java/com/salesmanager/shop/store/facade/category/CategoryFacadeImpl.java/right.java
 
 	}
 
