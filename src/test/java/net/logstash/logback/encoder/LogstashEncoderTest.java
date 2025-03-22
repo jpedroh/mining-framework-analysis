@@ -184,7 +184,7 @@ public class LogstashEncoderTest {
         byte[] encoded = encoder.encode(event);
         
         String output = new String(encoded, StandardCharsets.UTF_8);
-        
+
         assertThat(output).isEqualTo(String.format(
                 "{%n"
                 + "  @timestamp : \"" + DateTimeFormatter.ISO_OFFSET_DATE_TIME.withZone(TimeZone.getDefault().toZoneId()).format(Instant.ofEpochMilli(timestamp)) + "\",%n"
