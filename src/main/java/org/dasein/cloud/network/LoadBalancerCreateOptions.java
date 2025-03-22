@@ -73,23 +73,24 @@ public class LoadBalancerCreateOptions {
         return options;
     }
 
-    private ArrayList<LoadBalancerEndpoint> endpoints;
-    private ArrayList<String>               providerDataCenterIds;
-    private ArrayList<String>               providerSubnetIds;
+    private List<LoadBalancerEndpoint> endpoints;
+    private List<String>          providerDataCenterIds;
+    private List<String>          providerSubnetIds;
     private ArrayList<String>               firewallIds;
-    private String                          providerIpAddressId;
-    private String                          description;
-    private ArrayList<LbListener>           listeners;
-    private Map<String,Object>              metaData;
-    private String                          name;
-    private LbType                          type;
-    private HealthCheckOptions              healthCheckOptions;
+    private String                     providerIpAddressId;
+    private String                     description;
+    private List<LbListener>      listeners;
+    private Map<String, Object>        metaData;
+    private String                     name;
+    private LbType                     type;
+    private HealthCheckOptions         healthCheckOptions;
     private Boolean                         crossDataCenter;
     private Boolean                         connectionDraining;
     private Integer                         connectionDrainingTimeout;
     private Integer                         idleConnectionTimeout;
 
-    private LoadBalancerCreateOptions() { }
+    private LoadBalancerCreateOptions() {
+    }
 
     /**
      * Builds a load balancer in the cloud using the options specified in this object. It will examine provider meta-data
