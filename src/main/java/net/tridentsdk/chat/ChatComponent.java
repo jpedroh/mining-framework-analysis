@@ -25,8 +25,8 @@ import lombok.*;
 import lombok.experimental.Accessors;
 
 import javax.annotation.concurrent.NotThreadSafe;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Represents a component in a Minecraft chat format.
@@ -96,16 +96,26 @@ public class ChatComponent {
     /**
      * The list of chat components added to the 'with' array.
      */
+<<<<<<< /usr/src/app/output/tridentsdk/tridentsdk/589b367cf283a6b348e415d065f59983f884b95c/src/main/java/net/tridentsdk/chat/ChatComponent.java/left.java
+    private final List<ChatComponent> with = Lists.newLinkedList();
+||||||| /usr/src/app/output/tridentsdk/tridentsdk/589b367cf283a6b348e415d065f59983f884b95c/src/main/java/net/tridentsdk/chat/ChatComponent.java/base.java
+=======
     private final Collection<ChatComponent> with = Lists.newArrayList();
+>>>>>>> /usr/src/app/output/tridentsdk/tridentsdk/589b367cf283a6b348e415d065f59983f884b95c/src/main/java/net/tridentsdk/chat/ChatComponent.java/right.java
 
     /**
-     * The list of chat components added to the 'extra' array.
-     */
+ * The list of chat components added to the 'extra' array.
+ */
+<<<<<<< /usr/src/app/output/tridentsdk/tridentsdk/589b367cf283a6b348e415d065f59983f884b95c/src/main/java/net/tridentsdk/chat/ChatComponent.java/left.java
+    private final List<ChatComponent> extra = Lists.newLinkedList();
+||||||| /usr/src/app/output/tridentsdk/tridentsdk/589b367cf283a6b348e415d065f59983f884b95c/src/main/java/net/tridentsdk/chat/ChatComponent.java/base.java
+=======
     private final Collection<ChatComponent> extra = Lists.newArrayList();
+>>>>>>> /usr/src/app/output/tridentsdk/tridentsdk/589b367cf283a6b348e415d065f59983f884b95c/src/main/java/net/tridentsdk/chat/ChatComponent.java/right.java
 
     /**
-     * Whether or not this message is bolded
-     */
+ * Whether or not this message is bolded
+ */
     private Boolean bold;
 
     /**
@@ -135,8 +145,8 @@ public class ChatComponent {
      *
      * @return The with elements.
      */
-    public Collection<ChatComponent> getWith() {
-        return Collections.unmodifiableCollection(this.with);
+    public List<ChatComponent> getWith() {
+        return Collections.unmodifiableList(this.with);
     }
 
     /**
@@ -194,8 +204,8 @@ public class ChatComponent {
      *
      * @return The extra components.
      */
-    public Collection<ChatComponent> getExtra() {
-        return Collections.unmodifiableCollection(this.extra);
+    public List<ChatComponent> getExtra() {
+        return Collections.unmodifiableList(this.extra);
     }
 
     /**
@@ -232,7 +242,7 @@ public class ChatComponent {
      * component's hierarchy.
      */
     public boolean hasExtra(ChatComponent component, boolean recursive) {
-        Collection<ChatComponent> extra = this.extra;
+        List<ChatComponent> extra = this.extra;
         if (extra.contains(component)) {
             return true;
         } else if (!recursive) {
@@ -387,7 +397,7 @@ public class ChatComponent {
             json.addProperty("selector", selector);
         }
 
-        Collection<ChatComponent> extra = this.extra;
+        List<ChatComponent> extra = this.extra;
         if (!extra.isEmpty()) {
             JsonArray extraArray = new JsonArray();
             extra.forEach(e -> extraArray.add(e.asJson()));
