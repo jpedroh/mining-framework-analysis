@@ -20,13 +20,28 @@ import com.lambdaworks.redis.protocol.*;
  */
 class RedisCommandBuilder<K, V> extends BaseRedisCommandBuilder<K, V> {
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisCommandBuilder.java/left.java
+    private static final String MUST_NOT_CONTAIN_NULL_ELEMENTS = "must not contain null elements";
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisCommandBuilder.java/base.java
+=======
     static final String MUST_NOT_CONTAIN_NULL_ELEMENTS = "must not contain null elements";
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisCommandBuilder.java/right.java
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisCommandBuilder.java/left.java
+    private static final String MUST_NOT_BE_EMPTY = "must not be empty";
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisCommandBuilder.java/base.java
+=======
     static final String MUST_NOT_BE_EMPTY = "must not be empty";
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisCommandBuilder.java/right.java
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisCommandBuilder.java/left.java
+    private static final String MUST_NOT_BE_NULL = "must not be null";
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisCommandBuilder.java/base.java
+=======
     static final String MUST_NOT_BE_NULL = "must not be null";
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisCommandBuilder.java/right.java
 
     public RedisCommandBuilder(RedisCodec<K, V> codec) {
-        super(codec);
-    }
+    super(codec);
+}
 
     public Command<K, V, Long> append(K key, V value) {
         return createCommand(APPEND, new IntegerOutput<K, V>(codec), key, value);

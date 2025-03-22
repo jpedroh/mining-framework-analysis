@@ -13,6 +13,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 import com.lambdaworks.redis.AbstractRedisClient;
+import com.lambdaworks.redis.RedisAsyncConnectionImpl;
+import com.lambdaworks.redis.RedisChannelWriter;
+import com.lambdaworks.redis.RedisClusterAsyncConnection;
+import com.lambdaworks.redis.RedisClusterConnection;
 import com.lambdaworks.redis.RedisException;
 import com.lambdaworks.redis.RedisURI;
 import com.lambdaworks.redis.StatefulRedisConnectionImpl;
@@ -77,6 +81,7 @@ public class RedisClusterClient extends AbstractRedisClient {
      * @return A new connection.
      */
     public RedisAdvancedClusterConnection<String, String> connectCluster() {
+
         return connectCluster(newStringStringCodec());
     }
 
@@ -89,18 +94,40 @@ public class RedisClusterClient extends AbstractRedisClient {
      * @param <V> Value type.
      * @return A new connection.
      */
+
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/cluster/RedisClusterClient.java/left.java
+    @SuppressWarnings("unchecked")
+    public <K, V> RedisAdvancedClusterConnection<K, V> connectCluster(RedisCodec<K, V> codec) {
+
+        return (RedisAdvancedClusterConnection<K, V>) syncHandler(connectClusterAsyncImpl(codec),
+                RedisAdvancedClusterConnection.class, RedisClusterConnection.class);
+    }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/cluster/RedisClusterClient.java/base.java
+    @SuppressWarnings("unchecked")
+    public <K, V> RedisClusterConnection<K, V> connectCluster(RedisCodec<K, V> codec) {
+
+        return (RedisClusterConnection<K, V>) syncHandler(connectClusterAsyncImpl(codec), RedisClusterConnection.class);
+    }
+=======
     @SuppressWarnings("unchecked")
     public <K, V> RedisAdvancedClusterConnection<K, V> connectCluster(RedisCodec<K, V> codec) {
         return connectClusterImpl(codec, getSocketAddressSupplier()).sync();
     }
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/cluster/RedisClusterClient.java/right.java
 
     /**
      * Creates a connection to the redis cluster.
      * 
      * @return A new connection.
      */
+
     public RedisAdvancedClusterAsyncConnection<String, String> connectClusterAsync() {
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/cluster/RedisClusterClient.java/left.java
+        return connectClusterAsyncImpl(newStringStringCodec(), getSocketAddressSupplier());
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/cluster/RedisClusterClient.java/base.java
+=======
         return connectClusterImpl(newStringStringCodec(), getSocketAddressSupplier()).async();
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/cluster/RedisClusterClient.java/right.java
     }
 
     /**
@@ -111,9 +138,17 @@ public class RedisClusterClient extends AbstractRedisClient {
      * @param <V> Value type.
      * @return A new connection.
      */
+
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/cluster/RedisClusterClient.java/left.java
+    public <K, V> RedisAdvancedClusterAsyncConnection<K, V> connectClusterAsync(RedisCodec<K, V> codec) {
+        return connectClusterAsyncImpl(codec, getSocketAddressSupplier());
+    }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/cluster/RedisClusterClient.java/base.java
+=======
     public <K, V> RedisAdvancedClusterAsyncConnection<K, V> connectClusterAsync(RedisCodec<K, V> codec) {
         return connectClusterImpl(codec, getSocketAddressSupplier()).async();
     }
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/cluster/RedisClusterClient.java/right.java
 
     protected StatefulRedisConnection<String, String> connectToNode(SocketAddress socketAddress) {
         return connectToNode(newStringStringCodec(), socketAddress);
@@ -127,6 +162,7 @@ public class RedisClusterClient extends AbstractRedisClient {
      * @param <V> Value type.
      * @return a new connection
      */
+
     <K, V> StatefulRedisConnection<K, V> connectToNode(RedisCodec<K, V> codec, final SocketAddress socketAddress) {
 
         logger.debug("connectAsyncImpl(" + socketAddress + ")");
@@ -161,7 +197,14 @@ public class RedisClusterClient extends AbstractRedisClient {
      * @param <V> Value type.
      * @return a new connection
      */
+
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/cluster/RedisClusterClient.java/left.java
+    <K, V> RedisAdvancedClusterAsyncConnectionImpl<K, V> connectClusterImpl(RedisCodec<K, V> codec,
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/cluster/RedisClusterClient.java/base.java
+    <K, V> RedisAsyncConnectionImpl<K, V> connectClusterImpl(RedisCodec<K, V> codec,
+=======
     <K, V> StatefulRedisClusterConnectionImpl<K, V> connectClusterImpl(RedisCodec<K, V> codec,
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/cluster/RedisClusterClient.java/right.java
             final Supplier<SocketAddress> socketAddressSupplier) {
 
         if (partitions == null) {
@@ -178,8 +221,14 @@ public class RedisClusterClient extends AbstractRedisClient {
 
         final ClusterDistributionChannelWriter<K, V> clusterWriter = new ClusterDistributionChannelWriter<K, V>(handler,
                 pooledClusterConnectionProvider);
-        StatefulRedisClusterConnectionImpl<K, V> connection = new StatefulRedisClusterConnectionImpl<>(clusterWriter, codec,
-                timeout, unit);
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/cluster/RedisClusterClient.java/left.java
+        RedisAdvancedClusterAsyncConnectionImpl<K, V> connection = new StatefulRedisClusterConnectionImpl<>(clusterWriter, codec, timeout,
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/cluster/RedisClusterClient.java/base.java
+        RedisAsyncConnectionImpl<K, V> connection = new StatefulRedisClusterConnectionImpl<>(clusterWriter, codec, timeout,
+=======
+        StatefulRedisClusterConnectionImpl<K, V> connection = new StatefulRedisClusterConnectionImpl<>(clusterWriter, codec, timeout,
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/cluster/RedisClusterClient.java/right.java
+                unit);
 
         connection.setPartitions(partitions);
         connectAsyncImpl(handler, connection, socketAddressSupplier);
@@ -197,6 +246,7 @@ public class RedisClusterClient extends AbstractRedisClient {
     /**
      * Reload partitions and re-initialize the distribution table.
      */
+
     public void reloadPartitions() {
         if (partitions == null) {
             initializePartitions();
@@ -222,6 +272,7 @@ public class RedisClusterClient extends AbstractRedisClient {
      * 
      * @return Partitions
      */
+
     protected Partitions loadPartitions() {
         String clusterNodes = null;
         RedisURI nodeUri = null;
@@ -261,6 +312,25 @@ public class RedisClusterClient extends AbstractRedisClient {
         }
 
         return loadedPartitions;
+    }
+
+    /**
+     * Construct a new {@link RedisAdvancedClusterAsyncConnectionImpl}. Can be overridden in order to construct a subclass of
+     * {@link RedisAdvancedClusterAsyncConnectionImpl}
+     *
+     * @param channelWriter the channel writer
+     * @param codec the codec to use
+     * @param timeout Timeout value
+     * @param unit Timeout unit
+     * @param <K> Key type.
+     * @param <V> Value type.
+     * @return RedisAdvancedClusterAsyncConnectionImpl&lt;K, V&gt; instance
+     */
+
+    protected <K, V> RedisAdvancedClusterAsyncConnectionImpl<K, V> newRedisAsyncConnectionImpl(
+            RedisChannelWriter<K, V> channelWriter,
+            RedisCodec<K, V> codec, long timeout, TimeUnit unit) {
+        return new RedisAdvancedClusterAsyncConnectionImpl<K, V>(channelWriter, codec, timeout, unit);
     }
 
     protected RedisURI getFirstUri() {

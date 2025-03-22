@@ -219,7 +219,13 @@ public class RedisClient extends AbstractRedisClient {
      * @return A new connection.
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+    public RedisConnection<String, String> connect() {
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+    public  connect() {
+=======
     public RedisCommands<String, String> connect() {
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
         return connect(newStringStringCodec());
     }
 
@@ -265,19 +271,26 @@ public class RedisClient extends AbstractRedisClient {
      * 
      * @return A new connection.
      */
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+    public RedisAsyncConnection<String, String> connectAsync() {
+        return connectAsync(newStringStringCodec());
+    }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+=======
     public RedisAsyncCommands<String, String> connectAsync() {
         return connectAsync(newStringStringCodec());
     }
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
 
     /**
-     * Open a new asynchronous connection to the redis server. Use the supplied {@link RedisCodec codec} to encode/decode keys
-     * and values.
-     * 
-     * @param codec Use this codec to encode/decode keys and values, must not be {@literal null}
-     * @param <K> Key type.
-     * @param <V> Value type.
-     * @return A new connection.
-     */
+ * Open a new asynchronous connection to the redis server. Use the supplied {@link RedisCodec codec} to encode/decode keys
+ * and values.
+ * 
+ * @param codec Use this codec to encode/decode keys and values, must not be {@literal null}
+ * @param <K> Key type.
+ * @param <V> Value type.
+ * @return A new connection.
+ */
     public <K, V> RedisAsyncCommands<K, V> connectAsync(RedisCodec<K, V> codec) {
         checkForRedisURI();
         checkArgument(codec != null, "RedisCodec must not be null");
@@ -292,7 +305,13 @@ public class RedisClient extends AbstractRedisClient {
      */
     public RedisAsyncCommands<String, String> connectAsync(RedisURI redisURI) {
         checkValidRedisURI(redisURI);
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+        return connectStateful(newStringStringCodec(), redisURI).async(newStringStringCodec(), redisURI);
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+        return connectStateful(newStringStringCodec(), redisURI).async(codec, redisURI);
+=======
         return connectStateful(newStringStringCodec(), redisURI).async();
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
     }
 
     private <K, V> StatefulRedisConnection<K, V> connectStateful(RedisCodec<K, V> codec, RedisURI redisURI) {
@@ -343,16 +362,23 @@ public class RedisClient extends AbstractRedisClient {
      *
      * @return A new connection.
      */
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+    public RedisPubSubConnection<String, String> connectPubSub() {
+        return connectPubSub(newStringStringCodec());
+    }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+=======
     public RedisPubSubAsyncCommands<String, String> connectPubSub() {
         return connectPubSub(newStringStringCodec());
     }
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
 
     /**
-     * Open a new pub/sub connection to the supplied {@link RedisURI} that treats keys and values as UTF-8 strings.
-     *
-     * @param redisURI the redis server to connect to, must not be {@literal null}
-     * @return A new connection.
-     */
+ * Open a new pub/sub connection to the supplied {@link RedisURI} that treats keys and values as UTF-8 strings.
+ *
+ * @param redisURI the redis server to connect to, must not be {@literal null}
+ * @return A new connection.
+ */
     public RedisPubSubAsyncCommands<String, String> connectPubSub(RedisURI redisURI) {
         checkValidRedisURI(redisURI);
         return connectPubSub(newStringStringCodec(), redisURI);
@@ -390,18 +416,25 @@ public class RedisClient extends AbstractRedisClient {
      * 
      * @return a new connection.
      */
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+    public RedisSentinelAsyncConnection<String, String> connectSentinelAsync() {
+        return connectSentinelAsync(newStringStringCodec());
+    }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+=======
     public RedisSentinelAsyncCommands<String, String> connectSentinelAsync() {
         return connectSentinelAsync(newStringStringCodec());
     }
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
 
     /**
-     * Creates an asynchronous connection to Sentinel. You must supply a valid RedisURI containing one or more sentinels.
-     * 
-     * @param codec Use this codec to encode/decode keys and values, must not be {@literal null}
-     * @param <K> Key type.
-     * @param <V> Value type.
-     * @return a new connection.
-     */
+ * Creates an asynchronous connection to Sentinel. You must supply a valid RedisURI containing one or more sentinels.
+ * 
+ * @param codec Use this codec to encode/decode keys and values, must not be {@literal null}
+ * @param <K> Key type.
+ * @param <V> Value type.
+ * @return a new connection.
+ */
     public <K, V> RedisSentinelAsyncCommands<K, V> connectSentinelAsync(RedisCodec<K, V> codec) {
         checkForRedisURI();
         checkArgument(codec != null, "RedisCodec must not be null");
@@ -415,58 +448,65 @@ public class RedisClient extends AbstractRedisClient {
      * @param redisURI the redis server to connect to, must not be {@literal null}
      * @return A new connection.
      */
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisClient.java/left.java
+    public RedisSentinelAsyncConnection<String, String> connectSentinelAsync(RedisURI redisURI) {
+        return connectSentinelAsyncImpl(newStringStringCodec(), redisURI);
+    }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisClient.java/base.java
+=======
     public RedisSentinelAsyncCommands<String, String> connectSentinelAsync(RedisURI redisURI) {
         return connectSentinelImpl(newStringStringCodec(), redisURI).async();
     }
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/b378ab2fb0448418754c692b66d23b99e0801ac8/src/main/java/com/lambdaworks/redis/RedisClient.java/right.java
 
     private <K, V> StatefulRedisSentinelConnection<K, V> connectSentinelImpl(RedisCodec<K, V> codec, RedisURI redisURI) {
-        BlockingQueue<RedisCommand<K, V, ?>> queue = new LinkedBlockingQueue<RedisCommand<K, V, ?>>();
+    BlockingQueue<RedisCommand<K, V, ?>> queue = new LinkedBlockingQueue<RedisCommand<K, V, ?>>();
 
-        ConnectionBuilder connectionBuilder = ConnectionBuilder.connectionBuilder();
-        connectionBuilder.clientOptions(ClientOptions.copyOf(getOptions()));
+    ConnectionBuilder connectionBuilder = ConnectionBuilder.connectionBuilder();
+    connectionBuilder.clientOptions(ClientOptions.copyOf(getOptions()));
 
-        final CommandHandler<K, V> commandHandler = new CommandHandler<K, V>(clientOptions, queue);
+    final CommandHandler<K, V> commandHandler = new CommandHandler<K, V>(clientOptions, queue);
 
-        StatefulRedisSentinelConnectionImpl<K, V> connection = newStatefulRedisSentinelConnection(commandHandler, codec);
+    StatefulRedisSentinelConnectionImpl<K, V> connection = newStatefulRedisSentinelConnection(commandHandler, codec);
 
-        logger.debug("Trying to get a Sentinel connection for one of: " + redisURI.getSentinels());
+    logger.debug("Trying to get a Sentinel connection for one of: " + redisURI.getSentinels());
 
-        connectionBuilder(commandHandler, connection, getSocketAddressSupplier(redisURI), connectionBuilder, redisURI);
+    connectionBuilder(commandHandler, connection, getSocketAddressSupplier(redisURI), connectionBuilder, redisURI);
 
-        if (redisURI.getSentinels().isEmpty() && (isNotEmpty(redisURI.getHost()) || !isEmpty(redisURI.getSocket()))) {
-            channelType(connectionBuilder, redisURI);
-            initializeChannel(connectionBuilder);
-        } else {
-            boolean connected = false;
-            boolean first = true;
-            Exception causingException = null;
-            validateUrisAreOfSameConnectionType(redisURI.getSentinels());
-            for (RedisURI uri : redisURI.getSentinels()) {
-                if (first) {
-                    channelType(connectionBuilder, uri);
-                    first = false;
-                }
-                connectionBuilder.socketAddressSupplier(getSocketAddressSupplier(uri));
-                logger.debug("Connecting to Sentinel, address: " + uri.getResolvedAddress());
-                try {
-                    initializeChannel(connectionBuilder);
-                    connected = true;
-                    break;
-                } catch (Exception e) {
-                    logger.warn("Cannot connect sentinel at " + uri + ": " + e.toString());
-                    causingException = e;
-                    if (e instanceof ConnectException) {
-                        continue;
-                    }
-                }
+    if (redisURI.getSentinels().isEmpty() && (isNotEmpty(redisURI.getHost()) || !isEmpty(redisURI.getSocket()))) {
+        channelType(connectionBuilder, redisURI);
+        initializeChannel(connectionBuilder);
+    } else {
+        boolean connected = false;
+        boolean first = true;
+        Exception causingException = null;
+        validateUrisAreOfSameConnectionType(redisURI.getSentinels());
+        for (RedisURI uri : redisURI.getSentinels()) {
+            if (first) {
+                channelType(connectionBuilder, uri);
+                first = false;
             }
-            if (!connected) {
-                throw new RedisConnectionException("Cannot connect to a sentinel: " + redisURI.getSentinels(), causingException);
+            connectionBuilder.socketAddressSupplier(getSocketAddressSupplier(uri));
+            logger.debug("Connecting to Sentinel, address: " + uri.getResolvedAddress());
+            try {
+                initializeChannel(connectionBuilder);
+                connected = true;
+                break;
+            } catch (Exception e) {
+                logger.warn("Cannot connect sentinel at " + uri + ": " + e.toString());
+                causingException = e;
+                if (e instanceof ConnectException) {
+                    continue;
+                }
             }
         }
-
-        return connection;
+        if (!connected) {
+            throw new RedisConnectionException("Cannot connect to a sentinel: " + redisURI.getSentinels(), causingException);
+        }
     }
+
+    return connection;
+}
 
     protected <K, V> StatefulRedisPubSubConnectionImpl<K, V> newStatefulRedisPubSubConnection(
             PubSubCommandHandler<K, V> handler, RedisCodec<K, V> codec) {
