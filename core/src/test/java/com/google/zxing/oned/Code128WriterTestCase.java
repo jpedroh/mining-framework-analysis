@@ -23,11 +23,14 @@ import org.junit.Test;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Writer;
 import com.google.zxing.Result;
+//import com.google.zxing.Reader;
 import com.google.zxing.WriterException;
 import com.google.zxing.ReaderException;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.BitArray;
+
+import java.util.Map;
 
 public class Code128WriterTestCase extends Assert {
 
@@ -77,7 +80,13 @@ public class Code128WriterTestCase extends Assert {
   @Test
   public void testEncodeWithFunc1() throws WriterException {
     String toEncode = "\u00f1" + "123";
+<<<<<<< /usr/src/app/output/zxing/zxing/5413f5ceff8fea063f6042eefa08e6a8db78f30c/core/src/test/java/com/google/zxing/oned/Code128WriterTestCase.java/left.java
     //                                                       "12"                           "3"          check digit 92
+||||||| /usr/src/app/output/zxing/zxing/5413f5ceff8fea063f6042eefa08e6a8db78f30c/core/src/test/java/com/google/zxing/oned/Code128WriterTestCase.java/base.java
+    //                                                       "1"            "2"             "3"          check digit 61
+=======
+    //                                                       "12"                            "3"          check digit 92
+>>>>>>> /usr/src/app/output/zxing/zxing/5413f5ceff8fea063f6042eefa08e6a8db78f30c/core/src/test/java/com/google/zxing/oned/Code128WriterTestCase.java/right.java
     String expected = QUIET_SPACE + START_CODE_C + FNC1 + "10110011100" + SWITCH_CODE_B + "11001011100" + "10101111000" + STOP + QUIET_SPACE;
 
     BitMatrix result = writer.encode(toEncode, BarcodeFormat.CODE_128, 0, 0);
@@ -87,7 +96,9 @@ public class Code128WriterTestCase extends Assert {
   }
 
   @Test
-  public void testRoundtrip() throws WriterException, ReaderException {
+  public
+<<<<<<< /usr/src/app/output/zxing/zxing/5413f5ceff8fea063f6042eefa08e6a8db78f30c/core/src/test/java/com/google/zxing/oned/Code128WriterTestCase.java/left.java
+  @Test void testRoundtrip() throws WriterException, ReaderException {
     String toEncode = "\u00f1" + "10958" + "\u00f1" + "17160526";
     String expected = "1095817160526";
 
@@ -96,6 +107,20 @@ public class Code128WriterTestCase extends Assert {
     String actual = rtResult.getText();
     assertEquals(expected, actual);
   }
+||||||| /usr/src/app/output/zxing/zxing/5413f5ceff8fea063f6042eefa08e6a8db78f30c/core/src/test/java/com/google/zxing/oned/Code128WriterTestCase.java/base.java
+  @Test void testRoundtrip() throws WriterException, ReaderException 
+=======
+  @Test void testRoundtrip() throws WriterException, ReaderException {
+    String toEncode = "\u00f1" + "10958" + "\u00f1" + "17160526";
+    String expected = "1095817160526";
+    Map<DecodeHintType,?> hints = null;
+
+    BitMatrix encResult = writer.encode(toEncode, BarcodeFormat.CODE_128, 0, 0);
+    Result rtResult = reader.decodeRow(0, matrixToArray(encResult), hints);
+    String actual = rtResult.getText();
+    assertEquals(expected, actual);
+  }
+>>>>>>> /usr/src/app/output/zxing/zxing/5413f5ceff8fea063f6042eefa08e6a8db78f30c/core/src/test/java/com/google/zxing/oned/Code128WriterTestCase.java/right.java
 
   @Test
   public void testEncodeWithFunc4() throws WriterException {
