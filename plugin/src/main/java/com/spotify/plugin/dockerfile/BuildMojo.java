@@ -127,7 +127,7 @@ public class BuildMojo extends AbstractDockerMojo {
       dockerfilePath = dockerfile.toPath();
     }
     final String imageId = buildImage(
-        dockerClient, log, verbose, contextDirectory.toPath(), dockerfilePath, repository, tag, 
+        dockerClient, log, verbose, contextDirectory.toPath(), dockerfilePath, repository, tag,
         pullNewerImage, noCache, buildArgs, cacheFrom, squash);
 
     if (imageId == null) {
@@ -268,7 +268,7 @@ public class BuildMojo extends AbstractDockerMojo {
       }
     }
   }
-  
+
   private static String encodeBuildParam(Object buildParam) throws MojoExecutionException {
     try {
       return URLEncoder.encode(new Gson().toJson(buildParam), "utf-8");
