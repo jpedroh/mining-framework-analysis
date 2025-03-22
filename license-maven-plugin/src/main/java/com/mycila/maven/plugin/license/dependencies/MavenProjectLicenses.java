@@ -1,20 +1,4 @@
-/*
- * Copyright (C) 2008-2021 Mycila (mathieu.carbou@gmail.com)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.mycila.maven.plugin.license.dependencies;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.CumulativeScopeArtifactFilter;
@@ -31,7 +15,6 @@ import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.apache.maven.shared.dependency.graph.internal.Maven31DependencyGraphBuilder;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -48,13 +31,18 @@ import java.util.concurrent.ConcurrentMap;
  * @author Royce Remer
  */
 public class MavenProjectLicenses implements LicenseMap, LicenseMessage {
-
   private Set<MavenProject> projects;
+
   private MavenSession session;
+
   private DependencyGraphBuilder graph;
+
   private ProjectBuilder projectBuilder;
+
   private ProjectBuildingRequest buildingRequest;
+
   private ArtifactFilter filter;
+
   private Log log;
 
   /**
@@ -64,16 +52,13 @@ public class MavenProjectLicenses implements LicenseMap, LicenseMessage {
    * @param filters        the list of {@link ArtifactFilter} to scope analysis to
    * @param log            the log to sync to
    */
-  public MavenProjectLicenses(final Set<MavenProject> projects, final DependencyGraphBuilder graph,
-                              final ProjectBuilder projectBuilder, final ProjectBuildingRequest buildingRequest,
-                              final ArtifactFilter filter, final Log log) {
+  public MavenProjectLicenses(final Set<MavenProject> projects, final DependencyGraphBuilder graph, final ProjectBuilder projectBuilder, final ProjectBuildingRequest buildingRequest, final ArtifactFilter filter, final Log log) {
     this.setProjects(projects);
     this.setBuildingRequest(buildingRequest);
     this.setGraph(graph);
     this.setFilter(filter);
     this.setProjectBuilder(projectBuilder);
     this.setLog(log);
-
     log.info(String.format("%s %s", INFO_LICENSE_IMPL, this.getClass()));
   }
 
@@ -86,10 +71,8 @@ public class MavenProjectLicenses implements LicenseMap, LicenseMessage {
    * @param exclusions     List<String> of exclusion expressions,
    *                       {@link org.apache.maven.shared.artifact.filter.AbstractStrictPatternArtifactFilter}
    */
-  public MavenProjectLicenses(final MavenSession session, MavenProject project, final DependencyGraphBuilder graph,
-                              final ProjectBuilder projectBuilder, final List<String> scopes, final Log log) {
-    this(Collections.singleton(project), graph, projectBuilder, getBuildingRequestWithDefaults(session),
-        new CumulativeScopeArtifactFilter(scopes), log);
+  public MavenProjectLicenses(final MavenSession session, MavenProject project, final DependencyGraphBuilder graph, final ProjectBuilder projectBuilder, final List<String> scopes, final Log log) {
+    this(Collections.singleton(project), graph, projectBuilder, getBuildingRequestWithDefaults(session), new CumulativeScopeArtifactFilter(scopes), log);
   }
 
   private static ProjectBuildingRequest getBuildingRequestWithDefaults(final MavenSession session) {
@@ -111,9 +94,8 @@ public class MavenProjectLicenses implements LicenseMap, LicenseMessage {
       MavenProject project = getProjectBuilder().build(artifact, getBuildingRequest()).getProject();
       licenses.addAll(project.getLicenses());
     } catch (ProjectBuildingException ex) {
-      getLog().warn(String.format("Could not get project from dependency's artifact: %s", artifact.getFile()));
+      getLog().warn(String.format("Could not get project from dependency\'s artifact: %s", artifact.getFile()));
     }
-
     return licenses;
   }
 
@@ -126,22 +108,16 @@ public class MavenProjectLicenses implements LicenseMap, LicenseMessage {
    */
   protected Map<License, Set<Artifact>> getLicenseMapFromArtifacts(final Set<Artifact> dependencies) {
     final ConcurrentMap<License, Set<Artifact>> map = new ConcurrentHashMap<>();
-
-    // license:artifact is a many-to-many relationship.
-    // Each artifact may have several licenses.
-    // Each artifact may appear multiple times in the map.
-    dependencies.parallelStream().forEach(artifact -> getLicensesFromArtifact(artifact).forEach(license -> {
+    dependencies.parallelStream().forEach((artifact) -> getLicensesFromArtifact(artifact).forEach((license) -> {
       map.putIfAbsent(license, new HashSet<>());
       Set<Artifact> artifacts = map.get(license);
       artifacts.add(artifact);
       map.put(license, artifacts);
     }));
-
     return map;
   }
 
-  @Override
-  public Map<License, Set<Artifact>> getLicenseMap() {
+  @Override public Map<License, Set<Artifact>> getLicenseMap() {
     return getLicenseMapFromArtifacts(getDependencies());
   }
 
@@ -151,30 +127,17 @@ public class MavenProjectLicenses implements LicenseMap, LicenseMessage {
   private Set<Artifact> getDependencies() {
     final Set<Artifact> artifacts = new HashSet<>();
     final Set<DependencyNode> dependencies = new HashSet<>();
-
-    // build the set of maven dependencies for each module in the reactor (might
-    // only be the single one) and all its transitives
     getLog().debug(String.format("Building dependency graphs for %d projects", getProjects().size()));
-    getProjects().parallelStream().forEach(project -> {
+    getProjects().parallelStream().forEach((project) -> {
       try {
         dependencies.addAll(getGraph().buildDependencyGraph(buildingRequest, getFilter()).getChildren());
       } catch (DependencyGraphBuilderException ex) {
-        getLog().warn(
-            String.format("Could not get children from project %s, it's dependencies will not be checked!",
-                project.getId()));
+        getLog().warn(String.format("Could not get children from project %s, it\'s dependencies will not be checked!", project.getId()));
       }
     });
-
-    // build the complete set of direct+transitive dependent artifacts in all
-    // modules in the reactor
-    dependencies.parallelStream().forEach(d -> artifacts.add(d.getArtifact()));
+    dependencies.parallelStream().forEach((d) -> artifacts.add(d.getArtifact()));
     getLog().info(String.format("%s: %d", INFO_DEPS_DISCOVERED, dependencies.size()));
-
     return artifacts;
-
-    // tempting, but does not resolve dependencies after the scope in which this
-    // plugin is invoked
-    // return project.getArtifacts();
   }
 
   private MavenSession getSession() {
