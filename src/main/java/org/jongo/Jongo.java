@@ -76,4 +76,12 @@ public class Jongo {
     public static JongoNative useNative(MongoDatabase mongoDatabase, Mapper mapper) {
         return new JongoNative(mongoDatabase, mapper);
     }
+
+    public void requestStart() {
+        database.requestStart();
+    }
+
+    public void requestDone() {
+        database.requestDone();
+    }
 }
