@@ -151,7 +151,13 @@ public final class LuceneServlet extends HttpServlet {
 	    final Package p = this.getClass().getPackage();
 		final JSONObject welcome = new JSONObject();
 		welcome.put("couchdb-lucene", "Welcome");
+<<<<<<< /usr/src/app/output/rnewson/couchdb-lucene/51a152b363bc753cbe4ed6a4353b57bddd26c272/src/main/java/com/github/rnewson/couchdb/lucene/LuceneServlet.java/left.java
+		welcome.put("version", "0.6-SNAPSHOT");
+||||||| /usr/src/app/output/rnewson/couchdb-lucene/51a152b363bc753cbe4ed6a4353b57bddd26c272/src/main/java/com/github/rnewson/couchdb/lucene/LuceneServlet.java/base.java
+		welcome.put("version", "0.5.0");
+=======
 		welcome.put("version", p.getImplementationVersion());
+>>>>>>> /usr/src/app/output/rnewson/couchdb-lucene/51a152b363bc753cbe4ed6a4353b57bddd26c272/src/main/java/com/github/rnewson/couchdb/lucene/LuceneServlet.java/right.java
 		ServletUtils.writeJSON(resp, welcome);
 	}
 
