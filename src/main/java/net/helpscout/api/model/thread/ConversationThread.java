@@ -10,9 +10,11 @@ import net.helpscout.api.model.ref.UserRef;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Calendar;
 
 public interface ConversationThread {
 	public Long getId();
+	public String getType();
 	public boolean isPublished();
 	public boolean isDraft();
 	public boolean isHeldForReview();
@@ -36,8 +38,9 @@ public interface ConversationThread {
 	public Date getCreatedAt();
 	public MailboxRef getFromMailbox();
 
+<<<<<<< /usr/src/app/output/helpscout/helpscout-api-java/7dde5bbe5d07ba446e8d8b7b942d378b40f2b5c3/src/main/java/net/helpscout/api/model/thread/ConversationThread.java/left.java
 	public void setId(Long id);
-	public void setType(ThreadType type);
+	public void setType(String type);
 	public void setState(ThreadState state);
 	public void setStatus(Status status);
 	public void setBody(String body);
@@ -47,4 +50,8 @@ public interface ConversationThread {
 	public void setAttachments(List<Attachment> attachments);
 	public void setAssignedTo(UserRef assignedTo);
 	public void setCreatedBy(PersonRef person);
+||||||| /usr/src/app/output/helpscout/helpscout-api-java/7dde5bbe5d07ba446e8d8b7b942d378b40f2b5c3/src/main/java/net/helpscout/api/model/thread/ConversationThread.java/base.java
+=======
+	public void setType(ThreadType type);
+>>>>>>> /usr/src/app/output/helpscout/helpscout-api-java/7dde5bbe5d07ba446e8d8b7b942d378b40f2b5c3/src/main/java/net/helpscout/api/model/thread/ConversationThread.java/right.java
 }

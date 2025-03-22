@@ -8,12 +8,24 @@ import java.util.List;
 
 public class AbstractThread extends BaseLineItem implements ConversationThread {
 	private Long id;
-	private ThreadType type;
+
 	private ThreadState state;
+
+<<<<<<< /usr/src/app/output/helpscout/helpscout-api-java/7dde5bbe5d07ba446e8d8b7b942d378b40f2b5c3/src/main/java/net/helpscout/api/model/thread/AbstractThread.java/left.java
+	private String type;
+||||||| /usr/src/app/output/helpscout/helpscout-api-java/7dde5bbe5d07ba446e8d8b7b942d378b40f2b5c3/src/main/java/net/helpscout/api/model/thread/AbstractThread.java/base.java
+=======
+	private ThreadType type;
+>>>>>>> /usr/src/app/output/helpscout/helpscout-api-java/7dde5bbe5d07ba446e8d8b7b942d378b40f2b5c3/src/main/java/net/helpscout/api/model/thread/AbstractThread.java/right.java
+
 	private String body;
+
 	private List<String> toList;
+
 	private List<String> ccList;
+
 	private List<String> bccList;
+
 	private List<Attachment> attachments;
 
 	public boolean isPublished() {
@@ -34,14 +46,6 @@ public class AbstractThread extends BaseLineItem implements ConversationThread {
 
 	public Long getId() {
 		return id;
-	}
-
-	public void setType(ThreadType type) {
-		this.type = type;
-	}
-
-	public ThreadType getType() {
-		return type;
 	}
 
 	public ThreadState getState() {
@@ -94,5 +98,24 @@ public class AbstractThread extends BaseLineItem implements ConversationThread {
 
 	public void setAttachments(List<Attachment> attachments) {
 		this.attachments = attachments;
+	}
+
+<<<<<<< /usr/src/app/output/helpscout/helpscout-api-java/7dde5bbe5d07ba446e8d8b7b942d378b40f2b5c3/src/main/java/net/helpscout/api/model/thread/AbstractThread.java/left.java
+	public String getType() {
+		return type;
+	}
+||||||| /usr/src/app/output/helpscout/helpscout-api-java/7dde5bbe5d07ba446e8d8b7b942d378b40f2b5c3/src/main/java/net/helpscout/api/model/thread/AbstractThread.java/base.java
+=======
+	public ThreadType getType() {
+		return type;
+	}
+>>>>>>> /usr/src/app/output/helpscout/helpscout-api-java/7dde5bbe5d07ba446e8d8b7b942d378b40f2b5c3/src/main/java/net/helpscout/api/model/thread/AbstractThread.java/right.java
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public void setType(ThreadType type) {
+		this.type = type;
 	}
 }

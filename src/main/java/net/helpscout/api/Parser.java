@@ -4,14 +4,13 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import net.helpscout.api.adapters.*;
-import net.helpscout.api.cbo.*;
 import net.helpscout.api.model.Conversation;
 import net.helpscout.api.model.Customer;
 import net.helpscout.api.model.ref.PersonRef;
 import net.helpscout.api.model.thread.LineItem;
-
 import java.util.Date;
-
+import net.helpscout.api.cbo.*;
+import java.util.Calendar;
 
 public final class Parser {
 	private final GsonBuilder builder;

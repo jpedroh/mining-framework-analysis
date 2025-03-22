@@ -55,6 +55,10 @@ public class Conversation {
 		this.type = type;
 	}
 
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	public Long getFolderId() {
 		return folderId;
 	}

@@ -21,6 +21,7 @@ public class PersonRefAdapter implements JsonDeserializer<PersonRef> {
 
 		JsonElement element = JsonThreadLocal.get();
 		String type = element.getAsJsonObject().get("type").getAsString();
+
 		if (type != null) {
 			PersonType personType = PersonType.findByLabel(type.trim());
 			if (personType == PersonType.Customer) {

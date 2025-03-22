@@ -1,11 +1,10 @@
 package net.helpscout.api.adapters;
 
 import com.google.gson.*;
-import net.helpscout.api.cbo.ThreadState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.lang.reflect.Type;
+import net.helpscout.api.cbo.ThreadState;
 
 public class ThreadStateAdapter implements JsonDeserializer<ThreadState>, JsonSerializer<ThreadState> {
 

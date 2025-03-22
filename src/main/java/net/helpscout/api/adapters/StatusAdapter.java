@@ -1,9 +1,8 @@
 package net.helpscout.api.adapters;
 
 import com.google.gson.*;
-import net.helpscout.api.cbo.Status;
-
 import java.lang.reflect.Type;
+import net.helpscout.api.cbo.Status;
 
 public class StatusAdapter implements JsonDeserializer<Status>, JsonSerializer<Status> {
 

@@ -1,9 +1,10 @@
 package net.helpscout.api;
 
-import net.helpscout.api.adapters.*;
-import net.helpscout.api.model.Mailbox;
-
 import com.google.gson.*;
+import net.helpscout.api.adapters.PersonTypeAdapter;
+import net.helpscout.api.adapters.StatusAdapter;
+import net.helpscout.api.adapters.ThreadStateAdapter;
+import net.helpscout.api.adapters.ThreadsAdapater;
 import net.helpscout.api.cbo.PersonType;
 import net.helpscout.api.cbo.Status;
 import net.helpscout.api.cbo.ThreadState;
@@ -16,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
-
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -28,13 +28,17 @@ import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 public class ApiClient {
 
 	final static Logger log = LoggerFactory.getLogger(ApiClient.class);
 
-	private final static String BASE_URL = "https://api.helpscout.net/v1/";
-	// private final static String BASE_URL = "http://localhost:9000/v1/";
+	// private final static String BASE_URL = "https://api.helpscout.net/v1/";
+	private final static String BASE_URL = "http://localhost:9000/v1/";
 	private final static String METHOD_GET = "GET";
 	private final static String METHOD_POST = "POST";
 	private final static String METHOD_PUT = "PUT";
@@ -228,8 +232,7 @@ public class ApiClient {
 		GsonBuilder builder = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
 				.registerTypeAdapter(ThreadState.class, new ThreadStateAdapter())
 				.registerTypeAdapter(Status.class, new StatusAdapter())
-				.registerTypeAdapter(PersonType.class, new PersonTypeAdapter())
-				.registerTypeAdapter(ThreadType.class, new ThreadTypeAdapter());
+				.registerTypeAdapter(PersonType.class, new PersonTypeAdapter());
 		builder.registerTypeAdapter(LineItem.class, new ThreadsAdapater(builder));
 
 		String json = builder.create().toJson(conversation);
@@ -275,33 +278,38 @@ public class ApiClient {
 
 		// Set the type of thread
 		if (theThread.getClass().isAssignableFrom(BaseLineItem.class)) {
-			thread.setType(ThreadType.LineItem);
+			thread.setType(ThreadType.LineItem.getLabel());
 		} else if (theThread.getClass().isAssignableFrom(Message.class)) {
-			thread.setType(ThreadType.Message);
+			thread.setType(ThreadType.Message.getLabel());
 		} else if (theThread.getClass().isAssignableFrom(Note.class)) {
-			thread.setType(ThreadType.Note);
+			thread.setType(ThreadType.Note.getLabel());
 		} else if (theThread.getClass().isAssignableFrom(Customer.class)) {
-			thread.setType(ThreadType.Customer);
+			thread.setType(ThreadType.Customer.getLabel());
 		} else if (theThread.getClass().isAssignableFrom(ForwardParent.class)) {
-			thread.setType(ThreadType.ForwardParent);
+			thread.setType(ThreadType.ForwardParent.getLabel());
 		} else if (theThread.getClass().isAssignableFrom(ForwardChild.class)) {
-			thread.setType(ThreadType.ForwardChild);
+			thread.setType(ThreadType.ForwardChild.getLabel());
 		} else if (theThread.getClass().isAssignableFrom(Chat.class)) {
-			thread.setType(ThreadType.Chat);
+			thread.setType(ThreadType.Chat.getLabel());
 		}
 	}
 
 	private String setFields(String url, List<String> fields) {
 		if (fields != null && fields.size() > 0) {
 			StringBuilder sb = new StringBuilder();
-			sb.append(url);
+<<<<<<< /usr/src/app/output/helpscout/helpscout-api-java/7dde5bbe5d07ba446e8d8b7b942d378b40f2b5c3/src/main/java/net/helpscout/api/ApiClient.java/left.java
+			sb.append(url).append(url);
+||||||| /usr/src/app/output/helpscout/helpscout-api-java/7dde5bbe5d07ba446e8d8b7b942d378b40f2b5c3/src/main/java/net/helpscout/api/ApiClient.java/base.java
+			sb.append(url).append(url + "?fields=");
+=======
+			sb.append(url).append("?fields=");
+>>>>>>> /usr/src/app/output/helpscout/helpscout-api-java/7dde5bbe5d07ba446e8d8b7b942d378b40f2b5c3/src/main/java/net/helpscout/api/ApiClient.java/right.java
 			if (url.indexOf("?") > 0) {
 				sb.append("&");
 			} else {
 				sb.append("?");
 			}
 			sb.append("fields=");
-
 		    String sep = "";
 			for (String field : fields) {
 				sb.append(sep).append(field);
@@ -391,8 +399,8 @@ public class ApiClient {
 
 	private ArrayList<Object> getPageItems(JsonElement elem, Class<?> clazzType) {
 		Gson gson = new Gson();
-
 		JsonArray ar = elem.getAsJsonArray();
+
 		ArrayList<Object> col = new ArrayList<Object>(ar.size());
 		for(JsonElement e : ar) {
 			try {
