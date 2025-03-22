@@ -1,16 +1,13 @@
 package org.telegram.abilitybots.api.objects;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.objects.Update;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
@@ -38,36 +35,38 @@ public final class Ability {
   private static final Logger log = LoggerFactory.getLogger(Ability.class);
 
   private final String name;
+
   private final String info;
+
   private final Locality locality;
+
   private final Privacy privacy;
+
   private final int argNum;
+
   private final Consumer<MessageContext> action;
+
   private final Consumer<MessageContext> postAction;
+
   private final List<Reply> replies;
+
   private final List<Predicate<Update>> flags;
 
-  @SafeVarargs
-  private Ability(String name, String info, Locality locality, Privacy privacy, int argNum, Consumer<MessageContext> action, Consumer<MessageContext> postAction, List<Reply> replies, Predicate<Update>... flags) {
+  @SafeVarargs private Ability(String name, String info, Locality locality, Privacy privacy, int argNum, Consumer<MessageContext> action, Consumer<MessageContext> postAction, List<Reply> replies, Predicate<Update>... flags) {
     checkArgument(!isEmpty(name), "Method name cannot be empty");
     checkArgument(!containsWhitespace(name), "Method name cannot contain spaces");
     checkArgument(isAlphanumeric(name), "Method name can only be alpha-numeric", name);
     this.name = name;
     this.info = info;
-
     this.locality = checkNotNull(locality, "Please specify a valid locality setting. Use the Locality enum class");
     this.privacy = checkNotNull(privacy, "Please specify a valid privacy setting. Use the Privacy enum class");
-
-    checkArgument(argNum >= 0, "The number of arguments the method can handle CANNOT be negative. " +
-        "Use the number 0 if the method ignores the arguments OR uses as many as appended");
+    checkArgument(argNum >= 0, "The number of arguments the method can handle CANNOT be negative. " + "Use the number 0 if the method ignores the arguments OR uses as many as appended");
     this.argNum = argNum;
-
-    this.action = checkNotNull(action, "Method action can't be empty. Please assign a function by using .action() method");
-    if (postAction == null)
+    this.action = checkNotNull(action, "Method action can\'t be empty. Please assign a function by using .action() method");
+    if (postAction == null) {
       log.info(format("No post action was detected for method with name [%s]", name));
-
+    }
     this.flags = ofNullable(flags).map(Arrays::asList).orElse(newArrayList());
-
     this.postAction = postAction;
     this.replies = replies;
   }
@@ -112,44 +111,42 @@ public final class Ability {
     return flags;
   }
 
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("name", name)
-        .add("locality", locality)
-        .add("privacy", privacy)
-        .add("argNum", argNum)
-        .toString();
+  @Override public String toString() {
+    return MoreObjects.toStringHelper(this).add("name", name).add("locality", locality).add("privacy", privacy).add("argNum", argNum).toString();
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o)
+  @Override public boolean equals(Object o) {
+    if (this == o) {
       return true;
-    if (o == null || getClass() != o.getClass())
+    }
+    if (o == null || getClass() != o.getClass()) {
       return false;
-
+    }
     Ability ability = (Ability) o;
-    return argNum == ability.argNum &&
-        Objects.equal(name, ability.name) &&
-        locality == ability.locality &&
-        privacy == ability.privacy;
+    return argNum == ability.argNum && Objects.equal(name, ability.name) && locality == ability.locality && privacy == ability.privacy;
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return hash(name, info, locality, privacy, argNum, action, postAction, replies, flags);
   }
 
   public static class AbilityBuilder {
     private String name;
+
     private String info;
+
     private Privacy privacy;
+
     private Locality locality;
+
     private int argNum;
+
     private Consumer<MessageContext> action;
+
     private Consumer<MessageContext> postAction;
+
     private List<Reply> replies;
+
     private Predicate<Update>[] flags;
 
     private AbilityBuilder() {
@@ -196,8 +193,7 @@ public final class Ability {
       return this;
     }
 
-    @SafeVarargs
-    public final AbilityBuilder reply(Consumer<Update> action, Predicate<Update>... conditions) {
+    @SafeVarargs public final AbilityBuilder reply(Consumer<Update> action, Predicate<Update>... conditions) {
       replies.add(Reply.of(action, conditions));
       return this;
     }
@@ -205,14 +201,7 @@ public final class Ability {
     public AbilityBuilder basedOn(Ability ability) {
       replies.clear();
       replies.addAll(ability.replies());
-
-      return name(ability.name())
-          .info(ability.info())
-          .input(ability.tokens())
-          .locality(ability.locality())
-          .privacy(ability.privacy())
-          .action(ability.action())
-          .post(ability.postAction());
+      return name(ability.name()).info(ability.info()).input(ability.tokens()).locality(ability.locality()).privacy(ability.privacy()).action(ability.action()).post(ability.postAction());
     }
 
     public Ability build() {

@@ -1,5 +1,4 @@
 package org.telegram.abilitybots.api.sender;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -8,10 +7,8 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.updateshandlers.SentCallback;
-
 import java.io.Serializable;
 import java.util.Optional;
-
 
 /**
  * A silent sender that returns {@link Optional} objects upon execution. Mainly used to decrease verboseness of exception handling.
@@ -40,7 +37,6 @@ public class SilentSender {
     msg.setText(message);
     msg.setChatId(id);
     msg.setReplyMarkup(new ForceReplyKeyboard());
-
     return execute(msg);
   }
 
@@ -53,8 +49,7 @@ public class SilentSender {
     }
   }
 
-  public <T extends Serializable, Method extends BotApiMethod<T>, Callback extends SentCallback<T>> void
-  executeAsync(Method method, Callback callable) {
+  public <T extends Serializable, Method extends BotApiMethod<T>, Callback extends SentCallback<T>> void executeAsync(Method method, Callback callable) {
     try {
       sender.executeAsync(method, callable);
     } catch (TelegramApiException e) {
@@ -67,7 +62,6 @@ public class SilentSender {
     smsg.setChatId(groupId);
     smsg.setText(txt);
     smsg.enableMarkdown(format);
-
     return execute(smsg);
   }
 }
