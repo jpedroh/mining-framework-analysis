@@ -32,35 +32,28 @@ class ConnectionBuilder {
     private ClientOptions clientOptions;
     private long timeout;
     private TimeUnit timeUnit;
-
     public static ConnectionBuilder connectionBuilder() {
         return new ConnectionBuilder();
     }
-
     public ConnectionBuilder socketAddressSupplier(Supplier<SocketAddress> socketAddressSupplier) {
         this.socketAddressSupplier = socketAddressSupplier;
         return this;
     }
-
     public SocketAddress socketAddress() {
         checkState(socketAddressSupplier != null, "socketAddressSupplier must be set");
         return socketAddressSupplier.get();
     }
-
     public ConnectionBuilder timeout(long timeout, TimeUnit timeUnit) {
         this.timeout = timeout;
         this.timeUnit = timeUnit;
         return this;
     }
-
     public long getTimeout() {
         return timeout;
     }
-
     public TimeUnit getTimeUnit() {
         return timeUnit;
     }
-
     public ConnectionBuilder clientOptions(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
         return this;
@@ -112,6 +105,8 @@ class ConnectionBuilder {
             watchdog.setListenOnChannelInactive(true);
             handlers.add(watchdog);
         }
+
+        connection.setOptions(clientOptions);
 
         connection.setOptions(clientOptions);
 

@@ -9,7 +9,6 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -17,7 +16,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.test.util.ReflectionTestUtils;
-
 import com.google.code.tempusfugit.temporal.Condition;
 import com.google.code.tempusfugit.temporal.Timeout;
 import com.lambdaworks.redis.protocol.CommandHandler;
@@ -63,6 +61,7 @@ public class ClientTest extends AbstractCommandTest {
 
     }
 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/87175a19f93a6dc32e03b21d18b2db1c3e79f36a/src/test/java/com/lambdaworks/redis/ClientTest.java/left.java
     @Test
     public void disconnectedConnectionWithoutReconnect() throws Exception {
 
@@ -85,6 +84,24 @@ public class ClientTest extends AbstractCommandTest {
             connection.close();
         }
     }
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/87175a19f93a6dc32e03b21d18b2db1c3e79f36a/src/test/java/com/lambdaworks/redis/ClientTest.java/base.java
+=======
+    @Test(expected = RedisException.class)
+    public void disconnectedConnectionWithoutReconnect() throws Exception {
+
+        client.setOptions(new ClientOptions.Builder().autoReconnect(false).build());
+
+        RedisConnection<String, String> connection = client.connect();
+
+        connection.quit();
+        Thread.sleep(500);
+        try {
+            System.out.println(connection.get(key));
+        } finally {
+            connection.close();
+        }
+    }
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/87175a19f93a6dc32e03b21d18b2db1c3e79f36a/src/test/java/com/lambdaworks/redis/ClientTest.java/right.java
 
     @Test(expected = RedisConnectionException.class)
     public void pingBeforeConnectFailsWithVeryShortTimeout() throws Exception {
@@ -102,6 +119,7 @@ public class ClientTest extends AbstractCommandTest {
      * 
      * @throws Exception
      */
+
     @Test(timeout = 10000)
     public void pingBeforeConnectFails() throws Exception {
 
@@ -130,6 +148,7 @@ public class ClientTest extends AbstractCommandTest {
      * 
      * @throws Exception
      */
+
     @Test(timeout = 10000)
     public void pingBeforeConnectFailOnReconnect() throws Exception {
 
@@ -190,6 +209,7 @@ public class ClientTest extends AbstractCommandTest {
      * 
      * @throws Exception
      */
+
     @Test
     public void cancelCommandsOnReconnectFailure() throws Exception {
 
