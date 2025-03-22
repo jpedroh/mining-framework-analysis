@@ -19,6 +19,7 @@ package net.tridentsdk.meta;
 import net.tridentsdk.meta.nbt.TagCompound;
 
 import javax.annotation.Nullable;
+
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
@@ -29,20 +30,15 @@ import javax.annotation.concurrent.ThreadSafe;
  * @author TridentSDK
  * @since 0.5-alpha
  */
+// TODO
 @ThreadSafe
 public class ItemMeta {
-    /**
-     * The NBT data which contains modifications made to
-     * this item.
-     */
-    private final TagCompound nbt = new TagCompound();
-
-    /**
-     * Obtains the NBT data of this particular item.
-     *
-     * @return the NBT data, or {@code null} if the item was
-     * not modified
-     */
+<<<<<<< /usr/src/app/output/tridentsdk/tridentsdk/5f8547d9368c73ccbc2ba422b1efa3775af4ac61/src/main/java/net/tridentsdk/meta/ItemMeta.java/left.java
+    public TagCompound toNbt() {
+        return null;
+    }
+||||||| /usr/src/app/output/tridentsdk/tridentsdk/5f8547d9368c73ccbc2ba422b1efa3775af4ac61/src/main/java/net/tridentsdk/meta/ItemMeta.java/base.java
+=======
     @Nullable
     public TagCompound toNbt() {
         if (this.nbt.isEmpty()) {
@@ -51,4 +47,16 @@ public class ItemMeta {
 
         return this.nbt;
     }
+>>>>>>> /usr/src/app/output/tridentsdk/tridentsdk/5f8547d9368c73ccbc2ba422b1efa3775af4ac61/src/main/java/net/tridentsdk/meta/ItemMeta.java/right.java
+    /**
+     * The NBT data which contains modifications made to
+     * this item.
+     */
+    private final TagCompound nbt = new TagCompound();
+    /**
+     * Obtains the NBT data of this particular item.
+     *
+     * @return the NBT data, or {@code null} if the item was
+     * not modified
+     */
 }
