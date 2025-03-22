@@ -1,45 +1,56 @@
 package com.xxl.job.core.biz;
-
 import com.xxl.job.core.biz.model.*;
 
 /**
  * Created by xuxueli on 17/3/1.
  */
 public interface ExecutorBiz {
-
-    /**
+  /**
      * beat
      * @return
      */
-    public ReturnT<String> beat();
+  public ReturnT<String> beat();
 
-    /**
+  /**
      * idle beat
      *
-     * @param idleBeatParam
+     * @param jobId
      * @return
      */
-    public ReturnT<String> idleBeat(IdleBeatParam idleBeatParam);
+  public ReturnT<String> idleBeat(
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/c5c9325aee1204646605eee5e7cb212a9eb97028/xxl-job-core/src/main/java/com/xxl/job/core/biz/ExecutorBiz.java/left.java
+  long jobId
+=======
+  IdleBeatParam idleBeatParam
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/c5c9325aee1204646605eee5e7cb212a9eb97028/xxl-job-core/src/main/java/com/xxl/job/core/biz/ExecutorBiz.java/right.java
+  );
 
-    /**
+  /**
+     * kill
+     * @param jobId
+     * @return
+     */
+  public ReturnT<String> kill(
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/c5c9325aee1204646605eee5e7cb212a9eb97028/xxl-job-core/src/main/java/com/xxl/job/core/biz/ExecutorBiz.java/left.java
+  long jobId
+=======
+  KillParam killParam
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/c5c9325aee1204646605eee5e7cb212a9eb97028/xxl-job-core/src/main/java/com/xxl/job/core/biz/ExecutorBiz.java/right.java
+  );
+
+  /**
      * run
      * @param triggerParam
      * @return
      */
-    public ReturnT<String> run(TriggerParam triggerParam);
+  public ReturnT<String> run(TriggerParam triggerParam);
 
-    /**
-     * kill
-     * @param killParam
-     * @return
-     */
-    public ReturnT<String> kill(KillParam killParam);
-
-    /**
+  /**
      * log
-     * @param logParam
+     * @param logDateTim
+     * @param logId
+     * @param fromLineNum
      * @return
      */
-    public ReturnT<LogResult> log(LogParam logParam);
-
+  public ReturnT<LogResult> log(LogParam logParam);
 }
