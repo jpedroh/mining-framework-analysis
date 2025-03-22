@@ -61,8 +61,6 @@ public final class ShardingNode {
     public static String getProcessingNode() {
         return PROCESSING;
     }
-
-
     /**
      * Get the path of instance node.
      *
