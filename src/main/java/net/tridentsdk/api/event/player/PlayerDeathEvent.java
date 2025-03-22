@@ -28,29 +28,44 @@
 package net.tridentsdk.api.event.player;
 
 import net.tridentsdk.api.entity.living.Player;
-import net.tridentsdk.api.event.Cancellable;
 import net.tridentsdk.api.event.entity.EntityDeathEvent;
 
 /**
  * Called when a Player dies
  */
+
+import net.tridentsdk.api.event.Cancellable;
+
 public class PlayerDeathEvent extends EntityDeathEvent implements Cancellable {
 
-    private Cause cause;
-
+<<<<<<< /usr/src/app/output/tridentsdk/tridentsdk/dc340947a28c96d0b5ea6ba459a24c63deebb5b2/src/main/java/net/tridentsdk/api/event/player/PlayerDeathEvent.java/left.java
+    private EntityDeathEvent.Cause cause;
+||||||| /usr/src/app/output/tridentsdk/tridentsdk/dc340947a28c96d0b5ea6ba459a24c63deebb5b2/src/main/java/net/tridentsdk/api/event/player/PlayerDeathEvent.java/base.java
+    /**
+     * TODO add cause of death
+     *
+     * @param player the player associated with this event (that died)
+     */
+=======
     /**
      * @param player the player associated with this event (that died)
      */
+>>>>>>> /usr/src/app/output/tridentsdk/tridentsdk/dc340947a28c96d0b5ea6ba459a24c63deebb5b2/src/main/java/net/tridentsdk/api/event/player/PlayerDeathEvent.java/right.java
+
     public PlayerDeathEvent(Player player, EntityDeathEvent.Cause cause) {
         super(player);
+<<<<<<< /usr/src/app/output/tridentsdk/tridentsdk/dc340947a28c96d0b5ea6ba459a24c63deebb5b2/src/main/java/net/tridentsdk/api/event/player/PlayerDeathEvent.java/left.java
         this.cause = cause;
     }
 
     public EntityDeathEvent.Cause getCause() {
         return cause;
+||||||| /usr/src/app/output/tridentsdk/tridentsdk/dc340947a28c96d0b5ea6ba459a24c63deebb5b2/src/main/java/net/tridentsdk/api/event/player/PlayerDeathEvent.java/base.java
+=======
     }
 
     public Player getPlayer() {
         return (Player) super.getEntity();
+>>>>>>> /usr/src/app/output/tridentsdk/tridentsdk/dc340947a28c96d0b5ea6ba459a24c63deebb5b2/src/main/java/net/tridentsdk/api/event/player/PlayerDeathEvent.java/right.java
     }
 }
