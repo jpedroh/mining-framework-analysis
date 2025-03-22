@@ -23,15 +23,12 @@
  */
 
 package com.github.pagehelper.dialect.helper;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.dialect.AbstractHelperDialect;
 import com.github.pagehelper.util.MetaObjectUtil;
