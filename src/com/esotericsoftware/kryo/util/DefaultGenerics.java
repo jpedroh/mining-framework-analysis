@@ -37,8 +37,14 @@ public final class DefaultGenerics extends BaseGenerics {
 
 	@Override
 	public int pushTypeVariables (GenericsHierarchy hierarchy, GenericType[] args) {
+<<<<<<< /usr/src/app/output/esotericsoftware/kryo/bf687ac542e07549103cf47fd5f5087c118a068e/src/com/esotericsoftware/kryo/util/DefaultGenerics.java/left.java
+		// Do not store type variables if hierarchy is empty, or we do not have arguments for all root parameters.
+||||||| /usr/src/app/output/esotericsoftware/kryo/bf687ac542e07549103cf47fd5f5087c118a068e/src/com/esotericsoftware/kryo/util/DefaultGenerics.java/base.java
+		// Do not store type variables if hierarchy is empty or we do not have arguments for all root parameters.
+=======
 		// Do not store type variables if hierarchy is empty, or we do not have arguments for all root parameters, or we have more
 		// arguments than the hierarchy has parameters.
+>>>>>>> /usr/src/app/output/esotericsoftware/kryo/bf687ac542e07549103cf47fd5f5087c118a068e/src/com/esotericsoftware/kryo/util/DefaultGenerics.java/right.java
 		if (hierarchy.total == 0 || hierarchy.rootTotal > args.length || args.length > hierarchy.counts.length) return 0;
 
 		int startSize = this.argumentsSize;
