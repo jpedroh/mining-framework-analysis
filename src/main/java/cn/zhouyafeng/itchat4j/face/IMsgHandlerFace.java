@@ -1,5 +1,4 @@
 package cn.zhouyafeng.itchat4j.face;
-
 import cn.zhouyafeng.itchat4j.beans.BaseMsg;
 
 /**
@@ -11,16 +10,16 @@ import cn.zhouyafeng.itchat4j.beans.BaseMsg;
  *
  */
 public interface IMsgHandlerFace {
-	/**
+  /**
 	 * 
 	 * @author https://github.com/yaphone
 	 * @date 2017年4月20日 上午12:15:00
 	 * @param msg
 	 * @return
 	 */
-	public String textMsgHandle(BaseMsg msg);
+  public String textMsgHandle(BaseMsg msg);
 
-	/**
+  /**
 	 * 处理图片消息
 	 * 
 	 * @author https://github.com/yaphone
@@ -28,9 +27,9 @@ public interface IMsgHandlerFace {
 	 * @param msg
 	 * @return
 	 */
-	public String picMsgHandle(BaseMsg msg);
+  public String picMsgHandle(BaseMsg msg);
 
-	/**
+  /**
 	 * 处理声音消息
 	 * 
 	 * @author https://github.com/yaphone
@@ -38,9 +37,9 @@ public interface IMsgHandlerFace {
 	 * @param msg
 	 * @return
 	 */
-	public String voiceMsgHandle(BaseMsg msg);
+  public String voiceMsgHandle(BaseMsg msg);
 
-	/**
+  /**
 	 * 处理小视频消息
 	 * 
 	 * @author https://github.com/yaphone
@@ -48,9 +47,9 @@ public interface IMsgHandlerFace {
 	 * @param msg
 	 * @return
 	 */
-	public String viedoMsgHandle(BaseMsg msg);
+  public String viedoMsgHandle(BaseMsg msg);
 
-	/**
+  /**
 	 * 处理名片消息
 	 * 
 	 * @author https://github.com/yaphone
@@ -58,9 +57,9 @@ public interface IMsgHandlerFace {
 	 * @param msg
 	 * @return
 	 */
-	public String nameCardMsgHandle(BaseMsg msg);
+  public String nameCardMsgHandle(BaseMsg msg);
 
-	/**
+  /**
 	 * 处理系统消息
 	 * 
 	 * @author Relyn
@@ -68,15 +67,14 @@ public interface IMsgHandlerFace {
 	 * @param msg
 	 * @return
 	 */
-	public void sysMsgHandle(BaseMsg msg);
+  public void sysMsgHandle(BaseMsg msg);
 
-	/**
+  /**
 	 * 处理确认添加好友消息
 	 * 
 	 * @date 2017年6月28日 下午10:15:30
 	 * @param msg
 	 * @return
 	 */
-	public String verifyAddFriendMsgHandle(BaseMsg msg);
-
+  public String verifyAddFriendMsgHandle(JSONObject msg);
 }

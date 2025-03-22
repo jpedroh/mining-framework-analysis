@@ -1,18 +1,11 @@
 package cn.zhouyafeng.itchat4j.demo.demo1;
-
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import org.apache.log4j.Logger;
-
 import com.alibaba.fastjson.JSON;
-
 import cn.zhouyafeng.itchat4j.api.MessageTools;
-import cn.zhouyafeng.itchat4j.api.WechatTools;
 import cn.zhouyafeng.itchat4j.beans.BaseMsg;
-import cn.zhouyafeng.itchat4j.beans.RecommendInfo;
-import cn.zhouyafeng.itchat4j.core.Core;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
 import cn.zhouyafeng.itchat4j.utils.tools.DownloadTools;
@@ -26,83 +19,59 @@ import cn.zhouyafeng.itchat4j.utils.tools.DownloadTools;
  *
  */
 public class SimpleDemo implements IMsgHandlerFace {
-	Logger LOG = Logger.getLogger(SimpleDemo.class);
+  Logger LOG = Logger.getLogger(SimpleDemo.class);
 
-	@Override
-	public String textMsgHandle(BaseMsg msg) {
-		LOG.info(JSON.toJSON(msg));
-		// String docFilePath = "D:/itchat4j/pic/1.jpg"; // 这里是需要发送的文件的路径
-		if (!msg.isGroupMsg()) { // 群消息不处理
-			// String userId = msg.getString("FromUserName");
-			// MessageTools.sendFileMsgByUserId(userId, docFilePath); // 发送文件
-			// MessageTools.sendPicMsgByUserId(userId, docFilePath);
-			String text = msg.getText(); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
-			LOG.info(text);
-			if (text.equals("111")) {
-				WechatTools.logout();
-			}
-			if (text.equals("222")) {
-				WechatTools.remarkNameByNickName("yaphone", "Hello");
-			}
-			if (text.equals("333")) { // 测试群列表
-				System.out.print(WechatTools.getGroupNickNameList());
-				System.out.print(WechatTools.getGroupIdList());
-				System.out.print(Core.getInstance().getGroupMemeberMap());
-			}
-			return text;
-		}
-		return null;
-	}
+  @Override public String textMsgHandle(BaseMsg msg) {
+    LOG.info(JSON.toJSON(msg));
+    if (!msg.isGroupMsg()) {
+      String text = msg.getText();
+      return text;
+    }
+    return null;
+  }
 
-	@Override
-	public String picMsgHandle(BaseMsg msg) {
-		LOG.info(JSON.toJSON(msg));
-		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());// 这里使用收到图片的时间作为文件名
-		String picPath = "D://itchat4j/pic" + File.separator + fileName + ".jpg"; // 调用此方法来保存图片
-		DownloadTools.getDownloadFn(msg, MsgTypeEnum.PIC.getType(), picPath); // 保存图片的路径
-		return "图片保存成功";
-	}
+  @Override public String picMsgHandle(BaseMsg msg) {
+    LOG.info(JSON.toJSON(msg));
+    String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+    String picPath = "D://itchat4j/pic" + File.separator + fileName + ".jpg";
+    DownloadTools.getDownloadFn(msg, MsgTypeEnum.PIC.getType(), picPath);
+    return "\u56fe\u7247\u4fdd\u5b58\u6210\u529f";
+  }
 
-	@Override
-	public String voiceMsgHandle(BaseMsg msg) {
-		LOG.info(JSON.toJSON(msg));
-		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
-		String voicePath = "D://itchat4j/voice" + File.separator + fileName + ".mp3";
-		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VOICE.getType(), voicePath);
-		return "声音保存成功";
-	}
+  @Override public String voiceMsgHandle(BaseMsg msg) {
+    LOG.info(JSON.toJSON(msg));
+    String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+    String voicePath = "D://itchat4j/voice" + File.separator + fileName + ".mp3";
+    DownloadTools.getDownloadFn(msg, MsgTypeEnum.VOICE.getType(), voicePath);
+    return "\u58f0\u97f3\u4fdd\u5b58\u6210\u529f";
+  }
 
-	@Override
-	public String viedoMsgHandle(BaseMsg msg) {
-		LOG.info(JSON.toJSON(msg));
-		String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
-		String viedoPath = "D://itchat4j/viedo" + File.separator + fileName + ".mp4";
-		DownloadTools.getDownloadFn(msg, MsgTypeEnum.VIEDO.getType(), viedoPath);
-		return "视频保存成功";
-	}
+  @Override public String viedoMsgHandle(BaseMsg msg) {
+    LOG.info(JSON.toJSON(msg));
+    String fileName = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+    String viedoPath = "D://itchat4j/viedo" + File.separator + fileName + ".mp4";
+    DownloadTools.getDownloadFn(msg, MsgTypeEnum.VIEDO.getType(), viedoPath);
+    return "\u89c6\u9891\u4fdd\u5b58\u6210\u529f";
+  }
 
-	@Override
-	public String nameCardMsgHandle(BaseMsg msg) {
-		LOG.info(JSON.toJSON(msg));
-		return "收到名片消息";
-	}
+  @Override public String nameCardMsgHandle(BaseMsg msg) {
+    LOG.info(JSON.toJSON(msg));
+    return "\u6536\u5230\u540d\u7247\u6d88\u606f";
+  }
 
-	@Override
-	public void sysMsgHandle(BaseMsg msg) { // 收到系统消息
-		LOG.info(JSON.toJSON(msg));
-		String text = msg.getContent();
-		LOG.info(text);
-	}
+  @Override public void sysMsgHandle(BaseMsg msg) {
+    LOG.info(JSON.toJSON(msg));
+    String text = msg.getContent();
+    LOG.info(text);
+  }
 
-	@Override
-	public String verifyAddFriendMsgHandle(BaseMsg msg) {
-		MessageTools.addFriend(msg, true); // 同意好友请求，false为不接受好友请求
-		RecommendInfo recommendInfo = msg.getRecommendInfo();
-		String nickName = recommendInfo.getNickName();
-		String province = recommendInfo.getProvince();
-		String city = recommendInfo.getCity();
-		String text = "你好，来自" + province + city + "的" + nickName + "， 欢迎添加我为好友！";
-		return text;
-	}
-
+  @Override public String verifyAddFriendMsgHandle(JSONObject msg) {
+    MessageTools.addFriend(msg, true);
+    JSONObject recommendInfo = msg.getJSONObject("RecommendInfo");
+    String nickName = recommendInfo.getString("NickName");
+    String province = recommendInfo.getString("Province");
+    String city = recommendInfo.getString("City");
+    String text = "\u4f60\u597d\uff0c\u6765\u81ea" + province + city + "\u7684" + nickName + "\uff0c \u6b22\u8fce\u6dfb\u52a0\u6211\u4e3a\u597d\u53cb\uff01";
+    return text;
+  }
 }
