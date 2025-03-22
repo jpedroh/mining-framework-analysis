@@ -52,7 +52,7 @@ public final class ZookeeperRegistryCenterWatchTest {
         zkRegCenter.close();
     }
 
-    @Test(timeout = 10000L)
+    @Test(timeout = 30000L)
     public void assertWatchWithoutExecutor() throws InterruptedException {
         CountDownLatch waitingForCountDownValue = new CountDownLatch(1);
         zkRegCenter.addCacheData("/test");
@@ -68,7 +68,7 @@ public final class ZookeeperRegistryCenterWatchTest {
         waitingForCountDownValue.await();
     }
     
-    @Test(timeout = 30000L)
+    @Test(timeout = 10000L)
     public void assertWatchWithExecutor() throws InterruptedException {
         CountDownLatch waitingForCountDownValue = new CountDownLatch(1);
         zkRegCenter.addCacheData("/test");
