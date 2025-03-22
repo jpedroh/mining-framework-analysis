@@ -1,222 +1,239 @@
 package org.dynjs;
-
 import org.dynjs.cli.Options;
 import org.dynjs.runtime.Classpath;
 import org.dynjs.runtime.DynamicClassLoader;
-
 import java.io.PrintStream;
 import java.util.Locale;
 import java.util.TimeZone;
 
 public class Config {
+  public static enum CompileMode {
+    OFF,
+    FORCE,
+    JIT,
+    IR
+  }
+
+  public static enum KernelMode {
+    INTERNAL,
+    EXTERNAL
+  }
+
+  public static final String DEFAULT_BASE_PACKAGE = "org.dynjs.gen";
+
+  private boolean debug = false;
+
+  private final DynamicClassLoader classLoader;
 
 
-    public static enum CompileMode {
-        OFF,
-        FORCE,
-        JIT,
-        IR;
-    }
+<<<<<<< /usr/src/app/output/dynjs/dynjs/2c3aed23807abb8b7cde4101d94d8fb693b13be2/src/main/java/org/dynjs/Config.java/left.java
+  private boolean sandbox = false;
+=======
+  private String exposeDebugAs;
+>>>>>>> /usr/src/app/output/dynjs/dynjs/2c3aed23807abb8b7cde4101d94d8fb693b13be2/src/main/java/org/dynjs/Config.java/right.java
 
-    public static enum KernelMode {
-        INTERNAL,
-        EXTERNAL;
-    }
 
-    public static final String DEFAULT_BASE_PACKAGE = "org.dynjs.gen";
+  private Clock clock = SystemClock.INSTANCE;
 
-    private boolean debug = false;
-    private String exposeDebugAs;
+  private TimeZone timeZone = TimeZone.getDefault();
 
-    private final DynamicClassLoader classLoader;
-    private Clock clock = SystemClock.INSTANCE;
-    private TimeZone timeZone = TimeZone.getDefault();
-    private Locale locale = Locale.getDefault();
-    private PrintStream outputStream = System.out;
-    private PrintStream errorStream = System.err;
-    private String basePackage = DEFAULT_BASE_PACKAGE;
-    private boolean invokeDynamicEnabled = Options.INVOKEDYNAMIC.load();
-    private boolean commonJSCompatible = Options.COMPATIBILITY_COMMONJS.load();
-    private boolean rhinoCompatible = Options.COMPATIBILITY_RHINO.load();
-    private CompileMode compileMode = Options.CLI_COMPILE_MODE.load();
-    private KernelMode kernelMode = Options.CLI_KERNEL_MODE.load();
-    private Integer jitThreshold = Options.JIT_TRESHOLD.load();
-    private boolean jitEnabled = Options.JIT.load();
-    private boolean jitAsync = Options.JIT_ASYNC.load();
-    private boolean v8Compatible = Options.COMPATIBILITY_V8.load();
-    private boolean sandbox = false;
+  private Locale locale = Locale.getDefault();
 
-    private final Classpath classpath;
+  private PrintStream outputStream = System.out;
 
-    public Classpath getClasspath() {
-        return classpath;
-    }
+  private PrintStream errorStream = System.err;
 
-    private Object[] argv;
+  private String basePackage = DEFAULT_BASE_PACKAGE;
 
-    public Config() {
-        this.classLoader = new DynamicClassLoader();
-        this.classpath = new Classpath(this.classLoader);
-    }
+  private boolean invokeDynamicEnabled = Options.INVOKEDYNAMIC.load();
 
-    public Config(ClassLoader parentClassLoader) {
-        this.classLoader = new DynamicClassLoader(parentClassLoader);
-        this.classpath = new Classpath(this.classLoader);
-    }
+  private boolean commonJSCompatible = Options.COMPATIBILITY_COMMONJS.load();
 
-    private void setRhinoCompatible(boolean rhinoCompatible) {
-        this.rhinoCompatible = rhinoCompatible;
-    }
+  private boolean rhinoCompatible = Options.COMPATIBILITY_RHINO.load();
 
-    public boolean isRhinoCompatible() {
-        return this.rhinoCompatible;
-    }
+  private CompileMode compileMode = Options.CLI_COMPILE_MODE.load();
 
-    public void setInvokeDynamicEnabled(boolean enabled) {
-        this.invokeDynamicEnabled = enabled;
-    }
+  private KernelMode kernelMode = Options.CLI_KERNEL_MODE.load();
 
-    public boolean isInvokeDynamicEnabled() {
-        return this.invokeDynamicEnabled;
-    }
+  private Integer jitThreshold = Options.JIT_TRESHOLD.load();
 
-    public void setCompileMode(CompileMode compileMode) {
-        this.compileMode = compileMode;
-    }
+  private boolean jitEnabled = Options.JIT.load();
 
-    public CompileMode getCompileMode() {
-        return this.compileMode;
-    }
+  private boolean jitAsync = Options.JIT_ASYNC.load();
 
-    public KernelMode getKernelMode() {
-        return kernelMode;
-    }
+  private boolean v8Compatible = Options.COMPATIBILITY_V8.load();
 
-    public void setKernelMode(KernelMode kernelMode) {
-        this.kernelMode = kernelMode;
-    }
+  private final Classpath classpath;
 
-    public Integer getJitThreshold() {
-        return jitThreshold;
-    }
+  public Classpath getClasspath() {
+    return classpath;
+  }
 
-    public boolean isJitEnabled() {
-        return jitEnabled;
-    }
+  private Object[] argv;
 
-    public boolean isJitAsync() {
-        return jitAsync;
-    }
+  public Config() {
+    this.classLoader = new DynamicClassLoader();
+    this.classpath = new Classpath(this.classLoader);
+  }
 
-    public void setJitAsync(boolean jitAsync) {
-        this.jitAsync = jitAsync;
-    }
+  public Config(ClassLoader parentClassLoader) {
+    this.classLoader = new DynamicClassLoader(parentClassLoader);
+    this.classpath = new Classpath(this.classLoader);
+  }
 
-    public void setJitEnabled(boolean jitEnabled) {
-        this.jitEnabled = jitEnabled;
-    }
+  private void setRhinoCompatible(boolean rhinoCompatible) {
+    this.rhinoCompatible = rhinoCompatible;
+  }
 
-    public void setJitThreshold(Integer jitThreshold) {
-        this.jitThreshold = jitThreshold;
-    }
+  public boolean isRhinoCompatible() {
+    return this.rhinoCompatible;
+  }
 
-    public void setCommonJSCompatible(boolean enabled) {
-        this.commonJSCompatible = enabled;
-    }
+  public void setInvokeDynamicEnabled(boolean enabled) {
+    this.invokeDynamicEnabled = enabled;
+  }
 
-    public boolean isCommonJSCompatible() {
-        return this.commonJSCompatible;
-    }
+  public boolean isInvokeDynamicEnabled() {
+    return this.invokeDynamicEnabled;
+  }
 
-    public boolean isV8Compatible() {
-        return v8Compatible;
-    }
+  public void setCompileMode(CompileMode compileMode) {
+    this.compileMode = compileMode;
+  }
 
-    public void setV8Compatible(boolean v8Compatible) {
-        this.v8Compatible = v8Compatible;
-    }
+  public CompileMode getCompileMode() {
+    return this.compileMode;
+  }
 
-    public DynamicClassLoader getClassLoader() {
-        return this.classLoader;
-    }
+  public KernelMode getKernelMode() {
+    return kernelMode;
+  }
 
-    public void setClock(Clock clock) {
-        this.clock = clock;
-    }
+  public void setKernelMode(KernelMode kernelMode) {
+    this.kernelMode = kernelMode;
+  }
 
-    public Clock getClock() {
-        return this.clock;
-    }
+  public Integer getJitThreshold() {
+    return jitThreshold;
+  }
 
-    public void setTimeZone(TimeZone timeZone) {
-        this.timeZone = timeZone;
-    }
+  public boolean isJitEnabled() {
+    return jitEnabled;
+  }
 
-    public TimeZone getTimeZone() {
-        return this.timeZone;
-    }
+  public boolean isJitAsync() {
+    return jitAsync;
+  }
 
-    public void setLocale(Locale locale) {
-        this.locale = locale;
-    }
+  public void setJitAsync(boolean jitAsync) {
+    this.jitAsync = jitAsync;
+  }
 
-    public Locale getLocale() {
-        return this.locale;
-    }
+  public void setJitEnabled(boolean jitEnabled) {
+    this.jitEnabled = jitEnabled;
+  }
 
-    public void setBasePackage(String basePackage) {
-        this.basePackage = basePackage;
-    }
+  public void setJitThreshold(Integer jitThreshold) {
+    this.jitThreshold = jitThreshold;
+  }
 
-    public String getBasePackage() {
-        return this.basePackage;
-    }
+  public void setCommonJSCompatible(boolean enabled) {
+    this.commonJSCompatible = enabled;
+  }
 
-    public void setOutputStream(PrintStream outputStream) {
-        this.outputStream = outputStream;
-    }
+  public boolean isCommonJSCompatible() {
+    return this.commonJSCompatible;
+  }
 
-    public PrintStream getOutputStream() {
-        return this.outputStream;
-    }
+  public boolean isV8Compatible() {
+    return v8Compatible;
+  }
 
-    public void setErrorStream(PrintStream errorStream) {
-        this.errorStream = errorStream;
-    }
+  public void setV8Compatible(boolean v8Compatible) {
+    this.v8Compatible = v8Compatible;
+  }
 
-    public PrintStream getErrorStream() {
-        return this.errorStream;
-    }
+  public DynamicClassLoader getClassLoader() {
+    return this.classLoader;
+  }
 
-    public void setDebug(boolean debug) {
-        this.debug = debug;
-    }
+  public void setClock(Clock clock) {
+    this.clock = clock;
+  }
 
-    public boolean isDebug() {
-        return this.debug;
-    }
+  public Clock getClock() {
+    return this.clock;
+  }
 
-    public void setExposeDebugAs(String name) {
-        this.exposeDebugAs = name;
-    }
+  public void setTimeZone(TimeZone timeZone) {
+    this.timeZone = timeZone;
+  }
 
-    public String getExposeDebugAs() {
-        return this.exposeDebugAs;
-    }
+  public TimeZone getTimeZone() {
+    return this.timeZone;
+  }
 
-    public void setArgv(Object[] arguments) {
-        this.argv = arguments;
-    }
+  public void setLocale(Locale locale) {
+    this.locale = locale;
+  }
 
-    public Object[] getArgv() {
-        return this.argv;
-    }
+  public Locale getLocale() {
+    return this.locale;
+  }
 
-    public boolean isSandbox() {
-        return sandbox;
-    }
+  public void setBasePackage(String basePackage) {
+    this.basePackage = basePackage;
+  }
 
-    public void setSandbox(boolean sandbox) {
-        this.sandbox = sandbox;
-    }
+  public String getBasePackage() {
+    return this.basePackage;
+  }
+
+  public void setOutputStream(PrintStream outputStream) {
+    this.outputStream = outputStream;
+  }
+
+  public PrintStream getOutputStream() {
+    return this.outputStream;
+  }
+
+  public void setErrorStream(PrintStream errorStream) {
+    this.errorStream = errorStream;
+  }
+
+  public PrintStream getErrorStream() {
+    return this.errorStream;
+  }
+
+  public void setDebug(boolean debug) {
+    this.debug = debug;
+  }
+
+  public boolean isDebug() {
+    return this.debug;
+  }
+
+  public void setExposeDebugAs(String name) {
+    this.exposeDebugAs = name;
+  }
+
+  public String getExposeDebugAs() {
+    return this.exposeDebugAs;
+  }
+
+  public void setArgv(Object[] arguments) {
+    this.argv = arguments;
+  }
+
+  public Object[] getArgv() {
+    return this.argv;
+  }
+
+  public boolean isSandbox() {
+    return sandbox;
+  }
+
+  public void setSandbox(boolean sandbox) {
+    this.sandbox = sandbox;
+  }
 }
