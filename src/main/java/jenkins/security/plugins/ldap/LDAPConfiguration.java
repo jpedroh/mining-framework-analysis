@@ -431,10 +431,20 @@ public class LDAPConfiguration extends AbstractDescribableImpl<LDAPConfiguration
                 return FormValidation.ok();
             String url = LDAPSecurityRealm.toProviderUrl(server,rootDN);
 
-            Context ctx = null;
+<<<<<<< /usr/src/app/output/jenkinsci/ldap-plugin/eb623f5f7c3cdd91ba10dfd7382fe050fb16af02/src/main/java/jenkins/security/plugins/ldap/LDAPConfiguration.java/left.java
             try(SetContextClassLoader sccl = new SetContextClassLoader()) {
+                Hashtable<String,String> props = new Hashtable<String,String>();
+                if(managerDN!=null && managerDN.trim().length() > 0  && !"undefined".equals(managerDN)) {
+||||||| /usr/src/app/output/jenkinsci/ldap-plugin/eb623f5f7c3cdd91ba10dfd7382fe050fb16af02/src/main/java/jenkins/security/plugins/ldap/LDAPConfiguration.java/base.java
+            try {
+                Hashtable<String,String> props = new Hashtable<String,String>();
+                if(managerDN!=null && managerDN.trim().length() > 0  && !"undefined".equals(managerDN)) {
+=======
+            Context ctx = null;
+            try {
                 Hashtable<String,Object> props = new Hashtable<>();
                 if(StringUtils.isNotBlank(managerDN)  && !"undefined".equals(managerDN)) {
+>>>>>>> /usr/src/app/output/jenkinsci/ldap-plugin/eb623f5f7c3cdd91ba10dfd7382fe050fb16af02/src/main/java/jenkins/security/plugins/ldap/LDAPConfiguration.java/right.java
                     props.put(Context.SECURITY_PRINCIPAL,managerDN);
                 }
                 if(StringUtils.isNotBlank(managerPassword) && !"undefined".equals(managerPassword)) {
@@ -507,7 +517,7 @@ public class LDAPConfiguration extends AbstractDescribableImpl<LDAPConfiguration
      */
     private String inferRootDN(String server) {
         try(SetContextClassLoader sccl = new SetContextClassLoader()) {
-            Hashtable<String, String> props = new Hashtable<String, String>();
+            Hashtable<String, String> props = new Hashtable<>();
             String url = LDAPSecurityRealm.toProviderUrl(getServerUrl(), "");
             if (managerDN != null) {
                 props.put(Context.SECURITY_PRINCIPAL, managerDN);
@@ -632,12 +642,20 @@ public class LDAPConfiguration extends AbstractDescribableImpl<LDAPConfiguration
         }
         contextSource.setReferral("follow");
         Map<String, Object> vars = new HashMap<>();
-        vars.put("com.sun.jndi.ldap.connect.pool", "true");
-        vars.put("com.sun.jndi.ldap.connect.timeout", Integer.toString(CONNECT_TIMEOUT)); // timeout if no connection after 30 seconds
-        vars.put("com.sun.jndi.ldap.read.timeout", Integer.toString(READ_TIMEOUT)); // timeout if no response after 60 seconds
+<<<<<<< /usr/src/app/output/jenkinsci/ldap-plugin/eb623f5f7c3cdd91ba10dfd7382fe050fb16af02/src/main/java/jenkins/security/plugins/ldap/LDAPConfiguration.java/left.java
+        vars.put("com.sun.jndi.ldap.connect.timeout", "30000"); // timeout if no connection after 30 seconds
+        vars.put("com.sun.jndi.ldap.read.timeout", "60000"); // timeout if no response after 60 seconds
         if(getLDAPURL().startsWith("ldaps:") && !sslVerify) {
             vars.put("java.naming.ldap.factory.socket", BlindSSLSocketFactory.class.getName());
         }
+||||||| /usr/src/app/output/jenkinsci/ldap-plugin/eb623f5f7c3cdd91ba10dfd7382fe050fb16af02/src/main/java/jenkins/security/plugins/ldap/LDAPConfiguration.java/base.java
+        vars.put("com.sun.jndi.ldap.connect.timeout", "30000"); // timeout if no connection after 30 seconds
+        vars.put("com.sun.jndi.ldap.read.timeout", "60000"); // timeout if no response after 60 seconds
+=======
+        vars.put("com.sun.jndi.ldap.connect.pool", "true");
+        vars.put("com.sun.jndi.ldap.connect.timeout", Integer.toString(CONNECT_TIMEOUT)); // timeout if no connection after 30 seconds
+        vars.put("com.sun.jndi.ldap.read.timeout", Integer.toString(READ_TIMEOUT)); // timeout if no response after 60 seconds
+>>>>>>> /usr/src/app/output/jenkinsci/ldap-plugin/eb623f5f7c3cdd91ba10dfd7382fe050fb16af02/src/main/java/jenkins/security/plugins/ldap/LDAPConfiguration.java/right.java
         vars.putAll(getExtraEnvVars());
         contextSource.setBaseEnvironmentProperties(vars);
         contextSource.afterPropertiesSet();
