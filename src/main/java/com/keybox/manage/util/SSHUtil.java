@@ -354,6 +354,11 @@ public class SSHUtil {
 			//Write new authorizedKey
 			InputStream inputStreamAuthKeyVal = new ByteArrayInputStream(keyValue.getBytes());
 			c.put(inputStreamAuthKeyVal, authorizedKeys);
+<<<<<<< /usr/src/app/output/bastillion-io/bastillion/ddab63430d7f6858b92da794199c0abcc23c7af2/src/main/java/com/keybox/manage/util/SSHUtil.java/left.java
+			c.chmod(Integer.parseInt("600",8), authorizedKeys);
+
+||||||| /usr/src/app/output/bastillion-io/bastillion/ddab63430d7f6858b92da794199c0abcc23c7af2/src/main/java/com/keybox/manage/util/SSHUtil.java/base.java
+=======
 			c.chmod(Integer.parseInt("600",8), authorizedKeys);
 			
 			//Test Connection
@@ -370,6 +375,7 @@ public class SSHUtil {
 				}
 			}
 			
+>>>>>>> /usr/src/app/output/bastillion-io/bastillion/ddab63430d7f6858b92da794199c0abcc23c7af2/src/main/java/com/keybox/manage/util/SSHUtil.java/right.java
 		} catch (Exception e) {
 			hostSystem.setErrorMsg(e.getMessage());
 			hostSystem.setStatusCd(HostSystem.GENERIC_FAIL_STATUS);
