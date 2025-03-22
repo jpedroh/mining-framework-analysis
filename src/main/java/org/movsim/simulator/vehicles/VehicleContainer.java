@@ -1,85 +1,55 @@
-/**
- * Copyright (C) 2010, 2011 by Arne Kesting, Martin Treiber,
- *                             Ralph Germ, Martin Budden
- *                             <info@movsim.org>
- * ----------------------------------------------------------------------
- * 
- *  This file is part of 
- *  
- *  MovSim - the multi-model open-source vehicular-traffic simulator 
- *
- *  MovSim is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  MovSim is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with MovSim.  If not, see <http://www.gnu.org/licenses/> or
- *  <http://www.movsim.org>.
- *  
- * ----------------------------------------------------------------------
- */
 package org.movsim.simulator.vehicles;
-
 import java.util.List;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface VehicleContainer.
  */
 public interface VehicleContainer extends MoveableContainer {
-
-    /**
+  /**
      * Gets the lane index.
      *
      * @return the lane index
      */
-    int getLaneIndex();
+  int getLaneIndex();
 
-    /**
+  /**
      * Gets the vehicles.
      * 
      * @return the vehicles
      */
-    List<Vehicle> getVehicles();
+  List<Vehicle> getVehicles();
 
-    /**
+  /**
      * Size.
      * 
      * @return the int
      */
-    @Override
-    int size();
+  @Override int size();
 
-    /**
+  /**
      * Gets the.
      * 
      * @param index
      *            the index
      * @return the vehicle
      */
-    Vehicle get(int index);
+  Vehicle get(int index);
 
-    /**
+  /**
      * Gets the most upstream.
      * 
      * @return the most upstream
      */
-    Vehicle getMostUpstream();
+  Vehicle getMostUpstream();
 
-    /**
+  /**
      * Gets the most downstream.
      * 
      * @return the most downstream
      */
-    Vehicle getMostDownstream();
+  Vehicle getMostDownstream();
 
-    /**
+  /**
      * Adds the.
      * 
      * @param veh
@@ -89,54 +59,52 @@ public interface VehicleContainer extends MoveableContainer {
      * @param vInit
      *            the v init
      */
-    void add(final Vehicle veh, double xInit, double vInit);
+  void add(final Vehicle veh, double xInit, double vInit);
 
-    /**
+  /**
      * Adds the.
      *
      * @param veh the veh
      */
-    void add(Vehicle veh);
+  void add(Vehicle veh);
 
-    /**
+  /**
      * Removes the vehicles downstream.
      * 
      * @param roadLength
      *            the road length
      */
-    void removeVehiclesDownstream(double roadLength);
+  void removeVehiclesDownstream(double roadLength);
 
-    /**
+  /**
      * Removes the vehicle most downstream.
      */
-    void removeVehicleMostDownstream();
+  void removeVehicleMostDownstream();
 
-    /**
+  /**
      * Removes the vehicle.
      *
      * @param veh the veh
      */
-    void removeVehicle(final Vehicle veh);
+  void removeVehicle(final Vehicle veh);
 
-    // returns also "virtual" leaders when veh is not located in considered lane
-    /**
+  /**
      * Gets the leader.
      *
      * @param veh the veh
      * @return the leader
      */
-    Vehicle getLeader(final Moveable veh);
+  Vehicle getLeader(final Moveable veh);
 
-    // returns also "virtual" leaders when veh is not located in considered lane
-    /**
+  /**
      * Gets the follower.
      *
      * @param veh the veh
      * @return the follower
      */
-    Vehicle getFollower(final Moveable veh);
+  Vehicle getFollower(final Moveable veh);
 
-    /**
+  /**
      * Adds the from to ramp.
      *
      * @param veh the veh
@@ -144,9 +112,7 @@ public interface VehicleContainer extends MoveableContainer {
      * @param vInit the v init
      * @param oldLane the old lane
      */
-    void addFromToRamp(Vehicle veh, double xInit, double vInit, int oldLane);
-    
-    void addTestwise(final Vehicle veh);
-    
+  void addFromToRamp(Vehicle veh, double xInit, double vInit, int oldLane);
 
+  void addTestwise(final Vehicle veh);
 }
