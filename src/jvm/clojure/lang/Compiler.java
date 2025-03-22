@@ -7550,51 +7550,58 @@ static void addParameterAnnotation(Object visitor, IPersistentMap meta, int i){
 
 private static Expr analyzeSymbol(Symbol sym) {
 	Symbol tag = tagOf(sym);
-	if(sym.ns == null) //ns-qualified syms are always Vars
-		{
+	if(sym.ns == null) //ns-qualified syms are always Vars or member symbols
+	{
 		LocalBinding b = referenceLocal(sym);
 		if(b != null)
-			{
-			return new LocalBindingExpr(b, tag);
-			}
-		else
-			{
-			//maybe Klass. member symbol
-			Class c = HostExpr.maybeClassFromMemberSymbol(sym);
-			if (c != null)
-				{
-				Object argTags = (sym.meta() != null) ? sym.meta().valAt(RT.ARG_TAGS_KEY) : null;
-				return maybeProcessMethodDescriptor(c, Symbol.intern(null, sym.name), argTags);
-				}
-			}
+		{
+		return new LocalBindingExpr(b, tag);
 		}
 	else
 		{
+			//maybe Klass. member symbol
+			Class c = HostExpr.maybeClassFromMemberSymbol(sym);
+			if (c != null)
+			{
+				Object argTags = (sym.meta() != null) ? sym.meta().valAt(RT.ARG_TAGS_KEY) : null;
+
+				if (argTags != null && !(argTags instanceof IPersistentVector))
+					throw new IllegalArgumentException("Malformed arg-tags. Expected a vector.");
+
+				return new MethodValueExpr(null, c, Symbol.intern(null, sym.name), (IPersistentVector) argTags);
+			}
+		}
+	}
+	else
+	{
 		if(namespaceFor(sym) == null)
 			{
-			Symbol nsSym = Symbol.intern(sym.ns);
+				Symbol nsSym = Symbol.intern(sym.ns);
 			Class c = HostExpr.maybeClass(nsSym, false);
 
-			if (c == null)
-				{
-				// maybe .Klass/method
-				c = HostExpr.maybeClassFromMemberSymbol(sym);
+				if (c == null) {
+					// maybe .Klass/method
+					c = HostExpr.maybeClassFromMemberSymbol(sym);
 				}
 
-			if(c != null)
+				if(c != null)
 				{
-				if(Reflector.getField(c, sym.name, true) != null)
+					if(Reflector.getField(c, sym.name, true) != null)
 					{
-					return new StaticFieldExpr(lineDeref(), columnDeref(), c, sym.name, tag);
+						return new StaticFieldExpr(lineDeref(), columnDeref(), c, sym.name, tag);
 					}
-				else
+					else
 					{
-					Object argTags = (sym.meta() != null) ? sym.meta().valAt(RT.ARG_TAGS_KEY) : null;
-					return maybeProcessMethodDescriptor(c, Symbol.intern(null, sym.name), argTags);
+						Object argTags = (sym.meta() != null) ? sym.meta().valAt(RT.ARG_TAGS_KEY) : null;
+
+						if (argTags != null && !(argTags instanceof IPersistentVector))
+							throw new IllegalArgumentException("Malformed arg-tags. Expected a vector.");
+
+						return new MethodValueExpr(null, c, Symbol.intern(null, sym.name), (IPersistentVector) argTags);
 					}
 				}
 			}
-		}
+	}
 	//Var v = lookupVar(sym, false);
 //	Var v = lookupVar(sym, false);
 //	if(v != null)
