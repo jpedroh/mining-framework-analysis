@@ -47,7 +47,13 @@ public class SecureShellTask implements Runnable {
 
             SessionOutputUtil.addOutput(sessionOutput.getSessionId(), sessionOutput.getHostSystemId(), sessionOutput);
 
+<<<<<<< /usr/src/app/output/bastillion-io/bastillion/83ad29e2011c4a71d9004d22939820a7e3318f9b/src/main/java/com/keybox/manage/task/SecureShellTask.java/left.java
             char[] buff = new char[SSHUtil.KEY_LENGTH];
+||||||| /usr/src/app/output/bastillion-io/bastillion/83ad29e2011c4a71d9004d22939820a7e3318f9b/src/main/java/com/keybox/manage/task/SecureShellTask.java/base.java
+            char[] buff = new char[1024];
+=======
+            char[] buff = new char[Integer.parseInt(AppConfig.getProperty("KeyStrengh"))];
+>>>>>>> /usr/src/app/output/bastillion-io/bastillion/83ad29e2011c4a71d9004d22939820a7e3318f9b/src/main/java/com/keybox/manage/task/SecureShellTask.java/right.java
             int read;
             while((read = br.read(buff)) != -1) {
 
