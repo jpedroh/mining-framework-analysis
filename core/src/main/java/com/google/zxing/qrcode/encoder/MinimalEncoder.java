@@ -139,8 +139,16 @@ final class MinimalEncoder {
     this.isGS1 = isGS1;
     this.ecLevel = ecLevel;
 
+<<<<<<< /usr/src/app/output/zxing/zxing/24629357672accc3c1b41c7d5c5f968e6d2ffda2/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/left.java
     ArrayList<CharsetEncoder> neededEncoders = new ArrayList();
     neededEncoders.add(StandardCharsets.ISO_8859_1.newEncoder());
+||||||| /usr/src/app/output/zxing/zxing/24629357672accc3c1b41c7d5c5f968e6d2ffda2/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/base.java
+    CharsetEncoder[] isoEncoders = new CharsetEncoder[15]; //room for the 15 ISO-8859 charsets 1 through 16.
+    isoEncoders[0] = StandardCharsets.ISO_8859_1.newEncoder();
+=======
+    CharsetEncoder[] isoEncoders = new CharsetEncoder[15]; // room for the 15 ISO-8859 charsets 1 through 16.
+    isoEncoders[0] = StandardCharsets.ISO_8859_1.newEncoder();
+>>>>>>> /usr/src/app/output/zxing/zxing/24629357672accc3c1b41c7d5c5f968e6d2ffda2/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/right.java
     boolean needUnicodeEncoder = priorityCharset != null && priorityCharset.name().startsWith("UTF");
 
     for (int i = 0; i < stringToEncode.length(); i++) {
@@ -162,8 +170,64 @@ final class MinimalEncoder {
         }
       }
 
+<<<<<<< /usr/src/app/output/zxing/zxing/24629357672accc3c1b41c7d5c5f968e6d2ffda2/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/left.java
       if (!canEncode) {
         needUnicodeEncoder = true;
+||||||| /usr/src/app/output/zxing/zxing/24629357672accc3c1b41c7d5c5f968e6d2ffda2/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/base.java
+      if (cnt == 14) { //we need all. Can stop looking further.
+        break;
+      }
+
+      if (j >= 15) { //no encoder found
+        for (j = 0; j < 15; j++) {
+          if (j != 11 && isoEncoders[j] == null) { // ISO-8859-12 doesn't exist
+            try {
+              CharsetEncoder ce = Charset.forName("ISO-8859-" + (j + 1)).newEncoder();
+              if (ce.canEncode(stringToEncode.charAt(i))) {
+                isoEncoders[j] = ce;
+                break;
+              }
+            } catch (UnsupportedCharsetException e) {
+              // continue
+            }
+          }
+        }
+        if (j >= 15) {
+          if (!StandardCharsets.UTF_16BE.newEncoder().canEncode(stringToEncode.charAt(i))) {
+            throw new WriterException("Can not encode character \\u" +
+                String.format("%04X", (int) stringToEncode.charAt(i)) + " at position " + i +
+                " in input \"" + stringToEncode + "\"");
+          }
+          needUnicodeEncoder = true;
+        }
+=======
+      if (cnt == 14) { // we need all. Can stop looking further.
+        break;
+      }
+
+      if (j >= 15) { // no encoder found
+        for (j = 0; j < 15; j++) {
+          if (j != 11 && isoEncoders[j] == null) { // ISO-8859-12 doesn't exist
+            try {
+              CharsetEncoder ce = Charset.forName("ISO-8859-" + (j + 1)).newEncoder();
+              if (ce.canEncode(stringToEncode.charAt(i))) {
+                isoEncoders[j] = ce;
+                break;
+              }
+            } catch (UnsupportedCharsetException e) {
+              // continue
+            }
+          }
+        }
+        if (j >= 15) {
+          if (!StandardCharsets.UTF_16BE.newEncoder().canEncode(stringToEncode.charAt(i))) {
+            throw new WriterException("Can not encode character \\u" +
+                String.format("%04X", (int) stringToEncode.charAt(i)) + " at position " + i +
+                " in input \"" + stringToEncode + "\"");
+          }
+          needUnicodeEncoder = true;
+        }
+>>>>>>> /usr/src/app/output/zxing/zxing/24629357672accc3c1b41c7d5c5f968e6d2ffda2/core/src/main/java/com/google/zxing/qrcode/encoder/MinimalEncoder.java/right.java
       }
     }
 
