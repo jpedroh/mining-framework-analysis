@@ -361,6 +361,7 @@ public final class JWTCreator {
          * @return this same Builder instance.
          * @throws IllegalArgumentException if the name is null, or if the list contents does not validate.
          */
+
         public Builder withClaim(String name, List<?> list) throws IllegalArgumentException {
             assertNonNull(name);
             // validate list contents
@@ -369,12 +370,6 @@ public final class JWTCreator {
                         + "Long, Double, String and Date");
             }
             addClaim(name, list);
-            return this;
-        }
-
-        public Builder withNullClaim(String name) throws IllegalArgumentException {
-            assertNonNull(name);
-            addClaim(name, null);
             return this;
         }
 
@@ -421,6 +416,38 @@ public final class JWTCreator {
         }
 
         /**
+         * Add a custom Map Claim with the given items.
+         * <p>
+         * Accepted nested types are {@linkplain Map} and {@linkplain List} with basic types
+         * {@linkplain Boolean}, {@linkplain Integer}, {@linkplain Long}, {@linkplain Double},
+         * {@linkplain String} and {@linkplain Date}. {@linkplain Map}s cannot contain null keys or values.
+         * {@linkplain List}s can contain null elements.
+         *
+         * @param name the Claim's name.
+         * @param map  the Claim's key-values.
+         * @return this same Builder instance.
+         * @throws IllegalArgumentException if the name is null, or if the map contents does not validate.
+         */
+        /**
+         * Add a custom List Claim with the given items.
+         * <p>
+         * Accepted nested types are {@linkplain Map} and {@linkplain List} with basic types
+         * {@linkplain Boolean}, {@linkplain Integer}, {@linkplain Long}, {@linkplain Double},
+         * {@linkplain String} and {@linkplain Date}. {@linkplain Map}s cannot contain null keys or values.
+         * {@linkplain List}s can contain null elements.
+         *
+         * @param name the Claim's name.
+         * @param list the Claim's list of values.
+         * @return this same Builder instance.
+         * @throws IllegalArgumentException if the name is null, or if the list contents does not validate.
+         */
+        public Builder withNullClaim(String name) throws IllegalArgumentException {
+            assertNonNull(name);
+            addClaim(name, null);
+            return this;
+        }
+
+        /**
          * Add specific Claims to set as the Payload. If the provided map is null then
          * nothing is changed.
          * <p>
@@ -444,8 +471,14 @@ public final class JWTCreator {
             }
 
             if (!validatePayload(payloadClaims)) {
+<<<<<<< /usr/src/app/output/auth0/java-jwt/75ee6a33c14697af6c1b18b10c6a3603f0f8d121/lib/src/main/java/com/auth0/jwt/JWTCreator.java/left.java
+                throw new IllegalArgumentException("Claim values must only be of types Map, List, Boolean, Integer, Long, Double, String, Date and Null");
+||||||| /usr/src/app/output/auth0/java-jwt/75ee6a33c14697af6c1b18b10c6a3603f0f8d121/lib/src/main/java/com/auth0/jwt/JWTCreator.java/base.java
+                throw new IllegalArgumentException("Claim values must only be of types Map, List, Boolean, Integer, Long, Double, String and Date");
+=======
                 throw new IllegalArgumentException("Claim values must only be of types Map, List, Boolean, Integer, "
                         + "Long, Double, String and Date");
+>>>>>>> /usr/src/app/output/auth0/java-jwt/75ee6a33c14697af6c1b18b10c6a3603f0f8d121/lib/src/main/java/com/auth0/jwt/JWTCreator.java/right.java
             }
 
             // add claims only after validating all claims so as not to corrupt the claims map of this builder
