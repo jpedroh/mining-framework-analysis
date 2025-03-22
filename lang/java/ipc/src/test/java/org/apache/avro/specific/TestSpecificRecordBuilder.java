@@ -59,7 +59,7 @@ public class TestSpecificRecordBuilder {
 
     Person person = builder.build();
     Assert.assertEquals("James Gosling", person.getName());
-    Assert.assertEquals(new Integer(1955), person.getYearOfBirth());
+    Assert.assertEquals(1955, person.getYearOfBirth());
     Assert.assertEquals("US", person.getCountry());  // country should default to "US"
     Assert.assertEquals("CA", person.getState());
     Assert.assertNotNull(person.getFriends());  // friends should default to an empty list
@@ -75,7 +75,7 @@ public class TestSpecificRecordBuilder {
 
     Person.Builder builderCopy = Person.newBuilder(person);
     Assert.assertEquals("James Gosling", builderCopy.getName());
-    Assert.assertEquals(new Integer(1955), builderCopy.getYearOfBirth());
+    Assert.assertEquals(1955, builderCopy.getYearOfBirth());
     Assert.assertEquals("US", builderCopy.getCountry());  // country should default to "US"
     Assert.assertEquals("CA", builderCopy.getState());
     Assert.assertNotNull(builderCopy.getFriends());  // friends should default to an empty list
