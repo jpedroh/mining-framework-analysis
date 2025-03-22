@@ -80,6 +80,11 @@ public abstract class AbstractVMSupport<T extends CloudProvider> implements Virt
     }
 
     @Override
+    public VirtualMachine modifyInstance(@Nonnull String vmId, @Nonnull String[] firewalls) throws InternalException, CloudException {
+        throw new OperationNotSupportedException("Instance firewall modifications are not currently supported for " + getProvider().getCloudName());
+    }
+
+    @Override
     public void cancelSpotDataFeedSubscription() throws CloudException, InternalException{
         throw new OperationNotSupportedException("Spot Instances are not supported for " + getProvider().getCloudName());
     }
@@ -115,8 +120,8 @@ public abstract class AbstractVMSupport<T extends CloudProvider> implements Virt
         // NO-OP
     }
 
-    @Override
-    public void enableSpotDataFeedSubscription(String s3BucketName) throws CloudException, InternalException{
+    public
+    @Override void enableSpotDataFeedSubscription(String s3BucketName) throws CloudException, InternalException{
         throw new OperationNotSupportedException("Spot Instances are not supported for " + getProvider().getCloudName());
     }
 
@@ -125,6 +130,7 @@ public abstract class AbstractVMSupport<T extends CloudProvider> implements Virt
      * @return the current provider context
      * @throws CloudException no context was defined before making this call
      */
+
     protected final @Nonnull ProviderContext getContext() throws CloudException {
         ProviderContext ctx = getProvider().getContext();
 
@@ -150,7 +156,7 @@ public abstract class AbstractVMSupport<T extends CloudProvider> implements Virt
 		return null;
 	}
 
-	@Override
+    @Override
     public @Nonnull String getConsoleOutput(@Nonnull String vmId) throws InternalException, CloudException {
         return "";
     }
@@ -176,6 +182,7 @@ public abstract class AbstractVMSupport<T extends CloudProvider> implements Virt
     /**
      * @return the current provider governing any operations against this cloud in this support instance
      */
+
     protected final @Nonnull T getProvider() {
         return provider;
     }
@@ -291,6 +298,7 @@ public abstract class AbstractVMSupport<T extends CloudProvider> implements Virt
      * @param withLaunchOptions the launch options to use in launching the virtual machine
      * @return the unique ID of the launched virtual machine
      */
+
     protected Future<String> launchAsync(final @Nonnull VMLaunchOptions withLaunchOptions) {
         return launchPool.submit(new Callable<String>() {
             @Override
@@ -301,6 +309,7 @@ public abstract class AbstractVMSupport<T extends CloudProvider> implements Virt
     }
 
     // the default implementation does parallel launches and throws an exception only if it is unable to launch any virtual machines
+
     @Override
     public @Nonnull Iterable<String> launchMany(final @Nonnull VMLaunchOptions withLaunchOptions, final @Nonnegative int count) throws CloudException, InternalException {
         if( count < 1 ) {
@@ -501,6 +510,7 @@ public abstract class AbstractVMSupport<T extends CloudProvider> implements Virt
      * @return a resource file location with a vmproducts JSON definition
      * @throws CloudException no context has been set for loading the products
      */
+
     protected @Nonnull String getVMProductsResource() throws CloudException {
         Properties p = getContext().getCustomProperties();
         String value = null;

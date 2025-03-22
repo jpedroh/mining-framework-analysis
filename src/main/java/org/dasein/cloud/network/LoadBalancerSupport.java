@@ -406,6 +406,19 @@ public interface LoadBalancerSupport extends AccessControlledService {
     public LoadBalancerHealthCheck createLoadBalancerHealthCheck(@Nonnull LBHealthCheckCreateOptions options) throws CloudException, InternalException;
 
     /**
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/3134322c92aa1670a2fbe93b651a2136eb5a6def/src/main/java/org/dasein/cloud/network/LoadBalancerSupport.java/left.java
+     * Gets the specified Health Check from the cloud
+     * @param providerLBHealthCheckId the unique ID of the LB Health Check
+     * @param providerLoadBalancerId optionally can provide the ID of a load balancer to with the Health Check is attached
+     * @return the specified LoadBalancerHealthCheck
+     * @throws CloudException
+     * @throws InternalException
+     */
+    public LoadBalancerHealthCheck getLoadBalancerHealthCheck(@Nonnull String providerLBHealthCheckId, @Nullable String providerLoadBalancerId) throws CloudException, InternalException;
+
+    /**
+||||||| /usr/src/app/output/greese/dasein-cloud-core/3134322c92aa1670a2fbe93b651a2136eb5a6def/src/main/java/org/dasein/cloud/network/LoadBalancerSupport.java/base.java
+=======
      * Gets the specified Health Check from the cloud
      * @param providerLBHealthCheckId the unique ID of the LB Health Check
      * @param providerLoadBalancerId optionally can provide the ID of a load balancer to with the Health Check is attached
@@ -426,6 +439,7 @@ public interface LoadBalancerSupport extends AccessControlledService {
     public Iterable<LoadBalancerHealthCheck> listLBHealthChecks(@Nullable HealthCheckFilterOptions options) throws CloudException, InternalException;
 
     /**
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/3134322c92aa1670a2fbe93b651a2136eb5a6def/src/main/java/org/dasein/cloud/network/LoadBalancerSupport.java/right.java
      * Attaches an existing Health Check to an existing Load Balancer
      * @param providerLoadBalancerId the load balancer ID
      * @param providerLBHealthCheckId the health check ID
