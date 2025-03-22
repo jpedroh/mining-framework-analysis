@@ -1,16 +1,13 @@
 package com.michelboudreau.alternator;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.amazonaws.services.dynamodb.model.*;
+import com.amazonaws.services.dynamodb.model.transform.*;
+import com.michelboudreau.alternator.enums.AttributeValueType;
+import com.michelboudreau.alternator.models.ItemRangeGroup;
+import com.michelboudreau.alternator.models.Limits;
+import com.michelboudreau.alternator.models.Table;
+import com.michelboudreau.alternator.parsers.AmazonWebServiceRequestParser;
+import com.michelboudreau.alternator.validators.*;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -91,11 +88,6 @@ import com.amazonaws.services.dynamodb.model.transform.UpdateItemRequestJsonUnma
 import com.amazonaws.services.dynamodb.model.transform.UpdateItemResultMarshaller;
 import com.amazonaws.services.dynamodb.model.transform.UpdateTableRequestJsonUnmarshaller;
 import com.amazonaws.services.dynamodb.model.transform.UpdateTableResultMarshaller;
-import com.michelboudreau.alternator.enums.AttributeValueType;
-import com.michelboudreau.alternator.models.ItemRangeGroup;
-import com.michelboudreau.alternator.models.Limits;
-import com.michelboudreau.alternator.models.Table;
-import com.michelboudreau.alternator.parsers.AmazonWebServiceRequestParser;
 import com.michelboudreau.alternator.validators.CreateTableRequestValidator;
 import com.michelboudreau.alternator.validators.DeleteItemRequestValidator;
 import com.michelboudreau.alternator.validators.DeleteTableRequestValidator;
@@ -107,6 +99,10 @@ import com.michelboudreau.alternator.validators.QueryRequestValidator;
 import com.michelboudreau.alternator.validators.ScanRequestValidator;
 import com.michelboudreau.alternator.validators.UpdateItemRequestValidator;
 import com.michelboudreau.alternator.validators.UpdateTableRequestValidator;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 class AlternatorDBHandler {
 

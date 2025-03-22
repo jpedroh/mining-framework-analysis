@@ -1,11 +1,11 @@
 package com.michelboudreau.test;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
+import com.amazonaws.AmazonWebServiceRequest;
+import com.amazonaws.services.dynamodb.AmazonDynamoDB;
+import com.amazonaws.services.dynamodb.model.*;
+import com.amazonaws.transform.JsonUnmarshallerContext;
+import com.amazonaws.transform.Unmarshaller;
+import com.michelboudreau.alternator.enums.AttributeValueType;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -18,28 +18,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.AmazonWebServiceRequest;
-import com.amazonaws.services.dynamodb.AmazonDynamoDB;
-import com.amazonaws.services.dynamodb.model.AttributeValue;
-import com.amazonaws.services.dynamodb.model.AttributeValueUpdate;
-import com.amazonaws.services.dynamodb.model.ConditionalCheckFailedException;
-import com.amazonaws.services.dynamodb.model.DeleteItemRequest;
-import com.amazonaws.services.dynamodb.model.DeleteItemResult;
-import com.amazonaws.services.dynamodb.model.ExpectedAttributeValue;
-import com.amazonaws.services.dynamodb.model.GetItemRequest;
-import com.amazonaws.services.dynamodb.model.GetItemResult;
-import com.amazonaws.services.dynamodb.model.Key;
-import com.amazonaws.services.dynamodb.model.KeySchema;
-import com.amazonaws.services.dynamodb.model.KeySchemaElement;
-import com.amazonaws.services.dynamodb.model.PutItemRequest;
-import com.amazonaws.services.dynamodb.model.PutItemResult;
-import com.amazonaws.services.dynamodb.model.ReturnValue;
-import com.amazonaws.services.dynamodb.model.ScalarAttributeType;
-import com.amazonaws.services.dynamodb.model.UpdateItemRequest;
-import com.amazonaws.services.dynamodb.model.UpdateItemResult;
-import com.amazonaws.transform.JsonUnmarshallerContext;
-import com.amazonaws.transform.Unmarshaller;
-import com.michelboudreau.alternator.enums.AttributeValueType;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/applicationContext.xml"})
