@@ -75,6 +75,12 @@ public abstract class InputOutput {
         for (int i = lineI0; i <= lineI; i++) {
           addToRanges(ranges, i, k);
         }
+<<<<<<< /usr/src/app/output/google/google-java-format/48316cdcafbef41ab52e86d0a530324cf5384310/core/src/main/java/com/google/googlejavaformat/InputOutput.java/left.java
+        addToRanges(range1s, lineI, k);
+||||||| /usr/src/app/output/google/google-java-format/48316cdcafbef41ab52e86d0a530324cf5384310/core/src/main/java/com/google/googlejavaformat/InputOutput.java/base.java
+        addToRanges(range1s, lineI0, k);
+=======
+>>>>>>> /usr/src/app/output/google/google-java-format/48316cdcafbef41ab52e86d0a530324cf5384310/core/src/main/java/com/google/googlejavaformat/InputOutput.java/right.java
       }
     }
   }
