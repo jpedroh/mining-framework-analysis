@@ -1353,20 +1353,18 @@ public class ChosenImpl {
                     }
 
                     if (found) {
-                        String text;
-                        if (searchText.length() > 0) {
-                            if (options.isHighlightSearchTerm()) {
+                        if (options.isHighlightSearchTerm()) {
+                            String text;
+                            if (searchText.length() > 0) {
+                                result.addClass(css.foundResult());
                                 text = zregex.replace(optionContent, "<em>$1</em>");
                             } else {
+                                result.removeClass(css.foundResult());
                                 text = optionContent;
                             }
-                            result.addClass(css.foundResult());
-                        } else {
-                            text = optionContent;
-                            result.removeClass(css.foundResult());
+                            result.html(text);
                         }
 
-                        result.html(text);
                         resultActivate(result);
 
                         if (option.getGroupArrayIndex() != -1) {
