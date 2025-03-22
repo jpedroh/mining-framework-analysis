@@ -670,6 +670,29 @@ public interface VLANSupport extends AccessControlledService {
      */
     public void removeSubnetTags(@Nonnull String[] subnetIds, @Nonnull Tag ... tags) throws CloudException, InternalException;
 
+
+    /**
+     * Removes meta-data from a subnet. If tag values are set, their removal is dependent on underlying cloud
+     * provider behavior. They may be removed only if the tag value matches or they may be removed regardless of the
+     * value.
+     * @param providerSubnetId the unique ID of the subnet to update
+     * @param tags the meta-data tags to remove
+     * @throws CloudException    an error occurred within the cloud provider
+     * @throws InternalException an error occurred within the Dasein Cloud API implementation
+     */
+    public abstract void removeSubnetTags(@Nonnull String providerSubnetId, @Nonnull Tag... tags) throws CloudException, InternalException;
+
+    /**
+     * Removes meta-data from multiple subnets. If tag values are set, their removal is dependent on underlying cloud
+     * provider behavior. They may be removed only if the tag value matches or they may be removed regardless of the
+     * value.
+     * @param providerSubnetIds the subnet IDs to update
+     * @param tags  the meta-data tags to remove
+     * @throws CloudException    an error occurred within the cloud provider
+     * @throws InternalException an error occurred within the Dasein Cloud API implementation
+     */
+    public abstract void removeSubnetTags(@Nonnull String[] providerSubnetIds, @Nonnull Tag ... tags) throws CloudException, InternalException;
+
     /**
      * Removes the specified VLAN from the cloud.
      * @param vlanId the unique ID of the VLAN to be removed
@@ -780,7 +803,28 @@ public interface VLANSupport extends AccessControlledService {
      * @throws CloudException    an error occurred within the cloud provider
      * @throws InternalException an error occurred within the Dasein Cloud API implementation
      */
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/fd8c461fba5cc84d13fc551019089d506b74334b/src/main/java/org/dasein/cloud/network/VLANSupport.java/left.java
     public abstract void updateVLANTags(@Nonnull String[] vlanIds, @Nonnull Tag... tags) throws CloudException, InternalException;
+
+    /**
+     * Updates meta-data for a subnet with the new values. It will not overwrite any value that currently
+     * exists unless it appears in the tags you submit.
+     * @param providerSubnetId the subnet to update
+     * @param tags  the meta-data tags to set
+     * @throws CloudException    an error occurred within the cloud provider
+     * @throws InternalException an error occurred within the Dasein Cloud API implementation
+     */
+    public abstract void updateSubnetTags(@Nonnull String providerSubnetId, @Nonnull Tag... tags) throws CloudException, InternalException;
+
+    /**
+     * Updates meta-data for multiple subnets with the new values. It will not overwrite any value that currently
+     * exists unless it appears in the tags you submit.
+     * @param providerSubnetIds the subnets to update
+     * @param tags  the meta-data tags to set
+     * @throws CloudException    an error occurred within the cloud provider
+     * @throws InternalException an error occurred within the Dasein Cloud API implementation
+     */
+    public abstract void updateSubnetTags(@Nonnull String[] providerSubnetIds, @Nonnull Tag... tags) throws CloudException, InternalException;
 
     /**
      * Updates meta-data for an internet gateway with the new values. It will not overwrite any value that currently
@@ -802,4 +846,9 @@ public interface VLANSupport extends AccessControlledService {
      */
     public abstract void updateInternetGatewayTags(@Nonnull String[] internetGatewayIds, @Nonnull Tag... tags) throws CloudException, InternalException;
 
+||||||| /usr/src/app/output/greese/dasein-cloud-core/fd8c461fba5cc84d13fc551019089d506b74334b/src/main/java/org/dasein/cloud/network/VLANSupport.java/base.java
+    public abstract void updateVLANTags(@Nonnull String[] vlanIds, @Nonnull Tag... tags) throws CloudException, InternalException;
+=======
+    public void updateVLANTags(@Nonnull String[] vlanIds, @Nonnull Tag... tags) throws CloudException, InternalException;
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/fd8c461fba5cc84d13fc551019089d506b74334b/src/main/java/org/dasein/cloud/network/VLANSupport.java/right.java
 }

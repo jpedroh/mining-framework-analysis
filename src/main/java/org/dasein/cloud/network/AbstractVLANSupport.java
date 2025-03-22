@@ -491,17 +491,27 @@ public abstract class AbstractVLANSupport implements VLANSupport {
         // NO-OP
     }
 
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/fd8c461fba5cc84d13fc551019089d506b74334b/src/main/java/org/dasein/cloud/network/AbstractVLANSupport.java/left.java
+    @Override
+    public void removeSubnetTags(@Nonnull String[] providerSubnetIds, @Nonnull Tag... tags) throws CloudException, InternalException {
+        for (String providerSubnetId : providerSubnetIds) {
+            removeSubnetTags(providerSubnetId, tags);
+        }
+    }
+||||||| /usr/src/app/output/greese/dasein-cloud-core/fd8c461fba5cc84d13fc551019089d506b74334b/src/main/java/org/dasein/cloud/network/AbstractVLANSupport.java/base.java
+=======
     @Override
     public void removeSubnetTags(@Nonnull String[] subnetIds, @Nonnull Tag... tags) throws CloudException, InternalException {
         for( String id : subnetIds ) {
             removeSubnetTags(id, tags);
         }
     }
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/fd8c461fba5cc84d13fc551019089d506b74334b/src/main/java/org/dasein/cloud/network/AbstractVLANSupport.java/right.java
 
     @Override
-    public void removeVLANTags(@Nonnull String vlanId, @Nonnull Tag... tags) throws CloudException, InternalException {
-        // NO-OP
-    }
+public void removeVLANTags(@Nonnull String vlanId, @Nonnull Tag... tags) throws CloudException, InternalException {
+    // NO-OP
+}
 
     @Override
     public void removeVLANTags(@Nonnull String[] vlanIds, @Nonnull Tag... tags) throws CloudException, InternalException {
@@ -527,17 +537,27 @@ public abstract class AbstractVLANSupport implements VLANSupport {
         // NO-OP
     }
 
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/fd8c461fba5cc84d13fc551019089d506b74334b/src/main/java/org/dasein/cloud/network/AbstractVLANSupport.java/left.java
+    @Override
+    public void updateSubnetTags(@Nonnull String[] providerSubnetIds, @Nonnull Tag... tags) throws CloudException, InternalException {
+        for (String providerSubnetId : providerSubnetIds) {
+            updateSubnetTags(providerSubnetId, tags);
+        }
+    }
+||||||| /usr/src/app/output/greese/dasein-cloud-core/fd8c461fba5cc84d13fc551019089d506b74334b/src/main/java/org/dasein/cloud/network/AbstractVLANSupport.java/base.java
+=======
     @Override
     public void updateSubnetTags(@Nonnull String[] subnetIds, @Nonnull Tag... tags) throws CloudException, InternalException {
         for( String id : subnetIds ) {
             updateSubnetTags(id, tags);
         }
     }
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/fd8c461fba5cc84d13fc551019089d506b74334b/src/main/java/org/dasein/cloud/network/AbstractVLANSupport.java/right.java
 
     @Override
-    public void updateVLANTags(@Nonnull String vlanId, @Nonnull Tag... tags) throws CloudException, InternalException {
-        // NO-OP
-    }
+public void updateVLANTags(@Nonnull String vlanId, @Nonnull Tag... tags) throws CloudException, InternalException {
+    // NO-OP
+}
 
     @Override
     public void updateVLANTags(@Nonnull String[] vlanIds, @Nonnull Tag... tags) throws CloudException, InternalException {

@@ -88,7 +88,7 @@ public class VirtualMachine implements Networkable, Taggable {
     private String                providerRoleId;
     private VmStatus              providerHostStatus;
     private VmStatus              providerVmStatus;
-    private VisibleScope          visibleScope;
+    private VisibleScope visibleScope;
 
   public VirtualMachine() { }
     

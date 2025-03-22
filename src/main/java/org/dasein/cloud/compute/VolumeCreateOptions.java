@@ -169,7 +169,6 @@ public class VolumeCreateOptions {
     private String             vlanId;
     private String             volumeProductId;
     private Storage<Gigabyte>  volumeSize;
-  // NOTE: SEE NOTE AT TOP OF ATTRIBUTE LIST WHEN ADDING/REMOVING/CHANGING AN ATTRIBUTE
 
     public void setDataCenterId(String dataCenterId) {
       this.dataCenterId = dataCenterId;
@@ -219,8 +218,9 @@ public class VolumeCreateOptions {
       this.volumeSize = volumeSize;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
-    private VolumeCreateOptions() { }
+    public VolumeCreateOptions() { }
+
+    // NOTE: SEE NOTE AT TOP OF ATTRIBUTE LIST WHEN ADDING/REMOVING/CHANGING AN ATTRIBUTE
 
     private VolumeCreateOptions(@Nullable String volumeProductId, @Nullable String snapshotId, @Nonnull Storage<?> size, @Nonnull String name, @Nonnull String description, @Nonnegative int iops) {
         this.volumeProductId = volumeProductId;
