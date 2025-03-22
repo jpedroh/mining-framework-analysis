@@ -81,7 +81,7 @@ class ClusterDistributionChannelWriter<K, V> implements RedisChannelWriter<K, V>
         }
 
         if (channelWriter == null && args != null && args.getFirstEncodedKey() != null) {
-            int hash = getHash(args.getEncodedKey(0));
+            int hash = SlotHash.getSlot(args.getFirstEncodedKey());
             ClusterConnectionProvider.Intent intent = getIntent(command.getType());
 
             RedisChannelHandler<K, V> connection = (RedisChannelHandler<K, V>) clusterConnectionProvider.getConnection(intent,
