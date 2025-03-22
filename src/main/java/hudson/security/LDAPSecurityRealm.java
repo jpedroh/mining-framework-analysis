@@ -28,7 +28,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import groovy.lang.Binding;
 import hudson.DescriptorExtensionList;
 import hudson.Extension;
-import hudson.ExtensionList;
 import hudson.Util;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
@@ -51,6 +50,20 @@ import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+<<<<<<< /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/left.java
+import java.net.URI;
+import java.util.*;
+||||||| /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/base.java
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+=======
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -62,6 +75,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+>>>>>>> /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/right.java
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -76,14 +90,30 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.BasicAttributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
+<<<<<<< /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/left.java
 import javax.naming.ldap.Control;
 
+||||||| /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/base.java
+
+=======
+>>>>>>> /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/right.java
 import jenkins.model.IdStrategy;
 import jenkins.model.Jenkins;
 import jenkins.security.plugins.ldap.FromGroupSearchLDAPGroupMembershipStrategy;
 import jenkins.security.plugins.ldap.LDAPConfiguration;
 import jenkins.security.plugins.ldap.LDAPGroupMembershipStrategy;
+<<<<<<< /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/left.java
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import org.acegisecurity.*;
+||||||| /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/base.java
+import org.acegisecurity.AcegiSecurityException;
+import org.acegisecurity.Authentication;
+import org.acegisecurity.AuthenticationException;
+import org.acegisecurity.AuthenticationManager;
+import org.acegisecurity.GrantedAuthority;
+import org.acegisecurity.GrantedAuthorityImpl;
+=======
 import net.sf.json.JSONObject;
 import org.acegisecurity.AcegiSecurityException;
 import org.acegisecurity.Authentication;
@@ -92,6 +122,7 @@ import org.acegisecurity.AuthenticationManager;
 import org.acegisecurity.BadCredentialsException;
 import org.acegisecurity.GrantedAuthority;
 import org.acegisecurity.GrantedAuthorityImpl;
+>>>>>>> /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/right.java
 import org.acegisecurity.ldap.InitialDirContextFactory;
 import org.acegisecurity.ldap.LdapDataAccessException;
 import org.acegisecurity.ldap.LdapTemplate;
@@ -117,8 +148,13 @@ import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
+<<<<<<< /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/left.java
+import org.kohsuke.stapler.StaplerRequest;
+||||||| /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/base.java
+=======
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.interceptor.RequirePOST;
+>>>>>>> /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/right.java
 import org.springframework.dao.DataAccessException;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -306,9 +342,17 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
      */
     @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD",
         justification = "This public field is exposed to the plugin's API")
+<<<<<<< /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/left.java
     @Deprecated @Restricted(NoExternalUse.class)
     public transient String userSearch;
     
+||||||| /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/base.java
+    public final String userSearch;
+    
+=======
+    public final String userSearch;
+
+>>>>>>> /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/right.java
     /**
      * This defines the organizational unit that contains groups.
      *
@@ -341,8 +385,16 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
      * @since 1.5
      * @deprecated use {@link #groupMembershipStrategy}
      */
+<<<<<<< /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/left.java
     @Deprecated @Restricted(NoExternalUse.class)
     @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD", 
+||||||| /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/base.java
+    @Deprecated
+    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD", 
+=======
+    @Deprecated
+    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD",
+>>>>>>> /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/right.java
         justification = "This public field is exposed to the plugin's API")
     public transient String groupMembershipFilter;
 
@@ -378,8 +430,16 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
     @Deprecated @Restricted(NoExternalUse.class)
     public transient String managerDN;
 
+<<<<<<< /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/left.java
     @Deprecated @Restricted(NoExternalUse.class)
     @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD", 
+||||||| /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/base.java
+    @Deprecated
+    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD", 
+=======
+    @Deprecated
+    @SuppressFBWarnings(value = "UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD",
+>>>>>>> /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/right.java
         justification = "This public field is exposed to the plugin's API")
     private transient String managerPassword;
 
@@ -514,6 +574,7 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         this.configurations = configurations;
         this.disableMailAddressResolver = disableMailAddressResolver;
         this.cache = cache;
+<<<<<<< /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/left.java
         this.userIdStrategy = userIdStrategy;
         this.groupIdStrategy = groupIdStrategy;
     }
@@ -537,6 +598,26 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
 
     private boolean hasConfiguration() {
         return configurations != null && !configurations.isEmpty();
+||||||| /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/base.java
+        this.extraEnvVars = environmentProperties == null || environmentProperties.length == 0
+                ? null
+                : EnvironmentProperty.toMap(Arrays.asList(environmentProperties));
+        this.displayNameAttributeName = StringUtils.defaultString(fixEmptyAndTrim(displayNameAttributeName),
+                DescriptorImpl.DEFAULT_DISPLAYNAME_ATTRIBUTE_NAME);
+        this.mailAddressAttributeName = StringUtils.defaultString(fixEmptyAndTrim(mailAddressAttributeName),
+                DescriptorImpl.DEFAULT_MAILADDRESS_ATTRIBUTE_NAME);
+        this.userIdStrategy = userIdStrategy == null ? IdStrategy.CASE_INSENSITIVE : userIdStrategy;
+        this.groupIdStrategy = groupIdStrategy == null ? IdStrategy.CASE_INSENSITIVE : groupIdStrategy;
+=======
+        this.extraEnvVars = environmentProperties == null || environmentProperties.length == 0
+                ? null
+                : EnvironmentProperty.toMap(Arrays.asList(environmentProperties));
+        this.displayNameAttributeName = StringUtils.defaultString(fixEmptyAndTrim(displayNameAttributeName),
+                DescriptorImpl.DEFAULT_DISPLAYNAME_ATTRIBUTE_NAME);
+        this.mailAddressAttributeName = StringUtils.defaultString(fixEmptyAndTrim(mailAddressAttributeName),
+                DescriptorImpl.DEFAULT_MAILADDRESS_ATTRIBUTE_NAME);
+        this.userIdStrategy = userIdStrategy == null ? IdStrategy.CASE_INSENSITIVE : userIdStrategy;
+        this.groupIdStrategy = groupIdStrategy == null ? IdStrategy.CASE_INSENSITIVE : groupIdStrategy;
     }
 
     public boolean isDisableRolePrefixing() {
@@ -546,6 +627,7 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
     @DataBoundSetter
     public void setDisableRolePrefixing(boolean disableRolePrefixing) {
         this.disableRolePrefixing = disableRolePrefixing;
+>>>>>>> /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/right.java
     }
 
     private Object readResolve() {
@@ -643,6 +725,7 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         return hasConfiguration() ? configurations.get(0).getManagerPassword() : null;
     }
 
+<<<<<<< /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/left.java
     @Deprecated @Restricted(DoNotUse.class)
     public Secret getManagerPasswordSecret() {
         return hasConfiguration() ? configurations.get(0).getManagerPasswordSecret() : null;
@@ -670,6 +753,37 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         } else if (hasConfiguration() && configurations.size() == 1) {
             return configurations.get(0);
         } else {
+||||||| /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/base.java
+            DirContext ctx = new InitialDirContext(props);
+            Attributes atts = ctx.getAttributes("");
+            Attribute a = atts.get("defaultNamingContext");
+            if(a!=null && a.get()!=null) // this entry is available on Active Directory. See http://msdn2.microsoft.com/en-us/library/ms684291(VS.85).aspx
+                return a.get().toString();
+            
+            a = atts.get("namingcontexts");
+            if(a==null) {
+                LOGGER.warning("namingcontexts attribute not found in root DSE of "+server);
+                return null;
+            }
+            return a.get().toString();
+        } catch (NamingException e) {
+            LOGGER.log(Level.WARNING,"Failed to connect to LDAP to infer Root DN for "+server,e);
+=======
+            DirContext ctx = new InitialDirContext(props);
+            Attributes atts = ctx.getAttributes("");
+            Attribute a = atts.get("defaultNamingContext");
+            if(a!=null && a.get()!=null) // this entry is available on Active Directory. See http://msdn2.microsoft.com/en-us/library/ms684291(VS.85).aspx
+                return a.get().toString();
+
+            a = atts.get("namingcontexts");
+            if(a==null) {
+                LOGGER.warning("namingcontexts attribute not found in root DSE of "+server);
+                return null;
+            }
+            return a.get().toString();
+        } catch (NamingException e) {
+            LOGGER.log(Level.WARNING,"Failed to connect to LDAP to infer Root DN for "+server,e);
+>>>>>>> /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/right.java
             return null;
         }
     }
@@ -692,11 +806,8 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
             if (s.trim().length() == 0) continue;
             s = getProviderUrl(s, rootDN);
             if (s != null) {
-                if (first) {
-                    first = false;
-                } else {
-                    buf.append(' ');
-                }
+                if (first) first = false;
+                else buf.append(' ');
                 buf.append(s);
             }
         }
@@ -732,11 +843,59 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
         LDAPAuthenticationManager manager = new LDAPAuthenticationManager();
         DelegateLDAPUserDetailsService details = new DelegateLDAPUserDetailsService();
         for (LDAPConfiguration conf : configurations) {
-            WebApplicationContext appContext = conf.createApplicationContext(this);
+            WebApplicationContext appContext = conf.createApplicationContext();
             manager.addDelegate(findBean(AuthenticationManager.class, appContext), conf.getServer());
             details.addDelegate(new LDAPUserDetailsService(appContext, conf.getGroupMembershipStrategy(), conf.getServer()));
         }
+<<<<<<< /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/left.java
         return new SecurityComponents(manager, details);
+||||||| /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/base.java
+        
+        BeanBuilder builder = new BeanBuilder(jenkins.pluginManager.uberClassLoader);
+        String fileName = "LDAPBindSecurityRealm.groovy";
+        try {
+            File override = new File(jenkins.getRootDir(), fileName);
+            builder.parse(
+                    new AutoCloseInputStream(override.exists() ? new FileInputStream(override) :
+                        getClass().getResourceAsStream(fileName)), binding);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException("Failed to load "+fileName, e);
+        }
+        WebApplicationContext appContext = builder.createApplicationContext();
+
+        ldapTemplate = new LdapTemplate(findBean(InitialDirContextFactory.class, appContext));
+
+        if (groupMembershipStrategy != null) {
+            groupMembershipStrategy.setAuthoritiesPopulator(findBean(LdapAuthoritiesPopulator.class, appContext));
+        }
+
+        return new SecurityComponents(
+            new LDAPAuthenticationManager(findBean(AuthenticationManager.class, appContext)),
+            new LDAPUserDetailsService(appContext, groupMembershipStrategy));
+=======
+
+        BeanBuilder builder = new BeanBuilder(jenkins.pluginManager.uberClassLoader);
+        String fileName = "LDAPBindSecurityRealm.groovy";
+        try {
+            File override = new File(jenkins.getRootDir(), fileName);
+            builder.parse(
+                    new AutoCloseInputStream(override.exists() ? new FileInputStream(override) :
+                        getClass().getResourceAsStream(fileName)), binding);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException("Failed to load "+fileName, e);
+        }
+        WebApplicationContext appContext = builder.createApplicationContext();
+
+        ldapTemplate = new LdapTemplate(findBean(InitialDirContextFactory.class, appContext));
+
+        if (groupMembershipStrategy != null) {
+            groupMembershipStrategy.setAuthoritiesPopulator(findBean(LdapAuthoritiesPopulator.class, appContext));
+        }
+
+        return new SecurityComponents(
+            new LDAPAuthenticationManager(findBean(AuthenticationManager.class, appContext)),
+            new LDAPUserDetailsService(appContext, groupMembershipStrategy));
+>>>>>>> /usr/src/app/output/jenkinsci/ldap-plugin/3d9f87b4821809613c96f62dd1b75aec5b0e90d6/src/main/java/hudson/security/LDAPSecurityRealm.java/right.java
     }
 
     /**
@@ -1391,23 +1550,6 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
             return IdStrategy.CASE_INSENSITIVE;
         }
 
-        @Override
-        public SecurityRealm newInstance(StaplerRequest req, JSONObject formData) throws FormException {
-            if (!formData.has("configurations")) {
-                throw new Descriptor.FormException(jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AtLeastOne(), "configurations");
-            } else {
-                final Object configurations = formData.get("configurations");
-                if (configurations instanceof JSONArray && ((JSONArray) configurations).isEmpty()) {
-                    throw new Descriptor.FormException(jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AtLeastOne(), "configurations");
-                } else if (!(configurations instanceof JSONObject)) {
-                    throw new Descriptor.FormException(jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AtLeastOne(), "configurations");
-                } else if (((JSONObject) configurations).isNullObject()) {
-                    throw new Descriptor.FormException(jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AtLeastOne(), "configurations");
-                }
-            }
-            return super.newInstance(req, formData);
-        }
-
         @RequirePOST
         public FormValidation doValidate(StaplerRequest req) throws Exception {
             if (!Jenkins.getActiveInstance().hasPermission(Jenkins.ADMINISTER)) {
@@ -1465,12 +1607,9 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
 
         public FormValidation validate(LDAPSecurityRealm realm, String user, String password) {
             // we can only do deep validation if the connection is correct
-            LDAPConfiguration.LDAPConfigurationDescriptor confDescriptor = Jenkins.getActiveInstance().getDescriptorByType(LDAPConfiguration.LDAPConfigurationDescriptor.class);
-            for (LDAPConfiguration configuration : realm.getConfigurations()) {
-                FormValidation connnectionCheck = confDescriptor.doCheckServer(configuration.getServerUrl(), configuration.getManagerDN(), configuration.getManagerPasswordSecret());
-                if (connnectionCheck.kind != FormValidation.Kind.OK) {
-                    return connnectionCheck;
-                }
+            FormValidation connnectionCheck = doCheckServer(realm.getServerUrl(), realm.managerDN, realm.managerPasswordSecret);
+            if (connnectionCheck.kind != FormValidation.Kind.OK) {
+                return connnectionCheck;
             }
 
             // ok let's start with authentication
@@ -1552,7 +1691,7 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
                         StringUtils.isBlank(realm.managerDN)
                                 ? jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupManagerDnRequired()
                                 : jenkins.security.plugins.ldap.Messages
-                                .LDAPSecurityRealm_UserLookupManagerDnPermissions()
+                                        .LDAPSecurityRealm_UserLookupManagerDnPermissions()
                 );
                 // we do not flag these errors as could be probing user accounts
             } catch (UsernameNotFoundException e1) {
@@ -1561,7 +1700,7 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
                         StringUtils.isBlank(realm.managerDN)
                                 ? jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupManagerDnRequired()
                                 : jenkins.security.plugins.ldap.Messages
-                                .LDAPSecurityRealm_UserLookupManagerDnPermissions(),
+                                        .LDAPSecurityRealm_UserLookupManagerDnPermissions(),
                         jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupSettingsCorrect());
                 // we do not flag these errors as could be probing user accounts
             } catch (LdapDataAccessException e) {
@@ -1574,10 +1713,10 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
                             jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_UserLookupBadCredentials(),
                             StringUtils.isBlank(realm.managerDN)
                                     ? jenkins.security.plugins.ldap.Messages
-                                    .LDAPSecurityRealm_UserLookupManagerDnCorrect()
+                                            .LDAPSecurityRealm_UserLookupManagerDnCorrect()
                                     : jenkins.security.plugins.ldap.Messages
-                                    .LDAPSecurityRealm_UserLookupManagerDnPermissions()
-                    );
+                                            .LDAPSecurityRealm_UserLookupManagerDnPermissions()
+                            );
                     potentialLockout = true;
                 } else {
                     error(response, "lookup",
@@ -1732,9 +1871,9 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
                         escaped,
                         StringUtils.isBlank(realm.managerDN)
                                 ? jenkins.security.plugins.ldap.Messages
-                                .LDAPSecurityRealm_GroupLookupManagerDnRequired()
+                                        .LDAPSecurityRealm_GroupLookupManagerDnRequired()
                                 : jenkins.security.plugins.ldap.Messages
-                                .LDAPSecurityRealm_GroupLookupManagerDnPermissions(),
+                                        .LDAPSecurityRealm_GroupLookupManagerDnPermissions(),
                         jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_GroupLookupSettingsCorrect());
             }
             if (potentialLockout) {
@@ -1780,7 +1919,7 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
                         warning(response, testId,
                                 jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_EmptyEmailAddress(),
                                 jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_IsAttributeNameCorrect(
-                                        Util.escape(realm.getMailAddressAttributeName())
+                                                Util.escape(realm.getMailAddressAttributeName())
                                 ),
                                 jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AvailableAttributes(),
                                 alternatives);
@@ -1793,7 +1932,7 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
                     error(response, testId,
                             jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_CouldNotRetrieveEmailAddress(),
                             jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_IsAttributeNameCorrect(
-                                    Util.escape(realm.getMailAddressAttributeName())
+                                            Util.escape(realm.getMailAddressAttributeName())
                             ),
                             jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AvailableAttributes(),
                             alternatives);
@@ -1851,6 +1990,23 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
                             alternatives);
                 }
             }
+        }
+
+        @Override
+        public SecurityRealm newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+            if (!formData.has("configurations")) {
+                throw new Descriptor.FormException(jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AtLeastOne(), "configurations");
+            } else {
+                final Object configurations = formData.get("configurations");
+                if (configurations instanceof JSONArray && ((JSONArray) configurations).isEmpty()) {
+                    throw new Descriptor.FormException(jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AtLeastOne(), "configurations");
+                } else if (!(configurations instanceof JSONObject)) {
+                    throw new Descriptor.FormException(jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AtLeastOne(), "configurations");
+                } else if (((JSONObject) configurations).isNullObject()) {
+                    throw new Descriptor.FormException(jenkins.security.plugins.ldap.Messages.LDAPSecurityRealm_AtLeastOne(), "configurations");
+                }
+            }
+            return super.newInstance(req, formData);
         }
     }
 
