@@ -147,7 +147,7 @@ public class ConfluenceWikiTest {
         discriminator.setPropertyName("model_type");
         parentModel.setDiscriminator(discriminator);
 
-        final ComposedSchema composedSchema = new ComposedSchema();
+        final Schema composedSchema = new ComposedSchema();
         composedSchema.addAllOfItem(new Schema().$ref(parentModel.getName()));
         composedSchema.setName("sample");
 

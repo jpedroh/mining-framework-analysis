@@ -83,8 +83,8 @@ public class OpenApiSchemaValidationsTest {
         };
     }
 
-    private ComposedSchema getOneOfSample(boolean withProperties) {
-        ComposedSchema schema = new ComposedSchema();
+    private Schema getOneOfSample(boolean withProperties) {
+        Schema schema = new ComposedSchema();
         schema.oneOf(Arrays.asList(
                 new StringSchema(),
                 new IntegerSchema().format("int64"))
@@ -98,9 +98,9 @@ public class OpenApiSchemaValidationsTest {
         return schema;
     }
 
-    private ComposedSchema getAllOfSample(boolean withProperties) {
+    private Schema getAllOfSample(boolean withProperties) {
         // This doesn't matter if it's realistic; it's a structural check
-        ComposedSchema schema = new ComposedSchema();
+        Schema schema = new ComposedSchema();
         schema.allOf(Arrays.asList(
                 new StringSchema(),
                 new IntegerSchema().format("int64"))
@@ -114,8 +114,8 @@ public class OpenApiSchemaValidationsTest {
         return schema;
     }
 
-    private ComposedSchema getAnyOfSample(boolean withProperties) {
-        ComposedSchema schema = new ComposedSchema();
+    private Schema getAnyOfSample(boolean withProperties) {
+        Schema schema = new ComposedSchema();
         schema.anyOf(Arrays.asList(
                 new StringSchema(),
                 new IntegerSchema().format("int64"))
