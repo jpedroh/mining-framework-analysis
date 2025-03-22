@@ -337,6 +337,67 @@ public class Categories extends Suite {
         return annotation == null || annotation.matchAny();
     }
 
+<<<<<<< /usr/src/app/output/junit-team/junit4/5dbcddaabe2b1a1b7dd793f8fe5e97bdbe490ada/src/main/java/org/junit/experimental/categories/Categories.java/left.java
+    private static void assertNoCategorizedDescendentsOfUncategorizeableParents(Description description) throws InitializationError {
+        if (canHaveCategorizedChildren(description)) {
+            for (Description each : description.getChildren()) {
+                assertNoCategorizedDescendentsOfUncategorizeableParents(each);
+            }
+        } else {
+            assertNoDescendantsHaveCategoryAnnotations(description);
+        }
+    }
+
+    private static void assertNoDescendantsHaveCategoryAnnotations(Description description) throws InitializationError {
+        for (Description each : description.getChildren()) {
+            if (each.getAnnotation(Category.class) != null) {
+                throw new InitializationError("Category annotations on Parameterized classes are not supported on individual methods.");
+            }
+            assertNoDescendantsHaveCategoryAnnotations(each);
+        }
+    }
+
+    // If children have names like [0], our current magical category code can't determine their parentage.
+    private static boolean canHaveCategorizedChildren(Description description) {
+        for (Description each : description.getChildren()) {
+            if (each.getTestClass() == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+||||||| /usr/src/app/output/junit-team/junit4/5dbcddaabe2b1a1b7dd793f8fe5e97bdbe490ada/src/main/java/org/junit/experimental/categories/Categories.java/base.java
+    private static void assertNoCategorizedDescendentsOfUncategorizeableParents(Description description) throws InitializationError {
+        if (!canHaveCategorizedChildren(description)) {
+            assertNoDescendantsHaveCategoryAnnotations(description);
+        }
+        for (Description each : description.getChildren()) {
+            assertNoCategorizedDescendentsOfUncategorizeableParents(each);
+        }
+    }
+
+    private static void assertNoDescendantsHaveCategoryAnnotations(Description description) throws InitializationError {
+        for (Description each : description.getChildren()) {
+            if (each.getAnnotation(Category.class) != null) {
+                throw new InitializationError("Category annotations on Parameterized classes are not supported on individual methods.");
+            }
+            assertNoDescendantsHaveCategoryAnnotations(each);
+        }
+    }
+
+    // If children have names like [0], our current magical category code can't determine their parentage.
+    private static boolean canHaveCategorizedChildren(Description description) {
+        for (Description each : description.getChildren()) {
+            if (each.getTestClass() == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+=======
+>>>>>>> /usr/src/app/output/junit-team/junit4/5dbcddaabe2b1a1b7dd793f8fe5e97bdbe490ada/src/main/java/org/junit/experimental/categories/Categories.java/right.java
     private static boolean hasAssignableTo(Set<Class<?>> assigns, Class<?> to) {
         for (final Class<?> from : assigns) {
             if (to.isAssignableFrom(from)) {
