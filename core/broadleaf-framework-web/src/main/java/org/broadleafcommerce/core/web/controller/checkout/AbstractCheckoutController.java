@@ -1,22 +1,4 @@
-/*-
- * #%L
- * BroadleafCommerce Framework Web
- * %%
- * Copyright (C) 2009 - 2022 Broadleaf Commerce
- * %%
- * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
- * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
- * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
- * the Broadleaf End User License Agreement (EULA), Version 1.1
- * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
- * shall apply.
- * 
- * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
- * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
- * #L%
- */
 package org.broadleafcommerce.core.web.controller.checkout;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.i18n.service.ISOService;
@@ -48,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.ServletRequestDataBinder;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
@@ -61,128 +42,99 @@ import javax.servlet.http.HttpServletRequest;
  * @author Joshua Skorton (jskorton)
  */
 public abstract class AbstractCheckoutController extends BroadleafAbstractController {
+  private static final Log LOG = LogFactory.getLog(AbstractCheckoutController.class);
 
-    private static final Log LOG = LogFactory.getLog(AbstractCheckoutController.class);
+  protected static String ACTIVE_STAGE = "activeStage";
 
-    protected static String ACTIVE_STAGE = "activeStage";
+  protected static String cartPageRedirect = "redirect:/cart";
 
-    protected static String cartPageRedirect = "redirect:/cart";
-    protected static String checkoutView = "checkout/checkout";
-    protected static String checkoutStagesPartial = "checkout/partials/checkoutStages";
-    protected static String checkoutPageRedirect = "redirect:/checkout";
-    protected static String baseConfirmationView = "ajaxredirect:/confirmation";
+  protected static String checkoutView = "checkout/checkout";
 
-    /* Optional Service */
-    @Autowired(required=false)
-    @Qualifier("blPaymentGatewayCheckoutService")
-    protected PaymentGatewayCheckoutService paymentGatewayCheckoutService;
+  protected static String checkoutStagesPartial = "checkout/partials/checkoutStages";
 
-    /* Services */
-    @Resource(name = "blOrderService")
-    protected OrderService orderService;
+  protected static String checkoutPageRedirect = "redirect:/checkout";
 
-    @Resource(name = "blOrderPaymentService")
-    protected OrderPaymentService orderPaymentService;
+  protected static String baseConfirmationView = "ajaxredirect:/confirmation";
 
-    @Resource(name = "blOrderToPaymentRequestDTOService")
-    protected OrderToPaymentRequestDTOService dtoTranslationService;
+  @Autowired(required = false) @Qualifier(value = "blPaymentGatewayCheckoutService") protected PaymentGatewayCheckoutService paymentGatewayCheckoutService;
 
-    @Resource(name = "blFulfillmentGroupService")
-    protected FulfillmentGroupService fulfillmentGroupService;
+  @Resource(name = "blOrderService") protected OrderService orderService;
 
-    @Resource(name = "blFulfillmentOptionService")
-    protected FulfillmentOptionService fulfillmentOptionService;
+  @Resource(name = "blOrderPaymentService") protected OrderPaymentService orderPaymentService;
 
-    @Resource(name = "blCheckoutService")
-    protected CheckoutService checkoutService;
-    
-    @Resource(name = "blCustomerService")
-    protected CustomerService customerService;
+  @Resource(name = "blOrderToPaymentRequestDTOService") protected OrderToPaymentRequestDTOService dtoTranslationService;
 
-    @Resource(name = "blCustomerPaymentService")
-    protected CustomerPaymentService customerPaymentService;
+  @Resource(name = "blFulfillmentGroupService") protected FulfillmentGroupService fulfillmentGroupService;
 
-    @Resource(name = "blCountryService")
-    protected CountryService countryService;
+  @Resource(name = "blFulfillmentOptionService") protected FulfillmentOptionService fulfillmentOptionService;
 
-    @Resource(name = "blCountrySubdivisionService")
-    protected CountrySubdivisionService countrySubdivisionService;
+  @Resource(name = "blCheckoutService") protected CheckoutService checkoutService;
 
-    @Resource(name = "blISOService")
-    protected ISOService isoService;
+  @Resource(name = "blCustomerService") protected CustomerService customerService;
 
-    @Resource(name = "blCustomerAddressService")
-    protected CustomerAddressService customerAddressService;
+  @Resource(name = "blCustomerPaymentService") protected CustomerPaymentService customerPaymentService;
 
-    @Resource(name = "blAddressService")
-    protected AddressService addressService;
+  @Resource(name = "blCountryService") protected CountryService countryService;
 
-    @Resource(name = "blPhoneService")
-    protected PhoneService phoneService;
+  @Resource(name = "blCountrySubdivisionService") protected CountrySubdivisionService countrySubdivisionService;
 
-    @Resource(name = "blOrderMultishipOptionService")
-    protected OrderMultishipOptionService orderMultishipOptionService;
+  @Resource(name = "blISOService") protected ISOService isoService;
 
-    /* Validators */
-    @Resource(name = "blShippingInfoFormValidator")
-    protected ShippingInfoFormValidator shippingInfoFormValidator;
+  @Resource(name = "blCustomerAddressService") protected CustomerAddressService customerAddressService;
 
-    @Resource(name = "blBillingInfoFormValidator")
-    protected BillingInfoFormValidator billingInfoFormValidator;
+  @Resource(name = "blAddressService") protected AddressService addressService;
 
-    @Resource(name = "blCheckoutPaymentInfoFormValidator")
-    protected CheckoutPaymentInfoFormValidator paymentInfoFormValidator;
+  @Resource(name = "blPhoneService") protected PhoneService phoneService;
 
-    @Resource(name = "blGiftCardInfoFormValidator")
-    protected GiftCardInfoFormValidator giftCardInfoFormValidator;
+  @Resource(name = "blOrderMultishipOptionService") protected OrderMultishipOptionService orderMultishipOptionService;
 
-    @Resource(name = "blMultishipAddAddressFormValidator")
-    protected MultishipAddAddressFormValidator multishipAddAddressFormValidator;
+  @Resource(name = "blShippingInfoFormValidator") protected ShippingInfoFormValidator shippingInfoFormValidator;
 
-    @Resource(name = "blOrderInfoFormValidator")
-    protected OrderInfoFormValidator orderInfoFormValidator;
+  @Resource(name = "blBillingInfoFormValidator") protected BillingInfoFormValidator billingInfoFormValidator;
 
-    @Resource(name = "blCartStateService")
-    protected CartStateService cartStateService;
+  @Resource(name = "blCheckoutPaymentInfoFormValidator") protected CheckoutPaymentInfoFormValidator paymentInfoFormValidator;
 
-    @Resource(name = "blInitBinderService")
-    protected InitBinderService initBinderService;
+  @Resource(name = "blGiftCardInfoFormValidator") protected GiftCardInfoFormValidator giftCardInfoFormValidator;
 
-    /* Extension Managers */
-    @Resource(name = "blCheckoutControllerExtensionManager")
-    protected BroadleafCheckoutControllerExtensionManager checkoutControllerExtensionManager;
+  @Resource(name = "blMultishipAddAddressFormValidator") protected MultishipAddAddressFormValidator multishipAddAddressFormValidator;
 
-    /* Views and Redirects */
-    public String getCartPageRedirect() {
-        return cartPageRedirect;
-    }
+  @Resource(name = "blOrderInfoFormValidator") protected OrderInfoFormValidator orderInfoFormValidator;
 
-    public String getCheckoutView() {
-        return checkoutView;
-    }
+  @Resource(name = "blCartStateService") protected CartStateService cartStateService;
 
-    public String getCheckoutStagesPartial() {
-        return checkoutStagesPartial;
-    }
+  @Resource(name = "blInitBinderService") protected InitBinderService initBinderService;
 
-    public String getCheckoutPageRedirect() {
-        return checkoutPageRedirect;
-    }
+  @Resource(name = "blCheckoutControllerExtensionManager") protected BroadleafCheckoutControllerExtensionManager checkoutControllerExtensionManager;
 
-    public String getBaseConfirmationView() {
-        return baseConfirmationView;
-    }
+  public String getCartPageRedirect() {
+    return cartPageRedirect;
+  }
 
-    protected String getConfirmationView(String orderNumber) {
-        return getBaseConfirmationView() + "/" + orderNumber;
-    }
+  public String getCheckoutView() {
+    return checkoutView;
+  }
 
-    protected void populateModelWithReferenceData(HttpServletRequest request, Model model) {
-        //Add module specific model variables
-        checkoutControllerExtensionManager.getProxy().addAdditionalModelVariables(model);
-    }
+  public String getCheckoutStagesPartial() {
+    return checkoutStagesPartial;
+  }
 
-    /**
+  public String getCheckoutPageRedirect() {
+    return checkoutPageRedirect;
+  }
+
+  public String getBaseConfirmationView() {
+    return baseConfirmationView;
+  }
+
+  protected String getConfirmationView(String orderNumber) {
+    return getBaseConfirmationView() + "/" + orderNumber;
+  }
+
+  protected void populateModelWithReferenceData(HttpServletRequest request, Model model) {
+    checkoutControllerExtensionManager.getProxy().addAdditionalModelVariables(model);
+  }
+
+  /**
      * Initializes some custom binding operations for the checkout flow.
      * More specifically, this method will attempt to bind state and country
      * abbreviations to actual State and Country objects when the String
@@ -192,8 +144,7 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
      * @param binder
      * @throws Exception
      */
-    protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
-        initBinderService.configAddressInitBinder(binder);
-    }
-
+  protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
+    initBinderService.configAddressInitBinder(binder);
+  }
 }
