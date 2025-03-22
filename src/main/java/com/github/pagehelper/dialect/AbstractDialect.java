@@ -1,27 +1,11 @@
-package com.github.pagehelper.dialect;
-
-import com.github.pagehelper.Dialect;
-import com.github.pagehelper.PageRowBounds;
-import com.github.pagehelper.parser.CountSqlParser;
-import org.apache.ibatis.cache.CacheKey;
-import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.session.RowBounds;
-
-import java.util.List;
-import java.util.Properties;
-
-/**
- * 基于 CountSqlParser 的智能 Count 查询
- *
- * @author liuzh
- */
-public abstract class AbstractDialect implements Dialect {
-    //处理SQL
-    protected CountSqlParser countSqlParser = new CountSqlParser();
-
-    @Override
-    public String getCountSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, RowBounds rowBounds, CacheKey countKey) {
-        return countSqlParser.getSmartCountSql(boundSql.getSql());
-    }
-}
+  package    com . github . pagehelper . dialect ;   import    com . github . pagehelper . Dialect ;  import     com . github . pagehelper . parser . CountSqlParser ;  import     com . github . pagehelper . util . MetaObjectUtil ;  import     org . apache . ibatis . cache . CacheKey ;  import     org . apache . ibatis . mapping . BoundSql ;  import     org . apache . ibatis . mapping . MappedStatement ;  import     org . apache . ibatis . mapping . ParameterMapping ;  import     org . apache . ibatis . reflection . MetaObject ;  import     org . apache . ibatis . session . RowBounds ;  import   java . util . HashMap ;  import   java . util . List ;  import   java . util . Map ;  import   java . util . Properties ;   public abstract class AbstractDialect  implements  Dialect , Constant  {   protected CountSqlParser  countSqlParser =  new CountSqlParser  ( ) ;    @ Override public String getCountSql  (  MappedStatement ms ,  BoundSql boundSql ,  Object parameterObject ,  RowBounds rowBounds ,  CacheKey countKey )  {  return  countSqlParser . getSmartCountSql  (  boundSql . getSql  ( ) ) ; } 
+<<<<<<<
+   @ Override public void afterCount  (   long count ,  Object parameterObject ,  RowBounds rowBounds )  {  Page  page =  SqlUtil . getLocalPage  ( ) ;   page . setTotal  ( count ) ; }
+=======
+>>>>>>>
+ 
+<<<<<<<
+   @ Override public Object processParameterObject  (  MappedStatement ms ,  Object parameterObject ,  BoundSql boundSql ,  CacheKey pageKey )  {  Page  page =  SqlUtil . getLocalPage  ( ) ;  if  (  page . isOrderByOnly  ( ) )  {  return parameterObject ; }   Map  < String , Object >  paramMap = null ;  if  (  parameterObject == null )  {   paramMap =  new  HashMap  < String , Object >  ( ) ; } else  if  (  parameterObject instanceof Map )  {   paramMap =  new  HashMap  < String , Object >  ( ) ;   paramMap . putAll  (  ( Map ) parameterObject ) ; } else  {   paramMap =  new  HashMap  < String , Object >  ( ) ;  boolean  hasTypeHandler =    ms . getConfiguration  ( ) . getTypeHandlerRegistry  ( ) . hasTypeHandler  (  parameterObject . getClass  ( ) ) ;  MetaObject  metaObject =  MetaObjectUtil . forObject  ( parameterObject ) ;  if  (  ! hasTypeHandler )  {  for ( String name :  metaObject . getGetterNames  ( ) )  {   paramMap . put  ( name ,  metaObject . getValue  ( name ) ) ; } }  if  (    boundSql . getParameterMappings  ( ) != null &&    boundSql . getParameterMappings  ( ) . size  ( ) > 0 )  {  for ( ParameterMapping parameterMapping :  boundSql . getParameterMappings  ( ) )  {  String  name =  parameterMapping . getProperty  ( ) ;  if  (    !  name . equals  ( PAGEPARAMETER_FIRST ) &&  !  name . equals  ( PAGEPARAMETER_SECOND ) &&   paramMap . get  ( name ) == null )  {  if  (  hasTypeHandler ||   parameterMapping . getJavaType  ( ) . equals  (  parameterObject . getClass  ( ) ) )  {   paramMap . put  ( name , parameterObject ) ;  break ; } } } } }  return  processPageParameter  ( ms , paramMap , page , boundSql , pageKey ) ; }
+=======
+>>>>>>>
+   public abstract Object processPageParameter  (  MappedStatement ms ,   Map  < String , Object > paramMap ,  Page page ,  BoundSql boundSql ,  CacheKey pageKey ) ; }
