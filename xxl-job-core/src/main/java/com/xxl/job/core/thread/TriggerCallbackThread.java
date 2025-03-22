@@ -247,16 +247,19 @@ public class TriggerCallbackThread {
         // load and clear file, retry
         for (File callbaclLogFile: callbackLogPath.listFiles()) {
             byte[] callbackParamList_bytes = FileUtil.readFileContent(callbaclLogFile);
-
-            // avoid empty file
-            if(callbackParamList_bytes == null || callbackParamList_bytes.length < 1){
-                continue;
-            }
-          
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/2ca451972986ecac7962cb8d16aedcebb6bed1d5/xxl-job-core/src/main/java/com/xxl/job/core/thread/TriggerCallbackThread.java/left.java
             if(vaidateRetryCount(callbackParamList_bytes)){
                 continue;
             }
-            List<HandleCallbackParam> callbackParamList = (List<HandleCallbackParam>) XxlJobExecutor.getSerializer().deserialize(callbackParamList_bytes, HandleCallbackParam.class);
+||||||| /usr/src/app/output/xuxueli/xxl-job/2ca451972986ecac7962cb8d16aedcebb6bed1d5/xxl-job-core/src/main/java/com/xxl/job/core/thread/TriggerCallbackThread.java/base.java
+=======
+            // avoid empty file
+            if(callbackParamList_bytes == null || callbackParamList_bytes.length < 1){
+                callbaclLogFile.delete();
+                continue;
+            }
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/2ca451972986ecac7962cb8d16aedcebb6bed1d5/xxl-job-core/src/main/java/com/xxl/job/core/thread/TriggerCallbackThread.java/right.java
+            List<HandleCallbackParam> callbackParamList = (List<HandleCallbackParam>) JdkSerializeTool.deserialize(callbackParamList_bytes, List.class);
             doCallback(callbackParamList, callbaclLogFile);
         }
 
