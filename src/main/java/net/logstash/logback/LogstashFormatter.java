@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 package net.logstash.logback;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -26,17 +27,9 @@ import ch.qos.logback.classic.spi.ThrowableProxyUtil;
 import ch.qos.logback.core.Context;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.JsonNode;
-import org.apache.commons.lang.time.FastDateFormat;
-import org.slf4j.Marker;
-
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * 
@@ -157,6 +150,7 @@ public class LogstashFormatter {
         return MAPPER.convertValue(args, JsonNode.class);
     }
         
+
     private StackTraceElement extractCallerData(final ILoggingEvent event) {
         final StackTraceElement[] ste = event.getCallerData();
         if (ste == null || ste.length == 0) {
@@ -183,7 +177,7 @@ public class LogstashFormatter {
     public void setIncludeCallerInfo(boolean includeCallerInfo) {
         this.includeCallerInfo = includeCallerInfo;
     }
-
+    
     public void setCustomFields(JsonNode customFields) {
         this.customFields = customFields;
     }
@@ -191,4 +185,5 @@ public class LogstashFormatter {
     public JsonNode getCustomFields() {
         return this.customFields;
     }
+
 }
