@@ -888,6 +888,22 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
 
     private @Nonnull GroupDetailsImpl searchForGroupName(String groupname, boolean fetchMembers) throws UsernameNotFoundException, DataAccessException {
         for (LDAPConfiguration conf : configurations) {
+<<<<<<< /usr/src/app/output/jenkinsci/ldap-plugin/eea7336ee4cf2e275c469bea99f549eba74fdc2b/src/main/java/hudson/security/LDAPSecurityRealm.java/left.java
+            try {
+            String searchBase = conf.getGroupSearchBase() != null ? conf.getGroupSearchBase() : "";
+            String searchFilter = conf.getGroupSearchFilter() != null ? conf.getGroupSearchFilter() : GROUP_SEARCH;
+            groups.addAll(conf.getLdapTemplate().searchForSingleAttributeValues(searchBase, searchFilter, new String[]{groupname}, "cn"));
+            // Make sure we don't throw BadCredentialsException. Catch logic matches LDAPUserDetailsService#loadUserByUsername.
+            } catch (DataAccessException e) {
+                throwUnlessConfigIsIgnorable(e, conf);
+            } catch (RuntimeException e) {
+                throwUnlessConfigIsIgnorable(new LdapDataAccessException("Failed to search LDAP for group: " + groupname, e), conf);
+            }
+||||||| /usr/src/app/output/jenkinsci/ldap-plugin/eea7336ee4cf2e275c469bea99f549eba74fdc2b/src/main/java/hudson/security/LDAPSecurityRealm.java/base.java
+            String searchBase = conf.getGroupSearchBase() != null ? conf.getGroupSearchBase() : "";
+            String searchFilter = conf.getGroupSearchFilter() != null ? conf.getGroupSearchFilter() : GROUP_SEARCH;
+            groups.addAll(conf.getLdapTemplate().searchForSingleAttributeValues(searchBase, searchFilter, new String[]{groupname}, "cn"));
+=======
             try {
                 String searchBase = conf.getGroupSearchBase() != null ? conf.getGroupSearchBase() : "";
                 String searchFilter = conf.getGroupSearchFilter() != null ? conf.getGroupSearchFilter() : GROUP_SEARCH;
@@ -901,12 +917,14 @@ public class LDAPSecurityRealm extends AbstractPasswordBasedSecurityRealm {
                     }
                     return groupDetails;
                 }
-            // Make sure we don't throw BadCredentialsException. Catch logic matches LDAPUserDetailsService#loadUserByUsername.
             } catch (DataAccessException e) {
-                throwUnlessConfigIsIgnorable(e, conf);
-            } catch (RuntimeException e) {
-                throwUnlessConfigIsIgnorable(new LdapDataAccessException("Failed to search LDAP for group: " + groupname, e), conf);
+                LOGGER.log(Level.WARNING,
+                        String.format("Failed communication with ldap server %s (%s)",
+                                conf.getId(), conf.getServer()),
+                        e);
+                throw e;
             }
+>>>>>>> /usr/src/app/output/jenkinsci/ldap-plugin/eea7336ee4cf2e275c469bea99f549eba74fdc2b/src/main/java/hudson/security/LDAPSecurityRealm.java/right.java
         }
         throw new UsernameNotFoundException(groupname);
     }
