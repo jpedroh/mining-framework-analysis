@@ -144,6 +144,7 @@ public final class ArrivalsAndDeparturesQueryBean implements Serializable {
       if (types == null || types.isEmpty()) return;
       instanceFilterChain.add(new ArrivalAndDepartureFilterByRouteType(types));
   }
+
   public void setRouteType(String routeType) {
     if (routeType == null) return;
     ArrivalAndDepartureFilterByRouteType arrivalAndDepartureFilterByRouteType = new ArrivalAndDepartureFilterByRouteType(routeType);
