@@ -26,14 +26,23 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static com.github.jinahya.bit.io.BitIoTests.*;
+import static com.github.jinahya.bit.io.BitIoTests.randomSizeValueByte;
+import static com.github.jinahya.bit.io.BitIoTests.randomSizeValueInt;
+import static com.github.jinahya.bit.io.BitIoTests.randomSizeValueLong;
+import static com.github.jinahya.bit.io.BitIoTests.randomSizeValueShort;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -97,7 +106,7 @@ class BitIoTest {
 
     // -----------------------------------------------------------------------------------------------------------------
     static Object[] source() {
-        return new Object[]{
+        return new Object[] {
                 array(),
                 buffer(),
                 data(),
@@ -257,7 +266,6 @@ class BitIoTest {
             final int size = (Integer) list.remove(0);
             final int expected = (Integer) list.remove(0);
             final int actual = input.readInt(unsigned, size);
-//            log.debug("int; unsigned: {}, size: {}, expected: {}, actual: {}", unsigned, size, expected, actual);
             assertEquals(expected, actual);
         }
         input.align(1);

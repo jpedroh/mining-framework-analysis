@@ -1,5 +1,9 @@
 package com.github.jinahya.bit.io;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.lang.invoke.MethodHandles;
 /*-
  * #%L
  * bit-io
@@ -20,16 +24,13 @@ package com.github.jinahya.bit.io;
  * #L%
  */
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.lang.invoke.MethodHandles;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 import static java.util.concurrent.ThreadLocalRandom.current;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Utilities for testing classes.
@@ -38,6 +39,16 @@ final class BitIoTests {
 
     // -----------------------------------------------------------------------------------------------------------------
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Applies a unsigned flag and a bit size to given function.
+     *
+     * @param function the function.
+     * @param <R> result type parameter.
+     * @return the value the function results.
+     */
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -80,7 +91,6 @@ final class BitIoTests {
                 value = (byte) (current().nextInt() >> (Integer.SIZE - size));
                 assertEquals(value >> size, value >= 0 ? 0 : -1);
             }
-            //log.debug("byte; unsigned: {}, size: {}, value: {}", unsigned, size, value);
             return function.apply(Pair.of(unsigned, size), value);
         });
     }
@@ -209,12 +219,8 @@ final class BitIoTests {
             final int value;
             if (unsigned) {
                 value = (current().nextInt() >>> (Integer.SIZE - size));
-                assertTrue(value >= 0);
             } else {
                 value = (current().nextInt() >> (Integer.SIZE - size));
-                if (size < Integer.SIZE) {
-                    assertEquals(value >> size, value >= 0 ? 0 : -1);
-                }
             }
             assertValidValueInt(unsigned, size, value);
             return function.apply(Pair.of(unsigned, size), value);
@@ -279,7 +285,6 @@ final class BitIoTests {
                     assertEquals(value >> size, value >= 0L ? 0L : -1L);
                 }
             }
-            //log.debug("long; unsigned: {}, size: {}, value: {}", unsigned, size, value);
             return function.apply(Pair.of(unsigned, size), value);
         });
     }
