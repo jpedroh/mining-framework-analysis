@@ -12,8 +12,11 @@ import java.util.regex.Pattern;
 
 public class Main {
   private Scanner s;
+
   private List<Switchable> lazyStreams;
+
   private String className;
+
   private String fifoDir;
 
   public Main(String className, String fifoDir) {
@@ -24,20 +27,16 @@ public class Main {
   public void start() throws Exception {
     reopenStreams(fifoDir);
     Method main = mainMethod(className);
-
     Method init = mainMethod(System.getenv("DRIP_INIT_CLASS"));
     String initArgs = System.getenv("DRIP_INIT");
     if (initArgs != null) {
       invoke(init == null ? main : init, splitArgs(initArgs, "\n"));
     }
-
     for (Switchable o : lazyStreams) {
       o.flip();
     }
-
     String mainArgs = readLine();
     String runtimeArgs = readLine();
-
     invoke(main, splitArgs(mainArgs, "\u0000"));
   }
 
@@ -45,8 +44,7 @@ public class Main {
     new Main(args[0], args[1]).start();
   }
 
-  private Method mainMethod(String className)
-    throws ClassNotFoundException, NoSuchMethodException {
+  private Method mainMethod(String className) throws ClassNotFoundException, NoSuchMethodException {
     if (className != null) {
       return Class.forName(className).getMethod("main", String[].class);
     } else {
@@ -57,7 +55,6 @@ public class Main {
   private String[] splitArgs(String args, String delim) {
     Scanner s = new Scanner(args);
     s.useDelimiter(delim);
-
     LinkedList<String> arglist = new LinkedList<String>();
     while (s.hasNext()) {
       arglist.add(s.next());
@@ -66,12 +63,11 @@ public class Main {
   }
 
   private void invoke(Method main, String[] args) throws Exception {
-    main.invoke(null, (Object)args);
+    main.invoke(null, (Object) args);
   }
 
   private void setProperties(String runtimeArgs) {
     Matcher m = Pattern.compile("-D([^=]+)=([^\u0000]+)").matcher(runtimeArgs);
-
     while (m.find()) {
       System.setProperty(m.group(1), m.group(2));
     }
@@ -81,9 +77,8 @@ public class Main {
     Map<String, String> env = System.getenv();
     Class<?> classToHack = env.getClass();
     if (!(classToHack.getName().equals("java.util.Collections$UnmodifiableMap"))) {
-      throw new RuntimeException("Don't know how to hack " + classToHack);
+      throw new RuntimeException("Don\'t know how to hack " + classToHack);
     }
-
     Field field = classToHack.getDeclaredField("m");
     field.setAccessible(true);
     field.set(env, newEnv);
@@ -95,7 +90,6 @@ public class Main {
     SwitchableFileOutputStream stdout = new SwitchableFileOutputStream(System.out, fifo_dir + "/out");
     SwitchableFileOutputStream stderr = new SwitchableFileOutputStream(System.err, fifo_dir + "/err");
     lazyStreams = Arrays.<Switchable>asList(stdin, stdout, stderr);
-
     System.setIn(new BufferedInputStream(stdin));
     System.setOut(new PrintStream(stdout));
     System.setErr(new PrintStream(stderr));
