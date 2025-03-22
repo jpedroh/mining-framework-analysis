@@ -239,7 +239,13 @@ public class AuthKeysAction extends ActionSupport implements ServletRequestAware
 		String pubKey=null;
 		try {
 
+<<<<<<< /usr/src/app/output/bastillion-io/bastillion/9963fe0cc7668e7d305e6dc3ab82ec5d0fef8701/src/main/java/com/keybox/manage/action/AuthKeysAction.java/left.java
+			KeyPair keyPair = KeyPair.genKeyPair(jsch, type, Integer.parseInt(AppConfig.getProperty("KeyStrengh")));
+||||||| /usr/src/app/output/bastillion-io/bastillion/9963fe0cc7668e7d305e6dc3ab82ec5d0fef8701/src/main/java/com/keybox/manage/action/AuthKeysAction.java/base.java
+			KeyPair keyPair = KeyPair.genKeyPair(jsch, type);
+=======
 			KeyPair keyPair = KeyPair.genKeyPair(jsch, type, SSHUtil.KEY_LENGTH);
+>>>>>>> /usr/src/app/output/bastillion-io/bastillion/9963fe0cc7668e7d305e6dc3ab82ec5d0fef8701/src/main/java/com/keybox/manage/action/AuthKeysAction.java/right.java
 
 			OutputStream os = new ByteArrayOutputStream();
 			keyPair.writePrivateKey(os, publicKey.getPassphrase().getBytes());

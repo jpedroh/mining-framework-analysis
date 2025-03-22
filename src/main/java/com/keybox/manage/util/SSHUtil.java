@@ -170,7 +170,13 @@ public class SSHUtil {
 
 			try {
 
+<<<<<<< /usr/src/app/output/bastillion-io/bastillion/9963fe0cc7668e7d305e6dc3ab82ec5d0fef8701/src/main/java/com/keybox/manage/util/SSHUtil.java/left.java
+				KeyPair keyPair = KeyPair.genKeyPair(jsch, type, Integer.parseInt(AppConfig.getProperty("KeyStrengh")));
+||||||| /usr/src/app/output/bastillion-io/bastillion/9963fe0cc7668e7d305e6dc3ab82ec5d0fef8701/src/main/java/com/keybox/manage/util/SSHUtil.java/base.java
+				KeyPair keyPair = KeyPair.genKeyPair(jsch, type);
+=======
 				KeyPair keyPair = KeyPair.genKeyPair(jsch, type, KEY_LENGTH);
+>>>>>>> /usr/src/app/output/bastillion-io/bastillion/9963fe0cc7668e7d305e6dc3ab82ec5d0fef8701/src/main/java/com/keybox/manage/util/SSHUtil.java/right.java
 
 				keyPair.writePrivateKey(PVT_KEY, passphrase.getBytes());
 				keyPair.writePublicKey(PUB_KEY, comment);
