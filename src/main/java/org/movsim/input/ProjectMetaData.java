@@ -121,11 +121,6 @@ public class ProjectMetaData{
         return xodrPath;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.movsim.input.ProjectMetaData#isInstantaneousFileOutput()
-     */
     public boolean isInstantaneousFileOutput() {
         return instantaneousFileOutput;
     }

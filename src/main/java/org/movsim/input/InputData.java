@@ -52,7 +52,13 @@ public class InputData {
 
     
     /**
+<<<<<<< /usr/src/app/output/movsim/movsim/85b1821b4508a6ee489bd2f899caa01c1f3a94d6/src/main/java/org/movsim/input/InputData.java/left.java
      * Instantiates a new input data.
+||||||| /usr/src/app/output/movsim/movsim/85b1821b4508a6ee489bd2f899caa01c1f3a94d6/src/main/java/org/movsim/input/InputData.java/base.java
+     * Instantiates a new input data impl.
+=======
+     * Instantiates a new inputdata.
+>>>>>>> /usr/src/app/output/movsim/movsim/85b1821b4508a6ee489bd2f899caa01c1f3a94d6/src/main/java/org/movsim/input/InputData.java/right.java
      */
     public InputData() {
         projectMetaData = ProjectMetaData.getInstance();

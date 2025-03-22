@@ -272,4 +272,5 @@ public class Simulator implements Runnable {
     public RoadNetwork getRoadNetwork() {
         return roadNetwork;
     }
+
 }
