@@ -29,8 +29,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+<<<<<<< /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/test/java/com/rometools/modules/mediarss/MediaModuleTest.java/left.java
 import java.math.BigDecimal;
+||||||| /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/test/java/com/rometools/modules/mediarss/MediaModuleTest.java/base.java
+=======
 import java.util.Arrays;
+>>>>>>> /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/test/java/com/rometools/modules/mediarss/MediaModuleTest.java/right.java
 import java.util.List;
 
 import junit.framework.Test;
@@ -57,10 +61,18 @@ import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.SyndFeedOutput;
 
+<<<<<<< /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/test/java/com/rometools/modules/mediarss/MediaModuleTest.java/left.java
+||||||| /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/test/java/com/rometools/modules/mediarss/MediaModuleTest.java/base.java
+/**
+ *
+ * @author cooper
+ */
+=======
 /**
  * 
  * @author cooper
  */
+>>>>>>> /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/test/java/com/rometools/modules/mediarss/MediaModuleTest.java/right.java
 public class MediaModuleTest extends AbstractTestCase {
 
     /**
@@ -181,6 +193,38 @@ public class MediaModuleTest extends AbstractTestCase {
      * @throws IOException if file not found or not accessible
      * @throws FeedException when the feed can't be parsed
      */
+<<<<<<< /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/test/java/com/rometools/modules/mediarss/MediaModuleTest.java/left.java
+    public void testParseMediaContentContainingURLWithSpaces() throws Exception {
+        final SyndFeed feed = getSyndFeed("org/rometools/feed/module/mediarss/issue-20.xml");
+        final SyndEntry entry = feed.getEntries().get(0);
+        final MediaEntryModule m = (MediaEntryModule) entry.getModule(MediaModule.URI);
+        assertNotNull("missing media entry module", m);
+        final MediaContent[] mcs = m.getMediaContents();
+        assertNotNull("missing media:content", mcs);
+        assertEquals("wrong count of media:content", 1, mcs.length);
+        final MediaContent mc = mcs[0];
+        assertEquals("http://www.foo.com/path/containing+spaces/trailer.mov", mc.getReference().toString());
+    }
+    
+    public void testParseRestrictionWithoutType() throws FeedException, IOException  {
+        final SyndFeed feed = getSyndFeed("org/rometools/feed/module/mediarss/issue-331.xml");
+        final SyndEntry entry = feed.getEntries().get(0);
+        final MediaEntryModule module = (MediaEntryModule) entry.getModule(MediaModule.URI);
+        final Restriction[] restrictions = module.getMetadata().getRestrictions();
+        
+        assertThat(restrictions, is(notNullValue()));
+||||||| /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/test/java/com/rometools/modules/mediarss/MediaModuleTest.java/base.java
+    public void testParseMediaContentContainingURLWithSpaces() throws Exception {
+        final SyndFeed feed = getSyndFeed("org/rometools/feed/module/mediarss/issue-20.xml");
+        final SyndEntry entry = feed.getEntries().get(0);
+        final MediaEntryModule m = (MediaEntryModule) entry.getModule(MediaModule.URI);
+        assertNotNull("missing media entry module", m);
+        final MediaContent[] mcs = m.getMediaContents();
+        assertNotNull("missing media:content", mcs);
+        assertEquals("wrong count of media:content", 1, mcs.length);
+        final MediaContent mc = mcs[0];
+        assertEquals("http://www.foo.com/path/containing+spaces/trailer.mov", mc.getReference().toString());
+=======
     public void testParseMediaContentContainingURLWithSpaces() throws FeedException, IOException {
         final MediaEntryModule module = getFirstModuleFromFile("org/rometools/feed/module/mediarss/issue-20.xml");
         assertNotNull("missing media entry module", module);
@@ -189,6 +233,7 @@ public class MediaModuleTest extends AbstractTestCase {
         assertEquals("wrong count of media:content", 1, mediaContents.length);
         final MediaContent mediaContent = mediaContents[0];
         assertEquals("http://www.foo.com/path/containing+spaces/trailer.mov", mediaContent.getReference().toString());
+>>>>>>> /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/test/java/com/rometools/modules/mediarss/MediaModuleTest.java/right.java
     }
 
     /**
@@ -272,15 +317,6 @@ public class MediaModuleTest extends AbstractTestCase {
         final SyndFeed feed = getSyndFeed(filePath);
         final SyndEntry entry = feed.getEntries().get(0);
         return (MediaEntryModule) entry.getModule(MediaEntryModule.URI);
-    }
-    
-    public void testParseRestrictionWithoutType() throws FeedException, IOException  {
-        final SyndFeed feed = getSyndFeed("org/rometools/feed/module/mediarss/issue-331.xml");
-        final SyndEntry entry = feed.getEntries().get(0);
-        final MediaEntryModule module = (MediaEntryModule) entry.getModule(MediaModule.URI);
-        final Restriction[] restrictions = module.getMetadata().getRestrictions();
-        
-        assertThat(restrictions, is(notNullValue()));
     }
 
     /**

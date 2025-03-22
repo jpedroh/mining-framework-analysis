@@ -68,8 +68,19 @@ import com.rometools.rome.feed.impl.ToStringBean;
  * "country" allows restrictions to be placed based on country code. [<a href="http://www.iso.org/iso/en/prods-services/iso3166ma/index.html">ISO 3166</a>]
  * </p>
  * <p>
+<<<<<<< /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/main/java/com/rometools/modules/mediarss/types/Restriction.java/left.java
  * "uri" allows restrictions based on URI. Examples: urn:apple, http://images.google.com, urn:yahoo,
  * etc.
+||||||| /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/main/java/com/rometools/modules/mediarss/types/Restriction.java/base.java
+ * "uri" allows restrictions based on URI. Examples: urn:apple, http://images.google.com, urn:yahoo,
+ * etc.
+ *
+ * @author cooper
+=======
+ * "uri" allows restrictions based on URI. Examples: urn:apple, http://images.google.com, urn:yahoo, etc.
+ *
+ * @author cooper
+>>>>>>> /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/main/java/com/rometools/modules/mediarss/types/Restriction.java/right.java
  */
 public class Restriction implements Serializable {
     private static final long serialVersionUID = 7944281267467298628L;

@@ -21,8 +21,12 @@
  */
 package com.rometools.modules.mediarss.io;
 
+<<<<<<< /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/main/java/com/rometools/modules/mediarss/io/MediaModuleParser.java/left.java
 import java.math.BigDecimal;
+||||||| /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/main/java/com/rometools/modules/mediarss/io/MediaModuleParser.java/base.java
+=======
 import java.net.MalformedURLException;
+>>>>>>> /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/main/java/com/rometools/modules/mediarss/io/MediaModuleParser.java/right.java
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -77,10 +81,18 @@ import com.rometools.utils.Integers;
 import com.rometools.utils.Longs;
 import com.rometools.utils.Strings;
 
+<<<<<<< /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/main/java/com/rometools/modules/mediarss/io/MediaModuleParser.java/left.java
+||||||| /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/main/java/com/rometools/modules/mediarss/io/MediaModuleParser.java/base.java
+/**
+ * @author Nathanial X. Freitas
+ *
+ */
+=======
 /**
  * @author Nathanial X. Freitas
  * 
  */
+>>>>>>> /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/main/java/com/rometools/modules/mediarss/io/MediaModuleParser.java/right.java
 public class MediaModuleParser implements ModuleParser {
 
     private static final Logger LOG = LoggerFactory.getLogger(MediaModuleParser.class);
@@ -703,6 +715,300 @@ public class MediaModuleParser implements ModuleParser {
         } catch (final Exception ex) {
             LOG.warn("Exception parsing hash tag.", ex);
         }
+<<<<<<< /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/main/java/com/rometools/modules/mediarss/io/MediaModuleParser.java/left.java
+        // keywords
+        {
+            final Element keywords = e.getChild("keywords", getNS());
+
+            if (keywords != null) {
+                final StringTokenizer tok = new StringTokenizer(keywords.getText(), ",");
+                final String[] value = new String[tok.countTokens()];
+
+                for (int i = 0; tok.hasMoreTokens(); i++) {
+                    value[i] = tok.nextToken().trim();
+                }
+
+                md.setKeywords(value);
+            }
+        }
+        // ratings
+        {
+            final ArrayList<Rating> values = new ArrayList<Rating>();
+
+            final List<Element> ratings = e.getChildren("rating", getNS());
+            for (final Element ratingElement : ratings) {
+                try {
+                    final String ratingText = ratingElement.getText();
+                    String ratingScheme = Strings.trimToNull(ratingElement.getAttributeValue("scheme"));
+                    if (ratingScheme == null) {
+                        ratingScheme = "urn:simple";
+                    }
+                    final Rating rating = new Rating(ratingScheme, ratingText);
+                    values.add(rating);
+                } catch (final Exception ex) {
+                    LOG.warn("Exception parsing rating tag.", ex);
+                }
+            }
+
+            md.setRatings(values.toArray(new Rating[values.size()]));
+
+        }
+        // text
+        {
+            final List<Element> texts = e.getChildren("text", getNS());
+            final ArrayList<Text> values = new ArrayList<Text>();
+
+            for (int i = 0; texts != null && i < texts.size(); i++) {
+                try {
+                    final Element text = texts.get(i);
+                    final Time start = text.getAttributeValue("start") == null ? null : new Time(text.getAttributeValue("start"));
+                    final Time end = text.getAttributeValue("end") == null ? null : new Time(text.getAttributeValue("end"));
+                    values.add(new Text(text.getAttributeValue("type"), text.getTextTrim(), start, end));
+                } catch (final Exception ex) {
+                    LOG.warn("Exception parsing text tag.", ex);
+                }
+            }
+
+            md.setText(values.toArray(new Text[values.size()]));
+        }
+        // thumbnails
+        {
+            final ArrayList<Thumbnail> values = new ArrayList<Thumbnail>();
+
+            final List<Element> thumbnails = e.getChildren("thumbnail", getNS());
+            for (final Element thumb : thumbnails) {
+                try {
+
+                    final String timeAttr = Strings.trimToNull(thumb.getAttributeValue("time"));
+                    Time time = null;
+                    if (timeAttr != null) {
+                        time = new Time(timeAttr);
+                    }
+
+                    final String widthAttr = thumb.getAttributeValue("width");
+                    final Integer width = Integers.parse(widthAttr);
+
+                    final String heightAttr = thumb.getAttributeValue("height");
+                    final Integer height = Integers.parse(heightAttr);
+
+                    final String url = thumb.getAttributeValue("url");
+                    final URI uri = new URI(url);
+                    final Thumbnail thumbnail = new Thumbnail(uri, width, height, time);
+
+                    values.add(thumbnail);
+
+                } catch (final Exception ex) {
+                    LOG.warn("Exception parsing thumbnail tag.", ex);
+                }
+            }
+
+            md.setThumbnail(values.toArray(new Thumbnail[values.size()]));
+        }
+        // title
+        {
+            final Element title = e.getChild("title", getNS());
+
+            if (title != null) {
+                md.setTitle(title.getText());
+                md.setTitleType(title.getAttributeValue("type"));
+            }
+        }
+        // restrictions
+        {
+            final List<Element> restrictions = e.getChildren("restriction", getNS());
+            final ArrayList<Restriction> values = new ArrayList<Restriction>();
+
+            for (int i = 0; i < restrictions.size(); i++) {
+                final Element r = restrictions.get(i);
+                Restriction.Type type = null;
+
+                if (r.getAttributeValue("type") != null) {
+                    if (r.getAttributeValue("type").equalsIgnoreCase("uri")) {
+                        type = Restriction.Type.URI;
+                    } else if (r.getAttributeValue("type").equalsIgnoreCase("country")) {
+                        type = Restriction.Type.COUNTRY;
+                    }
+                }
+
+                Restriction.Relationship relationship = null;
+
+                if (r.getAttributeValue("relationship").equalsIgnoreCase("allow")) {
+                    relationship = Restriction.Relationship.ALLOW;
+                } else if (r.getAttributeValue("relationship").equalsIgnoreCase("deny")) {
+                    relationship = Restriction.Relationship.DENY;
+                }
+
+                final Restriction value = new Restriction(relationship, type, r.getTextTrim());
+                values.add(value);
+            }
+
+            md.setRestrictions(values.toArray(new Restriction[values.size()]));
+        }
+        // handle adult
+        {
+            final Element adult = e.getChild("adult", getNS());
+
+            if (adult != null && md.getRatings().length == 0) {
+                final Rating[] r = new Rating[1];
+
+                if (adult.getTextTrim().equals("true")) {
+                    r[0] = new Rating("urn:simple", "adult");
+                } else {
+                    r[0] = new Rating("urn:simple", "nonadult");
+                }
+
+                md.setRatings(r);
+            }
+        }
+
+        return md;
+||||||| /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/main/java/com/rometools/modules/mediarss/io/MediaModuleParser.java/base.java
+        // keywords
+        {
+            final Element keywords = e.getChild("keywords", getNS());
+
+            if (keywords != null) {
+                final StringTokenizer tok = new StringTokenizer(keywords.getText(), ",");
+                final String[] value = new String[tok.countTokens()];
+
+                for (int i = 0; tok.hasMoreTokens(); i++) {
+                    value[i] = tok.nextToken().trim();
+                }
+
+                md.setKeywords(value);
+            }
+        }
+        // ratings
+        {
+            final ArrayList<Rating> values = new ArrayList<Rating>();
+
+            final List<Element> ratings = e.getChildren("rating", getNS());
+            for (final Element ratingElement : ratings) {
+                try {
+                    final String ratingText = ratingElement.getText();
+                    String ratingScheme = Strings.trimToNull(ratingElement.getAttributeValue("scheme"));
+                    if (ratingScheme == null) {
+                        ratingScheme = "urn:simple";
+                    }
+                    final Rating rating = new Rating(ratingScheme, ratingText);
+                    values.add(rating);
+                } catch (final Exception ex) {
+                    LOG.warn("Exception parsing rating tag.", ex);
+                }
+            }
+
+            md.setRatings(values.toArray(new Rating[values.size()]));
+
+        }
+        // text
+        {
+            final List<Element> texts = e.getChildren("text", getNS());
+            final ArrayList<Text> values = new ArrayList<Text>();
+
+            for (int i = 0; texts != null && i < texts.size(); i++) {
+                try {
+                    final Element text = texts.get(i);
+                    final Time start = text.getAttributeValue("start") == null ? null : new Time(text.getAttributeValue("start"));
+                    final Time end = text.getAttributeValue("end") == null ? null : new Time(text.getAttributeValue("end"));
+                    values.add(new Text(text.getAttributeValue("type"), text.getTextTrim(), start, end));
+                } catch (final Exception ex) {
+                    LOG.warn("Exception parsing text tag.", ex);
+                }
+            }
+
+            md.setText(values.toArray(new Text[values.size()]));
+        }
+        // thumbnails
+        {
+            final ArrayList<Thumbnail> values = new ArrayList<Thumbnail>();
+
+            final List<Element> thumbnails = e.getChildren("thumbnail", getNS());
+            for (final Element thumb : thumbnails) {
+                try {
+
+                    final String timeAttr = Strings.trimToNull(thumb.getAttributeValue("time"));
+                    Time time = null;
+                    if (timeAttr != null) {
+                        time = new Time(timeAttr);
+                    }
+
+                    final String widthAttr = thumb.getAttributeValue("width");
+                    final Integer width = Integers.parse(widthAttr);
+
+                    final String heightAttr = thumb.getAttributeValue("height");
+                    final Integer height = Integers.parse(heightAttr);
+
+                    final String url = thumb.getAttributeValue("url");
+                    final URI uri = new URI(url);
+                    final Thumbnail thumbnail = new Thumbnail(uri, width, height, time);
+
+                    values.add(thumbnail);
+
+                } catch (final Exception ex) {
+                    LOG.warn("Exception parsing thumbnail tag.", ex);
+                }
+            }
+
+            md.setThumbnail(values.toArray(new Thumbnail[values.size()]));
+        }
+        // title
+        {
+            final Element title = e.getChild("title", getNS());
+
+            if (title != null) {
+                md.setTitle(title.getText());
+                md.setTitleType(title.getAttributeValue("type"));
+            }
+        }
+        // restrictions
+        {
+            final List<Element> restrictions = e.getChildren("restriction", getNS());
+            final ArrayList<Restriction> values = new ArrayList<Restriction>();
+
+            for (int i = 0; i < restrictions.size(); i++) {
+                final Element r = restrictions.get(i);
+                Restriction.Type type = null;
+
+                if (r.getAttributeValue("type").equalsIgnoreCase("uri")) {
+                    type = Restriction.Type.URI;
+                } else if (r.getAttributeValue("type").equalsIgnoreCase("country")) {
+                    type = Restriction.Type.COUNTRY;
+                }
+
+                Restriction.Relationship relationship = null;
+
+                if (r.getAttributeValue("relationship").equalsIgnoreCase("allow")) {
+                    relationship = Restriction.Relationship.ALLOW;
+                } else if (r.getAttributeValue("relationship").equalsIgnoreCase("deny")) {
+                    relationship = Restriction.Relationship.DENY;
+                }
+
+                final Restriction value = new Restriction(relationship, type, r.getTextTrim());
+                values.add(value);
+            }
+
+            md.setRestrictions(values.toArray(new Restriction[values.size()]));
+        }
+        // handle adult
+        {
+            final Element adult = e.getChild("adult", getNS());
+
+            if (adult != null && md.getRatings().length == 0) {
+                final Rating[] r = new Rating[1];
+
+                if (adult.getTextTrim().equals("true")) {
+                    r[0] = new Rating("urn:simple", "adult");
+                } else {
+                    r[0] = new Rating("urn:simple", "nonadult");
+                }
+
+                md.setRatings(r);
+            }
+        }
+
+        return md;
+=======
+>>>>>>> /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/main/java/com/rometools/modules/mediarss/io/MediaModuleParser.java/right.java
     }
 
     /**

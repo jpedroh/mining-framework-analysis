@@ -30,8 +30,6 @@ import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.SyndFeedInput;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
-import java.io.File;
 import java.util.List;
 
 /**

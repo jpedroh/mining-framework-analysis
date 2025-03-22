@@ -49,6 +49,14 @@ import com.rometools.rome.feed.impl.ToStringBean;
  * For example, &lt;media:content&gt; level elements are favored over &lt;item&gt; level elements. The priority level is listed from strongest to weakest:
  * &lt;media:content&gt;, &lt;media:group&gt;, &lt;item&gt;, &lt;channel&gt;.
  * </p>
+<<<<<<< /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/main/java/com/rometools/modules/mediarss/types/Metadata.java/left.java
+||||||| /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/main/java/com/rometools/modules/mediarss/types/Metadata.java/base.java
+ *
+ * @author cooper
+=======
+ * 
+ * @author cooper
+>>>>>>> /usr/src/app/output/rometools/rome/80945cdc0dc897d007fa1d5db5dbc77556fa409f/rome-modules/src/main/java/com/rometools/modules/mediarss/types/Metadata.java/right.java
  */
 public class Metadata implements Cloneable, Serializable {
     private static final long serialVersionUID = 649350950456005250L;
@@ -87,6 +95,7 @@ public class Metadata implements Cloneable, Serializable {
     private RightsStatus rights;
     private Scene[] scenes = new Scene[0];
 
+    /** Creates a new instance of Metadata. */
     public Metadata() {
         super();
     }
