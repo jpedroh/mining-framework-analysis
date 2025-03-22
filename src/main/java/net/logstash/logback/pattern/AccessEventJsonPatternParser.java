@@ -32,7 +32,22 @@ public class AccessEventJsonPatternParser extends AbstractJsonPatternParser<IAcc
         addOperation("nullNA", new NullNaValueOperation());
     }
     
+<<<<<<< /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AccessEventJsonPatternParser.java/left.java
     protected class NullNaValueOperation implements Operation<IAccessEvent, String> {
+||||||| /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AccessEventJsonPatternParser.java/base.java
+    protected class NullNaValueOperation extends AbstractJsonPatternParser<IAccessEvent>.Operation {
+
+        public NullNaValueOperation() {
+            super("nullNA", true);
+        }
+
+=======
+    protected class NullNaValueOperation extends AbstractJsonPatternParser<IAccessEvent>.Operation<String> {
+        public NullNaValueOperation() {
+            super(true);
+        }
+
+>>>>>>> /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AccessEventJsonPatternParser.java/right.java
         @Override
         public ValueGetter<String, IAccessEvent> createValueGetter(String data) {
             return makeLayoutValueGetter(data).andThen(this::convert);
@@ -48,4 +63,5 @@ public class AccessEventJsonPatternParser extends AbstractJsonPatternParser<IAcc
     protected PatternLayoutBase<IAccessEvent> createLayout() {
         return new PatternLayout();
     }
+
 }

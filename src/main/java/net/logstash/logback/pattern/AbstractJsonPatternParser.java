@@ -24,11 +24,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import net.logstash.logback.composite.JsonReadingUtils;
 import net.logstash.logback.composite.JsonWritingUtils;
 import net.logstash.logback.util.StringUtils;
-
 import ch.qos.logback.core.Context;
 import ch.qos.logback.core.pattern.PatternLayoutBase;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -43,6 +41,7 @@ import com.fasterxml.jackson.core.filter.TokenFilter.Inclusion;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import ch.qos.logback.core.spi.ContextAware;
 
 /**
  * Parser that takes a JSON pattern, resolves all the conversion specifiers and returns an instance
@@ -59,28 +58,34 @@ public abstract class AbstractJsonPatternParser<Event> {
      * An operation starts with a #, followed by a name and a pair of {} with possible arguments in between.
      */
     public static final Pattern OPERATION_PATTERN = Pattern.compile("\\# (\\w+) (?: \\{ (.*) \\} )", Pattern.COMMENTS);
-
     private final Context context;
     private final JsonFactory jsonFactory;
-
+<<<<<<< /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/left.java
     private final Map<String, Operation<Event, ?>> operations = new HashMap<>();
-
-
+||||||| /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/base.java
+    private final Map<String, Operation> operations = new HashMap<>();
+=======
+    private final Map<String, Operation<?>> operations = new HashMap<>();
+>>>>>>> /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/right.java
     /**
      * When true, fields whose values are considered empty
      * will be omitted from JSON output.
      */
     private boolean omitEmptyFields;
-
-    AbstractJsonPatternParser(final Context context, final JsonFactory jsonFactory) {
+     AbstractJsonPatternParser(final Context context, final JsonFactory jsonFactory) {
+<<<<<<< /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/left.java
         this.context = Objects.requireNonNull(context);
+||||||| /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/base.java
+        this.context = contextAware;
+=======
+        this.context = Objects.requireNonNull(contextAware);
+>>>>>>> /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/right.java
         this.jsonFactory = Objects.requireNonNull(jsonFactory);
         addOperation("asLong", new AsLongOperation());
         addOperation("asDouble", new AsDoubleOperation());
         addOperation("asJson", new AsJsonOperation());
         addOperation("tryJson", new TryJsonOperation());
     }
-
     /**
      * Register a new {@link Operation} and bind it to the given {@code name}.
      * 
@@ -90,7 +95,6 @@ public abstract class AbstractJsonPatternParser<Event> {
     protected void addOperation(String name, Operation<Event, ?> operation) {
         this.operations.put(name, operation);
     }
-
     protected interface Operation<Event, T> {
         /**
          * Create a {@link ValueGetter} implementing the operation on the supplied arguments ({@code data}).
@@ -102,7 +106,7 @@ public abstract class AbstractJsonPatternParser<Event> {
          */
         ValueGetter<T, Event> createValueGetter(String data);
     }
-
+<<<<<<< /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/left.java
     protected class AsLongOperation implements Operation<Event, Long> {
         @Override
         public ValueGetter<Long, Event> createValueGetter(String data) {
@@ -114,21 +118,6 @@ public abstract class AbstractJsonPatternParser<Event> {
         @Override
         public ValueGetter<Double, Event> createValueGetter(String data) {
             return makeLayoutValueGetter(data).andThen(Double::parseDouble);
-        }
-    }
-
-    protected class AsJsonOperation implements Operation<Event, JsonNode> {
-        @Override
-        public ValueGetter<JsonNode, Event> createValueGetter(String data) {
-            return makeLayoutValueGetter(data).andThen(this::convert); //FIXME if constant -> throw exception on invalid json
-        }
-        
-        private JsonNode convert(final String value) {
-            try {
-                return JsonReadingUtils.readFully(jsonFactory, value);
-            } catch (IOException e) {
-                throw new IllegalStateException("Unparsable JSON value (was '" + value + "')", e);
-            }
         }
     }
 
@@ -159,8 +148,123 @@ public abstract class AbstractJsonPatternParser<Event> {
             }
         }
     }
+||||||| /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/base.java
+    protected class TryJsonValueTransformer extends AbstractAsObjectTransformer<Object, Event> {
 
-    
+        public TryJsonValueTransformer(final ValueGetter<String, Event> generator) {
+            super(generator);
+        }
+
+        protected Object transform(final String value) throws IOException {
+            final String trimmedValue = StringUtils.trimToEmpty(value);
+            
+            try (JsonParser parser = jsonFactory.createParser(trimmedValue)) {
+                final TreeNode tree = parser.readValueAsTree();
+                if (parser.getCurrentLocation().getCharOffset() < trimmedValue.length()) {
+                    /*
+                     * If the full trimmed string was not read, then the full trimmed string contains a json value plus other text.
+                     * For example, trimmedValue = '10 foobar', or 'true foobar', or '{"foo","bar"} baz'.
+                     * In these cases readTree will only read the first part, and will not read the remaining text.
+                     */
+                    return value;
+                }
+                return tree;
+            } catch (JsonParseException e) {
+                return value;
+            }
+        }
+    }
+=======
+    protected class AsLongOperation extends Operation<Long> {
+        public AsLongOperation() {
+            super(true);
+        }
+
+        @Override
+        public ValueGetter<Long, Event> createValueGetter(String data) {
+            return makeLayoutValueGetter(data).andThen(Long::parseLong);
+        }
+    }
+
+    protected class AsDoubleOperation extends Operation<Double> {
+        public AsDoubleOperation() {
+            super(true);
+        }
+
+        @Override
+        public ValueGetter<Double, Event> createValueGetter(String data) {
+            return makeLayoutValueGetter(data).andThen(Double::parseDouble);
+        }
+    }
+
+    protected class TryJsonOperation extends Operation<Object> {
+        public TryJsonOperation() {
+            super(true);
+        }
+
+        @Override
+        public ValueGetter<Object, Event> createValueGetter(String data) {
+            return makeLayoutValueGetter(data).andThen(this::convert);
+        }
+        
+        private Object convert(final String value) {
+            final String trimmedValue = StringUtils.trimToEmpty(value);
+            
+            try (JsonParser parser = jsonFactory.createParser(trimmedValue)) {
+                final TreeNode tree = parser.readValueAsTree();
+                if (parser.getCurrentLocation().getCharOffset() < trimmedValue.length()) {
+                    /*
+                     * If the full trimmed string was not read, then the full trimmed string contains a json value plus other text.
+                     * For example, trimmedValue = '10 foobar', or 'true foobar', or '{"foo","bar"} baz'.
+                     * In these cases readTree will only read the first part, and will not read the remaining text.
+                     */
+                    return value;
+                }
+                return tree;
+            } catch (JsonParseException e) {
+                return value;
+            } catch (IOException e) {
+                throw new IllegalStateException("Unexpected IOException when reading JSON value (was '" + value + "')", e);
+            }
+        }
+    }
+>>>>>>> /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/right.java
+<<<<<<< /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/left.java
+    protected class AsJsonOperation implements Operation<Event, JsonNode> {
+        @Override
+        public ValueGetter<JsonNode, Event> createValueGetter(String data) {
+            return makeLayoutValueGetter(data).andThen(this::convert); //FIXME if constant -> throw exception on invalid json
+        }
+        
+        private JsonNode convert(final String value) {
+            try {
+                return JsonReadingUtils.readFully(jsonFactory, value);
+            } catch (IOException e) {
+                throw new IllegalStateException("Unparsable JSON value (was '" + value + "')", e);
+            }
+        }
+    }
+||||||| /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/base.java
+=======
+    protected class AsJsonOperation extends Operation<JsonNode> {
+        public AsJsonOperation() {
+            super(true);
+        }
+
+        @Override
+        public ValueGetter<JsonNode, Event> createValueGetter(String data) {
+            return makeLayoutValueGetter(data).andThen(this::convert);
+        }
+        
+        private JsonNode convert(final String value) {
+            try {
+                return JsonReadingUtils.readFully(jsonFactory, value);
+            } catch (IOException e) {
+                throw new IllegalStateException("Unexpected IOException when reading JSON value (was '" + value + "')", e);
+            }
+        }
+    }
+>>>>>>> /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/right.java
     private ValueGetter<?, Event> makeComputableValueGetter(String pattern) {
         Matcher matcher = OPERATION_PATTERN.matcher(pattern);
 
@@ -170,14 +274,33 @@ public abstract class AbstractJsonPatternParser<Event> {
                     ? matcher.group(2)
                     : null;
 
+<<<<<<< /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/left.java
             Operation<Event, ?> operation = this.operations.get(operationName);
+||||||| /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/base.java
+            Operation operation = this.operations.get(operationName);
+=======
+            Operation<?> operation = this.operations.get(operationName);
+>>>>>>> /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/right.java
             if (operation != null) {
+<<<<<<< /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/left.java
                 return operation.createValueGetter(operationData);
+||||||| /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/base.java
+                if (operation.requiresData() && operationData == null) {
+                    contextAware.addError("No parameter provided to operation: " + operation.getName());
+                } else {
+                    return operation.createValueGetter(operationData);
+                }
+=======
+                if (operation.requiresData() && operationData == null) {
+                    contextAware.addError("No parameter provided to operation: " + operationName);
+                } else {
+                    return operation.createValueGetter(operationData);
+                }
+>>>>>>> /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/right.java
             }
         }
         return makeLayoutValueGetter(pattern);
     }
-
     protected ValueGetter<String, Event> makeLayoutValueGetter(final String data) {
         /*
          * PatternLayout emits an ERROR status when pattern is null or empty and
@@ -201,8 +324,6 @@ public abstract class AbstractJsonPatternParser<Event> {
             return new LayoutValueGetter<>(layout);
         }
     }
-    
-    
     /**
      * Initialize a PatternLayout with the supplied format and throw an {@link IllegalArgumentException}
      * if the format is invalid.
@@ -219,8 +340,6 @@ public abstract class AbstractJsonPatternParser<Event> {
         
         return adapter;
     }
-
-    
     /**
      * Create a PatternLayout instance of the appropriate type. The returned instance
      * will further configured with the context and appropriate pattern then started.
@@ -228,8 +347,6 @@ public abstract class AbstractJsonPatternParser<Event> {
      * @return an unstarted {@link PatternLayoutBase} instance
      */
     protected abstract PatternLayoutBase<Event> createLayout();
-    
-    
     protected static class LayoutValueGetter<Event> implements ValueGetter<String, Event> {
         /**
          * The PatternLayout from which the value is generated
@@ -268,8 +385,6 @@ public abstract class AbstractJsonPatternParser<Event> {
             }
         }
     }
-    
-
     /**
      * Parse a JSON pattern and produce the corresponding {@link NodeWriter}.
      * Returns <em>null</em> if the pattern is invalid, null or empty. An error status is
@@ -291,13 +406,22 @@ public abstract class AbstractJsonPatternParser<Event> {
             throw new JsonPatternException("pattern is not a valid JSON object", e);
         }
 
+<<<<<<< /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/left.java
         NodeWriter<Event> nodeWriter = new RootWriter<>(parseObject(JsonPointer.compile("/"), node));
         if (omitEmptyFields) {
             nodeWriter = new OmitEmptyFieldWriter<>(nodeWriter);
         }
         return nodeWriter;
+||||||| /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/base.java
+        return parseChildren(node);
+=======
+        NodeWriter<Event> nodeWriter = new RootWriter<>(parseObject(node));
+        if (omitEmptyFields) {
+            nodeWriter = new OmitEmptyFieldWriter<>(nodeWriter);
+        }
+        return nodeWriter;
+>>>>>>> /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/right.java
     }
-
     /**
      * Parse a {@link JsonNode} and produce the corresponding {@link NodeWriter}.
      * 
@@ -321,12 +445,9 @@ public abstract class AbstractJsonPatternParser<Event> {
         if (node.isObject()) {
             return parseObject(location, (ObjectNode) node);
         }
-
         // Anything else, we will be just writing as is (nulls, numbers, booleans and whatnot)
         return new ValueWriter<>(g -> node);
     }
-    
-    
     /**
      * Parse a JSON array.
      * 
@@ -344,8 +465,6 @@ public abstract class AbstractJsonPatternParser<Event> {
 
         return new ArrayWriter<>(children);
     }
-    
-    
     /**
      * Parse an JSON object node
      * 
@@ -353,23 +472,42 @@ public abstract class AbstractJsonPatternParser<Event> {
      * @return a {@link ObjectWriter}
      * @throws JsonPatternException denotes an invalid pattern
      */
+<<<<<<< /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/left.java
     private ObjectWriter<Event> parseObject(JsonPointer location, ObjectNode node) throws JsonPatternException {
         ObjectWriter<Event> writer = new ObjectWriter<>();
 
+||||||| /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/base.java
+    private ChildrenWriter parseChildren(JsonNode node) {
+        List<FieldWriter<Event>> children = new ArrayList<>();
+=======
+    private ObjectWriter<Event> parseObject(ObjectNode node) {
+        ObjectWriter<Event> writer = new ObjectWriter<>();
+
+>>>>>>> /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/right.java
         for (Iterator<Map.Entry<String, JsonNode>> nodeFields = node.fields(); nodeFields.hasNext();) {
             Map.Entry<String, JsonNode> field = nodeFields.next();
 
             String fieldName = field.getKey();
             JsonNode fieldValue = field.getValue();
 
+<<<<<<< /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/left.java
             NodeWriter<Event> fieldWriter = parseNode(appendPath(location, fieldName), fieldValue);
             writer.addField(fieldName, fieldWriter);
+||||||| /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/base.java
+            if (value.isTextual()) {
+                ValueGetter<?, Event> getter = makeComputableValueGetter(value.asText());
+                children.add(new ComputableObjectFieldWriter(key, getter));
+            } else {
+                children.add(new DelegatingObjectFieldWriter(key, parseValue(value)));
+            }
+=======
+            NodeWriter<Event> fieldWriter = parseNode(fieldValue);
+            writer.addField(fieldName, fieldWriter);
+>>>>>>> /usr/src/app/output/logstash/logstash-logback-encoder/35759d0a000d8ea4bd238e736572bf94bc7891d9/src/main/java/net/logstash/logback/pattern/AbstractJsonPatternParser.java/right.java
         }
         
         return writer;
     }
-    
-    
     /**
      * Append a path to an existing {@link JsonPointer}
      * 
@@ -380,12 +518,9 @@ public abstract class AbstractJsonPatternParser<Event> {
     private static JsonPointer appendPath(JsonPointer ptr, String path) {
         return ptr.append(JsonPointer.compile("/" + path));
     }
-    
-    
     //
     // -- NodeWriters -----------------------------------------------------------------------------
     //
-    
     protected static class ObjectWriter<Event> implements NodeWriter<Event> {
         private final List<Field<Event>> fields = new ArrayList<>();
         
@@ -421,8 +556,6 @@ public abstract class AbstractJsonPatternParser<Event> {
             }
         }
     }
-    
-    
     protected static class ArrayWriter<Event> implements NodeWriter<Event> {
         private final List<NodeWriter<Event>> items;
 
@@ -438,8 +571,6 @@ public abstract class AbstractJsonPatternParser<Event> {
             generator.writeEndArray();
         }
     }
-    
-    
     protected static class ValueWriter<Event> implements NodeWriter<Event> {
         private final ValueGetter<?, Event> getter;
 
@@ -459,8 +590,6 @@ public abstract class AbstractJsonPatternParser<Event> {
             }
         }
     }
-    
-    
     private static class RootWriter<Event> implements NodeWriter<Event> {
         private final ObjectWriter<Event> delegate;
         
@@ -473,8 +602,6 @@ public abstract class AbstractJsonPatternParser<Event> {
             delegate.writeFields(generator, event);
         }
     }
-    
-    
     private static class OmitEmptyFieldWriter<Event> implements NodeWriter<Event> {
         private static final ThreadLocal<ReusableFilteringGenerator> filteringGenerators = ThreadLocal.withInitial(ReusableFilteringGenerator::new);
         private final NodeWriter<Event> delegate;
@@ -499,8 +626,6 @@ public abstract class AbstractJsonPatternParser<Event> {
             }
         }
     }
-    
-    
     private static class ReusableFilteringGenerator extends FilteringGeneratorDelegate {
         ReusableFilteringGenerator() {
             super(null, NullExcludingTokenFilter.INSTANCE, Inclusion.INCLUDE_ALL_AND_PATH, true /* multiple matches */);
@@ -514,8 +639,6 @@ public abstract class AbstractJsonPatternParser<Event> {
             this.delegate = null;
         }
     }
-    
-    
     private static class NullExcludingTokenFilter extends TokenFilter {
         private static final NullExcludingTokenFilter INSTANCE = new NullExcludingTokenFilter();
 
@@ -529,12 +652,9 @@ public abstract class AbstractJsonPatternParser<Event> {
             return !StringUtils.isEmpty(value);
         }
     }
-    
-    
     //
     // -- Public API ------------------------------------------------------------------------------
     //
-    
     /**
      * When {@code true}, fields whose values are considered empty will be omitted from JSON output.
      * 
@@ -543,7 +663,6 @@ public abstract class AbstractJsonPatternParser<Event> {
     public boolean isOmitEmptyFields() {
         return omitEmptyFields;
     }
-
     /**
      * When {@code true}, fields whose values are considered empty will be omitted from JSON output.
      * 
@@ -552,8 +671,6 @@ public abstract class AbstractJsonPatternParser<Event> {
     public void setOmitEmptyFields(boolean omitEmptyFields) {
         this.omitEmptyFields = omitEmptyFields;
     }
-    
-    
     @SuppressWarnings("serial")
     public static class JsonPatternException extends Exception {
         public JsonPatternException(String message, Throwable cause) {
@@ -564,4 +681,68 @@ public abstract class AbstractJsonPatternParser<Event> {
             super(message);
         }
     }
+    /**
+     * Pattern used to parse and detect {@link AbstractJsonPatternParser.Operation} in a string.
+     */
+    /**
+     * When true, fields whose values are considered empty
+     * will be omitted from JSON output.
+     */
+    /**
+     * Register a new {@link Operation} and bind it to the given {@code name}.
+     * 
+     * @param name the name of the operation
+     * @param operation the {@link Operation} instance
+     */
+    protected void addOperation(String name, Operation<?> operation) {
+        this.operations.put(name, operation);
+    }
+    /**
+     * Create a PatternLayout instance of the appropriate type. The returned instance
+     * will further configured with the context and appropriate pattern then started.
+     * 
+     * @return an unstarted {@link PatternLayoutBase} instance
+     */
+    /**
+     * Parse a JSON pattern and produce the corresponding {@link NodeWriter}.
+     * Returns <em>null</em> if the pattern is invalid, null or empty. An error status is
+     * logged when the pattern is invalid and parsing failed.
+     * 
+     * @param pattern the JSON pattern to parse
+     * @return a {@link NodeWriter} configured according to the pattern
+     */
+    /**
+     * Parse a {@link JsonNode} and produce the corresponding {@link NodeWriter}.
+     * 
+     * @param node the {@link JsonNode} to parse.
+     * @return a {@link NodeWriter} corresponding to the given json node
+     */
+    /**
+     * Parse a JSON array.
+     * 
+     * @param node the {@link ArrayNode} to parse
+     * @return a {@link ArrayWriter}
+     */
+    /**
+     * Parse an OBJECT json node
+     * 
+     * @param node the {@link ObjectNode} to parse
+     * @return a {@link ObjectWriter}
+     */
+    //
+    // -- NodeWriters -----------------------------------------------------------------------------
+    //
+    //
+    // -- Public API ------------------------------------------------------------------------------
+    //
+    /**
+     * When {@code true}, fields whose values are considered empty will be omitted from JSON output.
+     * 
+     * @return {@code true} if fields with empty values are omitted from JSON output
+     */
+    /**
+     * When {@code true}, fields whose values are considered empty will be omitted from JSON output.
+     * 
+     * @param omitEmptyFields whether fields with empty value should be omitted or not
+     */
 }
