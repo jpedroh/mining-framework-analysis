@@ -65,6 +65,9 @@ public class XxlJobAdminConfig implements InitializingBean, DisposableBean {
     @Value("${xxl.job.logretentiondays}")
     private int logretentiondays;
 
+    @Value("${xxl.job.hook.path:hooks}")
+    private String hookPath;
+
     // dao, service
 
     @Resource
