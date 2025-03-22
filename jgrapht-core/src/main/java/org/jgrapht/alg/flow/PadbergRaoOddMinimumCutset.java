@@ -1,29 +1,10 @@
-/*
- * (C) Copyright 2016-2016, by Joris Kinable and Contributors.
- *
- * JGraphT : a free Java graph-theory library
- *
- * This program and the accompanying materials are dual-licensed under
- * either
- *
- * (a) the terms of the GNU Lesser General Public License version 2.1
- * as published by the Free Software Foundation, or (at your option) any
- * later version.
- *
- * or (per the licensee's choosing)
- *
- * (b) the terms of the Eclipse Public License v1.0 as published by
- * the Eclipse Foundation.
- */
 package org.jgrapht.alg.flow;
-
 import org.jgrapht.Graph;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.alg.interfaces.MinimumSTCutAlgorithm;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
-
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -56,61 +37,53 @@ import java.util.stream.Collectors;
  *
  * @author Joris Kinable
  */
-public class PadbergRaoOddMinimumCutset<V, E>
-{
+public class PadbergRaoOddMinimumCutset<V extends java.lang.Object, E extends java.lang.Object> {
+  private final Graph<V, E> network;
 
-    /* Input graph */
-    private final Graph<V, E> network;
-    /* Set of vertices which are labeled 'odd' (set T in the paper) */
-    private Set<V> oddVertices;
-    /* Algorithm used to calculate the Gomory-Hu Cut-tree */
-    private final GusfieldGomoryHuCutTree<V, E> gusfieldGomoryHuCutTreeAlgorithm;
-    /* The Gomory-Hu tree */
-    private SimpleWeightedGraph<V, DefaultWeightedEdge> gomoryHuTree;
+  private Set<V> oddVertices;
 
-    /* Weight of the minimum odd cut-set */
-    private double minimumCutWeight = Double.MAX_VALUE;
-    /* Source partition constituting the minimum odd cut-set */
-    private Set<V> sourcePartitionMinimumCut;
+  private final GusfieldGomoryHuCutTree<V, E> gusfieldGomoryHuCutTreeAlgorithm;
 
-    /**
+  private SimpleWeightedGraph<V, DefaultWeightedEdge> gomoryHuTree;
+
+  private double minimumCutWeight = Double.MAX_VALUE;
+
+  private Set<V> sourcePartitionMinimumCut;
+
+  /**
      * Creates a new instance of the PadbergRaoOddMinimumCutset algorithm.
      *
      * @param network input graph
      */
-    public PadbergRaoOddMinimumCutset(Graph<V, E> network)
-    {
-        this(network, MaximumFlowAlgorithmBase.DEFAULT_EPSILON);
-    }
+  public PadbergRaoOddMinimumCutset(Graph<V, E> network) {
+    this(network, MaximumFlowAlgorithmBase.DEFAULT_EPSILON);
+  }
 
-    /**
+  /**
      * Creates a new instance of the PadbergRaoOddMinimumCutset algorithm.
      *
      * @param network input graph
      * @param epsilon tolerance
      */
-    public PadbergRaoOddMinimumCutset(Graph<V, E> network, double epsilon)
-    {
-        this(network, new PushRelabelMFImpl<>(network, epsilon));
-    }
+  public PadbergRaoOddMinimumCutset(Graph<V, E> network, double epsilon) {
+    this(network, new PushRelabelMFImpl<>(network, epsilon));
+  }
 
-    /**
+  /**
      * Creates a new instance of the PadbergRaoOddMinimumCutset algorithm.
      *
      * @param network input graph
      * @param minimumSTCutAlgorithm algorithm used to calculate the Gomory-Hu tree
      */
-    public PadbergRaoOddMinimumCutset(
-            Graph<V, E> network, MinimumSTCutAlgorithm<V, E> minimumSTCutAlgorithm)
-    {
-        if(!(network instanceof UndirectedGraph))
-            throw new IllegalArgumentException("Graph must be undirected");
-        this.network = network;
-        gusfieldGomoryHuCutTreeAlgorithm =
-                new GusfieldGomoryHuCutTree<>(network, minimumSTCutAlgorithm);
+  public PadbergRaoOddMinimumCutset(Graph<V, E> network, MinimumSTCutAlgorithm<V, E> minimumSTCutAlgorithm) {
+    if (!(network instanceof UndirectedGraph)) {
+      throw new IllegalArgumentException("Graph must be undirected");
     }
+    this.network = network;
+    gusfieldGomoryHuCutTreeAlgorithm = new GusfieldGomoryHuCutTree<>(network, minimumSTCutAlgorithm);
+  }
 
-    /**
+  /**
      * Calculates the minimum odd cut. The implementation follows Algorithm 1 in the paper Odd
      * minimum cut sets and b-matchings revisited by Adam Letchford, Gerhard Reinelt and Dirk Theis.
      * The original algorithm runs on a compressed Gomory-Hu tree: a cut-tree with the odd vertices
@@ -128,27 +101,23 @@ public class PadbergRaoOddMinimumCutset<V, E>
      *        (recommended: false).
      * @return weight of the minimum odd cut.
      */
-    public double calculateMinCut(Set<V> oddVertices, boolean useTreeCompression)
-    {
-        minimumCutWeight = Double.MAX_VALUE;
-        this.oddVertices = oddVertices;
-
-        if (oddVertices.size() % 2 == 1)
-            throw new IllegalArgumentException("There needs to be an even number of odd vertices");
-        assert network.vertexSet().containsAll(oddVertices); // All odd vertices must be contained
-        // in the graph
-        //all edge weights mucht be non-negative
-        assert network.edgeSet().stream().filter(e -> network.getEdgeWeight(e) < 0).count() == 0;
-
-        gomoryHuTree = gusfieldGomoryHuCutTreeAlgorithm.getGomoryHuTree();
-
-        if (useTreeCompression)
-            return calculateMinCutWithTreeCompression();
-        else
-            return calculateMinCutWithoutTreeCompression();
+  public double calculateMinCut(Set<V> oddVertices, boolean useTreeCompression) {
+    minimumCutWeight = Double.MAX_VALUE;
+    this.oddVertices = oddVertices;
+    if (oddVertices.size() % 2 == 1) {
+      throw new IllegalArgumentException("There needs to be an even number of odd vertices");
     }
+    assert network.vertexSet().containsAll(oddVertices);
+    assert network.edgeSet().stream().filter((e) -> network.getEdgeWeight(e) < 0).count() == 0;
+    gomoryHuTree = gusfieldGomoryHuCutTreeAlgorithm.getGomoryHuTree();
+    if (useTreeCompression) {
+      return calculateMinCutWithTreeCompression();
+    } else {
+      return calculateMinCutWithoutTreeCompression();
+    }
+  }
 
-    /**
+  /**
      * Modified implementation of the algorithm proposed in Odd Minimum Cut-sets and b-matchings by
      * Padberg and Rao. The optimal cut is directly computed on the Gomory-Hu tree computed for
      * graph G. This approach iterates efficiently over all possible cuts of the graph (there are
@@ -156,114 +125,98 @@ public class PadbergRaoOddMinimumCutset<V, E>
      *
      * @return weight of the minimum odd cut.
      */
-    private double calculateMinCutWithoutTreeCompression()
-    {
-        Set<DefaultWeightedEdge> edges = new LinkedHashSet<>(gomoryHuTree.edgeSet());
-        for (DefaultWeightedEdge edge : edges) {
-            V source = gomoryHuTree.getEdgeSource(edge);
-            V target = gomoryHuTree.getEdgeTarget(edge);
-            double edgeWeight = gomoryHuTree.getEdgeWeight(edge);
-
-            if(edgeWeight >= minimumCutWeight)
-                continue;
-
-            gomoryHuTree.removeEdge(edge); // Temporarily remove edge
-            Set<V> sourcePartition =
-                    new ConnectivityInspector<>(gomoryHuTree).connectedSetOf(source);
-            if (PadbergRaoOddMinimumCutset.isOddVertexSet(sourcePartition, oddVertices))
-            { // If the source partition forms an odd cutset, check whether the cut isn't better
-                // than the one we already found.
-                minimumCutWeight = edgeWeight;
-                sourcePartitionMinimumCut = sourcePartition;
-            }
-            gomoryHuTree.addEdge(source, target, edge); // Place edge back
-        }
-        return minimumCutWeight;
+  private double calculateMinCutWithoutTreeCompression() {
+    Set<DefaultWeightedEdge> edges = new LinkedHashSet<>(gomoryHuTree.edgeSet());
+    for (DefaultWeightedEdge edge : edges) {
+      V source = gomoryHuTree.getEdgeSource(edge);
+      V target = gomoryHuTree.getEdgeTarget(edge);
+      double edgeWeight = gomoryHuTree.getEdgeWeight(edge);
+      if (edgeWeight >= minimumCutWeight) {
+        continue;
+      }
+      gomoryHuTree.removeEdge(edge);
+      Set<V> sourcePartition = new ConnectivityInspector<>(gomoryHuTree).connectedSetOf(source);
+      if (PadbergRaoOddMinimumCutset.isOddVertexSet(sourcePartition, oddVertices)) {
+        minimumCutWeight = edgeWeight;
+        sourcePartitionMinimumCut = sourcePartition;
+      }
+      gomoryHuTree.addEdge(source, target, edge);
     }
+    return minimumCutWeight;
+  }
 
-    /**
+  /**
      * Implementation of the algorithm proposed in Odd Minimum Cut-sets and b-matchings by Padberg
      * and Rao. The algorithm evaluates at most |T| cuts in the Gomory-Hu tree.
      *
      * @return weight of the minimum odd cut.
      */
-    private double calculateMinCutWithTreeCompression()
-    {
-        Queue<Set<V>> queue = new LinkedList<>();
-        queue.add(oddVertices);
-
-        //Keep splitting the clusters until each resulting cluster containes exactly one vertex.
-        while(!queue.isEmpty()){
-            Set<V>  nextCluster=queue.poll();
-            this.splitCluster(nextCluster, queue);
-        }
-
-        return minimumCutWeight;
+  private double calculateMinCutWithTreeCompression() {
+    Queue<Set<V>> queue = new LinkedList<>();
+    queue.add(oddVertices);
+    while (!queue.isEmpty()) {
+      Set<V> nextCluster = queue.poll();
+      this.splitCluster(nextCluster, queue);
     }
+    return minimumCutWeight;
+  }
 
-    /**
+  /**
      * Takes a set of odd vertices with cardinality 2 or more, and splits them into 2 new non-empty sets.
      * @param cluster group of odd vertices
      * @param queue clusters with cardinality 2 or more
      */
-    private void splitCluster(Set<V>  cluster, Queue<Set<V> > queue){
-        assert cluster.size()>=2;
-
-        // Choose 2 random odd nodes
-        Iterator<V> iterator = cluster.iterator();
-        V oddNode1 = iterator.next();
-        V oddNode2 = iterator.next();
-
-        //Calculate the minimum cut separating these two nodes.
-        double cutWeight=gusfieldGomoryHuCutTreeAlgorithm.calculateMinCut(oddNode1, oddNode2);
-        Set<V> sourcePartition=null;
-
-        if(cutWeight < minimumCutWeight){
-            sourcePartition=gusfieldGomoryHuCutTreeAlgorithm.getSourcePartition();
-            if(PadbergRaoOddMinimumCutset.isOddVertexSet(sourcePartition, oddVertices)) {
-                this.minimumCutWeight = cutWeight;
-                this.sourcePartitionMinimumCut = sourcePartition;
-            }
-        }
-
-        if(cluster.size()==2)
-            return;
-
-        if(sourcePartition==null)
-            sourcePartition=gusfieldGomoryHuCutTreeAlgorithm.getSourcePartition();
-
-        Set<V> split1=this.intersection(cluster, sourcePartition);
-        Set<V> split2= new HashSet<>(cluster);
-        split2.removeAll(split1);
-
-        if(split1.size()>1)
-            queue.add(split1);
-        if(split2.size()>1)
-            queue.add(split2);
+  private void splitCluster(Set<V> cluster, Queue<Set<V>> queue) {
+    assert cluster.size() >= 2;
+    Iterator<V> iterator = cluster.iterator();
+    V oddNode1 = iterator.next();
+    V oddNode2 = iterator.next();
+    double cutWeight = gusfieldGomoryHuCutTreeAlgorithm.calculateMinCut(oddNode1, oddNode2);
+    Set<V> sourcePartition = null;
+    if (cutWeight < minimumCutWeight) {
+      sourcePartition = gusfieldGomoryHuCutTreeAlgorithm.getSourcePartition();
+      if (PadbergRaoOddMinimumCutset.isOddVertexSet(sourcePartition, oddVertices)) {
+        this.minimumCutWeight = cutWeight;
+        this.sourcePartitionMinimumCut = sourcePartition;
+      }
     }
+    if (cluster.size() == 2) {
+      return;
+    }
+    if (sourcePartition == null) {
+      sourcePartition = gusfieldGomoryHuCutTreeAlgorithm.getSourcePartition();
+    }
+    Set<V> split1 = this.intersection(cluster, sourcePartition);
+    Set<V> split2 = new HashSet<>(cluster);
+    split2.removeAll(split1);
+    if (split1.size() > 1) {
+      queue.add(split1);
+    }
+    if (split2.size() > 1) {
+      queue.add(split2);
+    }
+  }
 
-    /**
+  /**
      * Efficient way to compute the intersection between two sets
      * @param set1 set 1
      * @param set2 set 2
      * @return intersection of set 1 and 2
      */
-    private Set<V> intersection(Set<V> set1, Set<V> set2){
-        Set<V> a;
-        Set<V> b;
-        if (set1.size() <= set2.size()) {
-            a = set1;
-            b = set2;
-        } else {
-            a = set2;
-            b = set1;
-        }
-
-        return a.stream().filter(v -> b.contains(v)).collect(Collectors.toSet());
+  private Set<V> intersection(Set<V> set1, Set<V> set2) {
+    Set<V> a;
+    Set<V> b;
+    if (set1.size() <= set2.size()) {
+      a = set1;
+      b = set2;
+    } else {
+      a = set2;
+      b = set1;
     }
+    return a.stream().filter((v) -> b.contains(v)).collect(Collectors.toSet());
+  }
 
-
-    /**
+  /**
      * Convenience method which test whether the given set contains an odd number of odd-labeled
      * nodes.
      *
@@ -272,51 +225,45 @@ public class PadbergRaoOddMinimumCutset<V, E>
      * @param oddVertices subset of vertices which are labeled odd
      * @return true if the given set contains an odd number of odd-labeled nodes.
      */
-    public static <V> boolean isOddVertexSet(Set<V> vertices, Set<V> oddVertices)
-    {
-        if(vertices.size() < oddVertices.size())
-            return vertices.stream().filter(oddVertices::contains).count() % 2 == 1;
-        else
-            return oddVertices.stream().filter(vertices::contains).count() % 2 == 1;
+  public static <V extends java.lang.Object> boolean isOddVertexSet(Set<V> vertices, Set<V> oddVertices) {
+    if (vertices.size() < oddVertices.size()) {
+      return vertices.stream().filter(oddVertices::contains).count() % 2 == 1;
+    } else {
+      return oddVertices.stream().filter(vertices::contains).count() % 2 == 1;
     }
+  }
 
-    /**
+  /**
      * Returns partition W of the cut obtained after the last invocation of
      * {@link #calculateMinCut(Set, boolean)}
      *
      * @return partition W
      */
-    public Set<V> getSourcePartition()
-    {
-        return sourcePartitionMinimumCut;
-    }
+  public Set<V> getSourcePartition() {
+    return sourcePartitionMinimumCut;
+  }
 
-    /**
+  /**
      * Returns partition V-W of the cut obtained after the last invocation of
      * {@link #calculateMinCut(Set, boolean)}
      *
      * @return partition V-W
      */
-    public Set<V> getSinkPartition()
-    {
-        Set<V> sinkPartition = new LinkedHashSet<>(network.vertexSet());
-        sinkPartition.removeAll(sourcePartitionMinimumCut);
-        return sinkPartition;
-    }
+  public Set<V> getSinkPartition() {
+    Set<V> sinkPartition = new LinkedHashSet<>(network.vertexSet());
+    sinkPartition.removeAll(sourcePartitionMinimumCut);
+    return sinkPartition;
+  }
 
-    /**
+  /**
      * Returns the set of edges which run from the source partition to the sink partition, in the
      * s-t cut obtained after the last invocation of {@link #calculateMinCut(Set, boolean)}
      *
      * @return set of edges which have one endpoint in the source partition and one endpoint in the
      *         sink partition.
      */
-    public Set<E> getCutEdges()
-    {
-        Predicate<E> predicate = e -> sourcePartitionMinimumCut.contains(network.getEdgeSource(e))
-                ^ sourcePartitionMinimumCut.contains(network.getEdgeTarget(e));
-        return network.edgeSet().stream().filter(predicate).collect(
-                Collectors.toCollection(LinkedHashSet::new));
-    }
-
+  public Set<E> getCutEdges() {
+    Predicate<E> predicate = (e) -> sourcePartitionMinimumCut.contains(network.getEdgeSource(e)) ^ sourcePartitionMinimumCut.contains(network.getEdgeTarget(e));
+    return network.edgeSet().stream().filter(predicate).collect(Collectors.toCollection(LinkedHashSet::new));
+  }
 }
