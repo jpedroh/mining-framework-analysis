@@ -100,7 +100,15 @@ public class App {
             Controller controller = new SimulatorGUIController(simulator);
         } else {
             // commandline tool
+<<<<<<< /usr/src/app/output/movsim/movsim/db952595a57161f5c913d728dfcf23ecda11cc72/src/main/java/org/movsim/App.java/left.java
+            Controller controller = new SimulatorController(simulator); // or
+                                                                        // just:
+                                                                        // simulator.run();
+||||||| /usr/src/app/output/movsim/movsim/db952595a57161f5c913d728dfcf23ecda11cc72/src/main/java/org/movsim/App.java/base.java
+            Controller controller = new SimulatorController(simulator); // or just: simulator.run();
+=======
             final Controller controller = new SimulatorController(simulator); 
+>>>>>>> /usr/src/app/output/movsim/movsim/db952595a57161f5c913d728dfcf23ecda11cc72/src/main/java/org/movsim/App.java/right.java
         }
 
     }
@@ -110,8 +118,23 @@ public class App {
      */
     private static void initLocalizationAndLogger() {
         Locale.setDefault(Locale.US);
+<<<<<<< /usr/src/app/output/movsim/movsim/db952595a57161f5c913d728dfcf23ecda11cc72/src/main/java/org/movsim/App.java/left.java
+    
+        // BasicConfigurator for log4j replaced with PropertyConfigurator.
+        // log4j.properties from file system overrides log4j.properties from
+        // resources
+        final File file = new File("log4j.properties");
+        if (file.exists() && file.isFile()) {
+||||||| /usr/src/app/output/movsim/movsim/db952595a57161f5c913d728dfcf23ecda11cc72/src/main/java/org/movsim/App.java/base.java
+    
+        // BasicConfigurator for log4j replaced with PropertyConfigurator.
+        // log4j.properties from file system overrides log4j.properties from resources
             final File file = new File("log4j.properties");
             if (file.exists() && file.isFile()) {
+=======
+            final File file = new File("log4j.properties");
+            if (file.exists() && file.isFile()) {
+>>>>>>> /usr/src/app/output/movsim/movsim/db952595a57161f5c913d728dfcf23ecda11cc72/src/main/java/org/movsim/App.java/right.java
             PropertyConfigurator.configure("log4j.properties");
         } else {
             final URL log4jConfig = App.class.getResource("/sim/log4j.properties");
