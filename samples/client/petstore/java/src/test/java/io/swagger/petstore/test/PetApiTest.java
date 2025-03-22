@@ -1,64 +1,49 @@
 package io.swagger.petstore.test;
-
 import io.swagger.client.ApiException;
 import io.swagger.client.ApiClient;
 import io.swagger.client.Configuration;
 import io.swagger.client.api.*;
 import io.swagger.client.model.*;
 import io.swagger.client.auth.*;
-
 import java.util.*;
 import java.io.*;
-
 import static org.junit.Assert.*;
 import org.junit.*;
 
 public class PetApiTest {
   PetApi api = null;
 
-  @BeforeClass
-  public static void initAuth() {
+  @BeforeClass public static void initAuth() {
     ApiKeyAuth apiKeyAuth = (ApiKeyAuth) Configuration.getAuthentication("api_key");
     apiKeyAuth.setApiKey("special-key");
   }
 
-  @Before
-  public void setup() {
+  @Before public void setup() {
     api = new PetApi();
   }
 
-  @Test
-  public void testApiClient() {
-    // the default api client is used
+  @Test public void testApiClient() {
     assertEquals(Configuration.getDefaultApiClient(), api.getApiClient());
     assertNotNull(api.getApiClient());
     assertEquals("http://petstore.swagger.io/v2", api.getApiClient().getBasePath());
     assertFalse(api.getApiClient().isDebugging());
-
     ApiClient oldClient = api.getApiClient();
-
     ApiClient newClient = new ApiClient();
     newClient.setBasePath("http://example.com");
     newClient.setDebugging(true);
-
-    // set api client via constructor
     api = new PetApi(newClient);
     assertNotNull(api.getApiClient());
     assertEquals("http://example.com", api.getApiClient().getBasePath());
     assertTrue(api.getApiClient().isDebugging());
-
-    // set api client via setter method
     api.setApiClient(oldClient);
     assertNotNull(api.getApiClient());
     assertEquals("http://petstore.swagger.io/v2", api.getApiClient().getBasePath());
     assertFalse(api.getApiClient().isDebugging());
   }
 
-  @Test
-  public void testCreateAndGetPet() throws Exception {
+  @Test public void testCreateAndGetPet() throws Exception {
     Pet pet = createRandomPet();
     api.addPet(pet);
-
     Pet fetched = api.getPetById(pet.getId());
     assertNotNull(fetched);
     assertEquals(pet.getId(), fetched.getId());
@@ -66,13 +51,10 @@ public class PetApiTest {
     assertEquals(fetched.getCategory().getName(), pet.getCategory().getName());
   }
 
-  @Test
-  public void testUpdatePet() throws Exception {
+  @Test public void testUpdatePet() throws Exception {
     Pet pet = createRandomPet();
     pet.setName("programmer");
-
     api.updatePet(pet);
-
     Pet fetched = api.getPetById(pet.getId());
     assertNotNull(fetched);
     assertEquals(pet.getId(), fetched.getId());
@@ -80,48 +62,38 @@ public class PetApiTest {
     assertEquals(fetched.getCategory().getName(), pet.getCategory().getName());
   }
 
-  @Test
-  public void testFindPetsByStatus() throws Exception {
+  @Test public void testFindPetsByStatus() throws Exception {
     Pet pet = createRandomPet();
     pet.setName("programmer");
     pet.setStatus(Pet.StatusEnum.available);
-
     api.updatePet(pet);
-
-    List<Pet> pets = api.findPetsByStatus(Arrays.asList(new String[]{"available"}));
+    List<Pet> pets = api.findPetsByStatus(Arrays.asList(new String[] { "available" }));
     assertNotNull(pets);
-
     boolean found = false;
-    for(Pet fetched : pets) {
-      if(fetched.getId().equals(pet.getId())) {
+    for (Pet fetched : pets) {
+      if (fetched.getId().equals(pet.getId())) {
         found = true;
         break;
       }
     }
-
     assertTrue(found);
   }
 
-  @Test
-  public void testFindPetsByTags() throws Exception {
+  @Test public void testFindPetsByTags() throws Exception {
     Pet pet = createRandomPet();
     pet.setName("monster");
     pet.setStatus(Pet.StatusEnum.available);
-
     List<Tag> tags = new ArrayList<Tag>();
     Tag tag1 = new Tag();
     tag1.setName("friendly");
     tags.add(tag1);
     pet.setTags(tags);
-
     api.updatePet(pet);
-
-    List<Pet> pets = api.findPetsByTags(Arrays.asList(new String[]{"friendly"}));
+    List<Pet> pets = api.findPetsByTags(Arrays.asList(new String[] { "friendly" }));
     assertNotNull(pets);
-
     boolean found = false;
-    for(Pet fetched : pets) {
-      if(fetched.getId().equals(pet.getId())) {
+    for (Pet fetched : pets) {
+      if (fetched.getId().equals(pet.getId())) {
         found = true;
         break;
       }
@@ -129,47 +101,36 @@ public class PetApiTest {
     assertTrue(found);
   }
 
-  @Test
-  public void testUpdatePetWithForm() throws Exception {
+  @Test public void testUpdatePetWithForm() throws Exception {
     Pet pet = createRandomPet();
     pet.setName("frank");
     api.addPet(pet);
-
     Pet fetched = api.getPetById(pet.getId());
-
     api.updatePetWithForm(String.valueOf(fetched.getId()), "furt", null);
     Pet updated = api.getPetById(fetched.getId());
-
     assertEquals(updated.getName(), "furt");
   }
 
-  @Test
-  public void testDeletePet() throws Exception {
+  @Test public void testDeletePet() throws Exception {
     Pet pet = createRandomPet();
     api.addPet(pet);
-
     Pet fetched = api.getPetById(pet.getId());
     api.deletePet(null, fetched.getId());
-
     try {
       fetched = api.getPetById(fetched.getId());
       fail("expected an error");
-    }
-    catch (ApiException e) {
+    } catch (ApiException e) {
       assertEquals(404, e.getCode());
     }
   }
 
-  @Test
-  public void testUploadFile() throws Exception {
+  @Test public void testUploadFile() throws Exception {
     Pet pet = createRandomPet();
     api.addPet(pet);
-
     File file = new File("hello.txt");
     BufferedWriter writer = new BufferedWriter(new FileWriter(file));
     writer.write("Hello world!");
     writer.close();
-
     api.uploadFile(pet.getId(), "a test file", new File(file.getAbsolutePath()));
   }
 
@@ -177,15 +138,12 @@ public class PetApiTest {
     Pet pet = new Pet();
     pet.setId(System.currentTimeMillis());
     pet.setName("gorilla");
-
     Category category = new Category();
     category.setName("really-happy");
-
     pet.setCategory(category);
     pet.setStatus(Pet.StatusEnum.available);
-    List<String> photos = Arrays.asList(new String[]{"http://foo.bar.com/1", "http://foo.bar.com/2"});
+    List<String> photos = Arrays.asList(new String[] { "http://foo.bar.com/1", "http://foo.bar.com/2" });
     pet.setPhotoUrls(photos);
-
     return pet;
   }
 }
