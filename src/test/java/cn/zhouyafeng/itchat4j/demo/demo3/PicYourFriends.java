@@ -106,7 +106,7 @@ public class PicYourFriends implements IMsgHandlerFace {
 	}
 
 	@Override
-	public String verifyAddFriendMsgHandle(BaseMsg msg) {
+	public String verifyAddFriendMsgHandle(JSONObject msg) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -8,11 +8,9 @@ import org.apache.log4j.Logger;
 
 import com.alibaba.fastjson.JSON;
 
-import cn.zhouyafeng.itchat4j.api.MessageTools;
-import cn.zhouyafeng.itchat4j.api.WechatTools;
 import cn.zhouyafeng.itchat4j.beans.BaseMsg;
-import cn.zhouyafeng.itchat4j.beans.RecommendInfo;
-import cn.zhouyafeng.itchat4j.core.Core;
+
+import cn.zhouyafeng.itchat4j.api.MessageTools;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
 import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
 import cn.zhouyafeng.itchat4j.utils.tools.DownloadTools;
@@ -95,12 +93,21 @@ public class SimpleDemo implements IMsgHandlerFace {
 	}
 
 	@Override
-	public String verifyAddFriendMsgHandle(BaseMsg msg) {
+	public String textMsgHandle(JSONObject msg) {
+		if (!msg.isGroupMsg()) { // 群消息不处理
+			String text = msg.getText(); // 发送文本消息，也可调用MessageTools.sendFileMsgByUserId(userId,text);
+			return text;
+		}
+		return null;
+	}
+
+	@Override
+	public String verifyAddFriendMsgHandle(JSONObject msg) {
 		MessageTools.addFriend(msg, true); // 同意好友请求，false为不接受好友请求
-		RecommendInfo recommendInfo = msg.getRecommendInfo();
-		String nickName = recommendInfo.getNickName();
-		String province = recommendInfo.getProvince();
-		String city = recommendInfo.getCity();
+		JSONObject recommendInfo = msg.getJSONObject("RecommendInfo");
+		String nickName = recommendInfo.getString("NickName");
+		String province = recommendInfo.getString("Province");
+		String city = recommendInfo.getString("City");
 		String text = "你好，来自" + province + city + "的" + nickName + "， 欢迎添加我为好友！";
 		return text;
 	}

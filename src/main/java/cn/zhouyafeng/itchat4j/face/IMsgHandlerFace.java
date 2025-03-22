@@ -77,6 +77,6 @@ public interface IMsgHandlerFace {
 	 * @param msg
 	 * @return
 	 */
-	public String verifyAddFriendMsgHandle(BaseMsg msg);
+	public String verifyAddFriendMsgHandle(JSONObject msg);
 
 }

@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSONObject;
 import cn.zhouyafeng.itchat4j.api.MessageTools;
 import cn.zhouyafeng.itchat4j.beans.BaseMsg;
 import cn.zhouyafeng.itchat4j.face.IMsgHandlerFace;
+import cn.zhouyafeng.itchat4j.utils.MsgKeywords;
 import cn.zhouyafeng.itchat4j.utils.enums.MsgCodeEnum;
 import cn.zhouyafeng.itchat4j.utils.enums.MsgTypeEnum;
 import cn.zhouyafeng.itchat4j.utils.tools.CommonTools;
@@ -131,7 +132,6 @@ public class MsgCenter {
 								String result = msgHandler.textMsgHandle(msg);
 								MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
 							} else if (msg.getType().equals(MsgTypeEnum.PIC.getType())) {
-
 								String result = msgHandler.picMsgHandle(msg);
 								MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
 							} else if (msg.getType().equals(MsgTypeEnum.VOICE.getType())) {
@@ -145,10 +145,10 @@ public class MsgCenter {
 								MessageTools.sendMsgById(result, core.getMsgList().get(0).getFromUserName());
 							} else if (msg.getType().equals(MsgTypeEnum.SYS.getType())) { // 系统消息
 								msgHandler.sysMsgHandle(msg);
-							} else if (msg.getType().equals(MsgTypeEnum.VERIFYMSG.getType())) { // 确认添加好友消息
+							} else if (msg.getString("Type").equals(MsgTypeEnum.VERIFYMSG.getType())) { // 确认添加好友消息
 								String result = msgHandler.verifyAddFriendMsgHandle(msg);
 								MessageTools.sendMsgById(result,
-										core.getMsgList().get(0).getRecommendInfo().getUserName());
+										core.getMsgList().get(0).getJSONObject("RecommendInfo").getString("UserName"));
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
