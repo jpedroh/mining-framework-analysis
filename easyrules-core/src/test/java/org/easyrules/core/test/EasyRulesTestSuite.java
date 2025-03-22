@@ -1,7 +1,5 @@
 package org.easyrules.core.test;
-
 import junit.framework.TestSuite;
-
 import org.easyrules.core.test.annotation.EasyRulesAnnotationTestSuite;
 import org.easyrules.core.test.composite.CompositeRuleTest;
 import org.easyrules.core.test.parameters.DefaultRulesEngineTest;
@@ -16,15 +14,5 @@ import org.junit.runners.Suite;
  *
  * @author Mahmoud Ben Hassine (md.benhassine@gmail.com)
  */
-
-@RunWith(Suite.class)
-@Suite.SuiteClasses( {
-        RulePriorityComparisonTest.class,
-        RulePriorityThresholdTest.class,
-        SkipOnFirstAppliedRuleTest.class,
-        CompositeRuleTest.class,
-        EasyRulesAnnotationTestSuite.class,
-        DefaultRulesEngineTest.class})
-public class EasyRulesTestSuite extends TestSuite {
-
+@RunWith(value = Suite.class) @Suite.SuiteClasses(value = { RulePriorityComparisonTest.class, RulePriorityThresholdTest.class, SkipOnFirstAppliedRuleTest.class, CompositeRuleTest.class, EasyRulesAnnotationTestSuite.class, DefaultRulesEngineTest.class }) public class EasyRulesTestSuite extends TestSuite {
 }
