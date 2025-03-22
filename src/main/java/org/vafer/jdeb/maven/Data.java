@@ -105,7 +105,7 @@ public final class Data implements DataProducer {
         this.paths = paths;
     }
     
-    public String[] splitPatterns(String patterns) {
+    public String[] splitPatterns( String patterns ) {
         String[] result = null;
         if (patterns != null && patterns.length() > 0) {
             List tokens = new ArrayList();
