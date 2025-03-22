@@ -33,11 +33,8 @@ import org.jeasy.rules.api.RulesEngineParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Inference {@link RulesEngine} implementation.
@@ -73,8 +70,14 @@ public final class InferenceRulesEngine extends AbstractRulesEngine {
 
     @Override
     public void fire(Rules rules, Facts facts) {
+<<<<<<< /usr/src/app/output/j-easy/easy-rules/34f8a99338648331785a5cdb0dd70711c0c328c9/easy-rules-core/src/main/java/org/jeasy/rules/core/InferenceRulesEngine.java/left.java
+        rules = Objects.requireNonNull(rules);
+        facts = Objects.requireNonNull(facts);
+||||||| /usr/src/app/output/j-easy/easy-rules/34f8a99338648331785a5cdb0dd70711c0c328c9/easy-rules-core/src/main/java/org/jeasy/rules/core/InferenceRulesEngine.java/base.java
+=======
         Objects.requireNonNull(rules, "Rules must not be null");
         Objects.requireNonNull(facts, "Facts must not be null");
+>>>>>>> /usr/src/app/output/j-easy/easy-rules/34f8a99338648331785a5cdb0dd70711c0c328c9/easy-rules-core/src/main/java/org/jeasy/rules/core/InferenceRulesEngine.java/right.java
         Set<Rule> selectedRules;
         do {
             LOGGER.debug("Selecting candidate rules based on the following facts: {}", facts);
