@@ -100,9 +100,19 @@ public class JSON {
     /**
      * Deserialize the given JSON string to Java object.
      *
+<<<<<<< /usr/src/app/output/swagger-api/swagger-codegen/21dec4dbbc68aa0a7a9348f6a7b7d98935ed6bce/samples/client/petstore/java/okhttp-gson/src/main/java/io/swagger/client/JSON.java/left.java
+     * @param <T> Type
+     * @param body The JSON string
+     * @param returnType The type to deserialize inot
+||||||| /usr/src/app/output/swagger-api/swagger-codegen/21dec4dbbc68aa0a7a9348f6a7b7d98935ed6bce/samples/client/petstore/java/okhttp-gson/src/main/java/io/swagger/client/JSON.java/base.java
+     * @param <T> Type
+     * @param body The JSON string
+     * @param returnType The type to deserialize into
+=======
      * @param <T>        Type
      * @param body       The JSON string
      * @param returnType The type to deserialize into
+>>>>>>> /usr/src/app/output/swagger-api/swagger-codegen/21dec4dbbc68aa0a7a9348f6a7b7d98935ed6bce/samples/client/petstore/java/okhttp-gson/src/main/java/io/swagger/client/JSON.java/right.java
      * @return The deserialized Java object
      */
     @SuppressWarnings("unchecked")
@@ -126,7 +136,26 @@ public class JSON {
     }
 
     /**
+<<<<<<< /usr/src/app/output/swagger-api/swagger-codegen/21dec4dbbc68aa0a7a9348f6a7b7d98935ed6bce/samples/client/petstore/java/okhttp-gson/src/main/java/io/swagger/client/JSON.java/left.java
+     * Deserialize
+     *
+     * @param json Json element
+     * @param date Type
+     * @param typeOfSrc Type
+     * @param context Json Serialization Context
+     * @return Date
+     * @throw JsonParseException if fail to parse
+||||||| /usr/src/app/output/swagger-api/swagger-codegen/21dec4dbbc68aa0a7a9348f6a7b7d98935ed6bce/samples/client/petstore/java/okhttp-gson/src/main/java/io/swagger/client/JSON.java/base.java
+     * Deserialize
+     *
+     * @param json Json element
+     * @param date Type
+     * @param context Json Serialization Context
+     * @return Date
+     * @throws JsonParseException if fail to parse
+=======
      * Gson TypeAdapter for Joda DateTime type
+>>>>>>> /usr/src/app/output/swagger-api/swagger-codegen/21dec4dbbc68aa0a7a9348f6a7b7d98935ed6bce/samples/client/petstore/java/okhttp-gson/src/main/java/io/swagger/client/JSON.java/right.java
      */
     public static class DateTimeTypeAdapter extends TypeAdapter<DateTime> {
 
