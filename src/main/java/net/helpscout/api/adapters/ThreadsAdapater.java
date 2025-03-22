@@ -6,7 +6,6 @@ import net.helpscout.api.cbo.ThreadType;
 import net.helpscout.api.model.thread.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.lang.reflect.Type;
 
 public class ThreadsAdapater implements JsonDeserializer<LineItem>, JsonSerializer<LineItem> {
@@ -38,7 +37,7 @@ public class ThreadsAdapater implements JsonDeserializer<LineItem>, JsonSerializ
 			item = gson.create().fromJson(json, ForwardParent.class);
 		} else if (ThreadType.ForwardChild.getLabel().equals(theType)) {
 			item = gson.create().fromJson(json, ForwardChild.class);
-		} else if (ThreadType.Chat.getLabel().equals(theType)) {
+		} else if ("chat".equals(theType)) {
 			item = gson.create().fromJson(json, Chat.class);
 		}
 
@@ -60,8 +59,6 @@ public class ThreadsAdapater implements JsonDeserializer<LineItem>, JsonSerializ
 			thread.setType(ThreadType.ForwardParent.getLabel());
 		} else if (lineItem.getClass().isAssignableFrom(ForwardChild.class)) {
 			thread.setType(ThreadType.ForwardChild.getLabel());
-		} else if (lineItem.getClass().isAssignableFrom(Chat.class)) {
-			thread.setType(ThreadType.Chat.getLabel());
 		}
 		JsonElement json = gson.create().toJsonTree(thread);
 		log.debug("BKD => Thread: " + json.toString());
