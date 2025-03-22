@@ -141,34 +141,21 @@ public class mcMMO extends JavaPlugin {
     private GeneralConfig generalConfig;
     private AdvancedConfig advancedConfig;
 
-    private FoliaLib foliaLib;
-
-//    private RepairConfig repairConfig;
-//    private SalvageConfig salvageConfig;
-//    private PersistentDataConfig persistentDataConfig;
-//    private ChatConfig chatConfig;
-//    private CoreSkillsConfig coreSkillsConfig;
-//    private RankConfig rankConfig;
-//    private TreasureConfig treasureConfig;
-//    private FishingTreasureConfig fishingTreasureConfig;
-//    private SoundConfig soundConfig;
-
     private CommandOnLevelUpConfig commandOnLevelUpConfig;
 
     public mcMMO() {
         p = this;
     }
 
-
     protected mcMMO(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file)
     {
         super(loader, description, dataFolder, file);
     }
 
-
     /**
      * Things to be run when the plugin is enabled.
      */
+
     @Override
     public void onEnable() {
         try {
@@ -371,6 +358,7 @@ public class mcMMO extends JavaPlugin {
     /**
      * Things to be run when the plugin is disabled.
      */
+
     @Override
     public void onDisable() {
         setServerShutdown(true);
@@ -495,6 +483,7 @@ public class mcMMO extends JavaPlugin {
     /**
      * Setup the various storage file paths
      */
+
     private void setupFilePaths() {
         mcmmo = getFile();
         mainDirectory = getDataFolder().getPath() + File.separator;
@@ -618,6 +607,7 @@ public class mcMMO extends JavaPlugin {
      * Registers core skills
      * This enables the skills in the new skill system
      */
+
     private void registerCoreSkills() {
         /*
          * Acrobatics skills
@@ -723,6 +713,7 @@ public class mcMMO extends JavaPlugin {
      * Standard mode is scaled for 1-100
      * @return true if retro mode is enabled
      */
+
     public static boolean isRetroModeEnabled() {
         return isRetroModeEnabled;
     }
@@ -787,15 +778,35 @@ public class mcMMO extends JavaPlugin {
         return advancedConfig;
     }
 
-    public @NotNull FoliaLib getFoliaLib() {
-        return foliaLib;
-    }
-
     public @NotNull CommandOnLevelUpConfig getCommandOnLevelUpConfig() {
         return commandOnLevelUpConfig;
     }
 
     public @NotNull LevelUpCommandManager getLevelUpCommandManager() {
         return levelUpCommandManager;
+    }
+
+    private FoliaLib foliaLib;
+
+//    private RepairConfig repairConfig;
+
+//    private SalvageConfig salvageConfig;
+
+//    private PersistentDataConfig persistentDataConfig;
+
+//    private ChatConfig chatConfig;
+
+//    private CoreSkillsConfig coreSkillsConfig;
+
+//    private RankConfig rankConfig;
+
+//    private TreasureConfig treasureConfig;
+
+//    private FishingTreasureConfig fishingTreasureConfig;
+
+//    private SoundConfig soundConfig;
+
+    public @NotNull FoliaLib getFoliaLib() {
+        return foliaLib;
     }
 }
