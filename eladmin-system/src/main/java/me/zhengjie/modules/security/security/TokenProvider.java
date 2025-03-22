@@ -62,6 +62,18 @@ public class TokenProvider implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
+<<<<<<< /usr/src/app/output/elunez/eladmin/b2fdf7cb22817815e3ba1dd7f6f6c6ecf64afd0a/eladmin-system/src/main/java/me/zhengjie/modules/security/security/TokenProvider.java/left.java
+        byte[] keyBytes = Decoders.BASE64.decode(properties.getBase64Secret());
+        this.key = Keys.hmacShaKeyFor(keyBytes);
+        jwtParser = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build();
+        jwtBuilder = Jwts.builder()
+                .signWith(key, SignatureAlgorithm.HS512);
+||||||| /usr/src/app/output/elunez/eladmin/b2fdf7cb22817815e3ba1dd7f6f6c6ecf64afd0a/eladmin-system/src/main/java/me/zhengjie/modules/security/security/TokenProvider.java/base.java
+       byte[] keyBytes = Decoders.BASE64.decode(properties.getBase64Secret());
+       this.key = Keys.hmacShaKeyFor(keyBytes);
+=======
         byte[] keyBytes = Decoders.BASE64.decode(properties.getBase64Secret());
         Key key = Keys.hmacShaKeyFor(keyBytes);
         jwtParser = Jwts.parserBuilder()
@@ -69,8 +81,16 @@ public class TokenProvider implements InitializingBean {
                 .build();
         jwtBuilder = Jwts.builder()
                 .signWith(key, SignatureAlgorithm.HS512);
+>>>>>>> /usr/src/app/output/elunez/eladmin/b2fdf7cb22817815e3ba1dd7f6f6c6ecf64afd0a/eladmin-system/src/main/java/me/zhengjie/modules/security/security/TokenProvider.java/right.java
     }
 
+    /**
+     * 创建Token 设置永不过期，
+     * Token 的时间有效性转到Redis 维护
+     *
+     * @param authentication
+     * @return
+     */
     /**
      * 创建Token 设置永不过期，
      * Token 的时间有效性转到Redis 维护
@@ -79,21 +99,33 @@ public class TokenProvider implements InitializingBean {
      * @return /
      */
     public String createToken(Authentication authentication) {
+<<<<<<< /usr/src/app/output/elunez/eladmin/b2fdf7cb22817815e3ba1dd7f6f6c6ecf64afd0a/eladmin-system/src/main/java/me/zhengjie/modules/security/security/TokenProvider.java/left.java
+        /**
+         * 获取权限列表
+         */
+||||||| /usr/src/app/output/elunez/eladmin/b2fdf7cb22817815e3ba1dd7f6f6c6ecf64afd0a/eladmin-system/src/main/java/me/zhengjie/modules/security/security/TokenProvider.java/base.java
+=======
         /*
          * 获取权限列表
          */
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
+>>>>>>> /usr/src/app/output/elunez/eladmin/b2fdf7cb22817815e3ba1dd7f6f6c6ecf64afd0a/eladmin-system/src/main/java/me/zhengjie/modules/security/security/TokenProvider.java/right.java
+      String authorities = authentication.getAuthorities().stream()
+            .map(GrantedAuthority::getAuthority)
+            .collect(Collectors.joining(","));
 
         return jwtBuilder
                 // 加入ID确保生成的 Token 都不一致
-                .setId(IdUtil.simpleUUID())
-                .claim(AUTHORITIES_KEY, authorities)
+                .setId(IdUtil.simpleUUID())        .claim(AUTHORITIES_KEY, authorities)
                 .setSubject(authentication.getName())
                 .compact();
     }
 
+    /**
+     * 依据Token 获取鉴权信息
+     *
+     * @param token
+     * @return
+     */
     /**
      * 依据Token 获取鉴权信息
      *

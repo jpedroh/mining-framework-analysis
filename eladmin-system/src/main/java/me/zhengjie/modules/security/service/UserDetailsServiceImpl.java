@@ -41,6 +41,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private final RoleService roleService;
     private final DataService dataService;
     private final LoginProperties loginProperties;
+
     public void setEnableCache(boolean enableCache) {
         this.loginProperties.setCacheEnable(enableCache);
     }
@@ -50,7 +51,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      *
      * @see {@link UserCacheClean}
      */
+
     static Map<String, JwtUserDto> userDtoCache = new ConcurrentHashMap<>();
+
+    /**
+     * 用户信息缓存
+     *
+     * @see {@link UserCacheClean}
+     */
 
     @Override
     public JwtUserDto loadUserByUsername(String username) {

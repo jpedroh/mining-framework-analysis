@@ -126,9 +126,16 @@ public class RoleServiceImpl implements RoleService {
         List<User> users = userRepository.findByRoleId(role.getId());
         // 更新菜单
         role.setMenus(resources.getMenus());
+<<<<<<< /usr/src/app/output/elunez/eladmin/b2fdf7cb22817815e3ba1dd7f6f6c6ecf64afd0a/eladmin-system/src/main/java/me/zhengjie/modules/system/service/impl/RoleServiceImpl.java/left.java
+        cleanCache(resources, users);
+||||||| /usr/src/app/output/elunez/eladmin/b2fdf7cb22817815e3ba1dd7f6f6c6ecf64afd0a/eladmin-system/src/main/java/me/zhengjie/modules/system/service/impl/RoleServiceImpl.java/base.java
+        redisUtils.delByKeys("role::auth:",userIds);
+=======
         delCaches(resources.getId(), users);
+>>>>>>> /usr/src/app/output/elunez/eladmin/b2fdf7cb22817815e3ba1dd7f6f6c6ecf64afd0a/eladmin-system/src/main/java/me/zhengjie/modules/system/service/impl/RoleServiceImpl.java/right.java
         roleRepository.save(role);
     }
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -221,4 +228,43 @@ public class RoleServiceImpl implements RoleService {
         }
 
     }
+
+    /**
+     * 清理缓存
+     *
+     * @param id /
+     */
+    public void delCaches(Long id) {
+        List<User> users = userRepository.findByRoleId(id);
+        if (CollectionUtil.isNotEmpty(users)) {
+            users.stream().forEach(item -> {
+                userCacheClean.cleanUserCache(item.getUsername());
+            });
+            Set<Long> userIds = users.stream().map(User::getId).collect(Collectors.toSet());
+            redisUtils.delByKeys(CacheKey.DATE_USER, userIds);
+            redisUtils.delByKeys(CacheKey.MENU_USER, userIds);
+            redisUtils.delByKeys(CacheKey.ROLE_AUTH, userIds);
+        }
+
+    }
+
+    /**
+     * 清理缓存
+     *
+     * @param resources
+     * @param users
+     */
+    private void cleanCache(Role resources, List<User> users) {
+        // 清理缓存
+        if (CollectionUtil.isNotEmpty(users)) {
+            users.stream().forEach(item -> {
+                userCacheClean.cleanUserCache(item.getUsername());
+            });
+            Set<Long> userIds = users.stream().map(User::getId).collect(Collectors.toSet());
+            redisUtils.delByKeys(CacheKey.MENU_USER, userIds);
+            redisUtils.delByKeys(CacheKey.ROLE_AUTH, userIds);
+            redisUtils.del(CacheKey.ROLE_ID + resources.getId());
+        }
+    }
+
 }

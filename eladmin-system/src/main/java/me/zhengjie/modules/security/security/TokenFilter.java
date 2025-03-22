@@ -60,7 +60,6 @@ public class TokenFilter extends GenericFilterBean {
         this.tokenProvider = tokenProvider;
         this.userCacheClean = userCacheClean;
     }
-
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
@@ -89,7 +88,18 @@ public class TokenFilter extends GenericFilterBean {
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }
-
+    /**
+     * 初步检测Token
+     *
+     * @param request
+     * @return
+     */
+    /**
+     * @param tokenProvider     Token
+     * @param properties        JWT
+     * @param onlineUserService 用户在线
+     * @param userCacheClean    用户缓存清理工具
+     */
     /**
      * 初步检测Token
      *
@@ -99,11 +109,11 @@ public class TokenFilter extends GenericFilterBean {
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(properties.getHeader());
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(properties.getTokenStartWith())) {
-            // 去掉令牌前缀
-            return bearerToken.replace(properties.getTokenStartWith(), "");
-        } else {
-            log.debug("非法Token：{}", bearerToken);
-        }
+           // 去掉令牌前缀
+           return bearerToken.replace(properties.getTokenStartWith(), "");
+       } else {
+           log.debug("非法Token：{}", bearerToken);
+       }
         return null;
     }
 }
