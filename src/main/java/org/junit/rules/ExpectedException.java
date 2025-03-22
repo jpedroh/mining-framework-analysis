@@ -1,5 +1,4 @@
 package org.junit.rules;
-
 import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -109,42 +108,40 @@ import org.junit.runners.model.Statement;
  * @since 4.7
  */
 public class ExpectedException implements TestRule {
-    /**
+  /**
      * Returns a {@linkplain TestRule rule} that expects no exception to
      * be thrown (identical to behavior without this rule).
      */
-    public static ExpectedException none() {
-        return new ExpectedException();
-    }
+  public static ExpectedException none() {
+    return new ExpectedException();
+  }
 
-    private final ExpectedExceptionMatcherBuilder matcherBuilder = new ExpectedExceptionMatcherBuilder();
+  private final ExpectedExceptionMatcherBuilder matcherBuilder = new ExpectedExceptionMatcherBuilder();
 
-    private String missingExceptionMessage= "Expected test to throw %s";
+  private String missingExceptionMessage = "Expected test to throw %s";
 
-    private ExpectedException() {
-    }
+  private ExpectedException() {
+  }
 
-    /**
+  /**
      * This method does nothing. Don't use it.
      * @deprecated AssertionErrors are handled by default since JUnit 4.12. Just
      *             like in JUnit &lt;= 4.10.
      */
-    @Deprecated
-    public ExpectedException handleAssertionErrors() {
-        return this;
-    }
+  @Deprecated public ExpectedException handleAssertionErrors() {
+    return this;
+  }
 
-    /**
+  /**
      * This method does nothing. Don't use it.
      * @deprecated AssumptionViolatedExceptions are handled by default since
      *             JUnit 4.12. Just like in JUnit &lt;= 4.10.
      */
-    @Deprecated
-    public ExpectedException handleAssumptionViolatedExceptions() {
-        return this;
-    }
+  @Deprecated public ExpectedException handleAssumptionViolatedExceptions() {
+    return this;
+  }
 
-    /**
+  /**
      * Specifies the failure message for tests that are expected to throw 
      * an exception but do not throw any. You can use a {@code %s} placeholder for
      * the description of the expected exception. E.g. "Test doesn't throw %s."
@@ -154,17 +151,16 @@ public class ExpectedException implements TestRule {
      * @param message exception detail message
      * @return the rule itself
      */
-    public ExpectedException reportMissingExceptionWithMessage(String message) {
-        missingExceptionMessage = message;
-        return this;
-    }
+  public ExpectedException reportMissingExceptionWithMessage(String message) {
+    missingExceptionMessage = message;
+    return this;
+  }
 
-    public Statement apply(Statement base,
-            org.junit.runner.Description description) {
-        return new ExpectedExceptionStatement(base);
-    }
+  public Statement apply(Statement base, org.junit.runner.Description description) {
+    return new ExpectedExceptionStatement(base);
+  }
 
-    /**
+  /**
      * Verify that your code throws an exception that is matched by
      * a Hamcrest matcher.
      * <pre> &#064;Test
@@ -173,15 +169,12 @@ public class ExpectedException implements TestRule {
      *     thrown.expect(is(e));
      *     throw e;
      * }</pre>
-     *
-     * @deprecated use {@code org.hamcrest.junit.ExpectedException.expect()}
      */
-    @Deprecated
-    public void expect(Matcher<?> matcher) {
-        matcherBuilder.add(matcher);
-    }
+  @Deprecated public void expect(Matcher<?> matcher) {
+    matcherBuilder.add(matcher);
+  }
 
-    /**
+  /**
      * Verify that your code throws an exception that is an
      * instance of specific {@code type}.
      * <pre> &#064;Test
@@ -190,11 +183,11 @@ public class ExpectedException implements TestRule {
      *     throw new NullPointerException();
      * }</pre>
      */
-    public void expect(Class<? extends Throwable> type) {
-        expect(instanceOf(type));
-    }
+  public void expect(Class<? extends Throwable> type) {
+    expect(instanceOf(type));
+  }
 
-    /**
+  /**
      * Verify that your code throws an exception whose message contains
      * a specific text.
      * <pre> &#064;Test
@@ -203,11 +196,11 @@ public class ExpectedException implements TestRule {
      *     throw new NullPointerException(&quot;What happened?&quot;);
      * }</pre>
      */
-    public void expectMessage(String substring) {
-        expectMessage(containsString(substring));
-    }
+  public void expectMessage(String substring) {
+    expectMessage(containsString(substring));
+  }
 
-    /**
+  /**
      * Verify that your code throws an exception whose message is matched 
      * by a Hamcrest matcher.
      * <pre> &#064;Test
@@ -215,15 +208,12 @@ public class ExpectedException implements TestRule {
      *     thrown.expectMessage(startsWith(&quot;What&quot;));
      *     throw new NullPointerException(&quot;What happened?&quot;);
      * }</pre>
-     *
-     * @deprecated use {@code org.hamcrest.junit.ExpectedException.expectMessage()}
      */
-    @Deprecated
-    public void expectMessage(Matcher<String> matcher) {
-        expect(hasMessage(matcher));
-    }
+  @Deprecated public void expectMessage(Matcher<String> matcher) {
+    expect(hasMessage(matcher));
+  }
 
-    /**
+  /**
      * Verify that your code throws an exception whose cause is matched by 
      * a Hamcrest matcher.
      * <pre> &#064;Test
@@ -232,53 +222,49 @@ public class ExpectedException implements TestRule {
      *     thrown.expectCause(is(expectedCause));
      *     throw new IllegalArgumentException(&quot;What happened?&quot;, cause);
      * }</pre>
-     *
-     * @deprecated use {@code org.hamcrest.junit.ExpectedException.expectCause()}
      */
-    @Deprecated
-    public void expectCause(Matcher<? extends Throwable> expectedCause) {
-        expect(hasCause(expectedCause));
+  @Deprecated public void expectCause(Matcher<? extends Throwable> expectedCause) {
+    expect(hasCause(expectedCause));
+  }
+
+  private class ExpectedExceptionStatement extends Statement {
+    private final Statement next;
+
+    public ExpectedExceptionStatement(Statement base) {
+      next = base;
     }
 
-    private class ExpectedExceptionStatement extends Statement {
-        private final Statement next;
-
-        public ExpectedExceptionStatement(Statement base) {
-            next = base;
-        }
-
-        @Override
-        public void evaluate() throws Throwable {
-            try {
-                next.evaluate();
-            } catch (Throwable e) {
-                handleException(e);
-                return;
-            }
-            if (isAnyExceptionExpected()) {
-                failDueToMissingException();
-            }
-        }
+    @Override public void evaluate() throws Throwable {
+      try {
+        next.evaluate();
+      } catch (Throwable e) {
+        handleException(e);
+        return;
+      }
+      if (isAnyExceptionExpected()) {
+        failDueToMissingException();
+      }
     }
+  }
 
-    private void handleException(Throwable e) throws Throwable {
-        if (isAnyExceptionExpected()) {
-            assertThat(e, matcherBuilder.build());
-        } else {
-            throw e;
-        }
+  private void handleException(Throwable e) throws Throwable {
+    if (isAnyExceptionExpected()) {
+      assertThat(e, matcherBuilder.build());
+    } else {
+      throw e;
     }
+  }
 
-    private boolean isAnyExceptionExpected() {
-        return matcherBuilder.expectsThrowable();
-    }
+  private boolean isAnyExceptionExpected() {
+    return matcherBuilder.expectsThrowable();
+  }
 
-    private void failDueToMissingException() throws AssertionError {
-        fail(missingExceptionMessage());
-    }
-    
-    private String missingExceptionMessage() {
-        String expectation= StringDescription.toString(matcherBuilder.build());
-        return format(missingExceptionMessage, expectation);
-    }
+  private void failDueToMissingException() throws AssertionError {
+    fail(missingExceptionMessage());
+  }
+
+  private String missingExceptionMessage() {
+    String expectation = StringDescription.toString(matcherBuilder.build());
+    return format(missingExceptionMessage, expectation);
+  }
 }
