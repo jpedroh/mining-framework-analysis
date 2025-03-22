@@ -69,10 +69,18 @@ public class CountSqlParser {
         isSupportedSql(sql);
         //解析SQL
         Statement stmt = null;
+<<<<<<< /usr/src/app/output/pagehelper/mybatis-pagehelper/964a5ebebae2922f93d80ac9403670905686c88c/src/main/java/com/github/pagehelper/parser/CountSqlParser.java/left.java
+        //特殊sql不需要去掉order by时，使用注释前缀
+        if(sql.indexOf(KEEP_ORDERBY) >= 0){
+            return getSimpleCountSql(sql);
+        }
+||||||| /usr/src/app/output/pagehelper/mybatis-pagehelper/964a5ebebae2922f93d80ac9403670905686c88c/src/main/java/com/github/pagehelper/parser/CountSqlParser.java/base.java
+=======
         //特殊sql不需要去掉order by时，使用注释前缀
         if (sql.indexOf(KEEP_ORDERBY) >= 0) {
             return getSimpleCountSql(sql);
         }
+>>>>>>> /usr/src/app/output/pagehelper/mybatis-pagehelper/964a5ebebae2922f93d80ac9403670905686c88c/src/main/java/com/github/pagehelper/parser/CountSqlParser.java/right.java
         try {
             stmt = CCJSqlParserUtil.parse(sql);
         } catch (Throwable e) {
@@ -195,6 +203,18 @@ public class CountSqlParser {
      * @param plainSelect
      */
     public void processPlainSelect(PlainSelect plainSelect) {
+<<<<<<< /usr/src/app/output/pagehelper/mybatis-pagehelper/964a5ebebae2922f93d80ac9403670905686c88c/src/main/java/com/github/pagehelper/parser/CountSqlParser.java/left.java
+        //如果当前层有 group by，那么内层的 order by 不能去掉，当前层的可以去掉
+        if(plainSelect.getGroupByColumnReferences() != null && plainSelect.getGroupByColumnReferences().size() > 0){
+            //缺少必要的示例，暂时不管group by
+            //throw new RuntimeException();
+        }
+||||||| /usr/src/app/output/pagehelper/mybatis-pagehelper/964a5ebebae2922f93d80ac9403670905686c88c/src/main/java/com/github/pagehelper/parser/CountSqlParser.java/base.java
+        if(plainSelect.getGroupByColumnReferences() != null && plainSelect.getGroupByColumnReferences().size() > 0){
+            throw new RuntimeException();
+        }
+=======
+>>>>>>> /usr/src/app/output/pagehelper/mybatis-pagehelper/964a5ebebae2922f93d80ac9403670905686c88c/src/main/java/com/github/pagehelper/parser/CountSqlParser.java/right.java
         if (!orderByHashParameters(plainSelect.getOrderByElements())) {
             plainSelect.setOrderByElements(null);
         }
