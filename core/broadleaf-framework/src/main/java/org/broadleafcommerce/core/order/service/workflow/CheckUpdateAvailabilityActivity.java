@@ -85,11 +85,15 @@ public class CheckUpdateAvailabilityActivity extends AbstractCheckAvailabilityAc
             LOG.warn("Could not check availability; did not recognize passed-in item " + orderItem.getClass().getName());
             return context;
         }
-
+<<<<<<< /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/order/service/workflow/CheckUpdateAvailabilityActivity.java/left.java
+        if(sku.getProduct().getEnableDefaultSkuInInventory()){
+||||||| /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/order/service/workflow/CheckUpdateAvailabilityActivity.java/base.java
+        if{
+=======
         if(enableUseDefaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+>>>>>>> /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/order/service/workflow/CheckUpdateAvailabilityActivity.java/right.java
             sku = sku.getProduct().getDefaultSku();
         }
-
         Order order = context.getSeedData().getOrder();
         Integer requestedQuantity = request.getItemRequest().getQuantity();
         Map<Sku, Integer> skuItems = new HashMap<>();
@@ -100,12 +104,19 @@ public class CheckUpdateAvailabilityActivity extends AbstractCheckAvailabilityAc
             } else if (orderItemFromOrder instanceof BundleOrderItem) {
                 skuFromOrder = ((BundleOrderItem) orderItemFromOrder).getSku();
             }
+<<<<<<< /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/order/service/workflow/CheckUpdateAvailabilityActivity.java/left.java
+            if(skuFromOrder != null && skuFromOrder.getProduct().getEnableDefaultSkuInInventory()){
+                skuFromOrder = skuFromOrder.getProduct().getDefaultSku();
+            }
+||||||| /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/order/service/workflow/CheckUpdateAvailabilityActivity.java/base.java
+=======
             if(skuFromOrder!= null && enableUseDefaultSkuInventory && ((ProductSkuUsage) skuFromOrder.getProduct()).getUseDefaultSkuInInventory()){
                 skuFromOrder = skuFromOrder.getProduct().getDefaultSku();
             }
+>>>>>>> /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/order/service/workflow/CheckUpdateAvailabilityActivity.java/right.java
             if (skuFromOrder != null && skuFromOrder.equals(sku) && !orderItemFromOrder.equals(orderItem)) {
-                skuItems.merge(sku, orderItemFromOrder.getQuantity(), (oldVal, newVal) -> oldVal + newVal);
-            }
+            skuItems.merge(sku, orderItemFromOrder.getQuantity(), (oldVal, newVal) -> oldVal + newVal);
+        }
         }
         skuItems.merge(sku, requestedQuantity, (oldVal, newVal) -> oldVal + newVal);
         for (Map.Entry<Sku, Integer> entry : skuItems.entrySet()) {
@@ -115,7 +126,13 @@ public class CheckUpdateAvailabilityActivity extends AbstractCheckAvailabilityAc
         Integer previousQty = orderItem.getQuantity();
         for (OrderItem child : orderItem.getChildOrderItems()) {
             Sku childSku = ((DiscreteOrderItem) child).getSku();
+<<<<<<< /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/order/service/workflow/CheckUpdateAvailabilityActivity.java/left.java
+            if(childSku.getProduct().getEnableDefaultSkuInInventory()){
+||||||| /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/order/service/workflow/CheckUpdateAvailabilityActivity.java/base.java
+            if{
+=======
             if(enableUseDefaultSkuInventory && ((ProductSkuUsage) childSku.getProduct()).getUseDefaultSkuInInventory()){
+>>>>>>> /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/order/service/workflow/CheckUpdateAvailabilityActivity.java/right.java
                 childSku = childSku.getProduct().getDefaultSku();
             }
             Integer childQuantity = child.getQuantity();

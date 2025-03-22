@@ -28,7 +28,6 @@ import org.broadleafcommerce.common.event.BroadleafSystemEventDetail;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.util.TransactionUtils;
-import org.broadleafcommerce.core.catalog.domain.ProductSkuUsage;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
@@ -68,8 +67,14 @@ public class InventoryServiceImpl implements ContextualInventoryService {
     @Autowired
     protected ApplicationContext applicationContext;
 
-    @Value("${enable.weave.use.default.sku.inventory:false}")
+    @Value("${enable.default.sku.inventory:false}")
+<<<<<<< /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/left.java
+    protected boolean enableDefaultSkuInventory = false;
+||||||| /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/base.java
+    protected boolean enableUseDegaultSkuInventory = false;
+=======
     protected boolean enableUseDefaultSkuInventory = false;
+>>>>>>> /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/right.java
 
     @Override
     public boolean checkBasicAvailablility(Sku sku) {
@@ -143,17 +148,23 @@ public class InventoryServiceImpl implements ContextualInventoryService {
 
             for (Sku sku : skus) {
                 Sku skuForInventory = sku;
-                if (enableUseDefaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+<<<<<<< /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/left.java
+                if (enableDefaultSkuInventory && sku.getProduct().getEnableDefaultSkuInInventory()){
+||||||| /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/base.java
+                if (enableUseDegaultSkuInventory && sku.getProduct().getEnableDefaultSkuInInventory()){
+=======
+                if (enableUseDefaultSkuInventory && sku.getProduct().getEnableDefaultSkuInInventory()){
+>>>>>>> /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/right.java
                     skuForInventory = sku.getProduct().getDefaultSku();
                 }
                 Integer quantityAvailable = 0;
-                if(checkBasicAvailablility(skuForInventory)) {
-                    InventoryType skuInventoryType = skuForInventory.getInventoryType();
+                if(checkBasicAvailablility(sku)) {
+                    InventoryType skuInventoryType = sku.getInventoryType();
                     if(InventoryType.CHECK_QUANTITY.equals(skuInventoryType)) {
-                        if(skuForInventory.getQuantityAvailable() != null) {
-                            quantityAvailable = skuForInventory.getQuantityAvailable();
+                        if(sku.getQuantityAvailable() != null) {
+                            quantityAvailable = sku.getQuantityAvailable();
                         }
-                    } else if(skuForInventory.getInventoryType() == null || InventoryType.ALWAYS_AVAILABLE.equals(skuInventoryType)) {
+                    } else if(sku.getInventoryType() == null || InventoryType.ALWAYS_AVAILABLE.equals(skuInventoryType)) {
                         quantityAvailable = null;
                     }
                 }
@@ -166,7 +177,6 @@ public class InventoryServiceImpl implements ContextualInventoryService {
         }
     }
 
-    //here
     @Override
     public boolean isAvailable(Sku sku, int quantity, Map<String, Object> context) {
         if (quantity < 1) {
@@ -176,9 +186,9 @@ public class InventoryServiceImpl implements ContextualInventoryService {
         if (enableUseDefaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()) {
             skuForInventory = sku.getProduct().getDefaultSku();
         }
-        if (checkBasicAvailablility(skuForInventory)) {
-            if (InventoryType.CHECK_QUANTITY.equals(skuForInventory.getInventoryType())) {
-                Integer quantityAvailable = retrieveQuantityAvailable(skuForInventory, context);
+        if (checkBasicAvailablility(sku)) {
+            if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
+                Integer quantityAvailable = retrieveQuantityAvailable(sku, context);
                 
                 return quantityAvailable != null && quantity <= quantityAvailable;
             } else {
@@ -210,7 +220,13 @@ public class InventoryServiceImpl implements ContextualInventoryService {
         for (Entry<Sku, Integer> entry : skuQuantities.entrySet()) {
             Sku sku = entry.getKey();
             Sku skuForInventory = sku;
-            if (enableUseDefaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+<<<<<<< /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/left.java
+            if (enableDefaultSkuInventory && sku.getProduct().getEnableDefaultSkuInInventory()){
+||||||| /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/base.java
+            if (enableUseDegaultSkuInventory && sku.getProduct().getEnableDefaultSkuInInventory()){
+=======
+            if (enableUseDefaultSkuInventory && sku.getProduct().getEnableDefaultSkuInInventory()){
+>>>>>>> /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/right.java
                 skuForInventory = sku.getProduct().getDefaultSku();
             }
             Integer quantity = entry.getValue();
@@ -218,18 +234,18 @@ public class InventoryServiceImpl implements ContextualInventoryService {
                 throw new IllegalArgumentException("Quantity " + quantity + " is not valid. Must be greater than zero and not null.");
             }
 
-            if (checkBasicAvailablility(skuForInventory)) {
-                if (InventoryType.CHECK_QUANTITY.equals(skuForInventory.getInventoryType())) {
-                    Integer inventoryAvailable = retrieveQuantityAvailable(skuForInventory, context);
+            if (checkBasicAvailablility(sku)) {
+                if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
+                    Integer inventoryAvailable = retrieveQuantityAvailable(sku, context);
                     if (inventoryAvailable == null) {
                         return;
                     }
                     if (inventoryAvailable < quantity) {
                         throw new InventoryUnavailableException(
-                                "There was not enough inventory to fulfill this request.", skuForInventory.getId(), quantity, inventoryAvailable);
+                                "There was not enough inventory to fulfill this request.", sku.getId(), quantity, inventoryAvailable);
                     }
                     int newInventory = inventoryAvailable - quantity;
-                    skuForInventory.setQuantityAvailable(newInventory);
+                    sku.setQuantityAvailable(newInventory);
                     catalogService.saveSku(skuForInventory);
                     invalidateSkuInventory(skuForInventory);
                 } else {
@@ -261,24 +277,33 @@ public class InventoryServiceImpl implements ContextualInventoryService {
     protected void incrementSku(Map<Sku, Integer> skuQuantities, Map<String, Object> context) {
         for (Entry<Sku, Integer> entry : skuQuantities.entrySet()) {
             Sku sku = entry.getKey();
-
+<<<<<<< /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/left.java
+||||||| /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/base.java
+        
+            Sku skuForInventory = sku;
+            if (enableUseDegaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+                skuForInventory = sku.getProduct().getDefaultSku();
+            }
+=======
+        
             Sku skuForInventory = sku;
             if (enableUseDefaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
                 skuForInventory = sku.getProduct().getDefaultSku();
             }
+>>>>>>> /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/right.java
             Integer quantity = entry.getValue();
             if (quantity == null || quantity < 1) {
                 throw new IllegalArgumentException("Quantity " + quantity + " is not valid. Must be greater than zero and not null.");
             }
             if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
-                Integer currentInventoryAvailable = retrieveQuantityAvailable(skuForInventory, context);
+                Integer currentInventoryAvailable = retrieveQuantityAvailable(sku, context);
                 if (currentInventoryAvailable == null) {
                     throw new IllegalArgumentException("The current inventory for this Sku is null");
                 }
                 int newInventory = currentInventoryAvailable + quantity;
-                skuForInventory.setQuantityAvailable(newInventory);
-                catalogService.saveSku(skuForInventory);
-                invalidateSkuInventory(skuForInventory);
+                sku.setQuantityAvailable(newInventory);
+                catalogService.saveSku(sku);
+                invalidateSkuInventory(sku);
             } else {
                 LOG.info("Not incrementing inventory as the Sku has been marked as always available");
             }
@@ -305,47 +330,66 @@ public class InventoryServiceImpl implements ContextualInventoryService {
         HashMap<Sku, Integer> skuInventoryMap = new HashMap<Sku, Integer>();
 
         for (OrderItem orderItem : order.getOrderItems()) {
+            Sku sku = null;
             if (orderItem instanceof DiscreteOrderItem) {
-                Sku sku = ((DiscreteOrderItem) orderItem).getSku();
+                sku = ((DiscreteOrderItem) orderItem).getSku();
                 Sku skuForInventory = sku;
-                if (enableUseDefaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+<<<<<<< /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/left.java
+                if (enableDefaultSkuInventory && sku.getProduct().getEnableDefaultSkuInInventory()) {
+||||||| /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/base.java
+                if (enableUseDegaultSkuInventory && sku.getProduct().getEnableDefaultSkuInInventory()) {
+=======
+                if (enableUseDefaultSkuInventory && sku.getProduct().getEnableDefaultSkuInInventory()) {
+>>>>>>> /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/right.java
                     skuForInventory = sku.getProduct().getDefaultSku();
                 }
-                Integer quantity = skuInventoryMap.get(skuForInventory);
+                Integer quantity = skuInventoryMap.get(sku);
                 if (quantity == null) {
                     quantity = orderItem.getQuantity();
                 } else {
                     quantity += orderItem.getQuantity();
                 }
-                if (InventoryType.CHECK_QUANTITY.equals(skuForInventory.getInventoryType())) {
-                    skuInventoryMap.put(skuForInventory, quantity);
+                if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
+                    skuInventoryMap.put(sku, quantity);
                 }
             } else if (orderItem instanceof BundleOrderItem) {
                 BundleOrderItem bundleItem = (BundleOrderItem) orderItem;
                 Sku bundleSku = bundleItem.getSku();
-                if (enableUseDefaultSkuInventory && ((ProductSkuUsage) bundleSku.getProduct()).getUseDefaultSkuInInventory()){
+<<<<<<< /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/left.java
+                if (enableDefaultSkuInventory && sku.getProduct().getEnableDefaultSkuInInventory()) {
+||||||| /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/base.java
+                if (enableUseDegaultSkuInventory && sku.getProduct().getEnableDefaultSkuInInventory()) {
+=======
+                if (enableUseDefaultSkuInventory && sku.getProduct().getEnableDefaultSkuInInventory()) {
+>>>>>>> /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/right.java
                     bundleSku = bundleSku.getProduct().getDefaultSku();
                 }
-                if (InventoryType.CHECK_QUANTITY.equals(bundleSku.getInventoryType())) {
+                if (InventoryType.CHECK_QUANTITY.equals(bundleItem.getSku().getInventoryType())) {
                     // add the bundle sku of quantities to decrement
-                    skuInventoryMap.put(bundleSku, bundleItem.getQuantity());
+                    skuInventoryMap.put(bundleItem.getSku(), bundleItem.getQuantity());
                 }
 
                 // Now add all of the discrete items within the bundl
                 List<DiscreteOrderItem> discreteItems = bundleItem.getDiscreteOrderItems();
                 for (DiscreteOrderItem discreteItem : discreteItems) {
-                    Sku sku = discreteItem.getSku();
-                    if (enableUseDefaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+                    sku = discreteItem.getSku();
+<<<<<<< /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/left.java
+                    if (enableDefaultSkuInventory && sku.getProduct().getEnableDefaultSkuInInventory()) {
+||||||| /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/base.java
+                    if (enableUseDegaultSkuInventory && sku.getProduct().getEnableDefaultSkuInInventory()) {
+=======
+                    if (enableUseDefaultSkuInventory && sku.getProduct().getEnableDefaultSkuInInventory()) {
+>>>>>>> /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/right.java
                         sku = sku.getProduct().getDefaultSku();
                     }
-                    if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
-                        Integer quantity = skuInventoryMap.get(sku);
+                    if (InventoryType.CHECK_QUANTITY.equals(discreteItem.getSku().getInventoryType())) {
+                        Integer quantity = skuInventoryMap.get(discreteItem.getSku());
                         if (quantity == null) {
                             quantity = (discreteItem.getQuantity() * bundleItem.getQuantity());
                         } else {
                             quantity += (discreteItem.getQuantity() * bundleItem.getQuantity());
                         }
-                        skuInventoryMap.put(sku, quantity);
+                        skuInventoryMap.put(discreteItem.getSku(), quantity);
                     }
                 }
             }
@@ -414,14 +458,22 @@ public class InventoryServiceImpl implements ContextualInventoryService {
     @Override
     public void checkSkuAvailability(Order order, Sku sku, Integer requestedQuantity) throws InventoryUnavailableException {
         Sku skuForInventory = sku;
-        if (enableUseDefaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+<<<<<<< /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/left.java
+        if (enableDefaultSkuInventory && sku.getProduct().getEnableDefaultSkuInInventory()){
+||||||| /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/base.java
+        if (enableUseDegaultSkuInventory && sku.getProduct().getEnableDefaultSkuInInventory()){
+=======
+        if (enableUseDefaultSkuInventory && sku.getProduct().getEnableDefaultSkuInInventory()){
+>>>>>>> /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/inventory/service/InventoryServiceImpl.java/right.java
             skuForInventory = sku.getProduct().getDefaultSku();
         }
+
         // First check if this Sku is available
         if (!sku.isAvailable()) {
             throw new InventoryUnavailableException("The referenced Sku " + sku.getId() + " is marked as unavailable", sku.getId(), requestedQuantity, 0);
         }
-        if (InventoryType.CHECK_QUANTITY.equals(skuForInventory.getInventoryType())) {
+
+        if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
             Map<String, Object> inventoryContext = new HashMap<>();
             inventoryContext.put(ContextualInventoryService.ORDER_KEY, order);
             boolean available = isAvailable(sku, requestedQuantity, inventoryContext);

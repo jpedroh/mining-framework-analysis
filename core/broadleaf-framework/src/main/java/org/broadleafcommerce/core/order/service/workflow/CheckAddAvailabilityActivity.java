@@ -76,11 +76,15 @@ public class CheckAddAvailabilityActivity extends AbstractCheckAvailabilityActiv
         // No order item, this must be a new item add request
         Long skuId = request.getItemRequest().getSkuId();
         Sku sku = catalogService.findSkuById(skuId);
-
+<<<<<<< /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/order/service/workflow/CheckAddAvailabilityActivity.java/left.java
+        if(sku.getProduct().getEnableDefaultSkuInInventory()){
+||||||| /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/order/service/workflow/CheckAddAvailabilityActivity.java/base.java
+        if{
+=======
         if(enableUseDefaultSkuInventory && ((ProductSkuUsage) sku.getProduct()).getUseDefaultSkuInInventory()){
+>>>>>>> /usr/src/app/output/broadleafcommerce/broadleafcommerce/09e0d493ef8f08b241da892df08f4751799082a3/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/order/service/workflow/CheckAddAvailabilityActivity.java/right.java
             sku = sku.getProduct().getDefaultSku();
         }
-
         Order order = context.getSeedData().getOrder();
         Integer requestedQuantity = request.getItemRequest().getQuantity();
 
@@ -91,6 +95,9 @@ public class CheckAddAvailabilityActivity extends AbstractCheckAvailabilityActiv
                 skuFromOrder = ((DiscreteOrderItem) orderItem).getSku();
             } else if (orderItem instanceof BundleOrderItem) {
                 skuFromOrder = ((BundleOrderItem) orderItem).getSku();
+            }
+            if(skuFromOrder != null && skuFromOrder.getProduct().getEnableDefaultSkuInInventory()){
+                skuFromOrder = skuFromOrder.getProduct().getDefaultSku();
             }
 
             if(skuFromOrder != null && enableUseDefaultSkuInventory && ((ProductSkuUsage) skuFromOrder.getProduct()).getUseDefaultSkuInInventory()){
