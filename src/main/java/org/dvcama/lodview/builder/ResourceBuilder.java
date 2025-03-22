@@ -128,7 +128,6 @@ public class ResourceBuilder {
 		RDFWriter rdfWriter = model.getWriter(lang.getName());
 		rdfWriter.setProperty("showXMLDeclaration","true");
 		rdfWriter.setProperty("relativeURIs","");
- 
 		rdfWriter.write(model, baos, conf.getIRInamespace());
 
 		byte[] resultByteArray = baos.toByteArray();
