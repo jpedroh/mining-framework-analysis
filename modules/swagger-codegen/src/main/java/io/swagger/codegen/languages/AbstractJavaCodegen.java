@@ -1236,7 +1236,6 @@ public abstract class AbstractJavaCodegen extends DefaultCodegen implements Code
     public void setDisableHtmlEscaping(boolean disabled) {
         this.disableHtmlEscaping = disabled;
     }
-
     public void setSupportAsync(boolean enabled) {
         this.supportAsync = enabled;
     }
