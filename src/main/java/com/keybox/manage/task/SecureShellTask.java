@@ -1,68 +1,45 @@
-/**
- * Copyright 2013 Sean Kavanagh - sean.p.kavanagh6@gmail.com
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.keybox.manage.task;
-
 import com.keybox.common.util.AppConfig;
 import com.keybox.manage.util.SSHUtil;
 import com.keybox.manage.util.SessionOutputUtil;
 import com.keybox.manage.model.SessionOutput;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
-
 
 /**
  * Task to watch for output read from the ssh session stream
  */
 public class SecureShellTask implements Runnable {
+  InputStream outFromChannel;
 
-    InputStream outFromChannel;
-    SessionOutput sessionOutput;
+  SessionOutput sessionOutput;
 
-    public SecureShellTask(SessionOutput sessionOutput, InputStream outFromChannel) {
+  public SecureShellTask(SessionOutput sessionOutput, InputStream outFromChannel) {
+    this.sessionOutput = sessionOutput;
+    this.outFromChannel = outFromChannel;
+  }
 
-        this.sessionOutput = sessionOutput;
-        this.outFromChannel = outFromChannel;
+  public void run() {
+    InputStreamReader isr = new InputStreamReader(outFromChannel);
+    BufferedReader br = new BufferedReader(isr);
+    try {
+      SessionOutputUtil.addOutput(sessionOutput.getSessionId(), sessionOutput.getHostSystemId(), sessionOutput);
+      char[] buff = new char[
+<<<<<<< /usr/src/app/output/bastillion-io/bastillion/83ad29e2011c4a71d9004d22939820a7e3318f9b/src/main/java/com/keybox/manage/task/SecureShellTask.java/left.java
+      SSHUtil.KEY_LENGTH
+=======
+      Integer.parseInt(AppConfig.getProperty("KeyStrengh"))
+>>>>>>> /usr/src/app/output/bastillion-io/bastillion/83ad29e2011c4a71d9004d22939820a7e3318f9b/src/main/java/com/keybox/manage/task/SecureShellTask.java/right.java
+      ];
+      int read;
+      while ((read = br.read(buff)) != -1) {
+        SessionOutputUtil.addToOutput(sessionOutput.getSessionId(), sessionOutput.getInstanceId(), buff, 0, read);
+        Thread.sleep(50);
+      }
+      SessionOutputUtil.removeOutput(sessionOutput.getSessionId(), sessionOutput.getInstanceId());
+    } catch (Exception ex) {
+      ex.printStackTrace();
     }
-
-    public void run() {
-        InputStreamReader isr = new InputStreamReader(outFromChannel);
-        BufferedReader br = new BufferedReader(isr);
-        try {
-
-            SessionOutputUtil.addOutput(sessionOutput.getSessionId(), sessionOutput.getHostSystemId(), sessionOutput);
-
-            char[] buff = new char[SSHUtil.KEY_LENGTH];
-            int read;
-            while((read = br.read(buff)) != -1) {
-
-                SessionOutputUtil.addToOutput(sessionOutput.getSessionId(), sessionOutput.getInstanceId(), buff,0,read);
-                Thread.sleep(50);
-            }
-
-
-
-            SessionOutputUtil.removeOutput(sessionOutput.getSessionId(), sessionOutput.getInstanceId());
-
-        } catch (Exception ex) {
-
-            ex.printStackTrace();
-        }
-    }
-
+  }
 }
