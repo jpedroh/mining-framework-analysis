@@ -1,24 +1,8 @@
-/**
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package net.logstash.logback.encoder;
-
 import static org.apache.commons.io.IOUtils.*;
-
 import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.ThrowableProxyUtil;
@@ -31,88 +15,76 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang.time.FastDateFormat;
 
 public class LogstashEncoder extends EncoderBase<ILoggingEvent> {
+  private static final ObjectMapper MAPPER = new ObjectMapper().configure(Feature.ESCAPE_NON_ASCII, true);
 
-    private static final ObjectMapper MAPPER = new ObjectMapper().configure(Feature.ESCAPE_NON_ASCII, true);
-    private static final FastDateFormat ISO_DATETIME_TIME_ZONE_FORMAT_WITH_MILLIS = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSSZZ");
-    private static final StackTraceElement DEFAULT_CALLER_DATA = new StackTraceElement("", "", "", 0);
-    
-    private boolean immediateFlush = true;
+  private static final FastDateFormat ISO_DATETIME_TIME_ZONE_FORMAT_WITH_MILLIS = FastDateFormat.getInstance("yyyy-MM-dd\'T\'HH:mm:ss.SSSZZ");
 
-    @Override
-    public void doEncode(ILoggingEvent event) throws IOException {
+  private static final StackTraceElement DEFAULT_CALLER_DATA = new StackTraceElement("", "", "", 0);
 
-        ObjectNode eventNode = MAPPER.createObjectNode();
-        eventNode.put("@timestamp", ISO_DATETIME_TIME_ZONE_FORMAT_WITH_MILLIS.format(event.getTimeStamp()));
-        eventNode.put("@message", event.getFormattedMessage());
-        eventNode.put("@fields", createFields(event));
+  private boolean immediateFlush = true;
 
-        write(MAPPER.writeValueAsBytes(eventNode), outputStream);
-        write(CoreConstants.LINE_SEPARATOR, outputStream);
-
-        if (immediateFlush) {
-            outputStream.flush();
-        }
-
+  @Override public void doEncode(ILoggingEvent event) throws IOException {
+    ObjectNode eventNode = MAPPER.createObjectNode();
+    eventNode.put("@timestamp", ISO_DATETIME_TIME_ZONE_FORMAT_WITH_MILLIS.format(event.getTimeStamp()));
+    eventNode.put("@message", event.getFormattedMessage());
+    eventNode.put("@fields", createFields(event));
+    write(MAPPER.writeValueAsBytes(eventNode), outputStream);
+    write(CoreConstants.LINE_SEPARATOR, outputStream);
+    if (immediateFlush) {
+      outputStream.flush();
     }
+  }
 
-    private ObjectNode createFields(ILoggingEvent event) {
-
-        ObjectNode fieldsNode = MAPPER.createObjectNode();
-        fieldsNode.put("logger_name", event.getLoggerName());
-        fieldsNode.put("thread_name", event.getThreadName());
-        fieldsNode.put("level", event.getLevel().toString());
-        fieldsNode.put("level_value", event.getLevel().toInt());
-
-        StackTraceElement callerData = extractCallerData(event);
-        fieldsNode.put("caller_class_name", callerData.getClassName());
-        fieldsNode.put("caller_method_name", callerData.getMethodName());
-        fieldsNode.put("caller_file_name", callerData.getFileName());
-        fieldsNode.put("caller_line_number", callerData.getLineNumber());
-
-        IThrowableProxy throwableProxy = event.getThrowableProxy();
-        if (throwableProxy != null) {
-            fieldsNode.put("stack_trace", ThrowableProxyUtil.asString(throwableProxy));
-        }
-
-        Context context = getContext();
-        if (context != null) {
-            addPropertiesAsFields(fieldsNode, context.getCopyOfPropertyMap());
-        }
-        addPropertiesAsFields(fieldsNode, event.getMDCPropertyMap());
-
-        return fieldsNode;
-
+  private ObjectNode createFields(ILoggingEvent event) {
+    ObjectNode fieldsNode = MAPPER.createObjectNode();
+    fieldsNode.put("logger_name", event.getLoggerName());
+    fieldsNode.put("thread_name", event.getThreadName());
+    fieldsNode.put("level", event.getLevel().toString());
+    fieldsNode.put("level_value", event.getLevel().toInt());
+    StackTraceElement callerData = extractCallerData(event);
+    fieldsNode.put("caller_class_name", callerData.getClassName());
+    fieldsNode.put("caller_method_name", callerData.getMethodName());
+    fieldsNode.put("caller_file_name", callerData.getFileName());
+    fieldsNode.put("caller_line_number", callerData.getLineNumber());
+    IThrowableProxy throwableProxy = event.getThrowableProxy();
+    if (throwableProxy != null) {
+      fieldsNode.put("stack_trace", ThrowableProxyUtil.asString(throwableProxy));
     }
-
-    private void addPropertiesAsFields(final ObjectNode fieldsNode, final Map<String, String> properties) {
-        if (properties != null) {
-            for (Entry<String, String> entry : properties.entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
-                fieldsNode.put(key, value);
-            }
-        }
+    Context context = getContext();
+    if (context != null) {
+      addPropertiesAsFields(fieldsNode, context.getCopyOfPropertyMap());
     }
+    addPropertiesAsFields(fieldsNode, event.getMDCPropertyMap());
+    return fieldsNode;
+  }
 
-    private StackTraceElement extractCallerData(final ILoggingEvent event) {
-        final StackTraceElement[] ste = event.getCallerData();
-        if (ste == null || ste.length == 0) {
-            return DEFAULT_CALLER_DATA;
-        }
-        return ste[0];
+  private StackTraceElement extractCallerData(final ILoggingEvent event) {
+    final StackTraceElement[] ste = event.getCallerData();
+    if (ste == null || ste.length == 0) {
+      return DEFAULT_CALLER_DATA;
     }
+    return ste[0];
+  }
 
-    @Override
-    public void close() throws IOException {
-        write(LINE_SEPARATOR, outputStream);
+  private void addPropertiesAsFields(final ObjectNode fieldsNode, final Map<String, String> properties) {
+    if (properties != null) {
+      for (Entry<String, String> entry : properties.entrySet()) {
+        String key = entry.getKey();
+        String value = entry.getValue();
+        fieldsNode.put(key, value);
+      }
     }
+  }
 
-    public boolean isImmediateFlush() {
-        return immediateFlush;
-    }
+  @Override public void close() throws IOException {
+    write(LINE_SEPARATOR, outputStream);
+  }
 
-    public void setImmediateFlush(boolean immediateFlush) {
-        this.immediateFlush = immediateFlush;
-    }
+  public boolean isImmediateFlush() {
+    return immediateFlush;
+  }
 
+  public void setImmediateFlush(boolean immediateFlush) {
+    this.immediateFlush = immediateFlush;
+  }
 }
