@@ -27,7 +27,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
+/**
+ * Represents a virtual load balancer operating in a cloud. Load balancers have an address/virtual IP (VIP) to which
+ * public traffic is routed over one or more public ports. The address or VIP is based on what kind of addressing
+ * the cloud has (DNS/CNAME-based vs IP based).  Endpoints (aka real IPs) may
+ * be either IP addresses or virtual machines. One or more listeners indicate how the traffic on the public port
+ * is routed over to the endpoints.
+ * @author George Reese
+ * @version 2013.04 added Javadoc and refactored for support for endpoints and data integrity
+ * @since unknown
+ */
 /**
  * Represents a virtual load balancer operating in a cloud. Load balancers have an address/virtual IP (VIP) to which
  * public traffic is routed over one or more public ports. The address or VIP is based on what kind of addressing
@@ -53,10 +62,32 @@ public class LoadBalancer implements Networkable, Taggable {
      * @param publicPorts one or more public ports on which the load balancer is listening
      * @return a load balancer instance representing the specified state
      */
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/9ed17d6c8e1fced7095fbd2cf4e52814a65bcfe2/src/main/java/org/dasein/cloud/network/LoadBalancer.java/left.java
+    static public LoadBalancer getInstance(@Nonnull String ownerId, @Nonnull String regionId, @Nonnull String lbId, @Nonnull LoadBalancerState state, @Nonnull String name, @Nonnull String description, @Nonnull LoadBalancerAddressType addressType, @Nonnull String address, @Nonnull int ... publicPorts) {
+        assert (publicPorts.length > 0);
+        return new LoadBalancer(ownerId, regionId, lbId, state, name, description, addressType, address, publicPorts);
+    }
+||||||| /usr/src/app/output/greese/dasein-cloud-core/9ed17d6c8e1fced7095fbd2cf4e52814a65bcfe2/src/main/java/org/dasein/cloud/network/LoadBalancer.java/base.java
+    static public LoadBalancer getInstance(@Nonnull String ownerId, @Nonnull String regionId, @Nonnull String lbId, @Nonnull LoadBalancerState state, @Nonnull String name, @Nonnull String description, @Nonnull LoadBalancerAddressType addressType, @Nonnull String address, @Nonnull int ... publicPorts) 
+=======
     static public LoadBalancer getInstance(@Nonnull String ownerId, @Nonnull String regionId, @Nonnull String lbId, @Nonnull LoadBalancerState state, @Nonnull String name, @Nonnull String description, @Nonnull LoadBalancerAddressType addressType, @Nonnull String address, @Nonnull int ... publicPorts) {
         return new LoadBalancer(ownerId, regionId, lbId, state, name, description, addressType, address, publicPorts);
     }
-
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/9ed17d6c8e1fced7095fbd2cf4e52814a65bcfe2/src/main/java/org/dasein/cloud/network/LoadBalancer.java/right.java
+    /**
+     * Constructs a load balancer with the minimally acceptable data set.
+     * @param ownerId the account number that owns this load balancer
+     * @param regionId the region ID of the region in which the load balancer operates
+     * @param lbId the unique ID of the load balancer in the target cloud
+     * @param state the current operational state for the load balancer
+     * @param name the name of the load balancer
+     * @param description a user-friendly description of the load balancer
+     * @param addressType what kind of address is represented by the load balancer address
+     * @param address the load balancer CNAME, IPv4, or IPv6 address
+     * @param publicPorts one or more public ports on which the load balancer is listening
+     * @return a load balancer instance representing the specified state
+     */
+    
     private String                  address;
     private LoadBalancerAddressType addressType;
     private long                    creationTimestamp;
