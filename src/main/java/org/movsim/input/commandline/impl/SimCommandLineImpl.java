@@ -26,10 +26,6 @@
  */
 package org.movsim.input.commandline.impl;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -172,6 +168,7 @@ public class SimCommandLineImpl implements SimCommandLine {
      * 
      * @throws ClassNotFoundException
      */
+<<<<<<< /usr/src/app/output/movsim/movsim/f65dfc825dcaa8a267f5fba4694b112528f3189c/src/main/java/org/movsim/input/commandline/impl/SimCommandLineImpl.java/left.java
     private void optWriteScenarios() {
         try {
         InputStreamReader isr = new InputStreamReader(System.in);
@@ -206,6 +203,20 @@ public class SimCommandLineImpl implements SimCommandLine {
         // }
         
         // TODO loop properly, not hard coded
+        String[] models = { "IDM", "IIDM", "ACC", "OVM", "VDIFF", "BARL", "GIPPS", "KCA", "NSM"};
+        String[] scenario = { "onramp", "startStop" };
+        for (String sce : scenario) {
+            for (String model : models) {
+                FileUtils.resourceToFile("/sim/" + sce  + "_" + model + ".xml", "sim/"+ sce  + "_" + model + ".xml");
+            }
+        }
+        logger.info("Example scenarios written to folder 'sim'. Exit.");
+        System.exit(0);
+    }
+||||||| /usr/src/app/output/movsim/movsim/f65dfc825dcaa8a267f5fba4694b112528f3189c/src/main/java/org/movsim/input/commandline/impl/SimCommandLineImpl.java/base.java
+    private void optWriteScenarios() 
+=======
+    private void optWriteScenarios() {
         FileUtils.createDir("sim", "");
 
         // //Iterate over resources does not work?!?
@@ -235,7 +246,7 @@ public class SimCommandLineImpl implements SimCommandLine {
         logger.info("Example scenarios written to folder 'sim'. Exit.");
         System.exit(0);
     }
-
+>>>>>>> /usr/src/app/output/movsim/movsim/f65dfc825dcaa8a267f5fba4694b112528f3189c/src/main/java/org/movsim/input/commandline/impl/SimCommandLineImpl.java/right.java
     /**
      * Option: writes log4j.properties to local filesystem
      */
@@ -244,6 +255,14 @@ public class SimCommandLineImpl implements SimCommandLine {
         String filename = "log4j.properties";
         FileUtils.resourceToFile(resource, filename);
     }
+    /**
+     * Option: Writes all example scenarios from jar resources to /sim folder
+     * 
+     * @throws ClassNotFoundException
+     */
+    /**
+     * Option: writes log4j.properties to local filesystem
+     */
 
     /**
      * Option: writes multiModelTrafficSimulatirInput.dtd to file system
