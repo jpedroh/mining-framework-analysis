@@ -9,7 +9,6 @@ import io.swagger.client.model.*;
 import java.util.*;
 
 import io.swagger.client.model.User;
-import java.util.*;
 
 import com.sun.jersey.multipart.FormDataMultiPart;
 import com.sun.jersey.multipart.file.FileDataBodyPart;

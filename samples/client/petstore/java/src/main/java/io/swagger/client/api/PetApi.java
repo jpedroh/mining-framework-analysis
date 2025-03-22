@@ -15,8 +15,6 @@ import com.sun.jersey.multipart.FormDataMultiPart;
 import com.sun.jersey.multipart.file.FileDataBodyPart;
 
 import javax.ws.rs.core.MediaType;
-
-import java.io.File;
 import java.util.Map;
 import java.util.HashMap;
 

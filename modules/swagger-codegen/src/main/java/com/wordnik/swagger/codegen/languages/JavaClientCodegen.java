@@ -45,6 +45,41 @@ public class JavaClientCodegen extends DefaultCodegen implements CodegenConfig {
         "native", "super", "while")
     );
 
+<<<<<<< /usr/src/app/output/swagger-api/swagger-codegen/947935f3d9d27f942ce540500ca58c3b13891909/modules/swagger-codegen/src/main/java/com/wordnik/swagger/codegen/languages/JavaClientCodegen.java/left.java
+    additionalProperties.put("invokerPackage", invokerPackage);
+    additionalProperties.put("groupId", groupId);
+    additionalProperties.put("artifactId", artifactId);
+    additionalProperties.put("artifactVersion", artifactVersion);
+
+    final String invokerFolder = (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator);
+    final String authFolder = (sourceFolder + File.separator + invokerPackage + ".auth").replace(".", java.io.File.separator);
+
+    supportingFiles.add(new SupportingFile("pom.mustache", "", "pom.xml"));
+    supportingFiles.add(new SupportingFile("apiInvoker.mustache", invokerFolder, "ApiInvoker.java"));
+    supportingFiles.add(new SupportingFile("JsonUtil.mustache", invokerFolder, "JsonUtil.java"));
+    supportingFiles.add(new SupportingFile("apiException.mustache", invokerFolder, "ApiException.java"));
+    supportingFiles.add(new SupportingFile("configuration.mustache", invokerFolder, "Configuration.java"));
+    supportingFiles.add(new SupportingFile("auth/Authentication.mustache", authFolder, "Authentication.java"));
+    supportingFiles.add(new SupportingFile("auth/HttpBasicAuth.mustache", authFolder, "HttpBasicAuth.java"));
+    supportingFiles.add(new SupportingFile("auth/ApiKeyAuth.mustache", authFolder, "ApiKeyAuth.java"));
+    supportingFiles.add(new SupportingFile("auth/OAuth.mustache", authFolder, "OAuth.java"));
+
+||||||| /usr/src/app/output/swagger-api/swagger-codegen/947935f3d9d27f942ce540500ca58c3b13891909/modules/swagger-codegen/src/main/java/com/wordnik/swagger/codegen/languages/JavaClientCodegen.java/base.java
+    additionalProperties.put("invokerPackage", invokerPackage);
+    additionalProperties.put("groupId", groupId);
+    additionalProperties.put("artifactId", artifactId);
+    additionalProperties.put("artifactVersion", artifactVersion);
+
+    supportingFiles.add(new SupportingFile("pom.mustache", "", "pom.xml"));
+    supportingFiles.add(new SupportingFile("apiInvoker.mustache", 
+      (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "ApiInvoker.java"));
+    supportingFiles.add(new SupportingFile("JsonUtil.mustache", 
+      (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "JsonUtil.java"));
+    supportingFiles.add(new SupportingFile("apiException.mustache", 
+      (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "ApiException.java"));
+
+=======
+>>>>>>> /usr/src/app/output/swagger-api/swagger-codegen/947935f3d9d27f942ce540500ca58c3b13891909/modules/swagger-codegen/src/main/java/com/wordnik/swagger/codegen/languages/JavaClientCodegen.java/right.java
     languageSpecificPrimitives = new HashSet<String>(
       Arrays.asList(
         "String",
@@ -106,18 +141,15 @@ public class JavaClientCodegen extends DefaultCodegen implements CodegenConfig {
       this.setSourceFolder((String)additionalProperties.get("sourceFolder"));
     }
 
-    final String invokerFolder = (sourceFolder + File.separator + invokerPackage).replace(".", File.separator);
     supportingFiles.add(new SupportingFile("pom.mustache", "", "pom.xml"));
-    supportingFiles.add(new SupportingFile("ApiClient.mustache", invokerFolder, "ApiClient.java"));
-    supportingFiles.add(new SupportingFile("JsonUtil.mustache", invokerFolder, "JsonUtil.java"));
-    supportingFiles.add(new SupportingFile("apiException.mustache", invokerFolder, "ApiException.java"));
-    supportingFiles.add(new SupportingFile("Configuration.mustache", invokerFolder, "Configuration.java"));
-
-    final String authFolder = (sourceFolder + File.separator + invokerPackage + ".auth").replace(".", File.separator);
-    supportingFiles.add(new SupportingFile("auth/Authentication.mustache", authFolder, "Authentication.java"));
-    supportingFiles.add(new SupportingFile("auth/HttpBasicAuth.mustache", authFolder, "HttpBasicAuth.java"));
-    supportingFiles.add(new SupportingFile("auth/ApiKeyAuth.mustache", authFolder, "ApiKeyAuth.java"));
-    supportingFiles.add(new SupportingFile("auth/OAuth.mustache", authFolder, "OAuth.java"));
+    supportingFiles.add(new SupportingFile("ApiClient.mustache",
+      (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "ApiClient.java"));
+    supportingFiles.add(new SupportingFile("Configuration.mustache",
+      (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "Configuration.java"));
+    supportingFiles.add(new SupportingFile("JsonUtil.mustache",
+      (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "JsonUtil.java"));
+    supportingFiles.add(new SupportingFile("apiException.mustache",
+      (sourceFolder + File.separator + invokerPackage).replace(".", java.io.File.separator), "ApiException.java"));
   }
 
 
