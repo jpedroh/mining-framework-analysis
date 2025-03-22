@@ -164,16 +164,24 @@ public class LaneSegment implements Iterable<Vehicle> {
      * 
      * @return the number of vehicles on this lane segment
      */
+<<<<<<< /usr/src/app/output/movsim/movsim/633cf8a7804a537c3b908eff2ec21dc4213d9b77/core/src/main/java/org/movsim/simulator/roadnetwork/LaneSegment.java/left.java
     public final int vehicleCount() {
         // int vehicleCount = 0;
         // for (final Vehicle vehicle : vehicles) {
-//            if (vehicle.type() != Vehicle.Type.OBSTACLE) {
-//                ++vehicleCount;
-//            }
+    //            if (vehicle.type() != Vehicle.Type.OBSTACLE) {
+    //                ++vehicleCount;
+    //            }
         // }
         // return vehicleCount;
         return vehicles.size();
     }
+||||||| /usr/src/app/output/movsim/movsim/633cf8a7804a537c3b908eff2ec21dc4213d9b77/core/src/main/java/org/movsim/simulator/roadnetwork/LaneSegment.java/base.java
+    public final int vehicleCount() 
+=======
+    public final int vehicleCount() {
+        return vehicles.size();
+    }
+>>>>>>> /usr/src/app/output/movsim/movsim/633cf8a7804a537c3b908eff2ec21dc4213d9b77/core/src/main/java/org/movsim/simulator/roadnetwork/LaneSegment.java/right.java
 
     public int stoppedVehicleCount() {
         int stoppedVehicleCount = 0;

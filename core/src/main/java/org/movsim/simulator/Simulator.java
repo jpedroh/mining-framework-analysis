@@ -78,23 +78,18 @@ public class Simulator implements SimulationTimeStep, SimulationRun.CompletionCa
 
     /** The Constant LOG. */
     private static final Logger LOG = LoggerFactory.getLogger(Simulator.class);
-
     private long startTimeMillis;
-
     private final ProjectMetaData projectMetaData;
     private String projectName;
     private Movsim inputData;
-
     private VehicleFactory vehicleFactory;
     private TrafficCompositionGenerator defaultTrafficComposition;
     private TrafficLights trafficLights;
     private SimulationOutput simOutput;
     private final RoadNetwork roadNetwork;
-    private Routing routing;
     private final SimulationRunnable simulationRunnable;
     private int obstacleCount;
     private long timeOffsetMillis;
-
     /**
      * Constructor.
      * 
@@ -107,7 +102,6 @@ public class Simulator implements SimulationTimeStep, SimulationRun.CompletionCa
         simulationRunnable = new SimulationRunnable(this);
         simulationRunnable.setCompletionCallback(this);
     }
-
     public void initialize() throws JAXBException, SAXException {
         LOG.info("Copyright '\u00A9' by Arne Kesting, Martin Treiber, Ralph Germ and Martin Budden (2011-2013)");
 
@@ -129,7 +123,7 @@ public class Simulator implements SimulationTimeStep, SimulationRun.CompletionCa
 
         Simulation simulationInput = inputData.getScenario().getSimulation();
 
-        final boolean loadedRoadNetwork = parseOpenDriveXml(roadNetwork, projectMetaData);
+        Preconditions.checkState(parseOpenDriveXml(roadNetwork, projectMetaData), "road network not loaded.");
         routing = new Routing(inputData.getScenario().getRoutes(), roadNetwork);
         
         vehicleFactory = new VehicleFactory(simulationInput.getTimestep(), inputData.getVehiclePrototypes(),
@@ -159,28 +153,21 @@ public class Simulator implements SimulationTimeStep, SimulationRun.CompletionCa
 
         reset();
     }
-
-
     public Iterable<String> getVehiclePrototypeLabels() {
         return vehicleFactory.getLabels();
     }
-
     public TrafficCompositionGenerator getVehicleGenerator() {
         return defaultTrafficComposition;
     }
-
     public ProjectMetaData getProjectMetaData() {
         return projectMetaData;
     }
-
     public RoadNetwork getRoadNetwork() {
         return roadNetwork;
     }
-
     public SimulationRunnable getSimulationRunnable() {
         return simulationRunnable;
     }
-
     /**
      * Load scenario from xml.
      * 
@@ -197,16 +184,35 @@ public class Simulator implements SimulationTimeStep, SimulationRun.CompletionCa
         projectMetaData.setPathToProjectXmlFile(path);
         initialize();
     }
-
+<<<<<<< /usr/src/app/output/movsim/movsim/633cf8a7804a537c3b908eff2ec21dc4213d9b77/core/src/main/java/org/movsim/simulator/Simulator.java/left.java
     private void matchRoadSegmentsAndRoadInput(List<Road> roads) {
         for (Road roadInput : roads) {
             LOG.info("roadInput.getId()={}", roadInput.getId());
-            RoadSegment roadSegment = Preconditions.checkNotNull(roadNetwork.findByUserId(roadInput.getId()),
+            RoadSegment roadSegment = Preconditions.checkNotNull(roadNetwork.findByRoadId(roadInput.getId()),
                     "cannot find roadId=\"" + roadInput.getId() + "\" in road network.");
             addInputToRoadSegment(roadSegment, roadInput);
         }
     }
-
+||||||| /usr/src/app/output/movsim/movsim/633cf8a7804a537c3b908eff2ec21dc4213d9b77/core/src/main/java/org/movsim/simulator/Simulator.java/base.java
+    private void matchRoadSegmentsAndRoadInput(List<Road> roads) {
+        for (final Road roadInput : roads) {
+            RoadSegment roadSegment = Preconditions.checkNotNull(roadNetwork.findByRoadId(roadInput.getId()),
+                    "cannot find roadId=\"" + roadInput.getId() + "\" in road network.");
+            addInputToRoadSegment(roadSegment, roadInput);
+        }
+    }
+=======
+    private void matchRoadSegmentsAndRoadInput(List<Road> roads) {
+        for (final Road roadInput : roads) {
+            RoadSegment roadSegment = Preconditions.checkNotNull(roadNetwork.findByUserId(roadInput.getId()),
+                    "cannot find roadId=" + roadInput.getId()
+                            + " from input in constructed roadNetwork. IGNORE DATA!!!");
+            addInputToRoadSegment(roadSegment, roadInput);
+        }
+    }
+>>>>>>> /usr/src/app/output/movsim/movsim/633cf8a7804a537c3b908eff2ec21dc4213d9b77/core/src/main/java/org/movsim/simulator/Simulator.java/right.java
+    /** The Constant LOG. */
+    private Routing routing;
 
     /**
      * Parse the OpenDrive (.xodr) file to load the network topology and road layout.
