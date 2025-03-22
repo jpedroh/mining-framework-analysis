@@ -152,7 +152,13 @@ public abstract class AbstractJavaCodegen extends DefaultCodegen implements Code
         CliOption dateLibrary = new CliOption(DATE_LIBRARY, "Option. Date library to use");
         Map<String, String> dateOptions = new HashMap<String, String>();
         dateOptions.put("java8", "Java 8 native JSR310 (preferred for jdk 1.8+) - note: this also sets \"" + JAVA8_MODE + "\" to true");
+<<<<<<< /usr/src/app/output/swagger-api/swagger-codegen/9269dac6cf70f6ac83ae8778e40d50a8c19d4453/modules/swagger-codegen/src/main/java/io/swagger/codegen/languages/AbstractJavaCodegen.java/left.java
         dateOptions.put("threetenbp", "Backport of JSR310 (preferred for jdk < 1.8)");
+||||||| /usr/src/app/output/swagger-api/swagger-codegen/9269dac6cf70f6ac83ae8778e40d50a8c19d4453/modules/swagger-codegen/src/main/java/io/swagger/codegen/languages/AbstractJavaCodegen.java/base.java
+        dateOptions.put("java8", "Java 8 native");
+=======
+        dateOptions.put("java8", "Java 8 native - note: this also sets \"" + JAVA8_MODE + "\" to true");
+>>>>>>> /usr/src/app/output/swagger-api/swagger-codegen/9269dac6cf70f6ac83ae8778e40d50a8c19d4453/modules/swagger-codegen/src/main/java/io/swagger/codegen/languages/AbstractJavaCodegen.java/right.java
         dateOptions.put("java8-localdatetime", "Java 8 using LocalDateTime (for legacy app only)");
         dateOptions.put("joda", "Joda (for legacy app only)");
         dateOptions.put("legacy", "Legacy java.util.Date (if you really have a good reason not to use threetenbp");
@@ -368,11 +374,28 @@ public abstract class AbstractJavaCodegen extends DefaultCodegen implements Code
         // used later in recursive import in postProcessingModels
         importMapping.put("com.fasterxml.jackson.annotation.JsonProperty", "com.fasterxml.jackson.annotation.JsonCreator");
 
+<<<<<<< /usr/src/app/output/swagger-api/swagger-codegen/9269dac6cf70f6ac83ae8778e40d50a8c19d4453/modules/swagger-codegen/src/main/java/io/swagger/codegen/languages/AbstractJavaCodegen.java/left.java
         if(additionalProperties.containsKey(JAVA8_MODE)) {
             setJava8Mode(Boolean.parseBoolean(additionalProperties.get(JAVA8_MODE).toString()));
             if ( java8Mode ) {
                 additionalProperties.put("java8", "true");
             }
+||||||| /usr/src/app/output/swagger-api/swagger-codegen/9269dac6cf70f6ac83ae8778e40d50a8c19d4453/modules/swagger-codegen/src/main/java/io/swagger/codegen/languages/AbstractJavaCodegen.java/base.java
+        if(additionalProperties.containsKey(DATE_LIBRARY)) {
+            setDateLibrary(additionalProperties.get("dateLibrary").toString());
+            additionalProperties.put(dateLibrary, "true");
+=======
+        if(additionalProperties.containsKey(DATE_LIBRARY)) {
+            setDateLibrary(additionalProperties.get(DATE_LIBRARY).toString());
+            additionalProperties.put(dateLibrary, "true");
+        }
+
+        if(additionalProperties.containsKey(JAVA8_MODE)) {
+            setJava8Mode(Boolean.parseBoolean(additionalProperties.get(JAVA8_MODE).toString()));
+            if ( java8Mode ) {
+                additionalProperties.put("java8", "true");
+            }
+>>>>>>> /usr/src/app/output/swagger-api/swagger-codegen/9269dac6cf70f6ac83ae8778e40d50a8c19d4453/modules/swagger-codegen/src/main/java/io/swagger/codegen/languages/AbstractJavaCodegen.java/right.java
         }
 
         if (additionalProperties.containsKey(DATE_LIBRARY)) {
