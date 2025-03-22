@@ -1,30 +1,4 @@
-/*
- * #%L
- * OME Bio-Formats package for reading and converting biological file formats.
- * %%
- * Copyright (C) 2005 - 2017 Open Microscopy Environment:
- *   - Board of Regents of the University of Wisconsin-Madison
- *   - Glencoe Software, Inc.
- *   - University of Dundee
- * %%
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 2 of the 
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public 
- * License along with this program.  If not, see
- * <http://www.gnu.org/licenses/gpl-2.0.html>.
- * #L%
- */
-
 package loci.formats.in;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -37,11 +11,9 @@ import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import loci.common.DataTools;
 import loci.common.DateTools;
 import loci.common.Location;
@@ -68,7 +40,6 @@ import ome.xml.model.primitives.Timestamp;
 import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.units.UNITS;
-
 import org.xml.sax.SAXException;
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Attr;
@@ -76,7 +47,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 
@@ -86,28 +56,25 @@ import com.google.common.collect.ImmutableMap.Builder;
  * @author Melissa Linkert melissa at glencoesoftware.com
  */
 public class LIFReader extends FormatReader {
+  public static final String OLD_PHYSICAL_SIZE_KEY = "leicalif.old_physical_size";
 
-  // -- Constants --
-
-  public static final String OLD_PHYSICAL_SIZE_KEY =
-    "leicalif.old_physical_size";
   public static final boolean OLD_PHYSICAL_SIZE_DEFAULT = false;
 
   public static final byte LIF_MAGIC_BYTE = 0x70;
+
   public static final byte LIF_MEMORY_BYTE = 0x2a;
 
   /** The encoding used in this file.*/
   private static final String ENCODING = "ISO-8859-1";
 
   private static final String LOGO_FILE = "LeicaLogo.jpg";
+
   private static final String STYLESHEET_FILE = "LASAF_CIP.xsl";
 
-  private static final ImmutableMap<String, Integer> CHANNEL_PRIORITIES =
-    createChannelPriorities();
+  private static final ImmutableMap<String, Integer> CHANNEL_PRIORITIES = createChannelPriorities();
 
   private static ImmutableMap<String, Integer> createChannelPriorities() {
     final Builder<String, Integer> h = ImmutableMap.builder();
-
     h.put("red", 0);
     h.put("green", 1);
     h.put("blue", 2);
@@ -117,191 +84,176 @@ public class LIFReader extends FormatReader {
     h.put("black", 6);
     h.put("gray", 7);
     h.put("", 8);
-
     return h.build();
   }
 
   private static final long METER_MULTIPLY = 1000000;
 
-  // -- Fields --
-
   /** Offsets to memory blocks, paired with their corresponding description. */
   private List<Long> offsets;
 
   private int[][] realChannel;
+
   private int lastChannel = 0;
 
   private List<String> lutNames = new ArrayList<String>();
+
   private List<Double> physicalSizeXs = new ArrayList<Double>();
+
   private List<Double> physicalSizeYs = new ArrayList<Double>();
+
   private List<Length> fieldPosX = new ArrayList<Length>();
+
   private List<Length> fieldPosY = new ArrayList<Length>();
 
   private String[] descriptions, microscopeModels, serialNumber;
+
   private Double[] pinholes, zooms, zSteps, tSteps, lensNA;
+
   private boolean[] flipX, flipY, swapXY;
+
   private Double[][] expTimes, gains, detectorOffsets;
+
   private String[][] channelNames;
+
   private List[] detectorModels;
+
   private Double[][] exWaves;
+
   private List[] activeDetector;
+
   private HashMap[] detectorIndexes;
 
   private String[] immersions, corrections, objectiveModels;
+
   private Double[] magnification;
+
   private Length[] posX, posY, posZ;
+
   private Double[] refractiveIndex;
+
   private List[] cutIns, cutOuts, filterModels;
+
   private Double[][] timestamps;
+
   private List[] laserWavelength, laserIntensity, laserActive, laserFrap;
 
   private ROI[][] imageROIs;
+
   private boolean alternateCenter = false;
+
   private String[] imageNames;
+
   private double[] acquiredDate;
 
   private int[] tileCount;
-  private long[] tileBytesInc;
-  private long endPointer;
 
-  // -- Constructor --
+  private long[] tileBytesInc;
+
+  private long endPointer;
 
   /** Constructs a new Leica LIF reader. */
   public LIFReader() {
     super("Leica Image File Format", "lif");
     suffixNecessary = false;
     hasCompanionFiles = true;
-    domains = new String[] {FormatTools.LM_DOMAIN};
+    domains = new String[] { FormatTools.LM_DOMAIN };
   }
 
   public boolean useOldPhysicalSizeCalculation() {
     MetadataOptions options = getMetadataOptions();
     if (options instanceof DynamicMetadataOptions) {
-      return ((DynamicMetadataOptions) options).getBoolean(
-        OLD_PHYSICAL_SIZE_KEY, OLD_PHYSICAL_SIZE_DEFAULT);
+      return ((DynamicMetadataOptions) options).getBoolean(OLD_PHYSICAL_SIZE_KEY, OLD_PHYSICAL_SIZE_DEFAULT);
     }
     return OLD_PHYSICAL_SIZE_DEFAULT;
   }
 
-  // -- IFormatReader API methods --
-
-  /* @see loci.formats.IFormatReader#getOptimalTileHeight() */
-  @Override
-  public int getOptimalTileHeight() {
+  @Override public int getOptimalTileHeight() {
     FormatTools.assertId(currentId, true, 1);
     return getSizeY();
   }
 
-  /* @see loci.formats.IFormatReader#isThisType(RandomAccessInputStream) */
-  @Override
-  public boolean isThisType(RandomAccessInputStream stream) throws IOException {
+  @Override public boolean isThisType(RandomAccessInputStream stream) throws IOException {
     return false;
-    // final int blockLen = 1;
-    // if (!FormatTools.validStream(stream, blockLen, true)) return false;
-    // if (stream.read() != LIF_MAGIC_BYTE) return false;
-    // stream.skipBytes(7);
-    // if (stream.readByte() != LIF_MEMORY_BYTE) return false;
-    // int nc = stream.readInt();
-    // String desc = DataTools.stripString(stream.readString(nc * 2));
-    // if (desc.equals("LMS_Object_File")) return false; //LOF file
-    // return true;
   }
 
-  /* @see loci.formats.IFormatReader#get8BitLookupTable() */
-  @Override
-  public byte[][] get8BitLookupTable() {
+  @Override public byte[][] get8BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
-    if (getPixelType() != FormatTools.UINT8 || !isIndexed()) return null;
-
+    if (getPixelType() != FormatTools.UINT8 || !isIndexed()) {
+      return null;
+    }
     if (lastChannel < 0 || lastChannel >= 9) {
       return null;
     }
-
     byte[][] lut = new byte[3][256];
-    for (int i=0; i<256; i++) {
+    for (int i = 0; i < 256; i++) {
       switch (lastChannel) {
         case 0:
-          // red
-          lut[0][i] = (byte) (i & 0xff);
-          break;
+        lut[0][i] = (byte) (i & 0xff);
+        break;
         case 1:
-          // green
-          lut[1][i] = (byte) (i & 0xff);
-          break;
+        lut[1][i] = (byte) (i & 0xff);
+        break;
         case 2:
-          // blue
-          lut[2][i] = (byte) (i & 0xff);
-          break;
+        lut[2][i] = (byte) (i & 0xff);
+        break;
         case 3:
-          // cyan
-          lut[1][i] = (byte) (i & 0xff);
-          lut[2][i] = (byte) (i & 0xff);
-          break;
+        lut[1][i] = (byte) (i & 0xff);
+        lut[2][i] = (byte) (i & 0xff);
+        break;
         case 4:
-          // magenta
-          lut[0][i] = (byte) (i & 0xff);
-          lut[2][i] = (byte) (i & 0xff);
-          break;
+        lut[0][i] = (byte) (i & 0xff);
+        lut[2][i] = (byte) (i & 0xff);
+        break;
         case 5:
-          // yellow
-          lut[0][i] = (byte) (i & 0xff);
-          lut[1][i] = (byte) (i & 0xff);
-          break;
+        lut[0][i] = (byte) (i & 0xff);
+        lut[1][i] = (byte) (i & 0xff);
+        break;
         default:
-          // gray
-          lut[0][i] = (byte) (i & 0xff);
-          lut[1][i] = (byte) (i & 0xff);
-          lut[2][i] = (byte) (i & 0xff);
+        lut[0][i] = (byte) (i & 0xff);
+        lut[1][i] = (byte) (i & 0xff);
+        lut[2][i] = (byte) (i & 0xff);
       }
     }
     return lut;
   }
 
-  /* @see loci.formats.IFormatReader#get16BitLookupTable() */
-  @Override
-  public short[][] get16BitLookupTable() {
+  @Override public short[][] get16BitLookupTable() {
     FormatTools.assertId(currentId, true, 1);
-    if (getPixelType() != FormatTools.UINT16 || !isIndexed()) return null;
-
+    if (getPixelType() != FormatTools.UINT16 || !isIndexed()) {
+      return null;
+    }
     if (lastChannel < 0 || lastChannel >= 9) {
       return null;
     }
-
     short[][] lut = new short[3][65536];
-    for (int i=0; i<65536; i++) {
+    for (int i = 0; i < 65536; i++) {
       switch (lastChannel) {
         case 0:
-          // red
-          lut[0][i] = (short) (i & 0xffff);
-          break;
+        lut[0][i] = (short) (i & 0xffff);
+        break;
         case 1:
-          // green
-          lut[1][i] = (short) (i & 0xffff);
-          break;
+        lut[1][i] = (short) (i & 0xffff);
+        break;
         case 2:
-          // blue
-          lut[2][i] = (short) (i & 0xffff);
-          break;
+        lut[2][i] = (short) (i & 0xffff);
+        break;
         case 3:
-          // cyan
-          lut[1][i] = (short) (i & 0xffff);
-          lut[2][i] = (short) (i & 0xffff);
-          break;
+        lut[1][i] = (short) (i & 0xffff);
+        lut[2][i] = (short) (i & 0xffff);
+        break;
         case 4:
-          // magenta
-          lut[0][i] = (short) (i & 0xffff);
-          lut[2][i] = (short) (i & 0xffff);
-          break;
+        lut[0][i] = (short) (i & 0xffff);
+        lut[2][i] = (short) (i & 0xffff);
+        break;
         case 5:
-          // yellow
-          lut[0][i] = (short) (i & 0xffff);
-          lut[1][i] = (short) (i & 0xffff);
-          break;
+        lut[0][i] = (short) (i & 0xffff);
+        lut[1][i] = (short) (i & 0xffff);
+        break;
         default:
-          // gray
-          lut[0][i] = (short) (i & 0xffff);
-          lut[1][i] = (short) (i & 0xffff);
-          lut[2][i] = (short) (i & 0xffff);
+        lut[0][i] = (short) (i & 0xffff);
+        lut[1][i] = (short) (i & 0xffff);
+        lut[2][i] = (short) (i & 0xffff);
       }
     }
     return lut;
@@ -310,137 +262,99 @@ public class LIFReader extends FormatReader {
   /**
    * @see loci.formats.IFormatReader#openBytes(int, byte[], int, int, int, int)
    */
-  @Override
-  public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h)
-    throws FormatException, IOException
-  {
+  @Override public byte[] openBytes(int no, byte[] buf, int x, int y, int w, int h) throws FormatException, IOException {
     FormatTools.checkPlaneParameters(this, no, buf.length, x, y, w, h);
-
     if (!isRGB()) {
       int[] pos = getZCTCoords(no);
       lastChannel = realChannel[getTileIndex(series)][pos[1]];
     }
-
     int index = getTileIndex(series);
     if (index >= offsets.size()) {
-      // truncated file; imitate LAS AF and return blank planes
       Arrays.fill(buf, getFillColor());
       return buf;
     }
-
     long offset = offsets.get(index).longValue();
     int bytes = FormatTools.getBytesPerPixel(getPixelType());
     int bpp = bytes * getRGBChannelCount();
-
     long planeSize = (long) getSizeX() * getSizeY() * bpp;
-    long nextOffset = index + 1 < offsets.size() ?
-      offsets.get(index + 1).longValue() : endPointer;
+    long nextOffset = index + 1 < offsets.size() ? offsets.get(index + 1).longValue() : endPointer;
     long bytesToSkip = nextOffset - offset - planeSize * getImageCount();
     bytesToSkip /= getSizeY();
-    if ((getSizeX() % 4) == 0) bytesToSkip = 0;
-
+    if ((getSizeX() % 4) == 0) {
+      bytesToSkip = 0;
+    }
     if (offset + (planeSize + bytesToSkip * getSizeY()) * no >= in.length()) {
-      // truncated file; imitate LAS AF and return blank planes
       Arrays.fill(buf, getFillColor());
       return buf;
     }
-
     seekStartOfPlane(no, offset, planeSize);
-
     if (bytesToSkip == 0) {
       readPlane(in, x, y, w, h, buf);
-    }
-    else {
+    } else {
       in.skipBytes(bytesToSkip * getSizeY() * no);
       in.skipBytes(y * (getSizeX() * bpp + bytesToSkip));
-      for (int row=0; row<h; row++) {
+      for (int row = 0; row < h; row++) {
         in.skipBytes(x * bpp);
         in.read(buf, row * w * bpp, w * bpp);
         in.skipBytes(bpp * (getSizeX() - w - x) + bytesToSkip);
       }
     }
-
-    // color planes are stored in BGR order
     if (getRGBChannelCount() == 3) {
       ImageTools.bgrToRgb(buf, isInterleaved(), bytes, getRGBChannelCount());
     }
-
     return buf;
   }
-  
-  private void seekStartOfPlane(int no, long dataOffset, long planeSize)
-    throws IOException
-  {
+
+  private void seekStartOfPlane(int no, long dataOffset, long planeSize) throws IOException {
     int index = getTileIndex(series);
     long posInFile;
-
     int numberOfTiles = tileCount[index];
     if (numberOfTiles > 1) {
-      // LAS AF treats tiles just like any other dimension, while we do not.
-      // Hence we need to take the tiles into account for a frame's position.
       long bytesIncPerTile = tileBytesInc[index];
       long framesPerTile = bytesIncPerTile / planeSize;
-
       if (framesPerTile > Integer.MAX_VALUE) {
         throw new IOException("Could not read frame due to int overflow");
       }
-
       int noOutsideTiles = no / (int) framesPerTile;
       int noInsideTiles = no % (int) framesPerTile;
-
       int tile = series;
       for (int i = 0; i < index; i++) {
         tile -= tileCount[i];
       }
-
       posInFile = dataOffset;
       posInFile += noOutsideTiles * bytesIncPerTile * numberOfTiles;
       posInFile += tile * bytesIncPerTile;
       posInFile += noInsideTiles * planeSize;
-    }
-    else {
+    } else {
       posInFile = dataOffset + no * planeSize;
     }
-    
-    // seek instead of skipBytes to prevent dangerous int cast
     in.seek(posInFile);
   }
 
-  /* @see loci.formats.IFormatReader#getSeriesUsedFiles(boolean) */
-  @Override
-  public String[] getSeriesUsedFiles(boolean noPixels) {
+  @Override public String[] getSeriesUsedFiles(boolean noPixels) {
     FormatTools.assertId(currentId, true, 1);
     final List<String> files = new ArrayList<String>();
     files.add(currentId);
-
     Location currentFile = new Location(currentId).getAbsoluteFile();
     Location parent = currentFile.getParentFile();
-    if (parent != null && getSeries() < imageNames.length &&
-      imageNames[getSeries()] != null)
-    {
-      // look for an XML file with the same name as this series
+    if (parent != null && getSeries() < imageNames.length && imageNames[getSeries()] != null) {
       Location xmlFile = new Location(parent, imageNames[getSeries()].trim() + ".xml");
       if (xmlFile.exists()) {
         files.add(xmlFile.getAbsolutePath());
       }
-
       Location logoFile = new Location(parent, LOGO_FILE);
       if (logoFile.exists()) {
         files.add(logoFile.getAbsolutePath());
       }
-
       Location stylesheetFile = new Location(parent, STYLESHEET_FILE);
       if (stylesheetFile.exists()) {
         files.add(stylesheetFile.getAbsolutePath());
       }
     }
-
     return files.toArray(new String[files.size()]);
   }
 
-  /* @see loci.formats.IFormatReader#close(boolean) */
-  @Override
-  public void close(boolean fileOnly) throws IOException {
+  @Override public void close(boolean fileOnly) throws IOException {
     super.close(fileOnly);
     if (!fileOnly) {
       offsets = null;
@@ -480,114 +394,80 @@ public class LIFReader extends FormatReader {
     }
   }
 
-  // -- Internal FormatReader API methods --
-
-  /* @see loci.formats.FormatReader#getAvailableOptions() */
-  @Override
-  protected ArrayList<String> getAvailableOptions() {
+  @Override protected ArrayList<String> getAvailableOptions() {
     ArrayList<String> optionsList = super.getAvailableOptions();
     optionsList.add(OLD_PHYSICAL_SIZE_KEY);
     return optionsList;
   }
 
-  /* @see loci.formats.FormatReader#initFile(String) */
-  @Override
-  protected void initFile(String id) throws FormatException, IOException {
+  @Override protected void initFile(String id) throws FormatException, IOException {
     super.initFile(id);
     in = new RandomAccessInputStream(id);
     in.setEncoding(ENCODING);
     offsets = new ArrayList<Long>();
-
     in.order(true);
-
-    // read the header
-
     LOGGER.info("Reading header");
-
     byte checkOne = in.readByte();
     in.skipBytes(2);
     byte checkTwo = in.readByte();
     if (checkOne != LIF_MAGIC_BYTE && checkTwo != LIF_MAGIC_BYTE) {
       throw new FormatException(id + " is not a valid Leica LIF file");
     }
-
     in.skipBytes(4);
-
-    // read and parse the XML description
-
     if (in.read() != LIF_MEMORY_BYTE) {
       throw new FormatException("Invalid XML description");
     }
-
-    // number of Unicode characters in the XML block
     int nc = in.readInt();
     String xml = DataTools.stripString(in.readString(nc * 2));
-
     LOGGER.info("Finding image offsets");
-
     while (in.getFilePointer() < in.length()) {
-      LOGGER.debug("Looking for a block at {}; {} blocks read",
-        in.getFilePointer(), offsets.size());
+      LOGGER.debug("Looking for a block at {}; {} blocks read", in.getFilePointer(), offsets.size());
       int check = in.readInt();
       if (check != LIF_MAGIC_BYTE) {
         if (check == 0 && offsets.size() > 0) {
-          // newer .lif file; the remainder of the file is all 0s
           endPointer = in.getFilePointer();
           break;
         }
-        throw new FormatException("Invalid Memory Block: found magic bytes " +
-          check + ", expected " + LIF_MAGIC_BYTE);
+        throw new FormatException("Invalid Memory Block: found magic bytes " + check + ", expected " + LIF_MAGIC_BYTE);
       }
-
       in.skipBytes(4);
       check = in.read();
       if (check != LIF_MEMORY_BYTE) {
-        throw new FormatException("Invalid Memory Description: found magic " +
-          "byte " + check + ", expected " + LIF_MEMORY_BYTE);
+        throw new FormatException("Invalid Memory Description: found magic " + "byte " + check + ", expected " + LIF_MEMORY_BYTE);
       }
-
       long blockLength = in.readInt();
       if (in.read() != LIF_MEMORY_BYTE) {
         in.seek(in.getFilePointer() - 5);
         blockLength = in.readLong();
         check = in.read();
         if (check != LIF_MEMORY_BYTE) {
-          throw new FormatException("Invalid Memory Description: found magic " +
-            "byte " + check + ", expected " + LIF_MEMORY_BYTE);
+          throw new FormatException("Invalid Memory Description: found magic " + "byte " + check + ", expected " + LIF_MEMORY_BYTE);
         }
       }
-
       int descrLength = in.readInt() * 2;
-
       if (blockLength > 0) {
         offsets.add(in.getFilePointer() + descrLength);
       }
-
       in.seek(in.getFilePointer() + descrLength + blockLength);
     }
     initMetadata(xml);
     xml = null;
-
     if (endPointer == 0) {
       endPointer = in.length();
     }
-
-    // correct offsets, if necessary
     if (offsets.size() > getSeriesCount()) {
       Long[] storedOffsets = offsets.toArray(new Long[offsets.size()]);
       offsets.clear();
       int index = 0;
-      for (int i=0; i<getSeriesCount(); i++) {
+      for (int i = 0; i < getSeriesCount(); i++) {
         setSeries(i);
         long nBytes = (long) FormatTools.getPlaneSize(this) * getImageCount();
         long start = storedOffsets[index];
-        long end = index == storedOffsets.length - 1 ? in.length() :
-          storedOffsets[index + 1];
+        long end = index == storedOffsets.length - 1 ? in.length() : storedOffsets[index + 1];
         while (end - start < nBytes && ((end - start) / nBytes) != 1) {
           index++;
           start = storedOffsets[index];
-          end = index == storedOffsets.length - 1 ? in.length() :
-            storedOffsets[index + 1];
+          end = index == storedOffsets.length - 1 ? in.length() : storedOffsets[index + 1];
         }
         offsets.add(storedOffsets[index]);
         index++;
@@ -596,95 +476,69 @@ public class LIFReader extends FormatReader {
     }
   }
 
-  // -- Helper methods --
-
   /** Parses a string of XML and puts the values in a Hashtable. */
   private void initMetadata(String xml) throws FormatException, IOException {
     try {
       ServiceFactory factory = new ServiceFactory();
       OMEXMLService service = factory.getInstance(OMEXMLService.class);
       service.createOMEXMLMetadata();
-    }
-    catch (DependencyException exc) {
+    } catch (DependencyException exc) {
       throw new FormatException("Could not create OME-XML store.", exc);
-    }
-    catch (ServiceException exc) {
+    } catch (ServiceException exc) {
       throw new FormatException("Could not create OME-XML store.", exc);
     }
     MetadataStore store = makeFilterMetadata();
-
-    // the XML blocks stored in a LIF file are invalid,
-    // because they don't have a root node
-
-    xml = "<?xml version=\"1.0\" encoding=\""+ENCODING+"\"?><LEICA>" + xml +
-      "</LEICA>";
-
+    xml = "<?xml version=\"1.0\" encoding=\"" + ENCODING + "\"?><LEICA>" + xml + "</LEICA>";
     xml = XMLTools.sanitizeXML(xml);
     LOGGER.trace(xml);
-
     translateMetadata(getMetadataRoot(xml));
-
-    for (int i=0; i<imageNames.length; i++) {
+    for (int i = 0; i < imageNames.length; i++) {
       setSeries(i);
       addSeriesMeta("Image name", imageNames[i]);
     }
     setSeries(0);
-
-    // set up mapping to rearrange channels
-    // for instance, the green channel may be #0, and the red channel may be #1
     realChannel = new int[tileCount.length][];
     int nextLut = 0;
-
-    for (int i=0; i<core.size(); i++) {
+    for (int i = 0; i < core.size(); i++) {
       int index = getTileIndex(i);
       if (realChannel[index] != null) {
         continue;
       }
       CoreMetadata ms = core.get(i);
       realChannel[index] = new int[ms.sizeC];
-
-      for (int q=0; q<ms.sizeC; q++) {
+      for (int q = 0; q < ms.sizeC; q++) {
         String lut = "";
         if (nextLut < lutNames.size()) {
           lut = lutNames.get(nextLut++).toLowerCase();
         }
-        if (!CHANNEL_PRIORITIES.containsKey(lut)) lut = "";
+        if (!CHANNEL_PRIORITIES.containsKey(lut)) {
+          lut = "";
+        }
         realChannel[index][q] = CHANNEL_PRIORITIES.get(lut).intValue();
       }
-
       int[] sorted = new int[ms.sizeC];
       Arrays.fill(sorted, -1);
-
-      for (int q=0; q<sorted.length; q++) {
+      for (int q = 0; q < sorted.length; q++) {
         int min = Integer.MAX_VALUE;
         int minIndex = -1;
-        for (int n=0; n<ms.sizeC; n++) {
-          if (realChannel[index][n] < min &&
-            !DataTools.containsValue(sorted, n))
-          {
+        for (int n = 0; n < ms.sizeC; n++) {
+          if (realChannel[index][n] < min && !DataTools.containsValue(sorted, n)) {
             min = realChannel[index][n];
             minIndex = n;
           }
         }
-
         sorted[q] = minIndex;
       }
     }
-
     MetadataTools.populatePixels(store, this, true, false);
-
     int roiCount = 0;
-    for (int i=0; i<getSeriesCount(); i++) {
+    for (int i = 0; i < getSeriesCount(); i++) {
       setSeries(i);
-
       String instrumentID = MetadataTools.createLSID("Instrument", i);
       store.setInstrumentID(instrumentID, i);
-
       int index = getTileIndex(i);
-
       store.setMicroscopeModel(microscopeModels[index], i);
       store.setMicroscopeType(MetadataTools.getMicroscopeType("Other"), i);
-
       String objectiveID = MetadataTools.createLSID("Objective", i, 0);
       store.setObjectiveID(objectiveID, i, 0);
       store.setObjectiveLensNA(lensNA[index], i, 0);
@@ -695,50 +549,39 @@ public class LIFReader extends FormatReader {
       store.setObjectiveImmersion(MetadataTools.getImmersion(immersions[index]), i, 0);
       store.setObjectiveCorrection(MetadataTools.getCorrection(corrections[index]), i, 0);
       store.setObjectiveModel(objectiveModels[index], i, 0);
-
       if (cutIns[index] != null && filterModels[index] != null) {
         int channel = 0;
         if (cutIns[index].size() >= filterModels[index].size() * 2) {
           int diff = cutIns[index].size() - filterModels[index].size();
-          for (int q=0; q<diff; q++) {
+          for (int q = 0; q < diff; q++) {
             cutIns[index].remove(filterModels[index].size());
           }
         }
-        for (int filter=0; filter<cutIns[index].size(); filter++) {
+        for (int filter = 0; filter < cutIns[index].size(); filter++) {
           String filterID = MetadataTools.createLSID("Filter", i, filter);
           store.setFilterID(filterID, i, filter);
-          if (filterModels[index] != null &&
-            filter < filterModels[index].size())
-          {
-            store.setFilterModel(
-              (String) filterModels[index].get(filter), i, filter);
+          if (filterModels[index] != null && filter < filterModels[index].size()) {
+            store.setFilterModel((String) filterModels[index].get(filter), i, filter);
           }
-          store.setTransmittanceRangeCutIn(
-            (Length) cutIns[index].get(filter), i, filter);
-          store.setTransmittanceRangeCutOut(
-            (Length) cutOuts[index].get(filter), i, filter);
+          store.setTransmittanceRangeCutIn((Length) cutIns[index].get(filter), i, filter);
+          store.setTransmittanceRangeCutOut((Length) cutOuts[index].get(filter), i, filter);
         }
       }
-
       final List<Double> lasers = laserWavelength[index];
       final List<Double> laserIntensities = laserIntensity[index];
-
       final List<Boolean> active = laserActive[index];
       final List<Boolean> frap = laserFrap[index];
       int nextChannel = 0;
-
       if (lasers != null) {
         int laserIndex = 0;
         while (laserIndex < lasers.size()) {
           if ((Double) lasers.get(laserIndex) == 0) {
             lasers.remove(laserIndex);
-          }
-          else {
+          } else {
             laserIndex++;
           }
         }
-
-        for (int laser=0; laser<lasers.size(); laser++) {
+        for (int laser = 0; laser < lasers.size(); laser++) {
           String id = MetadataTools.createLSID("LightSource", i, laser);
           store.setLaserID(id, i, laser);
           store.setLaserType(LaserType.OTHER, i, laser);
@@ -749,41 +592,34 @@ public class LIFReader extends FormatReader {
             store.setLaserWavelength(wave, i, laser);
           }
         }
-
         Set<Integer> ignoredChannels = new HashSet<Integer>();
         final List<Integer> validIntensities = new ArrayList<Integer>();
         int size = lasers.size();
         int channel = 0;
         Set<Integer> channels = new HashSet<Integer>();
-
-        for (int laser=0; laser<laserIntensities.size(); laser++) {
+        for (int laser = 0; laser < laserIntensities.size(); laser++) {
           double intensity = (Double) laserIntensities.get(laser);
-          channel = laser/size;
+          channel = laser / size;
           if (intensity < 100) {
             validIntensities.add(laser);
             channels.add(channel);
           }
           ignoredChannels.add(channel);
         }
-        //remove channels w/o valid intensities
         ignoredChannels.removeAll(channels);
-        //remove entries if channel has 2 wavelengths
-        //e.g. 30% 458 70% 633
         int s = validIntensities.size();
-
         int jj;
         Set<Integer> toRemove = new HashSet<Integer>();
-
         int as = active.size();
         for (int j = 0; j < s; j++) {
           if (j < as && !(Boolean) active.get(j)) {
             toRemove.add(validIntensities.get(j));
           }
-          jj = j+1;
+          jj = j + 1;
           if (jj < s) {
-            int v = validIntensities.get(j)/size;
-            int vv = validIntensities.get(jj)/size;
-            if (vv == v) {//do not consider that channel.
+            int v = validIntensities.get(j) / size;
+            int vv = validIntensities.get(jj) / size;
+            if (vv == v) {
               toRemove.add(validIntensities.get(j));
               toRemove.add(validIntensities.get(jj));
               ignoredChannels.add(j);
@@ -793,7 +629,6 @@ public class LIFReader extends FormatReader {
         if (toRemove.size() > 0) {
           validIntensities.removeAll(toRemove);
         }
-
         boolean noNames = true;
         if (channelNames[index] != null) {
           for (String name : channelNames[index]) {
@@ -803,7 +638,7 @@ public class LIFReader extends FormatReader {
             }
           }
         }
-        if (!noNames && frap != null) { //only use name for frap.
+        if (!noNames && frap != null) {
           for (int k = 0; k < frap.size(); k++) {
             if (!frap.get(k)) {
               noNames = true;
@@ -811,10 +646,8 @@ public class LIFReader extends FormatReader {
             }
           }
         }
-
         int nextFilter = 0;
-        //int nextFilter = cutIns[i].size() - getEffectiveSizeC();
-        for (int k=0; k<validIntensities.size(); k++, nextChannel++) {
+        for (int k = 0; k < validIntensities.size(); k++, nextChannel++) {
           int laserArrayIndex = validIntensities.get(k);
           double intensity = (Double) laserIntensities.get(laserArrayIndex);
           int laser = laserArrayIndex % lasers.size();
@@ -823,45 +656,32 @@ public class LIFReader extends FormatReader {
             while (ignoredChannels.contains(nextChannel)) {
               nextChannel++;
             }
-            while (channelNames != null && nextChannel < getEffectiveSizeC() &&
-              channelNames[index] != null &&
-              ((channelNames[index][nextChannel] == null ||
-              channelNames[index][nextChannel].equals("")) && !noNames))
-            {
+            while (channelNames != null && nextChannel < getEffectiveSizeC() && channelNames[index] != null && ((channelNames[index][nextChannel] == null || channelNames[index][nextChannel].equals("")) && !noNames)) {
               nextChannel++;
             }
             if (nextChannel < getEffectiveSizeC()) {
               String id = MetadataTools.createLSID("LightSource", i, laser);
               store.setChannelLightSourceSettingsID(id, i, nextChannel);
-              store.setChannelLightSourceSettingsAttenuation(
-                new PercentFraction((float) intensity / 100f), i, nextChannel);
-
+              store.setChannelLightSourceSettingsAttenuation(new PercentFraction((float) intensity / 100f), i, nextChannel);
               Length ex = FormatTools.getExcitationWavelength(wavelength);
               if (ex != null) {
                 store.setChannelExcitationWavelength(ex, i, nextChannel);
               }
-
               if (wavelength > 0) {
-                if (cutIns[index] == null || nextFilter >= cutIns[index].size())
-                {
+                if (cutIns[index] == null || nextFilter >= cutIns[index].size()) {
                   continue;
                 }
-                Double cutIn =
-                  ((Length) cutIns[index].get(nextFilter)).value(UNITS.NANOMETER).doubleValue();
+                Double cutIn = ((Length) cutIns[index].get(nextFilter)).value(UNITS.NANOMETER).doubleValue();
                 while (cutIn - wavelength > 20) {
                   nextFilter++;
                   if (nextFilter < cutIns[index].size()) {
-                    cutIn = ((Length)
-                      cutIns[index].get(nextFilter)).value(UNITS.NANOMETER).doubleValue();
-                  }
-                  else {
+                    cutIn = ((Length) cutIns[index].get(nextFilter)).value(UNITS.NANOMETER).doubleValue();
+                  } else {
                     break;
                   }
                 }
                 if (nextFilter < cutIns[index].size()) {
-                  String fid =
-                    MetadataTools.createLSID("Filter", i, nextFilter);
-                  //store.setLightPathEmissionFilterRef(fid, i, nextChannel, 0);
+                  String fid = MetadataTools.createLSID("Filter", i, nextFilter);
                   nextFilter++;
                 }
               }
@@ -869,25 +689,17 @@ public class LIFReader extends FormatReader {
           }
         }
       }
-
       store.setImageInstrumentRef(instrumentID, i);
       store.setObjectiveSettingsID(objectiveID, i);
       store.setObjectiveSettingsRefractiveIndex(refractiveIndex[index], i);
-
       store.setImageDescription(descriptions[index], i);
       if (acquiredDate[index] > 0) {
-        store.setImageAcquisitionDate(new Timestamp(DateTools.convertDate(
-          (long) (acquiredDate[index] * 1000), DateTools.COBOL,
-          DateTools.ISO8601_FORMAT, false)), i);
+        store.setImageAcquisitionDate(new Timestamp(DateTools.convertDate((long) (acquiredDate[index] * 1000), DateTools.COBOL, DateTools.ISO8601_FORMAT, false)), i);
       }
       store.setImageName(imageNames[index].trim(), i);
-
-      Length sizeX =
-        FormatTools.getPhysicalSizeX(physicalSizeXs.get(index));
-      Length sizeY =
-        FormatTools.getPhysicalSizeY(physicalSizeYs.get(index));
+      Length sizeX = FormatTools.getPhysicalSizeX(physicalSizeXs.get(index));
+      Length sizeY = FormatTools.getPhysicalSizeY(physicalSizeYs.get(index));
       Length sizeZ = FormatTools.getPhysicalSizeZ(zSteps[index]);
-
       if (sizeX != null) {
         store.setPixelsPhysicalSizeX(sizeX, i);
       }
@@ -900,7 +712,6 @@ public class LIFReader extends FormatReader {
       if (tSteps[index] != null) {
         store.setPixelsTimeIncrement(new Time(tSteps[index], UNITS.SECOND), i);
       }
-
       final List<String> detectors = detectorModels[index];
       if (detectors != null) {
         nextChannel = 0;
@@ -908,79 +719,50 @@ public class LIFReader extends FormatReader {
         if (start < 0) {
           start = 0;
         }
-        for (int detector=start; detector<detectors.size(); detector++) {
+        for (int detector = start; detector < detectors.size(); detector++) {
           int dIndex = detector - start;
           String detectorID = MetadataTools.createLSID("Detector", i, dIndex);
           store.setDetectorID(detectorID, i, dIndex);
           store.setDetectorModel((String) detectors.get(detector), i, dIndex);
-
           store.setDetectorZoom(zooms[index], i, dIndex);
           store.setDetectorType(DetectorType.PMT, i, dIndex);
-
           if (activeDetector[index] != null) {
-            int detectorIndex =
-              activeDetector[index].size() - getEffectiveSizeC() + dIndex;
-            if (detectorIndex >= 0 &&
-              detectorIndex < activeDetector[index].size() &&
-              (Boolean) activeDetector[index].get(detectorIndex) &&
-              detectorOffsets[index] != null &&
-              nextChannel < detectorOffsets[index].length)
-            {
-              store.setDetectorOffset(
-                detectorOffsets[index][nextChannel++], i, dIndex);
+            int detectorIndex = activeDetector[index].size() - getEffectiveSizeC() + dIndex;
+            if (detectorIndex >= 0 && detectorIndex < activeDetector[index].size() && (Boolean) activeDetector[index].get(detectorIndex) && detectorOffsets[index] != null && nextChannel < detectorOffsets[index].length) {
+              store.setDetectorOffset(detectorOffsets[index][nextChannel++], i, dIndex);
             }
           }
         }
       }
-
       final List<Boolean> activeDetectors = activeDetector[index];
-      int firstDetector = activeDetectors == null ? 0 :
-        activeDetectors.size() - getEffectiveSizeC();
+      int firstDetector = activeDetectors == null ? 0 : activeDetectors.size() - getEffectiveSizeC();
       int nextDetector = firstDetector;
-
       int nextFilter = 0;
       int nextFilterDetector = 0;
-
-      if (activeDetectors != null &&
-        activeDetectors.size() > cutIns[index].size() &&
-        (Boolean) activeDetectors.get(activeDetectors.size() - 1) &&
-        (Boolean) activeDetectors.get(activeDetectors.size() - 2))
-      {
+      if (activeDetectors != null && activeDetectors.size() > cutIns[index].size() && (Boolean) activeDetectors.get(activeDetectors.size() - 1) && (Boolean) activeDetectors.get(activeDetectors.size() - 2)) {
         nextFilterDetector = activeDetectors.size() - cutIns[index].size();
-
         if (cutIns[index].size() > filterModels[index].size()) {
           nextFilterDetector += filterModels[index].size();
           nextFilter += filterModels[index].size();
         }
       }
-
-      for (int c=0; c<getEffectiveSizeC(); c++) {
+      for (int c = 0; c < getEffectiveSizeC(); c++) {
         if (activeDetectors != null) {
-          while (nextDetector >= 0 && nextDetector < activeDetectors.size() &&
-            !(Boolean) activeDetectors.get(nextDetector))
-          {
+          while (nextDetector >= 0 && nextDetector < activeDetectors.size() && !(Boolean) activeDetectors.get(nextDetector)) {
             nextDetector++;
           }
-          if (nextDetector < activeDetectors.size() && detectors != null &&
-            nextDetector - firstDetector < detectors.size())
-          {
-            String detectorID = MetadataTools.createLSID(
-              "Detector", i, nextDetector - firstDetector);
+          if (nextDetector < activeDetectors.size() && detectors != null && nextDetector - firstDetector < detectors.size()) {
+            String detectorID = MetadataTools.createLSID("Detector", i, nextDetector - firstDetector);
             store.setDetectorSettingsID(detectorID, i, c);
             nextDetector++;
-
-            if (detectorOffsets[index] != null &&
-              c < detectorOffsets[index].length)
-            {
+            if (detectorOffsets[index] != null && c < detectorOffsets[index].length) {
               store.setDetectorSettingsOffset(detectorOffsets[index][c], i, c);
             }
-
             if (gains[index] != null) {
               store.setDetectorSettingsGain(gains[index][c], i, c);
             }
           }
         }
-
         if (channelNames[index] != null) {
           store.setChannelName(channelNames[index][c], i, c);
         }
@@ -989,37 +771,26 @@ public class LIFReader extends FormatReader {
         }
         if (exWaves[index] != null) {
           if (exWaves[index][c] != null && exWaves[index][c] > 1) {
-            Length ex =
-              FormatTools.getExcitationWavelength(exWaves[index][c]);
+            Length ex = FormatTools.getExcitationWavelength(exWaves[index][c]);
             if (ex != null) {
               store.setChannelExcitationWavelength(ex, i, c);
             }
           }
         }
-
-        // channel coloring is implicit if the image is stored as RGB
         Color channelColor = getChannelColor(realChannel[index][c]);
         if (!isRGB()) {
           store.setChannelColor(channelColor, i, c);
         }
-
         if (channelColor.getValue() != -1 && nextFilter >= 0) {
-          if (nextDetector - firstDetector != getSizeC() &&
-            cutIns[index] != null && nextDetector >= cutIns[index].size())
-          {
+          if (nextDetector - firstDetector != getSizeC() && cutIns[index] != null && nextDetector >= cutIns[index].size()) {
             while (nextFilterDetector < firstDetector) {
-              String filterID =
-                MetadataTools.createLSID("Filter", i, nextFilter);
+              String filterID = MetadataTools.createLSID("Filter", i, nextFilter);
               store.setFilterID(filterID, i, nextFilter);
-
               nextFilterDetector++;
               nextFilter++;
             }
           }
-          while (activeDetectors != null &&
-            nextFilterDetector < activeDetectors.size() &&
-            !(Boolean) activeDetectors.get(nextFilterDetector))
-          {
+          while (activeDetectors != null && nextFilterDetector < activeDetectors.size() && !(Boolean) activeDetectors.get(nextFilterDetector)) {
             String filterID = MetadataTools.createLSID("Filter", i, nextFilter);
             store.setFilterID(filterID, i, nextFilter);
             nextFilterDetector++;
@@ -1032,8 +803,7 @@ public class LIFReader extends FormatReader {
           nextFilter++;
         }
       }
-
-      for (int image=0; image<getImageCount(); image++) {
+      for (int image = 0; image < getImageCount(); image++) {
         Length xPos = posX[index];
         Length yPos = posY[index];
         if (i < fieldPosX.size() && fieldPosX.get(i) != null) {
@@ -1042,16 +812,13 @@ public class LIFReader extends FormatReader {
         if (i < fieldPosY.size() && fieldPosY.get(i) != null) {
           yPos = fieldPosY.get(i);
         }
-
         if (swapXY[index]) {
           Length temp = xPos;
           xPos = yPos;
           yPos = temp;
         }
-
         xPos = checkFlip(flipX[index], xPos);
         yPos = checkFlip(flipY[index], yPos);
-
         if (xPos != null) {
           store.setPlanePositionX(xPos, i, image);
         }
@@ -1064,25 +831,23 @@ public class LIFReader extends FormatReader {
             double timestamp = timestamps[index][image];
             if (timestamps[index][0] == acquiredDate[index]) {
               timestamp -= acquiredDate[index];
-            }
-            else if (timestamp == acquiredDate[index] && image > 0) {
-              timestamp = timestamps[index][0];
+            } else {
+              if (timestamp == acquiredDate[index] && image > 0) {
+                timestamp = timestamps[index][0];
+              }
             }
             store.setPlaneDeltaT(new Time(timestamp, UNITS.SECOND), i, image);
           }
         }
-
         if (expTimes[index] != null) {
           int c = getZCTCoords(image)[1];
-          if (expTimes[index][c] != null)
-          {
+          if (expTimes[index][c] != null) {
             store.setPlaneExposureTime(new Time(expTimes[index][c], UNITS.SECOND), i, image);
           }
         }
       }
-
       if (imageROIs[index] != null) {
-        for (int roi=0; roi<imageROIs[index].length; roi++) {
+        for (int roi = 0; roi < imageROIs[index].length; roi++) {
           if (imageROIs[index][roi] != null) {
             imageROIs[index][roi].storeROI(store, i, roiCount++, roi);
           }
@@ -1098,39 +863,34 @@ public class LIFReader extends FormatReader {
     return pos;
   }
 
-
-  private Element getMetadataRoot(String xml)
-    throws FormatException, IOException
-  {
+  private Element getMetadataRoot(String xml) throws FormatException, IOException {
     ByteArrayInputStream s = null;
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       DocumentBuilder parser = factory.newDocumentBuilder();
       s = new ByteArrayInputStream(xml.getBytes(ENCODING));
       return parser.parse(s).getDocumentElement();
-    }
-    catch (ParserConfigurationException e) {
+    } catch (ParserConfigurationException e) {
       throw new FormatException(e);
-    }
-    catch (SAXException e) {
+    } catch (SAXException e) {
       throw new FormatException(e);
     } finally {
-        if (s != null) s.close();
+      if (s != null) {
+        s.close();
+      }
     }
   }
 
   private void translateMetadata(Element root) throws FormatException {
     Element realRoot = (Element) root.getChildNodes().item(0);
-
     NodeList toPrune = getNodes(realRoot, "LDM_Block_Sequential_Master");
     if (toPrune != null) {
-      for (int i=0; i<toPrune.getLength(); i++) {
+      for (int i = 0; i < toPrune.getLength(); i++) {
         Element prune = (Element) toPrune.item(i);
         Element parent = (Element) prune.getParentNode();
         parent.removeChild(prune);
       }
     }
-
     NodeList images = getNodes(realRoot, "Image");
     List<Element> imageNodes = new ArrayList<Element>();
     Long[] oldOffsets = null;
@@ -1138,9 +898,8 @@ public class LIFReader extends FormatReader {
       oldOffsets = offsets.toArray(new Long[offsets.size()]);
       offsets.clear();
     }
-
     int nextOffset = 0;
-    for (int i=0; i<images.getLength(); i++) {
+    for (int i = 0; i < images.getLength(); i++) {
       Element image = (Element) images.item(i);
       Element grandparent = (Element) image.getParentNode();
       if (grandparent == null) {
@@ -1151,7 +910,6 @@ public class LIFReader extends FormatReader {
         continue;
       }
       if (!"ProcessingHistory".equals(grandparent.getNodeName())) {
-        // image is being referenced from an event list
         imageNodes.add(image);
         if (oldOffsets != null && nextOffset < oldOffsets.length) {
           offsets.add(oldOffsets[nextOffset]);
@@ -1168,7 +926,6 @@ public class LIFReader extends FormatReader {
         }
       }
     }
-
     tileCount = new int[imageNodes.size()];
     Arrays.fill(tileCount, 1);
     tileBytesInc = new long[imageNodes.size()];
@@ -1211,17 +968,13 @@ public class LIFReader extends FormatReader {
     exWaves = new Double[imageNodes.size()][];
     imageROIs = new ROI[imageNodes.size()][];
     imageNames = new String[imageNodes.size()];
-
     core.clear();
-    for (int i=0; i<imageNodes.size(); i++) {
+    for (int i = 0; i < imageNodes.size(); i++) {
       Element image = imageNodes.get(i);
-
       CoreMetadata ms = new CoreMetadata();
       core.add(ms);
-
       int index = core.size() - 1;
       setSeries(index);
-
       translateImageNames(image, index);
       translateImageNodes(image, index);
       translateAttachmentNodes(image, index);
@@ -1232,43 +985,36 @@ public class LIFReader extends FormatReader {
       translateROIs(image, index);
       translateSingleROIs(image, index);
       translateDetectors(image, index);
-
       final Deque<String> nameStack = new ArrayDeque<String>();
       populateOriginalMetadata(image, nameStack, null, -1);
       addUserCommentMeta(image, i);
     }
     setSeries(0);
-
     int totalSeries = 0;
     for (int count : tileCount) {
       totalSeries += count;
     }
     ArrayList<CoreMetadata> newCore = new ArrayList<CoreMetadata>();
-    for (int i=0; i<core.size(); i++) {
-      for (int tile=0; tile<tileCount[i]; tile++) {
+    for (int i = 0; i < core.size(); i++) {
+      for (int tile = 0; tile < tileCount[i]; tile++) {
         newCore.add(core.get(i));
       }
     }
     core = newCore;
   }
 
-  private void populateOriginalMetadata(Element root, Deque<String> nameStack, int key_index[], int jj) {
+  private void populateOriginalMetadata(Element root, Deque<String> nameStack, int[] key_index, int jj) {
     String name = root.getNodeName();
-
-    // keep track of number of elements at each level
-    // reset count of each level >= jj
     if (key_index == null) {
       key_index = new int[20];
       jj = -1;
     }
-    if (jj > -1) { key_index[jj] = 0; }
+    if (jj > -1) {
+      key_index[jj] = 0;
+    }
     int j = 0;
-
-    if (root.hasAttributes() && !name.equals("Element") &&
-      !name.equals("Attachment") && !name.equals("LMSDataContainerHeader"))
-    {
+    if (root.hasAttributes() && !name.equals("Element") && !name.equals("Attachment") && !name.equals("LMSDataContainerHeader")) {
       nameStack.push(name);
-
       String suffix = root.getAttribute("Identifier");
       String value = root.getAttribute("Variant");
       if (suffix == null || suffix.trim().length() == 0) {
@@ -1284,40 +1030,31 @@ public class LIFReader extends FormatReader {
         key.append("|");
         j++;
       }
-      if (suffix != null && value != null && suffix.length() > 0 &&
-        value.length() > 0 && !suffix.equals("HighInteger") &&
-        !suffix.equals("LowInteger"))
-      {
+      if (suffix != null && value != null && suffix.length() > 0 && value.length() > 0 && !suffix.equals("HighInteger") && !suffix.equals("LowInteger")) {
         addSeriesMetaList(key.toString() + suffix, value);
-      }
-      else {
+      } else {
         NamedNodeMap attributes = root.getAttributes();
-        for (int i=0; i<attributes.getLength(); i++) {
+        for (int i = 0; i < attributes.getLength(); i++) {
           Attr attr = (Attr) attributes.item(i);
-          if (!attr.getName().equals("HighInteger") &&
-            !attr.getName().equals("LowInteger"))
-          {
+          if (!attr.getName().equals("HighInteger") && !attr.getName().equals("LowInteger")) {
             addSeriesMeta(key.toString() + attr.getName(), attr.getValue());
           }
         }
       }
     }
-
     NodeList children = root.getChildNodes();
-    for (int i=0; i<children.getLength(); i++) {
+    for (int i = 0; i < children.getLength(); i++) {
       Object child = children.item(i);
       if (child instanceof Element) {
         populateOriginalMetadata((Element) child, nameStack, key_index, j);
       }
     }
-
-    if (root.hasAttributes() && !name.equals("Element") &&
-      !name.equals("Attachment") && !name.equals("LMSDataContainerHeader"))
-    {
+    if (root.hasAttributes() && !name.equals("Element") && !name.equals("Attachment") && !name.equals("LMSDataContainerHeader")) {
       nameStack.pop();
     }
-
-    if (j > 0) { key_index[j-1]++; }
+    if (j > 0) {
+      key_index[j - 1]++;
+    }
   }
 
   private void translateImageNames(Element imageNode, int image) {
@@ -1333,42 +1070,41 @@ public class LIFReader extends FormatReader {
       }
     }
     imageNames[image] = "";
-    for (int i=names.size() - 2; i>=0; i--) {
+    for (int i = names.size() - 2; i >= 0; i--) {
       imageNames[image] += names.get(i);
-      if (i > 0) imageNames[image] += '/';
+      if (i > 0) {
+        imageNames[image] += '/';
+      }
     }
   }
 
-  private void translateDetectors(Element imageNode, int image)
-    throws FormatException
-  {
+  private void translateDetectors(Element imageNode, int image) throws FormatException {
     NodeList definitions = getNodes(imageNode, "ATLConfocalSettingDefinition");
-    if (definitions == null) return;
-
+    if (definitions == null) {
+      return;
+    }
     final List<String> channels = new ArrayList<String>();
     laserActive[image] = new ArrayList<Boolean>();
     int nextChannel = 0;
-    for (int definition=0; definition<definitions.getLength(); definition++) {
+    for (int definition = 0; definition < definitions.getLength(); definition++) {
       Element definitionNode = (Element) definitions.item(definition);
       String parentName = definitionNode.getParentNode().getNodeName();
       boolean isMaster = parentName.endsWith("Master");
       NodeList detectors = getNodes(definitionNode, "Detector");
-      if (detectors == null) return;
+      if (detectors == null) {
+        return;
+      }
       int count = 0;
-      for (int d=0; d<detectors.getLength(); d++) {
+      for (int d = 0; d < detectors.getLength(); d++) {
         Element detector = (Element) detectors.item(d);
         NodeList multibands = null;
         if (!isMaster) {
           multibands = getNodes(definitionNode, "MultiBand");
         }
-
         String v = detector.getAttribute("Gain");
-        Double gain =
-          v == null || v.trim().isEmpty() ? null : DataTools.parseDouble(v.trim());
+        Double gain = v == null || v.trim().isEmpty() ? null : DataTools.parseDouble(v.trim());
         v = detector.getAttribute("Offset");
-        Double offset =
-          v == null || v.trim().isEmpty() ? null : DataTools.parseDouble(v.trim());
-
+        Double offset = v == null || v.trim().isEmpty() ? null : DataTools.parseDouble(v.trim());
         boolean active = "1".equals(detector.getAttribute("IsActive"));
         String c = detector.getAttribute("Channel");
         int channel = (c == null || c.trim().length() == 0) ? 0 : Integer.parseInt(c);
@@ -1376,11 +1112,9 @@ public class LIFReader extends FormatReader {
           if (detectorIndexes[image] != null && detectorModels[image] != null) {
             detectorModels[image].add(detectorIndexes[image].get(channel));
           }
-
           Element multiband = null;
-
           if (multibands != null) {
-            for (int i=0; i<multibands.getLength(); i++) {
+            for (int i = 0; i < multibands.getLength(); i++) {
               Element mb = (Element) multibands.item(i);
               if (channel == Integer.parseInt(mb.getAttribute("Channel"))) {
                 multiband = mb;
@@ -1388,21 +1122,18 @@ public class LIFReader extends FormatReader {
               }
             }
           }
-
           if (multiband != null) {
             String dye = multiband.getAttribute("DyeName");
             if (!channels.contains(dye)) {
               channels.add(dye);
             }
-
             Double cutIn = DataTools.parseDouble(multiband.getAttribute("LeftWorld"));
             Double cutOut = DataTools.parseDouble(multiband.getAttribute("RightWorld"));
             if (cutIn != null && cutIn.intValue() > 0) {
               if (cutIns[image] == null) {
                 cutIns[image] = new ArrayList<PositiveFloat>();
               }
-              Length in =
-                FormatTools.getCutIn((double) Math.round(cutIn));
+              Length in = FormatTools.getCutIn((double) Math.round(cutIn));
               if (in != null) {
                 cutIns[image].add(in);
               }
@@ -1411,23 +1142,18 @@ public class LIFReader extends FormatReader {
               if (cutOuts[image] == null) {
                 cutOuts[image] = new ArrayList<PositiveFloat>();
               }
-              Length out =
-                FormatTools.getCutOut((double) Math.round(cutOut));
+              Length out = FormatTools.getCutOut((double) Math.round(cutOut));
               if (out != null) {
                 cutOuts[image].add(out);
               }
             }
-          }
-          else {
+          } else {
             channels.add("");
           }
-
-          
           if (!isMaster) {
             if (channel < nextChannel) {
               nextChannel = 0;
             }
-
             if (nextChannel < getEffectiveSizeC()) {
               if (gains[image] != null) {
                 gains[image][nextChannel] = gain;
@@ -1436,7 +1162,6 @@ public class LIFReader extends FormatReader {
                 detectorOffsets[image][nextChannel] = offset;
               }
             }
-
             nextChannel++;
           }
         } else {
@@ -1446,19 +1171,15 @@ public class LIFReader extends FormatReader {
           activeDetector[image].add(active);
         }
       }
-      //Store values to check if actually it is active.
       if (!isMaster) {
         laserActive[image].add(count < detectors.getLength());
       }
     }
-
     if (channels != null && channelNames[image] != null) {
-      for (int i=0; i<getEffectiveSizeC(); i++) {
+      for (int i = 0; i < getEffectiveSizeC(); i++) {
         int index = i + channels.size() - getEffectiveSizeC();
         if (index >= 0 && index < channels.size()) {
-          if (channelNames[image][i] == null ||
-            channelNames[image][i].trim().isEmpty())
-          {
+          if (channelNames[image][i] == null || channelNames[image][i].trim().isEmpty()) {
             channelNames[image][i] = channels.get(index);
           }
         }
@@ -1466,18 +1187,15 @@ public class LIFReader extends FormatReader {
     }
   }
 
-  private void translateROIs(Element imageNode, int image)
-    throws FormatException
-  {
+  private void translateROIs(Element imageNode, int image) throws FormatException {
     NodeList rois = getNodes(imageNode, "Annotation");
-    if (rois == null) return;
+    if (rois == null) {
+      return;
+    }
     imageROIs[image] = new ROI[rois.getLength()];
-
-    for (int r=0; r<rois.getLength(); r++) {
+    for (int r = 0; r < rois.getLength(); r++) {
       Element roiNode = (Element) rois.item(r);
-
       ROI roi = new ROI();
-
       String type = roiNode.getAttribute("type");
       if (type != null && !type.trim().isEmpty()) {
         roi.type = Integer.parseInt(type.trim());
@@ -1489,7 +1207,6 @@ public class LIFReader extends FormatReader {
       roi.name = roiNode.getAttribute("name");
       roi.fontName = roiNode.getAttribute("fontName");
       roi.fontSize = roiNode.getAttribute("fontSize");
-
       Double transX = DataTools.parseDouble(roiNode.getAttribute("transTransX"));
       if (transX != null) {
         roi.transX = transX;
@@ -1515,21 +1232,17 @@ public class LIFReader extends FormatReader {
         if (linewidth != null && !linewidth.trim().isEmpty()) {
           roi.linewidth = Integer.parseInt(linewidth.trim());
         }
+      } catch (NumberFormatException e) {
       }
-      catch (NumberFormatException e) { }
-
       roi.text = roiNode.getAttribute("text");
-
       NodeList vertices = getNodes(roiNode, "Vertex");
       if (vertices == null) {
         continue;
       }
-
-      for (int v=0; v<vertices.getLength(); v++) {
+      for (int v = 0; v < vertices.getLength(); v++) {
         Element vertex = (Element) vertices.item(v);
         String xx = vertex.getAttribute("x");
         String yy = vertex.getAttribute("y");
-
         if (xx != null && !xx.trim().isEmpty()) {
           roi.x.add(DataTools.parseDouble(xx.trim()));
         }
@@ -1538,31 +1251,33 @@ public class LIFReader extends FormatReader {
         }
       }
       imageROIs[image][r] = roi;
-
       if (getNodes(imageNode, "ROI") != null) {
         alternateCenter = true;
       }
     }
   }
 
-  private void translateSingleROIs(Element imageNode, int image)
-    throws FormatException
-  {
-    if (imageROIs[image] != null) return;
+  private void translateSingleROIs(Element imageNode, int image) throws FormatException {
+    if (imageROIs[image] != null) {
+      return;
+    }
     NodeList children = getNodes(imageNode, "ROI");
-    if (children == null) return;
+    if (children == null) {
+      return;
+    }
     children = getNodes((Element) children.item(0), "Children");
-    if (children == null) return;
+    if (children == null) {
+      return;
+    }
     children = getNodes((Element) children.item(0), "Element");
-    if (children == null) return;
+    if (children == null) {
+      return;
+    }
     imageROIs[image] = new ROI[children.getLength()];
-
-    for (int r=0; r<children.getLength(); r++) {
+    for (int r = 0; r < children.getLength(); r++) {
       NodeList rois = getNodes((Element) children.item(r), "ROISingle");
-
       Element roiNode = (Element) rois.item(0);
       ROI roi = new ROI();
-
       String type = roiNode.getAttribute("RoiType");
       if (type != null && !type.trim().isEmpty()) {
         roi.type = Integer.parseInt(type.trim());
@@ -1574,17 +1289,13 @@ public class LIFReader extends FormatReader {
       Element parent = (Element) roiNode.getParentNode();
       parent = (Element) parent.getParentNode();
       roi.name = parent.getAttribute("Name");
-
       NodeList vertices = getNodes(roiNode, "P");
-
       double sizeX = physicalSizeXs.get(image);
       double sizeY = physicalSizeYs.get(image);
-
-      for (int v=0; v<vertices.getLength(); v++) {
+      for (int v = 0; v < vertices.getLength(); v++) {
         Element vertex = (Element) vertices.item(v);
         String xx = vertex.getAttribute("X");
         String yy = vertex.getAttribute("Y");
-
         if (xx != null && !xx.trim().isEmpty()) {
           Double x = DataTools.parseDouble(xx.trim());
           if (x != null) {
@@ -1598,14 +1309,11 @@ public class LIFReader extends FormatReader {
           }
         }
       }
-
       Element transform = (Element) getNodes(roiNode, "Transformation").item(0);
-
       Double rotation = DataTools.parseDouble(transform.getAttribute("Rotation"));
       if (rotation != null) {
         roi.rotation = rotation;
       }
-
       Element scaling = (Element) getNodes(transform, "Scaling").item(0);
       Double scaleX = DataTools.parseDouble(scaling.getAttribute("XScale"));
       Double scaleY = DataTools.parseDouble(scaling.getAttribute("YScale"));
@@ -1615,9 +1323,7 @@ public class LIFReader extends FormatReader {
       if (scaleY != null) {
         roi.scaleY = scaleY;
       }
-
-      Element translation =
-        (Element) getNodes(transform, "Translation").item(0);
+      Element translation = (Element) getNodes(transform, "Translation").item(0);
       Double transX = DataTools.parseDouble(translation.getAttribute("X"));
       Double transY = DataTools.parseDouble(translation.getAttribute("Y"));
       if (transX != null) {
@@ -1626,68 +1332,54 @@ public class LIFReader extends FormatReader {
       if (transY != null) {
         roi.transY = transY / sizeY;
       }
-
       imageROIs[image][r] = roi;
     }
   }
 
-  private void translateLaserLines(Element imageNode, int image)
-    throws FormatException
-  {
+  private void translateLaserLines(Element imageNode, int image) throws FormatException {
     NodeList aotfLists = getNodes(imageNode, "AotfList");
-    if (aotfLists == null || aotfLists.getLength() == 0) return;
-
+    if (aotfLists == null || aotfLists.getLength() == 0) {
+      return;
+    }
     laserWavelength[image] = new ArrayList<Double>();
     laserIntensity[image] = new ArrayList<Double>();
     laserFrap[image] = new ArrayList<Boolean>();
-
     int baseIntensityIndex = 0;
-
-    for (int channel=0; channel<aotfLists.getLength(); channel++) {
+    for (int channel = 0; channel < aotfLists.getLength(); channel++) {
       Element aotf = (Element) aotfLists.item(channel);
       NodeList laserLines = getNodes(aotf, "LaserLineSetting");
-      if (laserLines == null) return;
+      if (laserLines == null) {
+        return;
+      }
       String gpName = aotf.getParentNode().getParentNode().getNodeName();
-      //might need parent for attachment
-      boolean isMaster = gpName.endsWith("Sequential_Master") ||
-              gpName.endsWith("Attachment");
+      boolean isMaster = gpName.endsWith("Sequential_Master") || gpName.endsWith("Attachment");
       laserFrap[image].add(gpName.endsWith("FRAP_Master"));
-      for (int laser=0; laser<laserLines.getLength(); laser++) {
+      for (int laser = 0; laser < laserLines.getLength(); laser++) {
         Element laserLine = (Element) laserLines.item(laser);
-        
         if (isMaster) {
           continue;
         }
         String lineIndex = laserLine.getAttribute("LineIndex");
         String qual = laserLine.getAttribute("Qualifier");
-        int index =
-          lineIndex == null || lineIndex.trim().isEmpty() ? 0 :
-          Integer.parseInt(lineIndex.trim());
-        int qualifier =
-          qual == null || qual.trim().isEmpty() ? 0:
-          Integer.parseInt(qual.trim());
-
+        int index = lineIndex == null || lineIndex.trim().isEmpty() ? 0 : Integer.parseInt(lineIndex.trim());
+        int qualifier = qual == null || qual.trim().isEmpty() ? 0 : Integer.parseInt(qual.trim());
         index += (2 - (qualifier / 10));
         if (index < 0) {
-            continue;
-            //index = 0;
+          continue;
         }
-
         String v = laserLine.getAttribute("LaserLine");
         Double wavelength = 0d;
         if (v != null && !v.trim().isEmpty()) {
-            wavelength = DataTools.parseDouble(v.trim());
+          wavelength = DataTools.parseDouble(v.trim());
         }
         if (index < laserWavelength[image].size()) {
           laserWavelength[image].set(index, wavelength);
-        }
-        else {
-          for (int i=laserWavelength[image].size(); i<index; i++) {
+        } else {
+          for (int i = laserWavelength[image].size(); i < index; i++) {
             laserWavelength[image].add(Double.valueOf(0));
           }
           laserWavelength[image].add(wavelength);
         }
-
         String intensity = laserLine.getAttribute("IntensityDev");
         Double realIntensity = 0d;
         if (intensity != null && !intensity.trim().isEmpty()) {
@@ -1697,37 +1389,29 @@ public class LIFReader extends FormatReader {
           }
         }
         realIntensity = 100d - realIntensity;
-
         int realIndex = baseIntensityIndex + index;
-
         if (realIndex < laserIntensity[image].size()) {
           laserIntensity[image].set(realIndex, realIntensity);
-        }
-        else {
+        } else {
           while (realIndex < laserIntensity[image].size()) {
             laserIntensity[image].add(100d);
           }
           laserIntensity[image].add(realIntensity);
         }
       }
-
       baseIntensityIndex += laserWavelength[image].size();
     }
   }
 
-  private void translateTimestamps(Element imageNode, int image)
-    throws FormatException
-  {
+  private void translateTimestamps(Element imageNode, int image) throws FormatException {
     NodeList timeStampLists = getNodes(imageNode, "TimeStampList");
-    if (timeStampLists == null) return;
-
-    Element timeStampList = (Element)timeStampLists.item(0);
+    if (timeStampLists == null) {
+      return;
+    }
+    Element timeStampList = (Element) timeStampLists.item(0);
     timestamps[image] = new Double[getImageCount()];
-    
-    // probe if timestamps are saved in the format of LAS AF 3.1 or newer
     String numberOfTimeStamps = timeStampList.getAttribute("NumberOfTimeStamps");
     if (numberOfTimeStamps != null && !numberOfTimeStamps.isEmpty()) {
-      // LAS AF 3.1 (or newer) timestamps are available
       String timeStampsRaw = timeStampList.getTextContent();
       List<String> timeStamps = Arrays.asList(timeStampsRaw.split(" "));
       for (int stamp = 0; stamp < timeStamps.size(); stamp++) {
@@ -1736,24 +1420,19 @@ public class LIFReader extends FormatReader {
           timestamps[image][stamp] = translateSingleTimestamp(timestamp);
         }
       }
-    }
-    else {
-      // probe if timestamps are saved in the format of LAS AF 3.0 or older
+    } else {
       NodeList timestampNodes = getNodes(imageNode, "TimeStamp");
       if (timestampNodes != null) {
-        // LAS AF 3.0 (or older) timestamps are available
         for (int stamp = 0; stamp < timestampNodes.getLength(); stamp++) {
           if (stamp < getImageCount()) {
             Element timestamp = (Element) timestampNodes.item(stamp);
             timestamps[image][stamp] = translateSingleTimestamp(timestamp);
           }
         }
-      }
-      else {
+      } else {
         return;
       }
     }
-    
     acquiredDate[image] = timestamps[image][0];
   }
 
@@ -1763,310 +1442,288 @@ public class LIFReader extends FormatReader {
     int stampHighEnd = Math.max(0, stampLowStart);
     String stampHigh = timestamp.substring(0, stampHighEnd);
     String stampLow = timestamp.substring(stampLowStart, timestamp.length());
-    long high
-            = stampHigh == null || stampHigh.trim().isEmpty() ? 0
-                    : Long.parseLong(stampHigh.trim(), 16);
-    long low
-            = stampLow == null || stampLow.trim().isEmpty() ? 0
-                    : Long.parseLong(stampLow.trim(), 16);
+    long high = stampHigh == null || stampHigh.trim().isEmpty() ? 0 : Long.parseLong(stampHigh.trim(), 16);
+    long low = stampLow == null || stampLow.trim().isEmpty() ? 0 : Long.parseLong(stampLow.trim(), 16);
     long milliseconds = DateTools.getMillisFromTicks(high, low);
-    double seconds = (double)milliseconds / 1000;
+    double seconds = (double) milliseconds / 1000;
     return seconds;
   }
-  
+
   private double translateSingleTimestamp(Element timestamp) {
     String stampHigh = timestamp.getAttribute("HighInteger");
     String stampLow = timestamp.getAttribute("LowInteger");
-    long high
-            = stampHigh == null || stampHigh.trim().isEmpty() ? 0
-                    : Long.parseLong(stampHigh.trim());
-    long low
-            = stampLow == null || stampLow.trim().isEmpty() ? 0
-                    : Long.parseLong(stampLow.trim());
-
+    long high = stampHigh == null || stampHigh.trim().isEmpty() ? 0 : Long.parseLong(stampHigh.trim());
+    long low = stampLow == null || stampLow.trim().isEmpty() ? 0 : Long.parseLong(stampLow.trim());
     long milliseconds = DateTools.getMillisFromTicks(high, low);
-    double seconds = (double)milliseconds / 1000;
+    double seconds = (double) milliseconds / 1000;
     return seconds;
   }
 
-  private void translateFilterSettings(Element imageNode, int image)
-    throws FormatException
-  {
+  private void translateFilterSettings(Element imageNode, int image) throws FormatException {
     NodeList filterSettings = getNodes(imageNode, "FilterSettingRecord");
-    if (filterSettings == null) return;
-
+    if (filterSettings == null) {
+      return;
+    }
     activeDetector[image] = new ArrayList<Boolean>();
     cutIns[image] = new ArrayList<PositiveFloat>();
     cutOuts[image] = new ArrayList<PositiveFloat>();
     filterModels[image] = new ArrayList<String>();
     detectorIndexes[image] = new HashMap<Integer, String>();
-
     int nextChannel = 0;
-
-    for (int i=0; i<filterSettings.getLength(); i++) {
+    for (int i = 0; i < filterSettings.getLength(); i++) {
       Element filterSetting = (Element) filterSettings.item(i);
-
       String object = filterSetting.getAttribute("ObjectName");
       String attribute = filterSetting.getAttribute("Attribute");
       String objectClass = filterSetting.getAttribute("ClassName");
       String variant = filterSetting.getAttribute("Variant");
       String data = filterSetting.getAttribute("Data");
-
       if (attribute.equals("NumericalAperture")) {
         if (variant != null && !variant.trim().isEmpty()) {
           lensNA[image] = DataTools.parseDouble(variant.trim());
         }
-      }
-      else if (attribute.equals("OrderNumber")) {
-        if (variant != null && !variant.trim().isEmpty()) {
-          serialNumber[image] = variant.trim();
-        }
-      }
-      else if (objectClass.equals("CDetectionUnit")) {
-        if (attribute.equals("State")) {
-          int channel = getChannelIndex(filterSetting);
-          if (channel < 0) continue;
-
-          detectorIndexes[image].put(new Integer(data), object);
-          activeDetector[image].add("Active".equals(variant.trim()));
-        }
-      }
-      else if (attribute.equals("Objective")) {
-        StringTokenizer tokens = new StringTokenizer(variant, " ");
-        boolean foundMag = false;
-        final StringBuilder model = new StringBuilder();
-        while (!foundMag) {
-          String token = tokens.nextToken();
-          int x = token.indexOf('x');
-          if (x != -1) {
-            foundMag = true;
-
-            String na = token.substring(x + 1);
-
-            if (na != null && !na.trim().isEmpty()) {
-              lensNA[image] = DataTools.parseDouble(na.trim());
+      } else {
+        if (attribute.equals("OrderNumber")) {
+          if (variant != null && !variant.trim().isEmpty()) {
+            serialNumber[image] = variant.trim();
+          }
+        } else {
+          if (objectClass.equals("CDetectionUnit")) {
+            if (attribute.equals("State")) {
+              int channel = getChannelIndex(filterSetting);
+              if (channel < 0) {
+                continue;
+              }
+              detectorIndexes[image].put(new Integer(data), object);
+              activeDetector[image].add("Active".equals(variant.trim()));
             }
-            na = token.substring(0, x);
-            if (na != null && !na.trim().isEmpty()) {
-              magnification[image] = DataTools.parseDouble(na.trim());
+          } else {
+            if (attribute.equals("Objective")) {
+              StringTokenizer tokens = new StringTokenizer(variant, " ");
+              boolean foundMag = false;
+              final StringBuilder model = new StringBuilder();
+              while (!foundMag) {
+                String token = tokens.nextToken();
+                int x = token.indexOf('x');
+                if (x != -1) {
+                  foundMag = true;
+                  String na = token.substring(x + 1);
+                  if (na != null && !na.trim().isEmpty()) {
+                    lensNA[image] = DataTools.parseDouble(na.trim());
+                  }
+                  na = token.substring(0, x);
+                  if (na != null && !na.trim().isEmpty()) {
+                    magnification[image] = DataTools.parseDouble(na.trim());
+                  }
+                } else {
+                  model.append(token);
+                  model.append(" ");
+                }
+              }
+              String immersion = "Other";
+              if (tokens.hasMoreTokens()) {
+                immersion = tokens.nextToken();
+                if (immersion == null || immersion.trim().isEmpty()) {
+                  immersion = "Other";
+                }
+              }
+              immersions[image] = immersion;
+              String correction = "Other";
+              if (tokens.hasMoreTokens()) {
+                correction = tokens.nextToken();
+                if (correction == null || correction.trim().isEmpty()) {
+                  correction = "Other";
+                }
+              }
+              corrections[image] = correction;
+              objectiveModels[image] = model.toString().trim();
+            } else {
+              if (attribute.equals("RefractionIndex")) {
+                if (variant != null && !variant.trim().isEmpty()) {
+                  refractiveIndex[image] = DataTools.parseDouble(variant.trim());
+                }
+              } else {
+                if (attribute.equals("XPos")) {
+                  if (variant != null && !variant.trim().isEmpty()) {
+                    final Double number = DataTools.parseDouble(variant.trim());
+                    posX[image] = new Length(number, UNITS.REFERENCEFRAME);
+                  }
+                } else {
+                  if (attribute.equals("YPos")) {
+                    if (variant != null && !variant.trim().isEmpty()) {
+                      final Double number = DataTools.parseDouble(variant.trim());
+                      posY[image] = new Length(number, UNITS.REFERENCEFRAME);
+                    }
+                  } else {
+                    if (attribute.equals("ZPos")) {
+                      if (variant != null && !variant.trim().isEmpty()) {
+                        final Double number = DataTools.parseDouble(variant.trim());
+                        posZ[image] = new Length(number, UNITS.REFERENCEFRAME);
+                      }
+                    } else {
+                      if (objectClass.equals("CSpectrophotometerUnit")) {
+                        Double v = DataTools.parseDouble(variant);
+                        String description = filterSetting.getAttribute("Description");
+                        if (description.endsWith("(left)")) {
+                          filterModels[image].add(object);
+                          if (v != null && v > 0) {
+                            Length in = FormatTools.getCutIn(v);
+                            if (in != null) {
+                              cutIns[image].add(in);
+                            }
+                          }
+                        } else {
+                          if (description.endsWith("(right)")) {
+                            if (v != null && v > 0) {
+                              Length out = FormatTools.getCutOut(v);
+                              if (out != null) {
+                                cutOuts[image].add(out);
+                              }
+                            }
+                          } else {
+                            if (attribute.equals("Stain")) {
+                              if (nextChannel < channelNames[image].length) {
+                                channelNames[image][nextChannel++] = variant;
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
-          }
-          else {
-            model.append(token);
-            model.append(" ");
-          }
-        }
-
-        String immersion = "Other";
-        if (tokens.hasMoreTokens()) {
-          immersion = tokens.nextToken();
-          if (immersion == null || immersion.trim().isEmpty()) {
-            immersion = "Other";
-          }
-        }
-        immersions[image] = immersion;
-
-        String correction = "Other";
-        if (tokens.hasMoreTokens()) {
-          correction = tokens.nextToken();
-          if (correction == null || correction.trim().isEmpty()) {
-            correction = "Other";
-          }
-        }
-        corrections[image] = correction;
-
-        objectiveModels[image] = model.toString().trim();
-      }
-      else if (attribute.equals("RefractionIndex")) {
-        if (variant != null && !variant.trim().isEmpty()) {
-          refractiveIndex[image] = DataTools.parseDouble(variant.trim());
-        }
-      }
-      else if (attribute.equals("XPos")) {
-        if (variant != null && !variant.trim().isEmpty()) {
-          final Double number = DataTools.parseDouble(variant.trim());
-          posX[image] = new Length(number, UNITS.REFERENCEFRAME);
-        }
-      }
-      else if (attribute.equals("YPos")) {
-        if (variant != null && !variant.trim().isEmpty()) {
-          final Double number = DataTools.parseDouble(variant.trim());
-          posY[image] = new Length(number, UNITS.REFERENCEFRAME);
-        }
-      }
-      else if (attribute.equals("ZPos")) {
-        if (variant != null && !variant.trim().isEmpty()) {
-          final Double number = DataTools.parseDouble(variant.trim());
-          posZ[image] = new Length(number, UNITS.REFERENCEFRAME);
-        }
-      }
-      else if (objectClass.equals("CSpectrophotometerUnit")) {
-        Double v = DataTools.parseDouble(variant);
-        String description = filterSetting.getAttribute("Description");
-        if (description.endsWith("(left)")) {
-          filterModels[image].add(object);
-          if (v != null && v > 0) {
-            Length in = FormatTools.getCutIn(v);
-            if (in != null) {
-              cutIns[image].add(in);
-            }
-          }
-        }
-        else if (description.endsWith("(right)")) {
-          if (v != null && v > 0) {
-            Length out = FormatTools.getCutOut(v);
-            if (out != null) {
-              cutOuts[image].add(out);
-            }
-          }
-        }
-        else if (attribute.equals("Stain")) {
-          if (nextChannel < channelNames[image].length) {
-            channelNames[image][nextChannel++] = variant;
           }
         }
       }
     }
   }
 
-  private void translateScannerSettings(Element imageNode, int image)
-    throws FormatException
-  {
+  private void translateScannerSettings(Element imageNode, int image) throws FormatException {
     NodeList scannerSettings = getNodes(imageNode, "ScannerSettingRecord");
     NodeList attachmentNodes = getNodes(imageNode, "Attachment");
     if (attachmentNodes == null) {
       return;
     }
     NodeList confocalSettings = null;
-    for (int i=0; i<attachmentNodes.getLength(); i++) {
+    for (int i = 0; i < attachmentNodes.getLength(); i++) {
       Element attachment = (Element) attachmentNodes.item(i);
-
       String attachmentName = attachment.getAttribute("Name");
-
       if ("HardwareSetting".equals(attachmentName)) {
         confocalSettings = getNodes(attachment, "ATLConfocalSettingDefinition");
       }
     }
-
-    if (scannerSettings == null && confocalSettings == null) return;
-
+    if (scannerSettings == null && confocalSettings == null) {
+      return;
+    }
     expTimes[image] = new Double[getEffectiveSizeC()];
     gains[image] = new Double[getEffectiveSizeC()];
     detectorOffsets[image] = new Double[getEffectiveSizeC()];
     channelNames[image] = new String[getEffectiveSizeC()];
     exWaves[image] = new Double[getEffectiveSizeC()];
     detectorModels[image] = new ArrayList<String>();
-
     if (scannerSettings != null) {
-      for (int i=0; i<scannerSettings.getLength(); i++) {
+      for (int i = 0; i < scannerSettings.getLength(); i++) {
         Element scannerSetting = (Element) scannerSettings.item(i);
         String id = scannerSetting.getAttribute("Identifier");
-        if (id == null) id = "";
+        if (id == null) {
+          id = "";
+        }
         String suffix = scannerSetting.getAttribute("Identifier");
         String value = scannerSetting.getAttribute("Variant");
-
         if (value == null || value.trim().isEmpty()) {
           continue;
         }
-
         if (id.equals("SystemType")) {
           microscopeModels[image] = value;
-        }
-        else if (id.equals("dblPinhole")) {
-          pinholes[image] = DataTools.parseDouble(value.trim()) * METER_MULTIPLY;
-        }
-        else if (id.equals("dblZoom")) {
-          zooms[image] = DataTools.parseDouble(value.trim());
-        }
-        else if (id.equals("dblStepSize")) {
-          zSteps[image] = DataTools.parseDouble(value.trim()) * METER_MULTIPLY;
-        }
-        else if (id.equals("nDelayTime_s")) {
-          tSteps[image] = DataTools.parseDouble(value.trim());
-        }
-        else if (id.equals("CameraName")) {
-          detectorModels[image].add(value);
-        }
-        else if (id.equals("eDirectional")) {
-          addSeriesMeta("Reverse X orientation", "1".equals(value.trim()));
-        }
-        else if (id.equals("eDirectionalY")) {
-          addSeriesMeta("Reverse Y orientation", "1".equals(value.trim()));
-        }
-        else if (id.indexOf("WFC") == 1) {
-          int c = 0;
-          try {
-            c = Integer.parseInt(id.replaceAll("\\D", ""));
-          }
-          catch (NumberFormatException e) { }
-          if (c < 0 || c >= getEffectiveSizeC()) {
-            continue;
-          }
-
-          if (id.endsWith("ExposureTime")) {
-            expTimes[image][c] = DataTools.parseDouble(value.trim());
-          }
-          else if (id.endsWith("Gain")) {
-            gains[image][c] = DataTools.parseDouble(value.trim());
-          }
-          else if (id.endsWith("WaveLength")) {
-            Double exWave = DataTools.parseDouble(value.trim());
-            if (exWave != null && exWave > 0) {
-              exWaves[image][c] = exWave;
-            }
-          }
-          // NB: "UesrDefName" is not a typo.
-          else if ((id.endsWith("UesrDefName") || id.endsWith("UserDefName")) &&
-            !value.equals("None"))
-          {
-            if (channelNames[image][c] == null ||
-              channelNames[image][c].trim().isEmpty())
-            {
-              channelNames[image][c] = value;
+        } else {
+          if (id.equals("dblPinhole")) {
+            pinholes[image] = DataTools.parseDouble(value.trim()) * METER_MULTIPLY;
+          } else {
+            if (id.equals("dblZoom")) {
+              zooms[image] = DataTools.parseDouble(value.trim());
+            } else {
+              if (id.equals("dblStepSize")) {
+                zSteps[image] = DataTools.parseDouble(value.trim()) * METER_MULTIPLY;
+              } else {
+                if (id.equals("nDelayTime_s")) {
+                  tSteps[image] = DataTools.parseDouble(value.trim());
+                } else {
+                  if (id.equals("CameraName")) {
+                    detectorModels[image].add(value);
+                  } else {
+                    if (id.equals("eDirectional")) {
+                      addSeriesMeta("Reverse X orientation", "1".equals(value.trim()));
+                    } else {
+                      if (id.equals("eDirectionalY")) {
+                        addSeriesMeta("Reverse Y orientation", "1".equals(value.trim()));
+                      } else {
+                        if (id.indexOf("WFC") == 1) {
+                          int c = 0;
+                          try {
+                            c = Integer.parseInt(id.replaceAll("\\D", ""));
+                          } catch (NumberFormatException e) {
+                          }
+                          if (c < 0 || c >= getEffectiveSizeC()) {
+                            continue;
+                          }
+                          if (id.endsWith("ExposureTime")) {
+                            expTimes[image][c] = DataTools.parseDouble(value.trim());
+                          } else {
+                            if (id.endsWith("Gain")) {
+                              gains[image][c] = DataTools.parseDouble(value.trim());
+                            } else {
+                              if (id.endsWith("WaveLength")) {
+                                Double exWave = DataTools.parseDouble(value.trim());
+                                if (exWave != null && exWave > 0) {
+                                  exWaves[image][c] = exWave;
+                                }
+                              } else {
+                                if ((id.endsWith("UesrDefName") || id.endsWith("UserDefName")) && !value.equals("None")) {
+                                  if (channelNames[image][c] == null || channelNames[image][c].trim().isEmpty()) {
+                                    channelNames[image][c] = value;
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }
       }
     }
-
     if (confocalSettings != null) {
-      for (int i=0; i<confocalSettings.getLength(); i++) {
+      for (int i = 0; i < confocalSettings.getLength(); i++) {
         Element confocalSetting = (Element) confocalSettings.item(i);
-
         String value = confocalSetting.getAttribute("Pinhole");
-
         if (value != null && !value.trim().isEmpty()) {
           pinholes[image] = DataTools.parseDouble(value.trim()) * METER_MULTIPLY;
         }
-
         value = confocalSetting.getAttribute("Zoom");
-
         if (value != null && !value.trim().isEmpty()) {
           zooms[image] = DataTools.parseDouble(value.trim());
         }
-
         value = confocalSetting.getAttribute("ObjectiveName");
-
         if (value != null && !value.trim().isEmpty()) {
           objectiveModels[image] = value.trim();
         }
-
         value = confocalSetting.getAttribute("FlipX");
-
         if (value != null && !value.trim().isEmpty()) {
           flipX[image] = "1".equals(value.trim());
           addSeriesMeta("Reverse X orientation", flipX[image]);
         }
-
         value = confocalSetting.getAttribute("FlipY");
-
         if (value != null && !value.trim().isEmpty()) {
           flipY[image] = "1".equals(value.trim());
           addSeriesMeta("Reverse Y orientation", flipY[image]);
         }
-
         value = confocalSetting.getAttribute("SwapXY");
-
         if (value != null && !value.trim().isEmpty()) {
           swapXY[image] = "1".equals(value.trim());
           addSeriesMeta("Swap XY orientation", swapXY[image]);
@@ -2075,103 +1732,88 @@ public class LIFReader extends FormatReader {
     }
   }
 
-  private void translateAttachmentNodes(Element imageNode, int image)
-    throws FormatException
-  {
+  private void translateAttachmentNodes(Element imageNode, int image) throws FormatException {
     boolean tilesAttachmentFound = false;
     NodeList attachmentNodes = getNodes(imageNode, "Attachment");
-    if (attachmentNodes == null) return;
-    for (int i=0; i<attachmentNodes.getLength(); i++) {
+    if (attachmentNodes == null) {
+      return;
+    }
+    for (int i = 0; i < attachmentNodes.getLength(); i++) {
       Element attachment = (Element) attachmentNodes.item(i);
-
       String attachmentName = attachment.getAttribute("Name");
-
       if ("ContextDescription".equals(attachmentName)) {
         descriptions[image] = attachment.getAttribute("Content");
-      }
-      else if ("TileScanInfo".equals(attachmentName)) {
-        NodeList tiles = getNodes(attachment, "Tile");
-
-        for (int tile=0; tile<tiles.getLength(); tile++) {
-          Element tileNode = (Element) tiles.item(tile);
-          String posX = tileNode.getAttribute("PosX");
-          String posY = tileNode.getAttribute("PosY");
-
-          while (fieldPosX.size() < image) {
-            fieldPosX.add(null);
-          }
-          while (fieldPosY.size() < image) {
-            fieldPosY.add(null);
-          }
-
-          if (posX != null) {
-            try {
-              final Double number = DataTools.parseDouble(posX);
-              fieldPosX.add(new Length(number, UNITS.METER));
-            }
-            catch (NumberFormatException e) {
-              LOGGER.debug("", e);
+      } else {
+        if ("TileScanInfo".equals(attachmentName)) {
+          NodeList tiles = getNodes(attachment, "Tile");
+          for (int tile = 0; tile < tiles.getLength(); tile++) {
+            Element tileNode = (Element) tiles.item(tile);
+            String posX = tileNode.getAttribute("PosX");
+            String posY = tileNode.getAttribute("PosY");
+            while (fieldPosX.size() < image) {
               fieldPosX.add(null);
             }
-          }
-          if (posY != null) {
-            try {
-              final Double number = DataTools.parseDouble(posY);
-              fieldPosY.add(new Length(number, UNITS.METER));
-            }
-            catch (NumberFormatException e) {
-              LOGGER.debug("", e);
+            while (fieldPosY.size() < image) {
               fieldPosY.add(null);
             }
+            if (posX != null) {
+              try {
+                final Double number = DataTools.parseDouble(posX);
+                fieldPosX.add(new Length(number, UNITS.METER));
+              } catch (NumberFormatException e) {
+                LOGGER.debug("", e);
+                fieldPosX.add(null);
+              }
+            }
+            if (posY != null) {
+              try {
+                final Double number = DataTools.parseDouble(posY);
+                fieldPosY.add(new Length(number, UNITS.METER));
+              } catch (NumberFormatException e) {
+                LOGGER.debug("", e);
+                fieldPosY.add(null);
+              }
+            }
           }
+          tilesAttachmentFound = true;
         }
-        tilesAttachmentFound = true;
       }
     }
-
     if (!tilesAttachmentFound) {
       NodeList confocalSettings = null;
-      for (int i=0; i<attachmentNodes.getLength(); i++) {
+      for (int i = 0; i < attachmentNodes.getLength(); i++) {
         Element attachment = (Element) attachmentNodes.item(i);
-
         String attachmentName = attachment.getAttribute("Name");
-
         if ("HardwareSetting".equals(attachmentName)) {
           confocalSettings = getNodes(attachment, "ATLConfocalSettingDefinition");
           break;
         }
       }
-
       if (confocalSettings != null) {
-        for (int i=0; i<confocalSettings.getLength(); i++) {
+        for (int i = 0; i < confocalSettings.getLength(); i++) {
           Element confocalSetting = (Element) confocalSettings.item(i);
-
           String value = confocalSetting.getAttribute("StagePosX");
-
           if (value != null && !value.trim().isEmpty()) {
             fieldPosX.add(new Length(DataTools.parseDouble(value.trim()), UNITS.METER));
           }
-
           value = confocalSetting.getAttribute("StagePosY");
-
           if (value != null && !value.trim().isEmpty()) {
             fieldPosY.add(new Length(DataTools.parseDouble(value.trim()), UNITS.METER));
           }
         }
-      }
-      else {
+      } else {
         fieldPosX.add(null);
         fieldPosY.add(null);
       }
     }
   }
 
-  private void addUserCommentMeta(Element imageNode, int image)
-    throws FormatException
-  {
+  private void addUserCommentMeta(Element imageNode, int image) throws FormatException {
     NodeList attachmentNodes = getNodes(imageNode, "User-Comment");
-    if (attachmentNodes == null) return;
-    for (int i=0; i<attachmentNodes.getLength(); i++) {
+    if (attachmentNodes == null) {
+      return;
+    }
+    for (int i = 0; i < attachmentNodes.getLength(); i++) {
       Node attachment = attachmentNodes.item(i);
       addSeriesMeta("User-Comment[" + i + "]", attachment.getTextContent());
       if (i == 0 && descriptions[image] == null) {
@@ -2180,43 +1822,31 @@ public class LIFReader extends FormatReader {
     }
   }
 
-  private void translateImageNodes(Element imageNode, int i)
-    throws FormatException
-  {
+  private void translateImageNodes(Element imageNode, int i) throws FormatException {
     CoreMetadata ms = core.get(i);
     ms.orderCertain = true;
     ms.metadataComplete = true;
     ms.littleEndian = true;
     ms.falseColor = true;
-
     NodeList channels = getChannelDescriptionNodes(imageNode);
     NodeList dimensions = getDimensionDescriptionNodes(imageNode);
-
     HashMap<Long, String> bytesPerAxis = new HashMap<Long, String>();
-
     Double physicalSizeX = null;
     Double physicalSizeY = null;
     Double physicalSizeZ = null;
-
     ms.sizeC = channels.getLength();
-    for (int ch=0; ch<channels.getLength(); ch++) {
+    for (int ch = 0; ch < channels.getLength(); ch++) {
       Element channel = (Element) channels.item(ch);
-
       lutNames.add(channel.getAttribute("LUTName"));
       String bytesInc = channel.getAttribute("BytesInc");
-      long bytes =
-        bytesInc == null || bytesInc.trim().isEmpty() ? 0 :
-            Long.parseLong(bytesInc.trim());
+      long bytes = bytesInc == null || bytesInc.trim().isEmpty() ? 0 : Long.parseLong(bytesInc.trim());
       if (bytes > 0) {
         bytesPerAxis.put(bytes, "C");
       }
     }
-
     int extras = 1;
-
-    for (int dim=0; dim<dimensions.getLength(); dim++) {
+    for (int dim = 0; dim < dimensions.getLength(); dim++) {
       Element dimension = (Element) dimensions.item(dim);
-
       String v = dimension.getAttribute("DimID");
       int id = v == null || v.trim().isEmpty() ? 0 : Integer.parseInt(v.trim());
       v = dimension.getAttribute("NumberOfElements");
@@ -2231,118 +1861,120 @@ public class LIFReader extends FormatReader {
         physicalLen = DataTools.parseDouble(v.trim());
       }
       String unit = dimension.getAttribute("Unit");
-
       double offByOnePhysicalLen = 0d;
       if (len > 1) {
         offByOnePhysicalLen = physicalLen / len;
         physicalLen /= (len - 1);
-      }
-      else {
+      } else {
         physicalLen = 0d;
       }
-      
       if (unit.equals("Ks")) {
         physicalLen /= 1000;
         offByOnePhysicalLen /= 1000;
+      } else {
+        if (unit.equals("m")) {
+          physicalLen *= METER_MULTIPLY;
+          offByOnePhysicalLen *= METER_MULTIPLY;
+        }
       }
-      else if (unit.equals("m")) {
-        physicalLen *= METER_MULTIPLY;
-        offByOnePhysicalLen *= METER_MULTIPLY;
-      }
-
       boolean oldPhysicalSize = useOldPhysicalSizeCalculation();
       switch (id) {
-        case 1: // X axis
-          ms.sizeX = len;
-          ms.rgb = (nBytes % 3) == 0;
-          if (ms.rgb) nBytes /= 3;
-          ms.pixelType =
-            FormatTools.pixelTypeFromBytes((int) nBytes, false, true);
-          physicalSizeX = oldPhysicalSize ? offByOnePhysicalLen : physicalLen;
-          break;
-        case 2: // Y axis
-          if (ms.sizeY != 0) {
-            if (ms.sizeZ == 1) {
-              ms.sizeZ = len;
-              bytesPerAxis.put(nBytes, "Z");
-              physicalSizeZ = physicalLen;
-            }
-            else if (ms.sizeT == 1) {
+        case 1:
+        ms.sizeX = len;
+        ms.rgb = (nBytes % 3) == 0;
+        if (ms.rgb) {
+          nBytes /= 3;
+        }
+        ms.pixelType = FormatTools.pixelTypeFromBytes((int) nBytes, false, true);
+        physicalSizeX = oldPhysicalSize ? offByOnePhysicalLen : physicalLen;
+        break;
+        case 2:
+        if (ms.sizeY != 0) {
+          if (ms.sizeZ == 1) {
+            ms.sizeZ = len;
+            bytesPerAxis.put(nBytes, "Z");
+            physicalSizeZ = physicalLen;
+          } else {
+            if (ms.sizeT == 1) {
               ms.sizeT = len;
               bytesPerAxis.put(nBytes, "T");
             }
           }
-          else {
-            ms.sizeY = len;
-            physicalSizeY = oldPhysicalSize ? offByOnePhysicalLen : physicalLen;
-          }
-          break;
-        case 3: // Z axis
-          if (ms.sizeY == 0) {
-            // XZ scan - swap Y and Z
-            ms.sizeY = len;
-            ms.sizeZ = 1;
-            bytesPerAxis.put(nBytes, "Y");
-            physicalSizeY = oldPhysicalSize ? offByOnePhysicalLen : physicalLen;
-          }
-          else {
-            ms.sizeZ = len;
-            bytesPerAxis.put(nBytes, "Z");
-            physicalSizeZ = physicalLen;
-          }
-          break;
-        case 4: // T axis
-          if (ms.sizeY == 0) {
-            // XT scan - swap Y and T
-            ms.sizeY = len;
-            ms.sizeT = 1;
-            bytesPerAxis.put(nBytes, "Y");
-            physicalSizeY = oldPhysicalSize ? offByOnePhysicalLen : physicalLen;
-          }
-          else {
-            ms.sizeT = len;
-            bytesPerAxis.put(nBytes, "T");
-          }
-          break;
-        case 10: // tile axis
-          tileCount[i] *= len;
-          tileBytesInc[i] = nBytes;
-          break;
+        } else {
+          ms.sizeY = len;
+          physicalSizeY = oldPhysicalSize ? offByOnePhysicalLen : physicalLen;
+        }
+        break;
+        case 3:
+        if (ms.sizeY == 0) {
+          ms.sizeY = len;
+          ms.sizeZ = 1;
+          bytesPerAxis.put(nBytes, "Y");
+          physicalSizeY = oldPhysicalSize ? offByOnePhysicalLen : physicalLen;
+        } else {
+          ms.sizeZ = len;
+          bytesPerAxis.put(nBytes, "Z");
+          physicalSizeZ = physicalLen;
+        }
+        break;
+        case 4:
+        if (ms.sizeY == 0) {
+          ms.sizeY = len;
+          ms.sizeT = 1;
+          bytesPerAxis.put(nBytes, "Y");
+          physicalSizeY = oldPhysicalSize ? offByOnePhysicalLen : physicalLen;
+        } else {
+          ms.sizeT = len;
+          bytesPerAxis.put(nBytes, "T");
+        }
+        break;
+        case 10:
+        tileCount[i] *= len;
+        tileBytesInc[i] = nBytes;
+        break;
         default:
-          extras *= len;
+        extras *= len;
       }
     }
-
     physicalSizeXs.add(physicalSizeX);
     physicalSizeYs.add(physicalSizeY);
-
     if (zSteps[i] == null && physicalSizeZ != null) {
       zSteps[i] = Math.abs(physicalSizeZ);
     }
-
     if (extras > 1) {
-      if (ms.sizeZ == 1) ms.sizeZ = extras;
-      else {
-        if (ms.sizeT == 0) ms.sizeT = extras;
-        else ms.sizeT *= extras;
+      if (ms.sizeZ == 1) {
+        ms.sizeZ = extras;
+      } else {
+        if (ms.sizeT == 0) {
+          ms.sizeT = extras;
+        } else {
+          ms.sizeT *= extras;
+        }
       }
     }
-
-    if (ms.sizeC == 0) ms.sizeC = 1;
-    if (ms.sizeZ == 0) ms.sizeZ = 1;
-    if (ms.sizeT == 0) ms.sizeT = 1;
-
-    if (ms.sizeX == 0) ms.sizeX = 1;
-    if (ms.sizeY == 0) ms.sizeY = 1;
-
+    if (ms.sizeC == 0) {
+      ms.sizeC = 1;
+    }
+    if (ms.sizeZ == 0) {
+      ms.sizeZ = 1;
+    }
+    if (ms.sizeT == 0) {
+      ms.sizeT = 1;
+    }
+    if (ms.sizeX == 0) {
+      ms.sizeX = 1;
+    }
+    if (ms.sizeY == 0) {
+      ms.sizeY = 1;
+    }
     ms.interleaved = ms.rgb;
     ms.indexed = !ms.rgb;
     ms.imageCount = ms.sizeZ * ms.sizeT;
-    if (!ms.rgb) ms.imageCount *= ms.sizeC;
-    else {
+    if (!ms.rgb) {
+      ms.imageCount *= ms.sizeC;
+    } else {
       ms.imageCount *= (ms.sizeC / 3);
     }
-
     Long[] bytes = bytesPerAxis.keySet().toArray(new Long[0]);
     Arrays.sort(bytes);
     ms.dimensionOrder = "XY";
@@ -2357,7 +1989,6 @@ public class LIFReader extends FormatReader {
         }
       }
     }
-
     if (ms.dimensionOrder.indexOf('Z') == -1) {
       ms.dimensionOrder += 'Z';
     }
@@ -2373,7 +2004,7 @@ public class LIFReader extends FormatReader {
     NodeList nodes = root.getElementsByTagName(nodeName);
     if (nodes.getLength() == 0) {
       NodeList children = root.getChildNodes();
-      for (int i=0; i<children.getLength(); i++) {
+      for (int i = 0; i < children.getLength(); i++) {
         Object child = children.item(i);
         if (child instanceof Element) {
           NodeList childNodes = getNodes((Element) child, nodeName);
@@ -2383,8 +2014,9 @@ public class LIFReader extends FormatReader {
         }
       }
       return null;
+    } else {
+      return nodes;
     }
-    else return nodes;
   }
 
   private Element getImageDescription(Element root) {
@@ -2393,15 +2025,13 @@ public class LIFReader extends FormatReader {
 
   private NodeList getChannelDescriptionNodes(Element root) {
     Element imageDescription = getImageDescription(root);
-    Element channels =
-      (Element) imageDescription.getElementsByTagName("Channels").item(0);
+    Element channels = (Element) imageDescription.getElementsByTagName("Channels").item(0);
     return channels.getElementsByTagName("ChannelDescription");
   }
 
   private NodeList getDimensionDescriptionNodes(Element root) {
     Element imageDescription = getImageDescription(root);
-    Element channels =
-      (Element) imageDescription.getElementsByTagName("Dimensions").item(0);
+    Element channels = (Element) imageDescription.getElementsByTagName("Dimensions").item(0);
     return channels.getElementsByTagName("DimensionDescription");
   }
 
@@ -2411,59 +2041,56 @@ public class LIFReader extends FormatReader {
       data = filterSetting.getAttribute("Data");
     }
     int channel = data == null || data.equals("") ? 0 : Integer.parseInt(data);
-    if (channel < 0) return -1;
+    if (channel < 0) {
+      return -1;
+    }
     return channel - 1;
   }
 
-  // -- Helper class --
-
   class ROI {
-    // -- Constants --
-
     public static final int TEXT = 512;
+
     public static final int SCALE_BAR = 8192;
+
     public static final int POLYGON = 32;
+
     public static final int RECTANGLE = 16;
+
     public static final int LINE = 256;
+
     public static final int ARROW = 2;
 
-    // -- Fields --
     public int type;
 
     public List<Double> x = new ArrayList<Double>();
+
     public List<Double> y = new ArrayList<Double>();
 
-    // center point of the ROI
     public double transX, transY;
 
-    // transformation parameters
     public double scaleX, scaleY;
+
     public double rotation;
 
     public long color;
+
     public int linewidth;
 
     public String text;
+
     public String fontName;
+
     public String fontSize;
+
     public String name;
 
     private boolean normalized = false;
 
-    // -- ROI API methods --
-
-    public void storeROI(MetadataStore store, int series, int roi, int roiIndex)
-    {
+    public void storeROI(MetadataStore store, int series, int roi, int roiIndex) {
       MetadataLevel level = getMetadataOptions().getMetadataLevel();
-      if (level == MetadataLevel.NO_OVERLAYS || level == MetadataLevel.MINIMUM)
-      {
+      if (level == MetadataLevel.NO_OVERLAYS || level == MetadataLevel.MINIMUM) {
         return;
       }
-
-      // keep in mind that vertices are given relative to the center
-      // point of the ROI and the transX/transY values are relative to
-      // the center point of the image
-
       String roiID = MetadataTools.createLSID("ROI", roi);
       store.setImageROIRef(roiID, series, roiIndex);
       store.setROIID(roiID, roi);
@@ -2483,66 +2110,57 @@ public class LIFReader extends FormatReader {
       }
       Length l = new Length((double) linewidth, UNITS.PIXEL);
       store.setLabelStrokeWidth(l, roi, 0);
-
-      if (!normalized) normalize();
-
+      if (!normalized) {
+        normalize();
+      }
       double cornerX = x.get(0).doubleValue();
       double cornerY = y.get(0).doubleValue();
-
       store.setLabelX(cornerX, roi, 0);
       store.setLabelY(cornerY, roi, 0);
-
       int centerX = (core.get(series).sizeX / 2) - 1;
       int centerY = (core.get(series).sizeY / 2) - 1;
-
       double roiX = centerX + transX;
       double roiY = centerY + transY;
-
       if (alternateCenter) {
         roiX = transX - 2 * cornerX;
         roiY = transY - 2 * cornerY;
       }
-
-      // TODO : rotation not populated
-
       String shapeID = MetadataTools.createLSID("Shape", roi, 1);
       switch (type) {
         case POLYGON:
-          final StringBuilder points = new StringBuilder();
-          for (int i=0; i<x.size(); i++) {
-            points.append(x.get(i).doubleValue() * scaleX + roiX);
-            points.append(",");
-            points.append(y.get(i).doubleValue() * scaleY + roiY);
-            if (i < x.size() - 1) points.append(" ");
+        final StringBuilder points = new StringBuilder();
+        for (int i = 0; i < x.size(); i++) {
+          points.append(x.get(i).doubleValue() * scaleX + roiX);
+          points.append(",");
+          points.append(y.get(i).doubleValue() * scaleY + roiY);
+          if (i < x.size() - 1) {
+            points.append(" ");
           }
-          store.setPolygonID(shapeID, roi, 1);
-          store.setPolygonPoints(points.toString(), roi, 1);
-
-          break;
+        }
+        store.setPolygonID(shapeID, roi, 1);
+        store.setPolygonPoints(points.toString(), roi, 1);
+        break;
         case TEXT:
         case RECTANGLE:
-          store.setRectangleID(shapeID, roi, 1);
-          store.setRectangleX(roiX - Math.abs(cornerX), roi, 1);
-          store.setRectangleY(roiY - Math.abs(cornerY), roi, 1);
-          double width = 2 * Math.abs(cornerX);
-          double height = 2 * Math.abs(cornerY);
-          store.setRectangleWidth(width, roi, 1);
-          store.setRectangleHeight(height, roi, 1);
-
-          break;
+        store.setRectangleID(shapeID, roi, 1);
+        store.setRectangleX(roiX - Math.abs(cornerX), roi, 1);
+        store.setRectangleY(roiY - Math.abs(cornerY), roi, 1);
+        double width = 2 * Math.abs(cornerX);
+        double height = 2 * Math.abs(cornerY);
+        store.setRectangleWidth(width, roi, 1);
+        store.setRectangleHeight(height, roi, 1);
+        break;
         case SCALE_BAR:
         case ARROW:
         case LINE:
-          store.setLineID(shapeID, roi, 1);
-          store.setLineX1(roiX + x.get(0), roi, 1);
-          store.setLineY1(roiY + y.get(0), roi, 1);
-          store.setLineX2(roiX + x.get(1), roi, 1);
-          store.setLineY2(roiY + y.get(1), roi, 1);
-          break;
+        store.setLineID(shapeID, roi, 1);
+        store.setLineX1(roiX + x.get(0), roi, 1);
+        store.setLineY1(roiY + y.get(0), roi, 1);
+        store.setLineX2(roiX + x.get(1), roi, 1);
+        store.setLineY2(roiY + y.get(1), roi, 1);
+        break;
       }
     }
-
-    // -- Helper methods --
 
     /**
      * Vertices and transformation values are not stored in pixel coordinates.
@@ -2550,52 +2168,48 @@ public class LIFReader extends FormatReader {
      * so that they can be stored in a MetadataStore.
      */
     private void normalize() {
-      if (normalized) return;
-
-      // coordinates are in meters
-
+      if (normalized) {
+        return;
+      }
       transX *= METER_MULTIPLY;
       transY *= METER_MULTIPLY;
       transX *= 1;
       transY *= 1;
-
-      for (int i=0; i<x.size(); i++) {
+      for (int i = 0; i < x.size(); i++) {
         double coordinate = x.get(i).doubleValue() * METER_MULTIPLY;
         coordinate *= 1;
         x.set(i, coordinate);
       }
-
-      for (int i=0; i<y.size(); i++) {
+      for (int i = 0; i < y.size(); i++) {
         double coordinate = y.get(i).doubleValue() * METER_MULTIPLY;
         coordinate *= 1;
         y.set(i, coordinate);
       }
-
       normalized = true;
     }
   }
 
   private Color getChannelColor(int colorCode) {
     switch (colorCode) {
-      case 0: // red
-        return new Color(255, 0, 0, 255);
-      case 1: // green
-        return new Color(0, 255, 0, 255);
-      case 2: // blue
-        return new Color(0, 0, 255, 255);
-      case 3: // cyan
-        return new Color(0, 255, 255, 255);
-      case 4: // magenta
-        return new Color(255, 0, 255, 255);
-      case 5: // yellow
-        return new Color(255, 255, 0, 255);
+      case 0:
+      return new Color(255, 0, 0, 255);
+      case 1:
+      return new Color(0, 255, 0, 255);
+      case 2:
+      return new Color(0, 0, 255, 255);
+      case 3:
+      return new Color(0, 255, 255, 255);
+      case 4:
+      return new Color(255, 0, 255, 255);
+      case 5:
+      return new Color(255, 255, 0, 255);
     }
     return new Color(255, 255, 255, 255);
   }
 
   private int getTileIndex(int coreIndex) {
     int count = 0;
-    for (int tile=0; tile<tileCount.length; tile++) {
+    for (int tile = 0; tile < tileCount.length; tile++) {
       if (coreIndex < count + tileCount[tile]) {
         return tile;
       }
@@ -2603,5 +2217,4 @@ public class LIFReader extends FormatReader {
     }
     return -1;
   }
-
 }
