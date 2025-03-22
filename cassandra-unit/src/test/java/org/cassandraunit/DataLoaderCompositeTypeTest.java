@@ -40,16 +40,28 @@ public class DataLoaderCompositeTypeTest {
 		dataLoader.load(MockDataSetHelper.getMockDataSetWithCompositeType());
 		/* test */
 		Cluster cluster = HFactory.getOrCreateCluster(clusterName, host);
-
+<<<<<<< /usr/src/app/output/jsevellec/cassandra-unit/4e87b46fe206e0acf5cdbd1e8c396be97410a5e4/cassandra-unit/src/test/java/org/cassandraunit/DataLoaderCompositeTypeTest.java/left.java
+		assertThat(cluster.describeKeyspace("compositeKeyspace").getCfDefs().get(1).getName(),
+				is("columnFamilyWithCompositeType"));
+||||||| /usr/src/app/output/jsevellec/cassandra-unit/4e87b46fe206e0acf5cdbd1e8c396be97410a5e4/cassandra-unit/src/test/java/org/cassandraunit/DataLoaderCompositeTypeTest.java/base.java
+		assertThat(cluster.describeKeyspace("compositeKeyspace").getCfDefs().get(0).getName(),
+				is("columnFamilyWithCompositeType"));
+=======
 		List<ColumnFamilyDefinition> compositeKeyspace = cluster.describeKeyspace("compositeKeyspace").getCfDefs();
 
 		Map<String, ColumnFamilyDefinition> columnFamilyDefinitionMap = getColumFamilyDefinitionAsMap(compositeKeyspace);
 
 		assertThat(columnFamilyDefinitionMap.containsKey("columnFamilyWithCompositeType"), is(true));
 		ColumnFamilyDefinition columnFamilyDefinition = columnFamilyDefinitionMap.get("columnFamilyWithCompositeType");
+>>>>>>> /usr/src/app/output/jsevellec/cassandra-unit/4e87b46fe206e0acf5cdbd1e8c396be97410a5e4/cassandra-unit/src/test/java/org/cassandraunit/DataLoaderCompositeTypeTest.java/right.java
 		assertThat(
+<<<<<<< /usr/src/app/output/jsevellec/cassandra-unit/4e87b46fe206e0acf5cdbd1e8c396be97410a5e4/cassandra-unit/src/test/java/org/cassandraunit/DataLoaderCompositeTypeTest.java/left.java
+				cluster.describeKeyspace("compositeKeyspace").getCfDefs().get(1).getComparatorType().getTypeName(),
+||||||| /usr/src/app/output/jsevellec/cassandra-unit/4e87b46fe206e0acf5cdbd1e8c396be97410a5e4/cassandra-unit/src/test/java/org/cassandraunit/DataLoaderCompositeTypeTest.java/base.java
+				cluster.describeKeyspace("compositeKeyspace").getCfDefs().get(0).getComparatorType().getTypeName(),
+=======
 				columnFamilyDefinition.getComparatorType().getTypeName(),
-
+>>>>>>> /usr/src/app/output/jsevellec/cassandra-unit/4e87b46fe206e0acf5cdbd1e8c396be97410a5e4/cassandra-unit/src/test/java/org/cassandraunit/DataLoaderCompositeTypeTest.java/right.java
 				is(ComparatorType
 						.getByClassName(
 								"CompositeType(org.apache.cassandra.db.marshal.LongType,org.apache.cassandra.db.marshal.UTF8Type,org.apache.cassandra.db.marshal.IntegerType)")
@@ -120,12 +132,25 @@ public class DataLoaderCompositeTypeTest {
 		dataLoader.load(MockDataSetHelper.getMockDataSetWithCompositeType());
 		/* test */
 		Cluster cluster = HFactory.getOrCreateCluster(clusterName, host);
-
+<<<<<<< /usr/src/app/output/jsevellec/cassandra-unit/4e87b46fe206e0acf5cdbd1e8c396be97410a5e4/cassandra-unit/src/test/java/org/cassandraunit/DataLoaderCompositeTypeTest.java/left.java
+		assertThat(cluster.describeKeyspace("compositeKeyspace").getCfDefs().get(0).getName(),
+				is("columnFamilyWithRowKeyCompositeType"));
+||||||| /usr/src/app/output/jsevellec/cassandra-unit/4e87b46fe206e0acf5cdbd1e8c396be97410a5e4/cassandra-unit/src/test/java/org/cassandraunit/DataLoaderCompositeTypeTest.java/base.java
+		assertThat(cluster.describeKeyspace("compositeKeyspace").getCfDefs().get(1).getName(),
+				is("columnFamilyWithRowKeyCompositeType"));
+=======
 		List<ColumnFamilyDefinition> compositeKeyspace = cluster.describeKeyspace("compositeKeyspace").getCfDefs();
 		Map<String, ColumnFamilyDefinition> columFamilyDefinitionAsMap = getColumFamilyDefinitionAsMap(compositeKeyspace);
 		assertThat(columFamilyDefinitionAsMap.containsKey("columnFamilyWithRowKeyCompositeType"), is(true));
+>>>>>>> /usr/src/app/output/jsevellec/cassandra-unit/4e87b46fe206e0acf5cdbd1e8c396be97410a5e4/cassandra-unit/src/test/java/org/cassandraunit/DataLoaderCompositeTypeTest.java/right.java
 		assertThat(
+<<<<<<< /usr/src/app/output/jsevellec/cassandra-unit/4e87b46fe206e0acf5cdbd1e8c396be97410a5e4/cassandra-unit/src/test/java/org/cassandraunit/DataLoaderCompositeTypeTest.java/left.java
+				cluster.describeKeyspace("compositeKeyspace").getCfDefs().get(0).getKeyValidationClass(),
+||||||| /usr/src/app/output/jsevellec/cassandra-unit/4e87b46fe206e0acf5cdbd1e8c396be97410a5e4/cassandra-unit/src/test/java/org/cassandraunit/DataLoaderCompositeTypeTest.java/base.java
+				cluster.describeKeyspace("compositeKeyspace").getCfDefs().get(1).getKeyValidationClass(),
+=======
 				columFamilyDefinitionAsMap.get("columnFamilyWithRowKeyCompositeType").getKeyValidationClass(),
+>>>>>>> /usr/src/app/output/jsevellec/cassandra-unit/4e87b46fe206e0acf5cdbd1e8c396be97410a5e4/cassandra-unit/src/test/java/org/cassandraunit/DataLoaderCompositeTypeTest.java/right.java
 				is("org.apache.cassandra.db.marshal.CompositeType(org.apache.cassandra.db.marshal.LongType,org.apache.cassandra.db.marshal.UTF8Type)"));
 
 		Keyspace keyspace = HFactory.createKeyspace("compositeKeyspace", cluster);

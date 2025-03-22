@@ -305,9 +305,18 @@ public class EmbeddedCassandraServerHelper {
         mkdirs();
         cleanup();
         mkdirs();
+<<<<<<< /usr/src/app/output/jsevellec/cassandra-unit/4e87b46fe206e0acf5cdbd1e8c396be97410a5e4/cassandra-unit/src/main/java/org/cassandraunit/utils/EmbeddedCassandraServerHelper.java/left.java
         CommitLog commitLog = CommitLog.instance;
         commitLog.getContext(); // wait for commit log allocator instantiation to avoid hanging on a race condition
         commitLog.resetUnsafe(true); // cleanup screws w/ CommitLog, this brings it back to safe state
+||||||| /usr/src/app/output/jsevellec/cassandra-unit/4e87b46fe206e0acf5cdbd1e8c396be97410a5e4/cassandra-unit/src/main/java/org/cassandraunit/utils/EmbeddedCassandraServerHelper.java/base.java
+        CommitLog.instance.resetUnsafe(true); // cleanup screws w/ CommitLog, this
+        // brings it back to safe state
+=======
+        CommitLog commitLog = CommitLog.instance;
+        commitLog.getContext(); // wait for commit log allocator instantiation to avoid hanging on a race condition
+        commitLog.resetUnsafe(); // cleanup screws w/ CommitLog, this brings it back to safe state
+>>>>>>> /usr/src/app/output/jsevellec/cassandra-unit/4e87b46fe206e0acf5cdbd1e8c396be97410a5e4/cassandra-unit/src/main/java/org/cassandraunit/utils/EmbeddedCassandraServerHelper.java/right.java
     }
 
     private static void cleanup() throws IOException {
