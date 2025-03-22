@@ -283,7 +283,6 @@ public class FormatTest   {
   @ApiModelProperty(value = "")
 
   @Valid
-
   public OffsetDateTime getDateTime() {
     return dateTime;
   }

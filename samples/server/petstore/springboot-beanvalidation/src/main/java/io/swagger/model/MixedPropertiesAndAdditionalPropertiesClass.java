@@ -61,7 +61,6 @@ public class MixedPropertiesAndAdditionalPropertiesClass   {
   @ApiModelProperty(value = "")
 
   @Valid
-
   public OffsetDateTime getDateTime() {
     return dateTime;
   }
