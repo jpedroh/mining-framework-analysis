@@ -129,7 +129,6 @@ public class CodegenConstants {
 
     public static final String HIDE_GENERATION_TIMESTAMP = "hideGenerationTimestamp";
     public static final String HIDE_GENERATION_TIMESTAMP_DESC = "Hides the generation timestamp.";
-
     public static final String GENERATE_PROPERTY_CHANGED = "generatePropertyChanged";
     public static final String GENERATE_PROPERTY_CHANGED_DESC = "Specifies that models support raising property changed events.";
 

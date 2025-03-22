@@ -33,8 +33,13 @@ public class CSharpClientOptionsProvider implements OptionsProvider {
                 .put(CodegenConstants.OPTIONAL_PROJECT_GUID, PACKAGE_GUID_VALUE)
                 .put(CodegenConstants.DOTNET_FRAMEWORK, "4.x")
                 .put(CodegenConstants.OPTIONAL_EMIT_DEFAULT_VALUES, "true")
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/0cba285cac3dc5763cadb0a4a692d55f583e168f/modules/swagger-codegen/src/test/java/io/swagger/codegen/options/CSharpClientOptionsProvider.java/left.java
                 .put(CodegenConstants.HIDE_GENERATION_TIMESTAMP, "true")
+||||||| /usr/src/app/output/openapitools/openapi-generator/0cba285cac3dc5763cadb0a4a692d55f583e168f/modules/swagger-codegen/src/test/java/io/swagger/codegen/options/CSharpClientOptionsProvider.java/base.java
+                .put
+=======
                 .put(CodegenConstants.GENERATE_PROPERTY_CHANGED, "true")
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/0cba285cac3dc5763cadb0a4a692d55f583e168f/modules/swagger-codegen/src/test/java/io/swagger/codegen/options/CSharpClientOptionsProvider.java/right.java
                 .build();
     }
 
