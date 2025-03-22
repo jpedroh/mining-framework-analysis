@@ -39,9 +39,15 @@ import java.util.*;
  * found cycle, the cycle has minimum number of vertices. It may enumerate all paths up to the length given by the
  * parameter <code>lengthBound</code>, i.e the algorithm runs in exponential time.
  *
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/6ddc805389528a2dbbc97aef3dc8e1df351ddb87/jgrapht-core/src/main/java/org/jgrapht/alg/cycle/AhujaOrlinSharmaCyclicExchangeLocalAugmentation.java/left.java
  * This algorithm is used to detect valid cyclic exchanges in a cyclic exchange neighborhood for the Capacitated Minomum
  * Spanning Tree problem {@link org.jgrapht.alg.spanning.AhujaOrlinSharmaCapacitatedMinimumSpanningTree}
  * @see org.jgrapht.alg.spanning.AhujaOrlinSharmaCapacitatedMinimumSpanningTree
+||||||| /usr/src/app/output/jgrapht/jgrapht/6ddc805389528a2dbbc97aef3dc8e1df351ddb87/jgrapht-core/src/main/java/org/jgrapht/alg/cycle/AhujaOrlinSharmaCyclicExchangeLocalAugmentation.java/base.java
+ * This algorithm is used to detect valid cyclic exchanges in a cyclic exchange neighborhood for the Capacitated Minomum Spanning Tree problem {@link org.jgrapht.alg.spanning.AhujaOrlinSharmaCapacitatedMinimumSpanningTree} @see org.jgrapht.alg.spanning.AhujaOrlinSharmaCapacitatedMinimumSpanningTree
+=======
+ * This algorithm is used to detect valid cyclic exchanges in a cyclic exchange neighborhood for the Capacitated Minimum Spanning Tree problem {@link org.jgrapht.alg.spanning.AhujaOrlinSharmaCapacitatedMinimumSpanningTree} @see org.jgrapht.alg.spanning.AhujaOrlinSharmaCapacitatedMinimumSpanningTree
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/6ddc805389528a2dbbc97aef3dc8e1df351ddb87/jgrapht-core/src/main/java/org/jgrapht/alg/cycle/AhujaOrlinSharmaCyclicExchangeLocalAugmentation.java/right.java
  *
  * @param <V> the vertex type the graph
  * @param <E> the edge type of the graph
@@ -78,9 +84,16 @@ public class AhujaOrlinSharmaCyclicExchangeLocalAugmentation<V, E> {
      */
     public AhujaOrlinSharmaCyclicExchangeLocalAugmentation(Graph<V, E> graph, int lengthBound, Map<V, Integer> labelMap, boolean bestImprovement) {
         this.graph = Objects.requireNonNull(graph, "Graph cannot be null");
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/6ddc805389528a2dbbc97aef3dc8e1df351ddb87/jgrapht-core/src/main/java/org/jgrapht/alg/cycle/AhujaOrlinSharmaCyclicExchangeLocalAugmentation.java/left.java
         if(!graph.getType().isDirected()) {
             throw new IllegalArgumentException("The graph has to be directed.");
         }
+||||||| /usr/src/app/output/jgrapht/jgrapht/6ddc805389528a2dbbc97aef3dc8e1df351ddb87/jgrapht-core/src/main/java/org/jgrapht/alg/cycle/AhujaOrlinSharmaCyclicExchangeLocalAugmentation.java/base.java
+        if (!graph.getType().isWeighted()) {
+            throw new IllegalArgumentException("Graph is not weighted");
+        }
+=======
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/6ddc805389528a2dbbc97aef3dc8e1df351ddb87/jgrapht-core/src/main/java/org/jgrapht/alg/cycle/AhujaOrlinSharmaCyclicExchangeLocalAugmentation.java/right.java
         this.lengthBound = lengthBound;
         this.labelMap = Objects.requireNonNull(labelMap, "Labels cannot be null");
         for(V vertex : graph.vertexSet()) {
