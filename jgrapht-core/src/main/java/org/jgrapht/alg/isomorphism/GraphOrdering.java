@@ -39,15 +39,20 @@ final class GraphOrdering<V, E>
 
     private final int[][] outgoingEdges;
     private final int[][] incomingEdges;
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/c304b564868408674d4af087e5e6691f7f029b32/jgrapht-core/src/main/java/org/jgrapht/alg/isomorphism/GraphOrdering.java/left.java
     private final E[] edgeCache;
+||||||| /usr/src/app/output/jgrapht/jgrapht/c304b564868408674d4af087e5e6691f7f029b32/jgrapht-core/src/main/java/org/jgrapht/alg/isomorphism/GraphOrdering.java/base.java
+=======
+    private E[] edgeCache;
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/c304b564868408674d4af087e5e6691f7f029b32/jgrapht-core/src/main/java/org/jgrapht/alg/isomorphism/GraphOrdering.java/right.java
     /**
-     * if caching is enabled, adjMatrix contains cached information on existing edges, valid values:
-     * <ul>
-     * <li>0 - no cached value</li>
-     * <li>1 - edge exists</li>
-     * <li>-1 - no edge exists</li>
-     * </ul>
-     */
+ * if caching is enabled, adjMatrix contains cached information on existing edges, valid values:
+ * <ul>
+ * <li>0 - no cached value</li>
+ * <li>1 - edge exists</li>
+ * <li>-1 - no edge exists</li>
+ * </ul>
+ */
     private final byte[] adjMatrix;
 
     private final boolean cacheEdges;
