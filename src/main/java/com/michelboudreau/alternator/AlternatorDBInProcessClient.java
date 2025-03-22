@@ -1,15 +1,13 @@
 package com.michelboudreau.alternator;
-
+import com.amazonaws.services.dynamodb.AmazonDynamoDB;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.AmazonWebServiceClient;
 import com.amazonaws.AmazonWebServiceRequest;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.ResponseMetadata;
-import com.amazonaws.services.dynamodb.AmazonDynamoDB;
 import com.amazonaws.services.dynamodb.model.BatchGetItemRequest;
 import com.amazonaws.services.dynamodb.model.BatchGetItemResult;
 import com.amazonaws.services.dynamodb.model.BatchWriteItemRequest;
@@ -38,113 +36,91 @@ import com.amazonaws.services.dynamodb.model.UpdateTableRequest;
 import com.amazonaws.services.dynamodb.model.UpdateTableResult;
 
 public class AlternatorDBInProcessClient extends AmazonWebServiceClient implements AmazonDynamoDB {
-	private static final Log log = LogFactory.getLog(AlternatorDBInProcessClient.class);
+  private static final Log log = LogFactory.getLog(AlternatorDBInProcessClient.class);
 
-	private AlternatorDBHandler handler = new AlternatorDBHandler();
+  private AlternatorDBHandler handler = new AlternatorDBHandler();
 
-	public AlternatorDBInProcessClient() {
-		this(new ClientConfiguration());
-	}
+  public AlternatorDBInProcessClient() {
+    this(new ClientConfiguration());
+  }
 
-	public AlternatorDBInProcessClient(ClientConfiguration clientConfiguration) {
-		super(clientConfiguration);
-		init();
-	}
+  public AlternatorDBInProcessClient(ClientConfiguration clientConfiguration) {
+    super(clientConfiguration);
+    init();
+  }
 
-	private void init() {
-	}
+  private void init() {
+  }
 
-	public ListTablesResult listTables(ListTablesRequest listTablesRequest)
-			throws AmazonServiceException, AmazonClientException {
-		return handler.listTables(listTablesRequest);
-	}
+  public ListTablesResult listTables(ListTablesRequest listTablesRequest) throws AmazonServiceException, AmazonClientException {
+    return handler.listTables(listTablesRequest);
+  }
 
-	public QueryResult query(QueryRequest queryRequest)
-			throws AmazonServiceException, AmazonClientException {
-		return handler.query(queryRequest);
-	}
+  public QueryResult query(QueryRequest queryRequest) throws AmazonServiceException, AmazonClientException {
+    return handler.query(queryRequest);
+  }
 
-	public BatchWriteItemResult batchWriteItem(BatchWriteItemRequest batchWriteItemRequest)
-			throws AmazonServiceException, AmazonClientException {
-		return handler.batchWriteItem(batchWriteItemRequest);
-	}
+  public BatchWriteItemResult batchWriteItem(BatchWriteItemRequest batchWriteItemRequest) throws AmazonServiceException, AmazonClientException {
+    return handler.batchWriteItem(batchWriteItemRequest);
+  }
 
-	public UpdateItemResult updateItem(UpdateItemRequest updateItemRequest)
-			throws AmazonServiceException, AmazonClientException {
+  public UpdateItemResult updateItem(UpdateItemRequest updateItemRequest) throws AmazonServiceException, AmazonClientException {
+    return handler.updateItem(updateItemRequest);
+  }
 
-            return handler.updateItem(updateItemRequest);
-	}
+  public PutItemResult putItem(PutItemRequest putItemRequest) throws AmazonServiceException, AmazonClientException {
+    return handler.putItem(putItemRequest);
+  }
 
-	public PutItemResult putItem(PutItemRequest putItemRequest)
-			throws AmazonServiceException, AmazonClientException {
+  public DescribeTableResult describeTable(DescribeTableRequest describeTableRequest) throws AmazonServiceException, AmazonClientException {
+    return handler.describeTable(describeTableRequest);
+  }
 
-            return handler.putItem(putItemRequest);
-}
+  public ScanResult scan(ScanRequest scanRequest) throws AmazonServiceException, AmazonClientException {
+    return handler.scan(scanRequest);
+  }
 
-	public DescribeTableResult describeTable(DescribeTableRequest describeTableRequest)
-			throws AmazonServiceException, AmazonClientException {
-		return handler.describeTable(describeTableRequest);
-	}
+  public CreateTableResult createTable(CreateTableRequest createTableRequest) throws AmazonServiceException, AmazonClientException {
+    return handler.createTable(createTableRequest);
+  }
 
-	public ScanResult scan(ScanRequest scanRequest)
-			throws AmazonServiceException, AmazonClientException {
-		return handler.scan(scanRequest);
-	}
+  public UpdateTableResult updateTable(UpdateTableRequest updateTableRequest) throws AmazonServiceException, AmazonClientException {
+    return handler.updateTable(updateTableRequest);
+  }
 
-	public CreateTableResult createTable(CreateTableRequest createTableRequest)
-			throws AmazonServiceException, AmazonClientException {
+  public DeleteTableResult deleteTable(DeleteTableRequest deleteTableRequest) throws AmazonServiceException, AmazonClientException {
+    return handler.deleteTable(deleteTableRequest);
+  }
 
-            return handler.createTable(createTableRequest);
-	}
+  public DeleteItemResult deleteItem(DeleteItemRequest deleteItemRequest) throws AmazonServiceException, AmazonClientException {
+    return handler.deleteItem(deleteItemRequest);
+  }
 
-	public UpdateTableResult updateTable(UpdateTableRequest updateTableRequest)
-			throws AmazonServiceException, AmazonClientException {
+  public GetItemResult getItem(GetItemRequest getItemRequest) throws AmazonServiceException, AmazonClientException {
+    return handler.getItem(getItemRequest);
+  }
 
-            return handler.updateTable(updateTableRequest);
-	}
+  public BatchGetItemResult batchGetItem(BatchGetItemRequest batchGetItemRequest) throws AmazonServiceException, AmazonClientException {
+    return handler.batchGetItem(batchGetItemRequest);
+  }
 
-	public DeleteTableResult deleteTable(DeleteTableRequest deleteTableRequest)
-			throws AmazonServiceException, AmazonClientException {
+  public ListTablesResult listTables() throws AmazonServiceException, AmazonClientException {
+    return listTables(new ListTablesRequest());
+  }
 
-            return handler.deleteTable(deleteTableRequest);
-	}
+  @Override public void setEndpoint(String endpoint) throws IllegalArgumentException {
+    super.setEndpoint(endpoint);
+  }
 
-	public DeleteItemResult deleteItem(DeleteItemRequest deleteItemRequest)
-			throws AmazonServiceException, AmazonClientException {
+  @Override public ResponseMetadata getCachedResponseMetadata(AmazonWebServiceRequest request) {
+    return client.getResponseMetadataForRequest(request);
+  }
 
-            return handler.deleteItem(deleteItemRequest);
-    }
+  public void save(String persistence) {
+    handler.save(persistence);
+  }
 
-	public GetItemResult getItem(GetItemRequest getItemRequest)
-			throws AmazonServiceException, AmazonClientException {
-
-            return handler.getItem(getItemRequest);
-	}
-
-	public BatchGetItemResult batchGetItem(BatchGetItemRequest batchGetItemRequest)
-			throws AmazonServiceException, AmazonClientException {
-		return handler.batchGetItem(batchGetItemRequest);
-	}
-
-	public ListTablesResult listTables() throws AmazonServiceException, AmazonClientException {
-		return listTables(new ListTablesRequest());
-	}
-
-	@Override
-	public void setEndpoint(String endpoint) throws IllegalArgumentException {
-		super.setEndpoint(endpoint);
-	}
-
-	@Override
-	public ResponseMetadata getCachedResponseMetadata(AmazonWebServiceRequest request) {
-		return client.getResponseMetadataForRequest(request);
-	}
-        
-	public void save(String persistence) {
-            handler.save(persistence);
-	}
-
-	public void restore(String persistence) {
-            handler.restore(persistence);
-	}
+  public void restore(String persistence) {
+    handler.restore(persistence);
+  }
 }
