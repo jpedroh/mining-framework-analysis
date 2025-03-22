@@ -161,9 +161,15 @@ public final class SearchRequest {
 		result.put("code", 200);
 
 		final JSONObject headers = new JSONObject();
+<<<<<<< /usr/src/app/output/rnewson/couchdb-lucene/14123029dc4281316d0200eeb64a55049fd21601/src/main/java/org/apache/couchdb/lucene/SearchRequest.java/left.java
 		// Cache for 5 minutes.
 		headers.put("Cache-Control", "max-age=300");
 		// Results can't change unless the IndexReader does.
+||||||| /usr/src/app/output/rnewson/couchdb-lucene/14123029dc4281316d0200eeb64a55049fd21601/src/main/java/org/apache/couchdb/lucene/SearchRequest.java/base.java
+		// TODO make a per-db etag (md5(dbname + update_seq)?).
+=======
+		// Results can't change unless the IndexReader does.
+>>>>>>> /usr/src/app/output/rnewson/couchdb-lucene/14123029dc4281316d0200eeb64a55049fd21601/src/main/java/org/apache/couchdb/lucene/SearchRequest.java/right.java
 		headers.put("ETag", etag);
 		result.put("headers", headers);
 
