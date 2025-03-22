@@ -1,26 +1,7 @@
-/*
- * (C) Copyright 2019-2021, by Dimitrios Michail and Contributors.
- *
- * JGraphT : a free Java graph-theory library
- *
- * See the CONTRIBUTORS.md file distributed with this work for additional
- * information regarding copyright ownership.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License 2.0 which is available at
- * http://www.eclipse.org/legal/epl-2.0, or the
- * GNU Lesser General Public License v2.1 or later
- * which is available at
- * http://www.gnu.org/licenses/old-licenses/lgpl-2.1-standalone.html.
- *
- * SPDX-License-Identifier: EPL-2.0 OR LGPL-2.1-or-later
- */
 package org.jgrapht.opt.graph.sparse;
-
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-
 import org.jgrapht.alg.util.Pair;
 import org.jgrapht.opt.graph.sparse.specifics.AbstractSparseSpecificsGraph;
 import org.jgrapht.opt.graph.sparse.specifics.IncidenceMatrixSparseUndirectedSpecifics;
@@ -57,31 +38,83 @@ import org.jgrapht.opt.graph.sparse.specifics.SparseGraphSpecifics;
  * 
  * @author Dimitrios Michail
  */
-public class SparseIntUndirectedGraph
-    extends
-    AbstractSparseSpecificsGraph<SparseGraphSpecifics>
-{
-    /**
+public class SparseIntUndirectedGraph extends AbstractSparseSpecificsGraph<SparseGraphSpecifics> {
+  /**
      * Create a new graph from an edge list
      * 
      * @param numVertices number of vertices
      * @param edges edge list
      */
-    public SparseIntUndirectedGraph(int numVertices, List<Pair<Integer, Integer>> edges)
-    {
-        this(numVertices, edges.size(), () -> edges.stream());
-    }
+  public SparseIntUndirectedGraph(int numVertices, List<Pair<Integer, Integer>> edges) {
+    this(numVertices, edges.size(), () -> edges.stream());
+  }
 
-    /**
+  /**
      * Create a new graph from an edge stream
      * 
      * @param numVertices number of vertices
      * @param numEdges number of edges
      * @param edges supplier of an edge stream
      */
-    public SparseIntUndirectedGraph(
-        int numVertices, int numEdges, Supplier<Stream<Pair<Integer, Integer>>> edges)
-    {
-        super(() -> new IncidenceMatrixSparseUndirectedSpecifics(numVertices, numEdges, edges));
+  public SparseIntUndirectedGraph(int numVertices, int numEdges, Supplier<Stream<Pair<Integer, Integer>>> edges) {
+    super(() -> new IncidenceMatrixSparseUndirectedSpecifics(numVertices, numEdges, edges));
+  }
+
+
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  /**
+     * {@inheritDoc}
+     * 
+     * This operation costs $O(d)$ where $d$ is the degree of the source vertex.
+     */
+  @Override public Integer getEdge(Integer sourceVertex, Integer targetVertex) {
+    if (sourceVertex < 0 || sourceVertex >= incidenceMatrix.rows()) {
+      return null;
     }
+    if (targetVertex < 0 || targetVertex >= incidenceMatrix.rows()) {
+      return null;
+    }
+    Iterator<Integer> it = incidenceMatrix.nonZerosPositionIterator(sourceVertex);
+    while (it.hasNext()) {
+      int eId = it.next();
+      int v = getEdgeSource(eId);
+      int u = getEdgeTarget(eId);
+      if (v == sourceVertex.intValue() && u == targetVertex.intValue() || v == targetVertex.intValue() && u == sourceVertex.intValue()) {
+        return eId;
+      }
+    }
+    return null;
+  }
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/1c5fff14bb909af58ffd1c1231584e0f8caea5a2/jgrapht-opt/src/main/java/org/jgrapht/opt/graph/sparse/SparseIntUndirectedGraph.java/right.java
+
+
+
+<<<<<<< Unknown file: This is a bug in JDime.
+=======
+  /**
+     * {@inheritDoc}
+     * 
+     * This operation costs $O(d)$ where $d$ is the degree of the source vertex.
+     */
+  @Override public Set<Integer> getAllEdges(Integer sourceVertex, Integer targetVertex) {
+    if (sourceVertex < 0 || sourceVertex >= incidenceMatrix.rows()) {
+      return null;
+    }
+    if (targetVertex < 0 || targetVertex >= incidenceMatrix.rows()) {
+      return null;
+    }
+    Set<Integer> result = new LinkedHashSet<>();
+    Iterator<Integer> it = incidenceMatrix.nonZerosPositionIterator(sourceVertex);
+    while (it.hasNext()) {
+      int eId = it.next();
+      int v = getEdgeSource(eId);
+      int u = getEdgeTarget(eId);
+      if (v == sourceVertex.intValue() && u == targetVertex.intValue() || v == targetVertex.intValue() && u == sourceVertex.intValue()) {
+        result.add(eId);
+      }
+    }
+    return result;
+  }
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/1c5fff14bb909af58ffd1c1231584e0f8caea5a2/jgrapht-opt/src/main/java/org/jgrapht/opt/graph/sparse/SparseIntUndirectedGraph.java/right.java
 }
