@@ -24,14 +24,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-
 import static org.springframework.http.MediaType.*;
 
 @Controller
 @RequestMapping(value = "/user", produces = {APPLICATION_JSON_VALUE})
 @Api(value = "/user", description = "the user API")
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/a0b429d69050b57653cad214daaa352685e8c449/samples/server/petstore/spring-mvc/src/main/java/io/swagger/api/UserApi.java/left.java
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.SpringMVCServerCodegen", date = "2016-04-15T00:38:43.027+08:00")
+||||||| /usr/src/app/output/openapitools/openapi-generator/a0b429d69050b57653cad214daaa352685e8c449/samples/server/petstore/spring-mvc/src/main/java/io/swagger/api/UserApi.java/base.java
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.SpringMVCServerCodegen", date = "2016-02-26T13:58:54.483Z")
+=======
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.SpringMVCServerCodegen", date = "2016-04-14T23:14:04.836+08:00")
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/a0b429d69050b57653cad214daaa352685e8c449/samples/server/petstore/spring-mvc/src/main/java/io/swagger/api/UserApi.java/right.java
 public class UserApi {
 
   @ApiOperation(value = "Create user", notes = "This can only be done by the logged in user.", response = Void.class)
@@ -103,6 +107,26 @@ public class UserApi {
   }
 
 
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/a0b429d69050b57653cad214daaa352685e8c449/samples/server/petstore/spring-mvc/src/main/java/io/swagger/api/UserApi.java/left.java
+  @ApiOperation(value = "Get user by user name", notes = "", response = User.class)
+  @io.swagger.annotations.ApiResponses(value = { 
+    @io.swagger.annotations.ApiResponse(code = 200, message = "successful operation"),
+    @io.swagger.annotations.ApiResponse(code = 400, message = "Invalid username supplied"),
+    @io.swagger.annotations.ApiResponse(code = 404, message = "User not found") })
+  @RequestMapping(value = "/{username}", 
+    produces = { "application/xml", "application/json" }, 
+    
+    method = RequestMethod.GET)
+  public ResponseEntity<User> getUserByName(
+@ApiParam(value = "The name that needs to be fetched. Use user1 for testing. ",required=true ) @PathVariable("username") String username
+
+)
+      throws NotFoundException {
+      // do some magic!
+      return new ResponseEntity<User>(HttpStatus.OK);
+  }
+||||||| /usr/src/app/output/openapitools/openapi-generator/a0b429d69050b57653cad214daaa352685e8c449/samples/server/petstore/spring-mvc/src/main/java/io/swagger/api/UserApi.java/base.java
+=======
   @ApiOperation(value = "Get user by user name", notes = "", response = User.class)
   @io.swagger.annotations.ApiResponses(value = { 
     @io.swagger.annotations.ApiResponse(code = 200, message = "successful operation", response = User.class),
@@ -120,17 +144,21 @@ public class UserApi {
       // do some magic!
       return new ResponseEntity<User>(HttpStatus.OK);
   }
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/a0b429d69050b57653cad214daaa352685e8c449/samples/server/petstore/spring-mvc/src/main/java/io/swagger/api/UserApi.java/right.java
 
 
   @ApiOperation(value = "Logs user into the system", notes = "", response = String.class)
   @io.swagger.annotations.ApiResponses(value = { 
-    @io.swagger.annotations.ApiResponse(code = 200, message = "successful operation", response = String.class),
-    @io.swagger.annotations.ApiResponse(code = 400, message = "Invalid username/password supplied", response = String.class) })
-  @RequestMapping(value = "/login",
+    @io.swagger.annotations.ApiResponse(code = 200, message = "successful operation"),
+    @io.swagger.annotations.ApiResponse(code = 400, message = "Invalid username/password supplied") })
+  @RequestMapping(value = "/login", 
     produces = { "application/xml", "application/json" }, 
     
     method = RequestMethod.GET)
-  public ResponseEntity<String> loginUser(@ApiParam(value = "The user name for login", required = true) @RequestParam(value = "username", required = true) String username
+  public
+  @io.swagger.annotations.ApiResponses(value = { 
+    @io.swagger.annotations.ApiResponse(code = 200, message = "successful operation", response = String.class),
+    @io.swagger.annotations.ApiResponse(code = 400, message = "Invalid username/password supplied", response = String.class) }) ResponseEntity<String> loginUser(@ApiParam(value = "The user name for login", required = true) @RequestParam(value = "username", required = true) String username
 
 
 ,
@@ -144,6 +172,21 @@ public class UserApi {
   }
 
 
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/a0b429d69050b57653cad214daaa352685e8c449/samples/server/petstore/spring-mvc/src/main/java/io/swagger/api/UserApi.java/left.java
+  @ApiOperation(value = "Logs out current logged in user session", notes = "", response = Void.class)
+  @io.swagger.annotations.ApiResponses(value = { 
+    @io.swagger.annotations.ApiResponse(code = 200, message = "successful operation") })
+  @RequestMapping(value = "/logout", 
+    produces = { "application/xml", "application/json" }, 
+    
+    method = RequestMethod.GET)
+  public ResponseEntity<Void> logoutUser()
+      throws NotFoundException {
+      // do some magic!
+      return new ResponseEntity<Void>(HttpStatus.OK);
+  }
+||||||| /usr/src/app/output/openapitools/openapi-generator/a0b429d69050b57653cad214daaa352685e8c449/samples/server/petstore/spring-mvc/src/main/java/io/swagger/api/UserApi.java/base.java
+=======
   @ApiOperation(value = "Logs out current logged in user session", notes = "", response = Void.class)
   @io.swagger.annotations.ApiResponses(value = { 
     @io.swagger.annotations.ApiResponse(code = 200, message = "successful operation", response = Void.class) })
@@ -156,8 +199,32 @@ public class UserApi {
       // do some magic!
       return new ResponseEntity<Void>(HttpStatus.OK);
   }
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/a0b429d69050b57653cad214daaa352685e8c449/samples/server/petstore/spring-mvc/src/main/java/io/swagger/api/UserApi.java/right.java
 
 
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/a0b429d69050b57653cad214daaa352685e8c449/samples/server/petstore/spring-mvc/src/main/java/io/swagger/api/UserApi.java/left.java
+  @ApiOperation(value = "Updated user", notes = "This can only be done by the logged in user.", response = Void.class)
+  @io.swagger.annotations.ApiResponses(value = { 
+    @io.swagger.annotations.ApiResponse(code = 400, message = "Invalid user supplied"),
+    @io.swagger.annotations.ApiResponse(code = 404, message = "User not found") })
+  @RequestMapping(value = "/{username}", 
+    produces = { "application/xml", "application/json" }, 
+    
+    method = RequestMethod.PUT)
+  public ResponseEntity<Void> updateUser(
+@ApiParam(value = "name that need to be deleted",required=true ) @PathVariable("username") String username
+
+,
+    
+
+@ApiParam(value = "Updated user object" ,required=true ) @RequestBody User body
+)
+      throws NotFoundException {
+      // do some magic!
+      return new ResponseEntity<Void>(HttpStatus.OK);
+  }
+||||||| /usr/src/app/output/openapitools/openapi-generator/a0b429d69050b57653cad214daaa352685e8c449/samples/server/petstore/spring-mvc/src/main/java/io/swagger/api/UserApi.java/base.java
+=======
   @ApiOperation(value = "Updated user", notes = "This can only be done by the logged in user.", response = Void.class)
   @io.swagger.annotations.ApiResponses(value = { 
     @io.swagger.annotations.ApiResponse(code = 400, message = "Invalid user supplied", response = Void.class),
@@ -178,5 +245,7 @@ public class UserApi {
       // do some magic!
       return new ResponseEntity<Void>(HttpStatus.OK);
   }
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/a0b429d69050b57653cad214daaa352685e8c449/samples/server/petstore/spring-mvc/src/main/java/io/swagger/api/UserApi.java/right.java
 
+  
 }

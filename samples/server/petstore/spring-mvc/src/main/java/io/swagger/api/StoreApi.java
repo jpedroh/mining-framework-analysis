@@ -31,7 +31,13 @@ import static org.springframework.http.MediaType.*;
 @Controller
 @RequestMapping(value = "/store", produces = {APPLICATION_JSON_VALUE})
 @Api(value = "/store", description = "the store API")
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/a0b429d69050b57653cad214daaa352685e8c449/samples/server/petstore/spring-mvc/src/main/java/io/swagger/api/StoreApi.java/left.java
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.SpringMVCServerCodegen", date = "2016-04-15T00:38:43.027+08:00")
+||||||| /usr/src/app/output/openapitools/openapi-generator/a0b429d69050b57653cad214daaa352685e8c449/samples/server/petstore/spring-mvc/src/main/java/io/swagger/api/StoreApi.java/base.java
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.SpringMVCServerCodegen", date = "2016-02-26T13:58:54.483Z")
+=======
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.SpringMVCServerCodegen", date = "2016-04-14T23:14:04.836+08:00")
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/a0b429d69050b57653cad214daaa352685e8c449/samples/server/petstore/spring-mvc/src/main/java/io/swagger/api/StoreApi.java/right.java
 public class StoreApi {
 
   @ApiOperation(value = "Delete purchase order by ID", notes = "For valid response try integer IDs with value < 1000. Anything above 1000 or nonintegers will generate API errors", response = Void.class)
@@ -70,10 +76,10 @@ public class StoreApi {
 
   @ApiOperation(value = "Find purchase order by ID", notes = "For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions", response = Order.class)
   @io.swagger.annotations.ApiResponses(value = { 
-    @io.swagger.annotations.ApiResponse(code = 200, message = "successful operation", response = Order.class),
-    @io.swagger.annotations.ApiResponse(code = 400, message = "Invalid ID supplied", response = Order.class),
-    @io.swagger.annotations.ApiResponse(code = 404, message = "Order not found", response = Order.class) })
-  @RequestMapping(value = "/order/{orderId}",
+    @io.swagger.annotations.ApiResponse(code = 200, message = "successful operation"),
+    @io.swagger.annotations.ApiResponse(code = 400, message = "Invalid ID supplied"),
+    @io.swagger.annotations.ApiResponse(code = 404, message = "Order not found") })
+  @RequestMapping(value = "/order/{orderId}", 
     produces = { "application/xml", "application/json" }, 
     
     method = RequestMethod.GET)
@@ -87,6 +93,44 @@ public class StoreApi {
   }
 
 
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/a0b429d69050b57653cad214daaa352685e8c449/samples/server/petstore/spring-mvc/src/main/java/io/swagger/api/StoreApi.java/left.java
+  @ApiOperation(value = "Place an order for a pet", notes = "", response = Order.class)
+  @io.swagger.annotations.ApiResponses(value = { 
+    @io.swagger.annotations.ApiResponse(code = 200, message = "successful operation"),
+    @io.swagger.annotations.ApiResponse(code = 400, message = "Invalid Order") })
+  @RequestMapping(value = "/order", 
+    produces = { "application/xml", "application/json" }, 
+    
+    method = RequestMethod.POST)
+  public ResponseEntity<Order> placeOrder(
+
+@ApiParam(value = "order placed for purchasing the pet" ,required=true ) @RequestBody Order body
+)
+      throws NotFoundException {
+      // do some magic!
+      return new ResponseEntity<Order>(HttpStatus.OK);
+  }
+||||||| /usr/src/app/output/openapitools/openapi-generator/a0b429d69050b57653cad214daaa352685e8c449/samples/server/petstore/spring-mvc/src/main/java/io/swagger/api/StoreApi.java/base.java
+  @ApiOperation(value = "Place an order for a pet", notes = "", response = Order.class, authorizations = {
+    @Authorization(value = "test_api_client_id"),
+    @Authorization(value = "test_api_client_secret")
+  })
+  @io.swagger.annotations.ApiResponses(value = { 
+    @io.swagger.annotations.ApiResponse(code = 200, message = "successful operation"),
+    @io.swagger.annotations.ApiResponse(code = 400, message = "Invalid Order") })
+  @RequestMapping(value = "/order", 
+    produces = { "application/json", "application/xml" }, 
+    
+    method = RequestMethod.POST)
+  public ResponseEntity<Order> placeOrder(
+
+@ApiParam(value = "order placed for purchasing the pet"  ) @RequestBody Order body
+)
+      throws NotFoundException {
+      // do some magic!
+      return new ResponseEntity<Order>(HttpStatus.OK);
+  }
+=======
   @ApiOperation(value = "Place an order for a pet", notes = "", response = Order.class)
   @io.swagger.annotations.ApiResponses(value = { 
     @io.swagger.annotations.ApiResponse(code = 200, message = "successful operation", response = Order.class),
@@ -103,5 +147,26 @@ public class StoreApi {
       // do some magic!
       return new ResponseEntity<Order>(HttpStatus.OK);
   }
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/a0b429d69050b57653cad214daaa352685e8c449/samples/server/petstore/spring-mvc/src/main/java/io/swagger/api/StoreApi.java/right.java
 
+
+  @ApiOperation(value = "Find purchase order by ID", notes = "For valid response try integer IDs with value <= 5 or > 10. Other values will generated exceptions", response = Order.class)
+  @io.swagger.annotations.ApiResponses(value = { 
+    @io.swagger.annotations.ApiResponse(code = 200, message = "successful operation", response = Order.class),
+    @io.swagger.annotations.ApiResponse(code = 400, message = "Invalid ID supplied", response = Order.class),
+    @io.swagger.annotations.ApiResponse(code = 404, message = "Order not found", response = Order.class) })
+  @RequestMapping(value = "/order/{orderId}",
+    produces = { "application/xml", "application/json" }, 
+    
+    method = RequestMethod.GET)
+  public ResponseEntity<Order> getOrderById(
+@ApiParam(value = "ID of pet that needs to be fetched",required=true ) @PathVariable("orderId") Long orderId
+
+)
+      throws NotFoundException {
+      // do some magic!
+      return new ResponseEntity<Order>(HttpStatus.OK);
+  }
+
+  
 }
