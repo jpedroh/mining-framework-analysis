@@ -461,6 +461,13 @@ public class JobOverviewController extends AbstractGUIController {
 	}
 
 	@ApiResponses(value = {@ApiResponse(code = 200, message = "Success/Fail", response = RequestResult.class)})
+	@GetMapping(value = "/arrangeLayout")
+	public SuccessResponseEntity getArrangeLayout(final HttpServletRequest request, @PathVariable String namespace)
+			throws SaturnJobConsoleException {
+		return new SuccessResponseEntity(jobService.getArrangeLayout(namespace));
+	}
+
+	@ApiResponses(value = {@ApiResponse(code = 200, message = "Success/Fail", response = RequestResult.class)})
 	@Audit
 	@GetMapping(value = "/export")
 	public void exportJobs(final HttpServletRequest request, @AuditParam("namespace") @PathVariable String namespace,
@@ -471,16 +478,9 @@ public class JobOverviewController extends AbstractGUIController {
 		SaturnConsoleUtils.exportFile(response, exportJobFile, exportFileName, true);
 	}
 
-	@ApiResponses(value = {@ApiResponse(code = 200, message = "Success/Fail", response = RequestResult.class)})
-	@GetMapping(value = "/arrangeLayout")
-	public SuccessResponseEntity getArrangeLayout(final HttpServletRequest request, @PathVariable String namespace)
-			throws SaturnJobConsoleException {
-		return new SuccessResponseEntity(jobService.getArrangeLayout(namespace));
-	}
-
-	/**
-	 * 获取该作业可选择的优先Executor
-	 */
+    /**
+     * 获取该作业可选择的优先Executor
+     */
 	@ApiResponses(value = {@ApiResponse(code = 200, message = "Success/Fail", response = RequestResult.class)})
 	@GetMapping(value = "/{jobName}/executors")
 	public SuccessResponseEntity getExecutors(final HttpServletRequest request, @PathVariable String namespace,
