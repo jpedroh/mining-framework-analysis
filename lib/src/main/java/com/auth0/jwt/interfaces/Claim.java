@@ -1,7 +1,5 @@
 package com.auth0.jwt.interfaces;
-
 import com.auth0.jwt.exceptions.JWTDecodeException;
-
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -11,120 +9,118 @@ import java.util.Map;
  * The Claim class holds the value in a generic way so that it can be recovered in many representations.
  */
 public interface Claim {
-
-    /**
+  /**
      * Whether this Claim has a null value or not.
      * If the claim is not present, it will return false hence checking {@link Claim#isMissing} is advised as well
      *
      * @return whether this Claim has a null value or not.
      */
-    boolean isNull();
+  boolean isNull();
 
-    /**
+  /**
      * Can be used to verify whether the Claim is found or not.
      * This will be true even if the Claim has null value associated to it.
      *
      * @return whether this Claim is present or not
      */
-    boolean isMissing();
+  boolean isMissing();
 
-    /**
+  /**
      * Get this Claim as a Boolean.
      * If the value isn't of type Boolean or it can't be converted to a Boolean, null will be returned.
      *
      * @return the value as a Boolean or null.
      */
-    Boolean asBoolean();
+  Boolean asBoolean();
 
-    /**
+  /**
      * Get this Claim as an Integer.
      * If the value isn't of type Integer or it can't be converted to an Integer, null will be returned.
      *
      * @return the value as an Integer or null.
      */
-    Integer asInt();
+  Integer asInt();
 
-    /**
+  /**
      * Get this Claim as an Long.
      * If the value isn't of type Long or it can't be converted to an Long, null will be returned.
      *
      * @return the value as an Long or null.
      */
-    Long asLong();
+  Long asLong();
 
-    /**
+  /**
      * Get this Claim as a Double.
      * If the value isn't of type Double or it can't be converted to a Double, null will be returned.
      *
      * @return the value as a Double or null.
      */
-    Double asDouble();
+  Double asDouble();
 
-    /**
+  /**
      * Get this Claim as a String.
      * If the value isn't of type String or it can't be converted to a String, null will be returned.
      *
      * @return the value as a String or null.
      */
-    String asString();
+  String asString();
 
-    /**
+  /**
      * Get this Claim as a Date.
      * If the value can't be converted to a Date, null will be returned.
      *
      * @return the value as a Date or null.
      */
-    Date asDate();
+  Date asDate();
 
-    /**
+  /**
      * Get this Claim as an Instant.
      * If the value can't be converted to an Instant, null will be returned.
      *
      * @return the value as a Date or null.
      */
-    default Instant asInstant() {
-        Date date = asDate();
-        return date != null ? date.toInstant() : null;
-    }
+  default Instant asInstant() {
+    Date date = asDate();
+    return date != null ? date.toInstant() : null;
+  }
 
-    /**
+  /**
      * Get this Claim as an Array of type T.
      * If the value isn't an Array, null will be returned.
-     *
      * @param <T> type
-     * @param clazz the type class
+     * @param tClazz the type class
      * @return the value as an Array or null.
      * @throws JWTDecodeException if the values inside the Array can't be converted to a class T.
      */
-    <T> T[] asArray(Class<T> clazz) throws JWTDecodeException;
+  <T extends java.lang.Object> T[] asArray(Class<T> clazz) throws JWTDecodeException;
 
-    /**
+  /**
      * Get this Claim as a List of type T.
      * If the value isn't an Array, null will be returned.
      *
      * @param <T> type
-     * @param clazz the type class
+     * @param tClazz the type class
      * @return the value as a List or null.
      * @throws JWTDecodeException if the values inside the List can't be converted to a class T.
      */
-    <T> List<T> asList(Class<T> clazz) throws JWTDecodeException;
+  <T extends java.lang.Object> List<T> asList(Class<T> clazz) throws JWTDecodeException;
 
-    /**
+  /**
      * Get this Claim as a generic Map of values.
      *
      * @return the value as instance of Map.
      * @throws JWTDecodeException if the value can't be converted to a Map.
      */
-    Map<String, Object> asMap() throws JWTDecodeException;
+  Map<String, Object> asMap() throws JWTDecodeException;
 
-    /**
+  /**
      * Get this Claim as a custom type T.
      * This method will return null if {@link Claim#isMissing()} or {@link Claim#isNull()} is true
      *
      * @param <T> type
-     * @param clazz the type class
+     * @param tClazz the type class
      * @return the value as instance of T.
      * @throws JWTDecodeException if the value can't be converted to a class T.
      */
-    <T> T as(Class<T> clazz) throws JWTDecodeException;
+  <T extends java.lang.Object> T as(Class<T> clazz) throws JWTDecodeException;
 }
