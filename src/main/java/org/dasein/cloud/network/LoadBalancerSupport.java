@@ -33,8 +33,6 @@ import org.dasein.cloud.identity.ServiceAction;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Locale;
 
 /**
  * Implements support for cloud load balancing services.
@@ -324,15 +322,6 @@ public interface LoadBalancerSupport extends AccessControlledService {
      */
     public @Nullable SSLCertificate getSSLCertificate(@Nonnull String certificateName) throws CloudException, InternalException;
 
-    /**
-     * Attaches an existing Load Balancer to an existing firewalls
-     * @param providerLoadBalancerId the load balancer ID
-     * @param firewallIds the firewalls
-     * @throws CloudException
-     * @throws InternalException
-     */
-    public void setFirewalls(@Nonnull String providerLoadBalancerId, @Nonnull String... firewallIds) throws CloudException, InternalException;
-
     /********************************** DEPRECATED METHODS *************************************/
 
     /**
@@ -519,8 +508,73 @@ public interface LoadBalancerSupport extends AccessControlledService {
     @Deprecated
     public HashMap<String, String> getInstanceHealth(@Nonnull String providerLoadBalancerId, @Nullable String providerVirtualMachineId) throws CloudException, InternalException;
 
-     /*
+    /**
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/2f9e4b35962b05f0e0c5c68d65a056475088ea37/src/main/java/org/dasein/cloud/network/LoadBalancerSupport.java/left.java
+     * Allows an existing LB Health Check to be modified
+     * @param providerLBHealthCheckId the ID of the Health Check being adjusted
+     * @param options the new options to which the Health Check will be modified to meet
+     * @return the modified LoadBalancerHealthCheck object
+     * @throws InternalException
+     * @throws CloudException
+     */
+    public LoadBalancerHealthCheck modifyHealthCheck(@Nonnull String providerLBHealthCheckId, @Nonnull HealthCheckOptions options) throws InternalException, CloudException;
+
+    /**
+     * Removes a health check associated with a particular Load Balancer. Only certain clouds allow this operation
+     * @param providerLoadBalancerId the ID of the Load Balancer that has the health check being removed
+     * @throws CloudException
+     * @throws InternalException
+     */
+    public void removeLoadBalancerHealthCheck(@Nonnull String providerLoadBalancerId) throws CloudException, InternalException;
+
+	/**
+	 * Adds subnets to the loadbalancer
+	 *
+	 * @param toLoadBalancerId the ID of the loadbalancer the subnets need to be attached
+	 * @param subnetIdsToAdd subnets IDs to be attached to the specified loadbalancer
+	 * @throws CloudException
+	 * @throws InternalException
+	 */
+	public void attachLoadBalancerToSubnets(@Nonnull String toLoadBalancerId, @Nonnull String ... subnetIdsToAdd) throws CloudException, InternalException;
+
+	/**
+	 * Removes subnet from the loadbalancer
+	 *
+	 * @param fromLoadBalancerId the ID of loadbalancer the subnets need to be detached
+	 * @param subnetIdsToDelete subnets IDs to be detached from the specified loadbalancer
+	 * @throws CloudException
+	 * @throws InternalException
+	 */
+	public void detachLoadBalancerFromSubnets(@Nonnull String fromLoadBalancerId, @Nonnull String ... subnetIdsToDelete) throws CloudException, InternalException;
+
+
+	/********************************** DEPRECATED METHODS *************************************/
+
+	/**
+     * Indicates whether a health check can be created independantly of a load balancer
+||||||| /usr/src/app/output/greese/dasein-cloud-core/2f9e4b35962b05f0e0c5c68d65a056475088ea37/src/main/java/org/dasein/cloud/network/LoadBalancerSupport.java/base.java
+     * Allows an existing LB Health Check to be modified
+     * @param providerLBHealthCheckId the ID of the Health Check being adjusted
+     * @param options the new options to which the Health Check will be modified to meet
+     * @return the modified LoadBalancerHealthCheck object
+     * @throws InternalException
+     * @throws CloudException
+     */
+    public LoadBalancerHealthCheck modifyHealthCheck(@Nonnull String providerLBHealthCheckId, @Nonnull HealthCheckOptions options) throws InternalException, CloudException;
+
+    /**
+     * Removes a health check associated with a particular Load Balancer. Only certain clouds allow this operation
+     * @param providerLoadBalancerId the ID of the Load Balancer that has the health check being removed
+     * @throws CloudException
+     * @throws InternalException
+     */
+    public void removeLoadBalancerHealthCheck(@Nonnull String providerLoadBalancerId) throws CloudException, InternalException;
+
+    /**
+     * Indicates whether a health check can be created independantly of a load balancer
+=======
      * Indicates whether a health check can be created independently of a load balancer
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/2f9e4b35962b05f0e0c5c68d65a056475088ea37/src/main/java/org/dasein/cloud/network/LoadBalancerSupport.java/right.java
      * @return false if a health check can exist without having been assigned to a load balancer
      * @throws CloudException
      * @throws InternalException
@@ -574,4 +628,13 @@ public interface LoadBalancerSupport extends AccessControlledService {
      */
     @Deprecated
     public boolean requiresServerOnCreate() throws CloudException, InternalException;
+
+    /**
+     * Attaches an existing Load Balancer to an existing firewalls
+     * @param providerLoadBalancerId the load balancer ID
+     * @param firewallIds the firewalls
+     * @throws CloudException
+     * @throws InternalException
+     */
+    public void setFirewalls(@Nonnull String providerLoadBalancerId, @Nonnull String... firewallIds) throws CloudException, InternalException;
 }
