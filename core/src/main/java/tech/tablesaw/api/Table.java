@@ -16,7 +16,6 @@ package tech.tablesaw.api;
 
 import static java.util.stream.Collectors.toList;
 import static tech.tablesaw.aggregate.AggregateFunctions.countMissing;
-import static tech.tablesaw.api.QuerySupport.not;
 import static tech.tablesaw.selection.Selection.selectNRowsAtRandom;
 
 import com.google.common.base.Preconditions;
@@ -128,10 +127,16 @@ public class Table extends Relation implements Iterable<Row> {
   public static Table create() {
     return new Table();
   }
+  public static Table create(Column<?>... columns) {
+    return new Table(columns);
+  }
 
   /** Returns a new, empty table (without rows or columns) with the given name */
   public static Table create(String tableName) {
     return new Table(tableName);
+  }
+  public static Table create(String name, Column<?>... columns) {
+    return new Table(name, columns);
   }
 
   /**
@@ -139,9 +144,6 @@ public class Table extends Relation implements Iterable<Row> {
    *
    * @param columns one or more columns, all of the same @code{column.size()}
    */
-  public static Table create(Column<?>... columns) {
-    return new Table(columns);
-  }
 
   /**
    * Returns a new table with the given columns and given name
@@ -149,9 +151,6 @@ public class Table extends Relation implements Iterable<Row> {
    * @param name the name for this table
    * @param columns one or more columns, all of the same @code{column.size()}
    */
-  public static Table create(String name, Column<?>... columns) {
-    return new Table(name, columns);
-  }
 
   /**
    * Returns a sort Key that can be used for simple or chained comparator sorting
@@ -631,6 +630,11 @@ public class Table extends Relation implements Iterable<Row> {
     return rowIndexes;
   }
 
+  public Table rows(int... rowNumbers) {
+    Preconditions.checkArgument(Ints.max(rowNumbers) <= rowCount());
+    return where(Selection.with(rowNumbers));
+  }
+
   /**
    * Adds a single row to this table from sourceTable, copying every column in sourceTable
    *
@@ -653,11 +657,6 @@ public class Table extends Relation implements Iterable<Row> {
     Row row = new Row(Table.this);
     row.at(rowIndex);
     return row;
-  }
-
-  public Table rows(int... rowNumbers) {
-    Preconditions.checkArgument(Ints.max(rowNumbers) <= rowCount());
-    return where(Selection.with(rowNumbers));
   }
 
   public Table dropRows(int... rowNumbers) {
@@ -704,25 +703,30 @@ public class Table extends Relation implements Iterable<Row> {
     return newTable;
   }
 
+<<<<<<< /usr/src/app/output/jtablesaw/tablesaw/68f967133364244b0238c0ccf7c38f6357e490f1/core/src/main/java/tech/tablesaw/api/Table.java/left.java
+  public Table where(Function<Table, Selection> selection) {
+    Table newTable = this.emptyCopy(this.rowCount());
+    Rows.copyRowsToTable(selection.apply(this), this, newTable);
+    return newTable;
+  }
+||||||| /usr/src/app/output/jtablesaw/tablesaw/68f967133364244b0238c0ccf7c38f6357e490f1/core/src/main/java/tech/tablesaw/api/Table.java/base.java
+=======
   public Table where(Function<Table, Selection> selection) {
     Table tempTable = where(selection.apply(this));
     Table newTable = tempTable.emptyCopy(tempTable.rowCount());
     Rows.copyRowsToTable(selection.apply(this), this, newTable);
     return newTable;
   }
-
-  public Table dropWhere(Function<Table, Selection> selection) {
-    return where(not(selection));
-  }
+>>>>>>> /usr/src/app/output/jtablesaw/tablesaw/68f967133364244b0238c0ccf7c38f6357e490f1/core/src/main/java/tech/tablesaw/api/Table.java/right.java
 
   public Table dropWhere(Selection selection) {
-    Selection opposite = new BitmapBackedSelection();
-    opposite.addRange(0, rowCount());
-    opposite.andNot(selection);
-    Table newTable = this.emptyCopy(opposite.size());
-    Rows.copyRowsToTable(opposite, this, newTable);
-    return newTable;
-  }
+  Selection opposite = new BitmapBackedSelection();
+  opposite.addRange(0, rowCount());
+  opposite.andNot(selection);
+  Table newTable = this.emptyCopy(opposite.size());
+  Rows.copyRowsToTable(opposite, this, newTable);
+  return newTable;
+}
 
   /**
    * Returns a pivot on this table, where: The first column contains unique values from the index
