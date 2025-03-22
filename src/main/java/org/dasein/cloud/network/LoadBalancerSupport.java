@@ -19,15 +19,7 @@
 
 package org.dasein.cloud.network;
 
-import java.util.HashMap;
-import java.util.Locale;
-
-import org.dasein.cloud.AccessControlledService;
-import org.dasein.cloud.CloudException;
-import org.dasein.cloud.InternalException;
-import org.dasein.cloud.OperationNotSupportedException;
-import org.dasein.cloud.Requirement;
-import org.dasein.cloud.ResourceStatus;
+import org.dasein.cloud.*;
 import org.dasein.cloud.identity.ServiceAction;
 
 import javax.annotation.Nonnegative;
@@ -57,22 +49,26 @@ public interface LoadBalancerSupport extends AccessControlledService {
     static public final ServiceAction REMOVE_VMS                = new ServiceAction("LB:REMOVE_VM");
     static public final ServiceAction REMOVE_LOAD_BALANCER      = new ServiceAction("LB:REMOVE_LOAD_BALANCER");
     static public final ServiceAction CONFIGURE_HEALTH_CHECK    = new ServiceAction("LB:CONFIGURE_HEALTH_CHECK");
+<<<<<<< /usr/src/app/output/greese/dasein-cloud-core/2edeed4c44c68b3f2b39d4f7ff962b24e1330118/src/main/java/org/dasein/cloud/network/LoadBalancerSupport.java/left.java
+    static public final ServiceAction SET_FIREWALLS        = new ServiceAction("LB:SET_FIREWALLS");
+||||||| /usr/src/app/output/greese/dasein-cloud-core/2edeed4c44c68b3f2b39d4f7ff962b24e1330118/src/main/java/org/dasein/cloud/network/LoadBalancerSupport.java/base.java
+=======
     static public final ServiceAction LIST_SSL_CERTIFICATES     = new ServiceAction("LB:LIST_SSL_CERTIFICATES");
     static public final ServiceAction GET_SSL_CERTIFICATE       = new ServiceAction("LB:GET_SSL_CERTIFICATE");
     static public final ServiceAction CREATE_SSL_CERTIFICATE    = new ServiceAction("LB:CREATE_SSL_CERTIFICATE");
     static public final ServiceAction DELETE_SSL_CERTIFICATE    = new ServiceAction("LB:DELETE_SSL_CERTIFICATE");
     static public final ServiceAction SET_LB_SSL_CERTIFICATE    = new ServiceAction("LB:SET_SSL_CERTIFICATE");
-    static public final ServiceAction SET_FIREWALLS        = new ServiceAction("LB:SET_FIREWALLS");
-    
+>>>>>>> /usr/src/app/output/greese/dasein-cloud-core/2edeed4c44c68b3f2b39d4f7ff962b24e1330118/src/main/java/org/dasein/cloud/network/LoadBalancerSupport.java/right.java
+
     /**
-     * Adds one or more data centers to the list of data centers associated with the specified load balancer. This method
-     * makes sense only if load balancers are not data center aware
-     * @param toLoadBalancerId the load balancer to which data centers are being added
-     * @param dataCenterIdsToAdd one or more data centers to add
-     * @throws CloudException an error occurred with the cloud provider while performing this action
-     * @throws InternalException an error occurred within the Dasein Cloud implementation while performing this action
-     * @throws OperationNotSupportedException this load balancer is not data-center aware
-     */
+ * Adds one or more data centers to the list of data centers associated with the specified load balancer. This method
+ * makes sense only if load balancers are not data center aware
+ * @param toLoadBalancerId the load balancer to which data centers are being added
+ * @param dataCenterIdsToAdd one or more data centers to add
+ * @throws CloudException an error occurred with the cloud provider while performing this action
+ * @throws InternalException an error occurred within the Dasein Cloud implementation while performing this action
+ * @throws OperationNotSupportedException this load balancer is not data-center aware
+ */
     public void addDataCenters(@Nonnull String toLoadBalancerId, @Nonnull String ... dataCenterIdsToAdd) throws CloudException, InternalException;
 
     /**
@@ -469,6 +465,7 @@ public interface LoadBalancerSupport extends AccessControlledService {
      * @throws InternalException
      */
     public void removeLoadBalancerHealthCheck(@Nonnull String providerLoadBalancerId) throws CloudException, InternalException;
+
 
     /**
      * Indicates whether a health check can be created independantly of a load balancer
