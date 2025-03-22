@@ -1,12 +1,9 @@
 package com.lambdaworks.redis.cluster.models.slots;
-
 import static com.google.common.base.Preconditions.*;
-
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
 import com.google.common.collect.Lists;
 import com.google.common.net.HostAndPort;
 import com.lambdaworks.redis.RedisURI;
@@ -18,26 +15,23 @@ import com.lambdaworks.redis.cluster.models.partitions.RedisClusterNode;
  * @author <a href="mailto:mpaluch@paluch.biz">Mark Paluch</a>
  * @since 3.0
  */
-@SuppressWarnings("serial")
-public class ClusterSlotRange implements Serializable {
-    private int from;
-    private int to;
+@SuppressWarnings(value = { "serial" }) public class ClusterSlotRange implements Serializable {
+  private int from;
 
-    @Deprecated
-    private HostAndPort master;
+  private int to;
 
-    private RedisClusterNode masterNode;
+  @Deprecated private HostAndPort master;
 
-    @Deprecated
-    private List<HostAndPort> slaves = Collections.emptyList();
+  private RedisClusterNode masterNode;
 
-    private List<RedisClusterNode> slaveNodes = Collections.emptyList();
+  @Deprecated private List<HostAndPort> slaves = Collections.emptyList();
 
-    public ClusterSlotRange() {
+  private List<RedisClusterNode> slaveNodes = Collections.emptyList();
 
-    }
+  public ClusterSlotRange() {
+  }
 
-    /**
+  /**
      * Constructs a {@link ClusterSlotRange}
      * 
      * @param from from slot
@@ -46,21 +40,18 @@ public class ClusterSlotRange implements Serializable {
      * @param slaves list of slaves must not be {@literal null} but may be empty
      * @deprecated Use {@link #ClusterSlotRange(int, int, RedisClusterNode, List)}
      */
-    @Deprecated
-    public ClusterSlotRange(int from, int to, HostAndPort master, List<HostAndPort> slaves) {
+  @Deprecated public ClusterSlotRange(int from, int to, HostAndPort master, List<HostAndPort> slaves) {
+    checkArgument(master != null, "master must not be null");
+    checkArgument(slaves != null, "slaves must not be null");
+    this.from = from;
+    this.to = to;
+    this.masterNode = toRedisClusterNode(master, null, Collections.singleton(RedisClusterNode.NodeFlag.MASTER));
+    this.slaveNodes = toRedisClusterNodes(slaves, null, Collections.singleton(RedisClusterNode.NodeFlag.SLAVE));
+    this.master = master;
+    this.slaves = slaves;
+  }
 
-        checkArgument(master != null, "master must not be null");
-        checkArgument(slaves != null, "slaves must not be null");
-
-        this.from = from;
-        this.to = to;
-        this.masterNode = toRedisClusterNode(master, null, Collections.singleton(RedisClusterNode.NodeFlag.MASTER));
-        this.slaveNodes = toRedisClusterNodes(slaves, null, Collections.singleton(RedisClusterNode.NodeFlag.SLAVE));
-        this.master = master;
-        this.slaves = slaves;
-    }
-
-    /**
+  /**
      * Constructs a {@link ClusterSlotRange}
      *
      * @param from from slot
@@ -68,119 +59,118 @@ public class ClusterSlotRange implements Serializable {
      * @param masterNode master for the slots, may be {@literal null}
      * @param slaveNodes list of slaves must not be {@literal null} but may be empty
      */
-    public ClusterSlotRange(int from, int to, RedisClusterNode masterNode, List<RedisClusterNode> slaveNodes) {
+  public ClusterSlotRange(int from, int to, RedisClusterNode masterNode, List<RedisClusterNode> slaveNodes) {
+    checkArgument(masterNode != null, "masterNode must not be null");
+    checkArgument(slaveNodes != null, "slaveNodes must not be null");
+    this.from = from;
+    this.to = to;
+    this.master = toHostAndPort(masterNode);
+    this.slaves = toHostAndPorts(slaveNodes);
+    this.masterNode = masterNode;
+    this.slaveNodes = slaveNodes;
+  }
 
-        checkArgument(masterNode != null, "masterNode must not be null");
-        checkArgument(slaveNodes != null, "slaveNodes must not be null");
+  private HostAndPort toHostAndPort(RedisClusterNode redisClusterNode) {
+    RedisURI uri = redisClusterNode.getUri();
+    return HostAndPort.fromParts(uri.getHost(), uri.getPort());
+  }
 
-        this.from = from;
-        this.to = to;
-        this.master = toHostAndPort(masterNode);
-        this.slaves = toHostAndPorts(slaveNodes);
-        this.masterNode = masterNode;
-        this.slaveNodes = slaveNodes;
+  private List<HostAndPort> toHostAndPorts(List<RedisClusterNode> nodes) {
+    List<HostAndPort> result = Lists.newArrayList();
+    for (RedisClusterNode node : nodes) {
+      result.add(toHostAndPort(node));
     }
+    return result;
+  }
 
-    private HostAndPort toHostAndPort(RedisClusterNode redisClusterNode) {
-        RedisURI uri = redisClusterNode.getUri();
-        return HostAndPort.fromParts(uri.getHost(), uri.getPort());
+  private RedisClusterNode toRedisClusterNode(HostAndPort hostAndPort, String slaveOf, Set<RedisClusterNode.NodeFlag> flags) {
+    RedisClusterNode redisClusterNode = new RedisClusterNode();
+    redisClusterNode.setUri(
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/models/slots/ClusterSlotRange.java/left.java
+    new RedisURI.Builder().redis(hostAndPort.getHostText(), hostAndPort.getPortOrDefault(RedisURI.DEFAULT_REDIS_PORT)).build()
+=======
+    RedisURI.create(hostAndPort.getHostText(), hostAndPort.getPortOrDefault(RedisURI.DEFAULT_REDIS_PORT))
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/models/slots/ClusterSlotRange.java/right.java
+    );
+    redisClusterNode.setSlaveOf(slaveOf);
+    redisClusterNode.setFlags(flags);
+    return redisClusterNode;
+  }
+
+  private List<RedisClusterNode> toRedisClusterNodes(List<HostAndPort> hostAndPorts, String slaveOf, Set<RedisClusterNode.NodeFlag> flags) {
+    List<RedisClusterNode> result = Lists.newArrayList();
+    for (HostAndPort hostAndPort : hostAndPorts) {
+      result.add(toRedisClusterNode(hostAndPort, slaveOf, flags));
     }
+    return result;
+  }
 
-    private List<HostAndPort> toHostAndPorts(List<RedisClusterNode> nodes) {
-         List<HostAndPort> result = Lists.newArrayList();
-        for (RedisClusterNode node : nodes) {
-            result.add(toHostAndPort(node));
-        }
-        return result;
-    }
+  public int getFrom() {
+    return from;
+  }
 
-    private RedisClusterNode toRedisClusterNode(HostAndPort hostAndPort, String slaveOf, Set<RedisClusterNode.NodeFlag> flags) {
-        RedisClusterNode redisClusterNode = new RedisClusterNode();
-        redisClusterNode.setUri(RedisURI
-                .create(hostAndPort.getHostText(), hostAndPort.getPortOrDefault(RedisURI.DEFAULT_REDIS_PORT)));
-        redisClusterNode.setSlaveOf(slaveOf);
-        redisClusterNode.setFlags(flags);
-        return redisClusterNode;
-    }
+  public int getTo() {
+    return to;
+  }
 
-    private List<RedisClusterNode> toRedisClusterNodes(List<HostAndPort> hostAndPorts, String slaveOf, Set<RedisClusterNode.NodeFlag> flags) {
-        List<RedisClusterNode> result = Lists.newArrayList();
-        for (HostAndPort hostAndPort : hostAndPorts) {
-            result.add(toRedisClusterNode(hostAndPort, slaveOf, flags));
-        }
-        return result;
-    }
-
-    public int getFrom() {
-        return from;
-    }
-
-    public int getTo() {
-        return to;
-    }
-
-    /**
+  /**
      * @deprecated Use {@link #getMasterNode()} to retrieve the {@code nodeId} and the {@code slaveOf} details.
      * @return the master host and port
      */
-    @Deprecated
-    public HostAndPort getMaster() {
-        return master;
-    }
+  @Deprecated public HostAndPort getMaster() {
+    return master;
+  }
 
-    /**
+  /**
      * @deprecated Use {@link #getSlaveNodes()} to retrieve the {@code nodeId} and the {@code slaveOf} details.
      * @return the master host and port
      */
-    @Deprecated
-    public List<HostAndPort> getSlaves() {
-        return slaves;
-    }
+  @Deprecated public List<HostAndPort> getSlaves() {
+    return slaves;
+  }
 
-    public RedisClusterNode getMasterNode() {
-        return masterNode;
-    }
+  public RedisClusterNode getMasterNode() {
+    return masterNode;
+  }
 
-    public void setMasterNode(RedisClusterNode masterNode) {
-        this.masterNode = masterNode;
-    }
+  public void setMasterNode(RedisClusterNode masterNode) {
+    this.masterNode = masterNode;
+  }
 
-    public List<RedisClusterNode> getSlaveNodes() {
-        return slaveNodes;
-    }
+  public List<RedisClusterNode> getSlaveNodes() {
+    return slaveNodes;
+  }
 
-    public void setSlaveNodes(List<RedisClusterNode> slaveNodes) {
-        this.slaveNodes = slaveNodes;
-    }
+  public void setSlaveNodes(List<RedisClusterNode> slaveNodes) {
+    this.slaveNodes = slaveNodes;
+  }
 
-    public void setFrom(int from) {
-        this.from = from;
-    }
+  public void setFrom(int from) {
+    this.from = from;
+  }
 
-    public void setTo(int to) {
-        this.to = to;
-    }
+  public void setTo(int to) {
+    this.to = to;
+  }
 
-    public void setMaster(HostAndPort master) {
-        checkArgument(master != null, "master must not be null");
-        this.master = master;
-    }
+  public void setMaster(HostAndPort master) {
+    checkArgument(master != null, "master must not be null");
+    this.master = master;
+  }
 
-    public void setSlaves(List<HostAndPort> slaves) {
+  public void setSlaves(List<HostAndPort> slaves) {
+    checkArgument(slaves != null, "slaves must not be null");
+    this.slaves = slaves;
+  }
 
-        checkArgument(slaves != null, "slaves must not be null");
-        this.slaves = slaves;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [from=").append(from);
-        sb.append(", to=").append(to);
-        sb.append(", masterNode=").append(masterNode);
-        sb.append(", slaveNodes=").append(slaveNodes);
-        sb.append(']');
-        return sb.toString();
-    }
+  @Override public String toString() {
+    final StringBuilder sb = new StringBuilder();
+    sb.append(getClass().getSimpleName());
+    sb.append(" [from=").append(from);
+    sb.append(", to=").append(to);
+    sb.append(", masterNode=").append(masterNode);
+    sb.append(", slaveNodes=").append(slaveNodes);
+    sb.append(']');
+    return sb.toString();
+  }
 }

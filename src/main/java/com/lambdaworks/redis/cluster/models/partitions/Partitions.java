@@ -1,10 +1,8 @@
 package com.lambdaworks.redis.cluster.models.partitions;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
 import com.google.common.collect.Lists;
 import com.lambdaworks.redis.cluster.SlotHash;
 
@@ -17,9 +15,9 @@ import com.lambdaworks.redis.cluster.SlotHash;
  * Partitions are cached to ensure a cheap lookup by {@code slot}. Users of {@link Partitions} are required to call
  * {@link #updateCache()} after topology changes occur.
  * </p>
- *
+ * 
  * Topology changes are:
- *
+ * 
  * <ul>
  * <li>Changes in {@link com.lambdaworks.redis.cluster.models.partitions.RedisClusterNode.NodeFlag#MASTER}/
  * {@link com.lambdaworks.redis.cluster.models.partitions.RedisClusterNode.NodeFlag#SLAVE} state</li>
@@ -28,161 +26,147 @@ import com.lambdaworks.redis.cluster.SlotHash;
  * <li>Changes to the {@link RedisClusterNode#getSlaveOf() slave replication source} (the master of a slave)</li>
  * <li>Changes to the {@link RedisClusterNode#getUri()} () connection point}</li>
  * </ul>
- *
+ * 
  * @author <a href="mailto:mpaluch@paluch.biz">Mark Paluch</a>
  * @since 3.0
  */
 public class Partitions implements Collection<RedisClusterNode> {
+  private List<RedisClusterNode> partitions = Lists.newArrayList();
 
-    private List<RedisClusterNode> partitions = Lists.newArrayList();
-    private RedisClusterNode slotCache[];
+  private RedisClusterNode slotCache[];
 
-    /**
+  /**
      * Retrieve a {@link RedisClusterNode} by its slot number. This method does not distinguish between masters and slaves.
      *
      * @param slot the slot
      * @return RedisClusterNode or {@literal null}
      */
-    public RedisClusterNode getPartitionBySlot(int slot) {
-        return slotCache[slot];
-    }
+  public RedisClusterNode getPartitionBySlot(int slot) {
+    return slotCache[slot];
+  }
 
-    /**
+  /**
      * Retrieve a {@link RedisClusterNode} by its node id.
      *
      * @param nodeId the nodeId
      * @return RedisClusterNode or {@literal null}
      */
-    public RedisClusterNode getPartitionByNodeId(String nodeId) {
-        for (RedisClusterNode partition : partitions) {
-            if (partition.getNodeId().equals(nodeId)) {
-                return partition;
-            }
-        }
-        return null;
+  public RedisClusterNode getPartitionByNodeId(String nodeId) {
+    for (RedisClusterNode partition : partitions) {
+      if (partition.getNodeId().equals(nodeId)) {
+        return partition;
+      }
     }
+    return null;
+  }
 
-    /**
+  /**
      * Update the partition cache. Updates are necessary after the partition details have changed.
      */
-    public synchronized void updateCache() {
-        if (slotCache == null) {
-            slotCache = new RedisClusterNode[SlotHash.SLOT_COUNT];
-        } else {
-            Arrays.fill(slotCache, null);
-        }
-
-        for (RedisClusterNode partition : partitions) {
-            for (Integer integer : partition.getSlots()) {
-                slotCache[integer.intValue()] = partition;
-            }
-        }
+  public synchronized void updateCache() {
+    if (slotCache == null) {
+      slotCache = new RedisClusterNode[SlotHash.SLOT_COUNT];
+    } else {
+      Arrays.fill(slotCache, null);
     }
-
-    @Override
-    public Iterator<RedisClusterNode> iterator() {
-        return partitions.iterator();
+    for (RedisClusterNode partition : partitions) {
+      for (Integer integer : partition.getSlots()) {
+        slotCache[integer.intValue()] = partition;
+      }
     }
+  }
 
-    public List<RedisClusterNode> getPartitions() {
-        return partitions;
-    }
+  @Override public Iterator<RedisClusterNode> iterator() {
+    return partitions.iterator();
+  }
 
-    public void addPartition(RedisClusterNode partition) {
-        slotCache = null;
-        partitions.add(partition);
-    }
+  public List<RedisClusterNode> getPartitions() {
+    return partitions;
+  }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" ").append(partitions);
-        return sb.toString();
-    }
+  public void addPartition(RedisClusterNode partition) {
+    slotCache = null;
+    partitions.add(partition);
+  }
 
-    @Override
-    public int size() {
-        return getPartitions().size();
-    }
+  @Override public String toString() {
+    final StringBuilder sb = new StringBuilder();
+    sb.append(getClass().getSimpleName());
+    sb.append(" ").append(partitions);
+    return sb.toString();
+  }
 
-    public RedisClusterNode getPartition(int index) {
-        return getPartitions().get(index);
-    }
+  @Override public int size() {
+    return getPartitions().size();
+  }
 
-    /**
+  public RedisClusterNode getPartition(int index) {
+    return getPartitions().get(index);
+  }
+
+  /**
      * Update partitions and rebuild slot cache.
      *
      * @param partitions list of new partitions
      */
-    public void reload(List<RedisClusterNode> partitions) {
-        this.partitions.clear();
-        this.partitions.addAll(partitions);
-        updateCache();
-    }
+  public void reload(List<RedisClusterNode> partitions) {
+    this.partitions.clear();
+    this.partitions.addAll(partitions);
+    updateCache();
+  }
 
-    @Override
-    public boolean isEmpty() {
-        return getPartitions().isEmpty();
-    }
+  @Override public boolean isEmpty() {
+    return getPartitions().isEmpty();
+  }
 
-    @Override
-    public boolean contains(Object o) {
-        return getPartitions().contains(o);
-    }
+  @Override public boolean contains(Object o) {
+    return getPartitions().contains(o);
+  }
 
-    @Override
-    public boolean addAll(Collection<? extends RedisClusterNode> c) {
-        boolean b = partitions.addAll(c);
-        updateCache();
-        return b;
-    }
+  @Override public boolean addAll(Collection<? extends RedisClusterNode> c) {
+    boolean b = partitions.addAll(c);
+    updateCache();
+    return b;
+  }
 
-    @Override
-    public boolean removeAll(Collection<?> c) {
-        boolean b = getPartitions().removeAll(c);
-        updateCache();
-        return b;
-    }
+  @Override public boolean removeAll(Collection<?> c) {
+    boolean b = getPartitions().removeAll(c);
+    updateCache();
+    return b;
+  }
 
-    @Override
-    public boolean retainAll(Collection<?> c) {
-        boolean b = getPartitions().retainAll(c);
-        updateCache();
-        return b;
-    }
+  @Override public boolean retainAll(Collection<?> c) {
+    boolean b = getPartitions().retainAll(c);
+    updateCache();
+    return b;
+  }
 
-    @Override
-    public void clear() {
-        getPartitions().clear();
-        updateCache();
-    }
-    @Override
-    public Object[] toArray() {
-        return getPartitions().toArray();
-    }
+  @Override public void clear() {
+    getPartitions().clear();
+    updateCache();
+  }
 
-    @Override
-    public <T> T[] toArray(T[] a) {
-        return getPartitions().toArray(a);
-    }
+  @Override public Object[] toArray() {
+    return getPartitions().toArray();
+  }
 
-    @Override
-    public boolean add(RedisClusterNode redisClusterNode) {
-        boolean add = getPartitions().add(redisClusterNode);
-        updateCache();
-        return add;
-    }
+  @Override public <T extends java.lang.Object> T[] toArray(T[] a) {
+    return getPartitions().toArray(a);
+  }
 
-    @Override
-    public boolean remove(Object o) {
-        boolean remove = getPartitions().remove(o);
-        updateCache();
-        return remove;
-    }
+  @Override public boolean add(RedisClusterNode redisClusterNode) {
+    boolean add = getPartitions().add(redisClusterNode);
+    updateCache();
+    return add;
+  }
 
-    @Override
-    public boolean containsAll(Collection<?> c) {
-        return getPartitions().containsAll(c);
-    }
+  @Override public boolean remove(Object o) {
+    boolean remove = getPartitions().remove(o);
+    updateCache();
+    return remove;
+  }
+
+  @Override public boolean containsAll(Collection<?> c) {
+    return getPartitions().containsAll(c);
+  }
 }

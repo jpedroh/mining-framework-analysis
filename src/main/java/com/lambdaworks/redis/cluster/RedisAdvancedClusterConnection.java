@@ -1,20 +1,17 @@
 package com.lambdaworks.redis.cluster;
-
+import com.lambdaworks.redis.ReadFrom;
 import com.lambdaworks.redis.RedisClusterConnection;
 import com.lambdaworks.redis.RedisException;
 import com.lambdaworks.redis.cluster.api.StatefulRedisClusterConnection;
 
 /**
- * Advanced synchronous and thread-safe cluster API.
+ * Advanced synchronous cluster API.
  * 
  * @author <a href="mailto:mpaluch@paluch.biz">Mark Paluch</a>
  * @since 3.3
- * @deprecated Use {@link com.lambdaworks.redis.cluster.api.sync.RedisAdvancedClusterCommands}
  */
-@Deprecated
-public interface RedisAdvancedClusterConnection<K, V> extends RedisClusterConnection<K, V> {
-
-    /**
+@Deprecated public interface RedisAdvancedClusterConnection<K extends java.lang.Object, V extends java.lang.Object> extends RedisClusterConnection<K, V> {
+  /**
      * Retrieve a connection to the specified cluster node using the nodeId. Host and port are looked up in the node list. This
      * connection is bound to the node id. Once the cluster topology view is updated, the connection will try to reconnect the
      * to the node with the specified {@code nodeId}, that behavior can also lead to a closed connection once the node with the
@@ -29,9 +26,9 @@ public interface RedisAdvancedClusterConnection<K, V> extends RedisClusterConnec
      * @return a connection to the requested cluster node
      * @throws RedisException if the requested node identified by {@code nodeId} is not part of the cluster
      */
-    RedisClusterConnection<K, V> getConnection(String nodeId);
+  RedisClusterConnection<K, V> getConnection(String nodeId);
 
-    /**
+  /**
      * Retrieve a connection to the specified cluster node using the nodeId. This connection is bound to a host and port.
      * Updates to the cluster topology view can close the connection once the host, identified by {@code host} and {@code port},
      * are no longer part of the cluster.
@@ -47,11 +44,25 @@ public interface RedisAdvancedClusterConnection<K, V> extends RedisClusterConnec
      * @return a connection to the requested cluster node
      * @throws RedisException if the requested node identified by {@code host} and {@code port} is not part of the cluster
      */
-    RedisClusterConnection<K, V> getConnection(String host, int port);
+  RedisClusterConnection<K, V> getConnection(String host, int port);
 
-    /**
+  /**
+     * Set from which nodes data is read. The setting is used as default for read operations on this connection. See the
+     * documentation for {@link ReadFrom} for more information.
+     * 
+     * @param readFrom the read from setting, must not be {@literal null}
+     */
+  void setReadFrom(ReadFrom readFrom);
+
+  /**
      * @return the underlying connection.
      */
-    StatefulRedisClusterConnection<K, V> getStatefulConnection();
+  StatefulRedisClusterConnection<K, V> getStatefulConnection();
 
+  /**
+     * Gets the {@link ReadFrom} setting for this connection. Defaults to {@link ReadFrom#MASTER} if not set.
+     * 
+     * @return the read from setting or {@literal null}
+     */
+  ReadFrom getReadFrom();
 }

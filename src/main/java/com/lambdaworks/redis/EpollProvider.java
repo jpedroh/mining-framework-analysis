@@ -1,12 +1,9 @@
 package com.lambdaworks.redis;
-
 import static com.google.common.base.Preconditions.checkState;
-
 import java.lang.reflect.Constructor;
 import java.net.SocketAddress;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadFactory;
-
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.util.internal.logging.InternalLogger;
@@ -19,73 +16,70 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
  * @author <a href="mailto:mpaluch@paluch.biz">Mark Paluch</a>
  */
 public class EpollProvider {
+  protected static final InternalLogger logger = InternalLoggerFactory.getInstance(EpollProvider.class);
 
-    protected static final InternalLogger logger = InternalLoggerFactory.getInstance(EpollProvider.class);
+  public final static Class<EventLoopGroup> epollEventLoopGroupClass;
 
-    public final static Class<EventLoopGroup> epollEventLoopGroupClass;
-    public final static Class<Channel> epollDomainSocketChannelClass;
-    public final static Class<SocketAddress> domainSocketAddressClass;
-    static {
+  public final static Class<Channel> epollDomainSocketChannelClass;
 
-        epollEventLoopGroupClass = getClass("io.netty.channel.epoll.EpollEventLoopGroup");
-        epollDomainSocketChannelClass = getClass("io.netty.channel.epoll.EpollDomainSocketChannel");
-        domainSocketAddressClass = getClass("io.netty.channel.unix.DomainSocketAddress");
-        if (epollDomainSocketChannelClass == null || epollEventLoopGroupClass == null) {
-            logger.debug("Starting without optional Epoll library");
-        }
+  public final static Class<SocketAddress> domainSocketAddressClass;
+
+  static {
+    epollEventLoopGroupClass = getClass("io.netty.channel.epoll.EpollEventLoopGroup");
+    epollDomainSocketChannelClass = getClass("io.netty.channel.epoll.EpollDomainSocketChannel");
+    domainSocketAddressClass = getClass("io.netty.channel.unix.DomainSocketAddress");
+    if (epollDomainSocketChannelClass == null || epollEventLoopGroupClass == null) {
+      logger.debug("Starting without optional Epoll library");
     }
+  }
 
-    /**
+  /**
      * Try to load class {@literal className}.
      * 
      * @param className
      * @param <T> Expected return type for casting.
      * @return instance of {@literal className} or null
      */
-    private static <T> Class<T> getClass(String className) {
-        try {
-            return (Class) JavaRuntime.forName(className);
-        } catch (ClassNotFoundException e) {
-            logger.debug("Cannot load class " + className, e);
-        }
-        return null;
+  @SuppressWarnings(value = { "unchecked" }) private static <T extends java.lang.Object> Class<T> getClass(String className) {
+    try {
+      return (Class) JavaRuntime.forName(className);
+    } catch (ClassNotFoundException e) {
+      logger.debug("Cannot load class " + className, e);
     }
+    return null;
+  }
 
-    /**
+  /**
      * Check whether the Epoll library is available on the class path.
      * 
      * @throws IllegalStateException if the {@literal netty-transport-native-epoll} library is not available
      * 
      */
-    static void checkForEpollLibrary() {
+  static void checkForEpollLibrary() {
+    checkState(domainSocketAddressClass != null && epollDomainSocketChannelClass != null, "Cannot connect using sockets without the optional netty-transport-native-epoll library on the class path");
+  }
 
-        checkState(domainSocketAddressClass != null && epollDomainSocketChannelClass != null,
-                "Cannot connect using sockets without the optional netty-transport-native-epoll library on the class path");
+  static SocketAddress newSocketAddress(String socketPath) {
+    return get(() -> {
+      Constructor<SocketAddress> constructor = domainSocketAddressClass.getConstructor(String.class);
+      return constructor.newInstance(socketPath);
+    });
+  }
+
+  public static EventLoopGroup newEventLoopGroup(int nThreads, ThreadFactory threadFactory) {
+    try {
+      Constructor<EventLoopGroup> constructor = epollEventLoopGroupClass.getConstructor(Integer.TYPE, ThreadFactory.class);
+      return constructor.newInstance(nThreads, threadFactory);
+    } catch (Exception e) {
+      throw new IllegalStateException(e);
     }
+  }
 
-    static SocketAddress newSocketAddress(String socketPath) {
-        return get(() -> {
-            Constructor<SocketAddress> constructor = domainSocketAddressClass.getConstructor(String.class);
-            return constructor.newInstance(socketPath);
-        });
+  private static <V extends java.lang.Object> V get(Callable<V> supplier) {
+    try {
+      return supplier.call();
+    } catch (Exception e) {
+      throw new IllegalStateException(e);
     }
-
-    public static EventLoopGroup newEventLoopGroup(int nThreads, ThreadFactory threadFactory) {
-
-        try {
-            Constructor<EventLoopGroup> constructor = epollEventLoopGroupClass
-                    .getConstructor(Integer.TYPE, ThreadFactory.class);
-            return constructor.newInstance(nThreads, threadFactory);
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    private static <V> V get(Callable<V> supplier) {
-        try {
-            return supplier.call();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-    }
+  }
 }

@@ -1,10 +1,7 @@
 package com.lambdaworks.redis.cluster;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.lambdaworks.redis.cluster.SlotHash.getSlot;
-
 import java.util.List;
-
 import com.google.common.base.Splitter;
 import com.google.common.net.HostAndPort;
 import com.lambdaworks.redis.LettuceStrings;
@@ -27,188 +24,188 @@ import com.lambdaworks.redis.protocol.RedisCommand;
  * @author <a href="mailto:mpaluch@paluch.biz">Mark Paluch</a>
  * @since 3.0
  */
-class ClusterDistributionChannelWriter<K, V> implements RedisChannelWriter<K, V> {
+class ClusterDistributionChannelWriter<K extends java.lang.Object, V extends java.lang.Object> implements RedisChannelWriter<K, V> {
+  private RedisChannelWriter<K, V> defaultWriter;
 
-    private RedisChannelWriter<K, V> defaultWriter;
-    private ClusterConnectionProvider clusterConnectionProvider;
-    private boolean closed = false;
-    private int executionLimit = 5;
+  private ClusterConnectionProvider clusterConnectionProvider;
 
-    public ClusterDistributionChannelWriter(RedisChannelWriter<K, V> defaultWriter) {
-        this.defaultWriter = defaultWriter;
+  private boolean closed = false;
+
+  private int executionLimit = 5;
+
+  public ClusterDistributionChannelWriter(RedisChannelWriter<K, V> defaultWriter) {
+    this.defaultWriter = defaultWriter;
+  }
+
+  @Override @SuppressWarnings(value = { "unchecked" }) public <T extends java.lang.Object, C extends RedisCommand<K, V, T>> C write(C command) {
+    checkArgument(command != null, "command must not be null");
+    if (closed) {
+      throw new RedisException("Connection is closed");
     }
+    RedisCommand<K, V, T> commandToSend = command;
+    CommandArgs<K, V> args = command.getArgs();
+    RedisChannelWriter<K, V> channelWriter = null;
+    if (!(command instanceof ClusterCommand)) {
+      RedisCommand<K, V, T> singleCommand = command;
+      commandToSend = new ClusterCommand<>(singleCommand, this, executionLimit);
+    }
+    if (commandToSend instanceof ClusterCommand && !commandToSend.isDone()) {
+      ClusterCommand<K, V, T> clusterCommand = (ClusterCommand<K, V, T>) commandToSend;
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T, C extends RedisCommand<K, V, T>> C write(C command) {
-
-        checkArgument(command != null, "command must not be null");
-
-        if (closed) {
-            throw new RedisException("Connection is closed");
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterDistributionChannelWriter.java/left.java
+      if (!clusterCommand.isDone()) {
+        if (clusterCommand.isMoved()) {
+          HostAndPort moveTarget = getMoveTarget(clusterCommand.getError());
+          commandToSend.getOutput().setError((String) null);
+          RedisAsyncConnectionImpl<K, V> connection = clusterConnectionProvider.getConnection(ClusterConnectionProvider.Intent.WRITE, moveTarget.getHostText(), moveTarget.getPort());
+          channelWriter = connection.getChannelWriter();
         }
-
-        RedisCommand<K, V, T> commandToSend = command;
-        CommandArgs<K, V> args = command.getArgs();
-
-        if (!(command instanceof ClusterCommand)) {
-            RedisCommand<K, V, T> singleCommand = command;
-            commandToSend = new ClusterCommand<>(singleCommand, this, executionLimit);
+        if (clusterCommand.isAsk()) {
+          HostAndPort askTarget = getAskTarget(clusterCommand.getError());
+          commandToSend.getOutput().setError((String) null);
+          RedisAsyncConnectionImpl<K, V> connection = clusterConnectionProvider.getConnection(ClusterConnectionProvider.Intent.WRITE, askTarget.getHostText(), askTarget.getPort());
+          channelWriter = connection.getChannelWriter();
+          connection.asking();
         }
-
-        RedisChannelWriter<K, V> channelWriter = null;
-
-        if (commandToSend instanceof ClusterCommand && !commandToSend.isDone()) {
-            ClusterCommand<K, V, T> clusterCommand = (ClusterCommand<K, V, T>) commandToSend;
-            if (clusterCommand.isMoved() || clusterCommand.isAsk()) {
-                HostAndPort target;
-                if (clusterCommand.isMoved()) {
-                    target = getMoveTarget(clusterCommand.getError());
-                } else {
-                    target = getAskTarget(clusterCommand.getError());
-                }
-
-                commandToSend.getOutput().setError((String) null);
-                RedisChannelHandler<K, V> connection = (RedisChannelHandler<K, V>) clusterConnectionProvider.getConnection(
-                        ClusterConnectionProvider.Intent.WRITE, target.getHostText(), target.getPort());
-                channelWriter = connection.getChannelWriter();
-
-                if (clusterCommand.isAsk()) {
-                    // set asking bit
-                    StatefulRedisConnection<K, V> statefulRedisConnection = (StatefulRedisConnection<K, V>) connection;
-                    statefulRedisConnection.async().asking();
-                }
-            }
+      }
+=======
+      if (clusterCommand.isMoved() || clusterCommand.isAsk()) {
+        HostAndPort target;
+        if (clusterCommand.isMoved()) {
+          target = getMoveTarget(clusterCommand.getError());
+        } else {
+          target = getAskTarget(clusterCommand.getError());
         }
-
-        if (channelWriter == null && args != null && args.getFirstEncodedKey() != null) {
-            int hash = getSlot(args.getFirstEncodedKey());
-            ClusterConnectionProvider.Intent intent = getIntent(command.getType());
-
-            RedisChannelHandler<K, V> connection = (RedisChannelHandler<K, V>) clusterConnectionProvider.getConnection(intent,
-                    hash);
-
-            channelWriter = connection.getChannelWriter();
-        }
-
-        if (channelWriter instanceof ClusterDistributionChannelWriter) {
-            ClusterDistributionChannelWriter<K, V> writer = (ClusterDistributionChannelWriter<K, V>) channelWriter;
-            channelWriter = writer.defaultWriter;
-        }
-
         commandToSend.getOutput().setError((String) null);
-        if (channelWriter != null && channelWriter != this && channelWriter != defaultWriter) {
-            return channelWriter.write((C) commandToSend);
+        RedisChannelHandler<K, V> connection = (RedisChannelHandler<K, V>) clusterConnectionProvider.getConnection(ClusterConnectionProvider.Intent.WRITE, target.getHostText(), target.getPort());
+        channelWriter = connection.getChannelWriter();
+        if (clusterCommand.isAsk()) {
+          StatefulRedisConnection<K, V> statefulRedisConnection = (StatefulRedisConnection<K, V>) connection;
+          statefulRedisConnection.async().asking();
         }
-
-        defaultWriter.write((C) commandToSend);
-
-        return command;
+      }
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterDistributionChannelWriter.java/right.java
     }
-
-    private ClusterConnectionProvider.Intent getIntent(ProtocolKeyword type) {
-        for (ProtocolKeyword readOnlyCommand : ReadOnlyCommands.READ_ONLY_COMMANDS) {
-            if (readOnlyCommand == type) {
-                return ClusterConnectionProvider.Intent.READ;
-            }
-        }
-
-        return ClusterConnectionProvider.Intent.WRITE;
+    if (channelWriter == null && args != null && args.
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterDistributionChannelWriter.java/left.java
+    getEncodedKey()
+=======
+    getFirstEncodedKey()
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterDistributionChannelWriter.java/right.java
+     != null) {
+      int hash = 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterDistributionChannelWriter.java/left.java
+      getHash(args.getEncodedKey())
+=======
+      getSlot(args.getFirstEncodedKey())
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterDistributionChannelWriter.java/right.java
+      ;
+      ClusterConnectionProvider.Intent intent = getIntent(command.getType());
+      RedisChannelHandler<K, V> connection = 
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterDistributionChannelWriter.java/left.java
+      clusterConnectionProvider.getConnection(intent, hash)
+=======
+      (RedisChannelHandler<K, V>) clusterConnectionProvider.getConnection(intent, hash)
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/dea8f66f846bf37494c18d1ca6036edd4a2f7898/src/main/java/com/lambdaworks/redis/cluster/ClusterDistributionChannelWriter.java/right.java
+      ;
+      channelWriter = connection.getChannelWriter();
     }
-
-    private HostAndPort getMoveTarget(String errorMessage) {
-
-        checkArgument(LettuceStrings.isNotEmpty(errorMessage), "errorMessage must not be empty");
-        checkArgument(errorMessage.startsWith(CommandKeyword.MOVED.name()), "errorMessage must start with "
-                + CommandKeyword.MOVED);
-
-        List<String> movedMessageParts = Splitter.on(' ').splitToList(errorMessage);
-        checkArgument(movedMessageParts.size() >= 3, "errorMessage must consist of 3 tokens (" + movedMessageParts + ")");
-
-        return HostAndPort.fromString(movedMessageParts.get(2));
+    if (channelWriter instanceof ClusterDistributionChannelWriter) {
+      ClusterDistributionChannelWriter<K, V> writer = (ClusterDistributionChannelWriter<K, V>) channelWriter;
+      channelWriter = writer.defaultWriter;
     }
-
-    private HostAndPort getAskTarget(String errorMessage) {
-
-        checkArgument(LettuceStrings.isNotEmpty(errorMessage), "errorMessage must not be empty");
-        checkArgument(errorMessage.startsWith(CommandKeyword.ASK.name()), "errorMessage must start with " + CommandKeyword.ASK);
-
-        List<String> movedMessageParts = Splitter.on(' ').splitToList(errorMessage);
-        checkArgument(movedMessageParts.size() >= 3, "errorMessage must consist of 3 tokens (" + movedMessageParts + ")");
-
-        return HostAndPort.fromString(movedMessageParts.get(2));
+    if (channelWriter != null && channelWriter != this && channelWriter != defaultWriter) {
+      return channelWriter.write((C) commandToSend);
     }
+    defaultWriter.write((C) commandToSend);
+    return command;
+  }
 
-    @Override
-    public void close() {
-
-        if (closed) {
-            return;
-        }
-
-        closed = true;
-
-        if (defaultWriter != null) {
-            defaultWriter.close();
-            defaultWriter = null;
-        }
-
-        if (clusterConnectionProvider != null) {
-            clusterConnectionProvider.close();
-            clusterConnectionProvider = null;
-        }
-
+  private ClusterConnectionProvider.Intent getIntent(ProtocolKeyword type) {
+    for (ProtocolKeyword readOnlyCommand : ReadOnlyCommands.READ_ONLY_COMMANDS) {
+      if (readOnlyCommand == type) {
+        return ClusterConnectionProvider.Intent.READ;
+      }
     }
+    return ClusterConnectionProvider.Intent.WRITE;
+  }
 
-    @Override
-    public void setRedisChannelHandler(RedisChannelHandler<K, V> redisChannelHandler) {
-        defaultWriter.setRedisChannelHandler(redisChannelHandler);
+  private HostAndPort getMoveTarget(String errorMessage) {
+    checkArgument(LettuceStrings.isNotEmpty(errorMessage), "errorMessage must not be empty");
+    checkArgument(errorMessage.startsWith(CommandKeyword.MOVED.name()), "errorMessage must start with " + CommandKeyword.MOVED);
+    List<String> movedMessageParts = Splitter.on(' ').splitToList(errorMessage);
+    checkArgument(movedMessageParts.size() >= 3, "errorMessage must consist of 3 tokens (" + movedMessageParts + ")");
+    return HostAndPort.fromString(movedMessageParts.get(2));
+  }
+
+  private HostAndPort getAskTarget(String errorMessage) {
+    checkArgument(LettuceStrings.isNotEmpty(errorMessage), "errorMessage must not be empty");
+    checkArgument(errorMessage.startsWith(CommandKeyword.ASK.name()), "errorMessage must start with " + CommandKeyword.ASK);
+    List<String> movedMessageParts = Splitter.on(' ').splitToList(errorMessage);
+    checkArgument(movedMessageParts.size() >= 3, "errorMessage must consist of 3 tokens (" + movedMessageParts + ")");
+    return HostAndPort.fromString(movedMessageParts.get(2));
+  }
+
+  @Override public void close() {
+    if (closed) {
+      return;
     }
-
-    @Override
-    public void setAutoFlushCommands(boolean autoFlush) {
-        getClusterConnectionProvider().setAutoFlushCommands(autoFlush);
+    closed = true;
+    if (defaultWriter != null) {
+      defaultWriter.close();
+      defaultWriter = null;
     }
-
-    @Override
-    public void flushCommands() {
-        getClusterConnectionProvider().flushCommands();
+    if (clusterConnectionProvider != null) {
+      clusterConnectionProvider.close();
+      clusterConnectionProvider = null;
     }
+  }
 
-    public ClusterConnectionProvider getClusterConnectionProvider() {
-        return clusterConnectionProvider;
-    }
+  @Override public void setRedisChannelHandler(RedisChannelHandler<K, V> redisChannelHandler) {
+    defaultWriter.setRedisChannelHandler(redisChannelHandler);
+  }
 
-    @Override
-    public void reset() {
-        defaultWriter.reset();
-        clusterConnectionProvider.reset();
-    }
+  @Override public void setAutoFlushCommands(boolean autoFlush) {
+    getClusterConnectionProvider().setAutoFlushCommands(autoFlush);
+  }
 
-    public void setClusterConnectionProvider(ClusterConnectionProvider clusterConnectionProvider) {
-        this.clusterConnectionProvider = clusterConnectionProvider;
-    }
+  @Override public void flushCommands() {
+    getClusterConnectionProvider().flushCommands();
+  }
 
-    public void setPartitions(Partitions partitions) {
-        clusterConnectionProvider.setPartitions(partitions);
-    }
+  public ClusterConnectionProvider getClusterConnectionProvider() {
+    return clusterConnectionProvider;
+  }
 
-    /**
+  @Override public void reset() {
+    defaultWriter.reset();
+    clusterConnectionProvider.reset();
+  }
+
+  public void setClusterConnectionProvider(ClusterConnectionProvider clusterConnectionProvider) {
+    this.clusterConnectionProvider = clusterConnectionProvider;
+  }
+
+  public void setPartitions(Partitions partitions) {
+    clusterConnectionProvider.setPartitions(partitions);
+  }
+
+  /**
      * Set from which nodes data is read. The setting is used as default for read operations on this connection. See the
      * documentation for {@link ReadFrom} for more information.
      *
      * @param readFrom the read from setting, must not be {@literal null}
      */
-    public void setReadFrom(ReadFrom readFrom) {
-        clusterConnectionProvider.setReadFrom(readFrom);
-    }
+  public void setReadFrom(ReadFrom readFrom) {
+    clusterConnectionProvider.setReadFrom(readFrom);
+  }
 
-    /**
+  /**
      * Gets the {@link ReadFrom} setting for this connection. Defaults to {@link ReadFrom#MASTER} if not set.
      * 
      * @return the read from setting
      */
-    public ReadFrom getReadFrom() {
-        return clusterConnectionProvider.getReadFrom();
-    }
+  public ReadFrom getReadFrom() {
+    return clusterConnectionProvider.getReadFrom();
+  }
 }

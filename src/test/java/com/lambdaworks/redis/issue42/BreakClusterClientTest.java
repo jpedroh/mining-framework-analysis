@@ -1,14 +1,10 @@
 package com.lambdaworks.redis.issue42;
-
 import static com.google.code.tempusfugit.temporal.Duration.*;
 import static com.google.code.tempusfugit.temporal.Timeout.*;
-
 import java.util.concurrent.TimeUnit;
-
 import com.lambdaworks.category.SlowTests;
 import com.lambdaworks.redis.FastShutdown;
 import org.junit.*;
-
 import com.google.code.tempusfugit.temporal.Condition;
 import com.google.code.tempusfugit.temporal.Duration;
 import com.google.code.tempusfugit.temporal.ThreadSleep;
@@ -19,58 +15,49 @@ import com.lambdaworks.redis.cluster.ClusterRule;
 import com.lambdaworks.redis.cluster.RedisClusterClient;
 import com.lambdaworks.redis.cluster.api.sync.RedisClusterCommands;
 
-@SlowTests
-@Ignore("Run me manually")
-public class BreakClusterClientTest extends BreakClientBase {
-    public static final String host = TestSettings.hostAddr();
-    public static final int port1 = 7379;
-    public static final int port2 = 7380;
-    public static final int port3 = 7381;
-    public static final int port4 = 7382;
+@SlowTests @Ignore(value = "Run me manually") public class BreakClusterClientTest extends BreakClientBase {
+  public static final String host = TestSettings.hostAddr();
 
-    private static RedisClusterClient clusterClient;
-    private RedisClusterCommands<String, String> clusterConnection;
+  public static final int port1 = 7379;
 
-    @Rule
-    public ClusterRule clusterRule = new ClusterRule(clusterClient, port1, port2, port3, port4);
+  public static final int port2 = 7380;
 
-    @BeforeClass
-    public static void setupClient() {
-        clusterClient = new RedisClusterClient(RedisURI.Builder.redis(host, port1).withTimeout(TIMEOUT, TimeUnit.SECONDS)
-                .build());
-    }
+  public static final int port3 = 7381;
 
-    @AfterClass
-    public static void shutdownClient() {
-        FastShutdown.shutdown(clusterClient);
-    }
+  public static final int port4 = 7382;
 
-    @Before
-    public void setUp() throws Exception {
-        WaitFor.waitOrTimeout(new Condition() {
-            @Override
-            public boolean isSatisfied() {
-                return clusterRule.isStable();
-            }
-        }, timeout(seconds(5)), new ThreadSleep(Duration.millis(500)));
+  private static RedisClusterClient clusterClient;
 
-        clusterConnection = clusterClient.connectCluster(this.slowCodec);
+  private RedisClusterCommands<String, String> clusterConnection;
 
-    }
+  @Rule public ClusterRule clusterRule = new ClusterRule(clusterClient, port1, port2, port3, port4);
 
-    @After
-    public void tearDown() throws Exception {
-        clusterConnection.close();
-    }
+  @BeforeClass public static void setupClient() {
+    clusterClient = new RedisClusterClient(RedisURI.Builder.redis(host, port1).withTimeout(TIMEOUT, TimeUnit.SECONDS).build());
+  }
 
-    @Test
-    public void testStandAlone() throws Exception {
-        testSingle(clusterConnection);
-    }
+  @AfterClass public static void shutdownClient() {
+    FastShutdown.shutdown(clusterClient);
+  }
 
-    @Test
-    public void testLooping() throws Exception {
-        testLoop(clusterConnection);
-    }
+  @Before public void setUp() throws Exception {
+    WaitFor.waitOrTimeout(new Condition() {
+      @Override public boolean isSatisfied() {
+        return clusterRule.isStable();
+      }
+    }, timeout(seconds(5)), new ThreadSleep(Duration.millis(500)));
+    clusterConnection = clusterClient.connectCluster(this.slowCodec);
+  }
 
+  @After public void tearDown() throws Exception {
+    clusterConnection.close();
+  }
+
+  @Test @Ignore public void testStandAlone() throws Exception {
+    testSingle(clusterConnection);
+  }
+
+  @Test @Ignore public void testLooping() throws Exception {
+    testLoop(clusterConnection);
+  }
 }

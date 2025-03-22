@@ -2,29 +2,28 @@ package com.lambdaworks.redis;
 
 /**
  * Interface for a connection point described with a host and port or socket.
- *
+ * 
  * @author <a href="mailto:mpaluch@paluch.biz">Mark Paluch</a>
  */
 public interface ConnectionPoint {
-
-    /**
+  /**
      * Returns the host that should represent the hostname or IPv4/IPv6 literal.
-     *
+     * 
      * @return the hostname/IP address
      */
-    String getHost();
+  String getHost();
 
-    /**
+  /**
      * Get the current port number.
-     *
+     * 
      * @return the port number
      */
-    int getPort();
+  int getPort();
 
-    /**
+  /**
      * Get the socket path.
-     *
+     * 
      * @return path to a Unix Domain Socket
      */
-    String getSocket();
+  String getSocket();
 }
