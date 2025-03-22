@@ -45,7 +45,42 @@ public class CSharpNetCoreClientCodegenTest {
     }
 
     @Test
-    public void testUnsigned() {
+    public
+<<<<<<< /usr/src/app/output/openapitools/openapi-generator/0ac721c36248a0569bfa1889de8b52c2bf49691a/modules/openapi-generator/src/test/java/org/openapitools/codegen/csharpnetcore/CSharpNetCoreClientCodegenTest.java/left.java
+    @Test void testUnsigned() {
+        // test unsigned integer/long
+        final OpenAPI openAPI = TestUtils.parseFlattenSpec("src/test/resources/3_0/csharp/petstore-with-fake-endpoints-models-for-testing-with-http-signature.yaml");
+        CSharpNetCoreClientCodegen codegen = new CSharpNetCoreClientCodegen();
+
+        Schema test1 = openAPI.getComponents().getSchemas().get("format_test");
+        codegen.setOpenAPI(openAPI);
+        CodegenModel cm1 = codegen.fromModel("format_test", test1);
+        Assert.assertEquals(cm1.getClassname(), "FormatTest");
+
+        final CodegenProperty property1 = cm1.allVars.get(2);
+        Assert.assertEquals(property1.baseName, "unsigned_integer");
+        Assert.assertEquals(property1.dataType, "uint");
+        Assert.assertEquals(property1.vendorExtensions.get("x-unsigned"), Boolean.TRUE);
+        Assert.assertTrue(property1.isPrimitiveType);
+        Assert.assertTrue(property1.isInteger);
+        Assert.assertFalse(property1.isContainer);
+        Assert.assertFalse(property1.isFreeFormObject);
+        Assert.assertFalse(property1.isAnyType);
+
+        final CodegenProperty property2 = cm1.allVars.get(4);
+        Assert.assertEquals(property2.baseName, "unsigned_long");
+        Assert.assertEquals(property2.dataType, "ulong");
+        Assert.assertEquals(property2.vendorExtensions.get("x-unsigned"), Boolean.TRUE);
+        Assert.assertTrue(property2.isPrimitiveType);
+        Assert.assertTrue(property2.isLong);
+        Assert.assertFalse(property2.isContainer);
+        Assert.assertFalse(property2.isFreeFormObject);
+        Assert.assertFalse(property2.isAnyType);
+    }
+||||||| /usr/src/app/output/openapitools/openapi-generator/0ac721c36248a0569bfa1889de8b52c2bf49691a/modules/openapi-generator/src/test/java/org/openapitools/codegen/csharpnetcore/CSharpNetCoreClientCodegenTest.java/base.java
+    @Test void testUnsigned() 
+=======
+    @Test void testUnsigned() {
         // test unsigned integer/long
         final OpenAPI openAPI = TestUtils.parseFlattenSpec("src/test/resources/3_0/unsigned-test.yaml");
         CSharpNetCoreClientCodegen codegen = new CSharpNetCoreClientCodegen();
@@ -75,4 +110,5 @@ public class CSharpNetCoreClientCodegenTest {
         Assert.assertFalse(property2.isFreeFormObject);
         Assert.assertFalse(property2.isAnyType);
     }
+>>>>>>> /usr/src/app/output/openapitools/openapi-generator/0ac721c36248a0569bfa1889de8b52c2bf49691a/modules/openapi-generator/src/test/java/org/openapitools/codegen/csharpnetcore/CSharpNetCoreClientCodegenTest.java/right.java
 }
