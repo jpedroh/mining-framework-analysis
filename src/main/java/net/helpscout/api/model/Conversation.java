@@ -18,7 +18,6 @@ public class Conversation {
 	private boolean isDraft;
 	private int number;
 	private Source source;
-
 	private UserRef owner;
 	private MailboxRef mailbox;
 	private CustomerRef customer;
@@ -30,23 +29,17 @@ public class Conversation {
 	private Calendar modifiedAt;
 	private String closedAt;
 	private UserRef closedBy;
-
 	private PersonRef createdBy;
-
 	private List<String> ccList;
 	private List<String> bccList;
 	private List<String> tags;
-
 	private List<LineItem> threads;
-
 	public int getId() {
 		return id;
 	}
-
 	public ConversationType getType() {
 		return type;
 	}
-
 	public void setType(ConversationType type) {
 		this.type = type;
 	}
@@ -106,11 +99,9 @@ public class Conversation {
 	public Calendar getCreatedAt() {
 		return createdAt;
 	}
-
 	public Calendar getModifiedAt() {
 		return modifiedAt;
 	}
-
 	public String getClosedAt() {
 		return closedAt;
 	}

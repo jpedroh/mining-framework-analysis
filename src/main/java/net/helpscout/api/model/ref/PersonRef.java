@@ -8,5 +8,10 @@ public interface PersonRef {
 	public String getFirstName();
 	public String getLastName();
 	public String getEmail();
+<<<<<<< /usr/src/app/output/helpscout/helpscout-api-java/397295ddede909edd6af0276694088841a9d5039/src/main/java/net/helpscout/api/model/ref/PersonRef.java/left.java
 	public PersonType getType();
+||||||| /usr/src/app/output/helpscout/helpscout-api-java/397295ddede909edd6af0276694088841a9d5039/src/main/java/net/helpscout/api/model/ref/PersonRef.java/base.java
+	public String getType();
+=======
+>>>>>>> /usr/src/app/output/helpscout/helpscout-api-java/397295ddede909edd6af0276694088841a9d5039/src/main/java/net/helpscout/api/model/ref/PersonRef.java/right.java
 }
