@@ -18,7 +18,7 @@ package me.zhengjie.modules.quartz.task;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.exception.TaskException;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * 测试用
@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Async
-@Component
+@Service
 @SuppressWarnings({"unused"})
 public class TestTask {
 
