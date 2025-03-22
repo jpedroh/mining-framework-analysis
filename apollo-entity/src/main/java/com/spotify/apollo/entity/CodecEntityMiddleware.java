@@ -28,10 +28,11 @@ import com.spotify.apollo.route.AsyncHandler;
 import com.spotify.apollo.route.Middleware;
 import com.spotify.apollo.route.SyncHandler;
 
+import java.util.concurrent.CompletionStage;
+
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 import javaslang.control.Either;
 import javax.annotation.Nullable;
