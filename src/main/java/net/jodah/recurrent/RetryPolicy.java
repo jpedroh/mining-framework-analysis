@@ -1,7 +1,5 @@
 package net.jodah.recurrent;
-
 import java.util.concurrent.TimeUnit;
-
 import net.jodah.recurrent.internal.util.Assert;
 import net.jodah.recurrent.util.Duration;
 import net.jodah.recurrent.util.Predicate;
@@ -13,11 +11,17 @@ import net.jodah.recurrent.util.Predicate;
  */
 public final class RetryPolicy {
   private Duration delay;
+
   private double delayMultiplier;
+
   private Duration maxDelay;
+
   private Duration maxDuration;
+
   private int maxRetries;
+
   private Class<? extends Throwable>[] retryOn;
+
   private Predicate<Throwable> retryPredicate;
 
   /**
@@ -40,16 +44,20 @@ public final class RetryPolicy {
    */
   public boolean allowsRetriesFor(Throwable failure) {
     boolean allowsRetries = allowsRetries();
-    if (!allowsRetries)
+    if (!allowsRetries) {
       return false;
-
-    if (retryPredicate != null)
+    }
+    if (retryPredicate != null) {
       return retryPredicate.test(failure);
-    else if (retryOn != null) {
-      for (Class<? extends Throwable> retryType : retryOn)
-        if (failure.getClass().isAssignableFrom(retryType))
-          return true;
-      return false;
+    } else {
+      if (retryOn != null) {
+        for (Class<? extends Throwable> retryType : retryOn) {
+          if (failure.getClass().isAssignableFrom(retryType)) {
+            return true;
+          }
+        }
+        return false;
+      }
     }
     return true;
   }
@@ -107,8 +115,7 @@ public final class RetryPolicy {
    * @throws NullPointerException if {@code failures} is null
    * @throws IllegalArgumentException if failures is empty
    */
-  @SuppressWarnings("unchecked")
-  public RetryPolicy retryOn(Class<? extends Throwable>... failures) {
+  @SuppressWarnings(value = { "unchecked" }) public RetryPolicy retryOn(Class<? extends Throwable>... failures) {
     Assert.notNull(failures, "failures");
     Assert.isTrue(failures.length > 0, "Failures cannot be empty");
     this.retryOn = failures;
@@ -121,8 +128,7 @@ public final class RetryPolicy {
    * 
    * @throws NullPointerException if {@code failurePredicate} is null
    */
-  @SuppressWarnings("unchecked")
-  public RetryPolicy retryWhen(Predicate<? extends Throwable> retryPredicate) {
+  @SuppressWarnings(value = { "unchecked" }) public RetryPolicy retryWhen(Predicate<? extends Throwable> retryPredicate) {
     Assert.notNull(retryPredicate, "retryPredicate");
     this.retryPredicate = (Predicate<Throwable>) retryPredicate;
     return this;
@@ -154,8 +160,9 @@ public final class RetryPolicy {
     this.maxDelay = new Duration(maxDelay, timeUnit);
     this.delayMultiplier = delayMultiplier;
     Assert.isTrue(this.delay.toNanos() > 0, "The delay must be greater tha 0");
-    if (maxDuration != null)
+    if (maxDuration != null) {
       Assert.state(this.delay.toNanos() < this.maxDuration.toNanos(), "The delay must be less than the maxDuration");
+    }
     Assert.isTrue(this.delay.toNanos() < this.maxDelay.toNanos(), "The delay must be less than the maxDelay");
     Assert.isTrue(delayMultiplier > 1, "The delayMultiplier must be greater than 1");
     return this;
@@ -173,8 +180,9 @@ public final class RetryPolicy {
     Assert.notNull(timeUnit, "timeUnit");
     this.delay = new Duration(delay, timeUnit);
     Assert.isTrue(this.delay.toNanos() > 0, "The delay must be greater tha 0");
-    if (maxDuration != null)
+    if (maxDuration != null) {
       Assert.state(this.delay.toNanos() < maxDuration.toNanos(), "The delay must be less than the maxDuration");
+    }
     Assert.state(maxDelay == null, "Backoff delays have already been set");
     return this;
   }
