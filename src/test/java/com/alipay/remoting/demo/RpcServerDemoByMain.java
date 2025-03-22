@@ -52,12 +52,12 @@ public class RpcServerDemoByMain {
         // 3. register user processor for client request
         server.registerUserProcessor(serverUserProcessor);
         // 4. server start
-        if (server.start()) {
+        if(server.start()) {
             System.out.println("server start ok!");
         } else {
             System.out.println("server start failed!");
         }
-        //        server.getRpcServer().stop();
+//        server.getRpcServer().stop();
     }
 
     public static void main(String[] args) {

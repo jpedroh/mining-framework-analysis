@@ -76,7 +76,12 @@ public abstract class RemotingServer {
                 return false;
             }
         } else {
+<<<<<<< /usr/src/app/output/sofastack/sofa-bolt/48c96584e07d2715f0346ea03a50e50c03b8787d/src/main/java/com/alipay/remoting/RemotingServer.java/left.java
+            this.stop();
+||||||| /usr/src/app/output/sofastack/sofa-bolt/48c96584e07d2715f0346ea03a50e50c03b8787d/src/main/java/com/alipay/remoting/RemotingServer.java/base.java
+=======
             String errMsg = "ERROR: The server has already started!";
+>>>>>>> /usr/src/app/output/sofastack/sofa-bolt/48c96584e07d2715f0346ea03a50e50c03b8787d/src/main/java/com/alipay/remoting/RemotingServer.java/right.java
             logger.error(errMsg);
             throw new IllegalStateException(errMsg);
         }
@@ -98,7 +103,12 @@ public abstract class RemotingServer {
                 return false;
             }
         } else {
+<<<<<<< /usr/src/app/output/sofastack/sofa-bolt/48c96584e07d2715f0346ea03a50e50c03b8787d/src/main/java/com/alipay/remoting/RemotingServer.java/left.java
+            this.stop();
+||||||| /usr/src/app/output/sofastack/sofa-bolt/48c96584e07d2715f0346ea03a50e50c03b8787d/src/main/java/com/alipay/remoting/RemotingServer.java/base.java
+=======
             String errMsg = "ERROR: The server has already started!";
+>>>>>>> /usr/src/app/output/sofastack/sofa-bolt/48c96584e07d2715f0346ea03a50e50c03b8787d/src/main/java/com/alipay/remoting/RemotingServer.java/right.java
             logger.error(errMsg);
             throw new IllegalStateException(errMsg);
         }

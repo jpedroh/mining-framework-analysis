@@ -70,8 +70,14 @@ public class RpcConnectionFactory implements ConnectionFactory {
                                                                                .getRuntime()
                                                                                .availableProcessors() + 1,
                                                                            new NamedThreadFactory(
+<<<<<<< /usr/src/app/output/sofastack/sofa-bolt/48c96584e07d2715f0346ea03a50e50c03b8787d/src/main/java/com/alipay/remoting/rpc/RpcConnectionFactory.java/left.java
+                                                                               "Rpc-netty-client-worker", true));
+||||||| /usr/src/app/output/sofastack/sofa-bolt/48c96584e07d2715f0346ea03a50e50c03b8787d/src/main/java/com/alipay/remoting/rpc/RpcConnectionFactory.java/base.java
+                                                                               "Rpc-netty-client-worker"));
+=======
                                                                                "Rpc-netty-client-worker",
                                                                                true));
+>>>>>>> /usr/src/app/output/sofastack/sofa-bolt/48c96584e07d2715f0346ea03a50e50c03b8787d/src/main/java/com/alipay/remoting/rpc/RpcConnectionFactory.java/right.java
 
     private Bootstrap                                   bootstrap;
 
