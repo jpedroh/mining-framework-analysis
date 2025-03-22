@@ -302,8 +302,15 @@ public class ScreenshotPlugin extends Plugin
 			{
 				takeScreenshot("Death", SD_DEATHS);
 			}
+<<<<<<< /usr/src/app/output/runelite/runelite/32dc12da8dda6d3eb70e9d44f2c9a1915c5dd444/runelite-client/src/main/java/net/runelite/client/plugins/screenshot/ScreenshotPlugin.java/left.java
 			else if (player != client.getLocalPlayer() && (player.isFriendsChatMember() || player.isFriend()) && config.screenshotFriendDeath() && player.getCanvasTilePoly() != null
 				|| player != client.getLocalPlayer() && player.isClanMember() && config.screenshotClanDeath() && player.getCanvasTilePoly() != null)
+||||||| /usr/src/app/output/runelite/runelite/32dc12da8dda6d3eb70e9d44f2c9a1915c5dd444/runelite-client/src/main/java/net/runelite/client/plugins/screenshot/ScreenshotPlugin.java/base.java
+			else if ()
+=======
+			else if ((player.isFriendsChatMember() || player.isFriend()) && config.screenshotFriendDeath() 
+				|| (player.isClanMember() && config.screenshotClanDeath()))
+>>>>>>> /usr/src/app/output/runelite/runelite/32dc12da8dda6d3eb70e9d44f2c9a1915c5dd444/runelite-client/src/main/java/net/runelite/client/plugins/screenshot/ScreenshotPlugin.java/right.java
 			{
 				takeScreenshot("Death " + player.getName(), SD_DEATHS);
 			}
