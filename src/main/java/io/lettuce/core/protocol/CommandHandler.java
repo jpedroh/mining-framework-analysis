@@ -421,12 +421,31 @@ public class CommandHandler extends ChannelDuplexHandler implements HasQueuedCom
             TraceContext context = provider.getTraceContext();
 
             Tracer.Span span = tracer.nextSpan(context);
+<<<<<<< /usr/src/app/output/lettuce-io/lettuce-core/5c268f3986d021f479f8937a44582182969cde2a/src/main/java/io/lettuce/core/protocol/CommandHandler.java/left.java
+            span.name(command.getType().name());
+
+            if (includeCommandArgsInSpanTags && command.getArgs() != null) {
+                span.tag("redis.args", command.getArgs().toCommandString());
+            }
 
             if (tracedEndpoint == null) {
                 tracedEndpoint = clientResources.tracing().createEndpoint(ctx.channel().remoteAddress());
             }
 
+            span.remoteEndpoint(tracedEndpoint);
+            span.start();
+||||||| /usr/src/app/output/lettuce-io/lettuce-core/5c268f3986d021f479f8937a44582182969cde2a/src/main/java/io/lettuce/core/protocol/CommandHandler.java/base.java
+            span.name(command.getType().name());
+
+            if (includeCommandArgsInSpanTags && command.getArgs() != null) {
+                span.tag("redis.args", command.getArgs().toCommandString());
+            }
+
+            span.remoteEndpoint(tracedEndpoint);
+            span.start();
+=======
             span.remoteEndpoint(tracedEndpoint).start(command);
+>>>>>>> /usr/src/app/output/lettuce-io/lettuce-core/5c268f3986d021f479f8937a44582182969cde2a/src/main/java/io/lettuce/core/protocol/CommandHandler.java/right.java
 
             if (traced != null) {
                 traced.setSpan(span);
