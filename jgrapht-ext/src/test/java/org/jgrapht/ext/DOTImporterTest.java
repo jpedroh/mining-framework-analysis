@@ -157,7 +157,7 @@ public class DOTImporterTest extends TestCase
 
        DirectedMultigraph<String, DefaultEdge> result
              = new DirectedMultigraph<String, DefaultEdge>(DefaultEdge.class);
-       importer.importGraph(result, new StringReader(input));
+       importer.read(input, result);
 
        Assert.assertEquals(expected.toString(), result.toString());
     }
@@ -615,9 +615,9 @@ public class DOTImporterTest extends TestCase
 
        Multigraph<String, DefaultEdge> expected
              = new Multigraph<String, DefaultEdge>(DefaultEdge.class);
-       expected.addVertex("1");
-       expected.addVertex("2");
-       expected.addEdge("1", "2");
+       expected.addVertex("abc123");
+       expected.addVertex("fred");
+       expected.addEdge("abc123", "fred");
 
        DOTImporter<String, DefaultEdge> importer = buildImporter();
 

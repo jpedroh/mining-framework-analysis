@@ -25,12 +25,17 @@
  * (C) Copyright 2015-2016, by  Wil Selwood and Contributors.
  *
  * Original Author:  Wil Selwood <wselwood@ijento.com>
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/c27c35b595c2f687c5537fa9663e7ea3fc9f2fe7/jgrapht-ext/src/main/java/org/jgrapht/ext/DOTImporter.java/left.java
  * Contributor(s): Dimitrios Michail
- * 
+ *  
  * Changes
  * -------
  * 2015 : Initial revision (WS);
  * 19-Aug-2016: Always provide id to vertex providers (DM);
+||||||| /usr/src/app/output/jgrapht/jgrapht/c27c35b595c2f687c5537fa9663e7ea3fc9f2fe7/jgrapht-ext/src/main/java/org/jgrapht/ext/DOTImporter.java/base.java
+=======
+ * Contributors: Dimitrios Michail
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/c27c35b595c2f687c5537fa9663e7ea3fc9f2fe7/jgrapht-ext/src/main/java/org/jgrapht/ext/DOTImporter.java/right.java
  *
  */
 package org.jgrapht.ext;
