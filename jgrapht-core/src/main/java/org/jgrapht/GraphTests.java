@@ -497,32 +497,6 @@ public abstract class GraphTests
     }
 
     /**
-     * Checks whether a graph is <a href="http://www.graphclasses.org/classes/gc_14.html">weakly chordal</a>.
-     * <p>
-     * The following definitions are equivalent:
-     * <ol>
-     * <li> A graph is weakly chordal if it is (<a href="http://mathworld.wolfram.com/GraphAntihole.html">
-     * anti-hole</a>,<a href="http://mathworld.wolfram.com/GraphHole.html">hole</a>)-free. In other words,
-     * a graph is weakly chordal if it and its complement do not have
-     * <a href="http://mathworld.wolfram.com/ChordlessCycle.html">chordless cycles</a> of length greater than 4.</li>
-     * <li> A 2-pair in a graph is a pair of non-adjacent vertices $x$, $y$ such that every chordless path has
-     * exactly two edges. A graph is weakly chordal if every connected
-     * <a href="https://en.wikipedia.org/wiki/Induced_subgraph">induced subgraph</a> $H$ that is not a complete
-     * graph, contains a 2-pair.</li>
-     * </ol>
-     *
-     * @param graph the input graph
-     * @param <V>   the graph vertex type
-     * @param <E>   the graph edge type
-     * @return true if the graph is weakly chordal, false otherwise
-     * @see WeakChordalityInspector#isWeaklyChordal()
-     */
-    public static <V, E> boolean isWeaklyChordal(Graph<V, E> graph) {
-        Objects.requireNonNull(graph, GRAPH_CANNOT_BE_NULL);
-        return new WeakChordalityInspector<>(graph).isWeaklyChordal();
-    }
-
-    /**
      * Tests whether an undirected graph meets Ore's condition to be Hamiltonian.
      *
      * Let $G$ be a (finite and simple) graph with $n \geq 3$ vertices. We denote by $deg(v)$ the degree of a vertex $v$ in $G$,
@@ -557,6 +531,33 @@ public abstract class GraphTests
         }
 
         return true;
+    }
+
+
+    /**
+     * Checks whether a graph is <a href="http://www.graphclasses.org/classes/gc_14.html">weakly chordal</a>.
+     * <p>
+     * The following definitions are equivalent:
+     * <ol>
+     * <li> A graph is weakly chordal if it is (<a href="http://mathworld.wolfram.com/GraphAntihole.html">
+     * anti-hole</a>,<a href="http://mathworld.wolfram.com/GraphHole.html">hole</a>)-free. In other words,
+     * a graph is weakly chordal if it and its complement do not have
+     * <a href="http://mathworld.wolfram.com/ChordlessCycle.html">chordless cycles</a> of length greater than 4.</li>
+     * <li> A 2-pair in a graph is a pair of non-adjacent vertices $x$, $y$ such that every chordless path has
+     * exactly two edges. A graph is weakly chordal if every connected
+     * <a href="https://en.wikipedia.org/wiki/Induced_subgraph">induced subgraph</a> $H$ that is not a complete
+     * graph, contains a 2-pair.</li>
+     * </ol>
+     *
+     * @param graph the input graph
+     * @param <V>   the graph vertex type
+     * @param <E>   the graph edge type
+     * @return true if the graph is weakly chordal, false otherwise
+     * @see WeakChordalityInspector#isWeaklyChordal()
+     */
+    public static <V, E> boolean isWeaklyChordal(Graph<V, E> graph) {
+        Objects.requireNonNull(graph, GRAPH_CANNOT_BE_NULL);
+        return new WeakChordalityInspector<>(graph).isWeaklyChordal();
     }
 
     /**
