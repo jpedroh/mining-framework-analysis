@@ -38,7 +38,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -97,8 +96,20 @@ public abstract class AbstractAvroMojo extends AbstractMojo {
    *
    * @parameter
    */
+  /**
+   * A set of Ant-like exclusion patterns used to prevent certain files from being
+   * processed. By default, this set is empty such that no files are excluded.
+   *
+   * @parameter
+   */
   protected String[] excludes = new String[0];
 
+  /**
+   * A set of Ant-like exclusion patterns used to prevent certain files from being
+   * processed. By default, this set is empty such that no files are excluded.
+   *
+   * @parameter
+   */
   /**
    * A set of Ant-like exclusion patterns used to prevent certain files from being
    * processed. By default, this set is empty such that no files are excluded.
@@ -301,22 +312,13 @@ public abstract class AbstractAvroMojo extends AbstractMojo {
   }
 
   private void compileFiles(String[] files, File sourceDir, File outDir) throws MojoExecutionException {
-    final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+    // Need to register custom logical type factories before schema compilation.
     try {
-      Thread.currentThread().setContextClassLoader(createClassLoader());
-
-      // Need to register custom logical type factories before schema compilation.
-      try {
-        loadLogicalTypesFactories();
-      } catch (IOException e) {
-        throw new MojoExecutionException("Error while loading logical types factories ", e);
-      }
-      this.doCompile(files, sourceDir, outDir);
-    } catch (MalformedURLException | DependencyResolutionRequiredException e) {
-      throw new MojoExecutionException("Cannot locate classpath entries", e);
-    } finally {
-      Thread.currentThread().setContextClassLoader(contextClassLoader);
+      loadLogicalTypesFactories();
+    } catch (IOException e) {
+      throw new MojoExecutionException("Error while loading logical types factories ", e);
     }
+    this.doCompile(files, sourceDir, outDir);
   }
 
   private void loadLogicalTypesFactories() throws IOException, MojoExecutionException {
@@ -358,23 +360,29 @@ public abstract class AbstractAvroMojo extends AbstractMojo {
   }
 
   protected void doCompile(String[] files, File sourceDirectory, File outputDirectory) throws MojoExecutionException {
-    for (String filename : files) {
-      try {
-        doCompile(filename, sourceDirectory, outputDirectory);
-      } catch (IOException e) {
-        throw new MojoExecutionException("Error compiling file " + filename + " to " + outputDirectory, e);
+    final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+    try {
+      Thread.currentThread().setContextClassLoader(createClassLoader());
+
+      for (String filename : files) {
+        try {
+          doCompile(filename, sourceDirectory, outputDirectory);
+        } catch (IOException e) {
+          throw new MojoExecutionException("Error compiling protocol file " + filename + " to " + outputDirectory, e);
+        }
       }
+    } catch (MalformedURLException | DependencyResolutionRequiredException e) {
+      throw new MojoExecutionException("Cannot locate classpath entries", e);
+    } finally {
+      Thread.currentThread().setContextClassLoader(contextClassLoader);
     }
   }
 
-  protected void doCompile(String filename, File sourceDirectory, File outputDirectory) throws IOException {
-    throw new UnsupportedOperationException(
-        "Programmer error: AbstractAvroMojo.doCompile(String, java.io.File, java.io.File) called directly");
-  };
+  protected abstract void doCompile(String filename, File sourceDirectory, File outputDirectory) throws IOException;
 
-  protected void doCompile(File sourceFileForModificationDetection, Collection<Schema> schemas, File outputDirectory)
+  protected void doCompile(File sourceFileForModificationDetection, Schema schema, File outputDirectory)
       throws IOException {
-    doCompile(sourceFileForModificationDetection, new SpecificCompiler(schemas), outputDirectory);
+    doCompile(sourceFileForModificationDetection, new SpecificCompiler(schema), outputDirectory);
   }
 
   protected void doCompile(File sourceFileForModificationDetection, Protocol protocol, File outputDirectory)
@@ -393,10 +401,11 @@ public abstract class AbstractAvroMojo extends AbstractMojo {
     compiler.setCreateSetters(createSetters);
     compiler.setEnableDecimalLogicalType(enableDecimalLogicalType);
     try {
+      final URLClassLoader classLoader = createClassLoader();
       for (String customConversion : customConversions) {
-        compiler.addCustomConversion(Thread.currentThread().getContextClassLoader().loadClass(customConversion));
+        compiler.addCustomConversion(classLoader.loadClass(customConversion));
       }
-    } catch (ClassNotFoundException e) {
+    } catch (ClassNotFoundException | DependencyResolutionRequiredException e) {
       throw new IOException(e);
     }
     compiler.setOutputCharacterEncoding(project.getProperties().getProperty("project.build.sourceEncoding"));
