@@ -109,7 +109,14 @@ public class ReflectiveHolderFactory<T> implements ViewHolderFactory<T> {
 		}
 	}
 
+<<<<<<< /usr/src/app/output/rtyley/android-viewholder-listviews/b5a40bb804382b21052c99890298fc5afcd4b6b1/src/main/java/com/madgag/android/listviews/ReflectiveHolderFactory.java/left.java
     public Class<? extends ViewHolder<T>> getHolderClass() {
         return holderClass;
     }
+||||||| /usr/src/app/output/rtyley/android-viewholder-listviews/b5a40bb804382b21052c99890298fc5afcd4b6b1/src/main/java/com/madgag/android/listviews/ReflectiveHolderFactory.java/base.java
+=======
+    public Class<ViewHolder<T>> getHolderClass() {
+        return getHolderClass();
+    }
+>>>>>>> /usr/src/app/output/rtyley/android-viewholder-listviews/b5a40bb804382b21052c99890298fc5afcd4b6b1/src/main/java/com/madgag/android/listviews/ReflectiveHolderFactory.java/right.java
 }

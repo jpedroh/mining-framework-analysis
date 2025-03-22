@@ -23,5 +23,10 @@ public interface ViewHolderFactory<T> {
 
     ViewHolder<T> createViewHolderFor(View view);
 
+<<<<<<< /usr/src/app/output/rtyley/android-viewholder-listviews/b5a40bb804382b21052c99890298fc5afcd4b6b1/src/main/java/com/madgag/android/listviews/ViewHolderFactory.java/left.java
     Class<? extends ViewHolder<T>> getHolderClass();
+||||||| /usr/src/app/output/rtyley/android-viewholder-listviews/b5a40bb804382b21052c99890298fc5afcd4b6b1/src/main/java/com/madgag/android/listviews/ViewHolderFactory.java/base.java
+=======
+    Class<ViewHolder<T>> getHolderClass();
+>>>>>>> /usr/src/app/output/rtyley/android-viewholder-listviews/b5a40bb804382b21052c99890298fc5afcd4b6b1/src/main/java/com/madgag/android/listviews/ViewHolderFactory.java/right.java
 }
