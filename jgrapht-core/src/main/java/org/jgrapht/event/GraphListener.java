@@ -49,6 +49,17 @@ public interface GraphListener<V, E>
      * @param e the edge event.
      */
     void edgeRemoved(GraphEdgeChangeEvent<V, E> e);
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/8f3dfa07cf62a9032f18a22f8022b3480dfbf1c7/jgrapht-core/src/main/java/org/jgrapht/event/GraphListener.java/left.java
+    
+    /**
+     * Notifies that an edge weight has been updated.
+     * 
+     * @param e the edge event.
+     */
+    default void edgeWeightUpdated(GraphEdgeChangeEvent<V, E> e) {}
+
+||||||| /usr/src/app/output/jgrapht/jgrapht/8f3dfa07cf62a9032f18a22f8022b3480dfbf1c7/jgrapht-core/src/main/java/org/jgrapht/event/GraphListener.java/base.java
+=======
 
     /**
      * Notifies that an edge weight has been updated.
@@ -59,6 +70,7 @@ public interface GraphListener<V, E>
     {
     }
 
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/8f3dfa07cf62a9032f18a22f8022b3480dfbf1c7/jgrapht-core/src/main/java/org/jgrapht/event/GraphListener.java/right.java
 }
 
 // End GraphListener.java

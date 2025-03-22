@@ -56,11 +56,11 @@ public abstract class Graphs
             throw new UnsupportedOperationException("Graph contains no edge supplier");
         }
         E e = edgeSupplier.get();
-
-        if (g.addEdge(sourceVertex, targetVertex, e)) {
+        
+        if (g.addEdge(sourceVertex, targetVertex, e)) { 
             g.setEdgeWeight(e, weight);
             return e;
-        } else {
+        } else { 
             return null;
         }
     }

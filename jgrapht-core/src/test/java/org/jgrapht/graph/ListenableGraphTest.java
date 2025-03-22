@@ -233,6 +233,49 @@ public class ListenableGraphTest
         assertEquals(null, lastRemovedEdge);
         assertEquals(20.5, lastWeightUpdate, 1e-9);
     }
+    
+    @Test
+    public void testListenableDirectedWeightedGraphWithCustomEdge()
+    {
+        init();
+
+        ListenableGraph<Object, DefaultEdge> g = new DefaultListenableGraph<>(
+            new DefaultDirectedWeightedGraph<>(DefaultEdge.class));
+
+        GraphListener<Object, DefaultEdge> listener = new MyGraphListener<>();
+        g.addGraphListener(listener);
+
+        String v1 = "v1";
+        String v2 = "v2";
+
+        g.addVertex(v1);
+        assertEquals(v1, lastAddedVertex);
+        assertEquals(null, lastRemovedVertex);
+
+        g.addVertex(v2);
+
+        init();
+
+        DefaultEdge e = g.addEdge(v1, v2);
+        g.setEdgeWeight(e, 10.0);
+        assertEquals(10.0, g.getEdgeWeight(e), 0);
+        assertEquals(e, lastAddedEdge);
+        assertEquals(null, lastRemovedEdge);
+        
+        init();
+        
+        g.setEdgeWeight(e, 5.5d);
+        assertEquals(5.5, g.getEdgeWeight(e), 1e-9);
+        assertEquals(null, lastAddedEdge);
+        assertEquals(null, lastRemovedEdge);
+        assertEquals(5.5, lastWeightUpdate, 1e-9);
+        
+        g.setEdgeWeight(e, 20.5d);
+        assertEquals(20.5, g.getEdgeWeight(e), 1e-9);
+        assertEquals(null, lastAddedEdge);
+        assertEquals(null, lastRemovedEdge);
+        assertEquals(20.5, lastWeightUpdate, 1e-9);
+    }
 
     public void init()
     {
@@ -278,10 +321,9 @@ public class ListenableGraphTest
         {
             lastRemovedVertex = e.getVertex();
         }
-
+        
         @Override
-        public void edgeWeightUpdated(GraphEdgeChangeEvent<Object, E> e)
-        {
+        public void edgeWeightUpdated(GraphEdgeChangeEvent<Object, E> e) {
             lastWeightUpdate = e.getEdgeWeight();
         }
     }
