@@ -190,10 +190,23 @@ public abstract class Symbol {
         List<Fixup> l = map2.get(s);
         if (l == null) {
           System.arraycopy(p, 0, out, j, p.length);
+<<<<<<< /usr/src/app/output/apache/avro/c299da64ee53de57ea34e589b858d7fe8ada72fd/lang/java/avro/src/main/java/org/apache/avro/io/parsing/Symbol.java/left.java
           // Copy any fixups that will be applied to p to add missing symbols
           for (List<Fixup> fixups : map2.values()) {
             copyFixups(fixups, out, j, p);
           }
+||||||| /usr/src/app/output/apache/avro/c299da64ee53de57ea34e589b858d7fe8ada72fd/lang/java/avro/src/main/java/org/apache/avro/io/parsing/Symbol.java/base.java
+=======
+          // Fixups need to be relocated!
+          for (List<Fixup> value : map2.values()) {
+              for (Fixup fixup : value) {
+                  if (fixup.symbols == p) {
+                      fixup.symbols = out;
+                      fixup.pos += j;
+                  }
+              }
+          }
+>>>>>>> /usr/src/app/output/apache/avro/c299da64ee53de57ea34e589b858d7fe8ada72fd/lang/java/avro/src/main/java/org/apache/avro/io/parsing/Symbol.java/right.java
         } else {
           l.add(new Fixup(out, j));
         }
