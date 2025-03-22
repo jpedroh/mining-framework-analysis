@@ -46,7 +46,7 @@ public abstract class CompositeJsonEncoder<Event extends DeferredProcessingAware
      * unnecessary memory allocations and reduce pressure on the garbage collector.
      */
     private int minBufferSize = 1024;
-
+    
     /**
      * Provides reusable byte buffers (initialized when the encoder is started).
      */
@@ -80,20 +80,20 @@ public abstract class CompositeJsonEncoder<Event extends DeferredProcessingAware
         encode(prefix, event, outputStream);
         formatter.writeEventToOutputStream(event, outputStream);
         encode(suffix, event, outputStream);
-
+        
         outputStream.write(lineSeparatorBytes);
     }
-
+    
     @Override
     public byte[] encode(Event event) {
         if (!isStarted()) {
             throw new IllegalStateException("Encoder is not started");
         }
-
+        
         ReusableByteBuffer buffer = bufferPool.acquire();
         try {
             encode(event, buffer);
-            return buffer.toByteArray();
+            return wrapEncoded(buffer.toByteArray());
         } catch (IOException e) {
             addWarn("Error encountered while encoding log event. Event: " + event, e);
             return EMPTY_BYTES;
@@ -101,7 +101,7 @@ public abstract class CompositeJsonEncoder<Event extends DeferredProcessingAware
             bufferPool.release(buffer);
         }
     }
-
+    
     private void encode(Encoder<Event> encoder, Event event, OutputStream outputStream) throws IOException {
         if (encoder != null) {
             byte[] data = encoder.encode(event);
@@ -123,7 +123,7 @@ public abstract class CompositeJsonEncoder<Event extends DeferredProcessingAware
         if (isStarted()) {
             return;
         }
-
+        
         super.start();
         this.bufferPool = new ReusableByteBufferPool(this.minBufferSize);
         formatter.setContext(getContext());
@@ -260,7 +260,7 @@ public abstract class CompositeJsonEncoder<Event extends DeferredProcessingAware
     public int getMinBufferSize() {
         return minBufferSize;
     }
-
+    
     /**
      * The minimum size of the byte buffer used when encoding events.
      *
