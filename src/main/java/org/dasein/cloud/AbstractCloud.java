@@ -28,6 +28,7 @@ import org.dasein.cloud.platform.PlatformServices;
 import org.dasein.cloud.quotas.QuotaServices;
 
 import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
 
 /**
@@ -96,4 +97,5 @@ public abstract class AbstractCloud extends CloudProvider {
 
         return (compute == null ? null : compute.getQuotaServices());
     }
+
 }
