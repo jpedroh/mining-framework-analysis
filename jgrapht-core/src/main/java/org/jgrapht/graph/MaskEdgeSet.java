@@ -100,7 +100,26 @@ class MaskEdgeSet<V, E>
      */
     @Override public int size()
     {
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/09493beacf894be0d9ecc446171ee7963830d048/jgrapht-core/src/main/java/org/jgrapht/graph/MaskEdgeSet.java/left.java
+        if (this.size == -1) {
+            this.size = 0;
+            for (Iterator<E> iter = iterator(); iter.hasNext(); iter.next()) {
+                this.size++;
+            }
+        }
+        return this.size;
+||||||| /usr/src/app/output/jgrapht/jgrapht/09493beacf894be0d9ecc446171ee7963830d048/jgrapht-core/src/main/java/org/jgrapht/graph/MaskEdgeSet.java/base.java
+        if (this.size == -1) {
+            this.size = 0;
+            for (Iterator<E> iter = iterator(); iter.hasNext();) {
+                iter.next();
+                this.size++;
+            }
+        }
+        return this.size;
+=======
         return (int) edgeSet.stream().filter(e -> contains(e)).count();
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/09493beacf894be0d9ecc446171ee7963830d048/jgrapht-core/src/main/java/org/jgrapht/graph/MaskEdgeSet.java/right.java
     }
 
     private class MaskEdgeSetNextElementFunctor

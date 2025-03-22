@@ -91,7 +91,26 @@ class MaskVertexSet<V, E>
      */
     @Override public int size()
     {
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/09493beacf894be0d9ecc446171ee7963830d048/jgrapht-core/src/main/java/org/jgrapht/graph/MaskVertexSet.java/left.java
+        if (this.size == -1) {
+            this.size = 0;
+            for (Iterator<V> iter = iterator(); iter.hasNext(); iter.next()) {
+                this.size++;
+            }
+        }
+        return this.size;
+||||||| /usr/src/app/output/jgrapht/jgrapht/09493beacf894be0d9ecc446171ee7963830d048/jgrapht-core/src/main/java/org/jgrapht/graph/MaskVertexSet.java/base.java
+        if (this.size == -1) {
+            this.size = 0;
+            for (Iterator<V> iter = iterator(); iter.hasNext();) {
+                iter.next();
+                this.size++;
+            }
+        }
+        return this.size;
+=======
         return (int) vertexSet.stream().filter(v -> contains(v)).count();
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/09493beacf894be0d9ecc446171ee7963830d048/jgrapht-core/src/main/java/org/jgrapht/graph/MaskVertexSet.java/right.java
     }
 
     private class MaskVertexSetNextElementFunctor
