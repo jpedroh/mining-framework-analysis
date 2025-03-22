@@ -89,6 +89,7 @@ public interface MatchingAlgorithm<V, E>
          */
         Set<E> getEdges();
 
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/7bd0c78896c58a95fa1c8f6a980e535563ab0fe9/jgrapht-core/src/main/java/org/jgrapht/alg/interfaces/MatchingAlgorithm.java/left.java
         /**
          * Returns true if vertex v is incident to an edge in this matching.
          * @param v vertex
@@ -104,18 +105,20 @@ public interface MatchingAlgorithm<V, E>
          * @return true if the matching is perfect. By definition, a perfect matching consists of exactly 1/2|V| edges,
          * and the number of vertices in the graph must be even.
          */
-        default boolean isPerfect() {
-            return getEdges().size() == getGraph().vertexSet().size() / 2.0;
+        default boolean isPerfect(){
+            return getEdges().size()==getGraph().vertexSet().size()/2.0;
         }
-
-       /**
-        * Returns an iterator over the edges in the matching.
-        * @return iterator over the edges in the matching.
-        */
+||||||| /usr/src/app/output/jgrapht/jgrapht/7bd0c78896c58a95fa1c8f6a980e535563ab0fe9/jgrapht-core/src/main/java/org/jgrapht/alg/interfaces/MatchingAlgorithm.java/base.java
+=======
+        /**
+         * Returns an iterator over the edges in the matching.
+         * @return iterator over the edges in the matching.
+         */
         @Override
         default Iterator<E> iterator(){
             return getEdges().iterator();
         }
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/7bd0c78896c58a95fa1c8f6a980e535563ab0fe9/jgrapht-core/src/main/java/org/jgrapht/alg/interfaces/MatchingAlgorithm.java/right.java
     }
 
     /**
