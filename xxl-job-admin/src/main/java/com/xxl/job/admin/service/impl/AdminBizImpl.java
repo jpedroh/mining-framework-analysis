@@ -125,6 +125,20 @@ public class AdminBizImpl implements AdminBiz {
         }
     }
 
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/8512a34469bf574b199268d855f7fd86a18d8fcc/xxl-job-admin/src/main/java/com/xxl/job/admin/service/impl/AdminBizImpl.java/left.java
+    @Override
+    public ReturnT<String> registry(RegistryParam registryParam) {
+        int ret = xxlJobRegistryDao.registryUpdate(registryParam.getRegistryGroup(), registryParam.getRegistryKey(), registryParam.getRegistryValue());
+        if (ret < 1) {
+            xxlJobRegistryDao.registrySave(registryParam.getRegistryGroup(), registryParam.getRegistryKey(), registryParam.getRegistryValue());
+
+            // fresh
+            freshGroupRegistryInfo(registryParam);
+        }
+        return ReturnT.SUCCESS;
+    }
+||||||| /usr/src/app/output/xuxueli/xxl-job/8512a34469bf574b199268d855f7fd86a18d8fcc/xxl-job-admin/src/main/java/com/xxl/job/admin/service/impl/AdminBizImpl.java/base.java
+=======
     @Override
     public ReturnT<String> registry(RegistryParam registryParam) {
 
@@ -144,18 +158,11 @@ public class AdminBizImpl implements AdminBiz {
         }
         return ReturnT.SUCCESS;
     }
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/8512a34469bf574b199268d855f7fd86a18d8fcc/xxl-job-admin/src/main/java/com/xxl/job/admin/service/impl/AdminBizImpl.java/right.java
 
     @Override
     public ReturnT<String> registryRemove(RegistryParam registryParam) {
-
-        // valid
-        if (!StringUtils.hasText(registryParam.getRegistGroup())
-                || !StringUtils.hasText(registryParam.getRegistryKey())
-                || !StringUtils.hasText(registryParam.getRegistryValue())) {
-            return new ReturnT<String>(ReturnT.FAIL_CODE, "Illegal Argument.");
-        }
-
-        int ret = xxlJobRegistryDao.registryDelete(registryParam.getRegistGroup(), registryParam.getRegistryKey(), registryParam.getRegistryValue());
+        int ret = xxlJobRegistryDao.registryDelete(registryParam.getRegistryGroup(), registryParam.getRegistryKey(), registryParam.getRegistryValue());
         if (ret > 0) {
 
             // fresh

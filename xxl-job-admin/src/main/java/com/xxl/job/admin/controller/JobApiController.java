@@ -26,6 +26,14 @@ public class JobApiController {
     @Resource
     private AdminBiz adminBiz;
 
+<<<<<<< /usr/src/app/output/xuxueli/xxl-job/8512a34469bf574b199268d855f7fd86a18d8fcc/xxl-job-admin/src/main/java/com/xxl/job/admin/controller/JobApiController.java/left.java
+    @Override
+    public void afterPropertiesSet() {
+||||||| /usr/src/app/output/xuxueli/xxl-job/8512a34469bf574b199268d855f7fd86a18d8fcc/xxl-job-admin/src/main/java/com/xxl/job/admin/controller/JobApiController.java/base.java
+    @Override
+    public void afterPropertiesSet() throws Exception {
+=======
+>>>>>>> /usr/src/app/output/xuxueli/xxl-job/8512a34469bf574b199268d855f7fd86a18d8fcc/xxl-job-admin/src/main/java/com/xxl/job/admin/controller/JobApiController.java/right.java
 
     // ---------------------- admin biz ----------------------
 
