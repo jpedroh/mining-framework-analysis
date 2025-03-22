@@ -518,6 +518,7 @@ public class Config extends AutoUpdateConfigLoader {
 
     /* Woodcutting */
     public boolean getWoodcuttingDoubleDropsEnabled(BlockData material) { return config.getBoolean("Double_Drops.Woodcutting." + StringUtils.getFriendlyConfigBlockDataString(material)); }
+    public boolean getWoodcuttingDoubleDropsEnabled(Material material) { return config.getBoolean("Double_Drops.Woodcutting." + StringUtils.getPrettyItemString(material).replace(" ", "_")); }
     public boolean getTreeFellerSoundsEnabled() { return config.getBoolean("Skills.Woodcutting.Tree_Feller_Sounds", true); }
 
     /* AFK Leveling */

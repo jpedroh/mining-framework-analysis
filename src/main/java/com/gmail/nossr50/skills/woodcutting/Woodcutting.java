@@ -55,7 +55,13 @@ public final class Woodcutting {
             Misc.dropItems(Misc.getBlockCenter(blockState), blockState.getBlock().getDrops());
         }
         else {
+<<<<<<< /usr/src/app/output/mcmmo-dev/mcmmo/d4bd886522cc786603bfbfeca927401c27335458/src/main/java/com/gmail/nossr50/skills/woodcutting/Woodcutting.java/left.java
             if (Config.getInstance().getWoodcuttingDoubleDropsEnabled(blockState.getBlockData())) {
+||||||| /usr/src/app/output/mcmmo-dev/mcmmo/d4bd886522cc786603bfbfeca927401c27335458/src/main/java/com/gmail/nossr50/skills/woodcutting/Woodcutting.java/base.java
+            if (Config.getInstance().getWoodcuttingDoubleDropsEnabled(species)) {
+=======
+            if (Config.getInstance().getWoodcuttingDoubleDropsEnabled(blockState.getType())) {
+>>>>>>> /usr/src/app/output/mcmmo-dev/mcmmo/d4bd886522cc786603bfbfeca927401c27335458/src/main/java/com/gmail/nossr50/skills/woodcutting/Woodcutting.java/right.java
                 Misc.dropItems(Misc.getBlockCenter(blockState), blockState.getBlock().getDrops());
             }
         }
