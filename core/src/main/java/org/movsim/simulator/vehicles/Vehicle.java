@@ -1174,9 +1174,16 @@ public class Vehicle {
     @Override
     public String toString() {
         DecimalFormat df = new DecimalFormat("#.###");
-        return "Vehicle [id=" + id + ", label=" + label + ", length=" + df.format(getLength()) + ", frontPosition="
+<<<<<<< /usr/src/app/output/movsim/movsim/51e5bb8b29c0520339d82143530d50c59145fb3f/core/src/main/java/org/movsim/simulator/vehicles/Vehicle.java/left.java
+        return "Vehicle [id=" + id + ", label=" + label + ", length=" + getLength() + ", frontPosition="
+||||||| /usr/src/app/output/movsim/movsim/51e5bb8b29c0520339d82143530d50c59145fb3f/core/src/main/java/org/movsim/simulator/vehicles/Vehicle.java/base.java
+        return "Vehicle [id=" + id + ", label=" + label + ", length=" + length + ", frontPosition="
+=======
+        return "Vehicle [id=" + id + ", label=" + label + ", length=" + df.format(length) + ", frontPosition="
+>>>>>>> /usr/src/app/output/movsim/movsim/51e5bb8b29c0520339d82143530d50c59145fb3f/core/src/main/java/org/movsim/simulator/vehicles/Vehicle.java/right.java
                 + df.format(frontPosition) + ", frontPositionOld=" + df.format(frontPositionOld) + ", speed="
-                + df.format(speed) + ", accModel=" + df.format(accModel) + ", acc=" + df.format(acc) + ", accOld="
+                + df.format(speed) + ", accModel="
+                + df.format(accModel) + ", acc=" + df.format(acc) + ", accOld="
                 + df.format(accOld) + ", vehNumber=" + vehNumber + ", lane=" + lane + ", brakeLightOn="
                 + brakeLightOn + "]";
     }
