@@ -1,31 +1,4 @@
-/**
- * Copyright (C) 2010, 2011 by Arne Kesting, Martin Treiber,
- *                             Ralph Germ, Martin Budden
- *                             <info@movsim.org>
- * ----------------------------------------------------------------------
- * 
- *  This file is part of 
- *  
- *  MovSim - the multi-model open-source vehicular-traffic simulator 
- *
- *  MovSim is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  MovSim is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with MovSim.  If not, see <http://www.gnu.org/licenses/> or
- *  <http://www.movsim.org>.
- *  
- * ----------------------------------------------------------------------
- */
 package org.movsim.simulator.vehicles;
-
 import org.movsim.consumption.FuelConsumption;
 import org.movsim.input.model.VehicleInput;
 import org.movsim.simulator.MovsimConstants;
@@ -44,159 +17,155 @@ import org.slf4j.LoggerFactory;
  * The Class Vehicle.
  */
 public class Vehicle {
+  /** The Constant logger. */
+  final static Logger logger = LoggerFactory.getLogger(Vehicle.class);
 
-    /** The Constant logger. */
-    final static Logger logger = LoggerFactory.getLogger(Vehicle.class);
-    // constants
-    protected static final int INITIAL_ID = 1;
-    protected static final int INITIAL_TEMPLATE_ID = -1;
-    /**
+  protected static final int INITIAL_ID = 1;
+
+  protected static final int INITIAL_TEMPLATE_ID = -1;
+
+  /**
      * 'Not Set' vehicle id value, guaranteed not to be used by any vehicles.
      */
-    public static final int ID_NOT_SET = -1;
-    /**
+  public static final int ID_NOT_SET = -1;
+
+  /**
      * 'Not Set' road segment id value, guaranteed not to be used by any vehicles.
      */
-    public static final int ROAD_SEGMENT_ID_NOT_SET = -1;
-    
-    /** in m/s^2 */
-    private final static double THRESHOLD_BRAKELIGHT_ON = 0.2;
-    
-    /** in m/s^2 */
-    private final static double THRESHOLD_BRAKELIGHT_OFF = 0.1;
-    
-    /** needs to be > 0 */
-    private final static double FINITE_LANE_CHANGE_TIME_S = 5;
+  public static final int ROAD_SEGMENT_ID_NOT_SET = -1;
 
-    /** The label. */
-    private final String label;
+  /** in m/s^2 */
+  private final static double THRESHOLD_BRAKELIGHT_ON = 0.2;
 
-    /** The length. */
-    private final double length;
-    private final double width;
+  /** in m/s^2 */
+  private final static double THRESHOLD_BRAKELIGHT_OFF = 0.1;
 
-    /** The position. */
-    private double position;
+  /** needs to be > 0 */
+  private final static double FINITE_LANE_CHANGE_TIME_S = 5;
 
-    /** The old position. */
-    private double positionOld;
+  /** The label. */
+  private final String label;
 
-    /** The speed. */
-    private double speed;
+  /** The length. */
+  private final double length;
 
-    /** The acceleration model. */
-    private double accModel;
+  private final double width;
 
-    /** The acceleration. */
-    private double acc;
+  /** The position. */
+  private double position;
 
-    private double accOld;
+  /** The old position. */
+  private double positionOld;
 
-    /** The reaction time. */
-    private final double reactionTime;
+  /** The speed. */
+  private double speed;
 
-    /** The max deceleration . */
-    private final double maxDecel;
+  /** The acceleration model. */
+  private double accModel;
 
-    /** The id. */
-    int id;
+  /** The acceleration. */
+  private double acc;
 
-    /** The vehicle number. */
-    private int vehNumber;
+  private double accOld;
 
-    /** The lane. */
-    private int lane;
-    private int laneOld;
+  /** The reaction time. */
+  private final double reactionTime;
 
-    /** variable for remembering new target lane when assigning to new vehContainerLane */
-    private int targetLane;
+  /** The max deceleration . */
+  private final double maxDecel;
 
-    /** finite lane-changing duration */
-    private double tLaneChangingDelay;
+  /** The id. */
+  int id;
 
-    /** The speed limit. */
-    private double speedlimit;
+  /** The vehicle number. */
+  private int vehNumber;
 
-    /** The long model. */
-    private AccelerationModel accelerationModel;
+  /** The lane. */
+  private int lane;
 
-    /** The lane-changing model. */
-    private LaneChangingModel lcModel;
+  private int laneOld;
 
-    /** The memory. */
-    private Memory memory = null;
+  /** variable for remembering new target lane when assigning to new vehContainerLane */
+  private int targetLane;
 
-    /** The noise. */
-    private Noise noise = null;
-    // Color
-    private int color;
-    private Object colorObject; // color object cache
+  /** finite lane-changing duration */
+  private double tLaneChangingDelay;
 
-    /** The traffic light approaching. */
-    private final TrafficLightApproaching trafficLightApproaching;
+  /** The speed limit. */
+  private double speedlimit;
 
-    private final FuelConsumption fuelModel; // can be null
-    
-    private boolean isBrakeLightOn;
+  /** The long model. */
+  private AccelerationModel accelerationModel;
 
-    private PhysicalQuantities physQuantities;
-    // Exit Handling
-    private int roadSegmentId;
-    private double roadSegmentLength;
-    private int exitRoadSegmentId = ROAD_SEGMENT_ID_NOT_SET;
-    
-    
-    private long roadId;
-    private static int nextId = INITIAL_ID;
-    private static int nextTemplateId = INITIAL_TEMPLATE_ID;
-    /**
-     * The type of numerical integration.
-     */
-    public static enum IntegrationType {
-        /**
-         * Euler (first order) numerical integration.
-         */
-        EULER,
-        /**
-         * Kinematic (second order) numerical integration.
-         */
-        KINEMATIC,
-        /**
-         * Runge-Kutta (fourth order) numerical integration.
-         */
-        RUNGE_KUTTA
-    }
+  /** The lane-changing model. */
+  private LaneChangingModel lcModel;
 
-    private static IntegrationType integrationType = IntegrationType.KINEMATIC;
+  /** The memory. */
+  private Memory memory = null;
 
-    /**
+  /** The noise. */
+  private Noise noise = null;
+
+  private int color;
+
+  private Object colorObject;
+
+  /** The traffic light approaching. */
+  private final TrafficLightApproaching trafficLightApproaching;
+
+  private final FuelConsumption fuelModel;
+
+  private boolean isBrakeLightOn;
+
+  private PhysicalQuantities physQuantities;
+
+  private int roadSegmentId;
+
+  private double roadSegmentLength;
+
+  private int exitRoadSegmentId = ROAD_SEGMENT_ID_NOT_SET;
+
+  private long roadId;
+
+  private static int nextId = INITIAL_ID;
+
+  private static int nextTemplateId = INITIAL_TEMPLATE_ID;
+
+  public static enum IntegrationType {
+    EULER,
+    KINEMATIC,
+    RUNGE_KUTTA
+  }
+
+  private static IntegrationType integrationType = IntegrationType.KINEMATIC;
+
+  /**
      * Resets the next id.
      */
-    public static void resetNextId() {
-        nextId = INITIAL_ID;
-        nextTemplateId = INITIAL_TEMPLATE_ID;
-    }
+  public static void resetNextId() {
+    nextId = INITIAL_ID;
+    nextTemplateId = INITIAL_TEMPLATE_ID;
+  }
 
-    /**
+  /**
      * Returns the id of the last vehicle created.
      * 
      * @return the id of the last vehicle created
      */
-    public static int lastIdSet() {
-        return nextId - 1;
-    }
+  public static int lastIdSet() {
+    return nextId - 1;
+  }
 
-    /**
+  /**
      * Returns the number of vehicles that have been created. Used for instrumentation.
      * 
      * @return the number of vehicles that have been created
      */
-    public static int count() {
-        return nextId - INITIAL_ID;
-    }
+  public static int count() {
+    return nextId - INITIAL_ID;
+  }
 
-
-    /**
+  /**
      * Instantiates a new vehicle impl.
      *
      * @param label the label
@@ -206,815 +175,545 @@ public class Vehicle {
      * @param cyclicBuffer the cyclic buffer
      * @param lcModel the lanechange model
      */
-    public Vehicle(String label, int id, final AccelerationModel longModel, final VehicleInput vehInput,
-            final Object cyclicBuffer, final LaneChangingModel lcModel, final FuelConsumption fuelModel) {
-        this.label = label;
-        this.id = id;
-        this.fuelModel = fuelModel;  
-
-        length = vehInput.getLength();
-        width = MovsimConstants.VEHICLE_WIDTH;
-        reactionTime = vehInput.getReactionTime();
-        maxDecel = vehInput.getMaxDeceleration();
-
-        initialize();
-        // longitudinal ("car-following") model
-        this.accelerationModel = longModel;
-        physQuantities = new PhysicalQuantities(this);
-
-        // lane-changing model
-        this.lcModel = lcModel;
-        lcModel.initialize(this);
-
-        // no effect if model is not configured with memory effect
-        if (vehInput.isWithMemory()) {
-            memory = new Memory(vehInput.getMemoryInputData());
-        }
-
-        if (vehInput.isWithNoise()) {
-            noise = new Noise(vehInput.getNoiseInputData());
-        }
-
-        trafficLightApproaching = new TrafficLightApproaching();
-
-        // needs to be > 0 to avoid lane-changing over 2 lanes in one update
-        // step
-        assert FINITE_LANE_CHANGE_TIME_S > 0;
-
+  public Vehicle(String label, int id, final AccelerationModel longModel, final VehicleInput vehInput, final Object cyclicBuffer, final LaneChangingModel lcModel, final FuelConsumption fuelModel) {
+    this.label = label;
+    this.id = id;
+    this.fuelModel = fuelModel;
+    length = vehInput.getLength();
+    width = MovsimConstants.VEHICLE_WIDTH;
+    reactionTime = vehInput.getReactionTime();
+    maxDecel = vehInput.getMaxDeceleration();
+    initialize();
+    this.accelerationModel = longModel;
+    physQuantities = new PhysicalQuantities(this);
+    this.lcModel = lcModel;
+    lcModel.initialize(this);
+    if (vehInput.isWithMemory()) {
+      memory = new Memory(vehInput.getMemoryInputData());
     }
+    if (vehInput.isWithNoise()) {
+      noise = new Noise(vehInput.getNoiseInputData());
+    }
+    trafficLightApproaching = new TrafficLightApproaching();
+    assert FINITE_LANE_CHANGE_TIME_S > 0;
+  }
 
-    /**
+  /**
      * Constructor.
      */
-    public Vehicle(double rearPosition, double speed, int lane, double length, double width) {
-        assert rearPosition >= 0.0;
-        assert speed >= 0.0;
-        // assert lane >= Lane.LANE1;
-        id = nextId++;
-        this.length = length;
-        setRearPosition(rearPosition);
-        this.speed = speed;
-        this.lane = lane;
-        this.width = width;
-        this.color = 0;
-        fuelModel = null;
-        trafficLightApproaching = null;
-        reactionTime = 0.0;
-        maxDecel = 0.0;
-        lcModel = null;
-        accelerationModel = null;
-        label = "";
-        physQuantities = new PhysicalQuantities(this);
-    }
-    
-    /**
+  public Vehicle(double rearPosition, double speed, int lane, double length, double width) {
+    assert rearPosition >= 0.0;
+    assert speed >= 0.0;
+    id = nextId++;
+    this.length = length;
+    setRearPosition(rearPosition);
+    this.speed = speed;
+    this.lane = lane;
+    this.width = width;
+    this.color = 0;
+    fuelModel = null;
+    trafficLightApproaching = null;
+    reactionTime = 0.0;
+    maxDecel = 0.0;
+    lcModel = null;
+    accelerationModel = null;
+    label = "";
+    physQuantities = new PhysicalQuantities(this);
+  }
+
+  /**
      * Copy constructor.
      * 
      * @param source
      */
-    public Vehicle(Vehicle source) {
-        id = source.id;
-        type = source.type;
-        position = source.position;
-        speed = source.speed;
-        lane = source.lane;
-        length = source.length;
-        width = source.width;
-        color = source.color;
-        fuelModel = source.fuelModel;
-        trafficLightApproaching = source.trafficLightApproaching;
-        reactionTime = source.reactionTime;
-        maxDecel = source.maxDecel;
-        lcModel = source.lcModel;
-        accelerationModel = source.accelerationModel;
-        label = source.label;
-    }
+  public Vehicle(Vehicle source) {
+    id = source.id;
+    type = source.type;
+    position = source.position;
+    speed = source.speed;
+    lane = source.lane;
+    length = source.length;
+    width = source.width;
+    color = source.color;
+    fuelModel = source.fuelModel;
+    trafficLightApproaching = source.trafficLightApproaching;
+    reactionTime = source.reactionTime;
+    maxDecel = source.maxDecel;
+    lcModel = source.lcModel;
+    accelerationModel = source.accelerationModel;
+    label = source.label;
+  }
 
-    /**
+  /**
      * Constructor.
      */
-    public Vehicle(org.movsim.simulator.vehicles.Vehicle.Type car,
-			AccelerationModel ldm, Object lcm, double length,
-			double width, int i) {
-        id = nextId++;
-        this.length = length;
-        setRearPosition(0.0);
-        this.speed = 0.0;
-        this.lane = Lane.NONE;
-        this.width = width;
-        this.color = 0;
-        fuelModel = null;
-        trafficLightApproaching = null;
-        reactionTime = 0.0;
-        maxDecel = 0.0;
-        lcModel = null;
-        accelerationModel = ldm;
-        label = "";
-	}
+  public Vehicle(org.movsim.simulator.vehicles.Vehicle.Type car, AccelerationModel ldm, Object lcm, double length, double width, int i) {
+    id = nextId++;
+    this.length = length;
+    setRearPosition(0.0);
+    this.speed = 0.0;
+    this.lane = Lane.NONE;
+    this.width = width;
+    this.color = 0;
+    fuelModel = null;
+    trafficLightApproaching = null;
+    reactionTime = 0.0;
+    maxDecel = 0.0;
+    lcModel = null;
+    accelerationModel = ldm;
+    label = "";
+  }
 
-	private void initialize(){
-        positionOld = 0;
-        position = 0;
-        speed = 0;
-        acc = 0;
-        isBrakeLightOn = false;
+  private void initialize() {
+    positionOld = 0;
+    position = 0;
+    speed = 0;
+    acc = 0;
+    isBrakeLightOn = false;
+    speedlimit = MovsimConstants.MAX_VEHICLE_SPEED;
+  }
 
-        speedlimit = MovsimConstants.MAX_VEHICLE_SPEED;
-    }
-    
+  public void init(double pos, double v, int lane, long roadId) {
+    this.laneOld = this.lane;
+    this.roadId = roadId;
+    this.position = pos;
+    this.positionOld = pos;
+    this.speed = v;
+    this.targetLane = this.lane = lane;
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.movsim.simulator.vehicles.Vehicle#init(double, double, int)
-     */
+  public String getLabel() {
+    return label;
+  }
 
-    // central book-keeping of lanes (lane and laneOld)
-
-    public void init(double pos, double v, int lane, long roadId) {
-        this.laneOld = this.lane; // remember previous lane
-        this.roadId = roadId;
-        this.position = pos;
-        this.positionOld = pos;
-        this.speed = v;
-        // targetlane not needed anymore for book-keeping, vehicle is in new
-        // lane
-        this.targetLane = this.lane = lane;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.movsim.simulator.vehicles.Vehicle#getLabel()
-     */
-    public String getLabel() {
-        return label;
-    }
-
-    /**
+  /**
      * Sets this vehicle's color.
      * 
      * @param color
      *            RGB integer color value
      */
-    public final void setColor(int color) {
-        this.color = color;
-    }
+  public final void setColor(int color) {
+    this.color = color;
+  }
 
-    /**
+  /**
      * Returns this vehicle's color.
      * 
      * @return vehicle's color, as an RGB integer
      */
-    public final int color() {
-        return color;
-    }
+  public final int color() {
+    return color;
+  }
 
-    /**
+  /**
      * Sets this vehicle's color object cache value. Primarily of use by AWT which rather
      * inefficiently uses objects rather than integers to represent color values. Note that
      * an object is cached so Vehicle.java has no dependency on AWT.
      * 
      * @param colorObject
      */
-    public final void setColorObject(Object colorObject) {
-        this.colorObject = colorObject;
-    }
+  public final void setColorObject(Object colorObject) {
+    this.colorObject = colorObject;
+  }
 
-    /**
+  /**
      * Returns the previously cached object associated with this vehicle's color.
      * 
      * @return vehicle's previously cached color object
      */
-    public final Object colorObject() {
-        return colorObject;
-    }
+  public final Object colorObject() {
+    return colorObject;
+  }
 
-    /**
+  /**
      * Returns this vehicle's length.
      * 
      * @return vehicle's length, in meters
      */
-    public double getLength() {
-        return length;
-    }
+  public double getLength() {
+    return length;
+  }
 
-    /**
+  /**
      * Returns this vehicle's width.
      * 
      * @return vehicle's width, in meters
      */
-    public double getWidth() {
-        return width;
-    }
+  public double getWidth() {
+    return width;
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.movsim.simulator.vehicles.Vehicle#position()
-     */
+  public double getPosition() {
+    return position;
+  }
 
-    // returns the vehicle's mid-position
-    
-    public double getPosition() {
-        return position;
-    }
+  public double posFrontBumper() {
+    return position + 0.5 * length;
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.movsim.simulator.vehicles.Vehicle#posFrontBumper()
-     */
-    
-    public double posFrontBumper() {
-        return position + 0.5 * length;
-    }
+  public double posRearBumper() {
+    return position - 0.5 * length;
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.movsim.simulator.vehicles.Vehicle#posReadBumper()
-     */
-    
-    public double posRearBumper() {
-        return position - 0.5 * length;
-    }
-
-    /**
+  /**
      * Sets the position of the rear of this vehicle.
      * 
      * @param rearPosition
      *            new rear position
      */
-    public final void setRearPosition(double rearPosition) {
-        this.position = rearPosition + 0.5 * length;
-    }
+  public final void setRearPosition(double rearPosition) {
+    this.position = rearPosition + 0.5 * length;
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.movsim.simulator.vehicles.Vehicle#oldPosition()
-     */
-    
-    public double getPositionOld() {
-        return positionOld;
-    }
+  public double getPositionOld() {
+    return positionOld;
+  }
 
-    /**
+  /**
      * Sets the position.
      * 
      * @param position
      *            the new position
      */
-    public void setPosition(double position) {
-        this.position = position;
-    }
+  public void setPosition(double position) {
+    this.position = position;
+  }
 
-    /**
+  /**
      * Sets the position of the middle of the vehicle.
      * 
      * @param position
      *            the position of the middle of the vehicle
      */
-    public void setMidPosition(double position) {
-        this.position = position;
-    }
+  public void setMidPosition(double position) {
+    this.position = position;
+  }
 
-    /**
+  /**
      * Returns this vehicle's speed.
      * 
      * @return this vehicle's speed, in m/s
      */
-    public double getSpeed() {
-        return speed;
-    }
+  public double getSpeed() {
+    return speed;
+  }
 
-    /**
+  /**
      * Sets the speed.
      * 
      * @param speed
      *            the new speed
      */
-    public void setSpeed(double speed) {
-        this.speed = speed;
-    }
+  public void setSpeed(double speed) {
+    this.speed = speed;
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.movsim.simulator.vehicles.Vehicle#speedlimit()
-     */
-    
-    public double getSpeedlimit() {
-        return speedlimit;
-    }
+  public double getSpeedlimit() {
+    return speedlimit;
+  }
 
-    // externally given speedlimit
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.movsim.simulator.vehicles.Vehicle#setSpeedlimit(double)
-     */
-    
-    public void setSpeedlimit(double speedlimit) {
-        this.speedlimit = speedlimit;
-    }
+  public void setSpeedlimit(double speedlimit) {
+    this.speedlimit = speedlimit;
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.movsim.simulator.vehicles.Vehicle#acc()
-     */
-    
-    public double getAcc() {
-        return acc;
-    }
+  public double getAcc() {
+    return acc;
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.movsim.simulator.vehicles.Vehicle#accModel()
-     */
-    
-    public double accModel() {
-        return accModel;
-    }
+  public double accModel() {
+    return accModel;
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.movsim.simulator.vehicles.Vehicle#distanceToTrafficlight()
-     */
-    public double getDistanceToTrafficlight() {
-        return trafficLightApproaching.getDistanceToTrafficlight();
-    }
+  public double getDistanceToTrafficlight() {
+    return trafficLightApproaching.getDistanceToTrafficlight();
+  }
 
-    /**
+  /**
      * Returns this vehicle's id.
      * 
      * @return vehicle's id
      * 
      */
-    public int getId() {
-        return id;
+  public int getId() {
+    return id;
+  }
+
+  public long getRoadId() {
+    return roadId;
+  }
+
+  public boolean isFromOnramp() {
+    return (vehNumber < 0);
+  }
+
+  public int getVehNumber() {
+    return vehNumber;
+  }
+
+  public void setVehNumber(int vehNumber) {
+    this.vehNumber = vehNumber;
+  }
+
+  public double getNetDistance(final Vehicle vehFront) {
+    if (vehFront == null) {
+      return MovsimConstants.GAP_INFINITY;
     }
-    
-    
-    
-    public long getRoadId(){
-        return roadId;
+    final double netGap = vehFront.getPosition() - position - 0.5 * (getLength() + vehFront.getLength());
+    return netGap;
+  }
+
+  public double getRelSpeed(Vehicle vehFront) {
+    if (vehFront == null) {
+      return 0;
     }
+    return (speed - vehFront.getSpeed());
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.movsim.simulator.vehicles.Vehicle#isFromOnramp()
-     */
-    
-    public boolean isFromOnramp() {
-        // TODO not working anymore, new concept needed for determining origin
-        // of vehicle
-        return (vehNumber < 0);
+  public void calcAcceleration(double dt, final LaneSegment vehContainer, final LaneSegment vehContainerLeftLane, double alphaT, double alphaV0) {
+    accOld = acc;
+    double accError = 0;
+    if (noise != null) {
+      noise.update(dt);
+      accError = noise.getAccError();
+      final Vehicle vehFront = vehContainer.frontVehicle(this);
+      if (getNetDistance(vehFront) < MovsimConstants.CRITICAL_GAP) {
+        accError = Math.min(accError, 0.);
+      }
     }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.movsim.simulator.vehicles.Vehicle#getVehNumber()
-     */
-    
-    public int getVehNumber() {
-        return vehNumber;
+    double alphaTLocal = alphaT;
+    double alphaV0Local = alphaV0;
+    double alphaALocal = 1;
+    if (memory != null) {
+      final double v0 = accelerationModel.getDesiredSpeedParameterV0();
+      memory.update(dt, speed, v0);
+      alphaTLocal *= memory.alphaT();
+      alphaV0Local *= memory.alphaV0();
+      alphaALocal *= memory.alphaA();
     }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.movsim.simulator.vehicles.Vehicle#setVehNumber(int)
-     */
-    
-    public void setVehNumber(int vehNumber) {
-        this.vehNumber = vehNumber;
+    accModel = calcAccModel(vehContainer, vehContainerLeftLane, alphaTLocal, alphaV0Local, alphaALocal);
+    if (trafficLightApproaching != null && trafficLightApproaching.considerTrafficLight()) {
+      acc = Math.min(accModel, trafficLightApproaching.accApproaching());
+    } else {
+      acc = accModel;
     }
+    acc = Math.max(acc + accError, -maxDecel);
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.movsim.simulator.vehicles.Vehicle#netDistance(org.movsim.simulator
-     * .vehicles.Vehicle)
-     */
-    public double getNetDistance(final Vehicle vehFront) {
-        if (vehFront == null) {
-            return MovsimConstants.GAP_INFINITY;
-        }
-        final double netGap = vehFront.getPosition() - position - 0.5 * (getLength() + vehFront.getLength());
-        return netGap;
+  public double calcAccModel(final LaneSegment vehContainer, final LaneSegment vehContainerLeftLane) {
+    return calcAccModel(vehContainer, vehContainerLeftLane, 1, 1, 1);
+  }
+
+  private double calcAccModel(final LaneSegment vehContainer, final LaneSegment vehContainerLeftLane, double alphaTLocal, double alphaV0Local, double alphaALocal) {
+    if (accelerationModel == null) {
+      return 0.0;
     }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.movsim.simulator.vehicles.Vehicle#relSpeed(org.movsim.simulator.vehicles
-     * .Vehicle)
-     */
-    
-    public double getRelSpeed(Vehicle vehFront) {
-        if (vehFront == null)
-            return 0;
-        return (speed - vehFront.getSpeed());
+    final double acc;
+    if (lcModel != null && lcModel.isInitialized() && lcModel.withEuropeanRules()) {
+      acc = accelerationModel.calcAccEur(lcModel.vCritEurRules(), this, vehContainer, vehContainerLeftLane, alphaTLocal, alphaV0Local, alphaALocal);
+    } else {
+      acc = accelerationModel.calcAcc(this, vehContainer, alphaTLocal, alphaV0Local, alphaALocal);
     }
+    return acc;
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.movsim.simulator.vehicles.Vehicle#calcAcceleration(double,
-     * org.movsim.simulator.vehicles.VehicleContainer, double, double)
-     */
-    
-    public void calcAcceleration(double dt, final LaneSegment vehContainer,
-            final LaneSegment vehContainerLeftLane, double alphaT, double alphaV0) {
-
-        accOld = acc;
-        // acceleration noise:
-        double accError = 0;
-        if (noise != null) {
-            noise.update(dt);
-            accError = noise.getAccError();
-            final Vehicle vehFront = vehContainer.frontVehicle(this);
-            if (getNetDistance(vehFront) < MovsimConstants.CRITICAL_GAP) {
-                accError = Math.min(accError, 0.); // !!!
-            }
-            // logger.debug("accError = {}", accError);
-        }
-
-        // TODO extract to super class
-        double alphaTLocal = alphaT;
-        double alphaV0Local = alphaV0;
-        double alphaALocal = 1;
-
-        // TODO check concept here: combination with alphaV0 (consideration of
-        // reference v0 instead of dynamic v0 which depends on speedlimits)
-        if (memory != null) {
-            final double v0 = accelerationModel.getDesiredSpeedParameterV0();
-            memory.update(dt, speed, v0);
-            alphaTLocal *= memory.alphaT();
-            alphaV0Local *= memory.alphaV0();
-            alphaALocal *= memory.alphaA();
-        }
-
-        accModel = calcAccModel(vehContainer, vehContainerLeftLane, alphaTLocal, alphaV0Local, alphaALocal);
-
-        // consider red or amber/yellow traffic light:
-        if (trafficLightApproaching != null && trafficLightApproaching.considerTrafficLight()) {
-            acc = Math.min(accModel, trafficLightApproaching.accApproaching());
-            // logger.debug("accModel = {}, accTrafficLight = {}", accModel,
-            // accTrafficLight );
-        } else {
-            acc = accModel;
-        }
-
-        acc = Math.max(acc + accError, -maxDecel); // limited to maximum
-                                                   // deceleration
-        // logger.debug("acc = {}", acc );
+  public void updatePositionAndSpeed(double dt) {
+    positionOld = position;
+    if (accelerationModel != null && accelerationModel.isCA()) {
+      speed = (int) (speed + dt * acc + 0.5);
+      position = (int) (position + dt * speed + 0.5);
+    } else {
+      if (speed < 0) {
+        speed = 0;
+      }
+      final double advance = (acc * dt >= -speed) ? speed * dt + 0.5 * acc * dt * dt : -0.5 * speed * speed / acc;
+      position += advance;
+      speed += dt * acc;
+      if (speed < 0) {
+        speed = 0;
+        acc = 0;
+      }
     }
+  }
 
-    // TODO this acceleration is the base for MOBIL decision: could consider
-    // also noise (for transfering stochasticity to lane-changing) and other
-    // relevant traffic situations!
-    //
-    
-    public double calcAccModel(final LaneSegment vehContainer, final LaneSegment vehContainerLeftLane) {
-        return calcAccModel(vehContainer, vehContainerLeftLane, 1, 1, 1);
+  public int getLane() {
+    return lane;
+  }
+
+  public void setLane(int lane) {
+    this.lane = lane;
+  }
+
+  public boolean hasReactionTime() {
+    return (reactionTime + MovsimConstants.SMALL_VALUE > 0);
+  }
+
+  public void updateTrafficLight(double time, TrafficLight trafficLight) {
+    trafficLightApproaching.update(this, time, trafficLight, accelerationModel);
+  }
+
+  public void removeObservers() {
+    accelerationModel.removeObserver();
+  }
+
+  public LaneChangingModel getLaneChangingModel() {
+    return lcModel;
+  }
+
+  public void setLaneChangingModel(LaneChangingModel lcModel) {
+    this.lcModel = lcModel;
+  }
+
+  public AccelerationModel getAccelerationModel() {
+    return accelerationModel;
+  }
+
+  public void setAccelerationModel(AccelerationModel AccelerationModel) {
+    this.accelerationModel = AccelerationModel;
+  }
+
+  public boolean considerLaneChanging(double dt, RoadSegment roadSegment) {
+    if (lcModel == null || !lcModel.isInitialized()) {
+      return false;
     }
-
-    private double calcAccModel(final LaneSegment vehContainer, final LaneSegment vehContainerLeftLane,
-            double alphaTLocal, double alphaV0Local, double alphaALocal) {
-    	if (accelerationModel == null) {
-    		return 0.0;
-    	}
-
-        final double acc;
-
-        if (lcModel != null && lcModel.isInitialized() && lcModel.withEuropeanRules()) {
-            acc = accelerationModel.calcAccEur(lcModel.vCritEurRules(), this, vehContainer, vehContainerLeftLane,
-                    alphaTLocal, alphaV0Local, alphaALocal);
-        } else {
-            acc = accelerationModel.calcAcc(this, vehContainer, alphaTLocal, alphaV0Local, alphaALocal);
-        }
-
-        return acc;
+    if (roadSegment.laneCount() < 2) {
+      return false;
     }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.movsim.simulator.vehicles.Vehicle#updatePostionAndSpeed(double)
-     */
-    
-    public void updatePositionAndSpeed(double dt) {
-
-        // logger.debug("dt = {}", dt);
-        // first increment postion, 
-        // then increment s with *new* v (second order: -0.5 a dt^2)
-
-        positionOld = position;
-
-        if (accelerationModel != null && accelerationModel.isCA()) {
-            speed = (int) (speed + dt * acc + 0.5);
-            position = (int) (position + dt * speed + 0.5);
-
-        } else {
-            // continuous microscopic models and iterated maps
-            if (speed < 0) {
-                speed = 0;
-            }
-            final double advance = (acc * dt >= -speed) ? speed * dt + 0.5 * acc * dt * dt : -0.5 * speed * speed / acc;
-
-            position += advance;
-            speed += dt * acc;
-            if (speed < 0) {
-                speed = 0;
-                acc = 0;
-            }
-
-        }
+    if (inProcessOfLaneChanging()) {
+      updateLaneChangingDelay(dt);
+      return false;
     }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.movsim.simulator.vehicles.Vehicle#getLane()
-     */
-    
-    public int getLane() {
-        return lane;
+    final int laneChangingDirection = lcModel.determineLaneChangingDirection(roadSegment);
+    if (laneChangingDirection != MovsimConstants.NO_CHANGE) {
+      setTargetLane(lane + laneChangingDirection);
+      resetDelay();
+      updateLaneChangingDelay(dt);
+      logger.info("veh id={}", id);
+      logger.debug("do lane change to={} into target lane={}", laneChangingDirection, targetLane);
+      logger.info("do lane change to={} into target lane={}", laneChangingDirection, targetLane);
+      return true;
     }
+    return false;
+  }
 
-    public void setLane(int lane) {
-        this.lane = lane;
+  public void initLaneChangeFromRamp(int oldLane) {
+    laneOld = oldLane;
+    resetDelay();
+    final double delayInit = 0.2;
+    updateLaneChangingDelay(delayInit);
+    logger.debug("do lane change from ramp: virtual old lane (origin)={}, contLane={}", lane, getContinousLane());
+    if (oldLane == MovsimConstants.TO_LEFT) {
+      logger.debug("do lane change from ramp: virtual old lane (origin)={}, contLane={}", lane, getContinousLane());
     }
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.movsim.simulator.vehicles.Vehicle#hasReactionTime()
-     */
-    
-    public boolean hasReactionTime() {
-        return (reactionTime + MovsimConstants.SMALL_VALUE > 0);
-    }
+  public int getTargetLane() {
+    return targetLane;
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.movsim.simulator.vehicles.Vehicle#updateTrafficLight(double,
-     * org.movsim.simulator.roadSection.TrafficLight)
-     */
-    
-    public void updateTrafficLight(double time, TrafficLight trafficLight) {
-        trafficLightApproaching.update(this, time, trafficLight, accelerationModel);
-
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.movsim.simulator.vehicles.Vehicle#removeObservers()
-     */
-    
-    public void removeObservers() {
-        accelerationModel.removeObserver();
-    }
-
-    
-    public LaneChangingModel getLaneChangingModel() {
-        return lcModel;
-    }
-
-    public void setLaneChangingModel(LaneChangingModel lcModel) {
-        this.lcModel = lcModel;
-    }
-    /* (non-Javadoc)
-     * @see org.movsim.simulator.vehicles.Vehicle#getAccelerationModel()
-     */
-    
-    public AccelerationModel getAccelerationModel() {
-        return accelerationModel;
-    }
-
-    public void setAccelerationModel(AccelerationModel AccelerationModel) {
-        this.accelerationModel = AccelerationModel;
-    }
-
-    // ---------------------------------------------------------------------------------
-    // lane-changing related methods
-    // ---------------------------------------------------------------------------------
-
-    /* (non-Javadoc)
-     * @see org.movsim.simulator.vehicles.Vehicle#considerLaneChanging(double, java.util.List)
-     */
-    
-    public boolean considerLaneChanging(double dt, RoadSegment roadSegment) {
-        
-        // no lane changing when not configured in xml.
-        if (lcModel==null  || !lcModel.isInitialized()) {
-            return false;
-        }
-
-        // no lane-changing decision necessary for one-lane road
-        if (roadSegment.laneCount() < 2) {
-            return false;
-        }
-
-        if (inProcessOfLaneChanging()) {
-            updateLaneChangingDelay(dt);
-            return false;
-        }
-        
-        // if not in lane-changing process do determine if new lane is more
-        // attractive and lane change is possible
-        final int laneChangingDirection = lcModel.determineLaneChangingDirection(roadSegment);
-
-        // initiates a lane change: set targetLane to new value
-        // the lane will be assigned by the vehicle container !!
-        if (laneChangingDirection != MovsimConstants.NO_CHANGE) {
-            setTargetLane(lane + laneChangingDirection);
-            resetDelay();
-            updateLaneChangingDelay(dt);
-            logger.info("veh id={}", id);
-            logger.debug("do lane change to={} into target lane={}", laneChangingDirection, targetLane);
-            logger.info("do lane change to={} into target lane={}", laneChangingDirection, targetLane);
-            return true;
-        }
-
-        return false;
-    }
-
-    
-    public void initLaneChangeFromRamp(int oldLane) {
-        laneOld = oldLane; // MovsimConstants.MOST_RIGHT_LANE + MovsimConstants.TO_RIGHT; //
-                           // virtual lane index from onramp
-        resetDelay();
-        final double delayInit = 0.2; // needs only to be > 0;
-        updateLaneChangingDelay(delayInit);
-        logger.debug("do lane change from ramp: virtual old lane (origin)={}, contLane={}", lane, getContinousLane());
-        if (oldLane == MovsimConstants.TO_LEFT) {
-//            System.out.printf(".......... do lane change from ramp: virtual old lane (origin)=%d, contLane=%.4f", lane,
-//                    getContinousLane());
-            logger.debug("do lane change from ramp: virtual old lane (origin)={}, contLane={}", lane,
-                    getContinousLane());
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.movsim.simulator.vehicles.Vehicle#getTargetLane()
-     */
-    
-    public int getTargetLane() {
-        return targetLane;
-    }
-
-    /**
+  /**
      * Sets the target lane.
      *
      * @param targetLane the new target lane
      */
-    private void setTargetLane(int targetLane) {
-        assert targetLane >= 0;
-        this.targetLane = targetLane;
-    }
+  private void setTargetLane(int targetLane) {
+    assert targetLane >= 0;
+    this.targetLane = targetLane;
+  }
 
-    /* (non-Javadoc)
-     * @see org.movsim.simulator.vehicles.Vehicle#inProcessOfLaneChanging()
-     */
-    public boolean inProcessOfLaneChanging() {
-        return (tLaneChangingDelay > 0 && tLaneChangingDelay < FINITE_LANE_CHANGE_TIME_S);
-    }
+  public boolean inProcessOfLaneChanging() {
+    return (tLaneChangingDelay > 0 && tLaneChangingDelay < FINITE_LANE_CHANGE_TIME_S);
+  }
 
-    /**
+  /**
      * Reset delay.
      */
-    private void resetDelay() {
-        tLaneChangingDelay = 0;
-    }
+  private void resetDelay() {
+    tLaneChangingDelay = 0;
+  }
 
-    /**
+  /**
      * Update lane changing delay.
      *
      * @param dt the dt
      */
-    private void updateLaneChangingDelay(double dt) {
-        tLaneChangingDelay += dt;
+  private void updateLaneChangingDelay(double dt) {
+    tLaneChangingDelay += dt;
+  }
+
+  public double getContinousLane() {
+    if (inProcessOfLaneChanging()) {
+      final double fractionTimeLaneChange = Math.min(1, tLaneChangingDelay / FINITE_LANE_CHANGE_TIME_S);
+      return fractionTimeLaneChange * lane + (1 - fractionTimeLaneChange) * laneOld;
     }
+    return getLane();
+  }
 
-    /* (non-Javadoc)
-     * @see org.movsim.simulator.vehicles.Moveable#getContinousLane()
-     */
-    
-    public double getContinousLane() {
-        if (inProcessOfLaneChanging()) {
-            final double fractionTimeLaneChange = Math.min(1, tLaneChangingDelay / FINITE_LANE_CHANGE_TIME_S);
-            return fractionTimeLaneChange * lane + (1 - fractionTimeLaneChange) * laneOld;
-        }
-        return getLane();
-    }
+  public boolean isBrakeLightOn() {
+    updateBrakeLightStatus();
+    return isBrakeLightOn;
+  }
 
-    // ---------------------------------------------------------------------------------
-    // braking lights for neat viewers
-    // ---------------------------------------------------------------------------------
-
-    /* (non-Javadoc)
-     * @see org.movsim.simulator.vehicles.Moveable#isBrakeLightOn()
-     */
-    
-    public boolean isBrakeLightOn() {
-        updateBrakeLightStatus();
-        return isBrakeLightOn;
-    }
-
-    /**
+  /**
      * Update brake light status.
      */
-    private void updateBrakeLightStatus() {
-        if (isBrakeLightOn) {
-            if (acc > -THRESHOLD_BRAKELIGHT_OFF || speed <= 0.0001) {
-                isBrakeLightOn = false;
-            }
-        } else if (accOld > -THRESHOLD_BRAKELIGHT_ON && acc < -THRESHOLD_BRAKELIGHT_ON) {
-            isBrakeLightOn = true;
-        }
+  private void updateBrakeLightStatus() {
+    if (isBrakeLightOn) {
+      if (acc > -THRESHOLD_BRAKELIGHT_OFF || speed <= 0.0001) {
+        isBrakeLightOn = false;
+      }
+    } else {
+      if (accOld > -THRESHOLD_BRAKELIGHT_ON && acc < -THRESHOLD_BRAKELIGHT_ON) {
+        isBrakeLightOn = true;
+      }
     }
+  }
 
-    // ---------------------------------------------------------------------------------
-    // converter for scaled quantities in cellular automata
-    // ---------------------------------------------------------------------------------
+  public PhysicalQuantities physicalQuantities() {
+    return physQuantities;
+  }
 
-    
-    public PhysicalQuantities physicalQuantities() {
-        return physQuantities;
+  public double getActualFuelFlowLiterPerS() {
+    if (fuelModel == null) {
+      return 0;
     }
-    
-    
-    
-    public double getActualFuelFlowLiterPerS(){
-        if(fuelModel==null){
-            return 0;
-        }
-        return fuelModel.getFuelFlowInLiterPerS(speed, acc);
-    }
-    // Added as part of xodr merge
-    /**
+    return fuelModel.getFuelFlowInLiterPerS(speed, acc);
+  }
+
+  /**
      * 'Not Set' road exit position value, guaranteed not to be used by any vehicles.
      */
-    public static final double EXIT_POSITION_NOT_SET = -1.0;
+  public static final double EXIT_POSITION_NOT_SET = -1.0;
 
-    /**
-     * Vehicle type.
-     */
-    public static enum Type {
-        /**
-         * Vehicle type has not been set.
-         */
-        NONE,
-        /**
-         * Vehicle is an immovable obstacle.
-         */
-        OBSTACLE,
-        /**
-         * Vehicle is nominally a car.
-         */
-        CAR,
-        /**
-         * Vehicle is nominally a truck.
-         */
-        TRUCK,
-        /**
-         * The vehicle is a test car, used to gather data about traffic conditions.
-         */
-        TEST_CAR
-    }
-    private Type type;
-    /**
+  public static enum Type {
+    NONE,
+    OBSTACLE,
+    CAR,
+    TRUCK,
+    TEST_CAR
+  }
+
+  private Type type;
+
+  /**
      * Returns this vehicle's type.
      * 
      * @return vehicle's type
      * 
      */
-    public final Vehicle.Type type() {
-        return type;
-    }
-    /**
+  public final Vehicle.Type type() {
+    return type;
+  }
+
+  /**
      * Sets this vehicle's type.
      * @param type 
      * 
      */
-    public final void setType(Vehicle.Type type) {
-        this.type = type;
-    }
+  public final void setType(Vehicle.Type type) {
+    this.type = type;
+  }
 
-    /**
+  /**
      * <p>
      * Called when vehicle changes road segments (and possibly also lanes) at a link or junction.
      * </p>
@@ -1028,17 +727,14 @@ public class Vehicle {
      * @param newPos
      * @param exitPos
      */
-    public void moveToNewRoadSegment(int newLane, double newRearPos, double exitPos) {
-//        distanceTravelledToStartOfRoadSegment += rearPosition - newRearPos;
-        final int delta = laneOld - lane;
-        lane = newLane;
-        laneOld = lane + delta;
-        setRearPosition(newRearPos);
-//        this.exitEndPos = exitPos;
-//        trafficLight = null;
-//        speedLimit = 0.0;
-    }
-    /**
+  public void moveToNewRoadSegment(int newLane, double newRearPos, double exitPos) {
+    final int delta = laneOld - lane;
+    lane = newLane;
+    laneOld = lane + delta;
+    setRearPosition(newRearPos);
+  }
+
+  /**
      * Sets the road segment properties for this vehicle. Invoked after a vehicle has moved onto a
      * new road segment.
      * 
@@ -1046,28 +742,26 @@ public class Vehicle {
      * @param roadSegmentLength
      * 
      */
-    public final void setRoadSegment(int roadSegmentId, double roadSegmentLength) {
-        this.roadSegmentId = roadSegmentId;
-        this.roadSegmentLength = roadSegmentLength;
-    }
+  public final void setRoadSegment(int roadSegmentId, double roadSegmentLength) {
+    this.roadSegmentId = roadSegmentId;
+    this.roadSegmentLength = roadSegmentLength;
+  }
 
-    /**
+  /**
      * Returns the id of the road segment currently occupied by this vehicle.
      * 
      * @return id of the road segment currently occupied by this vehicle
      */
-    public final int roadSegmentId() {
-        return roadSegmentId;
-    }
+  public final int roadSegmentId() {
+    return roadSegmentId;
+  }
 
-    /**
+  /**
      * Returns the id of the road segment in which this vehicle wishes to exit.
      * 
      * @return id of exit road segment
      */
-    public final int exitRoadSegmentId() {
-        return exitRoadSegmentId;
-    }
-
-
+  public final int exitRoadSegmentId() {
+    return exitRoadSegmentId;
+  }
 }
