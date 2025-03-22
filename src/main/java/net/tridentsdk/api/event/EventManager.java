@@ -54,11 +54,32 @@ public class EventManager {
             Call handler = method.getAnnotation(Call.class);
             Importance importance = handler == null ? Importance.MEDIUM : handler.importance();
 
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/tridentsdk/tridentsdk/c0a77afe78ec62f2674ece3a732fd3c8643162d6/src/main/java/net/tridentsdk/api/event/EventManager.java/left.java
             EventReflector registeredListener = new EventReflector(
+||||||| /usr/src/app/output/tridentsdk/tridentsdk/c0a77afe78ec62f2674ece3a732fd3c8643162d6/src/main/java/net/tridentsdk/api/event/EventManager.java/base.java
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+            List<RegisteredListener> eventCallers = this.callers.get(eventClass);
+            if (eventCallers == null) eventCallers = new ArrayList<>();
+            
+            eventCallers.add(new RegisteredListener(fastClass.getMethod(method.getName()), eventClass, importance));
+            Collections.sort(eventCallers);
+=======
+=======
+>>>>>>> /usr/src/app/output/tridentsdk/tridentsdk/c0a77afe78ec62f2674ece3a732fd3c8643162d6/src/main/java/net/tridentsdk/api/event/EventManager.java/right.java
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+            RegisteredListener registeredListener = new RegisteredListener(
 =======
             RegisteredListener registeredListener = new RegisteredListener(
->>>>>>> b93a8a1974500955d2d215605dcbc73139c48d1e
+>>>>>>> theirs
                     Factories.reflect().getMethod(listener, method.getName()),
                     eventClass,
                     importance);

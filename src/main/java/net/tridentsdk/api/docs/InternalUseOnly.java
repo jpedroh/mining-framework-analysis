@@ -1,5 +1,4 @@
 /*
-<<<<<<< HEAD
  * Trident - A Multithreaded Server Alternative
  * Copyright 2014 The TridentSDK Team
  *
@@ -14,7 +13,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-=======
+ */
+/*
  *     TridentSDK - A Minecraft Server API
  *     Copyright (C) 2014, The TridentSDK Team
  *
@@ -30,7 +30,6 @@
  *
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
->>>>>>> b93a8a1974500955d2d215605dcbc73139c48d1e
  */
 package net.tridentsdk.api.docs;
 

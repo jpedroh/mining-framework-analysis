@@ -36,13 +36,88 @@ public class FastMethod {
         this.instance = instance;
     }
 
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/tridentsdk/tridentsdk/c0a77afe78ec62f2674ece3a732fd3c8643162d6/src/main/java/net/tridentsdk/api/reflect/FastMethod.java/left.java
     public Object invoke(Object instance, Object... args) {
         return this.access.invoke(instance, this.name, args);
     }
 
     public Object invoke(Object instance) {
         return this.access.invoke(instance, this.name);
+||||||| /usr/src/app/output/tridentsdk/tridentsdk/c0a77afe78ec62f2674ece3a732fd3c8643162d6/src/main/java/net/tridentsdk/api/reflect/FastMethod.java/base.java
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+    public Object invoke(Object instance, Object... args) {
+        return this.access.invoke(instance, this.name, args);
+    }
+
+    public Object invoke(Object instance) {
+        return this.access.invoke(instance, this.name);
+=======
+=======
+>>>>>>> /usr/src/app/output/tridentsdk/tridentsdk/c0a77afe78ec62f2674ece3a732fd3c8643162d6/src/main/java/net/tridentsdk/api/reflect/FastMethod.java/right.java
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
+    /**
+     * Invokes the method with parameters
+     *
+     * @param args the method parameters
+     * @return the return value after calling the method
+     */
+    public Object invoke(Object... args) {
+        return this.access.invoke(this.instance, this.name, args);
+    }
+
+    /**
+     * Invokes a no-arg method
+     *
+     * @return the return value after calling the method
+     */
+    public Object invoke() {
+        return this.access.invoke(this.instance, this.name);
+>>>>>>> Stashed changes
+    }
+
+    /**
+     * Gets the object instance used by this class
+     *
+     * @return the instance for method invocation
+     */
+    public Object getInstance() {
+        return instance;
+    }
+
+    /**
+     * Gets the object instance used by this class
+     *
+     * @return the instance for method invocation
+     */
+    public Object getInstance() {
+        return instance;
+    }
+
+    /**
+     * Gets the object instance used by this class
+     *
+     * @return the instance for method invocation
+     */
+    public Object getInstance() {
+        return instance;
+    }
+
+    /**
+     * Gets the object instance used by this class
+     *
+     * @return the instance for method invocation
+     */
+    public Object getInstance() {
+        return instance;
 =======
     /**
      * Invokes the method with parameters
@@ -61,7 +136,7 @@ public class FastMethod {
      */
     public Object invoke() {
         return this.access.invoke(this.instance, this.name);
->>>>>>> b93a8a1974500955d2d215605dcbc73139c48d1e
+>>>>>>> theirs
     }
 
     /**

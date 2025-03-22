@@ -60,13 +60,20 @@ public class FastClass {
      * @param name     Name of the method
      * @return FastMethod instance
      */
-<<<<<<< HEAD
-    public FastMethod getMethod(Object object,  String name) {
-        return new FastMethod(object, this.methodAccess, name);
+<<<<<<< /usr/src/app/output/tridentsdk/tridentsdk/c0a77afe78ec62f2674ece3a732fd3c8643162d6/src/main/java/net/tridentsdk/api/reflect/FastClass.java/left.java
+    public FastMethod getMethod(Object object,String name) {
+||||||| /usr/src/app/output/tridentsdk/tridentsdk/c0a77afe78ec62f2674ece3a732fd3c8643162d6/src/main/java/net/tridentsdk/api/reflect/FastClass.java/base.java
+    public FastMethod getMethod(String name) {
 =======
-    public FastMethod getMethod(Object o, String name) {
-        return new FastMethod(o, this.methodAccess, name);
->>>>>>> b93a8a1974500955d2d215605dcbc73139c48d1e
+    public FastMethod getMethod(Object o,String name) {
+>>>>>>> /usr/src/app/output/tridentsdk/tridentsdk/c0a77afe78ec62f2674ece3a732fd3c8643162d6/src/main/java/net/tridentsdk/api/reflect/FastClass.java/right.java
+<<<<<<< /usr/src/app/output/tridentsdk/tridentsdk/c0a77afe78ec62f2674ece3a732fd3c8643162d6/src/main/java/net/tridentsdk/api/reflect/FastClass.java/left.java
+        return new FastMethod(object,this.methodAccess, name);
+||||||| /usr/src/app/output/tridentsdk/tridentsdk/c0a77afe78ec62f2674ece3a732fd3c8643162d6/src/main/java/net/tridentsdk/api/reflect/FastClass.java/base.java
+        return new FastMethod(this.methodAccess, name);
+=======
+        return new FastMethod(o,this.methodAccess, name);
+>>>>>>> /usr/src/app/output/tridentsdk/tridentsdk/c0a77afe78ec62f2674ece3a732fd3c8643162d6/src/main/java/net/tridentsdk/api/reflect/FastClass.java/right.java
     }
 
     public FastField[] getFields() {
