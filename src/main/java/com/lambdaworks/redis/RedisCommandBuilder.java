@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.lambdaworks.redis.LettuceStrings.string;
 import static com.lambdaworks.redis.protocol.CommandKeyword.*;
