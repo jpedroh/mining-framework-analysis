@@ -594,6 +594,7 @@ public class ExecMojo
         {
             Toolchain tc = getToolchain();
 
+<<<<<<< /usr/src/app/output/mojohaus/exec-maven-plugin/4c831013aa8566249aae635880e414012ded48ee/src/main/java/org/codehaus/mojo/exec/ExecMojo.java/left.java
             // if the file doesn't exist & toolchain is null, the exec is probably in the PATH...
             // we should probably also test for isFile and canExecute, but the second one is only
             // available in SDK 6.
@@ -609,8 +610,71 @@ public class ExecMojo
                     List<String> paths = this.getExecutablePaths( enviro );
                     paths.add( 0, dir.getAbsolutePath() );
 
-                    exec = findExecutable( executable, paths );
+                    File f = null;
+                    search: for ( String path : paths )
+                    {
+                        if (executable.contains(".")) 
+                        {
+                            f = new File( path, executable );
+                            if ( f.isFile() )
+                            { 
+                                break;
+                            }
+                        }
+                        for ( String extension : getExecutableExtensions() )
+                        {
+                            f = new File( path, executable + extension );
+                            if ( f.isFile() )
+                            {
+                                break search;
+                            }
+                        }
+                    }
+
+                    if ( f != null )
+                    {
+                        exec = f.getAbsolutePath();
+                    }
+
+                    if ( !f.exists() )
+                    {
+                        exec = null;
+                    }
                 }
+||||||| /usr/src/app/output/mojohaus/exec-maven-plugin/4c831013aa8566249aae635880e414012ded48ee/src/main/java/org/codehaus/mojo/exec/ExecMojo.java/base.java
+                File f = null;
+                search: for ( String path : paths )
+                {
+                    f = new File( path, executable );
+                    if ( f.isFile() )
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        for ( String extension : getExecutableExtensions() )
+                        {
+                            f = new File( path, executable + extension );
+                            if ( f.isFile() )
+                            {
+                                break search;
+                            }
+                        }
+                    }
+                }
+
+                if ( f != null )
+                {
+                    exec = f.getAbsolutePath();
+                }
+
+                if ( !f.exists() )
+                {
+                    exec = null;
+                }
+=======
+                exec = findExecutable( executable, paths );
+>>>>>>> /usr/src/app/output/mojohaus/exec-maven-plugin/4c831013aa8566249aae635880e414012ded48ee/src/main/java/org/codehaus/mojo/exec/ExecMojo.java/right.java
             }
         }
 
@@ -641,23 +705,16 @@ public class ExecMojo
         File f = null;
         search: for ( final String path : paths )
         {
-            if (executable.contains(".")) 
-            {
-                f = new File( path, executable );
-                if ( f.isFile() )
-                { 
-                    break;
-                }
-            }
+            f = new File( path, executable );
+            if ( f.isFile() )
+                break;
             else
-            {
                 for ( final String extension : getExecutableExtensions() )
                 {
                     f = new File( path, executable + extension );
                     if ( f.isFile() )
                         break search;
                 }
-            }
         }
 
         if ( f == null || !f.exists() )
