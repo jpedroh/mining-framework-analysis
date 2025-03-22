@@ -136,6 +136,45 @@ public class BannerComponent extends javax.swing.JPanel {
         mainPanel.setBackground(new java.awt.Color(255, 255, 255));
         mainPanel.setLayout(new java.awt.GridBagLayout());
 
+<<<<<<< /usr/src/app/output/gephi/gephi/6d122ed8d5aa839543625e58cf7eb7235576d866/modules/DesktopWindow/src/main/java/org/gephi/desktop/banner/BannerComponent.java/left.java
+        logoButton.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/banner/resources/logo_std.png", false)); // NOI18N
+        logoButton.setToolTipText(org.openide.util.NbBundle
+            .getMessage(BannerComponent.class, "BannerComponent.logoButton.toolTipText")); // NOI18N
+        logoButton.setBorderPainted(false);
+        logoButton.setContentAreaFilled(false);
+        logoButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        logoButton.setFocusPainted(false);
+        logoButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        logoButton.setPressedIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/banner/resources/logo_glow.png", false)); // NOI18N
+        logoButton.setRolloverIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/banner/resources/logo_glow.png", false)); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        mainPanel.add(logoButton, gridBagConstraints);
+
+        groupsPanel.setBackground(new java.awt.Color(255, 255, 255));
+||||||| /usr/src/app/output/gephi/gephi/6d122ed8d5aa839543625e58cf7eb7235576d866/modules/DesktopWindow/src/main/java/org/gephi/desktop/banner/BannerComponent.java/base.java
+        logoButton.setIcon(new javax.swing.ImageIcon(
+            getClass().getResource("/org/gephi/desktop/banner/resources/logo_std.png"))); // NOI18N
+        logoButton.setToolTipText(org.openide.util.NbBundle
+            .getMessage(BannerComponent.class, "BannerComponent.logoButton.toolTipText")); // NOI18N
+        logoButton.setBorderPainted(false);
+        logoButton.setContentAreaFilled(false);
+        logoButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        logoButton.setFocusPainted(false);
+        logoButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        logoButton.setPressedIcon(new javax.swing.ImageIcon(
+            getClass().getResource("/org/gephi/desktop/banner/resources/logo_glow.png"))); // NOI18N
+        logoButton.setRolloverIcon(new javax.swing.ImageIcon(
+            getClass().getResource("/org/gephi/desktop/banner/resources/logo_glow.png"))); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        mainPanel.add(logoButton, gridBagConstraints);
+
+        groupsPanel.setBackground(new java.awt.Color(255, 255, 255));
+=======
+>>>>>>> /usr/src/app/output/gephi/gephi/6d122ed8d5aa839543625e58cf7eb7235576d866/modules/DesktopWindow/src/main/java/org/gephi/desktop/banner/BannerComponent.java/right.java
         groupsPanel.setLayout(new java.awt.GridBagLayout());
 
         buttonsPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -151,6 +190,31 @@ public class BannerComponent extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         groupsPanel.add(buttonsPanel, gridBagConstraints);
 
+<<<<<<< /usr/src/app/output/gephi/gephi/6d122ed8d5aa839543625e58cf7eb7235576d866/modules/DesktopWindow/src/main/java/org/gephi/desktop/banner/BannerComponent.java/left.java
+        bannerBackground.setIcon(ImageUtilities.loadImageIcon("org/gephi/desktop/banner/resources/bannerback.png", false)); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        groupsPanel.add(bannerBackground, gridBagConstraints);
+
+||||||| /usr/src/app/output/gephi/gephi/6d122ed8d5aa839543625e58cf7eb7235576d866/modules/DesktopWindow/src/main/java/org/gephi/desktop/banner/BannerComponent.java/base.java
+        bannerBackground.setIcon(new javax.swing.ImageIcon(
+            getClass().getResource("/org/gephi/desktop/banner/resources/bannerback.png"))); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        groupsPanel.add(bannerBackground, gridBagConstraints);
+
+=======
+>>>>>>> /usr/src/app/output/gephi/gephi/6d122ed8d5aa839543625e58cf7eb7235576d866/modules/DesktopWindow/src/main/java/org/gephi/desktop/banner/BannerComponent.java/right.java
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -163,4 +227,54 @@ public class BannerComponent extends javax.swing.JPanel {
         add(mainPanel, java.awt.BorderLayout.CENTER);
         add(workspacePanel, java.awt.BorderLayout.SOUTH);
     }// </editor-fold>//GEN-END:initComponents
+<<<<<<< /usr/src/app/output/gephi/gephi/6d122ed8d5aa839543625e58cf7eb7235576d866/modules/DesktopWindow/src/main/java/org/gephi/desktop/banner/BannerComponent.java/left.java
+
+    private static class JPerspectiveButton extends JToggleButton {
+
+        public JPerspectiveButton(String text, Icon icon) {
+            setText(text);
+            setBorder(null);
+            setBorderPainted(false);
+            setContentAreaFilled(false);
+            setFocusPainted(false);
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
+            setIcon(ImageUtilities.image2Icon(ImageUtilities.mergeImages(
+                ImageUtilities.loadImage("org/gephi/desktop/banner/perspective/resources/aqua-enabled.png", false),
+                ImageUtilities.icon2Image(icon), 6, 3)));
+            setRolloverIcon(ImageUtilities.image2Icon(ImageUtilities.mergeImages(
+                ImageUtilities.loadImage("org/gephi/desktop/banner/perspective/resources/aqua-mouseover.png", false),
+                ImageUtilities.icon2Image(icon), 6, 3)));
+            setSelectedIcon(ImageUtilities.image2Icon(ImageUtilities.mergeImages(
+                ImageUtilities.loadImage("org/gephi/desktop/banner/perspective/resources/aqua-selected.png", false),
+                ImageUtilities.icon2Image(icon), 6, 3)));
+        }
+    }
+||||||| /usr/src/app/output/gephi/gephi/6d122ed8d5aa839543625e58cf7eb7235576d866/modules/DesktopWindow/src/main/java/org/gephi/desktop/banner/BannerComponent.java/base.java
+
+    private static class JPerspectiveButton extends JToggleButton {
+
+        public JPerspectiveButton(String text, Icon icon) {
+            setText(text);
+            setBorder(null);
+            setBorderPainted(false);
+            setContentAreaFilled(false);
+            setFocusPainted(false);
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
+            setIcon(ImageUtilities.image2Icon(ImageUtilities.mergeImages(
+                ImageUtilities.loadImage("org/gephi/desktop/banner/perspective/resources/aqua-enabled.png"),
+                ImageUtilities.icon2Image(icon), 6, 3)));
+            setRolloverIcon(ImageUtilities.image2Icon(ImageUtilities.mergeImages(
+                ImageUtilities.loadImage("org/gephi/desktop/banner/perspective/resources/aqua-mouseover.png"),
+                ImageUtilities.icon2Image(icon), 6, 3)));
+            setSelectedIcon(ImageUtilities.image2Icon(ImageUtilities.mergeImages(
+                ImageUtilities.loadImage("org/gephi/desktop/banner/perspective/resources/aqua-selected.png"),
+                ImageUtilities.icon2Image(icon), 6, 3)));
+        }
+    }
+=======
+>>>>>>> /usr/src/app/output/gephi/gephi/6d122ed8d5aa839543625e58cf7eb7235576d866/modules/DesktopWindow/src/main/java/org/gephi/desktop/banner/BannerComponent.java/right.java
 }
