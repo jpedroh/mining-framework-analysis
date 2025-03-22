@@ -1,24 +1,5 @@
-/*
- * (C) Copyright 2003-2017, by Barak Naveh and Contributors.
- *
- * JGraphT : a free Java graph-theory library
- *
- * This program and the accompanying materials are dual-licensed under
- * either
- *
- * (a) the terms of the GNU Lesser General Public License version 2.1
- * as published by the Free Software Foundation, or (at your option) any
- * later version.
- *
- * or (per the licensee's choosing)
- *
- * (b) the terms of the Eclipse Public License v1.0 as published by
- * the Eclipse Foundation.
- */
 package org.jgrapht.traverse;
-
 import java.util.*;
-
 import org.jgrapht.*;
 import org.jgrapht.event.*;
 
@@ -32,52 +13,45 @@ import org.jgrapht.event.*;
  * @author Barak Naveh
  * @since Jan 31, 2004
  */
-public abstract class CrossComponentIterator<V, E, D>
-    extends AbstractGraphIterator<V, E>
-{
-    private static final int CCS_BEFORE_COMPONENT = 1;
-    private static final int CCS_WITHIN_COMPONENT = 2;
-    private static final int CCS_AFTER_COMPONENT = 3;
+public abstract class CrossComponentIterator<V extends java.lang.Object, E extends java.lang.Object, D extends java.lang.Object> extends AbstractGraphIterator<V, E> {
+  private static final int CCS_BEFORE_COMPONENT = 1;
 
-    private final ConnectedComponentTraversalEvent ccFinishedEvent =
-        new ConnectedComponentTraversalEvent(
-            this, ConnectedComponentTraversalEvent.CONNECTED_COMPONENT_FINISHED);
-    private final ConnectedComponentTraversalEvent ccStartedEvent =
-        new ConnectedComponentTraversalEvent(
-            this, ConnectedComponentTraversalEvent.CONNECTED_COMPONENT_STARTED);
+  private static final int CCS_WITHIN_COMPONENT = 2;
 
-    /**
+  private static final int CCS_AFTER_COMPONENT = 3;
+
+  private final ConnectedComponentTraversalEvent ccFinishedEvent = new ConnectedComponentTraversalEvent(this, ConnectedComponentTraversalEvent.CONNECTED_COMPONENT_FINISHED);
+
+  private final ConnectedComponentTraversalEvent ccStartedEvent = new ConnectedComponentTraversalEvent(this, ConnectedComponentTraversalEvent.CONNECTED_COMPONENT_STARTED);
+
+  /**
      * Stores the vertices that have been seen during iteration and (optionally) some additional
      * traversal info regarding each vertex.
      */
-    private Map<V, D> seen = new HashMap<>();
+  private Map<V, D> seen = new HashMap<>();
 
-    /**
-     * Iterator which provides start vertices for cross-component iteration.
-     */
-    private Iterator<V> startVertexIterator = null;
+  private Iterator<V> startVertexIterator = null;
 
-    /**
+  /**
      * The start vertex.
      */
-    private V startVertex;
+  private V startVertex;
 
-    /**
+  /**
      * The connected component state
      */
-    private int state = CCS_BEFORE_COMPONENT;
+  private int state = CCS_BEFORE_COMPONENT;
 
-    /**
+  /**
      * Creates a new iterator for the specified graph.
      *
      * @param g the graph to be iterated
      */
-    public CrossComponentIterator(Graph<V, E> g)
-    {
-        this(g, null);
-    }
+  public CrossComponentIterator(Graph<V, E> g) {
+    this(g, null);
+  }
 
-    /**
+  /**
      * Creates a new iterator for the specified graph. Iteration will start at the specified start
      * vertex. If the specified start vertex is <code>
      * null</code>, Iteration will start at an arbitrary graph vertex.
@@ -88,123 +62,104 @@ public abstract class CrossComponentIterator<V, E, D>
      * @throws IllegalArgumentException if <code>g==null</code> or does not contain
      *         <code>startVertex</code>
      */
-    public CrossComponentIterator(Graph<V, E> g, V startVertex)
-    {
-        super(g);
-
-        /*
-         * Initialize start vertex
-         */
-        this.startVertexIterator = graph.vertexSet().iterator();
-        if (startVertex == null) {
-            this.crossComponentTraversal = true;
-            // pick a start vertex if graph not empty
-            if (startVertexIterator.hasNext()) {
-                this.startVertex = startVertexIterator.next();
-            } else {
-                this.startVertex = null;
-            }
-        } else {
-            this.crossComponentTraversal = false;
-            if (graph.containsVertex(startVertex)) {
-                this.startVertex = startVertex;
-            } else {
-                throw new IllegalArgumentException("graph must contain the start vertex");
-            }
-        }
+  public CrossComponentIterator(Graph<V, E> g, V startVertex) {
+    super(g);
+    this.startVertexIterator = graph.vertexSet().iterator();
+    if (startVertex == null) {
+      this.crossComponentTraversal = true;
+      if (startVertexIterator.hasNext()) {
+        this.startVertex = startVertexIterator.next();
+      } else {
+        this.startVertex = null;
+      }
+    } else {
+      this.crossComponentTraversal = false;
+      if (graph.containsVertex(startVertex)) {
+        this.startVertex = startVertex;
+      } else {
+        throw new IllegalArgumentException("graph must contain the start vertex");
+      }
     }
+  }
 
-    @Override
-    public boolean hasNext()
-    {
-        if (startVertex != null) {
-            encounterStartVertex();
+  @Override public boolean hasNext() {
+    if (startVertex != null) {
+      encounterStartVertex();
+    }
+    if (isConnectedComponentExhausted()) {
+      if (state == CCS_WITHIN_COMPONENT) {
+        state = CCS_AFTER_COMPONENT;
+        if (nListeners != 0) {
+          fireConnectedComponentFinished(ccFinishedEvent);
         }
-
-        if (isConnectedComponentExhausted()) {
-            if (state == CCS_WITHIN_COMPONENT) {
-                state = CCS_AFTER_COMPONENT;
-                if (nListeners != 0) {
-                    fireConnectedComponentFinished(ccFinishedEvent);
-                }
-            }
-
-            if (isCrossComponentTraversal()) {
-                while (startVertexIterator.hasNext()) {
-                    V v = startVertexIterator.next();
-
-                    if (!isSeenVertex(v)) {
-                        encounterVertex(v, null);
-                        state = CCS_BEFORE_COMPONENT;
-
-                        return true;
-                    }
-                }
-
-                return false;
-            } else {
-                return false;
-            }
-        } else {
+      }
+      if (isCrossComponentTraversal()) {
+        while (startVertexIterator.hasNext()) {
+          V v = startVertexIterator.next();
+          if (!isSeenVertex(v)) {
+            encounterVertex(v, null);
+            state = CCS_BEFORE_COMPONENT;
             return true;
+          }
         }
+        return false;
+      } else {
+        return false;
+      }
+    } else {
+      return true;
     }
+  }
 
-    @Override
-    public V next()
-    {
-        if (startVertex != null) {
-            encounterStartVertex();
-        }
-
-        if (hasNext()) {
-            if (state == CCS_BEFORE_COMPONENT) {
-                state = CCS_WITHIN_COMPONENT;
-                if (nListeners != 0) {
-                    fireConnectedComponentStarted(ccStartedEvent);
-                }
-            }
-
-            V nextVertex = provideNextVertex();
-            if (nListeners != 0) {
-                fireVertexTraversed(createVertexTraversalEvent(nextVertex));
-            }
-
-            addUnseenChildrenOf(nextVertex);
-
-            return nextVertex;
-        } else {
-            throw new NoSuchElementException();
-        }
+  @Override public V next() {
+    if (startVertex != null) {
+      encounterStartVertex();
     }
+    if (hasNext()) {
+      if (state == CCS_BEFORE_COMPONENT) {
+        state = CCS_WITHIN_COMPONENT;
+        if (nListeners != 0) {
+          fireConnectedComponentStarted(ccStartedEvent);
+        }
+      }
+      V nextVertex = provideNextVertex();
+      if (nListeners != 0) {
+        fireVertexTraversed(createVertexTraversalEvent(nextVertex));
+      }
+      addUnseenChildrenOf(nextVertex);
+      return nextVertex;
+    } else {
+      throw new NoSuchElementException();
+    }
+  }
 
-    /**
+  /**
      * Returns <tt>true</tt> if there are no more uniterated vertices in the currently iterated
      * connected component; <tt>false</tt> otherwise.
      *
      * @return <tt>true</tt> if there are no more uniterated vertices in the currently iterated
      *         connected component; <tt>false</tt> otherwise.
      */
-    protected abstract boolean isConnectedComponentExhausted();
+  protected abstract boolean isConnectedComponentExhausted();
 
-    /**
+  /**
      * Update data structures the first time we see a vertex.
      *
      * @param vertex the vertex encountered
      * @param edge the edge via which the vertex was encountered, or null if the vertex is a
      *        starting point
      */
-    protected abstract void encounterVertex(V vertex, E edge);
+  protected abstract void encounterVertex(V vertex, E edge);
 
-    /**
+  /**
      * Returns the vertex to be returned in the following call to the iterator <code>next</code>
      * method.
      *
      * @return the next vertex to be returned by this iterator.
      */
-    protected abstract V provideNextVertex();
+  protected abstract V provideNextVertex();
 
-    /**
+  /**
      * Access the data stored for a seen vertex.
      *
      * @param vertex a vertex which has already been seen.
@@ -214,32 +169,30 @@ public abstract class CrossComponentIterator<V, E, D>
      *         explicitly associated with <code>
      * null</code>.
      */
-    protected D getSeenData(V vertex)
-    {
-        return seen.get(vertex);
-    }
+  protected D getSeenData(V vertex) {
+    return seen.get(vertex);
+  }
 
-    /**
+  /**
      * Determines whether a vertex has been seen yet by this traversal.
      *
      * @param vertex vertex in question
      *
      * @return <tt>true</tt> if vertex has already been seen
      */
-    protected boolean isSeenVertex(V vertex)
-    {
-        return seen.containsKey(vertex);
-    }
+  protected boolean isSeenVertex(V vertex) {
+    return seen.containsKey(vertex);
+  }
 
-    /**
+  /**
      * Called whenever we re-encounter a vertex. The default implementation does nothing.
      *
      * @param vertex the vertex re-encountered
      * @param edge the edge via which the vertex was re-encountered
      */
-    protected abstract void encounterVertexAgain(V vertex, E edge);
+  protected abstract void encounterVertexAgain(V vertex, E edge);
 
-    /**
+  /**
      * Stores iterator-dependent data for a vertex that has been seen.
      *
      * @param vertex a vertex which has been seen.
@@ -250,47 +203,38 @@ public abstract class CrossComponentIterator<V, E, D>
      * null</code> return can also indicate that the vertex was explicitly associated with
      *         <code>null</code>.
      */
-    protected D putSeenData(V vertex, D data)
-    {
-        return seen.put(vertex, data);
-    }
+  protected D putSeenData(V vertex, D data) {
+    return seen.put(vertex, data);
+  }
 
-    /**
+  /**
      * Called when a vertex has been finished (meaning is dependent on traversal represented by
      * subclass).
      *
      * @param vertex vertex which has been finished
      */
-    protected void finishVertex(V vertex)
-    {
-        if (nListeners != 0) {
-            fireVertexFinished(createVertexTraversalEvent(vertex));
-        }
+  protected void finishVertex(V vertex) {
+    if (nListeners != 0) {
+      fireVertexFinished(createVertexTraversalEvent(vertex));
     }
+  }
 
-    private void addUnseenChildrenOf(V vertex)
-    {
-        for (E edge : graph.outgoingEdgesOf(vertex)) {
-            if (nListeners != 0) {
-                fireEdgeTraversed(createEdgeTraversalEvent(edge));
-            }
-
-            V oppositeV = Graphs.getOppositeVertex(graph, edge, vertex);
-
-            if (isSeenVertex(oppositeV)) {
-                encounterVertexAgain(oppositeV, edge);
-            } else {
-                encounterVertex(oppositeV, edge);
-            }
-        }
+  private void addUnseenChildrenOf(V vertex) {
+    for (E edge : graph.outgoingEdgesOf(vertex)) {
+      if (nListeners != 0) {
+        fireEdgeTraversed(createEdgeTraversalEvent(edge));
+      }
+      V oppositeV = Graphs.getOppositeVertex(graph, edge, vertex);
+      if (isSeenVertex(oppositeV)) {
+        encounterVertexAgain(oppositeV, edge);
+      } else {
+        encounterVertex(oppositeV, edge);
+      }
     }
+  }
 
-    private void encounterStartVertex()
-    {
-        encounterVertex(startVertex, null);
-        startVertex = null;
-    }
-
+  private void encounterStartVertex() {
+    encounterVertex(startVertex, null);
+    startVertex = null;
+  }
 }
-
-// End CrossComponentIterator.java

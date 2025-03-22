@@ -1,25 +1,5 @@
-/*
- * (C) Copyright 2003-2017, by Barak Naveh and Contributors.
- *
- * JGraphT : a free Java graph-theory library
- *
- * This program and the accompanying materials are dual-licensed under
- * either
- *
- * (a) the terms of the GNU Lesser General Public License version 2.1
- * as published by the Free Software Foundation, or (at your option) any
- * later version.
- *
- * or (per the licensee's choosing)
- *
- * (b) the terms of the Eclipse Public License v1.0 as published by
- * the Eclipse Foundation.
- */
 package org.jgrapht.traverse;
-
 import java.util.*;
-
-import org.jgrapht.*;
 import org.jgrapht.event.*;
 
 /**
@@ -32,259 +12,301 @@ import org.jgrapht.event.*;
  * @author Barak Naveh
  * @since Jul 19, 2003
  */
-public abstract class AbstractGraphIterator<V, E>
-    implements GraphIterator<V, E>
-{
-    private final Set<TraversalListener<V, E>> traversalListeners = new LinkedHashSet<>();
+public abstract class AbstractGraphIterator<V extends java.lang.Object, E extends java.lang.Object> implements GraphIterator<V, E> {
+  private final Set<TraversalListener<V, E>> traversalListeners = new LinkedHashSet<>();
 
-    // We keep this cached redundantly with traversalListeners.size()
-    // so that subclasses can use it as a fast check to see if
-    // event firing calls can be skipped.
-    protected int nListeners = 0;
+  protected int nListeners = 0;
 
-    protected final FlyweightEdgeEvent<V, E> reusableEdgeEvent;
-    protected final FlyweightVertexEvent<V> reusableVertexEvent;
-    protected final Graph<V, E> graph;
-    protected boolean crossComponentTraversal;
-    protected boolean reuseEvents;
+  protected boolean crossComponentTraversal;
 
-    /**
+  protected final FlyweightEdgeEvent<V, E> reusableEdgeEvent;
+
+  protected boolean reuseEvents;
+
+  protected final FlyweightVertexEvent<V> reusableVertexEvent;
+
+  protected final Graph<V, E> graph;
+
+
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/d7d129c0f6880a29fc0e593f1f1c10226ef22182/jgrapht-core/src/main/java/org/jgrapht/traverse/AbstractGraphIterator.java/left.java
+  protected final Specifics<V, E> specifics;
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
+
+  /**
      * Create a new iterator
      * 
      * @param graph the graph
      */
-    public AbstractGraphIterator(Graph<V, E> graph)
-    {
-        this.graph = Objects.requireNonNull(graph, "graph must not be null");
-        this.reusableEdgeEvent = new FlyweightEdgeEvent<>(this, null);
-        this.reusableVertexEvent = new FlyweightVertexEvent<>(this, null);
-        this.crossComponentTraversal = true;
-        this.reuseEvents = false;
-    }
+  public AbstractGraphIterator(Graph<V, E> graph) {
+    this.graph = Objects.requireNonNull(graph, "graph must not be null");
+    this.specifics = createGraphSpecifics(graph);
+    this.reusableEdgeEvent = new FlyweightEdgeEvent<>(this, null);
+    this.reusableVertexEvent = new FlyweightVertexEvent<>(this, null);
+    this.crossComponentTraversal = true;
+    this.reuseEvents = false;
+  }
 
-    /**
+  /**
      * Get the graph being traversed.
      * 
      * @return the graph being traversed
      */
-    public Graph<V, E> getGraph()
-    {
-        return graph;
-    }
+  public Graph<V, E> getGraph() {
+    return graph;
+  }
 
-    /**
+  /**
      * Sets the cross component traversal flag - indicates whether to traverse the graph across
      * connected components.
      *
      * @param crossComponentTraversal if <code>true</code> traverses across connected components.
      */
-    public void setCrossComponentTraversal(boolean crossComponentTraversal)
-    {
-        this.crossComponentTraversal = crossComponentTraversal;
-    }
+  public void setCrossComponentTraversal(boolean crossComponentTraversal) {
+    this.crossComponentTraversal = crossComponentTraversal;
+  }
 
-    /**
+  /**
      * Test whether this iterator is set to traverse the graph across connected components.
      *
      * @return <code>true</code> if traverses across connected components, otherwise
      *         <code>false</code>.
      */
-    @Override
-    public boolean isCrossComponentTraversal()
-    {
-        return crossComponentTraversal;
-    }
+  @Override public boolean isCrossComponentTraversal() {
+    return crossComponentTraversal;
+  }
 
-    @Override
-    public void setReuseEvents(boolean reuseEvents)
-    {
-        this.reuseEvents = reuseEvents;
-    }
+  @Override public void setReuseEvents(boolean reuseEvents) {
+    this.reuseEvents = reuseEvents;
+  }
 
-    @Override
-    public boolean isReuseEvents()
-    {
-        return reuseEvents;
-    }
+  @Override public boolean isReuseEvents() {
+    return reuseEvents;
+  }
 
-    @Override
-    public void addTraversalListener(TraversalListener<V, E> l)
-    {
-        traversalListeners.add(l);
-        nListeners = traversalListeners.size();
-    }
+  @Override public void addTraversalListener(TraversalListener<V, E> l) {
+    traversalListeners.add(l);
+    nListeners = traversalListeners.size();
+  }
 
-    @Override
-    public void remove()
-    {
-        throw new UnsupportedOperationException("remove");
-    }
+  @Override public void remove() {
+    throw new UnsupportedOperationException("remove");
+  }
 
-    @Override
-    public void removeTraversalListener(TraversalListener<V, E> l)
-    {
-        traversalListeners.remove(l);
-        nListeners = traversalListeners.size();
-    }
+  @Override public void removeTraversalListener(TraversalListener<V, E> l) {
+    traversalListeners.remove(l);
+    nListeners = traversalListeners.size();
+  }
 
-    /**
+  /**
      * Informs all listeners that the traversal of the current connected component finished.
      *
      * @param e the connected component finished event.
      */
-    protected void fireConnectedComponentFinished(ConnectedComponentTraversalEvent e)
-    {
-        for (TraversalListener<V, E> l : traversalListeners) {
-            l.connectedComponentFinished(e);
-        }
+  protected void fireConnectedComponentFinished(ConnectedComponentTraversalEvent e) {
+    for (TraversalListener<V, E> l : traversalListeners) {
+      l.connectedComponentFinished(e);
     }
+  }
 
-    /**
+  /**
      * Informs all listeners that a traversal of a new connected component has started.
      *
      * @param e the connected component started event.
      */
-    protected void fireConnectedComponentStarted(ConnectedComponentTraversalEvent e)
-    {
-        for (TraversalListener<V, E> l : traversalListeners) {
-            l.connectedComponentStarted(e);
-        }
+  protected void fireConnectedComponentStarted(ConnectedComponentTraversalEvent e) {
+    for (TraversalListener<V, E> l : traversalListeners) {
+      l.connectedComponentStarted(e);
     }
+  }
 
-    /**
+  /**
      * Informs all listeners that a the specified edge was visited.
      *
      * @param e the edge traversal event.
      */
-    protected void fireEdgeTraversed(EdgeTraversalEvent<E> e)
-    {
-        for (TraversalListener<V, E> l : traversalListeners) {
-            l.edgeTraversed(e);
-        }
+  protected void fireEdgeTraversed(EdgeTraversalEvent<E> e) {
+    for (TraversalListener<V, E> l : traversalListeners) {
+      l.edgeTraversed(e);
     }
+  }
 
-    /**
+  /**
      * Informs all listeners that a the specified vertex was visited.
      *
      * @param e the vertex traversal event.
      */
-    protected void fireVertexTraversed(VertexTraversalEvent<V> e)
-    {
-        for (TraversalListener<V, E> l : traversalListeners) {
-            l.vertexTraversed(e);
-        }
+  protected void fireVertexTraversed(VertexTraversalEvent<V> e) {
+    for (TraversalListener<V, E> l : traversalListeners) {
+      l.vertexTraversed(e);
     }
+  }
 
-    /**
+  /**
      * Informs all listeners that a the specified vertex was finished.
      *
      * @param e the vertex traversal event.
      */
-    protected void fireVertexFinished(VertexTraversalEvent<V> e)
-    {
-        for (TraversalListener<V, E> l : traversalListeners) {
-            l.vertexFinished(e);
-        }
+  protected void fireVertexFinished(VertexTraversalEvent<V> e) {
+    for (TraversalListener<V, E> l : traversalListeners) {
+      l.vertexFinished(e);
     }
+  }
 
-    /**
+  /**
      * Create a vertex traversal event.
      * 
      * @param vertex the vertex
      * @return the event
      */
-    protected VertexTraversalEvent<V> createVertexTraversalEvent(V vertex)
-    {
-        if (reuseEvents) {
-            reusableVertexEvent.setVertex(vertex);
-            return reusableVertexEvent;
-        } else {
-            return new VertexTraversalEvent<>(this, vertex);
-        }
+  protected VertexTraversalEvent<V> createVertexTraversalEvent(V vertex) {
+    if (reuseEvents) {
+      reusableVertexEvent.setVertex(vertex);
+      return reusableVertexEvent;
+    } else {
+      return new VertexTraversalEvent<>(this, vertex);
     }
+  }
 
-    /**
+  /**
      * Create an edge traversal event.
      * 
      * @param edge the edge
      * @return the event
      */
-    protected EdgeTraversalEvent<E> createEdgeTraversalEvent(E edge)
-    {
-        if (isReuseEvents()) {
-            reusableEdgeEvent.setEdge(edge);
-            return reusableEdgeEvent;
-        } else {
-            return new EdgeTraversalEvent<>(this, edge);
-        }
+  protected EdgeTraversalEvent<E> createEdgeTraversalEvent(E edge) {
+    if (isReuseEvents()) {
+      reusableEdgeEvent.setEdge(edge);
+      return reusableEdgeEvent;
+    } else {
+      return new EdgeTraversalEvent<>(this, edge);
     }
+  }
+
+  static class FlyweightEdgeEvent<VV extends java.lang.Object, localE extends java.lang.Object> extends EdgeTraversalEvent<localE> {
+    private static final long serialVersionUID = 4051327833765000755L;
 
     /**
-     * A reusable edge event.
-     *
-     * @author Barak Naveh
-     * @since Aug 11, 2003
-     */
-    static class FlyweightEdgeEvent<VV, localE>
-        extends EdgeTraversalEvent<localE>
-    {
-        private static final long serialVersionUID = 4051327833765000755L;
-
-        /**
          * Creates a new FlyweightEdgeEvent.
          *
          * @param eventSource the source of the event.
          * @param edge the traversed edge.
          */
-        public FlyweightEdgeEvent(Object eventSource, localE edge)
-        {
-            super(eventSource, edge);
-        }
+    public FlyweightEdgeEvent(Object eventSource, localE edge) {
+      super(eventSource, edge);
+    }
 
-        /**
+    /**
          * Sets the edge of this event.
          *
          * @param edge the edge to be set.
          */
-        protected void setEdge(localE edge)
-        {
-            this.edge = edge;
-        }
+    protected void setEdge(localE edge) {
+      this.edge = edge;
     }
+  }
+
+  static class FlyweightVertexEvent<VV extends java.lang.Object> extends VertexTraversalEvent<VV> {
+    private static final long serialVersionUID = 3834024753848399924L;
 
     /**
-     * A reusable vertex event.
-     *
-     * @author Barak Naveh
-     * @since Aug 11, 2003
-     */
-    static class FlyweightVertexEvent<VV>
-        extends VertexTraversalEvent<VV>
-    {
-        private static final long serialVersionUID = 3834024753848399924L;
-
-        /**
          * Creates a new FlyweightVertexEvent.
          *
          * @param eventSource the source of the event.
          * @param vertex the traversed vertex.
          */
-        public FlyweightVertexEvent(Object eventSource, VV vertex)
-        {
-            super(eventSource, vertex);
-        }
+    public FlyweightVertexEvent(Object eventSource, VV vertex) {
+      super(eventSource, vertex);
+    }
 
-        /**
+    /**
          * Sets the vertex of this event.
          *
          * @param vertex the vertex to be set.
          */
-        protected void setVertex(VV vertex)
-        {
-            this.vertex = vertex;
-        }
+    protected void setVertex(VV vertex) {
+      this.vertex = vertex;
+    }
+  }
+
+
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/d7d129c0f6880a29fc0e593f1f1c10226ef22182/jgrapht-core/src/main/java/org/jgrapht/traverse/AbstractGraphIterator.java/left.java
+  abstract static class Specifics<VV extends java.lang.Object, EE extends java.lang.Object> {
+    /**
+         * Returns the edges outgoing from the specified vertex in case of directed graph, and the
+         * edge touching the specified vertex in case of undirected graph.
+         *
+         * @param vertex the vertex whose outgoing edges are to be returned.
+         *
+         * @return the edges outgoing from the specified vertex in case of directed graph, and the
+         *         edge touching the specified vertex in case of undirected graph.
+         */
+    public abstract Set<? extends EE> edgesOf(VV vertex);
+
+    /**
+         * Returns the edges incoming from the specified vertex in case of directed graph, and the
+         * edge touching the specified vertex in case of undirected graph.
+         *
+         * @param vertex the vertex whose incoming edges are to be returned.
+         *
+         * @return the edges incoming from the specified vertex in case of directed graph, and the
+         *         edge touching the specified vertex in case of undirected graph.
+         */
+    public abstract Set<? extends EE> incomingEdgesOf(VV vertex);
+  }
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
+
+
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/d7d129c0f6880a29fc0e593f1f1c10226ef22182/jgrapht-core/src/main/java/org/jgrapht/traverse/AbstractGraphIterator.java/left.java
+  static class DirectedSpecifics<VV extends java.lang.Object, EE extends java.lang.Object> extends Specifics<VV, EE> {
+    private DirectedGraph<VV, EE> graph;
+
+    /**
+         * Creates a new DirectedSpecifics object.
+         *
+         * @param g the graph for which this specifics object to be created.
+         */
+    public DirectedSpecifics(DirectedGraph<VV, EE> g) {
+      graph = g;
     }
 
-}
+    @Override public Set<? extends EE> edgesOf(VV vertex) {
+      return graph.outgoingEdgesOf(vertex);
+    }
 
-// End AbstractGraphIterator.java
+    @Override public Set<? extends EE> incomingEdgesOf(VV vertex) {
+      return graph.incomingEdgesOf(vertex);
+    }
+  }
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+
+
+
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/d7d129c0f6880a29fc0e593f1f1c10226ef22182/jgrapht-core/src/main/java/org/jgrapht/traverse/AbstractGraphIterator.java/left.java
+  static class UndirectedSpecifics<VV extends java.lang.Object, EE extends java.lang.Object> extends Specifics<VV, EE> {
+    private Graph<VV, EE> graph;
+
+    /**
+         * Creates a new UndirectedSpecifics object.
+         *
+         * @param g the graph for which this specifics object to be created.
+         */
+    public UndirectedSpecifics(Graph<VV, EE> g) {
+      graph = g;
+    }
+
+    @Override public Set<EE> edgesOf(VV vertex) {
+      return graph.edgesOf(vertex);
+    }
+
+    @Override public Set<EE> incomingEdgesOf(VV vertex) {
+      return graph.edgesOf(vertex);
+    }
+  }
+=======
+>>>>>>> Unknown file: This is a bug in JDime.
+}
