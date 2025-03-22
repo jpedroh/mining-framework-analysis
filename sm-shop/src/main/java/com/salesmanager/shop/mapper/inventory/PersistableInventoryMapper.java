@@ -75,8 +75,14 @@ public class PersistableInventoryMapper implements Mapper<PersistableInventory, 
 			if (StringUtils.isNotBlank(source.getDateAvailable())) {
 				destination.setProductDateAvailable(DateUtil.getDate(source.getDateAvailable()));
 			}
-			
+
+<<<<<<< /usr/src/app/output/shopizer-ecommerce/shopizer/98a9e4f60539e64bc147453626e9cce7439f0d62/sm-shop/src/main/java/com/salesmanager/shop/mapper/inventory/PersistableInventoryMapper.java/left.java
+			if(source.getProductId()!= null && (source.getInstance() == null || source.getInstance() == 0)) {
+||||||| /usr/src/app/output/shopizer-ecommerce/shopizer/98a9e4f60539e64bc147453626e9cce7439f0d62/sm-shop/src/main/java/com/salesmanager/shop/mapper/inventory/PersistableInventoryMapper.java/base.java
+			if(source.getProductId()!= null && source.getInstance() > 0) {
+=======
 			if(source.getProductId()!= null && source.getProductId().longValue() > 0) {
+>>>>>>> /usr/src/app/output/shopizer-ecommerce/shopizer/98a9e4f60539e64bc147453626e9cce7439f0d62/sm-shop/src/main/java/com/salesmanager/shop/mapper/inventory/PersistableInventoryMapper.java/right.java
 				Product product = productService.findOne(source.getId(), store);
 				if(product == null) {
 					throw new ResourceNotFoundException("Product with id [" + source.getId() + "] not found for store [" + store.getCode() + "]");
