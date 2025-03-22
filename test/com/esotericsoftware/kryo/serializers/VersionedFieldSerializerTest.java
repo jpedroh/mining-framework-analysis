@@ -1,212 +1,295 @@
-/* Copyright (c) 2008-2023, Nathan Sweet
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
- * conditions are met:
- * 
- * - Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
- * - Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
- * disclaimer in the documentation and/or other materials provided with the distribution.
- * - Neither the name of Esoteric Software nor the names of its contributors may be used to endorse or promote products derived
- * from this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
- * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
-
 package com.esotericsoftware.kryo.serializers;
-
 import static org.junit.jupiter.api.Assertions.*;
-
 import com.esotericsoftware.kryo.KryoTestCase;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.serializers.VersionFieldSerializer.Since;
-
 import org.junit.jupiter.api.Test;
-
 import java.util.Objects;
 
 class VersionedFieldSerializerTest extends KryoTestCase {
-	{
-		supportsCopy = true;
-	}
+  {
+    supportsCopy = true;
+  }
 
-	@Test
-	void testVersionFieldSerializer () {
-		TestClass object1 = new TestClass();
-		object1.moo = 2;
-		object1.child = null;
-		object1.other = new AnotherClass();
-		object1.other.value = "meow";
-		object1.record = new RecordClass("1", 2, 3L, 4d);
+  @Test void testVersionFieldSerializer() {
+    TestClass object1 = new TestClass();
+    object1.moo = 2;
+    object1.child = null;
+    object1.other = new AnotherClass();
+    object1.other.value = "meow";
+    object1.record = new RecordClass("1", 2, 3L, 4d);
+    kryo.setDefaultSerializer(VersionFieldSerializer.class);
+    kryo.register(AnotherClass.class);
+    kryo.register(RecordClass.class);
+    VersionFieldSerializer serializer = new VersionFieldSerializer(kryo, TestClass.class);
+    serializer.getField("child").setValueClass(TestClass.class, serializer);
+    kryo.register(TestClass.class, serializer);
+    TestClass object2 = roundTrip(38, object1);
+    assertEquals(object2.moo, object1.moo);
+    assertEquals(object2.other.value, object1.other.value);
+  }
 
-		kryo.setDefaultSerializer(VersionFieldSerializer.class);
-		kryo.register(AnotherClass.class);
-		kryo.register(RecordClass.class);
+  @Test void testVersionedRecordNewToOld() {
+    final RecordClass recordClass = new RecordClass("1", 2, 3L, 4d);
+    kryo.setDefaultSerializer(VersionFieldSerializer.class);
+    kryo.register(RecordClass.class);
+    kryo.register(OldRecordClass.class);
+    Output output = new Output(2048, -1);
+    kryo.writeObject(output, recordClass);
+    output.close();
+    Input input = new Input(output.toBytes());
+    Object deserialized = kryo.readObject(input, OldRecordClass.class);
+    input.close();
+    assertNotNull(deserialized);
+  }
 
-		// Make VersionFieldSerializer handle "child" field being null.
-		VersionFieldSerializer serializer = new VersionFieldSerializer(kryo, TestClass.class);
-		serializer.getField("child").setValueClass(TestClass.class, serializer);
-		kryo.register(TestClass.class, serializer);
+  @Test void testVersionedRecordOldToNew() {
+    final OldRecordClass recordClass = new OldRecordClass(2, 3L, 4d);
+    kryo.setDefaultSerializer(VersionFieldSerializer.class);
+    kryo.register(RecordClass.class);
+    kryo.register(OldRecordClass.class);
+    Output output = new Output(2048, -1);
+    kryo.writeObject(output, recordClass);
+    output.close();
+    Input input = new Input(output.toBytes());
+    Object deserialized = kryo.readObject(input, RecordClass.class);
+    input.close();
+    assertNotNull(deserialized);
+  }
 
-		TestClass object2 = roundTrip(38, object1);
+  public static class TestClass {
+    @Since(value = 1) public String text = "something";
 
-		assertEquals(object2.moo, object1.moo);
-		assertEquals(object2.other.value, object1.other.value);
-	}
+    @Since(value = 1) public int moo = 120;
 
-	@Test
-	void testVersionedRecordNewToOld() {
-		final RecordClass recordClass = new RecordClass("1", 2, 3L, 4d);
+    @Since(value = 2) public long moo2 = 1234120;
 
-		kryo.setDefaultSerializer(VersionFieldSerializer.class);
-		kryo.register(RecordClass.class);
-		kryo.register(OldRecordClass.class);
+    @Since(value = 2) public TestClass child;
 
-		Output output = new Output(2048, -1);
-		kryo.writeObject(output, recordClass);
-		output.close();
+    @Since(value = 3) public int zzz = 123;
 
-		Input input = new Input(output.toBytes());
-		Object deserialized = kryo.readObject(input, OldRecordClass.class);
-		input.close();
-		
-		assertNotNull(deserialized);
-	}
+    @Since(value = 3) public AnotherClass other;
 
-	@Test
-	void testVersionedRecordOldToNew() {
-		final OldRecordClass recordClass = new OldRecordClass( 2, 3L, 4d);
+    @Since(value = 3) public RecordClass record;
 
-		kryo.setDefaultSerializer(VersionFieldSerializer.class);
-		kryo.register(RecordClass.class);
-		kryo.register(OldRecordClass.class);
+    public boolean equals(Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (obj == null) {
+        return false;
+      }
+      if (getClass() != obj.getClass()) {
+        return false;
+      }
+      TestClass other = (TestClass) obj;
+      if (child == null) {
+        if (other.child != null) {
+          return false;
+        }
+      } else {
+        if (!child.equals(other.child)) {
+          return false;
+        }
+      }
+      if (moo != other.moo) {
+        return false;
+      }
+      if (moo2 != other.moo2) {
+        return false;
+      }
+      if (text == null) {
+        if (other.text != null) {
+          return false;
+        }
+      } else {
+        if (!text.equals(other.text)) {
+          return false;
+        }
+      }
+      if (zzz != other.zzz) {
+        return false;
+      }
+      if (!Objects.equals(record, other.record)) {
+        return false;
+      }
+      return true;
+    }
+  }
 
-		Output output = new Output(2048, -1);
-		kryo.writeObject(output, recordClass);
-		output.close();
+  public static class AnotherClass {
+    @Since(value = 1) String value;
+  }
 
-		Input input = new Input(output.toBytes());
-		Object deserialized = kryo.readObject(input, RecordClass.class);
-		input.close();
+  public record OldRecordClass(int width, long x, double y) {
+  }
 
-		assertNotNull(deserialized);
-	}
+  public record RecordClass(@Since(value = 1) String height, int width, long x, double y) {
+  }
 
-	public static class TestClass {
-		@Since(1) public String text = "something";
-		@Since(1) public int moo = 120;
-		@Since(2) public long moo2 = 1234120;
-		@Since(2) public TestClass child;
-		@Since(3) public int zzz = 123;
-		@Since(3) public AnotherClass other;
-		@Since(3) public RecordClass record;
+  private static class FutureClass {
+    @Since(value = 0) public Integer value;
 
-		public boolean equals (Object obj) {
-			if (this == obj) return true;
-			if (obj == null) return false;
-			if (getClass() != obj.getClass()) return false;
-			TestClass other = (TestClass)obj;
-			if (child == null) {
-				if (other.child != null) return false;
-			} else if (!child.equals(other.child)) return false;
-			if (moo != other.moo) return false;
-			if (moo2 != other.moo2) return false;
-			if (text == null) {
-				if (other.text != null) return false;
-			} else if (!text.equals(other.text)) return false;
-			if (zzz != other.zzz) return false;
-			if (!Objects.equals(record, other.record)) return false;
-			return true;
-		}
-	}
+    @Since(value = 1) public FutureClass2 futureClass2;
 
-	public static class AnotherClass {
-		@Since(1) String value;
-	}
+    @Since(value = 2) public String futureString = "unchanged";
 
-	public record OldRecordClass(int width, long x, double y) { }
-	
-	public record RecordClass(@Since(1) String height, int width, long x, double y) { }
+    public boolean equals(Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (obj == null) {
+        return false;
+      }
+      if (getClass() != obj.getClass()) {
+        return false;
+      }
+      FutureClass other = (FutureClass) obj;
+      if (futureString == null) {
+        if (other.futureString != null) {
+          return false;
+        }
+      } else {
+        if (!futureString.equals(other.futureString)) {
+          return false;
+        }
+      }
+      if (futureClass2 == null) {
+        if (other.futureClass2 != null) {
+          return false;
+        }
+      } else {
+        if (!futureClass2.equals(other.futureClass2)) {
+          return false;
+        }
+      }
+      if (value == null) {
+        if (other.value != null) {
+          return false;
+        }
+      } else {
+        if (!value.equals(other.value)) {
+          return false;
+        }
+      }
+      return true;
+    }
 
-	private static class FutureClass {
-		@Since(0) public Integer value;
-		@Since(1) public FutureClass2 futureClass2;
-		@Since(2) public String futureString = "unchanged";
+    /** What equals(Object) would have been before the chunked fields were added to the class. */
+    public boolean pastEquals(Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (obj == null) {
+        return false;
+      }
+      if (getClass() != obj.getClass()) {
+        return false;
+      }
+      FutureClass other = (FutureClass) obj;
+      if (futureClass2 == null) {
+        if (other.futureClass2 != null) {
+          return false;
+        }
+      } else {
+        if (!futureClass2.pastEquals(other.futureClass2)) {
+          return false;
+        }
+      }
+      if (value == null) {
+        if (other.value != null) {
+          return false;
+        }
+      } else {
+        if (!value.equals(other.value)) {
+          return false;
+        }
+      }
+      return true;
+    }
+  }
 
-		public boolean equals (Object obj) {
-			if (this == obj) return true;
-			if (obj == null) return false;
-			if (getClass() != obj.getClass()) return false;
-			FutureClass other = (FutureClass)obj;
-			if (futureString == null) {
-				if (other.futureString != null) return false;
-			} else if (!futureString.equals(other.futureString)) return false;
-			if (futureClass2 == null) {
-				if (other.futureClass2 != null) return false;
-			} else if (!futureClass2.equals(other.futureClass2)) return false;
-			if (value == null) {
-				if (other.value != null) return false;
-			} else if (!value.equals(other.value)) return false;
-			return true;
-		}
+  private static class FutureClass2 {
+    @Since(value = 0) public String text = "something";
 
-		/** What equals(Object) would have been before the chunked fields were added to the class. */
-		public boolean pastEquals (Object obj) {
-			if (this == obj) return true;
-			if (obj == null) return false;
-			if (getClass() != obj.getClass()) return false;
-			FutureClass other = (FutureClass)obj;
-			if (futureClass2 == null) {
-				if (other.futureClass2 != null) return false;
-			} else if (!futureClass2.pastEquals(other.futureClass2)) return false;
-			if (value == null) {
-				if (other.value != null) return false;
-			} else if (!value.equals(other.value)) return false;
-			return true;
-		}
-	}
+    @Since(value = 1) public int moo = 120;
 
-	private static class FutureClass2 {
-		@Since(0) public String text = "something";
-		@Since(1) public int moo = 120;
-		@Since(2) public long moo2 = 1234120;
-		@Since(value = 3) public int zzz = 123;
-		@Since(value = 4) public FutureClass2 fc2;
+    @Since(value = 2) public long moo2 = 1234120;
 
-		public boolean equals (Object obj) {
-			if (this == obj) return true;
-			if (obj == null) return false;
-			if (getClass() != obj.getClass()) return false;
-			FutureClass2 other = (FutureClass2)obj;
-			if (fc2 == null) {
-				if (other.fc2 != null) return false;
-			} else if (!fc2.equals(other.fc2)) return false;
-			if (moo != other.moo) return false;
-			if (moo2 != other.moo2) return false;
-			if (text == null) {
-				if (other.text != null) return false;
-			} else if (!text.equals(other.text)) return false;
-			if (zzz != other.zzz) return false;
-			return true;
-		}
+    @Since(value = 3) public int zzz = 123;
 
-		/** What equals(Object) would have been before the chunked fields were added to the class. */
-		public boolean pastEquals (Object obj) {
-			if (this == obj) return true;
-			if (obj == null) return false;
-			if (getClass() != obj.getClass()) return false;
-			FutureClass2 other = (FutureClass2)obj;
-			if (moo != other.moo) return false;
-			if (moo2 != other.moo2) return false;
-			if (text == null) {
-				if (other.text != null) return false;
-			} else if (!text.equals(other.text)) return false;
-			return true;
-		}
-	}
+    @Since(value = 4) public FutureClass2 fc2;
+
+    public boolean equals(Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (obj == null) {
+        return false;
+      }
+      if (getClass() != obj.getClass()) {
+        return false;
+      }
+      FutureClass2 other = (FutureClass2) obj;
+      if (fc2 == null) {
+        if (other.fc2 != null) {
+          return false;
+        }
+      } else {
+        if (!fc2.equals(other.fc2)) {
+          return false;
+        }
+      }
+      if (moo != other.moo) {
+        return false;
+      }
+      if (moo2 != other.moo2) {
+        return false;
+      }
+      if (text == null) {
+        if (other.text != null) {
+          return false;
+        }
+      } else {
+        if (!text.equals(other.text)) {
+          return false;
+        }
+      }
+      if (zzz != other.zzz) {
+        return false;
+      }
+      return true;
+    }
+
+    /** What equals(Object) would have been before the chunked fields were added to the class. */
+    public boolean pastEquals(Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (obj == null) {
+        return false;
+      }
+      if (getClass() != obj.getClass()) {
+        return false;
+      }
+      FutureClass2 other = (FutureClass2) obj;
+      if (moo != other.moo) {
+        return false;
+      }
+      if (moo2 != other.moo2) {
+        return false;
+      }
+      if (text == null) {
+        if (other.text != null) {
+          return false;
+        }
+      } else {
+        if (!text.equals(other.text)) {
+          return false;
+        }
+      }
+      return true;
+    }
+  }
 }
