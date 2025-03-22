@@ -52,11 +52,13 @@ public class KSPPathValidatorTest
 
                         @Override
                         public boolean isValidPath(
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/b7c525bdcb82359ff37e9660cc48a8a13656e062/jgrapht-core/src/test/java/org/jgrapht/alg/KSPPathValidatorTest.java/left.java
                             GraphPath<String, DefaultEdge> partialPath,
+||||||| /usr/src/app/output/jgrapht/jgrapht/b7c525bdcb82359ff37e9660cc48a8a13656e062/jgrapht-core/src/test/java/org/jgrapht/alg/KSPPathValidatorTest.java/base.java
+                            GraphPath<String, DefaultEdge> prevPathElement,
 =======
                             GraphPath<String, DefaultEdge> prevPath,
->>>>>>> bb2518936fea6fc4262a23259462def8e83efae5
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/b7c525bdcb82359ff37e9660cc48a8a13656e062/jgrapht-core/src/test/java/org/jgrapht/alg/KSPPathValidatorTest.java/right.java
                             DefaultEdge edge)
                         {
                             // block all paths
@@ -90,11 +92,13 @@ public class KSPPathValidatorTest
 
                         @Override
                         public boolean isValidPath(
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/b7c525bdcb82359ff37e9660cc48a8a13656e062/jgrapht-core/src/test/java/org/jgrapht/alg/KSPPathValidatorTest.java/left.java
                             GraphPath<String, DefaultEdge> partialPath,
+||||||| /usr/src/app/output/jgrapht/jgrapht/b7c525bdcb82359ff37e9660cc48a8a13656e062/jgrapht-core/src/test/java/org/jgrapht/alg/KSPPathValidatorTest.java/base.java
+                            GraphPath<String, DefaultEdge> prevPathElement,
 =======
                             GraphPath<String, DefaultEdge> prevPath,
->>>>>>> bb2518936fea6fc4262a23259462def8e83efae5
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/b7c525bdcb82359ff37e9660cc48a8a13656e062/jgrapht-core/src/test/java/org/jgrapht/alg/KSPPathValidatorTest.java/right.java
                             DefaultEdge edge)
                         {
                             // block all paths
@@ -127,25 +131,38 @@ public class KSPPathValidatorTest
 
                     @Override
                     public boolean isValidPath(
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/b7c525bdcb82359ff37e9660cc48a8a13656e062/jgrapht-core/src/test/java/org/jgrapht/alg/KSPPathValidatorTest.java/left.java
                         GraphPath<Integer, DefaultEdge> partialPath, DefaultEdge edge)
-                    {
-                        if (partialPath == null) {
-                            return true;
-                        }
-                        return Math.abs(
-                            partialPath.getEndVertex() - Graphs
-                                .getOppositeVertex(ring, edge, partialPath.getEndVertex())) == 1;
+||||||| /usr/src/app/output/jgrapht/jgrapht/b7c525bdcb82359ff37e9660cc48a8a13656e062/jgrapht-core/src/test/java/org/jgrapht/alg/KSPPathValidatorTest.java/base.java
+                        GraphPath<Integer, DefaultEdge> prevPathElement, DefaultEdge edge)
 =======
                         GraphPath<Integer, DefaultEdge> prevPath, DefaultEdge edge)
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/b7c525bdcb82359ff37e9660cc48a8a13656e062/jgrapht-core/src/test/java/org/jgrapht/alg/KSPPathValidatorTest.java/right.java
                     {
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/b7c525bdcb82359ff37e9660cc48a8a13656e062/jgrapht-core/src/test/java/org/jgrapht/alg/KSPPathValidatorTest.java/left.java
+                        if (partialPath == null) {
+||||||| /usr/src/app/output/jgrapht/jgrapht/b7c525bdcb82359ff37e9660cc48a8a13656e062/jgrapht-core/src/test/java/org/jgrapht/alg/KSPPathValidatorTest.java/base.java
+                        if (prevPathElement == null) {
+=======
                         if (prevPath == null) {
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/b7c525bdcb82359ff37e9660cc48a8a13656e062/jgrapht-core/src/test/java/org/jgrapht/alg/KSPPathValidatorTest.java/right.java
                             return true;
                         }
                         return Math.abs(
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/b7c525bdcb82359ff37e9660cc48a8a13656e062/jgrapht-core/src/test/java/org/jgrapht/alg/KSPPathValidatorTest.java/left.java
+                            partialPath.getEndVertex() - Graphs
+||||||| /usr/src/app/output/jgrapht/jgrapht/b7c525bdcb82359ff37e9660cc48a8a13656e062/jgrapht-core/src/test/java/org/jgrapht/alg/KSPPathValidatorTest.java/base.java
+                            prevPathElement.getEndVertex() - Graphs
+=======
                             prevPath.getEndVertex() - Graphs
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/b7c525bdcb82359ff37e9660cc48a8a13656e062/jgrapht-core/src/test/java/org/jgrapht/alg/KSPPathValidatorTest.java/right.java
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/b7c525bdcb82359ff37e9660cc48a8a13656e062/jgrapht-core/src/test/java/org/jgrapht/alg/KSPPathValidatorTest.java/left.java
+                                .getOppositeVertex(ring, edge, partialPath.getEndVertex())) == 1;
+||||||| /usr/src/app/output/jgrapht/jgrapht/b7c525bdcb82359ff37e9660cc48a8a13656e062/jgrapht-core/src/test/java/org/jgrapht/alg/KSPPathValidatorTest.java/base.java
+                                .getOppositeVertex(ring, edge, prevPathElement.getEndVertex())) == 1;
+=======
                                 .getOppositeVertex(ring, edge, prevPath.getEndVertex())) == 1;
->>>>>>> bb2518936fea6fc4262a23259462def8e83efae5
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/b7c525bdcb82359ff37e9660cc48a8a13656e062/jgrapht-core/src/test/java/org/jgrapht/alg/KSPPathValidatorTest.java/right.java
                     }
                 });
 
@@ -176,11 +193,13 @@ public class KSPPathValidatorTest
 
                     @Override
                     public boolean isValidPath(
-<<<<<<< HEAD
+<<<<<<< /usr/src/app/output/jgrapht/jgrapht/b7c525bdcb82359ff37e9660cc48a8a13656e062/jgrapht-core/src/test/java/org/jgrapht/alg/KSPPathValidatorTest.java/left.java
                         GraphPath<Integer, DefaultEdge> partialPath, DefaultEdge edge)
+||||||| /usr/src/app/output/jgrapht/jgrapht/b7c525bdcb82359ff37e9660cc48a8a13656e062/jgrapht-core/src/test/java/org/jgrapht/alg/KSPPathValidatorTest.java/base.java
+                        GraphPath<Integer, DefaultEdge> prevPathElement, DefaultEdge edge)
 =======
                         GraphPath<Integer, DefaultEdge> prevPath, DefaultEdge edge)
->>>>>>> bb2518936fea6fc4262a23259462def8e83efae5
+>>>>>>> /usr/src/app/output/jgrapht/jgrapht/b7c525bdcb82359ff37e9660cc48a8a13656e062/jgrapht-core/src/test/java/org/jgrapht/alg/KSPPathValidatorTest.java/right.java
                     {
                         // accept all requests but the one to pass through the edge connecting
                         // the two cliques.
