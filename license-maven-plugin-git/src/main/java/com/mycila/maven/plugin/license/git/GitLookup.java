@@ -1,20 +1,4 @@
-/*
- * Copyright (C) 2008-2021 Mycila (mathieu.carbou@gmail.com)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.mycila.maven.plugin.license.git;
-
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -32,7 +16,6 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.filter.AndTreeFilter;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.eclipse.jgit.treewalk.filter.TreeFilter;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -48,17 +31,24 @@ import java.util.TimeZone;
  */
 public class GitLookup {
   public static final TimeZone DEFAULT_ZONE = TimeZone.getTimeZone("GMT");
+
   public static final int DEFAULT_COMMITS_COUNT = 10;
 
   public enum DateSource {
-    AUTHOR, COMMITER
+    AUTHOR,
+    COMMITER
   }
 
   private final int checkCommitsCount;
+
   private final DateSource dateSource;
+
   private final GitPathResolver pathResolver;
+
   private final Repository repository;
+
   private final TimeZone timeZone;
+
   private final boolean shallow;
 
   /**
@@ -76,25 +66,21 @@ public class GitLookup {
   public GitLookup(File anyFile, DateSource dateSource, TimeZone timeZone, int checkCommitsCount) throws IOException {
     super();
     this.repository = new FileRepositoryBuilder().findGitDir(anyFile).build();
-    /* A workaround for  https://bugs.eclipse.org/bugs/show_bug.cgi?id=457961 */
-    // Also contains contents of .git/shallow and can detect shallow repo
     this.shallow = !this.repository.getObjectDatabase().newReader().getShallowCommits().isEmpty();
-
     this.pathResolver = new GitPathResolver(repository.getWorkTree().getAbsolutePath());
     this.dateSource = dateSource;
     switch (dateSource) {
       case COMMITER:
-        this.timeZone = timeZone == null ? DEFAULT_ZONE : timeZone;
-        break;
+      this.timeZone = timeZone == null ? DEFAULT_ZONE : timeZone;
+      break;
       case AUTHOR:
-        if (timeZone != null) {
-          throw new IllegalArgumentException("Time zone must be null with dateSource " + DateSource.AUTHOR.name()
-              + " because git author name already contrains time zone information.");
-        }
-        this.timeZone = null;
-        break;
+      if (timeZone != null) {
+        throw new IllegalArgumentException("Time zone must be null with dateSource " + DateSource.AUTHOR.name() + " because git author name already contrains time zone information.");
+      }
+      this.timeZone = null;
+      break;
       default:
-        throw new IllegalStateException("Unexpected " + DateSource.class.getName() + " " + dateSource);
+      throw new IllegalStateException("Unexpected " + DateSource.class.getName() + " " + dateSource);
     }
     this.checkCommitsCount = checkCommitsCount;
   }
@@ -114,11 +100,9 @@ public class GitLookup {
    */
   int getYearOfLastChange(File file) throws NoHeadException, GitAPIException, IOException {
     String repoRelativePath = pathResolver.relativize(file);
-
     if (isFileModifiedOrUnstaged(repoRelativePath)) {
       return getCurrentYear();
     }
-
     int commitYear = 0;
     RevWalk walk = getGitRevWalk(repoRelativePath, false);
     for (RevCommit commit : walk) {
@@ -143,7 +127,6 @@ public class GitLookup {
    */
   int getYearOfCreation(File file) throws IOException, GitAPIException {
     String repoRelativePath = pathResolver.relativize(file);
-
     int commitYear = 0;
     RevWalk walk = getGitRevWalk(repoRelativePath, true);
     Iterator<RevCommit> iterator = walk.iterator();
@@ -152,12 +135,9 @@ public class GitLookup {
       commitYear = getYearFromCommit(commit);
     }
     walk.dispose();
-    
-    // If we couldn't find a creation year from Git assume newly created file
     if (commitYear == 0) {
-        return getCurrentYear();
-      }
-    
+      return getCurrentYear();
+    }
     return commitYear;
   }
 
@@ -186,33 +166,26 @@ public class GitLookup {
     walk.dispose();
     return authorEmail;
   }
-  
+
   boolean isShallowRepository() {
     return this.shallow;
   }
 
   private boolean isFileModifiedOrUnstaged(String repoRelativePath) throws GitAPIException {
-    @SuppressWarnings("resource")
-    Status status = new Git(repository).status().addPath(repoRelativePath).call();
+    @SuppressWarnings(value = { "resource" }) Status status = new Git(repository).status().addPath(repoRelativePath).call();
     return !status.isClean();
   }
 
   private RevWalk getGitRevWalk(String repoRelativePath, boolean oldestCommitsFirst) throws IOException {
     DiffConfig diffConfig = repository.getConfig().get(DiffConfig.KEY);
-
     RevWalk walk = new RevWalk(repository);
     walk.markStart(walk.parseCommit(repository.resolve(Constants.HEAD)));
-    walk.setTreeFilter(AndTreeFilter.create(Arrays.asList(
-        PathFilter.create(repoRelativePath),
-        FollowFilter.create(repoRelativePath, diffConfig), // Allows us to follow files as they move or are renamed
-        TreeFilter.ANY_DIFF)
-    ));
+    walk.setTreeFilter(AndTreeFilter.create(Arrays.asList(PathFilter.create(repoRelativePath), FollowFilter.create(repoRelativePath, diffConfig), TreeFilter.ANY_DIFF)));
     walk.setRevFilter(MaxCountRevFilter.create(checkCommitsCount));
     walk.setRetainBody(false);
     if (oldestCommitsFirst) {
       walk.sort(RevSort.REVERSE);
     }
-
     return walk;
   }
 
@@ -223,14 +196,14 @@ public class GitLookup {
   private int getYearFromCommit(RevCommit commit) {
     switch (dateSource) {
       case COMMITER:
-        int epochSeconds = commit.getCommitTime();
-        return toYear(epochSeconds * 1000L, timeZone);
+      int epochSeconds = commit.getCommitTime();
+      return toYear(epochSeconds * 1000L, timeZone);
       case AUTHOR:
-        PersonIdent id = commit.getAuthorIdent();
-        Date date = id.getWhen();
-        return toYear(date.getTime(), id.getTimeZone());
+      PersonIdent id = commit.getAuthorIdent();
+      Date date = id.getWhen();
+      return toYear(date.getTime(), id.getTimeZone());
       default:
-        throw new IllegalStateException("Unexpected " + DateSource.class.getName() + " " + dateSource);
+      throw new IllegalStateException("Unexpected " + DateSource.class.getName() + " " + dateSource);
     }
   }
 
