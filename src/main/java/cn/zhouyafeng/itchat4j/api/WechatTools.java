@@ -77,12 +77,22 @@ public class WechatTools {
 	 * @date 2017年5月4日 下午11:37:20
 	 * @return
 	 */
-	public static List<String> getContactList() {
-		List<String> contactList = new ArrayList<String>();
+	public static List<String> getContactNickNameList() {
+		List<String> contactNickNameList = new ArrayList<String>();
 		for (JSONObject o : core.getContactList()) {
-			contactList.add(o.getString("NickName"));
+			contactNickNameList.add(o.getString("NickName"));
 		}
-		return contactList;
+		return contactNickNameList;
+	}
+
+	/**
+	 * 返回好友完整信息列表
+	 * 
+	 * @date 2017年6月26日 下午9:45:39
+	 * @return
+	 */
+	public static List<JSONObject> getContactList() {
+		return core.getContactList();
 	}
 
 	/**
@@ -96,17 +106,34 @@ public class WechatTools {
 		return core.getGroupList();
 	}
 
+	/**
+	 * 获取群ID列表
+	 * 
+	 * @date 2017年6月21日 下午11:42:56
+	 * @return
+	 */
 	public static List<String> getGroupIdList() {
 		return core.getGroupIdList();
+	}
+
+	/**
+	 * 获取群NickName列表
+	 * 
+	 * @date 2017年6月21日 下午11:43:38
+	 * @return
+	 */
+	public static List<String> getGroupNickNameList() {
+		return core.getGroupNickNameList();
 	}
 
 	/**
 	 * 根据groupIdList返回群成员列表
 	 *
 	 * @date 2017年6月13日 下午11:12:31
-	 * @param groupIdList
+	 * @param groupId
 	 * @return
 	 */
+<<<<<<< /usr/src/app/output/yaphone/itchat4j/32081afb8764551f0fdf07c22b2d8d34e879ef76/src/main/java/cn/zhouyafeng/itchat4j/api/WechatTools.java/left.java
 	public static JSONObject getMemberListByGroupId(String groupIdList) {
 
 		JSONArray memberList=null;
@@ -152,13 +179,19 @@ public class WechatTools {
 		return null;
 
 	}
+||||||| /usr/src/app/output/yaphone/itchat4j/32081afb8764551f0fdf07c22b2d8d34e879ef76/src/main/java/cn/zhouyafeng/itchat4j/api/WechatTools.java/base.java
+=======
+	public static JSONArray getMemberListByGroupId(String groupId) {
+		return core.getGroupMemeberMap().get(groupId);
+	}
+>>>>>>> /usr/src/app/output/yaphone/itchat4j/32081afb8764551f0fdf07c22b2d8d34e879ef76/src/main/java/cn/zhouyafeng/itchat4j/api/WechatTools.java/right.java
 
 	/**
-	 * 退出微信
-	 * 
-	 * @author https://github.com/yaphone
-	 * @date 2017年5月18日 下午11:56:54
-	 */
+ * 退出微信
+ * 
+ * @author https://github.com/yaphone
+ * @date 2017年5月18日 下午11:56:54
+ */
 	public static void logout() {
 		webWxLogout();
 	}
