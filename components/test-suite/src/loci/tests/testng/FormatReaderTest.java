@@ -2449,17 +2449,20 @@ public class FormatReaderTest {
               continue;
             }
 
+<<<<<<< /usr/src/app/output/openmicroscopy/bioformats/769fc0abd378fc1a1cf585c056245c7befd485ee/components/test-suite/src/loci/tests/testng/FormatReaderTest.java/left.java
             // Operetta only reliably detects from Index.*.xml
             if (!result && r instanceof OperettaReader) {
               continue;
             }
-
+||||||| /usr/src/app/output/openmicroscopy/bioformats/769fc0abd378fc1a1cf585c056245c7befd485ee/components/test-suite/src/loci/tests/testng/FormatReaderTest.java/base.java
+=======
             // ignore anything other than .wpi for CV7000
             if (!used[i].toLowerCase().endsWith(".wpi") &&
               r instanceof CV7000Reader)
             {
               continue;
             }
+>>>>>>> /usr/src/app/output/openmicroscopy/bioformats/769fc0abd378fc1a1cf585c056245c7befd485ee/components/test-suite/src/loci/tests/testng/FormatReaderTest.java/right.java
 
             boolean expected = r == readers[j];
             if (result != expected) {
