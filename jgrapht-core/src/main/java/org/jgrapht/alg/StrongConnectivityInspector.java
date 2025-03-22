@@ -1,47 +1,8 @@
-/* ==========================================
- * JGraphT : a free Java graph-theory library
- * ==========================================
- *
- * Project Info:  http://jgrapht.sourceforge.net/
- * Project Creator:  Barak Naveh (http://sourceforge.net/users/barak_naveh)
- *
- * (C) Copyright 2003-2008, by Barak Naveh and Contributors.
- *
- * This program and the accompanying materials are dual-licensed under
- * either
- *
- * (a) the terms of the GNU Lesser General Public License version 2.1
- * as published by the Free Software Foundation, or (at your option) any
- * later version.
- *
- * or (per the licensee's choosing)
- *
- * (b) the terms of the Eclipse Public License v1.0 as published by
- * the Eclipse Foundation.
- */
-/* --------------------------
- * StrongConnectivityInspector.java
- * --------------------------
- * (C) Copyright 2005-2008, by Christian Soltenborn and Contributors.
- *
- * Original Author:  Christian Soltenborn
- *
- * $Id$
- *
- * Changes
- * -------
- * 2-Feb-2005 : Initial revision (CS);
- * 5-Feb-2007 : fixed NullPointerException (CS);
- * 1-Apr-2008 : Reduced memory consumption (CS);
- *
- */
 package org.jgrapht.alg;
-
 import java.util.*;
-
 import org.jgrapht.*;
+import org.jgrapht.alg.interfaces.StrongConnectivityAlgorithm;
 import org.jgrapht.graph.*;
-
 
 /**
  * <p>Complements the {@link org.jgrapht.alg.ConnectivityInspector} class with
@@ -58,71 +19,55 @@ import org.jgrapht.graph.*;
  * @author Christian Hammer
  * @since Feb 2, 2005
  */
-public class StrongConnectivityInspector<V, E>
-{
-    
+public class StrongConnectivityInspector<V extends java.lang.Object, E extends java.lang.Object> implements StrongConnectivityAlgorithm<V, E> {
+  private final DirectedGraph<V, E> graph;
 
-    // the graph to compute the strongly connected sets for
-    private final DirectedGraph<V, E> graph;
+  private LinkedList<VertexData<V>> orderedVertices;
 
-    // stores the vertices, ordered by their finishing time in first dfs
-    private LinkedList<VertexData<V>> orderedVertices;
+  private List<Set<V>> stronglyConnectedSets;
 
-    // the result of the computation, cached for future calls
-    private List<Set<V>> stronglyConnectedSets;
+  private List<DirectedSubgraph<V, E>> stronglyConnectedSubgraphs;
 
-    // the result of the computation, cached for future calls
-    private List<DirectedSubgraph<V, E>> stronglyConnectedSubgraphs;
+  private Map<V, VertexData<V>> vertexToVertexData;
 
-    // maps vertices to their VertexData object
-    private Map<V, VertexData<V>> vertexToVertexData;
-
-    
-
-    /**
+  /**
      * The constructor of the StrongConnectivityInspector class.
      *
      * @param directedGraph the graph to inspect
      *
      * @throws IllegalArgumentException
      */
-    public StrongConnectivityInspector(DirectedGraph<V, E> directedGraph)
-    {
-        if (directedGraph == null) {
-            throw new IllegalArgumentException("null not allowed for graph!");
-        }
-
-        graph = directedGraph;
-        vertexToVertexData = null;
-        orderedVertices = null;
-        stronglyConnectedSets = null;
-        stronglyConnectedSubgraphs = null;
+  public StrongConnectivityInspector(DirectedGraph<V, E> directedGraph) {
+    if (directedGraph == null) {
+      throw new IllegalArgumentException("null not allowed for graph!");
     }
+    graph = directedGraph;
+    vertexToVertexData = null;
+    orderedVertices = null;
+    stronglyConnectedSets = null;
+    stronglyConnectedSubgraphs = null;
+  }
 
-    
-
-    /**
+  /**
      * Returns the graph inspected by the StrongConnectivityInspector.
      *
      * @return the graph inspected by this StrongConnectivityInspector
      */
-    public DirectedGraph<V, E> getGraph()
-    {
-        return graph;
-    }
+  public DirectedGraph<V, E> getGraph() {
+    return graph;
+  }
 
-    /**
+  /**
      * Returns true if the graph of this <code>
      * StronglyConnectivityInspector</code> instance is strongly connected.
      *
      * @return true if the graph is strongly connected, false otherwise
      */
-    public boolean isStronglyConnected()
-    {
-        return stronglyConnectedSets().size() == 1;
-    }
+  public boolean isStronglyConnected() {
+    return stronglyConnectedSets().size() == 1;
+  }
 
-    /**
+  /**
      * Computes a {@link List} of {@link Set}s, where each set contains vertices
      * which together form a strongly connected component within the given
      * graph.
@@ -130,51 +75,32 @@ public class StrongConnectivityInspector<V, E>
      * @return <code>List</code> of <code>Set</code> s containing the strongly
      * connected components
      */
-    public List<Set<V>> stronglyConnectedSets()
-    {
-        if (stronglyConnectedSets == null) {
-            orderedVertices = new LinkedList<VertexData<V>>();
-            stronglyConnectedSets = new Vector<Set<V>>();
-
-            // create VertexData objects for all vertices, store them
-            createVertexData();
-
-            // perform the first round of DFS, result is an ordering
-            // of the vertices by decreasing finishing time
-            for (VertexData<V> data : vertexToVertexData.values()) {
-                if (!data.isDiscovered()) {
-                    dfsVisit(graph, data, null);
-                }
-            }
-
-            // 'create' inverse graph (i.e. every edge is reversed)
-            DirectedGraph<V, E> inverseGraph =
-                new EdgeReversedGraph<V, E>(graph);
-
-            // get ready for next dfs round
-            resetVertexData();
-
-            // second dfs round: vertices are considered in decreasing
-            // finishing time order; every tree found is a strongly
-            // connected set
-            for (VertexData<V> data : orderedVertices) {
-                if (!data.isDiscovered()) {
-                    // new strongly connected set
-                    Set<V> set = new HashSet<V>();
-                    stronglyConnectedSets.add(set);
-                    dfsVisit(inverseGraph, data, set);
-                }
-            }
-
-            // clean up for garbage collection
-            orderedVertices = null;
-            vertexToVertexData = null;
+  public List<Set<V>> stronglyConnectedSets() {
+    if (stronglyConnectedSets == null) {
+      orderedVertices = new LinkedList<VertexData<V>>();
+      stronglyConnectedSets = new Vector<Set<V>>();
+      createVertexData();
+      for (VertexData<V> data : vertexToVertexData.values()) {
+        if (!data.isDiscovered()) {
+          dfsVisit(graph, data, null);
         }
-
-        return stronglyConnectedSets;
+      }
+      DirectedGraph<V, E> inverseGraph = new EdgeReversedGraph<V, E>(graph);
+      resetVertexData();
+      for (VertexData<V> data : orderedVertices) {
+        if (!data.isDiscovered()) {
+          Set<V> set = new HashSet<V>();
+          stronglyConnectedSets.add(set);
+          dfsVisit(inverseGraph, data, set);
+        }
+      }
+      orderedVertices = null;
+      vertexToVertexData = null;
     }
+    return stronglyConnectedSets;
+  }
 
-    /**
+  /**
      * <p>Computes a list of {@link DirectedSubgraph}s of the given graph. Each
      * subgraph will represent a strongly connected component and will contain
      * all vertices of that component. The subgraph will have an edge (u,v) iff
@@ -187,204 +113,133 @@ public class StrongConnectivityInspector<V, E>
      * @return a list of subgraphs representing the strongly connected
      * components
      */
-    public List<DirectedSubgraph<V, E>> stronglyConnectedSubgraphs()
-    {
-        if (stronglyConnectedSubgraphs == null) {
-            List<Set<V>> sets = stronglyConnectedSets();
-            stronglyConnectedSubgraphs =
-                new Vector<DirectedSubgraph<V, E>>(sets.size());
+  public List<DirectedSubgraph<V, E>> stronglyConnectedSubgraphs() {
+    if (stronglyConnectedSubgraphs == null) {
+      List<Set<V>> sets = stronglyConnectedSets();
+      stronglyConnectedSubgraphs = new Vector<DirectedSubgraph<V, E>>(sets.size());
+      for (Set<V> set : sets) {
+        stronglyConnectedSubgraphs.add(new DirectedSubgraph<V, E>(graph, set, null));
+      }
+    }
+    return stronglyConnectedSubgraphs;
+  }
 
-            for (Set<V> set : sets) {
-                stronglyConnectedSubgraphs.add(
-                    new DirectedSubgraph<V, E>(
-                        graph,
-                        set,
-                        null));
-            }
+  private void createVertexData() {
+    vertexToVertexData = new HashMap<V, VertexData<V>>(graph.vertexSet().size());
+    for (V vertex : graph.vertexSet()) {
+      vertexToVertexData.put(vertex, new VertexData2<V>(vertex, false, false));
+    }
+  }
+
+  private void dfsVisit(DirectedGraph<V, E> visitedGraph, VertexData<V> vertexData, Set<V> vertices) {
+    Deque<VertexData<V>> stack = new ArrayDeque<VertexData<V>>();
+    stack.add(vertexData);
+    while (!stack.isEmpty()) {
+      VertexData<V> data = stack.removeLast();
+      if (!data.isDiscovered()) {
+        data.setDiscovered(true);
+        if (vertices != null) {
+          vertices.add(data.getVertex());
         }
+        stack.add(new VertexData1<V>(data, true, true));
+        for (E edge : visitedGraph.outgoingEdgesOf(data.getVertex())) {
+          VertexData<V> targetData = vertexToVertexData.get(visitedGraph.getEdgeTarget(edge));
+          if (!targetData.isDiscovered()) {
+            stack.add(targetData);
+          }
+        }
+      } else {
+        if (data.isFinished()) {
+          if (vertices == null) {
+            orderedVertices.addFirst(data.getFinishedData());
+          }
+        }
+      }
+    }
+  }
 
-        return stronglyConnectedSubgraphs;
+  private void resetVertexData() {
+    for (VertexData<V> data : vertexToVertexData.values()) {
+      data.setDiscovered(false);
+      data.setFinished(false);
+    }
+  }
+
+  private static abstract class VertexData<V extends java.lang.Object> {
+    private byte bitfield;
+
+    private VertexData(boolean discovered, boolean finished) {
+      this.bitfield = 0;
+      setDiscovered(discovered);
+      setFinished(finished);
     }
 
-    /*
-     * Creates a VertexData object for every vertex in the graph and stores
-     * them
-     * in a HashMap.
-     */
-    private void createVertexData()
-    {
-        vertexToVertexData =
-            new HashMap<V, VertexData<V>>(graph.vertexSet().size());
-
-        for (V vertex : graph.vertexSet()) {
-            vertexToVertexData.put(
-                vertex,
-                new VertexData2<V>(vertex, false, false));
-        }
+    private boolean isDiscovered() {
+      if ((bitfield & 1) == 1) {
+        return true;
+      }
+      return false;
     }
 
-    /*
-     * The subroutine of DFS. NOTE: the set is used to distinguish between 1st
-     * and 2nd round of DFS. set == null: finished vertices are stored (1st
-     * round). set != null: all vertices found will be saved in the set (2nd
-     * round)
-     */
-    private void dfsVisit(
-        DirectedGraph<V, E> visitedGraph,
-        VertexData<V> vertexData,
-        Set<V> vertices)
-    {
-        Deque<VertexData<V>> stack = new ArrayDeque<VertexData<V>>();
-        stack.add(vertexData);
-
-        while (!stack.isEmpty()) {
-            VertexData<V> data = stack.removeLast();
-
-            if (!data.isDiscovered()) {
-                data.setDiscovered(true);
-
-                if (vertices != null) {
-                    vertices.add(data.getVertex());
-                }
-
-                stack.add(new VertexData1<V>(data, true, true));
-
-                // follow all edges
-                for (E edge : visitedGraph.outgoingEdgesOf(data.getVertex())) {
-                    VertexData<V> targetData =
-                        vertexToVertexData.get(
-                            visitedGraph.getEdgeTarget(edge));
-
-                    if (!targetData.isDiscovered()) {
-                        // the "recursion"
-                        stack.add(targetData);
-                    }
-                }
-            } else if (data.isFinished()) {
-                if (vertices == null) {
-                    orderedVertices.addFirst(data.getFinishedData());
-                }
-            }
-        }
+    private boolean isFinished() {
+      if ((bitfield & 2) == 2) {
+        return true;
+      }
+      return false;
     }
 
-    /*
-     * Resets all VertexData objects.
-     */
-    private void resetVertexData()
-    {
-        for (VertexData<V> data : vertexToVertexData.values()) {
-            data.setDiscovered(false);
-            data.setFinished(false);
-        }
+    private void setDiscovered(boolean discovered) {
+      if (discovered) {
+        bitfield |= 1;
+      } else {
+        bitfield &= ~1;
+      }
     }
 
-    
-
-    /*
-     * Lightweight class storing some data for every vertex.
-     */
-    private static abstract class VertexData<V>
-    {
-        private byte bitfield;
-
-        private VertexData(
-            boolean discovered,
-            boolean finished)
-        {
-            this.bitfield = 0;
-            setDiscovered(discovered);
-            setFinished(finished);
-        }
-
-        private boolean isDiscovered()
-        {
-            if ((bitfield & 1) == 1) {
-                return true;
-            }
-            return false;
-        }
-
-        private boolean isFinished()
-        {
-            if ((bitfield & 2) == 2) {
-                return true;
-            }
-            return false;
-        }
-
-        private void setDiscovered(boolean discovered)
-        {
-            if (discovered) {
-                bitfield |= 1;
-            } else {
-                bitfield &= ~1;
-            }
-        }
-
-        private void setFinished(boolean finished)
-        {
-            if (finished) {
-                bitfield |= 2;
-            } else {
-                bitfield &= ~2;
-            }
-        }
-
-        abstract VertexData<V> getFinishedData();
-
-        abstract V getVertex();
+    private void setFinished(boolean finished) {
+      if (finished) {
+        bitfield |= 2;
+      } else {
+        bitfield &= ~2;
+      }
     }
 
-    private static final class VertexData1<V>
-        extends VertexData<V>
-    {
-        private final VertexData<V> finishedData;
+    abstract VertexData<V> getFinishedData();
 
-        private VertexData1(
-            VertexData<V> finishedData,
-            boolean discovered,
-            boolean finished)
-        {
-            super(discovered, finished);
-            this.finishedData = finishedData;
-        }
+    abstract V getVertex();
+  }
 
-        VertexData<V> getFinishedData()
-        {
-            return finishedData;
-        }
+  private static final class VertexData1<V extends java.lang.Object> extends VertexData<V> {
+    private final VertexData<V> finishedData;
 
-        V getVertex()
-        {
-            return null;
-        }
+    private VertexData1(VertexData<V> finishedData, boolean discovered, boolean finished) {
+      super(discovered, finished);
+      this.finishedData = finishedData;
     }
 
-    private static final class VertexData2<V>
-        extends VertexData<V>
-    {
-        private final V vertex;
-
-        private VertexData2(
-            V vertex,
-            boolean discovered,
-            boolean finished)
-        {
-            super(discovered, finished);
-            this.vertex = vertex;
-        }
-
-        VertexData<V> getFinishedData()
-        {
-            return null;
-        }
-
-        V getVertex()
-        {
-            return vertex;
-        }
+    VertexData<V> getFinishedData() {
+      return finishedData;
     }
+
+    V getVertex() {
+      return null;
+    }
+  }
+
+  private static final class VertexData2<V extends java.lang.Object> extends VertexData<V> {
+    private final V vertex;
+
+    private VertexData2(V vertex, boolean discovered, boolean finished) {
+      super(discovered, finished);
+      this.vertex = vertex;
+    }
+
+    VertexData<V> getFinishedData() {
+      return null;
+    }
+
+    V getVertex() {
+      return vertex;
+    }
+  }
 }
-
-// End StrongConnectivityInspector.java
