@@ -610,43 +610,42 @@ public class SystemDB {
 			//get AWS credentials from DB
 	        for (AWSCred awsCred : AWSCredDB.getAWSCredList()) {
 	
-	            if (awsCred != null) {
-	                //set  AWS credentials for service
-	                BasicAWSCredentials awsCredentials = new BasicAWSCredentials(awsCred.getAccessKey(), awsCred.getSecretKey());
+		    if (awsCred != null) {
+		        //set  AWS credentials for service
+		        BasicAWSCredentials awsCredentials = new BasicAWSCredentials(awsCred.getAccessKey(), awsCred.getSecretKey());
 	
-	                for (String ec2Region : ec2RegionList) {
-	                    //create service
+		        for (String ec2Region : ec2RegionList) {
+		            //create service
 	
-	                    AmazonEC2 service = new AmazonEC2Client(awsCredentials, AWSClientConfig.getClientConfig());
-	                    service.setEndpoint(ec2Region);
+		            AmazonEC2 service = new AmazonEC2Client(awsCredentials, AWSClientConfig.getClientConfig());
+		            service.setEndpoint(ec2Region);
 	
-	                    //only return systems that have keys set
-	                    List<String> keyValueList = new ArrayList<String>();
-	                    for (ApplicationKey ec2Key : PrivateKeyDB.getEC2KeyByRegion(ec2Region)) {
-	                    	if(ec2Key.isEnabled())
-	                    	{
-	                    		keyValueList.add(ec2Key.getKeyname());
-	                    	}
-	                    }
+		            //only return systems that have keys set
+		            List<String> keyValueList = new ArrayList<String>();
+		            for (ApplicationKey ec2Key : PrivateKeyDB.getEC2KeyByRegion(ec2Region)) {
+		            	if(ec2Key.isEnabled())
+		            	{
+		            		keyValueList.add(ec2Key.getKeyname());
+		            	}
+		            }
 	
-	                    DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest();
-	                    
-	                    Filter keyNmFilter = new Filter("key-name", keyValueList);
-	                    
-	                    describeInstancesRequest.withFilters(keyNmFilter);
+		            DescribeInstancesRequest describeInstancesRequest = new DescribeInstancesRequest();
+		            
+		            Filter keyNmFilter = new Filter("key-name", keyValueList);
+		            
+		            describeInstancesRequest.withFilters(keyNmFilter);
 	
-	                    DescribeInstancesResult describeInstancesResult = service.describeInstances(describeInstancesRequest);
-	                    
-	                    for (Reservation res : describeInstancesResult.getReservations()) {
-	                        for (Instance instance : res.getInstances()) {
-	                            HostSystem hostSystem = transformerEC2InstanzToHostSystem(instance, ec2Region);
-	                            
-	                            setEC2System(hostSystem);
-	                        }
-	                    }
-	                }
-	            }
-	        }			
+		            DescribeInstancesResult describeInstancesResult = service.describeInstances(describeInstancesRequest);
+		            
+		            for (Reservation res : describeInstancesResult.getReservations()) {
+		                for (Instance instance : res.getInstances()) {
+		                    HostSystem hostSystem = transformerEC2InstanzToHostSystem(instance, ec2Region);	                            
+		                    setEC2System(hostSystem);
+		                }
+		            }
+		        }
+		    }
+		}			
 		} catch (AmazonServiceException ex)
         {
             ex.printStackTrace();
