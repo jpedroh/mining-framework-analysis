@@ -26,45 +26,31 @@ public abstract class AbstractSelectorMessageBodyWriter implements MessageBodyWr
 {
     protected ResultTraverser _resultTraverser = new ResultTraverser();
 
+    @Inject
     protected SelectorParser _selectorParser;
 
+    @Inject
     protected RenderingListenerRegistry _renderingListenerRegistry = new RenderingListenerRegistry();
 
+    @Inject
     protected CoreSelector _selector;
     
-	protected ClassFinderStrategy _classFinderStrategy;
-
     @Context
     protected HttpServletRequest _request;
 
     @Context
     protected HttpServletResponse _response;
 
-    @Inject
+	protected ClassFinderStrategy _classFinderStrategy;
+
+    @javax.inject.Inject
     public void setClassFinderStrategy( ClassFinderStrategy classFinderStrategy )
     {
         this._classFinderStrategy = classFinderStrategy;
         _resultTraverser.setClassFinderStrategy( classFinderStrategy );
     }
 
-    @Inject
-    public void setSelectorParser( SelectorParser selectorParser )
-    {
-    	this._selectorParser = selectorParser;
-    }
-
-    @Inject
-    public void setRenderingListenerRegistry( RenderingListenerRegistry renderingListenerRegistry ) 
-    {
-		this._renderingListenerRegistry = renderingListenerRegistry;
-	}
-
-    @Inject
-    public void setSelector( CoreSelector selector ) 
-    {
-		this._selector = selector;
-	}
-
+    
     @Override
     public long getSize( Object arg0, Class<?> arg1, Type arg2, Annotation[] arg3, MediaType arg4 )
     {
