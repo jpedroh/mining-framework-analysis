@@ -1,29 +1,10 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.apache.avro.reflect;
-
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-
 import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.Schema;
 import org.apache.avro.Schema.Field;
@@ -37,7 +18,7 @@ import org.apache.avro.specific.SpecificDatumReader;
  * {@link org.apache.avro.io.DatumReader DatumReader} for existing classes via
  * Java reflection.
  */
-public class ReflectDatumReader<T> extends SpecificDatumReader<T> {
+public class ReflectDatumReader<T extends java.lang.Object> extends SpecificDatumReader<T> {
   public ReflectDatumReader() {
     this(null, null, ReflectData.get());
   }
@@ -68,8 +49,7 @@ public class ReflectDatumReader<T> extends SpecificDatumReader<T> {
     super(data);
   }
 
-  private static final ThreadLocal<ArrayList<Object>> CIRCULAR_REFS
-    = new ThreadLocal<ArrayList<Object>>() {
+  private static final ThreadLocal<ArrayList<Object>> CIRCULAR_REFS = new ThreadLocal<ArrayList<Object>>() {
     @Override protected ArrayList<Object> initialValue() {
       return new ArrayList<Object>();
     }
@@ -77,76 +57,63 @@ public class ReflectDatumReader<T> extends SpecificDatumReader<T> {
 
   @Override public T read(T reuse, Decoder in) throws IOException {
     T result = super.read(reuse, in);
-    if (((ReflectData)getData()).isResolvingCircularRefs())
-      CIRCULAR_REFS.get().clear();                // clear refs
+    if (((ReflectData) getData()).isResolvingCircularRefs()) {
+      CIRCULAR_REFS.get().clear();
+    }
     return result;
   }
 
-  @Override protected Object readRecord(Object old, Schema expected, 
-                                        ResolvingDecoder in)
-    throws IOException {
+  @Override protected Object readRecord(Object old, Schema expected, ResolvingDecoder in) throws IOException {
     Object result = super.readRecord(old, expected, in);
-    if (((ReflectData)getData()).isResolvingCircularRefs()
-        && result instanceof CircularRef) {
-      return CIRCULAR_REFS.get().get(((CircularRef)result).getId());
+    if (((ReflectData) getData()).isResolvingCircularRefs() && result instanceof CircularRef) {
+      return CIRCULAR_REFS.get().get(((CircularRef) result).getId());
     }
     return result;
   }
 
   @Override protected Object newRecord(Object old, Schema schema) {
     Object result = super.newRecord(old, schema);
-    if (((ReflectData)getData()).isResolvingCircularRefs()
-        && !(result instanceof CircularRef)) {
+    if (((ReflectData) getData()).isResolvingCircularRefs() && !(result instanceof CircularRef)) {
       CIRCULAR_REFS.get().add(result);
     }
     return result;
   }
 
-  @Override
-  protected Object newArray(Object old, int size, Schema schema) {
-    Class<?> collectionClass =
-      ReflectData.getClassProp(schema, SpecificData.CLASS_PROP);
-    Class<?> elementClass =
-      ReflectData.getClassProp(schema, SpecificData.ELEMENT_PROP);
-
-    if (collectionClass == null && elementClass == null)
-      return super.newArray(old, size, schema);   // use specific/generic
-
+  @Override protected Object newArray(Object old, int size, Schema schema) {
+    Class<?> collectionClass = ReflectData.getClassProp(schema, SpecificData.CLASS_PROP);
+    Class<?> elementClass = ReflectData.getClassProp(schema, SpecificData.ELEMENT_PROP);
+    if (collectionClass == null && elementClass == null) {
+      return super.newArray(old, size, schema);
+    }
     if (collectionClass != null && !collectionClass.isArray()) {
       if (old instanceof Collection) {
-        ((Collection<?>)old).clear();
+        ((Collection<?>) old).clear();
         return old;
       }
-      if (collectionClass.isAssignableFrom(ArrayList.class))
+      if (collectionClass.isAssignableFrom(ArrayList.class)) {
         return new ArrayList<Object>();
+      }
       return SpecificData.newInstance(collectionClass, schema);
     }
-
     if (elementClass == null) {
       elementClass = collectionClass.getComponentType();
     }
     if (elementClass == null) {
-      ReflectData data = (ReflectData)getData();
+      ReflectData data = (ReflectData) getData();
       elementClass = data.getClass(schema.getElementType());
     }
     return Array.newInstance(elementClass, size);
   }
 
-  @Override
-  protected Object peekArray(Object array) {
+  @Override protected Object peekArray(Object array) {
     return null;
   }
 
-  @Override
-  protected void addToArray(Object array, long pos, Object e) {
+  @Override protected void addToArray(Object array, long pos, Object e) {
     throw new AvroRuntimeException("reflectDatumReader does not use addToArray");
   }
 
-  @Override
-  /** Called to read an array instance.  May be overridden for alternate array
-   * representations.*/
-  protected Object readArray(Object old, Schema expected, ResolvingDecoder in)
-      throws IOException {
+  @Override protected Object readArray(Object old, Schema expected, ResolvingDecoder in) throws IOException {
     Schema expectedType = expected.getElementType();
     long l = in.readArrayStart();
     if (l <= 0) {
@@ -154,34 +121,32 @@ public class ReflectDatumReader<T> extends SpecificDatumReader<T> {
     }
     Object array = newArray(old, (int) l, expected);
     if (array instanceof Collection) {
-      @SuppressWarnings("unchecked")
-      Collection<Object> c = (Collection<Object>) array;
+      @SuppressWarnings(value = { "unchecked" }) Collection<Object> c = (Collection<Object>) array;
       return readCollection(c, expectedType, l, in);
-    } else if (array instanceof Map) {
-      // Only for non-string keys, we can use NS_MAP_* fields
-      // So we check the samee explicitly here
-      if (ReflectData.isNonStringMapSchema(expected)) {
-        Collection<Object> c = new ArrayList<Object> ();
-        readCollection(c, expectedType, l, in);
-        Map m = (Map)array;
-        for (Object ele: c) {
-          IndexedRecord rec = ((IndexedRecord)ele);
-          Object key = rec.get(ReflectData.NS_MAP_KEY_INDEX);
-          Object value = rec.get(ReflectData.NS_MAP_VALUE_INDEX);
-          m.put (key, value);
-        }
-        return array;
-      } else {
-        String msg = "Expected a schema of map with non-string keys but got " + expected;
-        throw new AvroRuntimeException(msg);
-      }
     } else {
-      return readJavaArray(array, expectedType, l, in);
+      if (array instanceof Map) {
+        if (ReflectData.isNonStringMapSchema(expected)) {
+          Collection<Object> c = new ArrayList<Object>();
+          readCollection(c, expectedType, l, in);
+          Map m = (Map) array;
+          for (Object ele : c) {
+            IndexedRecord rec = ((IndexedRecord) ele);
+            Object key = rec.get(ReflectData.NS_MAP_KEY_INDEX);
+            Object value = rec.get(ReflectData.NS_MAP_VALUE_INDEX);
+            m.put(key, value);
+          }
+          return array;
+        } else {
+          String msg = "Expected a schema of map with non-string keys but got " + expected;
+          throw new AvroRuntimeException(msg);
+        }
+      } else {
+        return readJavaArray(array, expectedType, l, in);
+      }
     }
   }
 
-  private Object readJavaArray(Object array, Schema expectedType, long l,
-      ResolvingDecoder in) throws IOException {
+  private Object readJavaArray(Object array, Schema expectedType, long l, ResolvingDecoder in) throws IOException {
     Class<?> elementType = array.getClass().getComponentType();
     if (elementType.isPrimitive()) {
       return readPrimitiveArray(array, elementType, l, in);
@@ -190,13 +155,11 @@ public class ReflectDatumReader<T> extends SpecificDatumReader<T> {
     }
   }
 
-  private Object readPrimitiveArray(Object array, Class<?> c, long l, ResolvingDecoder in)
-      throws IOException {
+  private Object readPrimitiveArray(Object array, Class<?> c, long l, ResolvingDecoder in) throws IOException {
     return ArrayAccessor.readArray(array, c, l, in);
   }
 
-  private Object readObjectArray(Object[] array, Schema expectedType, long l,
-      ResolvingDecoder in) throws IOException {
+  private Object readObjectArray(Object[] array, Schema expectedType, long l, ResolvingDecoder in) throws IOException {
     int index = 0;
     do {
       int limit = index + (int) l;
@@ -205,32 +168,29 @@ public class ReflectDatumReader<T> extends SpecificDatumReader<T> {
         array[index] = element;
         index++;
       }
-    } while ((l = in.arrayNext()) > 0);
+    } while((l = in.arrayNext()) > 0);
     return array;
   }
 
-  private Object readCollection(Collection<Object> c, Schema expectedType,
-      long l, ResolvingDecoder in) throws IOException {
+  private Object readCollection(Collection<Object> c, Schema expectedType, long l, ResolvingDecoder in) throws IOException {
     do {
       for (int i = 0; i < l; i++) {
         Object element = read(null, expectedType, in);
         c.add(element);
       }
-    } while ((l = in.arrayNext()) > 0);
+    } while((l = in.arrayNext()) > 0);
     return c;
   }
 
-  @Override
-  protected Object readString(Object old, Decoder in) throws IOException {
+  @Override protected Object readString(Object old, Decoder in) throws IOException {
     return super.readString(null, in).toString();
   }
 
-  @Override
-  protected Object createString(String value) { return value; }
+  @Override protected Object createString(String value) {
+    return value;
+  }
 
-  @Override
-  protected Object readBytes(Object old, Schema s, Decoder in)
-    throws IOException {
+  @Override protected Object readBytes(Object old, Schema s, Decoder in) throws IOException {
     ByteBuffer bytes = in.readBytes(null);
     Class<?> c = ReflectData.getClassProp(s, SpecificData.CLASS_PROP);
     if (c != null && c.isArray()) {
@@ -242,42 +202,39 @@ public class ReflectDatumReader<T> extends SpecificDatumReader<T> {
     }
   }
 
-  @Override
-  protected Object readInt(Object old,
-                           Schema expected, Decoder in) throws IOException {
+  @Override protected Object readInt(Object old, Schema expected, Decoder in) throws IOException {
     Object value = in.readInt();
     String intClass = expected.getProp(SpecificData.CLASS_PROP);
-    if (Byte.class.getName().equals(intClass))
-      value = ((Integer)value).byteValue();
-    else if (Short.class.getName().equals(intClass))
-      value = ((Integer)value).shortValue();
-    else if (Character.class.getName().equals(intClass))
-        value = ((Character)(char)(int)(Integer)value);
+    if (Byte.class.getName().equals(intClass)) {
+      value = ((Integer) value).byteValue();
+    } else {
+      if (Short.class.getName().equals(intClass)) {
+        value = ((Integer) value).shortValue();
+      } else {
+        if (Character.class.getName().equals(intClass)) {
+          value = ((Character) (char) (int) (Integer) value);
+        }
+      }
+    }
     return value;
   }
 
-  @Override
-  protected void readField(Object record, Field f, Object oldDatum,
-      ResolvingDecoder in, Object state) throws IOException {
+  @Override protected void readField(Object record, Field f, Object oldDatum, ResolvingDecoder in, Object state) throws IOException {
     if (state != null) {
       FieldAccessor accessor = ((FieldAccessor[]) state)[f.pos()];
       if (accessor != null) {
-        if (accessor.supportsIO()
-            && (!Schema.Type.UNION.equals(f.schema().getType())
-                || accessor.isCustomEncoded())) {
+        if (accessor.supportsIO() && (!Schema.Type.UNION.equals(f.schema().getType()) || accessor.isCustomEncoded())) {
           accessor.read(record, in);
           return;
         }
         if (accessor.isStringable()) {
           try {
             String asString = (String) read(null, f.schema(), in);
-            accessor.set(record, asString == null 
-              ? null
-              : newInstanceFromString(accessor.getField().getType(), asString));
+            accessor.set(record, asString == null ? null : newInstanceFromString(accessor.getField().getType(), asString));
             return;
           } catch (Exception e) {
             throw new AvroRuntimeException("Failed to read Stringable", e);
-          } 
+          }
         }
       }
     }
