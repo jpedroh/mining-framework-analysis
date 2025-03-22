@@ -1,95 +1,93 @@
 package io.swagger.model;
-
 import java.util.Objects;
 import java.util.ArrayList;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 
-public class User   {
-  
+public class User {
   private Long id = null;
+
   private String username = null;
+
   private String firstName = null;
+
   private String lastName = null;
+
   private String email = null;
+
   private String password = null;
+
   private String phone = null;
+
   private Integer userStatus = null;
 
   /**
    **/
-  
-  @JsonProperty("id")
-  public Long getId() {
+  @JsonProperty(value = "id") public Long getId() {
     return id;
   }
+
   public void setId(Long id) {
     this.id = id;
   }
 
   /**
    **/
-  
-  @JsonProperty("username")
-  public String getUsername() {
+  @JsonProperty(value = "username") public String getUsername() {
     return username;
   }
+
   public void setUsername(String username) {
     this.username = username;
   }
 
   /**
    **/
-  
-  @JsonProperty("firstName")
-  public String getFirstName() {
+  @JsonProperty(value = "firstName") public String getFirstName() {
     return firstName;
   }
+
   public void setFirstName(String firstName) {
     this.firstName = firstName;
   }
 
   /**
    **/
-  
-  @JsonProperty("lastName")
-  public String getLastName() {
+  @JsonProperty(value = "lastName") public String getLastName() {
     return lastName;
   }
+
   public void setLastName(String lastName) {
     this.lastName = lastName;
   }
 
   /**
    **/
-  
-  @JsonProperty("email")
-  public String getEmail() {
+  @JsonProperty(value = "email") public String getEmail() {
     return email;
   }
+
   public void setEmail(String email) {
     this.email = email;
   }
 
   /**
    **/
-  
-  @JsonProperty("password")
-  public String getPassword() {
+  @JsonProperty(value = "password") public String getPassword() {
     return password;
   }
+
   public void setPassword(String password) {
     this.password = password;
   }
 
   /**
    **/
-  
-  @JsonProperty("phone")
-  public String getPhone() {
+  @JsonProperty(value = "phone") public String getPhone() {
     return phone;
   }
+
   public void setPhone(String phone) {
     this.phone = phone;
   }
@@ -97,18 +95,15 @@ public class User   {
   /**
    * User Status
    **/
-  
-  @JsonProperty("userStatus")
-  public Integer getUserStatus() {
+  @JsonProperty(value = "userStatus") public Integer getUserStatus() {
     return userStatus;
   }
+
   public void setUserStatus(Integer userStatus) {
     this.userStatus = userStatus;
   }
 
-
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -116,26 +111,16 @@ public class User   {
       return false;
     }
     User user = (User) o;
-    return Objects.equals(id, user.id) &&
-        Objects.equals(username, user.username) &&
-        Objects.equals(firstName, user.firstName) &&
-        Objects.equals(lastName, user.lastName) &&
-        Objects.equals(email, user.email) &&
-        Objects.equals(password, user.password) &&
-        Objects.equals(phone, user.phone) &&
-        Objects.equals(userStatus, user.userStatus);
+    return Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(phone, user.phone) && Objects.equals(userStatus, user.userStatus);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(id, username, firstName, lastName, email, password, phone, userStatus);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class User {\n");
-    
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    username: ").append(toIndentedString(username)).append("\n");
     sb.append("    firstName: ").append(toIndentedString(firstName)).append("\n");
@@ -159,4 +144,3 @@ public class User   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

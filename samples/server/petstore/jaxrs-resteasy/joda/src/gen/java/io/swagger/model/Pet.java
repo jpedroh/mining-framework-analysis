@@ -1,5 +1,4 @@
 package io.swagger.model;
-
 import java.util.Objects;
 import java.util.ArrayList;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,33 +9,30 @@ import io.swagger.model.Category;
 import io.swagger.model.Tag;
 import java.util.List;
 
-
-public class Pet   {
-  
+public class Pet {
   private Long id = null;
+
   private Category category = null;
+
   private String name = null;
+
   private List<String> photoUrls = new ArrayList<String>();
+
   private List<Tag> tags = new ArrayList<Tag>();
 
-  /**
-   * pet status in the store
-   */
   public enum StatusEnum {
     AVAILABLE("available"),
+    PENDING("pending"),
+    SOLD("sold")
+    ;
 
-        PENDING("pending"),
-
-        SOLD("sold");
     private String value;
 
     StatusEnum(String value) {
       this.value = value;
     }
 
-    @Override
-    @JsonValue
-    public String toString() {
+    @Override @JsonValue public String toString() {
       return String.valueOf(value);
     }
   }
@@ -45,55 +41,50 @@ public class Pet   {
 
   /**
    **/
-  
-  @JsonProperty("id")
-  public Long getId() {
+  @JsonProperty(value = "id") public Long getId() {
     return id;
   }
+
   public void setId(Long id) {
     this.id = id;
   }
 
   /**
    **/
-  
-  @JsonProperty("category")
-  public Category getCategory() {
+  @JsonProperty(value = "category") public Category getCategory() {
     return category;
   }
+
   public void setCategory(Category category) {
     this.category = category;
   }
 
   /**
    **/
-  
-  @JsonProperty("name")
-  public String getName() {
+  @JsonProperty(value = "name") public String getName() {
     return name;
   }
+
   public void setName(String name) {
     this.name = name;
   }
 
   /**
    **/
-  
-  @JsonProperty("photoUrls")
-  public List<String> getPhotoUrls() {
+  @JsonProperty(value = "photoUrls") public List<String> getPhotoUrls() {
     return photoUrls;
   }
+
   public void setPhotoUrls(List<String> photoUrls) {
     this.photoUrls = photoUrls;
   }
 
   /**
    **/
-  
-  @JsonProperty("tags")
-  public List<Tag> getTags() {
+  @JsonProperty(value = "tags") public List<Tag> getTags() {
     return tags;
   }
+
   public void setTags(List<Tag> tags) {
     this.tags = tags;
   }
@@ -101,18 +92,15 @@ public class Pet   {
   /**
    * pet status in the store
    **/
-  
-  @JsonProperty("status")
-  public StatusEnum getStatus() {
+  @JsonProperty(value = "status") public StatusEnum getStatus() {
     return status;
   }
+
   public void setStatus(StatusEnum status) {
     this.status = status;
   }
 
-
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -120,24 +108,16 @@ public class Pet   {
       return false;
     }
     Pet pet = (Pet) o;
-    return Objects.equals(id, pet.id) &&
-        Objects.equals(category, pet.category) &&
-        Objects.equals(name, pet.name) &&
-        Objects.equals(photoUrls, pet.photoUrls) &&
-        Objects.equals(tags, pet.tags) &&
-        Objects.equals(status, pet.status);
+    return Objects.equals(id, pet.id) && Objects.equals(category, pet.category) && Objects.equals(name, pet.name) && Objects.equals(photoUrls, pet.photoUrls) && Objects.equals(tags, pet.tags) && Objects.equals(status, pet.status);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(id, category, name, photoUrls, tags, status);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Pet {\n");
-    
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    category: ").append(toIndentedString(category)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
@@ -159,4 +139,3 @@ public class Pet   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

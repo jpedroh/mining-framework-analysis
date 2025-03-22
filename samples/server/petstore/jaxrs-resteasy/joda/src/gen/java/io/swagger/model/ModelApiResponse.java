@@ -1,54 +1,48 @@
 package io.swagger.model;
-
 import java.util.Objects;
 import java.util.ArrayList;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 
-
-public class ModelApiResponse   {
-  
+public class ModelApiResponse {
   private Integer code = null;
+
   private String type = null;
+
   private String message = null;
 
   /**
    **/
-  
-  @JsonProperty("code")
-  public Integer getCode() {
+  @JsonProperty(value = "code") public Integer getCode() {
     return code;
   }
+
   public void setCode(Integer code) {
     this.code = code;
   }
 
   /**
    **/
-  
-  @JsonProperty("type")
-  public String getType() {
+  @JsonProperty(value = "type") public String getType() {
     return type;
   }
+
   public void setType(String type) {
     this.type = type;
   }
 
   /**
    **/
-  
-  @JsonProperty("message")
-  public String getMessage() {
+  @JsonProperty(value = "message") public String getMessage() {
     return message;
   }
+
   public void setMessage(String message) {
     this.message = message;
   }
 
-
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -56,21 +50,16 @@ public class ModelApiResponse   {
       return false;
     }
     ModelApiResponse _apiResponse = (ModelApiResponse) o;
-    return Objects.equals(code, _apiResponse.code) &&
-        Objects.equals(type, _apiResponse.type) &&
-        Objects.equals(message, _apiResponse.message);
+    return Objects.equals(code, _apiResponse.code) && Objects.equals(type, _apiResponse.type) && Objects.equals(message, _apiResponse.message);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(code, type, message);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ModelApiResponse {\n");
-    
     sb.append("    code: ").append(toIndentedString(code)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    message: ").append(toIndentedString(message)).append("\n");
@@ -89,4 +78,3 @@ public class ModelApiResponse   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

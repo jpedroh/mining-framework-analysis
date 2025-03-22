@@ -1,5 +1,4 @@
 package io.swagger.model;
-
 import java.util.Objects;
 import java.util.ArrayList;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,79 +7,72 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import org.joda.time.DateTime;
 
-
-public class Order   {
-  
+public class Order {
   private Long id = null;
+
   private Long petId = null;
+
   private Integer quantity = null;
+
   private DateTime shipDate = null;
 
-  /**
-   * Order Status
-   */
   public enum StatusEnum {
     PLACED("placed"),
+    APPROVED("approved"),
+    DELIVERED("delivered")
+    ;
 
-        APPROVED("approved"),
-
-        DELIVERED("delivered");
     private String value;
 
     StatusEnum(String value) {
       this.value = value;
     }
 
-    @Override
-    @JsonValue
-    public String toString() {
+    @Override @JsonValue public String toString() {
       return String.valueOf(value);
     }
   }
 
   private StatusEnum status = null;
+
   private Boolean complete = false;
 
   /**
    **/
-  
-  @JsonProperty("id")
-  public Long getId() {
+  @JsonProperty(value = "id") public Long getId() {
     return id;
   }
+
   public void setId(Long id) {
     this.id = id;
   }
 
   /**
    **/
-  
-  @JsonProperty("petId")
-  public Long getPetId() {
+  @JsonProperty(value = "petId") public Long getPetId() {
     return petId;
   }
+
   public void setPetId(Long petId) {
     this.petId = petId;
   }
 
   /**
    **/
-  
-  @JsonProperty("quantity")
-  public Integer getQuantity() {
+  @JsonProperty(value = "quantity") public Integer getQuantity() {
     return quantity;
   }
+
   public void setQuantity(Integer quantity) {
     this.quantity = quantity;
   }
 
   /**
    **/
-  
-  @JsonProperty("shipDate")
-  public DateTime getShipDate() {
+  @JsonProperty(value = "shipDate") public DateTime getShipDate() {
     return shipDate;
   }
+
   public void setShipDate(DateTime shipDate) {
     this.shipDate = shipDate;
   }
@@ -88,29 +80,25 @@ public class Order   {
   /**
    * Order Status
    **/
-  
-  @JsonProperty("status")
-  public StatusEnum getStatus() {
+  @JsonProperty(value = "status") public StatusEnum getStatus() {
     return status;
   }
+
   public void setStatus(StatusEnum status) {
     this.status = status;
   }
 
   /**
    **/
-  
-  @JsonProperty("complete")
-  public Boolean getComplete() {
+  @JsonProperty(value = "complete") public Boolean getComplete() {
     return complete;
   }
+
   public void setComplete(Boolean complete) {
     this.complete = complete;
   }
 
-
-  @Override
-  public boolean equals(Object o) {
+  @Override public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -118,24 +106,16 @@ public class Order   {
       return false;
     }
     Order order = (Order) o;
-    return Objects.equals(id, order.id) &&
-        Objects.equals(petId, order.petId) &&
-        Objects.equals(quantity, order.quantity) &&
-        Objects.equals(shipDate, order.shipDate) &&
-        Objects.equals(status, order.status) &&
-        Objects.equals(complete, order.complete);
+    return Objects.equals(id, order.id) && Objects.equals(petId, order.petId) && Objects.equals(quantity, order.quantity) && Objects.equals(shipDate, order.shipDate) && Objects.equals(status, order.status) && Objects.equals(complete, order.complete);
   }
 
-  @Override
-  public int hashCode() {
+  @Override public int hashCode() {
     return Objects.hash(id, petId, quantity, shipDate, status, complete);
   }
 
-  @Override
-  public String toString() {
+  @Override public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Order {\n");
-    
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    petId: ").append(toIndentedString(petId)).append("\n");
     sb.append("    quantity: ").append(toIndentedString(quantity)).append("\n");
@@ -157,4 +137,3 @@ public class Order   {
     return o.toString().replace("\n", "\n    ");
   }
 }
-
