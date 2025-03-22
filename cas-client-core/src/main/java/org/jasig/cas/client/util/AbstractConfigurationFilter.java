@@ -1,34 +1,13 @@
-/*
- * Licensed to Jasig under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.client.util;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
-
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.Filter;
 import javax.servlet.FilterConfig;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,21 +19,21 @@ import org.slf4j.LoggerFactory;
  * @since 3.1
  */
 public abstract class AbstractConfigurationFilter implements Filter {
+  protected static final String PARAM_NAME_CONFIG_FILE = "configFile";
 
-    protected static final String PARAM_NAME_CONFIG_FILE = "configFile";
-    private static final String PARAM_VALUE_DEFAULT_CONFIG_FILE = "/etc/cas/client.properties";
-    
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+  private static final String PARAM_VALUE_DEFAULT_CONFIG_FILE = "/etc/cas/client.properties";
 
-    private boolean ignoreInitConfiguration = false;
-    
-    /** The configuration properties that are loaded from the "configFile" specified. 
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+  private boolean ignoreInitConfiguration = false;
+
+  /** The configuration properties that are loaded from the "configFile" specified. 
      * @see #retrieveParameterValueFromConfigFile(FilterConfig, String)
      * @since 3.3.1
      **/
-    private Properties configurationProperties = null;
-    
-    /**
+  private Properties configurationProperties = null;
+
+  /**
      * Retrieves the property from the FilterConfig.  First it checks the FilterConfig's initParameters to see if it
      * has a value.
      * If it does, it returns that, otherwise it retrieves the ServletContext's initParameters and returns that value if any.
@@ -83,174 +62,171 @@ public abstract class AbstractConfigurationFilter implements Filter {
      * @return the property value, following the above conventions.  It will always return the more specific value (i.e.
      *  filter vs. context).
      */
-    protected final String getPropertyFromInitParams(final FilterConfig filterConfig, final String propertyName,
-            final String defaultValue) {
-        
-        String value = retrieveParameterValueFromWebOrJNDIConfiguration(filterConfig, propertyName);
-        if (CommonUtils.isNotBlank(value)) {
-            return value;
-        }
-        
-        value = retrieveParameterValueFromConfigFile(filterConfig, propertyName, PARAM_VALUE_DEFAULT_CONFIG_FILE);
-        if (CommonUtils.isNotBlank(value)) {
-            return value;
-        }
-
-        logger.info("Property [{}] not found. Using default value [{}]", propertyName, defaultValue);
-        return defaultValue;
+  protected final String getPropertyFromInitParams(final FilterConfig filterConfig, final String propertyName, final String defaultValue) {
+    String value = retrieveParameterValueFromWebOrJNDIConfiguration(filterConfig, propertyName);
+    if (CommonUtils.isNotBlank(value)) {
+      return value;
     }
-
-    protected final boolean parseBoolean(final String value) {
-        return ((value != null) && value.equalsIgnoreCase("true"));
+    value = retrieveParameterValueFromConfigFile(filterConfig, propertyName, PARAM_VALUE_DEFAULT_CONFIG_FILE);
+    if (CommonUtils.isNotBlank(value)) {
+      return value;
     }
+    logger.info("Property [{}] not found. Using default value [{}]", propertyName, defaultValue);
+    return defaultValue;
+  }
 
-    protected final String loadFromContext(final InitialContext context, final String path) {
+  protected final boolean parseBoolean(final String value) {
+    return ((value != null) && value.equalsIgnoreCase("true"));
+  }
+
+  protected final String loadFromContext(final InitialContext context, final String path) {
+    try {
+      return (String) context.lookup(path);
+    } catch (final NamingException e) {
+      return null;
+    }
+  }
+
+  public final void setIgnoreInitConfiguration(boolean ignoreInitConfiguration) {
+    this.ignoreInitConfiguration = ignoreInitConfiguration;
+  }
+
+  protected final boolean isIgnoreInitConfiguration() {
+    return this.ignoreInitConfiguration;
+  }
+
+  private String retrieveParameterValueFromFilterConfiguration(final FilterConfig filterConfig, final String propertyName) {
+    final String value = filterConfig.getInitParameter(propertyName);
+    if (CommonUtils.isNotBlank(value)) {
+      if ("renew".equals(propertyName)) {
+        throw new IllegalArgumentException("Renew MUST be specified via context parameter or JNDI environment to avoid misconfiguration.");
+      }
+      logger.info("Property [{}] loaded from FilterConfig.getInitParameter with value [{}]", propertyName, value);
+      return value;
+    }
+    return null;
+  }
+
+  private String retrieveParameterValueFromServletContextConfiguration(final FilterConfig filterConfig, final String propertyName) {
+    final String value = filterConfig.getServletContext().getInitParameter(propertyName);
+    if (CommonUtils.isNotBlank(value)) {
+      logger.info("Property [{}] loaded from ServletContext.getInitParameter with value [{}]", propertyName, value);
+      return value;
+    }
+    return null;
+  }
+
+  private String retrieveParameterValueFromJNDIConfiguration(final String propertyName) {
+    InitialContext context = null;
+    try {
+      context = new InitialContext();
+      final String shortName = this.getClass().getName().substring(this.getClass().getName().lastIndexOf(".") + 1);
+      final String value1 = loadFromContext(context, "java:comp/env/cas/" + shortName + "/" + propertyName);
+      if (CommonUtils.isNotBlank(value1)) {
+        logger.info("Property [{}] loaded from JNDI Filter Specific Property with value [{}]", propertyName, value1);
+        return value1;
+      }
+      final String value2 = loadFromContext(context, "java:comp/env/cas/" + propertyName);
+      if (CommonUtils.isNotBlank(value2)) {
+        logger.info("Property [{}] loaded from JNDI with value [{}]", propertyName, value2);
+        return value2;
+      }
+    } catch (final NamingException e) {
+      logger.warn(e.getMessage(), e);
+    } finally {
+      if (context != null) {
         try {
-            return (String) context.lookup(path);
+          context.close();
         } catch (final NamingException e) {
-            return null;
+          logger.warn(e.getMessage(), e);
         }
+      }
     }
+    return null;
+  }
 
-    public final void setIgnoreInitConfiguration(boolean ignoreInitConfiguration) {
-        this.ignoreInitConfiguration = ignoreInitConfiguration;
+  private String retrieveParameterValueFromWebOrJNDIConfiguration(final FilterConfig filterConfig, final String propertyName) {
+    String value = retrieveParameterValueFromFilterConfiguration(filterConfig, propertyName);
+    if (CommonUtils.isNotBlank(value)) {
+      return value;
     }
+    value = retrieveParameterValueFromServletContextConfiguration(filterConfig, propertyName);
+    if (CommonUtils.isNotBlank(value)) {
+      return value;
+    }
+    return retrieveParameterValueFromJNDIConfiguration(propertyName);
+  }
 
-    protected final boolean isIgnoreInitConfiguration() {
-        return this.ignoreInitConfiguration;
-    }
-    
-    private String retrieveParameterValueFromFilterConfiguration(final FilterConfig filterConfig, final String propertyName) {
-        final String value = filterConfig.getInitParameter(propertyName);
-
-        if (CommonUtils.isNotBlank(value)) {
-            if ("renew".equals(propertyName)) {
-                throw new IllegalArgumentException(
-                        "Renew MUST be specified via context parameter or JNDI environment to avoid misconfiguration.");
-            }
-            logger.info("Property [{}] loaded from FilterConfig.getInitParameter with value [{}]", propertyName, value);
-            return value;
-        }
-        return null;
-    }
-    
-    private String retrieveParameterValueFromServletContextConfiguration(final FilterConfig filterConfig, final String propertyName) {
-        final String value = filterConfig.getServletContext().getInitParameter(propertyName);
-
-        if (CommonUtils.isNotBlank(value)) {
-            logger.info("Property [{}] loaded from ServletContext.getInitParameter with value [{}]", propertyName,
-                    value);
-            return value;
-        }
-        return null;
-    }
-    
-    private String retrieveParameterValueFromJNDIConfiguration(final String propertyName) {
-        InitialContext context = null;
-        try {
-            context = new InitialContext();
-            final String shortName = this.getClass().getName().substring(this.getClass().getName().lastIndexOf(".") + 1);
-            final String value1 = loadFromContext(context, "java:comp/env/cas/" + shortName + "/" + propertyName);
-            
-            if (CommonUtils.isNotBlank(value1)) {
-                logger.info("Property [{}] loaded from JNDI Filter Specific Property with value [{}]", propertyName, value1);
-                return value1;
-            }
-
-            final String value2 = loadFromContext(context, "java:comp/env/cas/" + propertyName);
-
-            if (CommonUtils.isNotBlank(value2)) {
-                logger.info("Property [{}] loaded from JNDI with value [{}]", propertyName, value2);
-                return value2;
-            }
-            
-        } catch (final NamingException e) {
-            logger.warn(e.getMessage(), e);
-        } finally {
-            if (context != null) {
-                try {
-                    context.close();
-                } catch (final NamingException e) {
-                    logger.warn(e.getMessage(), e);
-                }
-            }
-        }
-        return null;
-    }
-    
-    private String retrieveParameterValueFromWebOrJNDIConfiguration(final FilterConfig filterConfig, final String propertyName) {
-        String value = retrieveParameterValueFromFilterConfiguration(filterConfig, propertyName);
-        if (CommonUtils.isNotBlank(value)) {
-            return value;
-        }
-        
-        value = retrieveParameterValueFromServletContextConfiguration(filterConfig, propertyName);
-        if (CommonUtils.isNotBlank(value)) {
-            return value;
-        }
-        
-        return retrieveParameterValueFromJNDIConfiguration(propertyName);
-    }
-    
-    /**
+  /**
      * Initialize the configuration file, if not done already. Locate the property in the properties next.
      * @see Properties#getProperty(String)
      */
-    private String retrieveParameterValueFromConfigFile(final FilterConfig filterConfig, final String propertyName,
-            final String defaultFile) {
-        if (this.configurationProperties == null) {
-            initializeConfigurationProperties(filterConfig, defaultFile);
-        }
-        
-        if (this.configurationProperties != null) {
-            final String value = this.configurationProperties.getProperty(propertyName);
-            if (CommonUtils.isNotBlank(value)) {
-                logger.info("Property [{}] loaded from configuration file with value [{}]", propertyName, value);
-                return value;
-            }
-        }
-        
-        return null;
+  private String retrieveParameterValueFromConfigFile(final FilterConfig filterConfig, final String propertyName, final String defaultFile) {
+    if (this.configurationProperties == null) {
+      initializeConfigurationProperties(filterConfig, defaultFile);
     }
-    
-    /**
+    if (this.configurationProperties != null) {
+      final String value = this.configurationProperties.getProperty(propertyName);
+      if (CommonUtils.isNotBlank(value)) {
+        logger.info("Property [{}] loaded from configuration file with value [{}]", propertyName, value);
+        return value;
+      }
+    }
+    return null;
+  }
+
+  /**
      * Retrieve the configuration from a config file that is provided by the parameter <code>configFile</code>.
      * The parameter <code>configFile</code> itself can be specified by web or JNDI configuration.
      * @param filterConfig
      */
-    private void initializeConfigurationProperties(final FilterConfig filterConfig, final String defaultFile) {
-        File configFile = null;
-        
-        final String configFileProps = retrieveParameterValueFromWebOrJNDIConfiguration(filterConfig, PARAM_NAME_CONFIG_FILE);
-        if (CommonUtils.isBlank(configFileProps)) {
-            configFile = new File(defaultFile);
-        } else {
-            configFile = new File(configFileProps);
-        }
-        
-        if (configFile.exists() && configFile.isFile() && configFile.canRead()) {
-            FileReader reader = null;
-            BufferedReader bufferedReader = null;
-
-            try {
-                logger.info("Loading configuration file from {}", configFile.getCanonicalPath());
-
-                reader = new FileReader(configFile);
-                bufferedReader = new BufferedReader(reader);
-
-                this.configurationProperties = new Properties();
-                this.configurationProperties.load(bufferedReader);
-
-                logger.info("Loaded {} properties from configuration file {}", 
-                        this.configurationProperties.size(), configFile.getCanonicalPath());
-
-            } catch (final IOException e) {
-                logger.warn(e.getMessage(), e);
-            } finally {
-                CommonUtils.closeQuietly(bufferedReader);
-                CommonUtils.closeQuietly(reader);
-            }
-        }
-        
+  private void initializeConfigurationProperties(final FilterConfig filterConfig, final String defaultFile) {
+    File configFile = null;
+    final String configFileProps = retrieveParameterValueFromWebOrJNDIConfiguration(filterConfig, PARAM_NAME_CONFIG_FILE);
+    if (CommonUtils.isBlank(configFileProps)) {
+      configFile = new File(defaultFile);
+    } else {
+      configFile = new File(configFileProps);
     }
+    if (configFile.exists() && configFile.isFile() && configFile.canRead()) {
+      FileReader reader = null;
+      BufferedReader bufferedReader = null;
+
+<<<<<<< /usr/src/app/output/jasig/java-cas-client/f9dba228c432bb86dec5f92f7ae748d86c69b380/cas-client-core/src/main/java/org/jasig/cas/client/util/AbstractConfigurationFilter.java/left.java
+      try {
+        logger.info("Loading configuration file from {}", configFile.getCanonicalPath());
+        reader = new FileReader(configFile);
+        bufferedReader = new BufferedReader(reader);
+        this.configurationProperties = new Properties();
+        this.configurationProperties.load(bufferedReader);
+        logger.info("Loaded {} properties from configuration file {}", this.configurationProperties.size(), configFile.getCanonicalPath());
+      } catch (final IOException e) {
+        logger.warn(e.getMessage(), e);
+      } finally {
+        CommonUtils.closeQuietly(bufferedReader);
+        CommonUtils.closeQuietly(reader);
+      }
+=======
+      if (configFile.exists() && configFile.isFile() && configFile.canRead()) {
+        FileReader reader = null;
+        BufferedReader bufferedReader = null;
+        try {
+          logger.info("Loading configuration file from {}", configFile.getCanonicalPath());
+          reader = new FileReader(configFile);
+          bufferedReader = new BufferedReader(reader);
+          this.configurationProperties = new Properties();
+          this.configurationProperties.load(bufferedReader);
+          logger.info("Loaded {} properties from configuration file", this.configurationProperties.size());
+        } catch (final IOException e) {
+          logger.warn(e.getMessage(), e);
+        } finally {
+          CommonUtils.closeQuietly(bufferedReader);
+          CommonUtils.closeQuietly(reader);
+        }
+      } else {
+        logger.debug("Configuration file cannot be loaded from {}", configFile.getPath());
+      }
+>>>>>>> /usr/src/app/output/jasig/java-cas-client/f9dba228c432bb86dec5f92f7ae748d86c69b380/cas-client-core/src/main/java/org/jasig/cas/client/util/AbstractConfigurationFilter.java/right.java
+    }
+  }
 }
