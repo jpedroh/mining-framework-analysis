@@ -174,8 +174,10 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<ProxyMessa
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    public
+    @Override void channelInactive(ChannelHandlerContext ctx) throws Exception {
         Channel userChannel = ctx.channel().attr(Constants.NEXT_CHANNEL).get();
+<<<<<<< /usr/src/app/output/ffay/lanproxy/b398ec123de9c959a731c6d19ba4b4bf8d39a9ea/proxy-server/src/main/java/org/fengfei/lanproxy/server/handlers/ServerChannelHandler.java/left.java
         if (userChannel != null && userChannel.isActive()) {
             String clientKey = ctx.channel().attr(Constants.CLIENT_KEY).get();
             String userId = ctx.channel().attr(Constants.USER_ID).get();
@@ -190,6 +192,20 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<ProxyMessa
             userChannel.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
             userChannel.close();
         } else {
+||||||| /usr/src/app/output/ffay/lanproxy/b398ec123de9c959a731c6d19ba4b4bf8d39a9ea/proxy-server/src/main/java/org/fengfei/lanproxy/server/handlers/ServerChannelHandler.java/base.java
+        if (userChannel != null && userChannel.isActive())  else {
+=======
+        if (userChannel != null && userChannel.isActive()) {
+            String clientKey = ctx.channel().attr(Constants.CLIENT_KEY).get();
+            String userId = ctx.channel().attr(Constants.USER_ID).get();
+            Channel cmdChannel = ProxyChannelManager.getCmdChannel(clientKey);
+            ProxyChannelManager.removeUserChannelFromCmdChannel(cmdChannel, userId);
+
+            // 数据发送完成后再关闭连接，解决http1.0数据传输问题
+            userChannel.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+            userChannel.close();
+        } else {
+>>>>>>> /usr/src/app/output/ffay/lanproxy/b398ec123de9c959a731c6d19ba4b4bf8d39a9ea/proxy-server/src/main/java/org/fengfei/lanproxy/server/handlers/ServerChannelHandler.java/right.java
             ProxyChannelManager.removeCmdChannel(ctx.channel());
         }
 

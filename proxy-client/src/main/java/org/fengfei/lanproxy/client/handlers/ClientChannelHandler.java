@@ -102,11 +102,11 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<ProxyMessa
 
                 // 连接后端服务器成功
                 if (future.isSuccess()) {
+<<<<<<< /usr/src/app/output/ffay/lanproxy/b398ec123de9c959a731c6d19ba4b4bf8d39a9ea/proxy-client/src/main/java/org/fengfei/lanproxy/client/handlers/ClientChannelHandler.java/left.java
                     final Channel realServerChannel = future.channel();
                     logger.debug("connect realserver success, {}", realServerChannel);
 
                     ClientChannelMannager.setRealServerChannelReadability(realServerChannel, false, true);
-
                     // 获取连接
                     ClientChannelMannager.borrowProxyChanel(proxyBootstrap, new ProxyChannelBorrowListener() {
 
@@ -125,6 +125,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<ProxyMessa
                             ClientChannelMannager.setRealServerChannelReadability(realServerChannel, true, true);
                             ClientChannelMannager.addRealServerChannel(userId, realServerChannel);
                             ClientChannelMannager.setRealServerChannelUserId(realServerChannel, userId);
+
                         }
 
                         @Override
@@ -136,6 +137,52 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<ProxyMessa
                         }
                     });
 
+||||||| /usr/src/app/output/ffay/lanproxy/b398ec123de9c959a731c6d19ba4b4bf8d39a9ea/proxy-client/src/main/java/org/fengfei/lanproxy/client/handlers/ClientChannelHandler.java/base.java
+                    Channel realServerChannel = future.channel();
+                    logger.debug("connect realserver success, {}, clientChannelWriteable {}", realServerChannel,
+                            channel.isWritable());
+                    ClientChannelMannager.setRealServerChannelReadability(realServerChannel, channel.isWritable(),
+                            true);
+                    ClientChannelMannager.addRealServerChannel(userId, realServerChannel);
+                    ClientChannelMannager.setRealServerChannelUserId(realServerChannel, userId);
+                    ProxyMessage proxyMessage = new ProxyMessage();
+                    proxyMessage.setType(ProxyMessage.TYPE_CONNECT);
+                    proxyMessage.setUri(userId);
+                    channel.writeAndFlush(proxyMessage);
+=======
+                    final Channel realServerChannel = future.channel();
+                    logger.debug("connect realserver success, {}", realServerChannel);
+
+                    // 获取连接
+                    ClientChannelMannager.borrowProxyChanel(proxyBootstrap, new ProxyChannelBorrowListener() {
+
+                        @Override
+                        public void success(Channel channel) {
+                            // 连接绑定
+                            channel.attr(Constants.NEXT_CHANNEL).set(realServerChannel);
+                            realServerChannel.attr(Constants.NEXT_CHANNEL).set(channel);
+
+                            ClientChannelMannager.setRealServerChannelReadability(realServerChannel, channel.isWritable(), true);
+                            ClientChannelMannager.addRealServerChannel(userId, realServerChannel);
+                            ClientChannelMannager.setRealServerChannelUserId(realServerChannel, userId);
+
+                            // 远程绑定
+                            ProxyMessage proxyMessage = new ProxyMessage();
+                            proxyMessage.setType(ProxyMessage.TYPE_CONNECT);
+                            proxyMessage.setUri(userId + "@" + Config.getInstance().getStringValue("client.key"));
+                            channel.writeAndFlush(proxyMessage);
+                        }
+
+                        @Override
+                        public void error(Throwable cause) {
+                            ProxyMessage proxyMessage = new ProxyMessage();
+                            proxyMessage.setType(ProxyMessage.TYPE_DISCONNECT);
+                            proxyMessage.setUri(userId);
+                            cmdChannel.writeAndFlush(proxyMessage);
+                        }
+                    });
+
+>>>>>>> /usr/src/app/output/ffay/lanproxy/b398ec123de9c959a731c6d19ba4b4bf8d39a9ea/proxy-client/src/main/java/org/fengfei/lanproxy/client/handlers/ClientChannelHandler.java/right.java
                 } else {
                     ProxyMessage proxyMessage = new ProxyMessage();
                     proxyMessage.setType(ProxyMessage.TYPE_DISCONNECT);
