@@ -72,6 +72,7 @@ import de.uni_koblenz.jgralab.codegenerator.ReversedEdgeCodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.SchemaCodeGenerator;
 import de.uni_koblenz.jgralab.codegenerator.VertexCodeGenerator;
 import de.uni_koblenz.jgralab.impl.ConsoleProgressFunction;
+import de.uni_koblenz.jgralab.impl.generic.GenericGraphImpl;
 import de.uni_koblenz.jgralab.schema.Attribute;
 import de.uni_koblenz.jgralab.schema.AttributedElementClass;
 import de.uni_koblenz.jgralab.schema.BooleanDomain;
@@ -672,7 +673,7 @@ public class SchemaImpl implements Schema {
 		if (finish) {
 			throw new SchemaException("No changes to finished schema!");
 		}
-		if (graphClass != null) {
+		if (this.graphClass != null) {
 			throw new SchemaException(
 					"Only one GraphClass (except DefaultGraphClass) is allowed in a Schema! '"
 					+ this.graphClass.getQualifiedName()
@@ -912,12 +913,12 @@ public class SchemaImpl implements Schema {
 	@Override
 	public List<CompositeDomain> getCompositeDomains() {
 		ArrayList<CompositeDomain> topologicalOrderList = new ArrayList<CompositeDomain>();
+
 		for (Domain dom : domainsDag.getNodesInTopologicalOrder()) {
 			if (dom instanceof CompositeDomain) {
 				topologicalOrderList.add((CompositeDomain) dom);
 			}
 		}
-
 		return topologicalOrderList;
 	}
 
@@ -927,7 +928,7 @@ public class SchemaImpl implements Schema {
 		AttributedElementClass aec = null;
 		try {
 			schemaClass = getGraphClassImpl(implementationType);
-			if (className.equals(graphClassName)) {
+			if (className.equals(graphClassName) || (implementationType == ImplementationType.GENERIC && graphClassName.equals("GenericGraphImpl"))) {
 				return schemaClass.getMethod("create", signature);
 			} else {
 				aec = this.graphClass.getVertexClass(className);
@@ -998,11 +999,10 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
-
 	public List<EdgeClass> getEdgeClasses() {
 		List<EdgeClass> ec_top = new ArrayList<EdgeClass>();
-		ec_top.add(defaultEdgeClass);
-		for (EdgeClass ec : graphClass.getEdgeClasses()) {
+		ec_top.add(this.defaultEdgeClass);
+		for (EdgeClass ec : this.graphClass.getEdgeClasses()) {
 			ec_top.add(ec);
 		}
 		return ec_top;
@@ -1097,6 +1097,7 @@ public class SchemaImpl implements Schema {
 	 * @param implementationType
 	 * @return
 	 */
+
 	@SuppressWarnings("unchecked")
 	private Class<? extends Graph> getGraphClassImpl(
 			ImplementationType implementationType) {
@@ -1123,6 +1124,7 @@ public class SchemaImpl implements Schema {
 		if (implementationType != ImplementationType.GENERIC) {
 			implClassName = implClassName + "." + graphClass.getSimpleName()
 					+ "Impl";
+
 			try {
 				schemaClass = (Class<? extends Graph>) Class.forName(
 						implClassName, true,
@@ -1159,7 +1161,6 @@ public class SchemaImpl implements Schema {
 		}
 	}
 
-
 	@Override
 	public String getName() {
 		return this.name;
@@ -1170,6 +1171,7 @@ public class SchemaImpl implements Schema {
 	 *
 	 * @return number of graphelementclasses contained in graphclass
 	 */
+
 	private int getNumberOfElements() {
 		return this.graphClass.getGraphElementClasses().size() + 1;
 	}
@@ -1210,8 +1212,8 @@ public class SchemaImpl implements Schema {
 	@Override
 	public List<VertexClass> getVertexClasses() {
 		List<VertexClass> vc_top = new ArrayList<VertexClass>();
-		vc_top.add(defaultVertexClass);
-		for (VertexClass vc : graphClass.getVertexClasses()) {
+		vc_top.add(this.defaultVertexClass);
+		for (VertexClass vc : this.graphClass.getVertexClasses()) {
 			vc_top.add(vc);
 		}
 		return vc_top;
@@ -1264,6 +1266,15 @@ public class SchemaImpl implements Schema {
 		this.allowLowercaseEnumConstants = allowLowercaseEnumConstants;
 	}
 
+	@Override
+	public GraphFactory getGraphFactory() {
+		return this.graphFactory;
+	}
+
+	@Override
+	public void setGraphFactory(GraphFactory factory) {
+		this.graphFactory = factory;
+	}
 
 	void setGraphClass(GraphClass gc) {
 		if (this.graphClass != null) {
@@ -1324,6 +1335,12 @@ public class SchemaImpl implements Schema {
 	public void setConfiguration(CodeGeneratorConfiguration config) {
 		this.config = config;
 	}
+	
+	
+	@Override
+	public GenericGraphImpl createGenericGraph() {
+		return null;
+	}
 
 	@Override
 	public Graph createGraph(ImplementationType implementationType) {
@@ -1331,6 +1348,7 @@ public class SchemaImpl implements Schema {
 	}
 
 	@Override
+<<<<<<< /usr/src/app/output/jgralab/jgralab/6b4faa42c0de2bdb921de9423bda798251cc7903/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
 	public Graph createGraph(ImplementationType implementationType, String id,
 			int vCount, int eCount) {
 		finish();
@@ -1353,13 +1371,63 @@ public class SchemaImpl implements Schema {
 							"FIXME: Unexpected implementation type "
 									+ implementationType);
 				}
+||||||| /usr/src/app/output/jgralab/jgralab/6b4faa42c0de2bdb921de9423bda798251cc7903/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+	public Graph createGraph(ImplementationType implementationType, int vCount,
+			int eCount) {
+		try {
+			getGraphClass().getSchemaClass();
+		} catch (SchemaClassAccessException e) {
+			switch (implementationType) {
+			case STANDARD:
+				compile(CodeGeneratorConfiguration.MINIMAL);
+				break;
+			case DATABASE:
+				compile(CodeGeneratorConfiguration.WITH_DATABASE_SUPPORT);
+				break;
+			case TRANSACTION:
+				compile(CodeGeneratorConfiguration.WITH_TRANSACTION_SUPPORT);
+				break;
+			default:
+				throw new RuntimeException(
+						"FIXME: Unexpected implementation type "
+								+ implementationType);
+=======
+	public Graph createGraph(ImplementationType implementationType, int vCount,
+			int eCount) {
+		if(implementationType != ImplementationType.GENERIC) {
+			try {
+				getGraphClass().getSchemaClass();
+			} catch (SchemaClassAccessException e) {
+				switch (implementationType) {
+				case STANDARD:
+					compile(CodeGeneratorConfiguration.MINIMAL);
+					break;
+				case DATABASE:
+					compile(CodeGeneratorConfiguration.WITH_DATABASE_SUPPORT);
+					break;
+				case TRANSACTION:
+					compile(CodeGeneratorConfiguration.WITH_TRANSACTION_SUPPORT);
+					break;
+				default:
+					throw new RuntimeException(
+							"FIXME: Unexpected implementation type "
+									+ implementationType);
+				}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/6b4faa42c0de2bdb921de9423bda798251cc7903/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
 			}
 		}
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/6b4faa42c0de2bdb921de9423bda798251cc7903/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
 		Method graphCreateMethod = implementationType != ImplementationType.GENERIC ? getGraphCreateMethod(ImplementationType.STANDARD)
 				: getGraphCreateMethod(ImplementationType.GENERIC);
+||||||| /usr/src/app/output/jgralab/jgralab/6b4faa42c0de2bdb921de9423bda798251cc7903/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+		Method graphCreateMethod = getGraphCreateMethod(ImplementationType.STANDARD);
+=======
+		Method graphCreateMethod = implementationType != ImplementationType.GENERIC ? getGraphCreateMethod(ImplementationType.STANDARD) : getGraphCreateMethod(ImplementationType.GENERIC);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/6b4faa42c0de2bdb921de9423bda798251cc7903/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
 
 		try {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/6b4faa42c0de2bdb921de9423bda798251cc7903/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/left.java
 			if (implementationType != ImplementationType.GENERIC) {
 				return (Graph) graphCreateMethod.invoke(null, id, vCount,
 						eCount);
@@ -1367,6 +1435,16 @@ public class SchemaImpl implements Schema {
 				return (Graph) graphCreateMethod.invoke(null, getGraphClass(),
 						id, vCount, eCount);
 			}
+||||||| /usr/src/app/output/jgralab/jgralab/6b4faa42c0de2bdb921de9423bda798251cc7903/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/base.java
+			return (Graph) graphCreateMethod.invoke(null, null, vCount, eCount);
+=======
+			if(implementationType != ImplementationType.GENERIC) {
+				return (Graph) graphCreateMethod.invoke(null, null, vCount, eCount);
+			}
+			else {
+				return (Graph) graphCreateMethod.invoke(null, getGraphClass(), null, vCount, eCount);
+			}
+>>>>>>> /usr/src/app/output/jgralab/jgralab/6b4faa42c0de2bdb921de9423bda798251cc7903/src/de/uni_koblenz/jgralab/schema/impl/SchemaImpl.java/right.java
 		} catch (Exception e) {
 			throw new SchemaException(
 					"Something failed when creating the  graph!", e);

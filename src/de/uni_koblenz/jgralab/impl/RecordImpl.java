@@ -18,6 +18,10 @@ public class RecordImpl implements de.uni_koblenz.jgralab.Record {
 	private static enum NullValue {
 		NULL;
 	}
+	// place holder for null-valued components
+	static enum NullValue {
+		NULL;
+	}
 	
 	private PMap<String, Object> entries;
 

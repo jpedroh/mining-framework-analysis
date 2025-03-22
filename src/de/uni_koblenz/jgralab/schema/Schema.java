@@ -52,6 +52,7 @@ import de.uni_koblenz.jgralab.ImplementationType;
 import de.uni_koblenz.jgralab.ProgressFunction;
 import de.uni_koblenz.jgralab.Vertex;
 import de.uni_koblenz.jgralab.codegenerator.CodeGeneratorConfiguration;
+import de.uni_koblenz.jgralab.impl.generic.GenericGraphImpl;
 import de.uni_koblenz.jgralab.schema.RecordDomain.RecordComponent;
 import de.uni_koblenz.jgralab.schema.impl.compilation.InMemoryJavaSourceFile;
 
@@ -477,6 +478,7 @@ public interface Schema extends Comparable<Schema> {
 	public Graph createGraph(ImplementationType implementationType, int vCount,
 			int eCount);
 
+<<<<<<< /usr/src/app/output/jgralab/jgralab/6b4faa42c0de2bdb921de9423bda798251cc7903/src/de/uni_koblenz/jgralab/schema/Schema.java/left.java
 	/**
 	 * @return whether the schema is finished
 	 */
@@ -494,5 +496,8 @@ public interface Schema extends Comparable<Schema> {
 	 * finish
 	 */
 	public void reopen();
-
+||||||| /usr/src/app/output/jgralab/jgralab/6b4faa42c0de2bdb921de9423bda798251cc7903/src/de/uni_koblenz/jgralab/schema/Schema.java/base.java
+=======
+	public GenericGraphImpl createGenericGraph();
+>>>>>>> /usr/src/app/output/jgralab/jgralab/6b4faa42c0de2bdb921de9423bda798251cc7903/src/de/uni_koblenz/jgralab/schema/Schema.java/right.java
 }

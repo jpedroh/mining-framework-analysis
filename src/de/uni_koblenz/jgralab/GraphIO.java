@@ -1916,9 +1916,8 @@ public class GraphIO {
 		return vc;
 	}
 
-
 	protected EdgeClass createEdgeClass(GraphElementClassData ecd, GraphClass gc)
-			throws GraphIOException, SchemaException {
+	throws GraphIOException, SchemaException {
 		EdgeClass ec = gc.createEdgeClass(ecd.getQualifiedName(),
 				gc.getVertexClass(ecd.fromVertexClassName),
 				ecd.fromMultiplicity[0], ecd.fromMultiplicity[1],
@@ -2566,11 +2565,11 @@ public class GraphIO {
 		}
 
 		// adjust fields for incidences
-		edgeIn = new Vertex[maxE + 1];
-		edgeOut = new Vertex[maxE + 1];
-		firstIncidence = new int[maxV + 1];
-		nextIncidence = new int[(2 * maxE) + 1];
-		edgeOffset = maxE;
+		this.edgeIn = new Vertex[maxE + 1];
+		this.edgeOut = new Vertex[maxE + 1];
+		this.firstIncidence = new int[maxV + 1];
+		this.nextIncidence = new int[(2 * maxE) + 1];
+		this.edgeOffset = maxE;
 
 		long graphElements = 0, currentCount = 0, interval = 1;
 		if (pf != null) {

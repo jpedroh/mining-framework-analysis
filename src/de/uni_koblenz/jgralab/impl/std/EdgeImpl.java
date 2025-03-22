@@ -111,7 +111,19 @@ public abstract class EdgeImpl extends de.uni_koblenz.jgralab.impl.EdgeBaseImpl 
 	}
 
 	protected EdgeImpl(int anId, Graph graph, Vertex alpha, Vertex omega) {
+<<<<<<< /usr/src/app/output/jgralab/jgralab/6b4faa42c0de2bdb921de9423bda798251cc7903/src/de/uni_koblenz/jgralab/impl/std/EdgeImpl.java/left.java
 		super(anId, graph, alpha, omega);
+||||||| /usr/src/app/output/jgralab/jgralab/6b4faa42c0de2bdb921de9423bda798251cc7903/src/de/uni_koblenz/jgralab/impl/std/EdgeImpl.java/base.java
+		super(anId, graph);
+		((GraphImpl) graph).addEdge(this, alpha, omega);
+=======
+		super(anId, graph);
+		addToGraph(graph, alpha, omega);
+>>>>>>> /usr/src/app/output/jgralab/jgralab/6b4faa42c0de2bdb921de9423bda798251cc7903/src/de/uni_koblenz/jgralab/impl/std/EdgeImpl.java/right.java
+	}
+	
+	protected void addToGraph(Graph graph, Vertex alpha, Vertex omega) {
+		((GraphImpl) graph).addEdge(this, alpha, omega);
 	}
 
 	@Override

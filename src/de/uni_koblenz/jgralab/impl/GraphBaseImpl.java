@@ -472,16 +472,25 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 			}
 		}
 	}
-
+	
+	
 	/**
 	 * Creates an edge of the given {@link EdgeClass} and adds it to the graph.
 	 */
+	@SuppressWarnings("unchecked")
+	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha, Vertex omega) {
+		return (T) createEdge(ec.getSchemaClass(), alpha, omega);
+	}
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends Edge> T createEdge(EdgeClass ec, Vertex alpha,
 			Vertex omega) {
 		return (T) createEdge(ec.getSchemaClass(), alpha, omega);
 	}
+
+	/**
+	 * Creates an edge of the given {@link EdgeClass} and adds it to the graph.
+	 */
 
 	@Override
 	public Edge internalCreateEdge(Class<? extends Edge> cls, Vertex alpha,
@@ -516,6 +525,9 @@ public abstract class GraphBaseImpl implements Graph, InternalGraph {
 	public <T extends Vertex> T createVertex(VertexClass vc) {
 		return (T) createVertex(vc.getSchemaClass());
 	}
+	/**
+	 * Creates a vertex of the given {@link VertexClass} and adds it to the graph.
+	 */
 
 	@Override
 	public Vertex internalCreateVertex(Class<? extends Vertex> cls) {
