@@ -631,6 +631,7 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
         @SuppressWarnings("unchecked")
         private void encode(Event event, OutputStream outputStream) throws IOException, EncoderException {
             if (encoder instanceof StreamingEncoder) {
+<<<<<<< /usr/src/app/output/logstash/logstash-logback-encoder/598ff0e621837d26c614c94d528aa95cba2fb60f/src/main/java/net/logstash/logback/appender/AbstractLogstashTcpSocketAppender.java/left.java
                 /*
                  * Use a temporary buffer to avoid writing "partial" content in the output
                  * stream if the Encoder throws an exception.
@@ -645,6 +646,20 @@ public abstract class AbstractLogstashTcpSocketAppender<Event extends DeferredPr
                 } finally {
                     buffer.reset();
                 }
+||||||| /usr/src/app/output/logstash/logstash-logback-encoder/598ff0e621837d26c614c94d528aa95cba2fb60f/src/main/java/net/logstash/logback/appender/AbstractLogstashTcpSocketAppender.java/base.java
+                ((StreamingEncoder<Event>) encoder).encode(event, outputStream);
+=======
+                /*
+                 * Generate content in a temporary buffer to avoid writing "partial" content in the output
+                 * stream if the Encoder throws an exception.
+                 */
+                try {
+                    ((StreamingEncoder<Event>) encoder).encode(event, buffer);
+                    buffer.writeTo(outputStream);
+                } finally {
+                    buffer.reset();
+                }
+>>>>>>> /usr/src/app/output/logstash/logstash-logback-encoder/598ff0e621837d26c614c94d528aa95cba2fb60f/src/main/java/net/logstash/logback/appender/AbstractLogstashTcpSocketAppender.java/right.java
             } else {
                 byte[] data;
                 try {
