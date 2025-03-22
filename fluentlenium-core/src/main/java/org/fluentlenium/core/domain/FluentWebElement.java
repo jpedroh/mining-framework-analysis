@@ -902,6 +902,7 @@ public class FluentWebElement extends Component
      *
      * @param hookRestoreStack restore stack
      */
+    /* default */
     /* default */ void setHookRestoreStack(Stack<List<HookDefinition<?>>> hookRestoreStack) {
         hookControl.setHookRestoreStack(hookRestoreStack);
     }
@@ -932,6 +933,11 @@ public class FluentWebElement extends Component
     }
 
     @Override
+    public FluentWebElement noHook() {
+        return getHookControl().noHook();
+    }
+
+    @Override
     public <R> R noHook(Function<FluentWebElement, R> function) {
         return getHookControl().noHook(function);
     }
@@ -942,18 +948,13 @@ public class FluentWebElement extends Component
     }
 
     @Override
-    public FluentWebElement restoreHooks() {
-        return getHookControl().restoreHooks();
-    }
-
-    @Override
     public FluentWebElement noHookInstance() {
         return getHookControl().noHookInstance();
     }
 
     @Override
-    public FluentWebElement noHook() {
-        return getHookControl().noHook();
+    public FluentWebElement restoreHooks() {
+        return getHookControl().restoreHooks();
     }
 
     @Override
